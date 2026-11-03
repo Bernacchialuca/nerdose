@@ -1,0 +1,27 @@
+service: api
+type: api
+language: node
+
+conventions:
+  - http-server # custom
+  - orm # custom
+  - validation # custom
+  - auth-jwt # custom
+  - security # custom
+  - logging
+  - env-config # custom
+  - testing # custom
+  - alerts-mail # custom
+  - game-registry # custom
+  - player-identity # custom
+  - platform-day # custom
+  - memory-cache # custom
+  # error-handling se incluye automaticamente (required_by: validation, http-server, auth-jwt)
+
+modules:
+  - identity
+  - gameplay
+  - progress
+  - quality
+  - publishing
+  - admin

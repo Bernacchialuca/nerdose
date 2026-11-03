@@ -39,7 +39,7 @@ El jugador se identifica con la cookie funcional **`nd_pid`**, cuyo valor es `pl
 - Un `nd_pid` que no corresponde a un Player existente MUST tratarse como ausente (se crea otro Player y se reemplaza la cookie).
 - Las rutas de jugador que lo exigen MUST responder `401` con `{ "error": { "code": "no_session", … } }` si falta la cookie o no es válida.
 - `GET /api/today` MUST funcionar sin cookie y devolver `has_session: false`.
-- Toda mutación (`POST`, `PATCH`) MUST rechazar con `415` un `Content-Type` distinto de `application/json`, y con `403` un header `Origin` distinto de `https://nerdose.dev` (en producción).
+- Toda mutación (`POST`, `PATCH`) MUST rechazar con `415` un `Content-Type` distinto de `application/json`, y con `403 forbidden_origin` un header `Origin` ausente o distinto del permitido: `WEB_ORIGIN` para las rutas de jugador y `ADMIN_ORIGIN` para `/api/admin/*`. Ambas variables son **obligatorias** en todos los ambientes (producción: `https://nerdose.dev` y `https://admin.nerdose.dev`; local: los orígenes del dev server de Vite). El chequeo nunca se desactiva por falta de configuración.
 - La `api` MUST NOT emitir headers CORS.
 - MUST NOT guardarse PII del jugador (ni IP, ni email, ni fingerprint) en `players`. El `user_agent` solo se guarda en el `context` de un reporte.
 

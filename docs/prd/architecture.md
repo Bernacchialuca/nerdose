@@ -31,7 +31,7 @@ Documento de alto nivel: qué servicios existen, cómo se comunican, qué base d
 
 | Paquete | Lo usan | Contenido |
 |---|---|---|
-| `core` | api, generator, web | Contrato `GameDefinition`, día UTC y número de desafío (`LAUNCH_DATE`), rachas con días neutros, seed/PRNG, `notify()` (mail), códigos de error |
+| `core` | api, generator, web | Contrato `GameDefinition`, día UTC y número de desafío (`LAUNCH_DATE`), rachas con días neutros, seed/PRNG, `notify()` (entrada aparte `@nerdose/core/notify`, solo Node) (mail), códigos de error |
 | `db` | api, generator | Schema Drizzle, migraciones, queries compartidas y vistas `metrics_*` |
 | `games/<game_id>` | `definition` → api · `client` → web y admin · `generator` → generator | Un paquete por juego: `devdle`, `grep-grid`, `timeline`, `big-o`, `bug-hunt` |
 | `polyglot` | generator | Árbol de código, emisores JS/Go/Java y runner multi-lenguaje |
@@ -105,7 +105,7 @@ El script manda un `User-Agent` descriptivo con un contacto del proyecto, como e
 - Salida SMTP de `api` y `generator`. Ningún servicio necesita otra salida a internet.
 
 **Estructura del repositorio:**
-- Monorepo con pnpm workspaces y Turborepo: `apps/{web,admin,api,generator}` y `packages/{core,db,ui,polyglot,games/*}`.
+- Monorepo con pnpm workspaces y Turborepo: `apps/{web,admin,api,generator}` y `packages/{core,db,ui,polyglot,content,games/*}`.
 
 ### Aspectos Transversales
 

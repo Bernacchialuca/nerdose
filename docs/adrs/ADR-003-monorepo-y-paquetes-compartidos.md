@@ -28,7 +28,7 @@ apps/
   api/          Hono: rutas de jugador + /api/admin/* + registry de juegos
   generator/    worker: scheduler, jobs, generación y verificación
 packages/
-  core/         GameDefinition, día UTC, número de desafío, rachas, seed/PRNG, notify(), códigos de error
+  core/         GameDefinition, día UTC, número de desafío, rachas, seed/PRNG, códigos de error; notify() en la entrada aparte ./notify (solo Node)
   db/           schema Drizzle, migraciones, queries compartidas, vistas metrics_*
   ui/           componentes compartidos (header, banners, share, stat cards), tokens, track()
   polyglot/     árbol de código, emisores JS/Go/Java, runner multi-lenguaje
@@ -51,7 +51,8 @@ Cada paquete de juego expone tres entradas separadas: `definition` (la usa la `a
 - Cada paquete de juego MUST exponer por `exports` tres entradas: `./definition`, `./client` y `./generator`.
 - `apps/api` MUST importar solo `./definition` de cada juego. `apps/web` y `apps/admin` MUST importar solo `./client`. `apps/generator` MUST importar solo `./generator` (y `./definition` si lo necesita para validar).
 - `./definition` y `./client` MUST NOT importar `polyglot`, `node:child_process` ni nada que ejecute código.
-- `apps/web` y `apps/admin` MUST NOT importar `@nerdose/db`.
+- `apps/web` y `apps/admin` MUST NOT importar `@nerdose/db` ni `@nerdose/core/notify`.
+- `@nerdose/core` MUST exponer dos entradas por `exports`: `.` (isomorfa: corre en Node y en el navegador, sin dependencias de Node) y `./notify` (solo Node, con nodemailer). La entrada `.` MUST NOT importar `./notify` ni `node:*`.
 - `@nerdose/db` MUST ser el único lugar con el schema Drizzle y las migraciones.
 - MUST NOT haber dependencias entre apps (`apps/*` no importa de otro `apps/*`). Lo compartido va en `packages/`.
 

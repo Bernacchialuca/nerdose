@@ -1,5 +1,7 @@
 # Arquitectura — nerdose
 
+> ⚠️ **Documento histórico, superado.** La arquitectura vigente está en [`prd/architecture.md`](prd/architecture.md), los ADRs de [`adrs/`](adrs/), [`apis/api.yaml`](apis/api.yaml), [`db-schemas/nerdose-db.md`](db-schemas/nerdose-db.md) y [`architectures/`](architectures/). Este archivo tiene decisiones que se cambiaron después (por ejemplo, Grep Grid con tiempo, Node 22, webhook, reposición de bancos en vivo). No usarlo como fuente.
+
 > Documento vivo. Complementa a [brief.md](brief.md), que define el producto; acá se define cómo se construye.
 > Última actualización: 2026-11-03.
 

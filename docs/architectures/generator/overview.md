@@ -1,0 +1,28 @@
+# generator — Overview
+
+## Proposito
+Worker siempre activo, sin interfaz de red, que produce el contenido de nerdose. Mantiene aprobados y verificados los desafíos de los próximos 14 días de cada juego (job `fill`, cada hora en UTC), atiende los pedidos de regeneración que la `api` deja en PostgreSQL (`LISTEN generation_requests` + `FOR UPDATE SKIP LOCKED`), carga los bancos (`terms`, `timeline_facts`) desde el dataset versionado de `@nerdose/content` al arrancar (`sync_banks`) y avisa por mail si falta el desafío de mañana. Es el único proceso que inserta en `challenges`, `terms` y `timeline_facts`. Su única salida de red es SMTP.
+
+## Tipo de servicio
+worker en node (TypeScript, Node.js 24 LTS, croner, pure-rand, nodemailer) más toolchains Go >= 1.25 y JDK 21 para verificar el código. Vive en `apps/generator` y usa `@nerdose/core`, `@nerdose/db`, `@nerdose/polyglot`, `@nerdose/content` y `./generator` de cada `@nerdose/game-*`.
+
+## Modulos del dominio
+- **challenge-publishing**: `fill`, pipeline de generación y verificación por candidato, seed (HMAC + pure-rand), regeneración por cola, `generation_failures` y alerta de falla de generación.
+- **content-banks**: `sync_banks`, UPSERT idempotente del dataset en los bancos y reglas de precedencia de ítems `rejected`.
+
+## Notas adicionales
+Supuestos tomados al generar esta arquitectura sin interacción con el usuario:
+
+- **Convenciones del catálogo usadas tal cual:** `_base` y `logging` (Pino). El resto es custom: o reemplaza a una del catálogo que contradice los ADRs (`orm`, `validation`, `error-handling`, `env-config`, `testing`), o es nueva (`alerts-mail`, `scheduler-jobs`, `generation-queue`, `challenge-generation`, `code-runner`, `content-sync`).
+- **Convenciones compartidas con `api`** (`orm`, `validation`, `error-handling`, `env-config`, `testing`, `alerts-mail`): los archivos son idénticos en ambos servicios; si se cambia uno hay que cambiar el otro.
+- **Convenciones excluidas:** `dockerfile`, `ci-gitlab`, `observability` (diferidas); `queue` y `cache` (sin Redis/BullMQ, ADR-001); `http-server`, `auth-jwt` y `security` no aplican (el `generator` no expone red).
+- **Tipo `worker`:** sin servidor HTTP, el `generator` no usa `http-server`; `error-handling` se incluye por `validation`.
+- **Seed:** los 32 bytes del HMAC se reducen a una semilla entera de 32 bits para `pure-rand` en el ejemplo de `challenge-generation`; la derivación exacta queda a cargo de `@nerdose/core`.
+- **Cola:** mientras genera una regeneración, la fila del pedido queda bloqueada (`SKIP LOCKED`); es aceptable porque hay una sola instancia del `generator`.
+- **Aislamiento del runner** (sin red, límites de recursos), imagen con toolchains, despliegue y CI quedan diferidos con el hosting.
+- **Idioma de las convenciones:** siguen el template del workflow (inglés, `display_name` en español).
+
+---
+
+**Manifest:** [manifest.yaml](./manifest.yaml)
+**Indice de arquitectura:** [index.md](./index.md)

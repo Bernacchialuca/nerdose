@@ -1,0 +1,21 @@
+service: generator
+type: worker
+language: node
+
+conventions:
+  - orm # custom
+  - validation # custom
+  - logging
+  - env-config # custom
+  - testing # custom
+  - alerts-mail # custom
+  - scheduler-jobs # custom
+  - generation-queue # custom
+  - challenge-generation # custom
+  - code-runner # custom
+  - content-sync # custom
+  # error-handling se incluye automaticamente (required_by: validation)
+
+modules:
+  - challenge-publishing
+  - content-banks

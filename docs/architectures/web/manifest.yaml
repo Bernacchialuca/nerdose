@@ -1,0 +1,26 @@
+service: web
+type: frontend
+language: react
+
+# Todas las convenciones son custom (docs/architectures/web/conventions/).
+# No existe catálogo para `react`; ver overview.md. `_base` es implícita.
+# error-handling se incluye sola (required_by: data-fetching, routing).
+conventions:
+  - routing
+  - data-fetching
+  - game-clients
+  - styling
+  - state-management
+  - i18n
+  - analytics
+  - accessibility
+  - testing-unit
+  - testing-e2e
+
+modules:
+  - shell
+  - catalog
+  - game-host
+  - stats
+  - about
+  - session

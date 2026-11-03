@@ -17,7 +17,7 @@ El análisis técnico había propuesto un webhook de Discord/Slack. **El usuario
 
 ## Decisión
 
-Las alertas se mandan por **mail vía SMTP con nodemailer**, desde un helper `notify(subject, text)` de `@nerdose/core` que usan la `api` y el `generator`.
+Las alertas se mandan por **mail vía SMTP con nodemailer**, desde un helper `notify(subject, text)` de `@nerdose/core/notify` (entrada solo Node, ADR-003) que usan la `api` y el `generator`.
 
 **Semántica best-effort y una sola vez:**
 1. Dentro de la transacción del evento, se reclama el envío con un `UPDATE … SET alert_sent_at = now() WHERE … AND alert_sent_at IS NULL RETURNING …`.
@@ -30,7 +30,7 @@ Las alertas se mandan por **mail vía SMTP con nodemailer**, desde un helper `no
 
 ## Reglas de Implementación
 
-- Todo envío de alertas MUST pasar por `notify()` de `@nerdose/core`. MUST NOT llamarse a nodemailer directamente desde rutas o jobs.
+- Todo envío de alertas MUST pasar por `notify()` de `@nerdose/core/notify`. MUST NOT llamarse a nodemailer directamente desde rutas o jobs.
 - `notify()` MUST usar `nodemailer.createTransport({ host: SMTP_HOST, port: SMTP_PORT, secure: SMTP_PORT === 465, auth: { user: SMTP_USER, pass: SMTP_PASS } })`, con `from = ALERT_EMAIL_FROM` y `to = ALERT_EMAIL_TO`, en texto plano.
 - Si las variables `SMTP_*` o `ALERT_EMAIL_*` no están definidas, `notify()` MUST loguear la alerta con nivel `warn` y devolver `false`, sin lanzar error. El proceso MUST arrancar igual.
 - El reclamo MUST hacerse con `UPDATE … WHERE alert_sent_at IS NULL RETURNING`, y el envío MUST ocurrir después del `COMMIT`.
