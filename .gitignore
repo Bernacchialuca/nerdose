@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.turbo/
+coverage/
+
+# Environment files: only .env.example is committed
+.env
+.env.local
+.env.test

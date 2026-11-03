@@ -1,0 +1,24 @@
+@theme {
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --color-bg: #0A0C0F;            /* page background */
+  --color-surface: #0F1318;       /* cards */
+  --color-surface-2: #11151A;     /* raised / inputs */
+  --color-surface-3: #141920;
+  --color-border: #222A33;
+  --color-border-strong: #2A323C;
+  --color-border-subtle: #1E252E;
+
+  --color-text: #E6EDF3;          /* primary text */
+  --color-text-muted: #9AA6B2;    /* secondary text */
+  --color-text-dim: #8D99A6;      /* tertiary text, labels */
+
+  --color-accent: #3DDC84;        /* brand accent, also Devdle */
+  --color-on-accent: #06120B;     /* text on accent backgrounds */
+
+  --color-game-devdle: #3DDC84;
+  --color-game-bug-hunt: #FFB547;
+  --color-game-big-o: #5EB1FF;
+  --color-game-timeline: #C39BFF;
+  --color-game-grep-grid: #F472B6;
+}

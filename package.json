@@ -1,0 +1,29 @@
+{
+  "name": "nerdose",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.6.0",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint lint:workspace",
+    "typecheck": "turbo run typecheck typecheck:workspace",
+    "test": "turbo run test test:workspace",
+    "lint:workspace": "eslint eslint.config.js vitest.config.ts test",
+    "typecheck:workspace": "tsc -p tsconfig.json",
+    "test:workspace": "vitest run --config test/vitest.config.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "eslint": "^9.39.5",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "turbo": "^2.11.10",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.1.0"
+  }
+}
