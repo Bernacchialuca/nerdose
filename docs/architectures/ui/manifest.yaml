@@ -1,0 +1,15 @@
+service: ui
+type: library
+language: react
+
+# Todas las convenciones son custom (docs/architectures/ui/conventions/), copias de las de `web`.
+# No existe catálogo para `react`. `_base` es implícita.
+conventions:
+  - styling
+  - accessibility
+  - testing-unit
+
+modules:
+  - tokens
+  - components
+  - utils

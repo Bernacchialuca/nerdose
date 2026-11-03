@@ -47,14 +47,14 @@ export default defineConfig({
   fullyParallel: true,
   retries: process.env.CI ? 2 : 0,
   use: {
-    baseURL: process.env.E2E_BASE_URL ?? 'http://localhost:5173',  // Vite dev server with proxy
+    baseURL: process.env.E2E_BASE_URL ?? 'http://localhost:5174',  // Vite dev server with proxy (admin port; web uses 5173)
     trace: 'on-first-retry',
   },
   projects: [
     { name: 'mobile', use: { ...devices['Pixel 5'], viewport: { width: 320, height: 640 } } },
     { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
   ],
-  webServer: { command: 'pnpm dev', url: 'http://localhost:5173', reuseExistingServer: true },
+  webServer: { command: 'pnpm dev', url: 'http://localhost:5174', reuseExistingServer: true },
 });
 ```
 

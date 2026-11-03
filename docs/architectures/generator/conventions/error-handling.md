@@ -2,7 +2,7 @@
 id: error-handling
 display_name: Manejo de errores (catalogo cerrado)
 language: node
-description: Error modeling and canonical { error: { code, message } } shape with a closed code catalog exported by @nerdose/core
+description: 'Error modeling and canonical { error: { code, message } } shape with a closed code catalog exported by @nerdose/core'
 applies_to: [api, worker]
 required_by: [http-server, validation, auth-jwt]
 package: null

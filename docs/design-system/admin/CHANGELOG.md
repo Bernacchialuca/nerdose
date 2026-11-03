@@ -3,6 +3,12 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [0.1.1] - 2026-11-03
+
+### Cambiado
+- `foundations/color.md`, `tokens/reference.md`, `tokens/semantic.md` y `tokens/component.md`: la paleta clara de relleno (por ejemplo `#ffffff`) se reemplaza por la paleta oscura del prototipo `docs/nerdose.html` (fondo `#0A0C0F`, texto `#E6EDF3`, acento `#3DDC84`), alineada con `@nerdose/ui/tokens.css`.
+- Se agrega el semántico `border.interactive` para bordes de controles con contraste ≥3:1.
+
 ## [0.1.0] - 2026-11-03
 
 ### Agregado

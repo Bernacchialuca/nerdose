@@ -1,0 +1,15 @@
+service: db
+type: library
+language: node
+
+conventions:
+  - orm # custom
+  - env-config # custom
+  - testing # custom
+  - error-handling # custom (ninguna convención activa lo requiere, se lista explícitamente)
+
+modules:
+  - schema
+  - migrations
+  - roles
+  - testing-utils

@@ -1,0 +1,11 @@
+service: workspace
+type: library
+language: node
+
+# Raíz del monorepo. `_base` es la del catálogo (node), implícita.
+conventions:
+  - monorepo-tooling # custom
+
+modules:
+  - tooling
+  - local-env

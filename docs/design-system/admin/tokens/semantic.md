@@ -1,6 +1,6 @@
 ---
 tokens: semantic
-version: 0.1.0
+version: 0.1.1
 last_updated: 2026-11-03
 status: placeholder
 ---
@@ -19,32 +19,36 @@ semánticos, NUNCA los primitivos directamente.
 Los semánticos comunican **intención** (`bg.action.primary`), no apariencia
 (`color.blue.500`). Esto permite cambiar la paleta sin tocar componentes.
 
-## Color (placeholder)
+## Color
 
 ### Background
 | Token | Valor | Uso |
 |-------|-------|-----|
-| `bg.surface` | `color.gray.0` | Fondo de cards, modales |
-| `bg.canvas` | `color.gray.50` | Fondo general de la página |
-| `bg.action.primary` | `color.blue.500` | Botón primario |
-| `bg.action.primary.hover` | `color.blue.600` | Hover de botón primario |
+| `bg.canvas` | `color.neutral.950` | Fondo general de la página |
+| `bg.surface` | `color.neutral.900` | Fondo de cards, modales |
+| `bg.surface.raised` | `color.neutral.850` | Superficies elevadas, inputs |
+| `bg.action.primary` | `color.green.500` | Botón primario |
+| `bg.action.primary.hover` | `color.green.300` | Hover de botón primario |
 | `bg.success` | `color.green.500` | Estado de éxito |
 | `bg.error` | `color.red.500` | Estado de error |
 
 ### Text
 | Token | Valor | Uso |
 |-------|-------|-----|
-| `text.primary` | `color.gray.900` | Texto principal |
-| `text.secondary` | `color.gray.500` | Texto secundario |
-| `text.inverse` | `color.gray.0` | Texto sobre fondo oscuro |
-| `text.action.primary` | `color.blue.500` | Links, botón secondary |
+| `text.primary` | `color.neutral.100` | Texto principal |
+| `text.secondary` | `color.neutral.300` | Texto secundario |
+| `text.dim` | `color.neutral.400` | Texto terciario, etiquetas |
+| `text.inverse` | `color.green.950` | Texto sobre fondo de acento |
+| `text.action.primary` | `color.green.500` | Links, botón secondary |
 | `text.error` | `color.red.500` | Mensaje de error |
 
 ### Border
 | Token | Valor | Uso |
 |-------|-------|-----|
-| `border.default` | `color.gray.300` | Bordes neutros |
-| `border.focus` | `color.blue.500` | Borde de elemento focused |
+| `border.default` | `color.neutral.700` | Bordes decorativos |
+| `border.strong` | `color.neutral.650` | Bordes fuertes, divisores |
+| `border.interactive` | `color.neutral.400` | Borde de controles interactivos (≥3:1) |
+| `border.focus` | `color.green.500` | Borde de elemento focused |
 | `border.error` | `color.red.500` | Borde de elemento inválido |
 
 ## Spacing (placeholder)
@@ -80,3 +84,4 @@ Los semánticos comunican **intención** (`bg.action.primary`), no apariencia
 ## Historial
 
 - 2026-11-03 v0.1.0 — Placeholder inicial.
+- 2026-11-03 v0.1.1 — Alias de color remapeados a la paleta oscura.

@@ -1,13 +1,14 @@
 ---
 foundation: color
-version: 0.1.0
+version: 0.1.1
 last_updated: 2026-11-03
 status: placeholder
 ---
 
 # Color
 
-> **Placeholder inicial** — Reemplazá esta paleta con la real del producto.
+> **Paleta oscura del prototipo** — Los valores salen de `docs/nerdose.html` y de la convención
+> `styling` (`@nerdose/ui/tokens.css`). El resto del DS sigue en placeholder.
 > Para iterar, ejecutá `/product-design-system-update` y describí los cambios.
 
 ## Propósito
@@ -18,41 +19,52 @@ componentes vía tokens.
 
 ## Paleta
 
-### Brand (placeholder)
-| Token | Hex | Uso |
-|-------|-----|-----|
-| `color.brand.primary` | `#3DDC84` | Acciones primarias, links |
-| `color.brand.secondary` | `#1e293b` | Acciones secundarias, header |
+El producto es **oscuro**: fondo `#0A0C0F`, texto `#E6EDF3` y acento de marca `#3DDC84` (terminal, JetBrains Mono).
 
-### Neutral (placeholder — paleta gris recomendada)
+### Brand
 | Token | Hex | Uso |
 |-------|-----|-----|
-| `color.neutral.0` | `#ffffff` | Fondo base |
-| `color.neutral.50` | `#f8fafc` | Fondo de superficies (cards) |
-| `color.neutral.100` | `#f1f5f9` | Fondo alternativo |
-| `color.neutral.300` | `#cbd5e1` | Bordes neutros |
-| `color.neutral.500` | `#64748b` | Texto secundario |
-| `color.neutral.700` | `#334155` | Texto primario alternativo |
-| `color.neutral.900` | `#0f172a` | Texto principal |
+| `color.brand.primary` | `#3DDC84` | Acciones primarias, links, foco |
+| `color.brand.primary.hover` | `#7CF0B0` | Hover de acciones primarias |
+| `color.brand.on-primary` | `#06120B` | Texto sobre fondo de acento |
 
-### Semántico (placeholder)
+### Neutral (oscura)
 | Token | Hex | Uso |
 |-------|-----|-----|
-| `color.success` | `#10b981` | Estados de éxito |
-| `color.warning` | `#f59e0b` | Estados de advertencia |
-| `color.error` | `#ef4444` | Estados de error / destructivo |
-| `color.info` | `#3b82f6` | Estados informativos |
+| `color.neutral.950` | `#0A0C0F` | Fondo de página |
+| `color.neutral.900` | `#0F1318` | Fondo de superficies (cards) |
+| `color.neutral.850` | `#11151A` | Superficie elevada, inputs |
+| `color.neutral.800` | `#141920` | Superficie de tercer nivel |
+| `color.neutral.750` | `#1E252E` | Bordes sutiles |
+| `color.neutral.700` | `#222A33` | Bordes |
+| `color.neutral.650` | `#2A323C` | Bordes fuertes, divisores punteados |
+| `color.neutral.400` | `#8D99A6` | Texto terciario, etiquetas |
+| `color.neutral.300` | `#9AA6B2` | Texto secundario |
+| `color.neutral.100` | `#E6EDF3` | Texto principal |
+
+### Semántico
+| Token | Hex | Uso |
+|-------|-----|-----|
+| `color.success` | `#3DDC84` | Estados de éxito (igual al acento de marca) |
+| `color.warning` | `#FFB547` | Advertencia, rachas pendientes (igual al acento de Bug Hunt) |
+| `color.error` | `#FF7B72` | Estados de error / destructivo |
+| `color.info` | `#5EB1FF` | Estados informativos (igual al acento de Big O) |
 
 ## Tokens
 
-### Semánticos (placeholder)
+### Semánticos
 | Token | Valor | Uso |
 |-------|-------|-----|
-| `bg.surface` | `color.neutral.0` | Fondo de superficies |
+| `bg.canvas` | `color.neutral.950` | Fondo de página |
+| `bg.surface` | `color.neutral.900` | Fondo de superficies |
+| `bg.surface.raised` | `color.neutral.850` | Superficies elevadas e inputs |
 | `bg.action.primary` | `color.brand.primary` | Fondo botón primario |
-| `text.primary` | `color.neutral.900` | Texto principal |
-| `text.muted` | `color.neutral.500` | Texto secundario |
-| `border.default` | `color.neutral.300` | Bordes neutros |
+| `text.primary` | `color.neutral.100` | Texto principal |
+| `text.muted` | `color.neutral.300` | Texto secundario |
+| `text.dim` | `color.neutral.400` | Texto terciario, etiquetas |
+| `text.on-action` | `color.brand.on-primary` | Texto sobre fondo de acento |
+| `border.default` | `color.neutral.700` | Bordes decorativos de cards y divisores |
+| `border.interactive` | `color.neutral.400` | Borde de controles interactivos (≥3:1) |
 
 ### De componente
 A definir cuando se documenten componentes específicos (ver `components/`).
@@ -62,16 +74,18 @@ A definir cuando se documenten componentes específicos (ver `components/`).
 **Do:**
 - Usar tokens semánticos en componentes, NUNCA primitivos directos.
 - Reservar `color.brand.primary` para acciones críticas (1 por pantalla).
+- Aplicar el texto `color.brand.on-primary` sobre cualquier fondo de acento.
 - Usar `color.error` solo para errores reales del usuario.
 
 **Don't:**
 - No usar más de 2 tonos del brand en una misma pantalla.
+- No usar `color.neutral.700` ni más oscuros como único borde de un control interactivo (contraste bajo): usar `border.interactive`.
 - No usar colores semánticos para decoración.
 - No declarar hex hardcoded en componentes.
 
 ## Accesibilidad
 
-- Contraste texto sobre fondo: **≥4.5:1** (WCAG AA para body ≥16pt).
+- Contraste texto sobre fondo: **≥4.5:1** (WCAG AA para body ≥16pt). Medido sobre `#0A0C0F`: texto principal 16,6:1, secundario 7,9:1, terciario 6,8:1, acento 11,0:1, error 7,8:1; texto `#06120B` sobre el acento 10,7:1.
 - Contraste texto grande (≥18pt o ≥14pt bold): **≥3:1**.
 - Bordes interactivos visibles: **≥3:1** contra fondo adyacente.
 - No comunicar estado solo con color (combinar con icono o texto).
@@ -83,4 +97,5 @@ A linkear cuando se documenten componentes que usen esta foundation.
 ## Historial
 
 - 2026-11-03 v0.1.0 — Placeholder inicial (bootstrap automático).
+- 2026-11-03 v0.1.1 — Se reemplaza la paleta clara de relleno por la oscura del prototipo (`#0A0C0F`, `#3DDC84`).
 - 2026-11-03 — `color.brand.primary` = `#3DDC84`, confirmado por el usuario en /product-ux-generate (acento del prototipo `docs/nerdose.html`).

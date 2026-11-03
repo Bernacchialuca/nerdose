@@ -15,8 +15,8 @@ es independiente por surface.
 <!-- linkea al README del DS de cada surface, donde está la versión actual e -->
 <!-- inventario detallado. -->
 
-- [`admin`](./admin/README.md) — versión inicial 0.1.0
-- [`web`](./web/README.md) — versión inicial 0.1.0
+- [`admin`](./admin/README.md) — versión 0.1.1
+- [`web`](./web/README.md) — versión 0.1.1
 
 ## Estructura
 

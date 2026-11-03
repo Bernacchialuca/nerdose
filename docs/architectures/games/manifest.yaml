@@ -1,0 +1,23 @@
+service: games
+type: library
+language: node
+
+# Un paquete por juego (packages/games/<game_id>) con tres entradas.
+# definition/generator: game-registry, validation, testing. client: game-clients, styling, accessibility, testing-unit.
+conventions:
+  - game-package # custom
+  - game-registry # custom
+  - validation # custom
+  - testing # custom
+  - game-clients # custom
+  - styling # custom
+  - accessibility # custom
+  - testing-unit # custom
+  # error-handling se incluye automaticamente (required_by: validation)
+
+modules:
+  - devdle
+  - grep-grid
+  - timeline
+  - big-o
+  - bug-hunt

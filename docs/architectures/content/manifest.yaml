@@ -1,0 +1,11 @@
+service: content
+type: library
+language: node
+
+conventions:
+  - content-sync # custom
+  - dataset-format # custom
+
+modules:
+  - dataset
+  - import-script

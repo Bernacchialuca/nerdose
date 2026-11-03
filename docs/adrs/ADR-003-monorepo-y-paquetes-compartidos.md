@@ -28,13 +28,13 @@ apps/
   api/          Hono: rutas de jugador + /api/admin/* + registry de juegos
   generator/    worker: scheduler, jobs, generación y verificación
 packages/
-  core/         GameDefinition, día UTC, número de desafío, rachas, seed/PRNG, códigos de error; notify() en la entrada aparte ./notify (solo Node)
+  core/         GameDefinition, día UTC, número de desafío, rachas, PRNG (rngFrom sobre pure-rand), códigos de error; notify() en la entrada aparte ./notify (solo Node)
   db/           schema Drizzle, migraciones, queries compartidas, vistas metrics_*
   ui/           componentes compartidos (header, banners, share, stat cards), tokens, track()
   polyglot/     árbol de código, emisores JS/Go/Java, runner multi-lenguaje
   content/      dataset versionado de los bancos (data/*.json) + script offline import:banks (ADR-016)
   games/
-    devdle/     definition · client · generator · share
+    devdle/     definition · client (incluye share) · generator
     grep-grid/
     timeline/
     big-o/

@@ -11,7 +11,7 @@
 ## Estado actual
 
 - **Surface:** `web`
-- **Versión:** `0.1.0` (placeholder inicial)
+- **Versión:** `0.1.1` (placeholder; paleta de color oscura del prototipo)
 - **Estado:** sin definir — esperando aportes del equipo de diseño
 
 ## Estructura

@@ -1,6 +1,6 @@
 ---
 tokens: component
-version: 0.1.0
+version: 0.1.1
 last_updated: 2026-11-03
 status: placeholder
 ---
@@ -23,14 +23,14 @@ Formato: `{componente}.{variant}.{propiedad}.{estado}`
 ```
 button.primary.bg          : bg.action.primary
 button.primary.bg.hover    : bg.action.primary.hover
-button.primary.bg.active   : color.blue.700
-button.primary.bg.disabled : color.gray.300
+button.primary.bg.active   : color.green.500
+button.primary.bg.disabled : color.neutral.700
 button.primary.text        : text.inverse
-button.primary.text.disabled : text.secondary
+button.primary.text.disabled : text.dim
 button.primary.border      : transparent
 
 button.secondary.bg        : transparent
-button.secondary.bg.hover  : color.blue.50
+button.secondary.bg.hover  : bg.surface.raised
 button.secondary.text      : text.action.primary
 button.secondary.border    : border.focus
 
@@ -43,8 +43,8 @@ button.destructive.text    : text.inverse
 ```
 input.bg           : bg.surface
 input.text         : text.primary
-input.placeholder  : text.secondary
-input.border       : border.default
+input.placeholder  : text.dim
+input.border       : border.interactive
 input.border.focus : border.focus
 input.border.error : border.error
 input.height.md    : 44px
@@ -71,3 +71,4 @@ card.elevation     : elevation.1
 ## Historial
 
 - 2026-11-03 v0.1.0 — Placeholder inicial.
+- 2026-11-03 v0.1.1 — Referencias a colores ajustadas a la paleta oscura.

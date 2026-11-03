@@ -1,6 +1,6 @@
 ---
 tokens: reference
-version: 0.1.0
+version: 0.1.1
 last_updated: 2026-11-03
 status: placeholder
 ---
@@ -25,23 +25,30 @@ Component (por componente)
 Los tokens reference son **el inventario crudo** de valores: paleta de
 colores raw, escala de espaciado raw, type scale raw.
 
-## Color (placeholder)
+## Color
+
+Paleta oscura del prototipo (`docs/nerdose.html`).
 
 ```
-color.blue.50  : #eff6ff
-color.blue.100 : #dbeafe
-color.blue.500 : #2563eb
-color.blue.900 : #1e3a8a
+color.neutral.950 : #0A0C0F
+color.neutral.900 : #0F1318
+color.neutral.850 : #11151A
+color.neutral.800 : #141920
+color.neutral.750 : #1E252E
+color.neutral.700 : #222A33
+color.neutral.650 : #2A323C
+color.neutral.400 : #8D99A6
+color.neutral.300 : #9AA6B2
+color.neutral.100 : #E6EDF3
 
-color.gray.0   : #ffffff
-color.gray.50  : #f8fafc
-color.gray.100 : #f1f5f9
-color.gray.500 : #64748b
-color.gray.900 : #0f172a
-
-color.green.500: #10b981
-color.amber.500: #f59e0b
-color.red.500  : #ef4444
+color.green.500 : #3DDC84
+color.green.300 : #7CF0B0
+color.green.950 : #06120B
+color.amber.500 : #FFB547
+color.blue.500  : #5EB1FF
+color.purple.500: #C39BFF
+color.pink.500  : #F472B6
+color.red.500   : #FF7B72
 ```
 
 ## Spacing (placeholder)
@@ -98,3 +105,4 @@ radius.full : 9999px
 ## Historial
 
 - 2026-11-03 v0.1.0 — Placeholder inicial.
+- 2026-11-03 v0.1.1 — Paleta de color oscura del prototipo en lugar de la clara de relleno.

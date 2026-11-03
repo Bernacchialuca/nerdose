@@ -1,0 +1,12 @@
+service: polyglot
+type: library
+language: node
+
+conventions:
+  - code-runner # custom
+  - code-tree # custom
+
+modules:
+  - tree
+  - emit
+  - runner

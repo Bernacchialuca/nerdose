@@ -31,12 +31,14 @@ Documento de alto nivel: qué servicios existen, cómo se comunican, qué base d
 
 | Paquete | Lo usan | Contenido |
 |---|---|---|
-| `core` | api, generator, web | Contrato `GameDefinition`, día UTC y número de desafío (`LAUNCH_DATE`), rachas con días neutros, seed/PRNG, `notify()` (entrada aparte `@nerdose/core/notify`, solo Node) (mail), códigos de error |
+| `core` | api, generator, web | Contrato `GameDefinition`, día UTC y número de desafío (`LAUNCH_DATE`), rachas con días neutros, PRNG (`rngFrom`; el seed HMAC se calcula solo en el `generator`), `notify()` (entrada aparte `@nerdose/core/notify`, solo Node) (mail), códigos de error |
 | `db` | api, generator | Schema Drizzle, migraciones, queries compartidas y vistas `metrics_*` |
 | `games/<game_id>` | `definition` → api · `client` → web y admin · `generator` → generator | Un paquete por juego: `devdle`, `grep-grid`, `timeline`, `big-o`, `bug-hunt` |
 | `polyglot` | generator | Árbol de código, emisores JS/Go/Java y runner multi-lenguaje |
 | `content` | generator (carga); script de importación (desarrollo) | Dataset versionado de los bancos (`data/terms.json`, `data/timeline_facts.json`, `data/manifest.json`) y el script offline `import:banks` que lo genera desde Wikidata y Wikipedia |
 | `ui` | web, admin | Header, banners, share, stat cards, tokens visuales y helper `track()` |
+
+Cada paquete compartido tiene su propia arquitectura en `docs/architectures/{workspace,core,db,ui,games,polyglot,content}/` (`workspace` es la raíz del monorepo: pnpm, Turborepo, ESLint, Compose). En las tablas "Servicios Afectados" de requests y stories se los nombra con esos ids.
 
 ## Bases de Datos
 

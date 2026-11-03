@@ -102,7 +102,7 @@ ADMIN_JWT_SECRET=      # required, >= 32 random bytes
 - Numeric and boolean variables use `z.coerce`.
 - Secrets have a minimum length constraint and are never logged (see `logging`).
 - `GENERATOR_SECRET` MUST exist only in the `generator` environment. `ADMIN_PASSWORD_HASH` and `ADMIN_JWT_SECRET` MUST exist only in the `api` environment.
-- `api` and `generator` use different `DATABASE_URL` values (one per role). The owner URL (`DATABASE_URL_OWNER`) is read only by `@nerdose/db` migration scripts.
+- `api` and `generator` use different `DATABASE_URL` values (one per role). The owner URL (`DATABASE_URL_OWNER`) is read only by `@nerdose/db` migration scripts. `DATABASE_URL_API` and `DATABASE_URL_GENERATOR` are also read only by the `db:migrate` script of `@nerdose/db`, which uses them to synchronize the role passwords (`ALTER ROLE ... PASSWORD`) after applying migrations; they are optional and never read by the services.
 - `LAUNCH_DATE` is the same value in both services.
 - Only `.env.example` is committed, listing every variable with an empty value and a short comment. Keep it in sync with `env.ts`.
 - `.env.local` and `.env.test` are gitignored. No real secret is ever committed.

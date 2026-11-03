@@ -147,6 +147,7 @@ A migration that creates a table MUST include the `GRANT`s for `nerdose_api` and
 - Raw SQL only for what Drizzle cannot express (see How to use). Document why in a one-line comment.
 - Migrations are forward-only, reviewed by hand, and committed together with the schema change. Never edit an applied migration.
 - Migrations run before starting `api` and `generator`, with the owner role. Services do not run migrations at startup.
+- The first migration, `0000_roles_and_grants` (manual SQL), creates `nerdose_api` and `nerdose_generator` with `LOGIN` and no password (idempotent) and sets the base grants (no DDL for services). Passwords are never versioned: after applying migrations, `db:migrate` optionally runs `ALTER ROLE` from `DATABASE_URL_API` / `DATABASE_URL_GENERATOR`.
 - Each service MUST only write the tables and columns its role allows (ADR-004). A test runs the expected operations with each role.
 
 ## Integration with other conventions

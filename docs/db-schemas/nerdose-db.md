@@ -401,6 +401,8 @@ Las cuatro vistas viven en migraciones de `@nerdose/db` (ADR-014). El rol `nerdo
 3. Se revisa el SQL generado. Si la migración crea una tabla, MUST incluir sus `GRANT` para `nerdose_api` y `nerdose_generator`.
 4. Se commitea la migración junto con el schema.
 5. Antes de levantar `api` y `generator`, se aplica con `pnpm --filter @nerdose/db db:migrate` usando el rol `nerdose_owner` (`DATABASE_URL_OWNER`).
+   - La migración `0000_roles_and_grants` crea `nerdose_api` y `nerdose_generator` con `LOGIN` y **sin contraseña** (idempotente). `nerdose_owner` ya existe antes de migrar (en local lo crea Docker Compose con `POSTGRES_USER`).
+   - Después de migrar, `db:migrate` asigna las contraseñas con `ALTER ROLE` si `DATABASE_URL_API` / `DATABASE_URL_GENERATOR` están definidas, así las credenciales no se versionan.
 
 **Rollback:** las migraciones son forward-only. Para revertir se escribe una migración nueva que deshace el cambio. Restaurar desde un backup queda definido con el hosting (diferido).
 
@@ -478,7 +480,8 @@ Diferido: se define con el hosting (frecuencia, retención, ubicación, RTO/RPO)
 **Control de acceso** (ADR-004). Los `GRANT` viven en una migración versionada:
 
 ```sql
--- Roles
+-- Roles (creados sin contraseña en la migración 0000_roles_and_grants;
+-- las credenciales se asignan fuera de ella, con db:migrate)
 CREATE ROLE nerdose_api LOGIN;
 CREATE ROLE nerdose_generator LOGIN;
 -- nerdose_owner es dueño del schema y corre las migraciones
