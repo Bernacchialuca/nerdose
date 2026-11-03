@@ -161,6 +161,33 @@ describe('core', () => {
   });
 });
 
+describe('ui package', () => {
+  it('never imports the database package (TS-15)', async () => {
+    await expectBoundary(
+      "import { createDb } from '@nerdose/db';\n",
+      'packages/ui/src/x.ts',
+      'never import the database package',
+    );
+    await expectBoundary(
+      "import { createDb } from '@nerdose/db/testing';\n",
+      'packages/ui/src/x.ts',
+      'never import the database package',
+    );
+  });
+
+  it('never imports notify (TS-16)', async () => {
+    await expectBoundary(
+      "import { notify } from '@nerdose/core/notify';\n",
+      'packages/ui/src/x.ts',
+      'notify is Node-only.',
+    );
+  });
+
+  it('can import the core entry (TS-17)', async () => {
+    await expectNoBoundary("import type { GameId } from '@nerdose/core';\n", 'packages/ui/src/x.ts');
+  });
+});
+
 describe('eslint CLI', () => {
   it('exits with 1 on a boundary violation', () => {
     const result = spawnSync('pnpm', ['exec', 'eslint', '--stdin', '--stdin-filename', 'apps/web/src/main.ts'], {

@@ -87,4 +87,8 @@ export default [
       },
     ]),
   },
+  {
+    files: ['packages/ui/**'],
+    rules: restrict([noDb, noNotify]),
+  },
 ];
