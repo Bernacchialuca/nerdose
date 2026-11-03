@@ -1,0 +1,1641 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>nerdose</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>html{scroll-behavior:smooth}body{margin:0;background:#0A0C0F}</style>
+<style id="page-style"></style>
+</head>
+<body>
+<div id="app"></div>
+<template id="tpl-Main" data-title="nerdose — Home">
+
+<div style="min-height: 100vh; background: #0A0C0F; color: #E6EDF3; font-family: 'Inter', system-ui, sans-serif; background-image: radial-gradient(#1A2029 1px, transparent 1px); background-size: 24px 24px">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 32px; border-bottom: 1px solid #1E252E; background: rgba(10,12,15,0.92)">
+    <a href="#/Main" style="display: flex; align-items: center; gap: 2px; text-decoration: none; color: #E6EDF3; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 20px; letter-spacing: -0.5px"><span style="color: #3DDC84">&gt;</span>&#160;nerdose<span class="cursor" style="color: #3DDC84">_</span></a>
+    <nav aria-label="Principal" style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 14px">
+      <a href="#/Main" style="color: #E6EDF3; text-decoration: none; padding: 12px 14px; border-radius: 8px; background: #161B22">./juegos</a>
+      <a href="#/Stats" style="color: #9AA6B2; text-decoration: none; padding: 12px 14px; border-radius: 8px">./stats</a>
+      <a href="#como" style="color: #9AA6B2; text-decoration: none; padding: 12px 14px; border-radius: 8px">./about</a>
+    </nav>
+    <div style="display: flex; align-items: center; gap: 10px">
+      <a href="#/Stats" aria-label="Racha global: 17 días" style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid #3A2A12; background: #1A140A; border-radius: 999px; color: #FFB547; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+        17 días
+      </a>
+      <div role="group" aria-label="Idioma" style="display: flex; padding: 3px; gap: 2px; border: 1px solid #2A323C; border-radius: 10px; background: #11151A"><button data-lang="es" aria-pressed="true" style="min-width: 40px; height: 36px; border: none; border-radius: 7px; background: #2A323C; color: #E6EDF3; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; cursor: pointer">ES</button><button data-lang="en" aria-pressed="false" style="min-width: 40px; height: 36px; border: none; border-radius: 7px; background: transparent; color: #9AA6B2; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; cursor: pointer">EN</button></div>
+    </div>
+  </header>
+
+  <main style="max-width: 1240px; margin: 0 auto; padding: 64px 32px 48px; display: flex; flex-direction: column; gap: 72px">
+
+    <section style="display: flex; flex-wrap: wrap; gap: 48px; align-items: center">
+      <div style="flex: 1 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 22px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #9AA6B2">$ nerdose --today <span style="color: #3DDC84">// viernes 30 oct</span></div>
+        <h1 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 64px; line-height: 1.02; letter-spacing: -2.5px">Una dosis diaria de <span style="color: #3DDC84">nerdeo</span>.</h1>
+        <p style="margin: 0; font-size: 19px; line-height: 1.55; color: #A9B4BF; max-width: 540px">Cinco minijuegos para developers y curiosos de la tecnología. Un desafío nuevo por día, el mismo para todos. Dos minutos, algo aprendido, una racha que cuidar.</p>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px; padding-top: 6px">
+          <a href="#/BigO" style="display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 22px; background: #3DDC84; color: #06120B; border-radius: 10px; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15px">Seguir jugando <span aria-hidden="true">→</span></a>
+          <a href="#como" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border: 1px solid #2A323C; color: #E6EDF3; border-radius: 10px; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-weight: 500; font-size: 15px">¿Cómo funciona?</a>
+        </div>
+      </div>
+
+      <div style="flex: 1 1 420px; min-width: 0; border: 1px solid #222A33; background: #0F1318; border-radius: 14px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.45)">
+        <div style="display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid #1E252E; background: #12171D">
+          <span style="width: 11px; height: 11px; border-radius: 99px; background: #3A424C"></span>
+          <span style="width: 11px; height: 11px; border-radius: 99px; background: #3A424C"></span>
+          <span style="width: 11px; height: 11px; border-radius: 99px; background: #3A424C"></span>
+          <span style="margin-left: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8D99A6">~/hoy — progreso.log</span>
+        </div>
+        <div style="padding: 22px 22px 24px; font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 2; display: flex; flex-direction: column">
+          <div style="color: #8D99A6">$ nerdose status</div>
+          <div style="display: grid; grid-template-columns: 22px 1fr auto auto; gap: 14px; align-items: center"><span style="color: #3DDC84">✓</span><span>devdle</span><span style="color: #9AA6B2">4/6</span><span style="color: #3DDC84">resuelto</span></div>
+          <div style="display: grid; grid-template-columns: 22px 1fr auto auto; gap: 14px; align-items: center"><span style="color: #3DDC84">✓</span><span>bug-hunt</span><span style="color: #9AA6B2">L4</span><span style="color: #3DDC84">encontrado</span></div>
+          <div style="display: grid; grid-template-columns: 22px 1fr auto auto; gap: 14px; align-items: center"><span style="color: #8D99A6">○</span><span>big-o</span><span style="color: #9AA6B2">—</span><span style="color: #FFB547">pendiente</span></div>
+          <div style="display: grid; grid-template-columns: 22px 1fr auto auto; gap: 14px; align-items: center"><span style="color: #8D99A6">○</span><span>tech-timeline</span><span style="color: #9AA6B2">—</span><span style="color: #FFB547">pendiente</span></div>
+          <div style="display: grid; grid-template-columns: 22px 1fr auto auto; gap: 14px; align-items: center"><span style="color: #8D99A6">○</span><span>grep-grid</span><span style="color: #9AA6B2">—</span><span style="color: #FFB547">pendiente</span></div>
+          <div style="margin-top: 10px; padding-top: 12px; border-top: 1px dashed #2A323C; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px"><span style="color: #8D99A6">racha global</span><span style="color: #FFB547; font-weight: 700">17 días · récord 31</span></div>
+          <div style="color: #8D99A6">próximo desafío en <span style="color: #E6EDF3">08:12:45</span><span class="cursor" style="color: #3DDC84">▌</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="hoy" style="display: flex; flex-direction: column; gap: 24px">
+      <div style="display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px">
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// 5 juegos · 2 completados</div>
+          <h2 id="hoy" style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 32px; letter-spacing: -1px">Los desafíos de hoy</h2>
+        </div>
+        <div style="display: flex; gap: 6px" aria-label="Progreso del día: 2 de 5">
+          <span style="width: 36px; height: 6px; border-radius: 99px; background: #3DDC84"></span>
+          <span style="width: 36px; height: 6px; border-radius: 99px; background: #3DDC84"></span>
+          <span style="width: 36px; height: 6px; border-radius: 99px; background: #2A323C"></span>
+          <span style="width: 36px; height: 6px; border-radius: 99px; background: #2A323C"></span>
+          <span style="width: 36px; height: 6px; border-radius: 99px; background: #2A323C"></span>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px">
+
+        <article style="display: flex; flex-direction: column; border: 1px solid #222A33; background: #0F1318; border-radius: 16px; overflow: hidden">
+          <div style="height: 150px; display: flex; align-items: center; justify-content: center; background: #0C1A12; border-bottom: 1px solid #16301F">
+            <div style="display: grid; grid-template-columns: repeat(6, 30px); gap: 5px" aria-hidden="true">
+              <span style="height: 30px; border-radius: 5px; border: 2px solid #1E3A28"></span><span style="height: 30px; border-radius: 5px; border: 2px dashed #FFB547"></span><span style="height: 30px; border-radius: 5px; background: #3DDC84"></span><span style="height: 30px; border-radius: 5px; border: 2px solid #1E3A28"></span><span style="height: 30px; border-radius: 5px; background: #3DDC84"></span><span style="height: 30px; border-radius: 5px; border: 2px solid #1E3A28"></span>
+              <span style="height: 30px; border-radius: 5px; background: #3DDC84"></span><span style="height: 30px; border-radius: 5px; background: #3DDC84"></span><span style="height: 30px; border-radius: 5px; background: #3DDC84"></span><span style="height: 30px; border-radius: 5px; background: #3DDC84"></span><span style="height: 30px; border-radius: 5px; background: #3DDC84"></span><span style="height: 30px; border-radius: 5px; background: #3DDC84"></span>
+            </div>
+          </div>
+          <div style="padding: 20px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+              <h3 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 20px; color: #3DDC84">Devdle</h3>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 4px 10px; border-radius: 99px; white-space: nowrap; flex: none; background: #12301F; color: #7CF0B0">✓ resuelto 4/6</span>
+            </div>
+            <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #A9B4BF">Adiviná el término técnico del día. Seis intentos, feedback por letra.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8D99A6; margin-top: auto; padding-top: 8px">
+              <span>6 intentos</span><span>~2 min</span><span style="color: #FFB547">▲ racha 12</span>
+            </div>
+            <a href="#/Devdle" style="display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 10px; border: 1px solid #2A323C; color: #E6EDF3; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 500">Ver resultado</a>
+          </div>
+        </article>
+
+        <article style="display: flex; flex-direction: column; border: 1px solid #222A33; background: #0F1318; border-radius: 16px; overflow: hidden">
+          <div style="height: 150px; display: flex; flex-direction: column; justify-content: center; gap: 7px; padding: 0 24px; background: #1A140A; border-bottom: 1px solid #33260F; font-family: 'JetBrains Mono', monospace" aria-hidden="true">
+            <div style="display: flex; gap: 10px; align-items: center"><span style="font-size: 10px; color: #7A5A2A; width: 12px">1</span><span style="height: 8px; width: 58%; border-radius: 99px; background: #3A2C14"></span></div>
+            <div style="display: flex; gap: 10px; align-items: center"><span style="font-size: 10px; color: #7A5A2A; width: 12px">2</span><span style="height: 8px; width: 16px"></span><span style="height: 8px; width: 40%; border-radius: 99px; background: #3A2C14"></span></div>
+            <div style="display: flex; gap: 10px; align-items: center; margin: 0 -10px; padding: 4px 10px; border-radius: 6px; background: #2A1F0B; box-shadow: inset 3px 0 0 #FFB547"><span style="font-size: 10px; color: #FFB547; width: 12px">3</span><span style="height: 8px; width: 32px"></span><span style="height: 8px; width: 46%; border-radius: 99px; background: #FFB547"></span><span style="margin-left: auto; font-size: 13px">🐛</span></div>
+            <div style="display: flex; gap: 10px; align-items: center"><span style="font-size: 10px; color: #7A5A2A; width: 12px">4</span><span style="height: 8px; width: 48px"></span><span style="height: 8px; width: 28%; border-radius: 99px; background: #3A2C14"></span></div>
+            <div style="display: flex; gap: 10px; align-items: center"><span style="font-size: 10px; color: #7A5A2A; width: 12px">5</span><span style="height: 8px; width: 34%; border-radius: 99px; background: #3A2C14"></span></div>
+          </div>
+          <div style="padding: 20px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+              <h3 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 20px; color: #FFB547">Bug Hunt</h3>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 4px 10px; border-radius: 99px; white-space: nowrap; flex: none; background: #12301F; color: #7CF0B0">✓ encontrado</span>
+            </div>
+            <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #A9B4BF">Hay un bug escondido. ¿En qué línea está? En Java, Go o JavaScript.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8D99A6; margin-top: auto; padding-top: 8px">
+              <span>1 intento</span><span>~2 min</span><span style="color: #FFB547">▲ racha 5</span>
+            </div>
+            <a href="#/BugHunt" style="display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 10px; border: 1px solid #2A323C; color: #E6EDF3; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 500">Ver resultado</a>
+          </div>
+        </article>
+
+        <article style="display: flex; flex-direction: column; border: 1px solid #2E4C6E; background: #0F1318; border-radius: 16px; overflow: hidden; box-shadow: 0 0 0 1px #5EB1FF33, 0 18px 40px rgba(20,60,110,0.25)">
+          <div style="height: 150px; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 8px; padding: 0 20px; background: #0B1522; border-bottom: 1px solid #1B2E45; font-family: 'JetBrains Mono', monospace" aria-hidden="true">
+            <span style="padding: 6px 12px; border-radius: 8px; border: 1px solid #23405F; color: #7FA7CF; font-size: 13px">O(1)</span>
+            <span style="padding: 6px 12px; border-radius: 8px; border: 1px solid #23405F; color: #7FA7CF; font-size: 13px">O(log n)</span>
+            <span style="padding: 6px 12px; border-radius: 8px; background: #5EB1FF; color: #06121F; font-size: 13px; font-weight: 700">O(n log n)</span>
+            <span style="padding: 6px 12px; border-radius: 8px; border: 1px solid #23405F; color: #7FA7CF; font-size: 13px">O(n²)</span>
+            <span style="padding: 6px 12px; border-radius: 8px; border: 1px solid #23405F; color: #7FA7CF; font-size: 13px">O(2ⁿ)</span>
+          </div>
+          <div style="padding: 20px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+              <h3 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 20px; color: #5EB1FF">Big O Challenge</h3>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 4px 10px; border-radius: 99px; white-space: nowrap; flex: none; background: #2A1F0B; color: #FFB547">pendiente</span>
+            </div>
+            <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #A9B4BF">¿Cuál es la complejidad de este algoritmo? En Java, Go o JavaScript.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8D99A6; margin-top: auto; padding-top: 8px">
+              <span>1 respuesta</span><span>~1 min</span><span style="color: #FFB547">▲ racha 8</span>
+            </div>
+            <a href="#/BigO" style="display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 10px; background: #5EB1FF; color: #06121F; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700">Jugar →</a>
+          </div>
+        </article>
+
+        <article style="display: flex; flex-direction: column; border: 1px solid #222A33; background: #0F1318; border-radius: 16px; overflow: hidden">
+          <div style="height: 150px; display: flex; align-items: center; justify-content: center; padding: 0 22px; background: #161024; border-bottom: 1px solid #2B2045; font-family: 'JetBrains Mono', monospace" aria-hidden="true">
+            <div style="position: relative; width: 100%; display: flex; justify-content: space-between; align-items: center">
+              <span style="position: absolute; left: 0; right: 0; top: 50%; height: 2px; background: #3C2E60"></span>
+              <span style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 99px; background: #C39BFF"></span><span style="font-size: 11px; color: #B596E6">1991</span></span>
+              <span style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 99px; background: #C39BFF"></span><span style="font-size: 11px; color: #B596E6">1995</span></span>
+              <span style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 99px; border: 2px solid #C39BFF; background: #161024"></span><span style="font-size: 11px; color: #B596E6">????</span></span>
+              <span style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 99px; border: 2px solid #C39BFF; background: #161024"></span><span style="font-size: 11px; color: #B596E6">????</span></span>
+              <span style="position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px"><span style="width: 14px; height: 14px; border-radius: 99px; border: 2px solid #C39BFF; background: #161024"></span><span style="font-size: 11px; color: #B596E6">????</span></span>
+            </div>
+          </div>
+          <div style="padding: 20px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+              <h3 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 20px; color: #C39BFF">Tech Timeline</h3>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 4px 10px; border-radius: 99px; white-space: nowrap; flex: none; background: #2A1F0B; color: #FFB547">pendiente</span>
+            </div>
+            <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #A9B4BF">Ordená cinco hitos de la historia tech. Arrastrá, soltá y confirmá.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8D99A6; margin-top: auto; padding-top: 8px">
+              <span>5 elementos</span><span>~1 min</span><span style="color: #FFB547">▲ racha 3</span>
+            </div>
+            <a href="#/Timeline" style="display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 10px; background: #C39BFF; color: #160E26; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700">Jugar →</a>
+          </div>
+        </article>
+
+        <article style="display: flex; flex-direction: column; border: 1px solid #222A33; background: #0F1318; border-radius: 16px; overflow: hidden">
+          <div style="height: 150px; display: flex; align-items: center; justify-content: center; background: #1A0B16; border-bottom: 1px solid #3A1530; font-family: 'JetBrains Mono', monospace" aria-hidden="true">
+            <div style="display: grid; grid-template-columns: repeat(7, 22px); gap: 4px; font-size: 12px; font-weight: 700; text-align: center; line-height: 22px">
+              <span style="color: #8A5C7A">V</span><span style="color: #8A5C7A">F</span><span style="color: #8A5C7A">S</span><span style="border-radius: 4px; background: #F472B6; color: #24081A">M</span><span style="border-radius: 4px; background: #F472B6; color: #24081A">U</span><span style="border-radius: 4px; background: #F472B6; color: #24081A">T</span><span style="border-radius: 4px; background: #F472B6; color: #24081A">E</span>
+              <span style="color: #8A5C7A">I</span><span style="color: #8A5C7A">B</span><span style="color: #8A5C7A">D</span><span style="color: #8A5C7A">W</span><span style="border-radius: 4px; border: 1px solid #F472B6; color: #F9A8D4; line-height: 20px">E</span><span style="color: #8A5C7A">C</span><span style="color: #8A5C7A">C</span>
+              <span style="color: #8A5C7A">I</span><span style="color: #8A5C7A">H</span><span style="color: #8A5C7A">I</span><span style="color: #8A5C7A">E</span><span style="color: #8A5C7A">D</span><span style="border-radius: 4px; border: 1px solid #F472B6; color: #F9A8D4; line-height: 20px">R</span><span style="color: #8A5C7A">U</span>
+              <span style="color: #8A5C7A">F</span><span style="color: #8A5C7A">I</span><span style="color: #8A5C7A">R</span><span style="color: #8A5C7A">F</span><span style="color: #8A5C7A">P</span><span style="color: #8A5C7A">W</span><span style="border-radius: 4px; border: 1px solid #F472B6; color: #F9A8D4; line-height: 20px">G</span>
+            </div>
+          </div>
+          <div style="padding: 20px; display: flex; flex-direction: column; gap: 12px; flex-grow: 1">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+              <h3 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 20px; color: #F472B6">Grep Grid</h3>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 4px 10px; border-radius: 99px; white-space: nowrap; flex: none; background: #2A1F0B; color: #FFB547">pendiente</span>
+            </div>
+            <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #A9B4BF">Una sopa de letras con 8 términos técnicos al azar. Encontralos contra reloj.</p>
+            <div style="display: flex; flex-wrap: wrap; gap: 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8D99A6; margin-top: auto; padding-top: 8px">
+              <span>8 palabras</span><span>~3 min</span><span style="color: #FFB547">▲ racha 6</span>
+            </div>
+            <a href="#/GrepGrid" style="display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 10px; background: #F472B6; color: #24081A; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700">Jugar →</a>
+          </div>
+        </article>
+
+        <article style="display: flex; flex-direction: column; justify-content: center; gap: 12px; border: 1px dashed #2A323C; border-radius: 16px; padding: 28px; min-height: 300px">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #A9B4BF">$ git checkout -b <span style="color: #E6EDF3">próximo-juego</span></span>
+          <span style="font-size: 15px; line-height: 1.5; color: #9AA6B2">Más desafíos en camino. Cada juego nuevo suma su propia racha.</span>
+          <span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 6px 12px; border-radius: 99px; border: 1px solid #2A323C; color: #9AA6B2">próximamente</span>
+        </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="progreso" style="display: flex; flex-wrap: wrap; gap: 20px">
+      <div style="flex: 2 1 560px; min-width: 0; border: 1px solid #222A33; background: #0F1318; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 22px">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: start; gap: 16px">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// racha global</div>
+            <h2 id="progreso" style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 26px; letter-spacing: -0.5px">Tu progreso</h2>
+          </div>
+          <a href="#/Stats" style="font-family: 'JetBrains Mono', monospace; font-size: 14px; text-decoration: none; padding: 12px 0">ver estadísticas →</a>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 32px; align-items: end">
+          <div style="display: flex; align-items: baseline; gap: 10px">
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 88px; line-height: 0.9; color: #FFB547; letter-spacing: -4px">17</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 15px; color: #A9B4BF">días<br>seguidos</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px; flex: 1 1 280px; min-width: 0">
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8D99A6">últimas 4 semanas · juegos completados por día</div>
+            <div style="display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 5px" role="img" aria-label="Actividad de las últimas 4 semanas: 17 días seguidos con al menos un desafío completado">
+              <template data-for list="{{ heat }}" as="d" hint-placeholder-count="28">
+                <span style="{{ d.style }}"></span>
+              </template>
+            </div>
+            <div style="display: flex; gap: 6px; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #8D99A6">0 <span style="width: 12px; height: 12px; border-radius: 3px; background: #1A2028"></span><span style="width: 12px; height: 12px; border-radius: 3px; background: #14532D"></span><span style="width: 12px; height: 12px; border-radius: 3px; background: #1F8F4E"></span><span style="width: 12px; height: 12px; border-radius: 3px; background: #2FBF6B"></span><span style="width: 12px; height: 12px; border-radius: 3px; background: #3DDC84"></span> 4</div>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px">
+          <div style="padding: 14px 16px; border-radius: 12px; background: #141920; display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700">31</span><span style="font-size: 13px; color: #9AA6B2">récord de racha</span></div>
+          <div style="padding: 14px 16px; border-radius: 12px; background: #141920; display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700">178</span><span style="font-size: 13px; color: #9AA6B2">desafíos completados</span></div>
+          <div style="padding: 14px 16px; border-radius: 12px; background: #141920; display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700">2/5</span><span style="font-size: 13px; color: #9AA6B2">jugados hoy</span></div>
+        </div>
+      </div>
+
+      <div style="flex: 1 1 320px; min-width: 0; border: 1px solid #222A33; background: #0F1318; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 16px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// rachas por juego</div>
+        <div style="display: flex; flex-direction: column; gap: 14px">
+          <template data-for list="{{ streaks }}" as="s" hint-placeholder-count="5">
+            <div style="display: flex; flex-direction: column; gap: 6px">
+              <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 14px"><span>{{ s.name }}</span><span style="color: #A9B4BF">{{ s.days }} días</span></div>
+              <div style="height: 8px; border-radius: 99px; background: #1A2028; overflow: hidden"><div style="{{ s.bar }}"></div></div>
+            </div>
+          </template>
+        </div>
+        <p style="margin: 6px 0 0; font-size: 13px; line-height: 1.5; color: #9AA6B2">La racha global sube con cualquier desafío completado. No hace falta jugar todos.</p>
+      </div>
+    </section>
+
+    <section id="como" aria-labelledby="como-h" style="display: flex; flex-direction: column; gap: 22px">
+      <h2 id="como-h" style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 26px; letter-spacing: -0.5px">Cómo funciona</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px">
+        <div style="padding: 22px; border-radius: 14px; border: 1px solid #1E252E; display: flex; flex-direction: column; gap: 8px"><span style="font-family: 'JetBrains Mono', monospace; color: #3DDC84; font-size: 14px">01 · todos los días</span><span style="font-size: 15px; line-height: 1.5; color: #C3CCD5">Cada juego publica un desafío nuevo a las 00:00 UTC. Es el mismo para todos.</span></div>
+        <div style="padding: 22px; border-radius: 14px; border: 1px solid #1E252E; display: flex; flex-direction: column; gap: 8px"><span style="font-family: 'JetBrains Mono', monospace; color: #FFB547; font-size: 14px">02 · reglas propias</span><span style="font-size: 15px; line-height: 1.5; color: #C3CCD5">Cada juego tiene su propia mecánica, sus intentos y su puntaje.</span></div>
+        <div style="padding: 22px; border-radius: 14px; border: 1px solid #1E252E; display: flex; flex-direction: column; gap: 8px"><span style="font-family: 'JetBrains Mono', monospace; color: #5EB1FF; font-size: 14px">03 · aprendés algo</span><span style="font-size: 15px; line-height: 1.5; color: #C3CCD5">Al terminar, cada desafío explica la respuesta y su contexto.</span></div>
+        <div style="padding: 22px; border-radius: 14px; border: 1px solid #1E252E; display: flex; flex-direction: column; gap: 8px"><span style="font-family: 'JetBrains Mono', monospace; color: #C39BFF; font-size: 14px">04 · compartís sin spoilers</span><span style="font-size: 15px; line-height: 1.5; color: #C3CCD5">Copiás tu resultado en cuadraditos y lo pegás donde quieras.</span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer style="border-top: 1px solid #1E252E; padding: 24px 32px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">
+    <span>&gt; nerdose — una plataforma, múltiples desafíos.</span>
+    <span>exit 0</span>
+  </footer>
+</div>
+</template>
+<style type="text/plain" id="css-Main">
+body{margin:0;background:#0A0C0F}
+a{color:#3DDC84}a:hover{color:#7CF0B0}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+.cursor{animation:blink 1.1s steps(1) infinite}
+</style>
+<script type="text/plain" id="js-Main">
+class Component extends DCLogic {
+  renderVals() {
+    var levels = [0,1,2,0,0,1,0,0,0,0,0,1,2,1,2,3,1,2,4,2,1,3,2,1,2,4,3,2];
+    var colors = ['#1A2028','#14532D','#1F8F4E','#2FBF6B','#3DDC84'];
+    var heat = levels.map(function (l) {
+      return { style: 'height: 22px; border-radius: 4px; background: ' + colors[l] };
+    });
+    var accents = { Devdle: '#3DDC84', 'Bug Hunt': '#FFB547', 'Big O': '#5EB1FF', Timeline: '#C39BFF', 'Grep Grid': '#F472B6' };
+    var data = [['Devdle', 12], ['Bug Hunt', 5], ['Big O', 8], ['Timeline', 3], ['Grep Grid', 6]];
+    var streaks = data.map(function (d) {
+      return { name: d[0], days: d[1], bar: 'height: 100%; border-radius: 99px; width: ' + Math.round(d[1] / 17 * 100) + '%; background: ' + accents[d[0]] };
+    });
+    return { heat: heat, streaks: streaks };
+  }
+}
+</script>
+<template id="tpl-Stats" data-title="nerdose — Estadísticas">
+
+<div style="min-height: 100vh; background: #0A0C0F; color: #E6EDF3; font-family: 'Inter', system-ui, sans-serif">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 32px; border-bottom: 1px solid #1E252E">
+    <a href="#/Main" style="display: flex; align-items: center; gap: 2px; text-decoration: none; color: #E6EDF3; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 20px; letter-spacing: -0.5px"><span style="color: #3DDC84">&gt;</span>&#160;nerdose<span style="color: #3DDC84">_</span></a>
+    <nav aria-label="Principal" style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-family: 'JetBrains Mono', monospace; font-size: 14px">
+      <a href="#/Main" style="color: #9AA6B2; text-decoration: none; padding: 12px 14px; border-radius: 8px">./juegos</a>
+      <a href="#/Stats" style="color: #E6EDF3; text-decoration: none; padding: 12px 14px; border-radius: 8px; background: #161B22">./stats</a>
+      <a href="#/Main/como" style="color: #9AA6B2; text-decoration: none; padding: 12px 14px; border-radius: 8px">./about</a>
+    </nav>
+    <div style="display: flex; align-items: center; gap: 10px">
+    <div role="group" aria-label="Idioma" style="display: flex; padding: 3px; gap: 2px; border: 1px solid #2A323C; border-radius: 10px; background: #11151A"><button data-lang="es" aria-pressed="true" style="min-width: 40px; height: 36px; border: none; border-radius: 7px; background: #2A323C; color: #E6EDF3; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; cursor: pointer">ES</button><button data-lang="en" aria-pressed="false" style="min-width: 40px; height: 36px; border: none; border-radius: 7px; background: transparent; color: #9AA6B2; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; cursor: pointer">EN</button></div>
+    </div>
+  </header>
+
+  <main style="max-width: 1240px; margin: 0 auto; padding: 48px 32px 56px; display: flex; flex-direction: column; gap: 32px">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">$ nerdose stats --local</div>
+      <h1 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 40px; letter-spacing: -1.5px">Tus estadísticas</h1>
+    </div>
+
+    <section aria-label="Racha global" style="display: flex; flex-wrap: wrap; gap: 20px">
+      <div style="flex: 1 1 280px; min-width: 0; border: 1px solid #3A2A12; background: #140F07; border-radius: 16px; padding: 26px; display: flex; flex-direction: column; gap: 10px">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #C9A46A">// racha global actual</span>
+        <div style="display: flex; align-items: baseline; gap: 10px"><span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 96px; line-height: 0.9; color: #FFB547; letter-spacing: -4px">17</span><span style="font-family: 'JetBrains Mono', monospace; color: #C9A46A">días</span></div>
+        <span style="font-size: 14px; color: #C9B48F">Cualquier desafío completado mantiene la racha.</span>
+      </div>
+      <div style="flex: 3 1 560px; min-width: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px">
+        <div style="border: 1px solid #222A33; background: #0F1318; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 800">31</span><span style="font-size: 14px; color: #9AA6B2">récord de racha global</span></div>
+        <div style="border: 1px solid #222A33; background: #0F1318; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 800">178</span><span style="font-size: 14px; color: #9AA6B2">desafíos completados</span></div>
+        <div style="border: 1px solid #222A33; background: #0F1318; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 800">63</span><span style="font-size: 14px; color: #9AA6B2">días con actividad</span></div>
+        <div style="border: 1px solid #222A33; background: #0F1318; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 30px; font-weight: 800">2,8</span><span style="font-size: 14px; color: #9AA6B2">juegos por día activo</span></div>
+        <div style="grid-column: 1 / -1; border: 1px solid #222A33; background: #0F1318; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 10px">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8D99A6">últimas 12 semanas · juegos completados por día</span>
+          <div style="overflow-x: auto">
+            <div style="display: grid; grid-template-rows: repeat(7, 14px); grid-auto-flow: column; grid-auto-columns: 14px; gap: 4px" role="img" aria-label="Mapa de actividad de las últimas 12 semanas">
+              <template data-for list="{{ heat }}" as="d" hint-placeholder-count="84">
+                <span style="{{ d }}"></span>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section aria-labelledby="pj" style="display: flex; flex-direction: column; gap: 16px">
+      <h2 id="pj" style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 24px; letter-spacing: -0.5px">Por juego</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px">
+        <template data-for list="{{ games }}" as="g" hint-placeholder-count="5">
+          <article style="border: 1px solid #222A33; background: #0F1318; border-radius: 14px; overflow: hidden; display: flex; flex-direction: column">
+            <div style="{{ g.bar }}"></div>
+            <div style="padding: 20px; display: flex; flex-direction: column; gap: 16px">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px">
+                <h3 style="{{ g.titleStyle }}">{{ g.name }}</h3>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #FFB547">racha {{ g.streak }} · máx {{ g.best }}</span>
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+                <template data-for list="{{ g.metrics }}" as="m" hint-placeholder-count="4">
+                  <div style="padding: 12px; border-radius: 10px; background: #141920; display: flex; flex-direction: column; gap: 2px">
+                    <span style="font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700">{{ m.v }}</span>
+                    <span style="font-size: 12px; color: #9AA6B2">{{ m.k }}</span>
+                  </div>
+                </template>
+              </div>
+              <a href="{{ g.href }}" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #C3CCD5; text-decoration: none; padding: 8px 0">ver historial completo →</a>
+            </div>
+          </article>
+        </template>
+      </div>
+    </section>
+
+    <section aria-labelledby="hist" style="display: flex; flex-direction: column; gap: 16px">
+      <h2 id="hist" style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 24px; letter-spacing: -0.5px">Historial reciente</h2>
+      <div style="border: 1px solid #222A33; background: #0F1318; border-radius: 14px; overflow-x: auto">
+        <table style="width: 100%; min-width: 640px; border-collapse: collapse; font-family: 'JetBrains Mono', monospace; font-size: 14px">
+          <thead>
+            <tr style="text-align: left; color: #8D99A6; font-size: 12px">
+              <th style="padding: 14px 20px; font-weight: 500; border-bottom: 1px solid #1E252E">fecha</th>
+              <th style="padding: 14px 20px; font-weight: 500; border-bottom: 1px solid #1E252E; color: #3DDC84">devdle</th>
+              <th style="padding: 14px 20px; font-weight: 500; border-bottom: 1px solid #1E252E; color: #FFB547">bug</th>
+              <th style="padding: 14px 20px; font-weight: 500; border-bottom: 1px solid #1E252E; color: #5EB1FF">big-o</th>
+              <th style="padding: 14px 20px; font-weight: 500; border-bottom: 1px solid #1E252E; color: #C39BFF">timeline</th>
+              <th style="padding: 14px 20px; font-weight: 500; border-bottom: 1px solid #1E252E; color: #F472B6">grep</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template data-for list="{{ history }}" as="h" hint-placeholder-count="6">
+              <tr>
+                <td style="padding: 14px 20px; border-bottom: 1px solid #161B22; color: #9AA6B2">{{ h.d }}</td>
+                <td style="padding: 14px 20px; border-bottom: 1px solid #161B22">{{ h.a }}</td>
+                <td style="padding: 14px 20px; border-bottom: 1px solid #161B22">{{ h.b }}</td>
+                <td style="padding: 14px 20px; border-bottom: 1px solid #161B22">{{ h.c }}</td>
+                <td style="padding: 14px 20px; border-bottom: 1px solid #161B22">{{ h.e }}</td>
+                <td style="padding: 14px 20px; border-bottom: 1px solid #161B22">{{ h.f }}</td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+</template>
+<style type="text/plain" id="css-Stats">
+body{margin:0;background:#0A0C0F}
+a{color:#3DDC84}a:hover{color:#7CF0B0}
+</style>
+<script type="text/plain" id="js-Stats">
+class Component extends DCLogic {
+  renderVals() {
+    var colors = ['#1A2028', '#14532D', '#1F8F4E', '#2FBF6B', '#3DDC84'];
+    var heat = [];
+    for (var i = 0; i < 84; i++) {
+      var l;
+      if (i >= 67) l = 1 + ((i * 7) % 4);
+      else if (i === 66) l = 0;
+      else l = ((i * 13) % 9) < 3 ? 0 : 1 + ((i * 5) % 4);
+      heat.push('width: 14px; height: 14px; border-radius: 3px; background: ' + colors[l]);
+    }
+    function game(name, color, href, streak, best, metrics) {
+      return {
+        name: name, streak: streak, best: best, href: href, metrics: metrics,
+        bar: 'height: 4px; background: ' + color,
+        titleStyle: 'margin: 0; font-family: \'JetBrains Mono\', monospace; font-size: 18px; color: ' + color
+      };
+    }
+    var games = [
+      game('Devdle', '#3DDC84', '#/Devdle', 12, 21, [{ v: '48', k: 'jugadas' }, { v: '96%', k: 'victorias' }, { v: '4,0', k: 'intentos promedio' }, { v: '3', k: 'en 2 intentos' }]),
+      game('Bug Hunt', '#FFB547', '#/BugHunt', 5, 11, [{ v: '41', k: 'jugadas' }, { v: '73%', k: 'aciertos' }, { v: 'Java', k: 'lenguaje favorito' }, { v: 'off-by-one', k: 'tu punto débil' }]),
+      game('Big O', '#5EB1FF', '#/BigO', 8, 14, [{ v: '52', k: 'jugadas' }, { v: '81%', k: 'aciertos' }, { v: 'Go', k: 'lenguaje favorito' }, { v: 'recursión', k: 'tu punto débil' }]),
+      game('Tech Timeline', '#C39BFF', '#/Timeline', 3, 9, [{ v: '37', k: 'jugadas' }, { v: '3,6/5', k: 'promedio' }, { v: '9', k: 'perfectos 5/5' }, { v: 'empresas', k: 'mejor categoría' }]),
+      game('Grep Grid', '#F472B6', '#/GrepGrid', 6, 6, [{ v: '6', k: 'jugadas' }, { v: '02:48', k: 'tiempo promedio' }, { v: '01:57', k: 'mejor tiempo' }, { v: '6', k: 'completas 8/8' }])
+    ];
+    var history = [
+      { d: 'vie 30/10', a: '✓ 4/6', b: '✓ L4', c: '—', e: '—', f: '—' },
+      { d: 'jue 29/10', a: '✓ 3/6', b: '✗ L7', c: '✓ O(n)', e: '✓ 4/5', f: '✓ 02:31' },
+      { d: 'mié 28/10', a: '✓ 5/6', b: '✓ L3', c: '✓ O(log n)', e: '✓ 3/5', f: '✓ 03:05' },
+      { d: 'mar 27/10', a: '✓ 4/6', b: '✓ L6', c: '✓ O(2ⁿ)', e: '✓ 5/5', f: '✓ 01:57' },
+      { d: 'lun 26/10', a: '✓ 2/6', b: '✓ L2', c: '✗ O(n²)', e: '—', f: '✓ 03:22' },
+      { d: 'dom 25/10', a: '✓ 4/6', b: '—', c: '✓ O(n log n)', e: '—', f: '✓ 02:40' }
+    ];
+    return { heat: heat, games: games, history: history };
+  }
+}
+</script>
+<template id="tpl-Devdle" data-title="Devdle — partida">
+
+<div style="min-height: 100vh; background: #0A0C0F; color: #E6EDF3; font-family: 'Inter', system-ui, sans-serif">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 32px; border-bottom: 1px solid #1E252E">
+    <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap">
+      <a href="#/Main" style="display: flex; align-items: center; gap: 2px; text-decoration: none; color: #E6EDF3; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 18px"><span style="color: #3DDC84">&gt;</span>&#160;nerdose</a>
+      <span style="color: #2A323C" aria-hidden="true">/</span>
+      <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px; color: #3DDC84">devdle</span>
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">desafío del 30/10</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px">
+      <button aria-label="Cómo se juega" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid #2A323C; background: #11151A; color: #C3CCD5; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg></button>
+      <a href="#/Stats" aria-label="Estadísticas" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid #2A323C; background: #11151A; color: #C3CCD5; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"></path><path d="M8 17V11"></path><path d="M13 17V7"></path><path d="M18 17v-4"></path></svg></a>
+      <button disabled title="Disponible al terminar la partida" aria-label="Compartir resultado (disponible al terminar)" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #2A323C; background: #11151A; color: #6B7682; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; cursor: not-allowed"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><path d="M16 6l-4-4-4 4"></path><path d="M12 2v13"></path></svg>Compartir</button>
+      <div role="group" aria-label="Idioma" style="display: flex; padding: 3px; gap: 2px; border: 1px solid #2A323C; border-radius: 10px; background: #11151A"><button data-lang="es" aria-pressed="true" style="min-width: 40px; height: 36px; border: none; border-radius: 7px; background: #2A323C; color: #E6EDF3; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; cursor: pointer">ES</button><button data-lang="en" aria-pressed="false" style="min-width: 40px; height: 36px; border: none; border-radius: 7px; background: transparent; color: #9AA6B2; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; cursor: pointer">EN</button></div>
+      <span style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid #3A2A12; background: #1A140A; border-radius: 999px; color: #FFB547; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>17</span>
+    </div>
+  </header>
+
+  <main style="max-width: 1240px; margin: 0 auto; padding: 40px 32px 56px; display: flex; flex-wrap: wrap; gap: 40px; justify-content: center">
+
+    <section aria-label="Tablero" style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 28px">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// término técnico · 6 letras · intento 4 de 6</div>
+        <h1 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 34px; letter-spacing: -1px">Adiviná el término del día</h1>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px" role="grid" aria-label="Intentos">
+        <template data-for list="{{ rows }}" as="row" hint-placeholder-count="6">
+          <div style="display: grid; grid-template-columns: repeat(6, 64px); gap: 8px" role="row">
+            <template data-for list="{{ row.tiles }}" as="t" hint-placeholder-count="6">
+              <div role="gridcell" aria-label="{{ t.label }}" style="{{ t.style }}">{{ t.ch }}</div>
+            </template>
+          </div>
+        </template>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 620px" aria-label="Teclado">
+        <template data-for list="{{ keyboard }}" as="kr" hint-placeholder-count="3">
+          <div style="display: flex; justify-content: center; gap: 6px">
+            <template data-for list="{{ kr.keys }}" as="k" hint-placeholder-count="10">
+              <button style="{{ k.style }}" aria-label="{{ k.aria }}">{{ k.label }}</button>
+            </template>
+          </div>
+        </template>
+      </div>
+    </section>
+
+    <aside style="flex: 1 1 300px; min-width: 0; max-width: 380px; display: flex; flex-direction: column; gap: 16px">
+      <div style="border: 1px solid #222A33; background: #0F1318; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// cómo leer las pistas</div>
+        <div style="display: flex; align-items: center; gap: 12px"><span style="width: 36px; height: 36px; border-radius: 6px; background: #3DDC84; color: #06120B; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-weight: 800">O</span><span style="font-size: 14px; color: #C3CCD5; line-height: 1.4">Letra correcta en el lugar correcto.</span></div>
+        <div style="display: flex; align-items: center; gap: 12px"><span style="width: 36px; height: 36px; box-sizing: border-box; border-radius: 6px; border: 2px dashed #FFB547; color: #FFB547; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-weight: 800">C</span><span style="font-size: 14px; color: #C3CCD5; line-height: 1.4">Está en la palabra, pero en otra posición.</span></div>
+        <div style="display: flex; align-items: center; gap: 12px"><span style="width: 36px; height: 36px; border-radius: 6px; background: #1A2028; color: #8D99A6; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-weight: 800">B</span><span style="font-size: 14px; color: #C3CCD5; line-height: 1.4">No está en la palabra.</span></div>
+      </div>
+
+      <div style="border: 1px solid #222A33; background: #0F1318; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// pista de categoría</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px">
+          <span style="padding: 6px 10px; border-radius: 99px; border: 1px solid #2A323C; color: #9AA6B2">git</span>
+          <span style="padding: 6px 10px; border-radius: 99px; border: 1px solid #2A323C; color: #9AA6B2">linux</span>
+          <span style="padding: 6px 10px; border-radius: 99px; border: 1px solid #2A323C; color: #9AA6B2">apis</span>
+          <span style="padding: 6px 10px; border-radius: 99px; border: 1px solid #2A323C; color: #9AA6B2">bases de datos</span>
+          <span style="padding: 6px 10px; border-radius: 99px; border: 1px solid #2A323C; color: #9AA6B2">seguridad</span>
+          <span style="padding: 6px 10px; border-radius: 99px; border: 1px solid #2A323C; color: #9AA6B2">networking</span>
+        </div>
+        <p style="margin: 0; font-size: 13px; color: #9AA6B2; line-height: 1.5">La categoría y la definición se revelan al terminar.</p>
+      </div>
+
+      <div style="border: 1px solid #222A33; background: #0F1318; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 14px">
+        <div style="display: flex; justify-content: space-between; align-items: baseline">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// tus intentos</span>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #FFB547">racha 12</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <template data-for list="{{ dist }}" as="d" hint-placeholder-count="7">
+            <div style="display: grid; grid-template-columns: 16px 1fr; gap: 10px; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 12px">
+              <span style="color: #9AA6B2">{{ d.k }}</span>
+              <div style="{{ d.bar }}">{{ d.n }}</div>
+            </div>
+          </template>
+        </div>
+        <div style="display: flex; gap: 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #9AA6B2"><span><b style="color: #E6EDF3">48</b> jugadas</span><span><b style="color: #E6EDF3">96%</b> victorias</span></div>
+      </div>
+    </aside>
+  </main>
+</div>
+</template>
+<style type="text/plain" id="css-Devdle">
+body{margin:0;background:#0A0C0F}
+a{color:#3DDC84}a:hover{color:#7CF0B0}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+.cursor{animation:blink 1.1s steps(1) infinite}
+</style>
+<script type="text/plain" id="js-Devdle">
+class Component extends DCLogic {
+  renderVals() {
+    var base = 'width: 64px; height: 64px; box-sizing: border-box; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: \'JetBrains Mono\', monospace; font-weight: 800; font-size: 28px; ';
+    var st = {
+      g: base + 'background: #3DDC84; color: #06120B; border: 2px solid #3DDC84',
+      y: base + 'background: transparent; color: #FFB547; border: 2px dashed #FFB547',
+      x: base + 'background: #1A2028; color: #8D99A6; border: 2px solid #1A2028',
+      t: base + 'background: #0F1318; color: #E6EDF3; border: 2px solid #5A6573',
+      e: base + 'background: transparent; color: #E6EDF3; border: 2px solid #222A33'
+    };
+    var names = { g: 'correcta', y: 'en otra posición', x: 'no está', t: 'escrita', e: 'vacía' };
+    var guesses = [
+      ['BRANCH', 'xxxxyx'],
+      ['CLIENT', 'yxxyxg'],
+      ['ROCKET', 'xggggg'],
+      ['SO    ', 'tteeee'],
+      ['      ', 'eeeeee'],
+      ['      ', 'eeeeee']
+    ];
+    var rows = guesses.map(function (g) {
+      var tiles = [];
+      for (var i = 0; i < 6; i++) {
+        var ch = g[0][i] === ' ' ? '' : g[0][i];
+        var s = g[1][i];
+        tiles.push({ ch: ch, style: st[s], label: (ch || 'casilla') + ', ' + names[s] });
+      }
+      return { tiles: tiles };
+    });
+    var state = {};
+    'BRANHLI'.split('').forEach(function (c) { state[c] = 'x'; });
+    'OCKET'.split('').forEach(function (c) { state[c] = 'g'; });
+    var kb = 'height: 54px; border-radius: 8px; border: none; cursor: pointer; font-family: \'JetBrains Mono\', monospace; font-weight: 700; font-size: 15px; ';
+    function key(c) {
+      var s = state[c];
+      var style = kb + 'flex: 1 1 0; min-width: 0; max-width: 52px; ';
+      if (s === 'g') style += 'background: #3DDC84; color: #06120B';
+      else if (s === 'x') style += 'background: #12161B; color: #5F6B78; text-decoration: line-through';
+      else style += 'background: #2A323C; color: #E6EDF3';
+      return { label: c, style: style, aria: c + (s === 'g' ? ', correcta' : s === 'x' ? ', descartada' : '') };
+    }
+    var keyboard = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'].map(function (r, i) {
+      var keys = r.split('').map(key);
+      if (i === 2) {
+        keys.unshift({ label: 'ENTER', aria: 'Enviar', style: kb + 'flex: 1.6 1 0; min-width: 0; max-width: 84px; font-size: 12px; background: #3DDC84; color: #06120B' });
+        keys.push({ label: '⌫', aria: 'Borrar', style: kb + 'flex: 1.6 1 0; min-width: 0; max-width: 84px; background: #2A323C; color: #E6EDF3' });
+      }
+      return { keys: keys };
+    });
+    var counts = [['1', 0], ['2', 3], ['3', 11], ['4', 19], ['5', 9], ['6', 4], ['X', 2]];
+    var dist = counts.map(function (c) {
+      var w = Math.max(8, Math.round(c[1] / 19 * 100));
+      var bg = c[0] === '4' ? '#3DDC84' : '#2A323C';
+      var col = c[0] === '4' ? '#06120B' : '#E6EDF3';
+      return { k: c[0], n: c[1], bar: 'width: ' + w + '%; min-width: 22px; box-sizing: border-box; padding: 3px 8px; border-radius: 4px; text-align: right; background: ' + bg + '; color: ' + col };
+    });
+    return { rows: rows, keyboard: keyboard, dist: dist };
+  }
+}
+</script>
+<template id="tpl-BugHunt" data-title="Bug Hunt — partida">
+
+<div style="min-height: 100vh; background: #0A0C0F; color: #E6EDF3; font-family: 'Inter', system-ui, sans-serif">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 32px; border-bottom: 1px solid #1E252E">
+    <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap">
+      <a href="#/Main" style="display: flex; align-items: center; gap: 2px; text-decoration: none; color: #E6EDF3; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 18px"><span style="color: #3DDC84">&gt;</span>&#160;nerdose</a>
+      <span style="color: #2A323C" aria-hidden="true">/</span>
+      <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px; color: #FFB547">bug-hunt</span>
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">desafío del 30/10</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px">
+      <button aria-label="Cómo se juega" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid #2A323C; background: #11151A; color: #C3CCD5; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg></button>
+      <a href="#/Stats" aria-label="Estadísticas" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid #2A323C; background: #11151A; color: #C3CCD5; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"></path><path d="M8 17V11"></path><path d="M13 17V7"></path><path d="M18 17v-4"></path></svg></a>
+      <template data-if value="{{ playing }}" hint-placeholder-val="{{ true }}">
+        <button disabled title="Disponible al terminar la partida" aria-label="Compartir resultado (disponible al terminar)" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #2A323C; background: #11151A; color: #6B7682; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; cursor: not-allowed"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><path d="M16 6l-4-4-4 4"></path><path d="M12 2v13"></path></svg>Compartir</button>
+      </template>
+      <template data-if value="{{ done }}" hint-placeholder-val="{{ false }}">
+        <button aria-label="Compartir resultado" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: 10px; border: none; background: #FFB547; color: #1A1206; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><path d="M16 6l-4-4-4 4"></path><path d="M12 2v13"></path></svg>Compartir</button>
+      </template>
+      <div role="group" aria-label="Idioma" style="display: flex; padding: 3px; gap: 2px; border: 1px solid #2A323C; border-radius: 10px; background: #11151A"><button data-lang="es" aria-pressed="true" style="min-width: 40px; height: 36px; border: none; border-radius: 7px; background: #2A323C; color: #E6EDF3; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; cursor: pointer">ES</button><button data-lang="en" aria-pressed="false" style="min-width: 40px; height: 36px; border: none; border-radius: 7px; background: transparent; color: #9AA6B2; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; cursor: pointer">EN</button></div>
+      <span style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid #3A2A12; background: #1A140A; border-radius: 999px; color: #FFB547; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>17</span>
+    </div>
+  </header>
+
+  <main style="max-width: 1240px; margin: 0 auto; padding: 40px 32px 56px; display: flex; flex-direction: column; gap: 28px">
+
+    <template data-if value="{{ won }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 22px; border-radius: 14px; background: #0C1A12; border: 1px solid #1E4A30">
+        <div style="display: flex; align-items: center; gap: 14px">
+          <span style="width: 40px; height: 40px; flex: none; border-radius: 99px; background: #3DDC84; color: #06120B; display: flex; align-items: center; justify-content: center" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px">Bug encontrado en la línea 4</span>
+            <span style="font-size: 14px; color: #A9C9B5">Racha de Bug Hunt: 6 días · racha global: 17 días</span>
+          </div>
+        </div>
+        <a href="#/BigO" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 10px; background: #3DDC84; color: #06120B; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px">Siguiente juego →</a>
+      </div>
+    </template>
+    <template data-if value="{{ lost }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 22px; border-radius: 14px; background: #1C0F0E; border: 1px solid #4A2220">
+        <div style="display: flex; align-items: center; gap: 14px">
+          <span style="width: 40px; height: 40px; flex: none; border-radius: 99px; background: #FF7B72; color: #1C0605; display: flex; align-items: center; justify-content: center" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg></span>
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px">{{ lostTitle }}</span>
+            <span style="font-size: 14px; color: #D9B3AF">Desafío completado: tus rachas siguen en pie (Bug Hunt 6 · global 17)</span>
+          </div>
+        </div>
+        <a href="#/BigO" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid #4A2220; color: #E6EDF3; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px">Siguiente juego →</a>
+      </div>
+    </template>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// un solo intento · las líneas con solo llaves no cuentan</div>
+      <h1 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 34px; letter-spacing: -1px">¿En qué línea está el bug?</h1>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px">
+      <section aria-label="Código" style="flex: 1 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+
+        <div style="border: 1px solid #3A2A12; background: #140F07; border-radius: 14px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px">
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #C9A46A">// qué debería hacer</span>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #E6EDF3">Devuelve el índice del mayor valor del array. Si el máximo se repite, devuelve <b>el primero</b>.</p>
+        </div>
+
+        <div style="border: 1px solid #222A33; background: #0D1116; border-radius: 14px; overflow: hidden">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px; padding: 8px 8px 8px 8px; border-bottom: 1px solid #1E252E; background: #11161C">
+            <div style="display: flex; flex-wrap: wrap; gap: 4px" role="tablist" aria-label="Lenguaje">
+              <template data-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+                <button role="tab" aria-selected="{{ t.selected }}" onClick="{{ t.pick }}" style="{{ t.style }}">{{ t.label }}</button>
+              </template>
+            </div>
+            <span style="padding: 0 10px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8D99A6">{{ file }}</span>
+          </div>
+          <div style="overflow-x: auto; padding: 14px 0" role="radiogroup" aria-label="Líneas de código">
+            <template data-for list="{{ code }}" as="l" hint-placeholder-count="9">
+              <button role="radio" aria-checked="{{ l.checked }}" aria-label="{{ l.aria }}" onClick="{{ l.pick }}" disabled="{{ l.locked }}" class="{{ l.cls }}" style="{{ l.style }}"><span style="color: #4F5A66; display: inline-block; width: 30px; flex: none">{{ l.n }}</span><span style="white-space: pre">{{ l.text }}</span><span style="{{ l.tagStyle }}">{{ l.tag }}</span></button>
+            </template>
+          </div>
+        </div>
+
+        <template data-if value="{{ playing }}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px">
+            <button disabled="{{ notReady }}" onClick="{{ confirm }}" style="{{ confirmStyle }}">{{ confirmLabel }}</button>
+            <span style="font-size: 13px; color: #9AA6B2">El bug es el mismo en los tres lenguajes: cambiar de pestaña no cambia la respuesta.</span>
+          </div>
+        </template>
+      </section>
+
+      <template data-if value="{{ playing }}" hint-placeholder-val="{{ true }}">
+        <aside style="flex: 1 1 360px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+          <div style="border: 1px solid #222A33; background: #0F1318; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// tests</span>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #8D99A6">input → esperado</span>
+            </div>
+            <template data-for list="{{ passing }}" as="p" hint-placeholder-count="3">
+              <div style="display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 10px; background: #141920; font-family: 'JetBrains Mono', monospace; font-size: 14px"><span style="color: #3DDC84">✓</span><span>{{ p }}</span></div>
+            </template>
+            <div style="display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 10px; border: 1px dashed #4A2220; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #D9B3AF"><span style="color: #FF7B72">✗</span><span>1 test oculto falla</span></div>
+            <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #9AA6B2">El test que falla se revela al confirmar. Los que pasan te ayudan a descartar líneas.</p>
+          </div>
+
+          <div style="border: 1px solid #222A33; background: #0F1318; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// cómo se juega</span>
+            <ol style="margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.5; color: #C3CCD5">
+              <li>Leé qué debería hacer la función.</li>
+              <li>Tocá la línea donde creés que está el bug.</li>
+              <li>Confirmá. Tenés <b style="color: #FFB547">un solo intento</b>.</li>
+            </ol>
+          </div>
+
+          <div style="border: 1px solid #222A33; background: #0F1318; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+            <div style="display: flex; justify-content: space-between; align-items: baseline">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// tu historial</span>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #FFB547">racha 5</span>
+            </div>
+            <div style="display: flex; gap: 20px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #9AA6B2"><span><b style="color: #E6EDF3">41</b> jugadas</span><span><b style="color: #E6EDF3">73%</b> aciertos</span></div>
+          </div>
+        </aside>
+      </template>
+
+      <template data-if value="{{ done }}" hint-placeholder-val="{{ false }}">
+        <aside aria-labelledby="bh-exp" style="flex: 1 1 380px; min-width: 0; border: 1px solid #222A33; background: #0F1318; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 20px">
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// el test que falla</span>
+            <div style="border-radius: 12px; background: #1C0F0E; border: 1px solid #4A2220; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 14px">
+              <span style="color: #E6EDF3">{{ failCall }}</span>
+              <span style="color: #C3CCD5">esperado <b style="color: #3DDC84">0</b> · obtenido <b style="color: #FF7B72">2</b></span>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// el fix · línea 4</span>
+            <div style="border-radius: 12px; background: #0D1116; border: 1px solid #222A33; overflow-x: auto; padding: 10px 0; font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 2; tab-size: 4">
+              <div style="padding: 0 14px; background: #1C0F0E; color: #FFB3AD; white-space: pre">- {{ diffOld }}</div>
+              <div style="padding: 0 14px; background: #0C1A12; color: #9EF0C2; white-space: pre">+ {{ diffNew }}</div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px">
+            <h2 id="bh-exp" style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 20px">Por qué falla</h2>
+            <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px">
+              <li style="display: grid; grid-template-columns: 32px 1fr; gap: 12px"><span style="width: 28px; height: 28px; border-radius: 8px; background: #2A1F0B; color: #FFB547; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center">1</span><span style="font-size: 15px; line-height: 1.55; color: #C3CCD5">Con <code style="font-family: 'JetBrains Mono', monospace; color: #E6EDF3">&gt;=</code>, cada valor <b style="color: #E6EDF3">igual</b> al máximo actual también mueve <code style="font-family: 'JetBrains Mono', monospace; color: #E6EDF3">best</code> hacia la derecha.</span></li>
+              <li style="display: grid; grid-template-columns: 32px 1fr; gap: 12px"><span style="width: 28px; height: 28px; border-radius: 8px; background: #2A1F0B; color: #FFB547; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center">2</span><span style="font-size: 15px; line-height: 1.55; color: #C3CCD5">En <code style="font-family: 'JetBrains Mono', monospace; color: #E6EDF3">[5, 1, 5]</code>, al llegar a <code style="font-family: 'JetBrains Mono', monospace; color: #E6EDF3">i = 2</code> se cumple <code style="font-family: 'JetBrains Mono', monospace; color: #E6EDF3">5 &gt;= 5</code> y devuelve el <b style="color: #E6EDF3">último</b> máximo, no el primero.</span></li>
+              <li style="display: grid; grid-template-columns: 32px 1fr; gap: 12px"><span style="width: 28px; height: 28px; border-radius: 8px; background: #2A1F0B; color: #FFB547; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center">3</span><span style="font-size: 15px; line-height: 1.55; color: #C3CCD5">Los tests visibles no tenían empates, por eso pasaban. Con <code style="font-family: 'JetBrains Mono', monospace; color: #E6EDF3">&gt;</code> solo se actualiza ante un valor <b style="color: #E6EDF3">estrictamente mayor</b>.</span></li>
+            </ol>
+          </div>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px">
+            <span style="padding: 6px 10px; border-radius: 99px; border: 1px solid #5C4419; color: #FFB547">tipo: comparación</span>
+            <span style="padding: 6px 10px; border-radius: 99px; border: 1px solid #2A323C; color: #9AA6B2">mutación: &gt; → &gt;=</span>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// lo que compartís</span>
+            <div style="border-radius: 12px; background: #141920; padding: 14px 16px; font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.7; color: #E6EDF3; white-space: pre-line">{{ shareText }}</div>
+          </div>
+
+          <button onClick="{{ restart }}" style="align-self: flex-start; min-height: 40px; padding: 0 14px; border-radius: 10px; border: 1px dashed #2A323C; background: transparent; color: #9AA6B2; font-family: 'JetBrains Mono', monospace; font-size: 13px; cursor: pointer">↺ reiniciar demo</button>
+        </aside>
+      </template>
+    </div>
+  </main>
+</div>
+</template>
+<style type="text/plain" id="css-BugHunt">
+body{margin:0;background:#0A0C0F}
+a{color:#FFB547}a:hover{color:#FFD08A}
+.bh-pick:hover{background:#15110A !important}
+.bh-pick:focus-visible{outline:2px solid #FFB547;outline-offset:-2px}
+#app *{font-variant-ligatures:none}
+</style>
+<script type="text/plain" id="js-BugHunt">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { lang: 'js', picked: null, done: false };
+  }
+  renderVals() {
+    var self = this;
+    var st = this.state;
+    var lang = st.lang;
+    var BUG = 4;
+    var PICKABLE = [2, 3, 4, 5, 8];
+    var src = {
+      js: ['function maxIndex(nums) {', '  let best = 0;', '  for (let i = 1; i < nums.length; i++) {', '    if (nums[i] >= nums[best]) {', '      best = i;', '    }', '  }', '  return best;', '}'],
+      go: ['func maxIndex(nums []int) int {', '\tbest := 0', '\tfor i := 1; i < len(nums); i++ {', '\t\tif nums[i] >= nums[best] {', '\t\t\tbest = i', '\t\t}', '\t}', '\treturn best', '}'],
+      java: ['static int maxIndex(int[] nums) {', '    int best = 0;', '    for (int i = 1; i < nums.length; i++) {', '        if (nums[i] >= nums[best]) {', '            best = i;', '        }', '    }', '    return best;', '}']
+    };
+    var fixed = { js: 'if (nums[i] > nums[best]) {', go: 'if nums[i] > nums[best] {', java: 'if (nums[i] > nums[best]) {' };
+    var files = { js: 'max-index.js', go: 'max_index.go', java: 'MaxIndex.java' };
+    var calls = { js: 'maxIndex([5, 1, 5])', go: 'maxIndex([]int{5, 1, 5})', java: 'maxIndex(new int[]{5, 1, 5})' };
+    var names = { js: 'JavaScript', go: 'Go', java: 'Java' };
+
+    var code = src[lang].map(function (t, i) {
+      var n = i + 1;
+      var canPick = PICKABLE.indexOf(n) >= 0;
+      var isPick = st.picked === n;
+      var isBug = n === BUG;
+      var tag = '', tagColor = '#FFB547', bg = 'transparent', bar = 'transparent';
+      if (!st.done) {
+        if (isPick) { tag = '◀ tu elección'; bg = '#1A140A'; bar = '#FFB547'; }
+      } else if (isBug && isPick) {
+        tag = '✓ acá estaba el bug'; tagColor = '#3DDC84'; bg = '#0C1A12'; bar = '#3DDC84';
+      } else if (isBug) {
+        tag = '🐛 acá estaba el bug'; bg = '#1A140A'; bar = '#FFB547';
+      } else if (isPick) {
+        tag = '✗ tu elección'; tagColor = '#FF7B72'; bg = '#1C0F0E'; bar = '#FF7B72';
+      }
+      var interactive = canPick && !st.done;
+      return {
+        n: n,
+        text: t,
+        tag: tag,
+        checked: isPick ? 'true' : 'false',
+        aria: 'Línea ' + n + (canPick ? '' : ' (no elegible)'),
+        locked: !interactive,
+        cls: interactive ? 'bh-pick' : '',
+        pick: interactive ? function () { self.setState({ picked: n }); } : null,
+        tagStyle: tag ? 'margin-left: auto; padding-left: 20px; flex: none; font-size: 12px; font-weight: 700; color: ' + tagColor : 'display: none',
+        style: 'display: flex; align-items: center; width: 100%; min-height: 40px; padding: 0 18px; border: none; text-align: left; font-family: \'JetBrains Mono\', monospace; font-size: 15px; line-height: 2; tab-size: 4; color: ' + (canPick ? '#E6EDF3' : '#8D99A6') + '; background: ' + bg + '; box-shadow: inset 3px 0 0 ' + bar + '; cursor: ' + (interactive ? 'pointer' : 'default')
+      };
+    });
+
+    var tabs = ['js', 'go', 'java'].map(function (k) {
+      var sel = k === lang;
+      return {
+        label: names[k],
+        selected: sel ? 'true' : 'false',
+        pick: function () { self.setState({ lang: k }); },
+        style: 'min-height: 40px; padding: 0 16px; border-radius: 8px; border: none; cursor: pointer; font-family: \'JetBrains Mono\', monospace; font-size: 13px; ' + (sel ? 'background: #2A1F0B; color: #FFB547; font-weight: 700' : 'background: transparent; color: #9AA6B2')
+      };
+    });
+
+    var ready = st.picked != null;
+    var won = st.done && st.picked === BUG;
+    return {
+      code: code,
+      tabs: tabs,
+      file: files[lang],
+      playing: !st.done,
+      done: st.done,
+      won: won,
+      lost: st.done && !won,
+      lostTitle: 'El bug estaba en la línea ' + BUG + ', no en la ' + st.picked,
+      passing: ['[3, 7, 2] → 1', '[4] → 0', '[-2, -9, -1] → 2'],
+      notReady: !ready,
+      confirmLabel: ready ? 'Confirmar línea ' + st.picked + ' →' : 'Elegí una línea',
+      confirm: function () { if (self.state.picked != null) self.setState({ done: true }); },
+      confirmStyle: 'min-height: 48px; padding: 0 22px; border-radius: 10px; border: none; font-family: \'JetBrains Mono\', monospace; font-weight: 700; font-size: 15px; ' + (ready ? 'background: #FFB547; color: #1A1206; cursor: pointer' : 'background: #2A2416; color: #8A7856; cursor: not-allowed'),
+      failCall: calls[lang],
+      diffOld: src[lang][BUG - 1].trim(),
+      diffNew: fixed[lang],
+      shareText: '🐛 Bug Hunt #128 · ' + names[lang] + '\n' + (won ? '🟩 bug encontrado' : '🟥 se me escapó') + '\nnerdose.dev',
+      restart: function () { self.setState({ picked: null, done: false }); }
+    };
+  }
+}
+</script>
+<template id="tpl-BigO" data-title="Big O Challenge — resultado">
+
+<div style="min-height: 100vh; background: #0A0C0F; color: #E6EDF3; font-family: 'Inter', system-ui, sans-serif">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 32px; border-bottom: 1px solid #1E252E">
+    <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap">
+      <a href="#/Main" style="display: flex; align-items: center; gap: 2px; text-decoration: none; color: #E6EDF3; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 18px"><span style="color: #3DDC84">&gt;</span>&#160;nerdose</a>
+      <span style="color: #2A323C" aria-hidden="true">/</span>
+      <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px; color: #5EB1FF">big-o</span>
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">desafío del 30/10 · loops anidados</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px">
+      <button aria-label="Cómo se juega" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid #2A323C; background: #11151A; color: #C3CCD5; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg></button>
+      <a href="#/Stats" aria-label="Estadísticas" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid #2A323C; background: #11151A; color: #C3CCD5; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"></path><path d="M8 17V11"></path><path d="M13 17V7"></path><path d="M18 17v-4"></path></svg></a>
+      <button aria-label="Compartir resultado" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: 10px; border: none; background: #5EB1FF; color: #06121F; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><path d="M16 6l-4-4-4 4"></path><path d="M12 2v13"></path></svg>Compartir</button>
+      <div role="group" aria-label="Idioma" style="display: flex; padding: 3px; gap: 2px; border: 1px solid #2A323C; border-radius: 10px; background: #11151A"><button data-lang="es" aria-pressed="true" style="min-width: 40px; height: 36px; border: none; border-radius: 7px; background: #2A323C; color: #E6EDF3; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; cursor: pointer">ES</button><button data-lang="en" aria-pressed="false" style="min-width: 40px; height: 36px; border: none; border-radius: 7px; background: transparent; color: #9AA6B2; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; cursor: pointer">EN</button></div>
+      <span style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid #3A2A12; background: #1A140A; border-radius: 999px; color: #FFB547; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>17</span>
+    </div>
+  </header>
+
+  <main style="max-width: 1240px; margin: 0 auto; padding: 40px 32px 56px; display: flex; flex-direction: column; gap: 28px">
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 22px; border-radius: 14px; background: #0C1A12; border: 1px solid #1E4A30">
+      <div style="display: flex; align-items: center; gap: 14px">
+        <span style="width: 40px; height: 40px; border-radius: 99px; background: #3DDC84; color: #06120B; display: flex; align-items: center; justify-content: center" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span>
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px">Correcto: O(n log n)</span>
+          <span style="font-size: 14px; color: #A9C9B5">Racha de Big O: 9 días · racha global: 17 días</span>
+        </div>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap">
+        <a href="#/Timeline" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 10px; background: #3DDC84; color: #06120B; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px">Siguiente juego →</a>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px">
+      <section aria-label="Código y respuestas" style="flex: 1 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+        <h1 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 30px; letter-spacing: -1px">¿Cuál es la complejidad temporal de <span style="color: #5EB1FF">f(n)</span>?</h1>
+
+        <div style="border: 1px solid #222A33; background: #0D1116; border-radius: 14px; overflow: hidden">
+          <div style="display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; border-bottom: 1px solid #1E252E; background: #11161C" role="tablist" aria-label="Lenguaje">
+            <template data-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+              <button role="tab" aria-selected="{{ t.selected }}" onClick="{{ t.pick }}" style="{{ t.style }}">{{ t.label }}</button>
+            </template>
+          </div>
+          <div style="overflow-x: auto; padding: 18px 0">
+            <template data-for list="{{ code }}" as="l" hint-placeholder-count="9">
+              <div style="{{ l.style }}"><span style="color: #4F5A66; display: inline-block; width: 30px; flex: none">{{ l.n }}</span><span style="white-space: pre">{{ l.text }}</span><span style="{{ l.tagStyle }}">{{ l.tag }}</span></div>
+            </template>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px" role="group" aria-label="Opciones">
+          <template data-for list="{{ options }}" as="o" hint-placeholder-count="8">
+            <button style="{{ o.style }}" aria-pressed="{{ o.picked }}">{{ o.label }}</button>
+          </template>
+        </div>
+      </section>
+
+      <aside aria-labelledby="exp" style="flex: 1 1 380px; min-width: 0; border: 1px solid #222A33; background: #0F1318; border-radius: 14px; padding: 24px; display: flex; flex-direction: column; gap: 18px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// por qué</div>
+        <h2 id="exp" style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 22px">Paso a paso</h2>
+        <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px">
+          <li style="display: grid; grid-template-columns: 32px 1fr; gap: 12px"><span style="width: 28px; height: 28px; border-radius: 8px; background: #11243A; color: #8CC8FF; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center">1</span><span style="font-size: 15px; line-height: 1.55; color: #C3CCD5">El loop externo recorre <code style="font-family: 'JetBrains Mono', monospace; color: #E6EDF3">i</code> de 0 a n−1: se ejecuta <b style="color: #E6EDF3">n veces</b>.</span></li>
+          <li style="display: grid; grid-template-columns: 32px 1fr; gap: 12px"><span style="width: 28px; height: 28px; border-radius: 8px; background: #11243A; color: #8CC8FF; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center">2</span><span style="font-size: 15px; line-height: 1.55; color: #C3CCD5">El loop interno no suma de a uno: <code style="font-family: 'JetBrains Mono', monospace; color: #E6EDF3">j</code> se duplica (1, 2, 4, 8…) hasta llegar a n. Eso son unas <b style="color: #E6EDF3">log₂ n</b> vueltas.</span></li>
+          <li style="display: grid; grid-template-columns: 32px 1fr; gap: 12px"><span style="width: 28px; height: 28px; border-radius: 8px; background: #11243A; color: #8CC8FF; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center">3</span><span style="font-size: 15px; line-height: 1.55; color: #C3CCD5">Los loops están anidados y el interno no depende de <code style="font-family: 'JetBrains Mono', monospace; color: #E6EDF3">i</code>, así que se multiplican: <b style="color: #E6EDF3">n · log n</b>.</span></li>
+          <li style="display: grid; grid-template-columns: 32px 1fr; gap: 12px"><span style="width: 28px; height: 28px; border-radius: 8px; background: #11243A; color: #8CC8FF; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center">4</span><span style="font-size: 15px; line-height: 1.55; color: #C3CCD5">La base del logaritmo es una constante y se descarta: <b style="color: #5EB1FF">O(n log n)</b>.</span></li>
+        </ol>
+        <div style="border-radius: 12px; background: #0B1522; border: 1px solid #1B2E45; padding: 16px; display: flex; flex-direction: column; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 13px">
+          <span style="color: #8D99A6">// en números, con n = 1024</span>
+          <span style="color: #C3CCD5">j toma 1, 2, 4 … 512 → <b style="color: #E6EDF3">10</b> vueltas</span>
+          <span style="color: #C3CCD5">1024 × 10 = <b style="color: #E6EDF3">10.240</b> ops</span>
+          <span style="color: #C3CCD5">con O(n²) serían <b style="color: #E6EDF3">1.048.576</b></span>
+        </div>
+        <div style="font-size: 14px; color: #9AA6B2; line-height: 1.5">La trampa más común es ver dos <code style="font-family: 'JetBrains Mono', monospace">for</code> y responder O(n²). Mirá siempre cómo avanza cada variable.</div>
+      </aside>
+    </div>
+  </main>
+</div>
+</template>
+<style type="text/plain" id="css-BigO">
+body{margin:0;background:#0A0C0F}
+a{color:#5EB1FF}a:hover{color:#9ACFFF}
+</style>
+<script type="text/plain" id="js-BigO">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { lang: 'js' };
+  }
+  renderVals() {
+    var self = this;
+    var src = {
+      js: ['function f(n) {', '  let ops = 0;', '  for (let i = 0; i < n; i++) {', '    for (let j = 1; j < n; j *= 2) {', '      ops++;', '    }', '  }', '  return ops;', '}'],
+      go: ['func f(n int) int {', '\tops := 0', '\tfor i := 0; i < n; i++ {', '\t\tfor j := 1; j < n; j *= 2 {', '\t\t\tops++', '\t\t}', '\t}', '\treturn ops', '}'],
+      java: ['static int f(int n) {', '    int ops = 0;', '    for (int i = 0; i < n; i++) {', '        for (int j = 1; j < n; j *= 2) {', '            ops++;', '        }', '    }', '    return ops;', '}']
+    };
+    var lang = this.state.lang;
+    var tags = { 2: 'n veces', 3: 'log n veces' };
+    var code = src[lang].map(function (t, i) {
+      var hl = i === 2 || i === 3;
+      return {
+        n: i + 1,
+        text: t,
+        tag: tags[i] || '',
+        tagStyle: tags[i] ? 'margin-left: auto; padding-left: 20px; flex: none; font-size: 12px; color: #8CC8FF' : 'display: none',
+        style: 'display: flex; align-items: center; padding: 0 18px; font-family: \'JetBrains Mono\', monospace; font-size: 15px; line-height: 2; tab-size: 4; color: #E6EDF3; ' + (hl ? 'background: #0E1D2E; box-shadow: inset 3px 0 0 #5EB1FF' : '')
+      };
+    });
+    var tabs = [['js', 'JavaScript'], ['go', 'Go'], ['java', 'Java']].map(function (t) {
+      var sel = t[0] === lang;
+      return {
+        label: t[1],
+        selected: sel ? 'true' : 'false',
+        pick: function () { self.setState({ lang: t[0] }); },
+        style: 'min-height: 40px; padding: 0 16px; border-radius: 8px; border: none; cursor: pointer; font-family: \'JetBrains Mono\', monospace; font-size: 13px; ' + (sel ? 'background: #1D2A3A; color: #E6EDF3; font-weight: 700' : 'background: transparent; color: #9AA6B2')
+      };
+    });
+    var opts = ['O(1)', 'O(log n)', 'O(n)', 'O(n log n)', 'O(n²)', 'O(n³)', 'O(2ⁿ)', 'O(n!)'];
+    var options = opts.map(function (o) {
+      var ok = o === 'O(n log n)';
+      return {
+        label: o,
+        picked: ok ? 'true' : 'false',
+        style: 'min-height: 56px; border-radius: 10px; font-family: \'JetBrains Mono\', monospace; font-size: 16px; cursor: default; ' + (ok ? 'background: #3DDC84; color: #06120B; border: 2px solid #3DDC84; font-weight: 800' : 'background: #0F1318; color: #8D99A6; border: 1px solid #1E252E')
+      };
+    });
+    return { code: code, tabs: tabs, options: options };
+  }
+}
+</script>
+<template id="tpl-Timeline" data-title="Tech Timeline — resultado">
+
+<div style="min-height: 100vh; background: #0A0C0F; color: #E6EDF3; font-family: 'Inter', system-ui, sans-serif">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 32px; border-bottom: 1px solid #1E252E">
+    <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap">
+      <a href="#/Main" style="display: flex; align-items: center; gap: 2px; text-decoration: none; color: #E6EDF3; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 18px"><span style="color: #3DDC84">&gt;</span>&#160;nerdose</a>
+      <span style="color: #2A323C" aria-hidden="true">/</span>
+      <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px; color: #C39BFF">tech-timeline</span>
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">desafío del 30/10 · lenguajes y herramientas</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px">
+      <button aria-label="Cómo se juega" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid #2A323C; background: #11151A; color: #C3CCD5; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg></button>
+      <a href="#/Stats" aria-label="Estadísticas" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid #2A323C; background: #11151A; color: #C3CCD5; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"></path><path d="M8 17V11"></path><path d="M13 17V7"></path><path d="M18 17v-4"></path></svg></a>
+      <button aria-label="Compartir resultado" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: 10px; border: none; background: #C39BFF; color: #160E26; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><path d="M16 6l-4-4-4 4"></path><path d="M12 2v13"></path></svg>Compartir</button>
+      <div role="group" aria-label="Idioma" style="display: flex; padding: 3px; gap: 2px; border: 1px solid #2A323C; border-radius: 10px; background: #11151A"><button data-lang="es" aria-pressed="true" style="min-width: 40px; height: 36px; border: none; border-radius: 7px; background: #2A323C; color: #E6EDF3; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; cursor: pointer">ES</button><button data-lang="en" aria-pressed="false" style="min-width: 40px; height: 36px; border: none; border-radius: 7px; background: transparent; color: #9AA6B2; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; cursor: pointer">EN</button></div>
+      <span style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid #3A2A12; background: #1A140A; border-radius: 999px; color: #FFB547; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>17</span>
+    </div>
+  </header>
+
+  <main style="max-width: 1240px; margin: 0 auto; padding: 40px 32px 56px; display: flex; flex-direction: column; gap: 28px">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 20px">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// consigna: del más antiguo al más reciente</div>
+        <h1 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 34px; letter-spacing: -1px">Ordená por año de lanzamiento</h1>
+      </div>
+      <div style="display: flex; align-items: baseline; gap: 10px; font-family: 'JetBrains Mono', monospace">
+        <span style="font-size: 56px; font-weight: 800; color: #C39BFF; letter-spacing: -2px; line-height: 1">3/5</span>
+        <span style="font-size: 14px; color: #A9B4BF">posiciones<br>correctas</span>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px">
+      <section aria-labelledby="tu" style="flex: 1 1 320px; min-width: 0; border: 1px solid #222A33; background: #0F1318; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+        <h2 id="tu" style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; color: #8D99A6">// tu orden</h2>
+        <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+          <template data-for list="{{ mine }}" as="m" hint-placeholder-count="5">
+            <li style="{{ m.style }}">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6; width: 18px">{{ m.pos }}</span>
+              <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 16px; flex-grow: 1">{{ m.name }}</span>
+              <span style="{{ m.markStyle }}">{{ m.mark }}</span>
+            </li>
+          </template>
+        </ol>
+        <p style="margin: 4px 0 0; font-size: 13px; line-height: 1.5; color: #9AA6B2">Se arrastra y se suelta. En pantallas táctiles, cada fila también tiene flechas para subir y bajar.</p>
+      </section>
+
+      <section aria-labelledby="ok" style="flex: 2 1 520px; min-width: 0; border: 1px solid #222A33; background: #0F1318; border-radius: 14px; padding: 20px 24px; display: flex; flex-direction: column; gap: 6px">
+        <h2 id="ok" style="margin: 0 0 8px; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 500; color: #8D99A6">// orden correcto</h2>
+        <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column">
+          <template data-for list="{{ truth }}" as="t" hint-placeholder-count="5">
+            <li style="display: grid; grid-template-columns: 64px 20px 1fr; gap: 14px; align-items: stretch">
+              <span style="font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 18px; color: #C39BFF; padding-top: 12px">{{ t.year }}</span>
+              <span style="display: flex; flex-direction: column; align-items: center"><span style="width: 2px; height: 16px; background: {{ t.topLine }}"></span><span style="width: 12px; height: 12px; border-radius: 99px; background: #C39BFF; flex: none"></span><span style="width: 2px; flex-grow: 1; background: {{ t.bottomLine }}"></span></span>
+              <div style="padding: 10px 0 18px; display: flex; flex-direction: column; gap: 4px">
+                <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 16px">{{ t.name }}</span>
+                <span style="font-size: 14px; line-height: 1.5; color: #A9B4BF">{{ t.note }}</span>
+              </div>
+            </li>
+          </template>
+        </ol>
+      </section>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 22px; border-radius: 14px; border: 1px solid #222A33; background: #0F1318">
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #9AA6B2">racha de Timeline: <b style="color: #FFB547">4 días</b> · próximo desafío en <span style="color: #E6EDF3">08:12:45</span></span>
+      <a href="#/Main" style="display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 10px; border: 1px solid #3C2E60; color: #E6EDF3; text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 14px">Volver a los juegos</a>
+    </div>
+  </main>
+</div>
+</template>
+<style type="text/plain" id="css-Timeline">
+body{margin:0;background:#0A0C0F}
+a{color:#C39BFF}a:hover{color:#DCC4FF}
+</style>
+<script type="text/plain" id="js-Timeline">
+class Component extends DCLogic {
+  renderVals() {
+    var correct = ['Python', 'Java', 'Git', 'Node.js', 'Docker'];
+    var picked = ['Python', 'Git', 'Java', 'Node.js', 'Docker'];
+    var mine = picked.map(function (n, i) {
+      var ok = correct[i] === n;
+      return {
+        pos: i + 1,
+        name: n,
+        mark: ok ? '✓ bien' : '✗ va en ' + (correct.indexOf(n) + 1) + '°',
+        markStyle: 'font-family: \'JetBrains Mono\', monospace; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 99px; ' + (ok ? 'background: #12301F; color: #7CF0B0' : 'background: #2A1F0B; color: #FFB547'),
+        style: 'display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 14px; border-radius: 10px; ' + (ok ? 'background: #0E1A13; border: 1px solid #1E4A30' : 'background: #17130B; border: 1px dashed #5C4419')
+      };
+    });
+    var data = [
+      ['1991', 'Python', 'Guido van Rossum publica la versión 0.9.0 en febrero de 1991, en el grupo alt.sources de Usenet.'],
+      ['1995', 'Java', 'Sun Microsystems lo presenta públicamente en mayo de 1995 con la promesa de "write once, run anywhere".'],
+      ['2005', 'Git', 'Linus Torvalds lo crea en abril de 2005 para el kernel de Linux, después de perder el acceso gratuito a BitKeeper.'],
+      ['2009', 'Node.js', 'Ryan Dahl lo lanza en 2009: JavaScript en el servidor sobre el motor V8 de Chrome.'],
+      ['2013', 'Docker', 'Solomon Hykes lo muestra en PyCon en marzo de 2013 y lo libera como open source.']
+    ];
+    var truth = data.map(function (d, i) {
+      return { year: d[0], name: d[1], note: d[2], topLine: i === 0 ? 'transparent' : '#3C2E60', bottomLine: i === data.length - 1 ? 'transparent' : '#3C2E60' };
+    });
+    return { mine: mine, truth: truth };
+  }
+}
+</script>
+<template id="tpl-GrepGrid" data-title="Grep Grid — partida">
+
+<div style="min-height: 100vh; background: #0A0C0F; color: #E6EDF3; font-family: 'Inter', system-ui, sans-serif">
+
+  <header style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 32px; border-bottom: 1px solid #1E252E">
+    <div style="display: flex; align-items: center; gap: 18px; flex-wrap: wrap">
+      <a href="#/Main" style="display: flex; align-items: center; gap: 2px; text-decoration: none; color: #E6EDF3; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 18px"><span style="color: #3DDC84">&gt;</span>&#160;nerdose</a>
+      <span style="color: #2A323C" aria-hidden="true">/</span>
+      <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px; color: #F472B6">grep-grid</span>
+      <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">desafío del 30/10</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px">
+      <button aria-label="Cómo se juega" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid #2A323C; background: #11151A; color: #C3CCD5; cursor: pointer; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path></svg></button>
+      <a href="#/Stats" aria-label="Estadísticas" style="width: 44px; height: 44px; border-radius: 10px; border: 1px solid #2A323C; background: #11151A; color: #C3CCD5; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"></path><path d="M8 17V11"></path><path d="M13 17V7"></path><path d="M18 17v-4"></path></svg></a>
+      <button disabled title="Disponible al terminar la partida" aria-label="Compartir resultado (disponible al terminar)" style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: 10px; border: 1px solid #2A323C; background: #11151A; color: #6B7682; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; cursor: not-allowed"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><path d="M16 6l-4-4-4 4"></path><path d="M12 2v13"></path></svg>Compartir</button>
+      <div role="group" aria-label="Idioma" style="display: flex; padding: 3px; gap: 2px; border: 1px solid #2A323C; border-radius: 10px; background: #11151A"><button data-lang="es" aria-pressed="true" style="min-width: 40px; height: 36px; border: none; border-radius: 7px; background: #2A323C; color: #E6EDF3; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; cursor: pointer">ES</button><button data-lang="en" aria-pressed="false" style="min-width: 40px; height: 36px; border: none; border-radius: 7px; background: transparent; color: #9AA6B2; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; cursor: pointer">EN</button></div>
+      <span style="display: flex; align-items: center; gap: 8px; padding: 10px 14px; border: 1px solid #3A2A12; background: #1A140A; border-radius: 999px; color: #FFB547; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>17</span>
+    </div>
+  </header>
+
+  <main style="max-width: 1240px; margin: 0 auto; padding: 40px 32px 56px; display: flex; flex-direction: column; gap: 28px">
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 20px">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">$ grep -o '[A-Z]*' hoy.txt</div>
+        <h1 style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 34px; letter-spacing: -1px">Encontrá las 8 palabras escondidas</h1>
+        <p style="margin: 0; font-size: 16px; line-height: 1.5; color: #A9B4BF">Tocá la primera y la última letra de cada palabra. Están en horizontal, vertical o diagonal.</p>
+      </div>
+      <div style="display: flex; gap: 12px">
+        <div style="padding: 12px 18px; border-radius: 12px; border: 1px solid #222A33; background: #0F1318; display: flex; flex-direction: column; gap: 2px; font-family: 'JetBrains Mono', monospace"><span style="font-size: 26px; font-weight: 800; color: #F472B6">{{ foundCount }}/8</span><span style="font-size: 12px; color: #9AA6B2">encontradas</span></div>
+        <div style="padding: 12px 18px; border-radius: 12px; border: 1px solid #222A33; background: #0F1318; display: flex; flex-direction: column; gap: 2px; font-family: 'JetBrains Mono', monospace"><span style="font-size: 26px; font-weight: 800">02:14</span><span style="font-size: 12px; color: #9AA6B2">tiempo</span></div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: flex-start">
+      <section aria-label="Sopa de letras" style="flex: 999 1 620px; min-width: 0; display: flex; flex-direction: column; gap: 14px; align-items: center">
+        <div style="overflow-x: auto; max-width: 100%">
+          <div role="grid" aria-label="Grilla de 12 por 12" style="display: grid; grid-template-columns: repeat(12, 48px); gap: 4px; padding: 16px; border-radius: 16px; border: 1px solid #222A33; background: #0D1116">
+            <template data-for list="{{ cells }}" as="c" hint-placeholder-count="144">
+              <button role="gridcell" onClick="{{ c.pick }}" aria-label="{{ c.aria }}" style="{{ c.style }}">{{ c.ch }}</button>
+            </template>
+          </div>
+        </div>
+        <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6; min-height: 20px">{{ hint }}</div>
+      </section>
+
+      <aside style="flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+        <div style="border: 1px solid #222A33; background: #0F1318; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #8D99A6">// palabras de hoy</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #FFB547">racha 6</span>
+          </div>
+          <ul style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+            <template data-for list="{{ words }}" as="w" hint-placeholder-count="8">
+              <li style="{{ w.rowStyle }}">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+                  <span style="{{ w.nameStyle }}">{{ w.word }}</span>
+                  <span style="{{ w.tagStyle }}">{{ w.tag }}</span>
+                </div>
+                <template data-if value="{{ w.found }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size: 13px; line-height: 1.45; color: #C3CCD5">{{ w.def }}</span>
+                </template>
+              </li>
+            </template>
+          </ul>
+        </div>
+        <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #9AA6B2">Cada palabra que encontrás revela qué hace. Tu tiempo final es tu puntaje: compartís el reloj, no las palabras.</p>
+      </aside>
+    </div>
+  </main>
+</div>
+</template>
+<style type="text/plain" id="css-GrepGrid">
+body{margin:0;background:#0A0C0F}
+a{color:#F472B6}a:hover{color:#F9A8D4}
+</style>
+<script type="text/plain" id="js-GrepGrid">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { found: ['MUTEX', 'TOKEN', 'KERNEL'], start: null, miss: false };
+  }
+  renderVals() {
+    var self = this;
+    var rows = ['VFSMUTEXTFCS', 'IBDWECCAOAZZ', 'IHIEDRUFLJCF', 'FIRFPWGIVXJO', 'XKPPDLAEJMKN', 'GIDIYRORGUNA', 'TOKENCHYEAME', 'BYFOXQARWGNS', 'HVXROUHCRVEA', 'MWTKWEVNHBYX', 'JEGBJRCCJEJY', 'FNTIEYKERNEL'];
+    var pos = { KERNEL: [11, 6, 0, 1], DEPLOY: [1, 2, 1, 1], CACHE: [6, 5, 1, 1], MUTEX: [0, 3, 0, 1], REGEX: [5, 7, 1, 1], TOKEN: [6, 0, 0, 1], QUERY: [7, 5, 1, 0], MERGE: [0, 3, 1, 1] };
+    var defs = {
+      KERNEL: 'El núcleo del sistema operativo: gestiona memoria, procesos y hardware.',
+      DEPLOY: 'Publicar una versión del software en un entorno, como producción.',
+      CACHE: 'Almacenamiento rápido para no volver a calcular o pedir los mismos datos.',
+      MUTEX: 'Un candado que deja entrar a un solo hilo por vez a una sección crítica.',
+      REGEX: 'Un patrón para buscar y validar texto. Como el que usa grep.',
+      TOKEN: 'Una credencial temporal que prueba quién sos ante una API.',
+      QUERY: 'Una consulta a una base de datos.',
+      MERGE: 'Une el historial de dos ramas en una.'
+    };
+    var order = ['KERNEL', 'DEPLOY', 'CACHE', 'MUTEX', 'REGEX', 'TOKEN', 'QUERY', 'MERGE'];
+    var found = this.state.found, start = this.state.start;
+    var hit = {};
+    found.forEach(function (w) {
+      var p = pos[w];
+      for (var i = 0; i < w.length; i++) hit[(p[0] + p[2] * i) + ',' + (p[1] + p[3] * i)] = true;
+    });
+    function tryMatch(a, b) {
+      for (var k = 0; k < order.length; k++) {
+        var w = order[k], p = pos[w];
+        var er = p[0] + p[2] * (w.length - 1), ec = p[1] + p[3] * (w.length - 1);
+        if ((a[0] === p[0] && a[1] === p[1] && b[0] === er && b[1] === ec) || (b[0] === p[0] && b[1] === p[1] && a[0] === er && a[1] === ec)) return w;
+      }
+      return null;
+    }
+    var base = 'width: 48px; height: 48px; border-radius: 8px; font-family: \'JetBrains Mono\', monospace; font-weight: 700; font-size: 18px; cursor: pointer; ';
+    var cells = [];
+    rows.forEach(function (row, r) {
+      row.split('').forEach(function (ch, c) {
+        var key = r + ',' + c;
+        var isStart = start && start[0] === r && start[1] === c;
+        var style = base + (isStart ? 'background: #2A0F22; color: #F9A8D4; border: 2px solid #F472B6'
+          : hit[key] ? 'background: #F472B6; color: #24081A; border: 2px solid #F472B6'
+          : 'background: #141920; color: #C3CCD5; border: 2px solid #141920');
+        cells.push({
+          ch: ch, style: style,
+          aria: ch + ', fila ' + (r + 1) + ', columna ' + (c + 1),
+          pick: function () {
+            if (!self.state.start) { self.setState({ start: [r, c], miss: false }); return; }
+            var w = tryMatch(self.state.start, [r, c]);
+            if (w && self.state.found.indexOf(w) < 0) self.setState({ found: self.state.found.concat([w]), start: null, miss: false });
+            else self.setState({ start: null, miss: !(self.state.start[0] === r && self.state.start[1] === c) });
+          }
+        });
+      });
+    });
+    var words = order.map(function (w) {
+      var f = found.indexOf(w) >= 0;
+      return {
+        word: w, found: f, def: defs[w], tag: f ? '✓' : w.length + ' letras',
+        rowStyle: 'display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: 10px; ' + (f ? 'background: #1F0D19; border: 1px solid #5B2147' : 'background: #141920; border: 1px solid #141920'),
+        nameStyle: 'font-family: \'JetBrains Mono\', monospace; font-weight: 700; font-size: 15px; ' + (f ? 'color: #F9A8D4; text-decoration: line-through' : 'color: #E6EDF3'),
+        tagStyle: 'font-family: \'JetBrains Mono\', monospace; font-size: 12px; ' + (f ? 'color: #F472B6; font-weight: 800' : 'color: #8D99A6')
+      };
+    });
+    var hint = start ? '> ahora tocá la última letra' : this.state.miss ? '> no es una palabra de la lista, probá de nuevo' : '> tocá la primera letra de una palabra';
+    return { cells: cells, words: words, foundCount: found.length, hint: hint };
+  }
+}
+</script>
+<script>window.I18N_EN = {
+  exact: {
+    "./juegos": "./games",
+    "Una sopa de letras con 8 términos técnicos al azar. Encontralos contra reloj.": "A word search with 8 random tech terms. Find them against the clock.",
+    "// palabras de hoy": "// today's words",
+    "completas 8/8": "full 8/8",
+    "El núcleo del sistema operativo: gestiona memoria, procesos y hardware.": "The core of the operating system: it manages memory, processes and hardware.",
+    "Publicar una versión del software en un entorno, como producción.": "Releasing a version of the software to an environment, like production.",
+    "Almacenamiento rápido para no volver a calcular o pedir los mismos datos.": "Fast storage so you don't recompute or refetch the same data.",
+    "Un candado que deja entrar a un solo hilo por vez a una sección crítica.": "A lock that lets only one thread at a time into a critical section.",
+    "Un patrón para buscar y validar texto. Como el que usa grep.": "A pattern to search and validate text. Like the ones grep uses.",
+    "Una credencial temporal que prueba quién sos ante una API.": "A temporary credential that proves who you are to an API.",
+    "Una consulta a una base de datos.": "A request to a database.",
+    "17 días": "17 days",
+    "// viernes 30 oct": "// friday oct 30",
+    "Una dosis diaria de": "A daily dose of",
+    "nerdeo": "nerdiness",
+    "Cuatro minijuegos para developers y curiosos de la tecnología. Un desafío nuevo por día, el mismo para todos. Dos minutos, algo aprendido, una racha que cuidar.": "Four mini-games for developers and tech-curious minds. A new challenge every day, the same for everyone. Two minutes, something learned, a streak to keep alive.",
+    "Cinco minijuegos para developers y curiosos de la tecnología. Un desafío nuevo por día, el mismo para todos. Dos minutos, algo aprendido, una racha que cuidar.": "Five mini-games for developers and tech-curious minds. A new challenge every day, the same for everyone. Two minutes, something learned, a streak to keep alive.",
+    "// 5 juegos · 2 completados": "// 5 games · 2 completed",
+    "Progreso del día: 2 de 5": "Today's progress: 2 of 5",
+    "Una sopa de letras con 8 términos del tema del día. Hoy: git.": "A word search with 8 terms from the theme of the day. Today: git.",
+    "8 palabras": "8 words",
+    "próximo-juego": "next-game",
+    "Más desafíos en camino. Cada juego nuevo suma su propia racha.": "More challenges on the way. Every new game brings its own streak.",
+    "La racha global sube con cualquier desafío completado. No hace falta jugar todos.": "Your global streak grows with any completed challenge. No need to play them all.",
+    "tiempo promedio": "avg. time",
+    "mejor tiempo": "best time",
+    "tema más rápido": "fastest theme",
+    "desafío del 30/10 · tema: git": "challenge for 10/30 · theme: git",
+    "Encontrá las 8 palabras escondidas": "Find the 8 hidden words",
+    "Tocá la primera y la última letra de cada palabra. Están en horizontal, vertical o diagonal.": "Tap the first and last letter of each word. They run horizontally, vertically or diagonally.",
+    "encontradas": "found",
+    "tiempo": "time",
+    "// palabras · tema git": "// words · git theme",
+    "> tocá la primera letra de una palabra": "> tap the first letter of a word",
+    "> ahora tocá la última letra": "> now tap the last letter",
+    "> no es una palabra de la lista, probá de nuevo": "> that's not a word on the list, try again",
+    "Guarda una foto de tus cambios en el historial del repo.": "Saves a snapshot of your changes in the repo history.",
+    "Una línea de desarrollo independiente dentro del repo.": "An independent line of development inside the repo.",
+    "Une el historial de dos ramas en una.": "Joins the history of two branches into one.",
+    "Reaplica tus commits encima de otra base.": "Replays your commits on top of another base.",
+    "Guarda cambios sin commitear para recuperarlos después.": "Shelves uncommitted changes so you can bring them back later.",
+    "Copia completa de un repositorio remoto.": "A full copy of a remote repository.",
+    "Descarga cambios del remoto sin integrarlos.": "Downloads changes from the remote without merging them.",
+    "Sube tus commits al repositorio remoto.": "Uploads your commits to the remote repository.",
+    "Cada palabra que encontrás revela qué hace. Tu tiempo final es tu puntaje: compartís el reloj, no las palabras.": "Every word you find reveals what it does. Your final time is your score: you share the clock, not the words.",
+    "Sopa de letras": "Word search",
+    "Grilla de 12 por 12": "12 by 12 grid",
+    "Grep Grid — partida": "Grep Grid — game",
+    "Seguir jugando": "Keep playing",
+    "¿Cómo funciona?": "How does it work?",
+    "~/hoy — progreso.log": "~/today — progress.log",
+    "resuelto": "solved",
+    "pendiente": "pending",
+    "racha global": "global streak",
+    "17 días · récord 31": "17 days · best 31",
+    "próximo desafío en": "next challenge in",
+    "// 4 juegos · 2 completados": "// 4 games · 2 completed",
+    "Los desafíos de hoy": "Today's challenges",
+    "✓ resuelto 4/6": "✓ solved 4/6",
+    "Adiviná el término técnico del día. Seis intentos, feedback por letra.": "Guess the tech term of the day. Six tries, feedback on every letter.",
+    "6 intentos": "6 tries",
+    "Ver resultado": "See result",
+    "1 intento": "1 try",
+    "¿Cuál es la complejidad de este algoritmo? En Java, Go o JavaScript.": "What's the complexity of this algorithm? In Java, Go or JavaScript.",
+    "1 respuesta": "1 answer",
+    "Jugar →": "Play →",
+    "Ordená cinco hitos de la historia tech. Arrastrá, soltá y confirmá.": "Sort five milestones of tech history. Drag, drop and confirm.",
+    "5 elementos": "5 items",
+    "// racha global": "// global streak",
+    "Tu progreso": "Your progress",
+    "ver estadísticas →": "see stats →",
+    "días": "days",
+    "seguidos": "in a row",
+    "últimas 4 semanas · juegos completados por día": "last 4 weeks · games completed per day",
+    "récord de racha": "best streak",
+    "desafíos completados": "challenges completed",
+    "jugados hoy": "played today",
+    "// rachas por juego": "// streaks per game",
+    "La racha global sube con cualquier desafío completado. No hace falta jugar los cuatro.": "Your global streak grows with any completed challenge. No need to play all four.",
+    "Cómo funciona": "How it works",
+    "01 · todos los días": "01 · every day",
+    "Cada juego publica un desafío nuevo a las 00:00 UTC. Es el mismo para todos.": "Each game drops a new challenge at 00:00 UTC. It's the same for everyone.",
+    "02 · reglas propias": "02 · its own rules",
+    "Cada juego tiene su propia mecánica, sus intentos y su puntaje.": "Each game has its own mechanics, tries and scoring.",
+    "03 · aprendés algo": "03 · you learn something",
+    "Al terminar, cada desafío explica la respuesta y su contexto.": "When you finish, every challenge explains the answer and its context.",
+    "04 · compartís sin spoilers": "04 · share without spoilers",
+    "Copiás tu resultado en cuadraditos y lo pegás donde quieras.": "Copy your result as little squares and paste it anywhere.",
+    "próximos-juegos": "upcoming-games",
+    "// más desafíos en camino": "// more challenges on the way",
+    "próximamente": "coming soon",
+    "> nerdose — una plataforma, múltiples desafíos.": "> nerdose — one platform, many challenges.",
+    "Tus estadísticas": "Your stats",
+    "// racha global actual": "// current global streak",
+    "Cualquier desafío completado mantiene la racha.": "Any completed challenge keeps the streak alive.",
+    "récord de racha global": "best global streak",
+    "días con actividad": "active days",
+    "juegos por día activo": "games per active day",
+    "últimas 12 semanas · juegos completados por día": "last 12 weeks · games completed per day",
+    "Por juego": "By game",
+    "jugadas": "played",
+    "victorias": "wins",
+    "intentos promedio": "avg. tries",
+    "en 2 intentos": "in 2 tries",
+    "ver historial completo →": "see full history →",
+    "tu punto débil": "your weak spot",
+    "aciertos": "correct",
+    "lenguaje favorito": "favorite language",
+    "recursión": "recursion",
+    "promedio": "average",
+    "empresas": "companies",
+    "mejor categoría": "best category",
+    "Historial reciente": "Recent history",
+    "fecha": "date",
+    "vie 30/10": "fri 10/30",
+    "jue 29/10": "thu 10/29",
+    "mié 28/10": "wed 10/28",
+    "mar 27/10": "tue 10/27",
+    "lun 26/10": "mon 10/26",
+    "dom 25/10": "sun 10/25",
+    "2,8": "2.8",
+    "4,0": "4.0",
+    "3,6/5": "3.6/5",
+    "desafío del 30/10": "challenge for 10/30",
+    "Compartir": "Share",
+    "// término técnico · 6 letras · intento 4 de 6": "// tech term · 6 letters · try 4 of 6",
+    "Adiviná el término del día": "Guess the term of the day",
+    "// cómo leer las pistas": "// how to read the hints",
+    "Letra correcta en el lugar correcto.": "Right letter in the right spot.",
+    "Está en la palabra, pero en otra posición.": "It's in the word, but in another spot.",
+    "No está en la palabra.": "Not in the word.",
+    "// pista de categoría": "// category hint",
+    "bases de datos": "databases",
+    "seguridad": "security",
+    "La categoría y la definición se revelan al terminar.": "The category and definition are revealed when you finish.",
+    "// tus intentos": "// your tries",
+    "desafío del 30/10 · loops anidados": "challenge for 10/30 · nested loops",
+    "Correcto: O(n log n)": "Correct: O(n log n)",
+    "Racha de Big O: 9 días · racha global: 17 días": "Big O streak: 9 days · global streak: 17 days",
+    "Siguiente juego →": "Next game →",
+    "¿Cuál es la complejidad temporal de": "What's the time complexity of",
+    "n veces": "n times",
+    "log n veces": "log n times",
+    "// por qué": "// why",
+    "Paso a paso": "Step by step",
+    "El loop externo recorre": "The outer loop runs",
+    "de 0 a n−1: se ejecuta": "from 0 to n−1: it executes",
+    "El loop interno no suma de a uno:": "The inner loop doesn't step by one:",
+    "se duplica (1, 2, 4, 8…) hasta llegar a n. Eso son unas": "doubles (1, 2, 4, 8…) until it reaches n. That's about",
+    "vueltas.": "iterations.",
+    "Los loops están anidados y el interno no depende de": "The loops are nested and the inner one doesn't depend on",
+    ", así que se multiplican:": ", so they multiply:",
+    "La base del logaritmo es una constante y se descarta:": "The log base is a constant and gets dropped:",
+    "// en números, con n = 1024": "// in numbers, with n = 1024",
+    "j toma 1, 2, 4 … 512 →": "j takes 1, 2, 4 … 512 →",
+    "vueltas": "iterations",
+    "1024 × 10 =": "1024 × 10 =",
+    "con O(n²) serían": "with O(n²) it'd be",
+    "10.240": "10,240",
+    "1.048.576": "1,048,576",
+    "La trampa más común es ver dos": "The most common trap is seeing two",
+    "y responder O(n²). Mirá siempre cómo avanza cada variable.": "loops and answering O(n²). Always check how each variable advances.",
+    "desafío del 30/10 · lenguajes y herramientas": "challenge for 10/30 · languages and tools",
+    "// consigna: del más antiguo al más reciente": "// task: from oldest to newest",
+    "Ordená por año de lanzamiento": "Sort by release year",
+    "posiciones": "positions",
+    "correctas": "correct",
+    "// tu orden": "// your order",
+    "✓ bien": "✓ right",
+    "Se arrastra y se suelta. En pantallas táctiles, cada fila también tiene flechas para subir y bajar.": "Drag and drop. On touch screens, each row also has up and down arrows.",
+    "// orden correcto": "// correct order",
+    "Guido van Rossum publica la versión 0.9.0 en febrero de 1991, en el grupo alt.sources de Usenet.": "Guido van Rossum publishes version 0.9.0 in February 1991, on the alt.sources Usenet group.",
+    "Sun Microsystems lo presenta públicamente en mayo de 1995 con la promesa de \"write once, run anywhere\".": "Sun Microsystems unveils it publicly in May 1995 with the promise of \"write once, run anywhere\".",
+    "Linus Torvalds lo crea en abril de 2005 para el kernel de Linux, después de perder el acceso gratuito a BitKeeper.": "Linus Torvalds creates it in April 2005 for the Linux kernel, after losing free access to BitKeeper.",
+    "Ryan Dahl lo lanza en 2009: JavaScript en el servidor sobre el motor V8 de Chrome.": "Ryan Dahl launches it in 2009: server-side JavaScript on Chrome's V8 engine.",
+    "Solomon Hykes lo muestra en PyCon en marzo de 2013 y lo libera como open source.": "Solomon Hykes demos it at PyCon in March 2013 and releases it as open source.",
+    "racha de Timeline:": "Timeline streak:",
+    "4 días": "4 days",
+    "· próximo desafío en": "· next challenge in",
+    "Volver a los juegos": "Back to games",
+    "Principal": "Main",
+    "Perfil": "Profile",
+    "Progreso del día: 2 de 4": "Today's progress: 2 of 4",
+    "Actividad de las últimas 4 semanas: 17 días seguidos con al menos un desafío completado": "Activity over the last 4 weeks: 17 days in a row with at least one completed challenge",
+    "Racha global": "Global streak",
+    "Mapa de actividad de las últimas 12 semanas": "Activity map for the last 12 weeks",
+    "Cómo se juega": "How to play",
+    "Estadísticas": "Stats",
+    "Compartir resultado (disponible al terminar)": "Share result (available when finished)",
+    "Disponible al terminar la partida": "Available when the game is over",
+    "Compartir resultado": "Share result",
+    "Tablero": "Board",
+    "Intentos": "Tries",
+    "Teclado": "Keyboard",
+    "Enviar": "Submit",
+    "Borrar": "Delete",
+    "Código": "Code",
+    "Código y respuestas": "Code and answers",
+    "Lenguaje": "Language",
+    "Opciones": "Options",
+    "Idioma": "Language",
+    "nerdose — Home": "nerdose — Home",
+    "nerdose — Estadísticas": "nerdose — Stats",
+    "Devdle — partida": "Devdle — game",
+    "Big O Challenge — resultado": "Big O Challenge — result",
+    "Tech Timeline — resultado": "Tech Timeline — result",
+    "Bug Hunt — partida": "Bug Hunt — game",
+    "encontrado": "found",
+    "✓ encontrado": "✓ found",
+    "Hay un bug escondido. ¿En qué línea está? En Java, Go o JavaScript.": "There's a hidden bug. Which line is it on? In Java, Go or JavaScript.",
+    "off-by-one": "off-by-one",
+    "// un solo intento · las líneas con solo llaves no cuentan": "// one try only · brace-only lines don't count",
+    "¿En qué línea está el bug?": "Which line has the bug?",
+    "// qué debería hacer": "// what it should do",
+    "Devuelve el índice del mayor valor del array. Si el máximo se repite, devuelve": "Returns the index of the largest value in the array. If the max repeats, it returns",
+    "el primero": "the first one",
+    "Elegí una línea": "Pick a line",
+    "El bug es el mismo en los tres lenguajes: cambiar de pestaña no cambia la respuesta.": "The bug is the same in all three languages: switching tabs doesn't change the answer.",
+    "// tests": "// tests",
+    "input → esperado": "input → expected",
+    "1 test oculto falla": "1 hidden test fails",
+    "El test que falla se revela al confirmar. Los que pasan te ayudan a descartar líneas.": "The failing test is revealed when you confirm. The passing ones help you rule out lines.",
+    "// cómo se juega": "// how to play",
+    "Leé qué debería hacer la función.": "Read what the function should do.",
+    "Tocá la línea donde creés que está el bug.": "Tap the line where you think the bug is.",
+    "Confirmá. Tenés": "Confirm. You get",
+    "un solo intento": "one try only",
+    "// tu historial": "// your history",
+    "Bug encontrado en la línea 4": "Bug found on line 4",
+    "Racha de Bug Hunt: 6 días · racha global: 17 días": "Bug Hunt streak: 6 days · global streak: 17 days",
+    "Desafío completado: tus rachas siguen en pie (Bug Hunt 6 · global 17)": "Challenge completed: your streaks are still alive (Bug Hunt 6 · global 17)",
+    "// el test que falla": "// the failing test",
+    "esperado": "expected",
+    "obtenido": "got",
+    "· obtenido": "· got",
+    "// el fix · línea 4": "// the fix · line 4",
+    "Por qué falla": "Why it fails",
+    "Con": "With",
+    ", cada valor": ", every value",
+    "igual": "equal",
+    "al máximo actual también mueve": "to the current max also moves",
+    "hacia la derecha.": "to the right.",
+    "En": "In",
+    ", al llegar a": ", when it reaches",
+    "se cumple": "the check",
+    "y devuelve el": "passes and it returns the",
+    "último": "last",
+    "máximo, no el primero.": "max, not the first one.",
+    "Los tests visibles no tenían empates, por eso pasaban. Con": "The visible tests had no ties, which is why they passed. With",
+    "solo se actualiza ante un valor": "it only updates on a",
+    "estrictamente mayor": "strictly greater",
+    "tipo: comparación": "type: comparison",
+    "mutación: > → >=": "mutation: > → >=",
+    "// lo que compartís": "// what you share",
+    "↺ reiniciar demo": "↺ reset demo",
+    "Líneas de código": "Lines of code"
+  },
+  rules: [
+    [/^▲ racha (\d+)$/, "▲ streak $1"],
+    [/^racha (\d+) · máx (\d+)$/, "streak $1 · max $2"],
+    [/^racha (\d+)$/, "streak $1"],
+    [/^(\d+) días$/, "$1 days"],
+    [/^Confirmar línea (\d+) →$/, "Confirm line $1 →"],
+    [/^El bug estaba en la línea (\d+), no en la (\d+)$/, "The bug was on line $1, not line $2"],
+    [/^Línea (\d+)$/, "Line $1"],
+    [/^Línea (\d+) \(no elegible\)$/, "Line $1 (not selectable)"],
+    [/^◀ tu elección$/, "◀ your pick"],
+    [/^✗ tu elección$/, "✗ your pick"],
+    [/^✓ acá estaba el bug$/, "✓ the bug was here"],
+    [/^🐛 acá estaba el bug$/, "🐛 the bug was here"],
+    [/^Racha global: (\d+) días$/, "Global streak: $1 days"],
+    [/^perfectos (\d+\/\d+)$/, "perfect $1"],
+    [/^línea (\d+)$/, "line $1"],
+    [/^(\d+) letras$/, "$1 letters"],
+    [/^(.), fila (\d+), columna (\d+)$/, "$1, row $2, column $3"],
+    [/^✗ va en (\d)°$/, "✗ goes #$1"],
+    [/^(.), no está$/, "$1, not in word"],
+    [/^(.), en otra posición$/, "$1, wrong spot"],
+    [/^(.), correcta$/, "$1, correct"],
+    [/^(.), descartada$/, "$1, ruled out"],
+    [/^(.), escrita$/, "$1, typed"],
+    [/^casilla, vacía$/, "tile, empty"],
+  ]
+};
+</script>
+<script>
+(function () {
+  function DCLogic(props) { this.props = props || {}; this.state = {}; }
+  DCLogic.prototype.setState = function (p) { Object.assign(this.state, p); render(); };
+  DCLogic.prototype.forceUpdate = function () { render(); };
+  class Base { constructor(props) { this.props = props || {}; this.state = {}; }
+    setState(p) { Object.assign(this.state, p); render(); } forceUpdate() { render(); } }
+  var instances = {}, current = null, pageStyle = document.getElementById('page-style'), root = document.getElementById('app');
+  function getInst(name) {
+    if (!instances[name]) {
+      var code = document.getElementById('js-' + name).textContent;
+      var C = new Function('DCLogic', code + '\n;return Component;')(Base);
+      instances[name] = new C({});
+    }
+    return instances[name];
+  }
+  function lookup(expr, scope) {
+    expr = expr.trim();
+    if (expr === 'true') return true; if (expr === 'false') return false;
+    if (/^-?\d+(\.\d+)?$/.test(expr)) return Number(expr);
+    return expr.split('.').reduce(function (o, k) { return o == null ? undefined : o[k]; }, scope);
+  }
+  var whole = /^\s*\{\{([^}]+)\}\}\s*$/;
+  function interp(s, scope) {
+    return s.replace(/\{\{([^}]+)\}\}/g, function (_, e) { var v = lookup(e, scope); return v == null ? '' : String(v); });
+  }
+  function walk(node, scope, parent) {
+    if (node.nodeType === 3) { parent.appendChild(document.createTextNode(interp(node.nodeValue, scope))); return; }
+    if (node.nodeType !== 1) return;
+    if (node.tagName === 'TEMPLATE' && node.hasAttribute('data-for')) {
+      var list = lookup(node.getAttribute('list').match(whole)[1], scope) || [];
+      var as = node.getAttribute('as');
+      list.forEach(function (item, i) {
+        var s = Object.create(scope); s[as] = item; s.$index = i;
+        node.content.childNodes.forEach(function (c) { walk(c, s, parent); });
+      });
+      return;
+    }
+    if (node.tagName === 'TEMPLATE' && node.hasAttribute('data-if')) {
+      if (lookup(node.getAttribute('value').match(whole)[1], scope)) node.content.childNodes.forEach(function (c) { walk(c, scope, parent); });
+      return;
+    }
+    var el = node.namespaceURI === 'http://www.w3.org/2000/svg' ? document.createElementNS(node.namespaceURI, node.tagName) : document.createElement(node.tagName);
+    for (var i = 0; i < node.attributes.length; i++) {
+      var a = node.attributes[i], m = a.value.match(whole);
+      if (/^on[A-Z]/.test(a.name) || /^on[a-z]/.test(a.name) && m) {
+        var fn = m && lookup(m[1], scope);
+        if (typeof fn === 'function') el.addEventListener(a.name.slice(2).toLowerCase(), fn);
+        continue;
+      }
+      if (m && a.name !== 'style' && a.name.indexOf('hint') !== 0) {
+        var v = lookup(m[1], scope);
+        if (v === false || v == null) continue;
+        el.setAttribute(a.name, v === true ? '' : String(v));
+        continue;
+      }
+      if (a.name.indexOf('hint-') === 0) continue;
+      el.setAttribute(a.name, interp(a.value, scope));
+    }
+    var kids = node.tagName === 'TEMPLATE' ? node.content.childNodes : node.childNodes;
+    kids.forEach(function (c) { walk(c, scope, el); });
+    parent.appendChild(el);
+  }
+  function render() {
+    var tpl = document.getElementById('tpl-' + current);
+    var inst = getInst(current);
+    var vals = inst.renderVals ? inst.renderVals() : {};
+    var frag = document.createDocumentFragment();
+    tpl.content.childNodes.forEach(function (c) { walk(c, vals, frag); });
+    root.replaceChildren(frag);
+    applyLang();
+  }
+  var lang = 'es';
+  try { lang = localStorage.getItem('nerdose-lang') || (navigator.language || '').slice(0, 2) === 'en' && 'en' || 'es'; } catch (e) {}
+  function tr(s) {
+    var D = window.I18N_EN; if (D.exact.hasOwnProperty(s)) return D.exact[s];
+    for (var i = 0; i < D.rules.length; i++) if (D.rules[i][0].test(s)) return s.replace(D.rules[i][0], D.rules[i][1]);
+    return null;
+  }
+  function trKeep(raw) {
+    var t = raw.trim(); if (!t) return null; var r = tr(t); if (r == null) return null;
+    return raw.replace(t, function () { return r; });
+  }
+  function applyLang() {
+    document.documentElement.lang = lang;
+    root.querySelectorAll('[data-lang]').forEach(function (b) {
+      var on = b.getAttribute('data-lang') === lang;
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.style.background = on ? '#2A323C' : 'transparent';
+      b.style.color = on ? '#E6EDF3' : '#9AA6B2';
+    });
+    var t = document.getElementById('tpl-' + current).getAttribute('data-title');
+    document.title = lang === 'en' ? (tr(t) || t) : t;
+    if (lang !== 'en') return;
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT), n, list = [];
+    while (n = w.nextNode()) list.push(n);
+    list.forEach(function (n) { if (n.parentElement.closest('pre')) return; var r = trKeep(n.nodeValue); if (r != null) n.nodeValue = r; });
+    root.querySelectorAll('[aria-label],[title]').forEach(function (e) {
+      ['aria-label', 'title'].forEach(function (a) { var v = e.getAttribute(a); if (v) { var r = tr(v); if (r != null) e.setAttribute(a, r); } });
+    });
+  }
+  root.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-lang]'); if (!b) return;
+    lang = b.getAttribute('data-lang');
+    try { localStorage.setItem('nerdose-lang', lang); } catch (err) {}
+    render();
+  });
+  function route() {
+    var h = location.hash, m = h.match(/^#\/([A-Za-z]+)(?:\/([\w-]+))?/);
+    if (!m) {
+      if (!current) { current = 'Main'; show(); }
+      var t = h && document.getElementById(h.slice(1)); if (t) t.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+    var name = document.getElementById('tpl-' + m[1]) ? m[1] : 'Main';
+    var changed = name !== current; current = name;
+    if (changed) show();
+    if (m[2]) { var el = document.getElementById(m[2]); if (el) el.scrollIntoView({ behavior: 'smooth' }); }
+    else if (changed) window.scrollTo(0, 0);
+  }
+  function show() {
+    pageStyle.textContent = document.getElementById('css-' + current).textContent;
+    render();
+  }
+  window.addEventListener('hashchange', route);
+  route();
+})();</script>
+</body>
+</html>
