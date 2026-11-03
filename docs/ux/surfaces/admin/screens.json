@@ -1,0 +1,2732 @@
+{
+ "_generated": "derivado de screens/*.md por /product-ux-wireframes — no editar a mano",
+ "surface": "admin",
+ "platform": "web",
+ "viewports": [
+  "desktop"
+ ],
+ "accent_color": "#3DDC84",
+ "grid_baseline": 8,
+ "screens": [
+  {
+   "name": "login",
+   "displayName": "P-01 · Login",
+   "audiences": [
+    "responsable"
+   ],
+   "blocks": [
+    {
+     "name": "header",
+     "type": "header",
+     "category": "layout",
+     "content": "> nerdose admin",
+     "icon": "settings"
+    },
+    {
+     "name": "titulo",
+     "type": "heading",
+     "category": "content",
+     "level": "h1",
+     "content": "Ingresar"
+    },
+    {
+     "name": "subtitulo",
+     "type": "paragraph",
+     "category": "content",
+     "level": "caption",
+     "content": "Panel del responsable de nerdose."
+    },
+    {
+     "name": "alerta-sesion",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "warning",
+     "content": "La sesión venció, ingresá de nuevo.",
+     "visible_only_in_states": [
+      "sesión vencida"
+     ]
+    },
+    {
+     "name": "alerta-bloqueo",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "warning",
+     "content": "Demasiados intentos. El acceso está bloqueado temporalmente; probá de nuevo en unos minutos.",
+     "visible_only_in_states": [
+      "bloqueado"
+     ]
+    },
+    {
+     "name": "alerta-sistema",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "error",
+     "content": "No pudimos conectarnos con el servidor. Probá de nuevo.",
+     "visible_only_in_states": [
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "campo-password",
+     "type": "text-input",
+     "category": "input",
+     "content": "Contraseña",
+     "value": "",
+     "state": "default",
+     "icon": "lock",
+     "state_overrides": {
+      "error de validación": {
+       "state": "error",
+       "error_msg": "Contraseña incorrecta.",
+       "value": "••••••••"
+      },
+      "bloqueado": {
+       "state": "disabled"
+      },
+      "loading": {
+       "state": "disabled",
+       "value": "••••••••"
+      }
+     },
+     "annotation": "type=password; Enter envía"
+    },
+    {
+     "name": "btn-ingresar",
+     "type": "button",
+     "category": "input",
+     "variant": "primary",
+     "content": "Ingresar",
+     "icon": "arrow-right",
+     "state_overrides": {
+      "loading": {
+       "variant": "disabled",
+       "content": "Ingresando…"
+      },
+      "bloqueado": {
+       "variant": "disabled"
+      }
+     }
+    }
+   ],
+   "layouts": {
+    "desktop": [
+     {
+      "row": "centrado",
+      "cols": [
+       {
+        "w": 4,
+        "stack": []
+       },
+       {
+        "w": 4,
+        "stack": [
+         "titulo",
+         "subtitulo",
+         "alerta-sesion",
+         "alerta-bloqueo",
+         "alerta-sistema",
+         "campo-password",
+         "btn-ingresar"
+        ]
+       },
+       {
+        "w": 4,
+        "stack": []
+       }
+      ]
+     }
+    ]
+   },
+   "states": [
+    {
+     "name": "default",
+     "applies": true
+    },
+    {
+     "name": "sesión vencida",
+     "applies": true
+    },
+    {
+     "name": "error de validación",
+     "applies": true
+    },
+    {
+     "name": "bloqueado",
+     "applies": true
+    },
+    {
+     "name": "loading",
+     "applies": true
+    },
+    {
+     "name": "error de sistema",
+     "applies": true
+    }
+   ]
+  },
+  {
+   "name": "reportes",
+   "displayName": "P-02 · Reportes",
+   "audiences": [
+    "responsable"
+   ],
+   "blocks": [
+    {
+     "name": "header",
+     "type": "header",
+     "category": "layout",
+     "content": "> nerdose admin",
+     "icon": "settings"
+    },
+    {
+     "name": "nav-reportes",
+     "type": "link",
+     "category": "navigation",
+     "content": "Reportes (3)",
+     "annotation": "sección actual"
+    },
+    {
+     "name": "nav-proximos",
+     "type": "link",
+     "category": "navigation",
+     "content": "Próximos"
+    },
+    {
+     "name": "nav-stock",
+     "type": "link",
+     "category": "navigation",
+     "content": "Stock"
+    },
+    {
+     "name": "nav-metricas",
+     "type": "link",
+     "category": "navigation",
+     "content": "Métricas"
+    },
+    {
+     "name": "nav-cerrar-sesion",
+     "type": "link",
+     "category": "navigation",
+     "content": "Cerrar sesión",
+     "icon": "lock"
+    },
+    {
+     "name": "titulo",
+     "type": "heading",
+     "category": "content",
+     "level": "h1",
+     "content": "Reportes"
+    },
+    {
+     "name": "subtitulo",
+     "type": "paragraph",
+     "category": "content",
+     "level": "caption",
+     "content": "Agrupados por desafío · el más reportado primero"
+    },
+    {
+     "name": "tabs-estado",
+     "type": "tabs",
+     "category": "navigation",
+     "labels": [
+      "Abiertos",
+      "Resueltos",
+      "Descartados"
+     ],
+     "active": 0,
+     "state_overrides": {
+      "resueltos": {
+       "active": 1
+      }
+     },
+     "annotation": "default: Abiertos (`open`)"
+    },
+    {
+     "name": "alerta-sistema",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "error",
+     "content": "No pudimos cargar los reportes. Probá de nuevo.",
+     "visible_only_in_states": [
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "btn-reintentar",
+     "type": "button",
+     "category": "input",
+     "variant": "secondary",
+     "content": "Reintentar",
+     "icon": "refresh",
+     "visible_only_in_states": [
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "estado-vacio",
+     "type": "empty-state",
+     "category": "feedback",
+     "content": "No hay reportes abiertos. Todo al día.",
+     "visible_only_in_states": [
+      "empty"
+     ]
+    },
+    {
+     "name": "cargando",
+     "type": "loader",
+     "category": "feedback",
+     "content": "Cargando reportes…",
+     "visible_only_in_states": [
+      "loading"
+     ]
+    },
+    {
+     "name": "tabla-grupos",
+     "type": "table",
+     "category": "content",
+     "columns": [
+      {
+       "label": "Desafío",
+       "width": 3
+      },
+      {
+       "label": "Reportes",
+       "width": 1
+      },
+      {
+       "label": "Motivos",
+       "width": 4
+      },
+      {
+       "label": "Último",
+       "width": 2
+      },
+      {
+       "label": "Desafío (estado)",
+       "width": 2
+      }
+     ],
+     "rows": [
+      [
+       "Devdle #128",
+       "7",
+       "wrong_answer ×5 · ambiguous ×2",
+       "hace 12 min",
+       "badge:Publicado"
+      ],
+      [
+       "Bug Hunt #128",
+       "4",
+       "wrong_answer ×3 · display_bug ×1",
+       "hace 1 h",
+       "badge:Publicado"
+      ],
+      [
+       "Big O #127",
+       "2",
+       "wrong_explanation ×2",
+       "hace 5 h",
+       "badge:Publicado"
+      ],
+      [
+       "Tech Timeline #127",
+       "1",
+       "translation ×1",
+       "ayer",
+       "badge:Publicado"
+      ],
+      [
+       "Grep Grid #126",
+       "1",
+       "other ×1",
+       "hace 2 días",
+       "badge:Anulado"
+      ]
+     ],
+     "hidden_in_states": [
+      "empty",
+      "loading",
+      "error de sistema"
+     ],
+     "state_overrides": {
+      "resueltos": {
+       "rows": [
+        [
+         "Devdle #125",
+         "3",
+         "wrong_answer ×3",
+         "hace 3 días",
+         "badge:Resuelto"
+        ],
+        [
+         "Big O #124",
+         "1",
+         "ambiguous ×1",
+         "hace 4 días",
+         "badge:Descartado"
+        ],
+        [
+         "Bug Hunt #123",
+         "5",
+         "wrong_answer ×5",
+         "hace 6 días",
+         "badge:Resuelto"
+        ]
+       ]
+      }
+     },
+     "annotation": "clic en la fila → detalle; acción «Anular» por fila solo si el desafío está `published`"
+    },
+    {
+     "name": "paginacion",
+     "type": "pagination",
+     "category": "navigation",
+     "pages": 3,
+     "page_size": 20,
+     "hidden_in_states": [
+      "empty",
+      "loading",
+      "error de sistema"
+     ]
+    }
+   ],
+   "layouts": {
+    "desktop": [
+     {
+      "row": "encabezado",
+      "cols": [
+       {
+        "w": 2,
+        "stack": [
+         "nav-reportes"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-proximos"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-stock"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-metricas"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-cerrar-sesion"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": []
+       }
+      ]
+     },
+     {
+      "row": "titulos",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "titulo",
+         "subtitulo"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "panel-reportes",
+      "card": true,
+      "title": "Grupos de reportes",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "tabs-estado",
+         "alerta-sistema",
+         "btn-reintentar",
+         "estado-vacio",
+         "cargando",
+         "tabla-grupos",
+         "paginacion"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "states": [
+    {
+     "name": "default",
+     "applies": true
+    },
+    {
+     "name": "empty",
+     "applies": true
+    },
+    {
+     "name": "loading",
+     "applies": true
+    },
+    {
+     "name": "error de sistema",
+     "applies": true
+    },
+    {
+     "name": "resueltos",
+     "applies": true
+    }
+   ]
+  },
+  {
+   "name": "proximos-desafios",
+   "displayName": "P-03 · Próximos desafíos",
+   "audiences": [
+    "responsable"
+   ],
+   "blocks": [
+    {
+     "name": "header",
+     "type": "header",
+     "category": "layout",
+     "content": "> nerdose admin",
+     "icon": "settings"
+    },
+    {
+     "name": "nav-reportes",
+     "type": "link",
+     "category": "navigation",
+     "content": "Reportes (3)"
+    },
+    {
+     "name": "nav-proximos",
+     "type": "link",
+     "category": "navigation",
+     "content": "Próximos",
+     "annotation": "sección actual"
+    },
+    {
+     "name": "nav-stock",
+     "type": "link",
+     "category": "navigation",
+     "content": "Stock"
+    },
+    {
+     "name": "nav-metricas",
+     "type": "link",
+     "category": "navigation",
+     "content": "Métricas"
+    },
+    {
+     "name": "nav-cerrar-sesion",
+     "type": "link",
+     "category": "navigation",
+     "content": "Cerrar sesión",
+     "icon": "lock"
+    },
+    {
+     "name": "titulo",
+     "type": "heading",
+     "category": "content",
+     "level": "h1",
+     "content": "Próximos desafíos"
+    },
+    {
+     "name": "subtitulo",
+     "type": "paragraph",
+     "category": "content",
+     "level": "caption",
+     "content": "Próximos 14 días (UTC) · 5 juegos"
+    },
+    {
+     "name": "leyenda",
+     "type": "chips",
+     "category": "content",
+     "items": [
+      "Aprobado",
+      "Sin desafío",
+      "Regenerando…"
+     ]
+    },
+    {
+     "name": "alerta-regeneracion",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "error",
+     "content": "No se pudo regenerar el desafío. Queda el actual.",
+     "visible_only_in_states": [
+      "error de regeneración"
+     ]
+    },
+    {
+     "name": "alerta-pendiente",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "info",
+     "content": "Hay una regeneración en curso. La grilla se actualiza sola.",
+     "visible_only_in_states": [
+      "regeneración pendiente"
+     ]
+    },
+    {
+     "name": "alerta-sistema",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "error",
+     "content": "No pudimos cargar los próximos desafíos. Probá de nuevo.",
+     "visible_only_in_states": [
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "btn-reintentar",
+     "type": "button",
+     "category": "input",
+     "variant": "secondary",
+     "content": "Reintentar",
+     "icon": "refresh",
+     "visible_only_in_states": [
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "cargando",
+     "type": "loader",
+     "category": "feedback",
+     "content": "Cargando grilla…",
+     "visible_only_in_states": [
+      "loading"
+     ]
+    },
+    {
+     "name": "grilla",
+     "type": "table",
+     "category": "content",
+     "columns": [
+      {
+       "label": "Día",
+       "width": 1
+      },
+      {
+       "label": "Devdle",
+       "width": 2
+      },
+      {
+       "label": "Bug Hunt",
+       "width": 2
+      },
+      {
+       "label": "Big O",
+       "width": 2
+      },
+      {
+       "label": "Tech Timeline",
+       "width": 2
+      },
+      {
+       "label": "Grep Grid",
+       "width": 2
+      }
+     ],
+     "rows": [
+      [
+       "03/11",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "04/11",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "05/11",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "06/11",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "07/11",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "08/11",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "Sin desafío",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "09/11",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "10/11",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "11/11",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "12/11",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "13/11",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "14/11",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "Sin desafío"
+      ],
+      [
+       "15/11",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "16/11",
+       "badge:Aprobado",
+       "Sin desafío",
+       "badge:Aprobado",
+       "Sin desafío",
+       "badge:Aprobado"
+      ]
+     ],
+     "hidden_in_states": [
+      "loading",
+      "error de sistema"
+     ],
+     "state_overrides": {
+      "regeneración pendiente": {
+       "rows": [
+        [
+         "03/11",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "04/11",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "05/11",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "06/11",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "07/11",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Regenerando…"
+        ],
+        [
+         "08/11",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "Sin desafío",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "09/11",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "10/11",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "11/11",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "12/11",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "13/11",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "14/11",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "Sin desafío"
+        ],
+        [
+         "15/11",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "16/11",
+         "badge:Aprobado",
+         "Sin desafío",
+         "badge:Aprobado",
+         "Sin desafío",
+         "badge:Aprobado"
+        ]
+       ]
+      }
+     },
+     "annotation": "clic en celda con desafío → detalle; «Regenerar» solo en `approved` con fecha futura; polling 5 s mientras haya pendientes (a confirmar)"
+    }
+   ],
+   "layouts": {
+    "desktop": [
+     {
+      "row": "encabezado",
+      "cols": [
+       {
+        "w": 2,
+        "stack": [
+         "nav-reportes"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-proximos"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-stock"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-metricas"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-cerrar-sesion"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": []
+       }
+      ]
+     },
+     {
+      "row": "titulos",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "titulo",
+         "subtitulo"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "panel-grilla",
+      "card": true,
+      "title": "Grilla de 14 días",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "leyenda",
+         "alerta-pendiente",
+         "alerta-regeneracion",
+         "alerta-sistema",
+         "btn-reintentar",
+         "cargando",
+         "grilla"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "states": [
+    {
+     "name": "default",
+     "applies": true
+    },
+    {
+     "name": "regeneración pendiente",
+     "applies": true
+    },
+    {
+     "name": "error de regeneración",
+     "applies": true
+    },
+    {
+     "name": "loading",
+     "applies": true
+    },
+    {
+     "name": "error de sistema",
+     "applies": true
+    }
+   ]
+  },
+  {
+   "name": "stock-contenido",
+   "displayName": "P-04 · Stock de contenido",
+   "audiences": [
+    "responsable"
+   ],
+   "blocks": [
+    {
+     "name": "header",
+     "type": "header",
+     "category": "layout",
+     "content": "> nerdose admin",
+     "icon": "settings"
+    },
+    {
+     "name": "nav-reportes",
+     "type": "link",
+     "category": "navigation",
+     "content": "Reportes (3)"
+    },
+    {
+     "name": "nav-proximos",
+     "type": "link",
+     "category": "navigation",
+     "content": "Próximos"
+    },
+    {
+     "name": "nav-stock",
+     "type": "link",
+     "category": "navigation",
+     "content": "Stock",
+     "annotation": "sección actual"
+    },
+    {
+     "name": "nav-metricas",
+     "type": "link",
+     "category": "navigation",
+     "content": "Métricas"
+    },
+    {
+     "name": "nav-cerrar-sesion",
+     "type": "link",
+     "category": "navigation",
+     "content": "Cerrar sesión",
+     "icon": "lock"
+    },
+    {
+     "name": "titulo",
+     "type": "heading",
+     "category": "content",
+     "level": "h1",
+     "content": "Stock de contenido"
+    },
+    {
+     "name": "carga-dataset",
+     "type": "paragraph",
+     "category": "content",
+     "level": "caption",
+     "content": "Última carga del dataset: 2026-10-28 03:12 UTC"
+    },
+    {
+     "name": "alerta-stock",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "warning",
+     "content": "El banco de hechos no alcanza para ciclar con la ventana anti-repetición.",
+     "visible_only_in_states": [
+      "stock bajo"
+     ]
+    },
+    {
+     "name": "alerta-sistema",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "error",
+     "content": "No pudimos cargar el stock. Probá de nuevo.",
+     "visible_only_in_states": [
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "btn-reintentar",
+     "type": "button",
+     "category": "input",
+     "variant": "secondary",
+     "content": "Reintentar",
+     "icon": "refresh",
+     "visible_only_in_states": [
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "cargando",
+     "type": "loader",
+     "category": "feedback",
+     "content": "Cargando stock…",
+     "visible_only_in_states": [
+      "loading"
+     ]
+    },
+    {
+     "name": "tabla-terminos",
+     "type": "table",
+     "category": "content",
+     "columns": [
+      {
+       "label": "Banco de términos",
+       "width": 3
+      },
+      {
+       "label": "Valor",
+       "width": 2
+      }
+     ],
+     "rows": [
+      [
+       "Aprobados disponibles",
+       "1.842 de 2.310"
+      ],
+      [
+       "Rechazados",
+       "468 (ver motivos)"
+      ],
+      [
+       "Días de stock estimados",
+       "920"
+      ],
+      [
+       "Alcanza para ciclar",
+       "badge:Sí"
+      ]
+     ],
+     "hidden_in_states": [
+      "loading",
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "tabla-hechos",
+     "type": "table",
+     "category": "content",
+     "columns": [
+      {
+       "label": "Banco de hechos",
+       "width": 3
+      },
+      {
+       "label": "Valor",
+       "width": 2
+      }
+     ],
+     "rows": [
+      [
+       "Aprobados disponibles",
+       "412 de 530"
+      ],
+      [
+       "Rechazados",
+       "118 (ver motivos)"
+      ],
+      [
+       "Días de stock estimados",
+       "82"
+      ],
+      [
+       "Alcanza para ciclar",
+       "badge:Sí"
+      ]
+     ],
+     "hidden_in_states": [
+      "loading",
+      "error de sistema"
+     ],
+     "state_overrides": {
+      "stock bajo": {
+       "rows": [
+        [
+         "Aprobados disponibles",
+         "64 de 530"
+        ],
+        [
+         "Rechazados",
+         "466 (ver motivos)"
+        ],
+        [
+         "Días de stock estimados",
+         "12"
+        ],
+        [
+         "Alcanza para ciclar",
+         "badge:No"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "name": "tabla-rechazadas",
+     "type": "table",
+     "category": "content",
+     "columns": [
+      {
+       "label": "#",
+       "width": 1
+      },
+      {
+       "label": "Palabra",
+       "width": 3
+      },
+      {
+       "label": "Veces rechazada",
+       "width": 2
+      },
+      {
+       "label": "Último intento",
+       "width": 2
+      }
+     ],
+     "rows": [
+      [
+       "1",
+       "kernel",
+       "214",
+       "hace 3 h"
+      ],
+      [
+       "2",
+       "async",
+       "187",
+       "hace 1 h"
+      ],
+      [
+       "3",
+       "regex",
+       "152",
+       "ayer"
+      ],
+      [
+       "4",
+       "proxy",
+       "131",
+       "hace 2 días"
+      ],
+      [
+       "5",
+       "tokens",
+       "119",
+       "hace 4 h"
+      ],
+      [
+       "6",
+       "cache",
+       "96",
+       "ayer"
+      ]
+     ],
+     "hidden_in_states": [
+      "loading",
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "paginacion",
+     "type": "pagination",
+     "category": "navigation",
+     "pages": 3,
+     "page_size": 10,
+     "hidden_in_states": [
+      "loading",
+      "error de sistema"
+     ]
+    }
+   ],
+   "layouts": {
+    "desktop": [
+     {
+      "row": "encabezado",
+      "cols": [
+       {
+        "w": 2,
+        "stack": [
+         "nav-reportes"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-proximos"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-stock"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-metricas"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-cerrar-sesion"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": []
+       }
+      ]
+     },
+     {
+      "row": "titulos",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "titulo",
+         "carga-dataset"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "avisos",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "alerta-stock",
+         "alerta-sistema",
+         "btn-reintentar",
+         "cargando"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "bancos",
+      "cols": [
+       {
+        "w": 6,
+        "card": true,
+        "stack": [
+         "tabla-terminos"
+        ]
+       },
+       {
+        "w": 6,
+        "card": true,
+        "stack": [
+         "tabla-hechos"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "panel-rechazadas",
+      "card": true,
+      "title": "Top 50 de palabras rechazadas en Devdle",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "tabla-rechazadas",
+         "paginacion"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "states": [
+    {
+     "name": "default",
+     "applies": true
+    },
+    {
+     "name": "stock bajo",
+     "applies": true
+    },
+    {
+     "name": "loading",
+     "applies": true
+    },
+    {
+     "name": "error de sistema",
+     "applies": true
+    }
+   ]
+  },
+  {
+   "name": "metricas",
+   "displayName": "P-05 · Métricas",
+   "audiences": [
+    "responsable"
+   ],
+   "blocks": [
+    {
+     "name": "header",
+     "type": "header",
+     "category": "layout",
+     "content": "> nerdose admin",
+     "icon": "settings"
+    },
+    {
+     "name": "nav-reportes",
+     "type": "link",
+     "category": "navigation",
+     "content": "Reportes (3)"
+    },
+    {
+     "name": "nav-proximos",
+     "type": "link",
+     "category": "navigation",
+     "content": "Próximos"
+    },
+    {
+     "name": "nav-stock",
+     "type": "link",
+     "category": "navigation",
+     "content": "Stock"
+    },
+    {
+     "name": "nav-metricas",
+     "type": "link",
+     "category": "navigation",
+     "content": "Métricas",
+     "annotation": "sección actual"
+    },
+    {
+     "name": "nav-cerrar-sesion",
+     "type": "link",
+     "category": "navigation",
+     "content": "Cerrar sesión",
+     "icon": "lock"
+    },
+    {
+     "name": "titulo",
+     "type": "heading",
+     "category": "content",
+     "level": "h1",
+     "content": "Métricas"
+    },
+    {
+     "name": "fecha-desde",
+     "type": "date-picker",
+     "category": "input",
+     "content": "Desde",
+     "value": "2026-10-04",
+     "state_overrides": {}
+    },
+    {
+     "name": "fecha-hasta",
+     "type": "date-picker",
+     "category": "input",
+     "content": "Hasta",
+     "value": "2026-11-02"
+    },
+    {
+     "name": "btn-consultar",
+     "type": "button",
+     "category": "input",
+     "variant": "primary",
+     "content": "Consultar",
+     "icon": "search",
+     "state_overrides": {
+      "loading": {
+       "variant": "disabled",
+       "content": "Consultando…"
+      },
+      "error de validación": {
+       "variant": "disabled"
+      }
+     }
+    },
+    {
+     "name": "alerta-rango",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "error",
+     "content": "La fecha inicial no puede ser posterior a la final.",
+     "visible_only_in_states": [
+      "error de validación"
+     ]
+    },
+    {
+     "name": "alerta-sistema",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "error",
+     "content": "No pudimos cargar las métricas. Probá de nuevo.",
+     "visible_only_in_states": [
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "btn-reintentar",
+     "type": "button",
+     "category": "input",
+     "variant": "secondary",
+     "content": "Reintentar",
+     "icon": "refresh",
+     "visible_only_in_states": [
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "estado-vacio",
+     "type": "empty-state",
+     "category": "feedback",
+     "content": "Sin datos en el rango. Probá con un rango más amplio.",
+     "visible_only_in_states": [
+      "empty"
+     ]
+    },
+    {
+     "name": "cargando",
+     "type": "loader",
+     "category": "feedback",
+     "content": "Consultando métricas…",
+     "visible_only_in_states": [
+      "loading"
+     ]
+    },
+    {
+     "name": "cifra-unicos",
+     "type": "card",
+     "category": "content",
+     "content": "Jugadores únicos · 1.284",
+     "hidden_in_states": [
+      "empty",
+      "loading",
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "cifra-d1",
+     "type": "card",
+     "category": "content",
+     "content": "Retención D1 · 41 %",
+     "hidden_in_states": [
+      "empty",
+      "loading",
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "cifra-d7",
+     "type": "card",
+     "category": "content",
+     "content": "Retención D7 · 18 %",
+     "hidden_in_states": [
+      "empty",
+      "loading",
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "cifra-completados",
+     "type": "card",
+     "category": "content",
+     "content": "Partidas completadas · 9.730",
+     "hidden_in_states": [
+      "empty",
+      "loading",
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "tabla-retencion",
+     "type": "table",
+     "category": "content",
+     "columns": [
+      {
+       "label": "Cohorte (primer día)",
+       "width": 3
+      },
+      {
+       "label": "Jugadores",
+       "width": 2
+      },
+      {
+       "label": "D1",
+       "width": 1
+      },
+      {
+       "label": "D7",
+       "width": 1
+      }
+     ],
+     "rows": [
+      [
+       "2026-10-04",
+       "112",
+       "43 %",
+       "19 %"
+      ],
+      [
+       "2026-10-11",
+       "98",
+       "40 %",
+       "17 %"
+      ],
+      [
+       "2026-10-18",
+       "131",
+       "44 %",
+       "20 %"
+      ],
+      [
+       "2026-10-25",
+       "120",
+       "38 %",
+       "—"
+      ]
+     ],
+     "hidden_in_states": [
+      "empty",
+      "loading",
+      "error de sistema"
+     ],
+     "annotation": "la definición de cohorte es visible al pie de la tabla"
+    },
+    {
+     "name": "tabla-rachas",
+     "type": "table",
+     "category": "content",
+     "columns": [
+      {
+       "label": "Tramo de racha",
+       "width": 3
+      },
+      {
+       "label": "Jugadores",
+       "width": 2
+      },
+      {
+       "label": "% del total",
+       "width": 2
+      }
+     ],
+     "rows": [
+      [
+       "1 día",
+       "612",
+       "48 %"
+      ],
+      [
+       "2–3 días",
+       "341",
+       "27 %"
+      ],
+      [
+       "4–7 días",
+       "204",
+       "16 %"
+      ],
+      [
+       "8+ días",
+       "127",
+       "9 %"
+      ]
+     ],
+     "hidden_in_states": [
+      "empty",
+      "loading",
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "tabla-calidad",
+     "type": "table",
+     "category": "content",
+     "columns": [
+      {
+       "label": "Desafío",
+       "width": 3
+      },
+      {
+       "label": "Jugadas",
+       "width": 1
+      },
+      {
+       "label": "Completado",
+       "width": 2
+      },
+      {
+       "label": "Victorias",
+       "width": 2
+      },
+      {
+       "label": "Reportes",
+       "width": 1
+      }
+     ],
+     "rows": [
+      [
+       "Devdle #128",
+       "842",
+       "91 %",
+       "68 %",
+       "7"
+      ],
+      [
+       "Bug Hunt #128",
+       "790",
+       "84 %",
+       "47 %",
+       "4"
+      ],
+      [
+       "Big O #127",
+       "801",
+       "88 %",
+       "52 %",
+       "2"
+      ],
+      [
+       "Tech Timeline #127",
+       "776",
+       "93 %",
+       "61 %",
+       "1"
+      ],
+      [
+       "Grep Grid #126",
+       "Anulado",
+       "—",
+       "—",
+       "1"
+      ]
+     ],
+     "hidden_in_states": [
+      "empty",
+      "loading",
+      "error de sistema"
+     ],
+     "annotation": "sin enlace a Reportes desde la fila (pregunta abierta 6)"
+    }
+   ],
+   "layouts": {
+    "desktop": [
+     {
+      "row": "encabezado",
+      "cols": [
+       {
+        "w": 2,
+        "stack": [
+         "nav-reportes"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-proximos"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-stock"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-metricas"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-cerrar-sesion"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": []
+       }
+      ]
+     },
+     {
+      "row": "titulos",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "titulo"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "rango",
+      "cols": [
+       {
+        "w": 3,
+        "stack": [
+         "fecha-desde"
+        ]
+       },
+       {
+        "w": 3,
+        "stack": [
+         "fecha-hasta"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "btn-consultar"
+        ]
+       },
+       {
+        "w": 4,
+        "stack": []
+       }
+      ]
+     },
+     {
+      "row": "avisos",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "alerta-rango",
+         "alerta-sistema",
+         "btn-reintentar",
+         "estado-vacio",
+         "cargando"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "cifras",
+      "cols": [
+       {
+        "w": 3,
+        "stack": [
+         "cifra-unicos"
+        ]
+       },
+       {
+        "w": 3,
+        "stack": [
+         "cifra-d1"
+        ]
+       },
+       {
+        "w": 3,
+        "stack": [
+         "cifra-d7"
+        ]
+       },
+       {
+        "w": 3,
+        "stack": [
+         "cifra-completados"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "tablas-1",
+      "cols": [
+       {
+        "w": 7,
+        "card": true,
+        "stack": [
+         "tabla-retencion"
+        ]
+       },
+       {
+        "w": 5,
+        "card": true,
+        "stack": [
+         "tabla-rachas"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "panel-calidad",
+      "card": true,
+      "title": "Calidad por desafío",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "tabla-calidad"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "states": [
+    {
+     "name": "default",
+     "applies": true
+    },
+    {
+     "name": "empty",
+     "applies": true
+    },
+    {
+     "name": "loading",
+     "applies": true
+    },
+    {
+     "name": "error de validación",
+     "applies": true
+    },
+    {
+     "name": "error de sistema",
+     "applies": true
+    }
+   ]
+  },
+  {
+   "name": "o-01-anular-desafio",
+   "displayName": "O-01 · Anular desafío",
+   "audiences": [
+    "responsable"
+   ],
+   "overlay": true,
+   "overlay_type": "modal",
+   "triggered_by": "reportes",
+   "blocks": [
+    {
+     "name": "header",
+     "type": "header",
+     "category": "layout",
+     "content": "Anular desafío",
+     "icon": "close"
+    },
+    {
+     "name": "desafio",
+     "type": "paragraph",
+     "category": "content",
+     "level": "body",
+     "content": "Devdle #128 · publicado"
+    },
+    {
+     "name": "campo-motivo",
+     "type": "textarea",
+     "category": "input",
+     "content": "Motivo de la anulación",
+     "value": "",
+     "h": 96,
+     "state_overrides": {
+      "error de validación": {
+       "value": ""
+      }
+     },
+     "annotation": "obligatorio"
+    },
+    {
+     "name": "error-motivo",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "error",
+     "content": "Contá por qué se anula el desafío.",
+     "visible_only_in_states": [
+      "error de validación"
+     ]
+    },
+    {
+     "name": "campo-culpable",
+     "type": "dropdown",
+     "category": "input",
+     "content": "Culpable del error",
+     "state": "closed",
+     "options": [
+      "Término",
+      "Hecho de timeline",
+      "Plantilla",
+      "Ninguno"
+     ],
+     "state_overrides": {
+      "culpable abierto": {
+       "state": "open"
+      }
+     }
+    },
+    {
+     "name": "campo-id",
+     "type": "text-input",
+     "category": "input",
+     "content": "ID del término o del hecho",
+     "value": "",
+     "state": "default",
+     "state_overrides": {
+      "error de validación": {
+       "state": "error",
+       "error_msg": "Indicá el ID del culpable."
+      }
+     },
+     "annotation": "solo se pide si el culpable es Término o Hecho de timeline"
+    },
+    {
+     "name": "resumen",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "warning",
+     "content": "Esto no se puede deshacer: el desafío deja de aceptar jugadas, las partidas pasan a anuladas, los reportes abiertos se resuelven, el término o hecho culpable se rechaza y se recalculan las rachas."
+    },
+    {
+     "name": "alerta-sistema",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "error",
+     "content": "No pudimos anular el desafío. Recargá Reportes y verificá su estado antes de reintentar.",
+     "visible_only_in_states": [
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "btn-anular",
+     "type": "button",
+     "category": "input",
+     "variant": "error",
+     "content": "Anular desafío",
+     "icon": "warning",
+     "state_overrides": {
+      "loading": {
+       "variant": "disabled",
+       "content": "Anulando…"
+      }
+     }
+    },
+    {
+     "name": "btn-cancelar",
+     "type": "button",
+     "category": "input",
+     "variant": "tertiary",
+     "content": "Cancelar"
+    }
+   ],
+   "layouts": {
+    "desktop": [
+     {
+      "row": "centrado",
+      "cols": [
+       {
+        "w": 3,
+        "stack": []
+       },
+       {
+        "w": 6,
+        "stack": [
+         "desafio",
+         "campo-motivo",
+         "error-motivo",
+         "campo-culpable",
+         "campo-id",
+         "resumen",
+         "alerta-sistema",
+         "btn-anular",
+         "btn-cancelar"
+        ]
+       },
+       {
+        "w": 3,
+        "stack": []
+       }
+      ]
+     }
+    ]
+   },
+   "states": [
+    {
+     "name": "default",
+     "applies": true
+    },
+    {
+     "name": "culpable abierto",
+     "applies": true
+    },
+    {
+     "name": "error de validación",
+     "applies": true
+    },
+    {
+     "name": "loading",
+     "applies": true
+    },
+    {
+     "name": "error de sistema",
+     "applies": true
+    }
+   ]
+  },
+  {
+   "name": "o-02-detalle-desafio",
+   "displayName": "O-02 · Detalle del desafío",
+   "audiences": [
+    "responsable"
+   ],
+   "overlay": true,
+   "overlay_type": "drawer",
+   "triggered_by": "reportes",
+   "blocks": [
+    {
+     "name": "header",
+     "type": "header",
+     "category": "layout",
+     "content": "Devdle #128",
+     "icon": "close"
+    },
+    {
+     "name": "estado",
+     "type": "chips",
+     "category": "content",
+     "items": [
+      "Publicado",
+      "2026-11-03"
+     ]
+    },
+    {
+     "name": "preview-es",
+     "type": "image",
+     "category": "content",
+     "aspect_ratio": "4:3",
+     "h": 220,
+     "content": "Preview ES · solución"
+    },
+    {
+     "name": "preview-en",
+     "type": "image",
+     "category": "content",
+     "aspect_ratio": "4:3",
+     "h": 220,
+     "content": "Preview EN · solución"
+    },
+    {
+     "name": "log-verificacion",
+     "type": "list",
+     "category": "content",
+     "items": [
+      {
+       "title": "Solución verificada",
+       "subtitle": "2026-11-02 03:05 UTC · ok",
+       "icon": "check"
+      },
+      {
+       "title": "Traducción ES/EN consistente",
+       "subtitle": "2026-11-02 03:05 UTC · ok",
+       "icon": "check"
+      }
+     ]
+    },
+    {
+     "name": "lista-reportes",
+     "type": "list",
+     "category": "content",
+     "items": [
+      {
+       "title": "wrong_answer · es",
+       "subtitle": "«La palabra tiene otra definición en el diccionario»"
+      },
+      {
+       "title": "ambiguous · en",
+       "subtitle": "«Two valid answers fit the hints»"
+      },
+      {
+       "title": "wrong_answer · es",
+       "subtitle": "Sin mensaje"
+      }
+     ],
+     "visible_only_in_states": [
+      "default",
+      "terminal",
+      "loading",
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "cargando",
+     "type": "loader",
+     "category": "feedback",
+     "content": "Cargando desafío…",
+     "visible_only_in_states": [
+      "loading"
+     ]
+    },
+    {
+     "name": "alerta-sistema",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "error",
+     "content": "No pudimos cargar el desafío. Probá de nuevo.",
+     "visible_only_in_states": [
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "btn-reintentar",
+     "type": "button",
+     "category": "input",
+     "variant": "secondary",
+     "content": "Reintentar",
+     "icon": "refresh",
+     "visible_only_in_states": [
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "btn-resolver",
+     "type": "button",
+     "category": "input",
+     "variant": "secondary",
+     "content": "Resolver",
+     "icon": "check",
+     "visible_only_in_states": [
+      "default",
+      "terminal",
+      "loading",
+      "error de sistema"
+     ],
+     "state_overrides": {
+      "terminal": {
+       "variant": "disabled"
+      },
+      "loading": {
+       "variant": "disabled"
+      },
+      "error de sistema": {
+       "variant": "disabled"
+      }
+     }
+    },
+    {
+     "name": "btn-descartar",
+     "type": "button",
+     "category": "input",
+     "variant": "secondary",
+     "content": "Descartar",
+     "icon": "x",
+     "visible_only_in_states": [
+      "default",
+      "terminal",
+      "loading",
+      "error de sistema"
+     ],
+     "state_overrides": {
+      "terminal": {
+       "variant": "disabled"
+      },
+      "loading": {
+       "variant": "disabled"
+      },
+      "error de sistema": {
+       "variant": "disabled"
+      }
+     }
+    },
+    {
+     "name": "btn-anular",
+     "type": "button",
+     "category": "input",
+     "variant": "error",
+     "content": "Anular",
+     "icon": "warning",
+     "visible_only_in_states": [
+      "default",
+      "terminal",
+      "loading",
+      "error de sistema"
+     ],
+     "state_overrides": {
+      "terminal": {
+       "variant": "disabled",
+       "annotation": "Solo se puede anular un desafío publicado."
+      },
+      "loading": {
+       "variant": "disabled"
+      },
+      "error de sistema": {
+       "variant": "disabled"
+      }
+     }
+    },
+    {
+     "name": "btn-regenerar",
+     "type": "button",
+     "category": "input",
+     "variant": "primary",
+     "content": "Regenerar",
+     "icon": "refresh",
+     "visible_only_in_states": [
+      "desde próximos"
+     ],
+     "annotation": "solo `approved` con fecha posterior a hoy"
+    }
+   ],
+   "layouts": {
+    "desktop": [
+     {
+      "row": "cabecera",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "estado",
+         "cargando",
+         "alerta-sistema",
+         "btn-reintentar"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "previews",
+      "cols": [
+       {
+        "w": 6,
+        "card": true,
+        "stack": [
+         "preview-es"
+        ]
+       },
+       {
+        "w": 6,
+        "card": true,
+        "stack": [
+         "preview-en"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "verificacion",
+      "card": true,
+      "title": "Log de verificación",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "log-verificacion"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "reportes",
+      "card": true,
+      "title": "Reportes del desafío",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "lista-reportes"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "acciones",
+      "cols": [
+       {
+        "w": 3,
+        "stack": [
+         "btn-resolver"
+        ]
+       },
+       {
+        "w": 3,
+        "stack": [
+         "btn-descartar"
+        ]
+       },
+       {
+        "w": 3,
+        "stack": [
+         "btn-anular"
+        ]
+       },
+       {
+        "w": 3,
+        "stack": [
+         "btn-regenerar"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "states": [
+    {
+     "name": "default",
+     "applies": true
+    },
+    {
+     "name": "desde próximos",
+     "applies": true
+    },
+    {
+     "name": "loading",
+     "applies": true
+    },
+    {
+     "name": "error de sistema",
+     "applies": true
+    },
+    {
+     "name": "terminal",
+     "applies": true
+    }
+   ]
+  },
+  {
+   "name": "o-03-regenerar-desafio",
+   "displayName": "O-03 · Regenerar desafío",
+   "audiences": [
+    "responsable"
+   ],
+   "overlay": true,
+   "overlay_type": "modal",
+   "triggered_by": "proximos-desafios",
+   "blocks": [
+    {
+     "name": "header",
+     "type": "header",
+     "category": "layout",
+     "content": "Regenerar desafío",
+     "icon": "close"
+    },
+    {
+     "name": "texto",
+     "type": "paragraph",
+     "category": "content",
+     "level": "body",
+     "content": "Se generará un reemplazo para Tech Timeline #134 (2026-11-07). Si pasa la verificación, el actual se rechaza; si falla, queda el actual."
+    },
+    {
+     "name": "alerta-no-disponible",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "warning",
+     "content": "Este desafío ya no se puede regenerar: dejó de estar aprobado o su fecha ya no es futura. Refrescá Próximos.",
+     "visible_only_in_states": [
+      "no disponible"
+     ]
+    },
+    {
+     "name": "alerta-sistema",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "error",
+     "content": "No pudimos pedir la regeneración. Probá de nuevo.",
+     "visible_only_in_states": [
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "btn-regenerar",
+     "type": "button",
+     "category": "input",
+     "variant": "primary",
+     "content": "Regenerar",
+     "icon": "refresh",
+     "state_overrides": {
+      "loading": {
+       "variant": "disabled",
+       "content": "Pidiendo…"
+      },
+      "no disponible": {
+       "variant": "disabled"
+      }
+     }
+    },
+    {
+     "name": "btn-cancelar",
+     "type": "button",
+     "category": "input",
+     "variant": "tertiary",
+     "content": "Cancelar"
+    }
+   ],
+   "layouts": {
+    "desktop": [
+     {
+      "row": "centrado",
+      "cols": [
+       {
+        "w": 3,
+        "stack": []
+       },
+       {
+        "w": 6,
+        "stack": [
+         "texto",
+         "alerta-no-disponible",
+         "alerta-sistema",
+         "btn-regenerar",
+         "btn-cancelar"
+        ]
+       },
+       {
+        "w": 3,
+        "stack": []
+       }
+      ]
+     }
+    ]
+   },
+   "states": [
+    {
+     "name": "default",
+     "applies": true
+    },
+    {
+     "name": "loading",
+     "applies": true
+    },
+    {
+     "name": "no disponible",
+     "applies": true
+    },
+    {
+     "name": "error de sistema",
+     "applies": true
+    }
+   ]
+  }
+ ],
+ "transitions": [
+  {
+   "src": "login",
+   "srcBlock": "btn-ingresar",
+   "dst": "reportes",
+   "trigger": "Ingresar",
+   "automatic": false
+  },
+  {
+   "src": "reportes",
+   "srcBlock": "nav-proximos",
+   "dst": "proximos-desafios",
+   "trigger": "Ir a Proximos",
+   "automatic": false
+  },
+  {
+   "src": "reportes",
+   "srcBlock": "nav-stock",
+   "dst": "stock-contenido",
+   "trigger": "Ir a Stock",
+   "automatic": false
+  },
+  {
+   "src": "reportes",
+   "srcBlock": "nav-metricas",
+   "dst": "metricas",
+   "trigger": "Ir a Metricas",
+   "automatic": false
+  },
+  {
+   "src": "reportes",
+   "srcBlock": "nav-cerrar-sesion",
+   "dst": "login",
+   "trigger": "Cerrar sesión",
+   "automatic": false
+  },
+  {
+   "src": "reportes",
+   "dst": "login",
+   "trigger": "401: sesión vencida",
+   "automatic": true
+  },
+  {
+   "src": "proximos-desafios",
+   "srcBlock": "nav-reportes",
+   "dst": "reportes",
+   "trigger": "Ir a Reportes",
+   "automatic": false
+  },
+  {
+   "src": "proximos-desafios",
+   "srcBlock": "nav-stock",
+   "dst": "stock-contenido",
+   "trigger": "Ir a Stock",
+   "automatic": false
+  },
+  {
+   "src": "proximos-desafios",
+   "srcBlock": "nav-metricas",
+   "dst": "metricas",
+   "trigger": "Ir a Metricas",
+   "automatic": false
+  },
+  {
+   "src": "proximos-desafios",
+   "srcBlock": "nav-cerrar-sesion",
+   "dst": "login",
+   "trigger": "Cerrar sesión",
+   "automatic": false
+  },
+  {
+   "src": "proximos-desafios",
+   "dst": "login",
+   "trigger": "401: sesión vencida",
+   "automatic": true
+  },
+  {
+   "src": "stock-contenido",
+   "srcBlock": "nav-reportes",
+   "dst": "reportes",
+   "trigger": "Ir a Reportes",
+   "automatic": false
+  },
+  {
+   "src": "stock-contenido",
+   "srcBlock": "nav-proximos",
+   "dst": "proximos-desafios",
+   "trigger": "Ir a Proximos",
+   "automatic": false
+  },
+  {
+   "src": "stock-contenido",
+   "srcBlock": "nav-metricas",
+   "dst": "metricas",
+   "trigger": "Ir a Metricas",
+   "automatic": false
+  },
+  {
+   "src": "stock-contenido",
+   "srcBlock": "nav-cerrar-sesion",
+   "dst": "login",
+   "trigger": "Cerrar sesión",
+   "automatic": false
+  },
+  {
+   "src": "stock-contenido",
+   "dst": "login",
+   "trigger": "401: sesión vencida",
+   "automatic": true
+  },
+  {
+   "src": "metricas",
+   "srcBlock": "nav-reportes",
+   "dst": "reportes",
+   "trigger": "Ir a Reportes",
+   "automatic": false
+  },
+  {
+   "src": "metricas",
+   "srcBlock": "nav-proximos",
+   "dst": "proximos-desafios",
+   "trigger": "Ir a Proximos",
+   "automatic": false
+  },
+  {
+   "src": "metricas",
+   "srcBlock": "nav-stock",
+   "dst": "stock-contenido",
+   "trigger": "Ir a Stock",
+   "automatic": false
+  },
+  {
+   "src": "metricas",
+   "srcBlock": "nav-cerrar-sesion",
+   "dst": "login",
+   "trigger": "Cerrar sesión",
+   "automatic": false
+  },
+  {
+   "src": "metricas",
+   "dst": "login",
+   "trigger": "401: sesión vencida",
+   "automatic": true
+  },
+  {
+   "src": "reportes",
+   "srcBlock": "tabla-grupos",
+   "dst": "o-02-detalle-desafio",
+   "trigger": "Abrir detalle del grupo",
+   "automatic": false
+  },
+  {
+   "src": "proximos-desafios",
+   "srcBlock": "grilla",
+   "dst": "o-02-detalle-desafio",
+   "trigger": "Abrir detalle de la celda",
+   "automatic": false
+  },
+  {
+   "src": "o-02-detalle-desafio",
+   "srcBlock": "btn-anular",
+   "dst": "o-01-anular-desafio",
+   "trigger": "Anular",
+   "automatic": false
+  },
+  {
+   "src": "o-02-detalle-desafio",
+   "srcState": "desde próximos",
+   "srcBlock": "btn-regenerar",
+   "dst": "o-03-regenerar-desafio",
+   "trigger": "Regenerar",
+   "automatic": false
+  },
+  {
+   "src": "o-02-detalle-desafio",
+   "srcBlock": "btn-resolver",
+   "dst": "reportes",
+   "trigger": "Resolver",
+   "automatic": false
+  },
+  {
+   "src": "o-02-detalle-desafio",
+   "srcBlock": "btn-descartar",
+   "dst": "reportes",
+   "trigger": "Descartar",
+   "automatic": false
+  },
+  {
+   "src": "o-01-anular-desafio",
+   "srcBlock": "btn-anular",
+   "dst": "reportes",
+   "trigger": "Confirmar anulación",
+   "automatic": false
+  },
+  {
+   "src": "o-01-anular-desafio",
+   "srcBlock": "btn-cancelar",
+   "dst": "o-02-detalle-desafio",
+   "trigger": "Cancelar",
+   "automatic": false
+  },
+  {
+   "src": "o-03-regenerar-desafio",
+   "srcBlock": "btn-regenerar",
+   "dst": "proximos-desafios",
+   "trigger": "Confirmar regeneración",
+   "automatic": false
+  },
+  {
+   "src": "o-03-regenerar-desafio",
+   "srcBlock": "btn-cancelar",
+   "dst": "proximos-desafios",
+   "trigger": "Cancelar",
+   "automatic": false
+  },
+  {
+   "src": "login",
+   "srcState": "sesión vencida",
+   "dst": "reportes",
+   "trigger": "Ingresar de nuevo",
+   "automatic": false,
+   "srcBlock": "btn-ingresar"
+  }
+ ]
+}

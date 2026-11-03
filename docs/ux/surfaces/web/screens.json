@@ -1,0 +1,6699 @@
+{
+  "_generated": "derivado de screens/*.md por /product-ux-wireframes — no editar a mano",
+  "surface": "web",
+  "platform": "web",
+  "viewports": [
+    "mobile",
+    "desktop"
+  ],
+  "accent_color": "#3DDC84",
+  "grid_baseline": 8,
+  "screens": [
+    {
+      "name": "home",
+      "displayName": "Home (catálogo)",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "banner-cookies",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Activá las cookies para poder jugar",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "sin sesión"
+          ],
+          "annotation": "Es el overlay O-03; persiste hasta que la sesión se crea"
+        },
+        {
+          "name": "hero-titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Cinco juegos tech. Un desafío por día.",
+          "level": "h1"
+        },
+        {
+          "name": "hero-sub",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Sin registro, de 1 a 3 minutos por partida. El mismo desafío para todos, cada día.",
+          "level": "body"
+        },
+        {
+          "name": "cta-hero",
+          "type": "button",
+          "category": "input",
+          "content": "Seguir jugando",
+          "variant": "primary",
+          "icon": "arrow-right",
+          "annotation": "baja a las tarjetas de juego",
+          "state_overrides": {
+            "empty": {
+              "content": "Empezar a jugar"
+            },
+            "sin sesión": {
+              "content": "Empezar a jugar",
+              "variant": "disabled"
+            }
+          }
+        },
+        {
+          "name": "link-como-funciona",
+          "type": "link",
+          "category": "navigation",
+          "content": "¿Cómo funciona?",
+          "icon": "arrow-right"
+        },
+        {
+          "name": "progreso-dia",
+          "type": "progress-bar",
+          "category": "feedback",
+          "content": "1 de 5 completados hoy",
+          "fill": 0.2,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "en curso": {
+              "content": "1 de 5 completados hoy",
+              "fill": 0.2
+            },
+            "sin desafío hoy": {
+              "content": "1 de 4 con desafío completados",
+              "fill": 0.25
+            },
+            "anulado": {
+              "content": "1 de 5 completados hoy",
+              "fill": 0.2
+            },
+            "empty": {
+              "content": "0 de 5 completados hoy",
+              "fill": 0.0
+            },
+            "sin sesión": {
+              "content": "Sin sesión: no podemos mostrar tu progreso",
+              "fill": 0.0
+            }
+          }
+        },
+        {
+          "name": "racha-global",
+          "type": "label",
+          "category": "content",
+          "content": "Racha global: 4 días",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "empty": {
+              "content": "Racha global: 0 días"
+            },
+            "sin sesión": {
+              "content": "Racha global: —"
+            }
+          }
+        },
+        {
+          "name": "cuenta-regresiva",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Próximo desafío en 05:42:10 (HH:MM:SS, 00:00 UTC)",
+          "level": "caption",
+          "annotation": "al llegar a 0 recarga el estado del día tras una espera aleatoria de 0–3 s",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "card-devdle",
+          "type": "card",
+          "category": "content",
+          "content": "Devdle",
+          "paragraph": "Adiviná el término tech en 6 intentos · ~2 min · racha 3 · ✓ 4/6",
+          "state_overrides": {
+            "empty": {
+              "paragraph": "Adiviná el término tech en 6 intentos · ~2 min · racha 0 · sin jugar"
+            },
+            "sin sesión": {
+              "paragraph": "Adiviná el término tech en 6 intentos · ~2 min · racha 0 · sin sesión"
+            }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "cta-devdle",
+          "type": "button",
+          "category": "input",
+          "content": "Ver resultado",
+          "variant": "secondary",
+          "annotation": "según el estado: sin jugar → instrucciones, en curso → partida, completado → resultado",
+          "state_overrides": {
+            "empty": {
+              "content": "Jugar →",
+              "variant": "primary"
+            },
+            "sin sesión": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "card-bug-hunt",
+          "type": "card",
+          "category": "content",
+          "content": "Bug Hunt",
+          "paragraph": "Encontrá la línea con el bug · ~2 min · racha 2 · sin jugar",
+          "state_overrides": {
+            "en curso": {
+              "paragraph": "Encontrá la línea con el bug · ~2 min · racha 2 · en curso"
+            },
+            "empty": {
+              "paragraph": "Encontrá la línea con el bug · ~2 min · racha 0 · sin jugar"
+            },
+            "sin sesión": {
+              "paragraph": "Encontrá la línea con el bug · ~2 min · racha 0 · sin sesión"
+            }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "cta-bug-hunt",
+          "type": "button",
+          "category": "input",
+          "content": "Jugar →",
+          "variant": "primary",
+          "annotation": "según el estado: sin jugar → instrucciones, en curso → partida, completado → resultado",
+          "state_overrides": {
+            "en curso": {
+              "content": "Seguir jugando",
+              "variant": "primary"
+            },
+            "sin sesión": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "card-big-o",
+          "type": "card",
+          "category": "content",
+          "content": "Big O",
+          "paragraph": "Elegí la complejidad temporal · ~1 min · racha 5 · sin jugar",
+          "state_overrides": {
+            "anulado": {
+              "paragraph": "Elegí la complejidad temporal · ~1 min · racha 5 · anulado"
+            },
+            "empty": {
+              "paragraph": "Elegí la complejidad temporal · ~1 min · racha 0 · sin jugar"
+            },
+            "sin sesión": {
+              "paragraph": "Elegí la complejidad temporal · ~1 min · racha 0 · sin sesión"
+            }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "cta-big-o",
+          "type": "button",
+          "category": "input",
+          "content": "Jugar →",
+          "variant": "primary",
+          "annotation": "según el estado: sin jugar → instrucciones, en curso → partida, completado → resultado",
+          "state_overrides": {
+            "anulado": {
+              "content": "—"
+            },
+            "sin sesión": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
+        },
+        {
+          "name": "card-timeline",
+          "type": "card",
+          "category": "content",
+          "content": "Tech Timeline",
+          "paragraph": "Ordená 5 hitos de la tecnología · ~1 min · racha 1 · sin jugar",
+          "state_overrides": {
+            "sin desafío hoy": {
+              "paragraph": "Ordená 5 hitos de la tecnología · ~1 min · racha 1 · sin desafío hoy · no afecta tu racha"
+            },
+            "empty": {
+              "paragraph": "Ordená 5 hitos de la tecnología · ~1 min · racha 0 · sin jugar"
+            },
+            "sin sesión": {
+              "paragraph": "Ordená 5 hitos de la tecnología · ~1 min · racha 0 · sin sesión"
+            }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "cta-timeline",
+          "type": "button",
+          "category": "input",
+          "content": "Jugar →",
+          "variant": "primary",
+          "annotation": "según el estado: sin jugar → instrucciones, en curso → partida, completado → resultado",
+          "state_overrides": {
+            "sin desafío hoy": {
+              "content": "Sin desafío hoy",
+              "variant": "disabled"
+            },
+            "sin sesión": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "card-grep-grid",
+          "type": "card",
+          "category": "content",
+          "content": "Grep Grid",
+          "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · racha 0 · sin jugar",
+          "state_overrides": {
+            "en curso": {
+              "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · racha 0 · en curso"
+            },
+            "sin sesión": {
+              "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · racha 0 · sin sesión"
+            }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "cta-grep-grid",
+          "type": "button",
+          "category": "input",
+          "content": "Jugar →",
+          "variant": "primary",
+          "annotation": "según el estado: sin jugar → instrucciones, en curso → partida, completado → resultado",
+          "state_overrides": {
+            "en curso": {
+              "content": "Seguir jugando",
+              "variant": "primary"
+            },
+            "sin sesión": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-aviso-anulado",
+          "type": "button",
+          "category": "input",
+          "content": "Ver aviso de anulación",
+          "variant": "secondary",
+          "icon": "info",
+          "visible_only_in_states": [
+            "anulado"
+          ]
+        },
+        {
+          "name": "resumen-progreso",
+          "type": "card",
+          "category": "content",
+          "content": "Tu progreso",
+          "paragraph": "Racha global 4 · Récord 9 · 31 desafíos completados · heatmap de los últimos 90 días",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "empty": {
+              "paragraph": "Todavía no hay datos. Completá un desafío y acá vas a ver tu racha y tu heatmap."
+            },
+            "sin sesión": {
+              "paragraph": "Sin sesión no hay progreso para mostrar. Activá las cookies y recargá."
+            }
+          }
+        },
+        {
+          "name": "link-stats",
+          "type": "link",
+          "category": "navigation",
+          "content": "ver estadísticas →",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando los desafíos de hoy…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar los juegos de hoy. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "banner-cookies",
+          "hero-titulo",
+          "hero-sub",
+          "cta-hero",
+          "link-como-funciona",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "progreso-dia",
+          "racha-global",
+          "cuenta-regresiva",
+          "card-devdle",
+          "cta-devdle",
+          "card-bug-hunt",
+          "cta-bug-hunt",
+          "card-big-o",
+          "cta-big-o",
+          "btn-aviso-anulado",
+          "card-timeline",
+          "cta-timeline",
+          "card-grep-grid",
+          "cta-grep-grid",
+          "resumen-progreso",
+          "link-stats"
+        ],
+        "desktop": [
+          "banner-cookies",
+          {
+            "row": "hero",
+            "cols": [
+              {
+                "w": 7,
+                "stack": [
+                  "hero-titulo",
+                  "hero-sub",
+                  "cta-hero",
+                  "link-como-funciona"
+                ]
+              },
+              {
+                "w": 5,
+                "stack": [
+                  "progreso-dia",
+                  "racha-global",
+                  "cuenta-regresiva"
+                ],
+                "card": true
+              }
+            ]
+          },
+          {
+            "row": "sistema",
+            "cols": [
+              {
+                "w": 12,
+                "stack": [
+                  "loader",
+                  "alerta-sistema",
+                  "btn-reintentar"
+                ]
+              }
+            ]
+          },
+          {
+            "row": "juegos-1",
+            "cols": [
+              {
+                "w": 4,
+                "stack": [
+                  "card-devdle",
+                  "cta-devdle"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "card-bug-hunt",
+                  "cta-bug-hunt"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "card-big-o",
+                  "cta-big-o",
+                  "btn-aviso-anulado"
+                ]
+              }
+            ]
+          },
+          {
+            "row": "juegos-2",
+            "cols": [
+              {
+                "w": 4,
+                "stack": [
+                  "card-timeline",
+                  "cta-timeline"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "card-grep-grid",
+                  "cta-grep-grid"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "resumen-progreso",
+                  "link-stats"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "en curso",
+          "applies": true
+        },
+        {
+          "name": "sin desafío hoy",
+          "applies": true
+        },
+        {
+          "name": "anulado",
+          "applies": true
+        },
+        {
+          "name": "empty",
+          "applies": true
+        },
+        {
+          "name": "sin sesión",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "estadisticas",
+      "displayName": "Estadísticas",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Estadísticas",
+          "level": "h1"
+        },
+        {
+          "name": "kpi-racha",
+          "type": "card",
+          "category": "content",
+          "content": "Racha global",
+          "paragraph": "4 días",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "empty"
+          ]
+        },
+        {
+          "name": "kpi-record",
+          "type": "card",
+          "category": "content",
+          "content": "Récord",
+          "paragraph": "9 días",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "empty"
+          ]
+        },
+        {
+          "name": "kpi-completados",
+          "type": "card",
+          "category": "content",
+          "content": "Desafíos completados",
+          "paragraph": "31",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "empty"
+          ]
+        },
+        {
+          "name": "heatmap",
+          "type": "image",
+          "category": "content",
+          "content": "Heatmap de actividad · últimos 365 días",
+          "aspect_ratio": "6:1",
+          "h": 110,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "empty"
+          ],
+          "annotation": "en mobile el heatmap scrollea horizontal; color + valor en el tooltip (NFR-U04)"
+        },
+        {
+          "name": "titulo-juegos",
+          "type": "heading",
+          "category": "content",
+          "content": "Por juego",
+          "level": "h2",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "empty"
+          ]
+        },
+        {
+          "name": "stats-devdle",
+          "type": "card",
+          "category": "content",
+          "content": "Devdle",
+          "paragraph": "Racha 3 · Récord 7 · Jugadas 21 · 75 % victorias · Promedio 4,1 intentos",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "empty"
+          ]
+        },
+        {
+          "name": "stats-bug-hunt",
+          "type": "card",
+          "category": "content",
+          "content": "Bug Hunt",
+          "paragraph": "Racha 2 · Récord 6 · Jugadas 18 · 70 % victorias · Mejor racha 7",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "empty"
+          ]
+        },
+        {
+          "name": "stats-big-o",
+          "type": "card",
+          "category": "content",
+          "content": "Big O",
+          "paragraph": "Racha 5 · Récord 9 · Jugadas 27 · 85 % victorias · Aciertos con n log n: 3",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "empty"
+          ]
+        },
+        {
+          "name": "stats-timeline",
+          "type": "card",
+          "category": "content",
+          "content": "Tech Timeline",
+          "paragraph": "Racha 1 · Récord 5 · Jugadas 15 · 65 % victorias · Posiciones acertadas: 78 %",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "empty"
+          ]
+        },
+        {
+          "name": "stats-grep-grid",
+          "type": "card",
+          "category": "content",
+          "content": "Grep Grid",
+          "paragraph": "Racha 0 · Récord 4 · Jugadas 12 · 60 % victorias · Promedio 6,4/8 palabras",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "empty"
+          ]
+        },
+        {
+          "name": "titulo-historial",
+          "type": "heading",
+          "category": "content",
+          "content": "Historial",
+          "level": "h2",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "empty"
+          ]
+        },
+        {
+          "name": "tabla-historial",
+          "type": "table",
+          "category": "content",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "empty"
+          ],
+          "columns": [
+            {
+              "label": "Fecha",
+              "width": 3
+            },
+            {
+              "label": "Juego",
+              "width": 4
+            },
+            {
+              "label": "Resultado",
+              "width": 3
+            }
+          ],
+          "rows": [
+            [
+              "03/11",
+              "Devdle",
+              "✓ 4/6"
+            ],
+            [
+              "03/11",
+              "Grep Grid",
+              "6/8"
+            ],
+            [
+              "02/11",
+              "Bug Hunt",
+              "✗ L7"
+            ],
+            [
+              "02/11",
+              "Tech Timeline",
+              "4/5"
+            ],
+            [
+              "02/11",
+              "Big O",
+              "✓"
+            ],
+            [
+              "01/11",
+              "Devdle",
+              "✗ X/6"
+            ]
+          ]
+        },
+        {
+          "name": "paginacion",
+          "type": "pagination",
+          "category": "navigation",
+          "pages": 3,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "empty"
+          ]
+        },
+        {
+          "name": "vacio",
+          "type": "empty-state",
+          "category": "feedback",
+          "content": "Todavía no jugaste",
+          "paragraph": "Completá un desafío y acá vas a ver tus rachas, tu heatmap y tu historial.",
+          "visible_only_in_states": [
+            "empty"
+          ]
+        },
+        {
+          "name": "btn-ir-juegos",
+          "type": "button",
+          "category": "input",
+          "content": "Ir a los juegos",
+          "variant": "primary",
+          "icon": "arrow-right",
+          "visible_only_in_states": [
+            "empty"
+          ]
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando tus estadísticas…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar tus estadísticas. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "titulo",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "vacio",
+          "btn-ir-juegos",
+          "kpi-racha",
+          "kpi-record",
+          "kpi-completados",
+          "heatmap",
+          "titulo-juegos",
+          "stats-devdle",
+          "stats-bug-hunt",
+          "stats-big-o",
+          "stats-timeline",
+          "stats-grep-grid",
+          "titulo-historial",
+          "tabla-historial",
+          "paginacion"
+        ],
+        "desktop": [
+          "titulo",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "vacio",
+          "btn-ir-juegos",
+          {
+            "row": "kpis",
+            "cols": [
+              {
+                "w": 4,
+                "stack": [
+                  "kpi-racha"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "kpi-record"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "kpi-completados"
+                ]
+              }
+            ]
+          },
+          "heatmap",
+          "titulo-juegos",
+          {
+            "row": "juegos-1",
+            "cols": [
+              {
+                "w": 4,
+                "stack": [
+                  "stats-devdle"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "stats-bug-hunt"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "stats-big-o"
+                ]
+              }
+            ]
+          },
+          {
+            "row": "juegos-2",
+            "cols": [
+              {
+                "w": 4,
+                "stack": [
+                  "stats-timeline"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "stats-grep-grid"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": []
+              }
+            ]
+          },
+          {
+            "row": "historial",
+            "cols": [
+              {
+                "w": 12,
+                "stack": [
+                  "titulo-historial",
+                  "tabla-historial",
+                  "paginacion"
+                ]
+              }
+            ],
+            "card": true
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "empty",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "acerca-de",
+      "displayName": "Acerca de",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Acerca de nerdose",
+          "level": "h1"
+        },
+        {
+          "name": "intro",
+          "type": "paragraph",
+          "category": "content",
+          "content": "nerdose es un juego diario sobre programación y tecnología: cinco minijuegos cortos, un único desafío por día igual para todos, sin registro y en español e inglés.",
+          "level": "body"
+        },
+        {
+          "name": "card-juegos",
+          "type": "card",
+          "category": "content",
+          "content": "Los 5 juegos",
+          "paragraph": "Devdle: adiviná el término. Bug Hunt: encontrá la línea con el bug. Big O: elegí la complejidad. Tech Timeline: ordená los hitos. Grep Grid: encontrá las 8 palabras, sin tiempo."
+        },
+        {
+          "name": "card-rachas",
+          "type": "card",
+          "category": "content",
+          "content": "Cómo funciona la racha",
+          "paragraph": "Completar un desafío, ganando o perdiendo, suma a tu racha. Un día sin desafío es neutro: no suma ni corta. Un desafío anulado no te afecta."
+        },
+        {
+          "name": "card-atribucion",
+          "type": "card",
+          "category": "content",
+          "content": "Datos y atribución",
+          "paragraph": "Parte del contenido proviene de Wikipedia y Wikidata y se usa bajo licencia CC BY-SA 4.0."
+        },
+        {
+          "name": "card-privacidad",
+          "type": "card",
+          "category": "content",
+          "content": "Privacidad",
+          "paragraph": "No hay cuenta ni registro. Usamos una cookie funcional para guardar tu progreso; no la usamos para seguirte."
+        },
+        {
+          "name": "link-volver",
+          "type": "link",
+          "category": "navigation",
+          "content": "Volver a los juegos",
+          "icon": "arrow-left"
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "titulo",
+          "intro",
+          "card-juegos",
+          "card-rachas",
+          "card-atribucion",
+          "card-privacidad",
+          "link-volver"
+        ],
+        "desktop": [
+          {
+            "row": "centrado",
+            "cols": [
+              {
+                "w": 1,
+                "stack": []
+              },
+              {
+                "w": 10,
+                "stack": [
+                  "titulo",
+                  "intro",
+                  {
+                    "row": "info",
+                    "cols": [
+                      {
+                        "w": 6,
+                        "stack": [
+                          "card-juegos",
+                          "card-atribucion"
+                        ]
+                      },
+                      {
+                        "w": 6,
+                        "stack": [
+                          "card-rachas",
+                          "card-privacidad"
+                        ]
+                      }
+                    ]
+                  },
+                  "link-volver"
+                ]
+              },
+              {
+                "w": 1,
+                "stack": []
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "devdle-instrucciones",
+      "displayName": "Devdle · Instrucciones",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose / Devdle · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose / Devdle     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Devdle",
+          "level": "h1"
+        },
+        {
+          "name": "meta",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Desafío #8 · ~2 min · una partida por día",
+          "level": "caption",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "alerta-sin-desafio",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Hoy no hay desafío de Devdle. Es un día neutro: no suma ni corta tu racha.",
+          "kind": "info",
+          "visible_only_in_states": [
+            "sin desafío hoy"
+          ]
+        },
+        {
+          "name": "alerta-anulado",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "anulado"
+          ],
+          "annotation": "el modal O-02 se abre solo al entrar en este estado"
+        },
+        {
+          "name": "reglas-titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Cómo se juega",
+          "level": "h2",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "paso-1",
+          "type": "card",
+          "category": "content",
+          "content": "1 · Adiviná el término",
+          "paragraph": "Es un término de tecnología escondido. Tenés 6 intentos para encontrarlo.",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "paso-2",
+          "type": "card",
+          "category": "content",
+          "content": "2 · Leé las pistas",
+          "paragraph": "Cada letra te dice si está en su lugar, en otro lugar o no está. Además del color, cada pista lleva un símbolo.",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "paso-3",
+          "type": "card",
+          "category": "content",
+          "content": "3 · Mirá las categorías",
+          "paragraph": "Te mostramos las categorías posibles, sin la del día, para orientarte.",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "aviso-conteo",
+          "type": "alert",
+          "category": "feedback",
+          "content": "La partida no cuenta hasta que la completes.",
+          "kind": "info",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-empezar",
+          "type": "button",
+          "category": "input",
+          "content": "Empezar",
+          "variant": "primary",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "variant": "disabled",
+              "annotation": "deshabilitado mientras no hay sesión (O-03)"
+            }
+          }
+        },
+        {
+          "name": "banner-cookies",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Activá las cookies para poder jugar",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "sin sesión"
+          ]
+        },
+        {
+          "name": "link-volver",
+          "type": "link",
+          "category": "navigation",
+          "content": "Volver a los juegos",
+          "icon": "arrow-left"
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando Devdle…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar el desafío de Devdle. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "banner-cookies",
+          "titulo",
+          "meta",
+          "alerta-sin-desafio",
+          "alerta-anulado",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "reglas-titulo",
+          "paso-1",
+          "paso-2",
+          "paso-3",
+          "aviso-conteo",
+          "btn-empezar",
+          "link-volver"
+        ],
+        "desktop": [
+          "banner-cookies",
+          {
+            "row": "centrado",
+            "cols": [
+              {
+                "w": 1,
+                "stack": []
+              },
+              {
+                "w": 10,
+                "stack": [
+                  "titulo",
+                  "meta",
+                  "alerta-sin-desafio",
+                  "alerta-anulado",
+                  "loader",
+                  "alerta-sistema",
+                  "btn-reintentar",
+                  "reglas-titulo",
+                  {
+                    "row": "pasos",
+                    "cols": [
+                      {
+                        "w": 4,
+                        "stack": [
+                          "paso-1"
+                        ]
+                      },
+                      {
+                        "w": 4,
+                        "stack": [
+                          "paso-2"
+                        ]
+                      },
+                      {
+                        "w": 4,
+                        "stack": [
+                          "paso-3"
+                        ]
+                      }
+                    ]
+                  },
+                  "aviso-conteo",
+                  {
+                    "row": "acciones",
+                    "cols": [
+                      {
+                        "w": 6,
+                        "stack": [
+                          "btn-empezar"
+                        ]
+                      },
+                      {
+                        "w": 6,
+                        "stack": [
+                          "link-volver"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "w": 1,
+                "stack": []
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "sin desafío hoy",
+          "applies": true
+        },
+        {
+          "name": "anulado",
+          "applies": true
+        },
+        {
+          "name": "sin sesión",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "devdle-partida",
+      "displayName": "Devdle · Partida",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose / Devdle · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose / Devdle     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Devdle",
+          "level": "h1",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "consigna",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Adiviná el término de 5 letras. Intento 2 de 6.",
+          "level": "body",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "grilla-intentos",
+          "type": "image",
+          "category": "content",
+          "content": "Grilla de 6 intentos × 5 letras · feedback por letra (color + símbolo)",
+          "aspect_ratio": "5:6",
+          "h": 260,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "el feedback usa color + ícono/patrón (NFR-U04)"
+        },
+        {
+          "name": "alerta-palabra",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No está en la lista. Probá con otro término.",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "error de validación"
+          ]
+        },
+        {
+          "name": "pista-categorias",
+          "type": "card",
+          "category": "content",
+          "content": "Categorías posibles",
+          "paragraph": "Lenguaje · Framework · Herramienta · Protocolo · Concepto",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "leyenda",
+          "type": "chips",
+          "category": "content",
+          "items": [
+            "✓ en su lugar",
+            "~ en otro lugar",
+            "✗ no está"
+          ],
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "teclado",
+          "type": "image",
+          "category": "content",
+          "content": "Teclado en pantalla · letras, Enter y Borrar",
+          "aspect_ratio": "10:4",
+          "h": 150,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "en desktop se juega también con el teclado físico"
+        },
+        {
+          "name": "link-reportar",
+          "type": "link",
+          "category": "navigation",
+          "content": "Reportar un problema",
+          "icon": "warning",
+          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando tu partida de Devdle…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "titulo",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "consigna",
+          "grilla-intentos",
+          "alerta-palabra",
+          "pista-categorias",
+          "leyenda",
+          "teclado",
+          "link-reportar"
+        ],
+        "desktop": [
+          "titulo",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          {
+            "row": "juego",
+            "cols": [
+              {
+                "w": 7,
+                "stack": [
+                  "consigna",
+                  "alerta-palabra",
+                  "grilla-intentos"
+                ]
+              },
+              {
+                "w": 5,
+                "stack": [
+                  "pista-categorias",
+                  "leyenda",
+                  "teclado",
+                  "link-reportar"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "error de validación",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "devdle-resultado",
+      "displayName": "Devdle · Resultado",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose / Devdle · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose / Devdle     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "veredicto",
+          "type": "heading",
+          "category": "content",
+          "content": "Ganaste en 4/6",
+          "level": "h1",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "perdió": {
+              "content": "No salió: X/6"
+            },
+            "anulado": {
+              "content": "Desafío anulado"
+            }
+          }
+        },
+        {
+          "name": "alerta-anulado",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "anulado"
+          ]
+        },
+        {
+          "name": "grilla-resultado",
+          "type": "image",
+          "category": "content",
+          "content": "Tus intentos (grilla 4 × 5)",
+          "aspect_ratio": "5:4",
+          "h": 160,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
+        },
+        {
+          "name": "card-palabra",
+          "type": "card",
+          "category": "content",
+          "content": "Palabra del día: PARSER",
+          "paragraph": "Categoría: concepto. Programa que analiza una secuencia de texto según una gramática. Resumen de Wikipedia con enlace a la fuente.",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "distribucion",
+          "type": "chart",
+          "category": "content",
+          "content": "Distribución de intentos",
+          "kind": "bar",
+          "h": 140,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
+        },
+        {
+          "name": "card-rachas",
+          "type": "card",
+          "category": "content",
+          "content": "Rachas",
+          "paragraph": "Devdle: 3 días · Global: 4 días",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-compartir",
+          "type": "button",
+          "category": "input",
+          "content": "Compartir",
+          "variant": "primary",
+          "icon": "share",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "share nativo del sistema; si no está disponible copia al portapapeles"
+        },
+        {
+          "name": "toast-copiado",
+          "type": "toast",
+          "category": "feedback",
+          "content": "Copiado",
+          "kind": "success",
+          "visible_only_in_states": [
+            "success"
+          ]
+        },
+        {
+          "name": "link-reportar",
+          "type": "link",
+          "category": "navigation",
+          "content": "Reportar un problema",
+          "icon": "warning",
+          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "cuenta-regresiva",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Próximo desafío en 05:42:10",
+          "level": "caption",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-siguiente",
+          "type": "button",
+          "category": "input",
+          "content": "Siguiente juego",
+          "variant": "secondary",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "link-stats",
+          "type": "link",
+          "category": "navigation",
+          "content": "Ver mis estadísticas",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "link-volver",
+          "type": "link",
+          "category": "navigation",
+          "content": "Volver a los juegos",
+          "icon": "arrow-left",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando tu resultado de Devdle…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "veredicto",
+          "alerta-anulado",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "grilla-resultado",
+          "card-palabra",
+          "distribucion",
+          "card-rachas",
+          "btn-compartir",
+          "toast-copiado",
+          "link-reportar",
+          "cuenta-regresiva",
+          "btn-siguiente",
+          "link-stats",
+          "link-volver"
+        ],
+        "desktop": [
+          "veredicto",
+          "alerta-anulado",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          {
+            "row": "resultado",
+            "cols": [
+              {
+                "w": 7,
+                "stack": [
+                  "grilla-resultado",
+                  "card-palabra"
+                ]
+              },
+              {
+                "w": 5,
+                "stack": [
+                  "distribucion",
+                  "card-rachas",
+                  "btn-compartir",
+                  "toast-copiado",
+                  "link-reportar"
+                ]
+              }
+            ]
+          },
+          {
+            "row": "salida",
+            "cols": [
+              {
+                "w": 4,
+                "stack": [
+                  "cuenta-regresiva"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "btn-siguiente"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "link-stats",
+                  "link-volver"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "perdió",
+          "applies": true
+        },
+        {
+          "name": "anulado",
+          "applies": true
+        },
+        {
+          "name": "success",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "bug-hunt-instrucciones",
+      "displayName": "Bug Hunt · Instrucciones",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose / Bug Hunt · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose / Bug Hunt     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Bug Hunt",
+          "level": "h1"
+        },
+        {
+          "name": "meta",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Desafío #8 · ~2 min · una partida por día",
+          "level": "caption",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "alerta-sin-desafio",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Hoy no hay desafío de Bug Hunt. Es un día neutro: no suma ni corta tu racha.",
+          "kind": "info",
+          "visible_only_in_states": [
+            "sin desafío hoy"
+          ]
+        },
+        {
+          "name": "alerta-anulado",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "anulado"
+          ],
+          "annotation": "el modal O-02 se abre solo al entrar en este estado"
+        },
+        {
+          "name": "reglas-titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Cómo se juega",
+          "level": "h2",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "paso-1",
+          "type": "card",
+          "category": "content",
+          "content": "1 · Leé la especificación",
+          "paragraph": "Te contamos qué debería hacer la función y te mostramos el código y los tests visibles.",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "paso-2",
+          "type": "card",
+          "category": "content",
+          "content": "2 · Encontrá la línea",
+          "paragraph": "Elegí la línea que tiene el bug. Las firmas y las líneas con solo llaves no se pueden elegir.",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "paso-3",
+          "type": "card",
+          "category": "content",
+          "content": "3 · Confirmá",
+          "paragraph": "Tenés un solo intento: elegí una línea y confirmá.",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "aviso-conteo",
+          "type": "alert",
+          "category": "feedback",
+          "content": "La partida no cuenta hasta que la completes.",
+          "kind": "info",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-empezar",
+          "type": "button",
+          "category": "input",
+          "content": "Empezar",
+          "variant": "primary",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "variant": "disabled",
+              "annotation": "deshabilitado mientras no hay sesión (O-03)"
+            }
+          }
+        },
+        {
+          "name": "banner-cookies",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Activá las cookies para poder jugar",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "sin sesión"
+          ]
+        },
+        {
+          "name": "link-volver",
+          "type": "link",
+          "category": "navigation",
+          "content": "Volver a los juegos",
+          "icon": "arrow-left"
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando Bug Hunt…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar el desafío de Bug Hunt. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "banner-cookies",
+          "titulo",
+          "meta",
+          "alerta-sin-desafio",
+          "alerta-anulado",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "reglas-titulo",
+          "paso-1",
+          "paso-2",
+          "paso-3",
+          "aviso-conteo",
+          "btn-empezar",
+          "link-volver"
+        ],
+        "desktop": [
+          "banner-cookies",
+          {
+            "row": "centrado",
+            "cols": [
+              {
+                "w": 1,
+                "stack": []
+              },
+              {
+                "w": 10,
+                "stack": [
+                  "titulo",
+                  "meta",
+                  "alerta-sin-desafio",
+                  "alerta-anulado",
+                  "loader",
+                  "alerta-sistema",
+                  "btn-reintentar",
+                  "reglas-titulo",
+                  {
+                    "row": "pasos",
+                    "cols": [
+                      {
+                        "w": 4,
+                        "stack": [
+                          "paso-1"
+                        ]
+                      },
+                      {
+                        "w": 4,
+                        "stack": [
+                          "paso-2"
+                        ]
+                      },
+                      {
+                        "w": 4,
+                        "stack": [
+                          "paso-3"
+                        ]
+                      }
+                    ]
+                  },
+                  "aviso-conteo",
+                  {
+                    "row": "acciones",
+                    "cols": [
+                      {
+                        "w": 6,
+                        "stack": [
+                          "btn-empezar"
+                        ]
+                      },
+                      {
+                        "w": 6,
+                        "stack": [
+                          "link-volver"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "w": 1,
+                "stack": []
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "sin desafío hoy",
+          "applies": true
+        },
+        {
+          "name": "anulado",
+          "applies": true
+        },
+        {
+          "name": "sin sesión",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "bug-hunt-partida",
+      "displayName": "Bug Hunt · Partida",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose / Bug Hunt · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose / Bug Hunt     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Bug Hunt",
+          "level": "h1",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "consigna",
+          "type": "paragraph",
+          "category": "content",
+          "content": "¿Qué línea tiene el bug? Tenés un solo intento.",
+          "level": "body",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "tabs-lenguaje",
+          "type": "tabs",
+          "category": "navigation",
+          "labels": [
+            "JS",
+            "Go",
+            "Java"
+          ],
+          "active": 0,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "codigo",
+          "type": "image",
+          "category": "content",
+          "content": "Código con numeración de líneas · líneas no elegibles atenuadas",
+          "aspect_ratio": "4:3",
+          "h": 220,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "a 320 px el código scrollea en horizontal"
+        },
+        {
+          "name": "especificacion",
+          "type": "card",
+          "category": "content",
+          "content": "Qué debería hacer",
+          "paragraph": "sumaPares(nums) devuelve la suma de los elementos pares del arreglo.",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "tests",
+          "type": "card",
+          "category": "content",
+          "content": "Tests visibles",
+          "paragraph": "✓ sumaPares([2, 4]) → 6 · ✓ sumaPares([]) → 0",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "aviso-oculto",
+          "type": "alert",
+          "category": "feedback",
+          "content": "1 test oculto falla.",
+          "kind": "info",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "alerta-linea",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Esa línea no se puede elegir. Elegí otra.",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "error de validación"
+          ]
+        },
+        {
+          "name": "seleccion",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Ninguna línea seleccionada",
+          "level": "caption",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "selección hecha": {
+              "content": "Línea seleccionada: 4"
+            }
+          }
+        },
+        {
+          "name": "btn-confirmar",
+          "type": "button",
+          "category": "input",
+          "content": "Confirmar línea",
+          "variant": "disabled",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "selección hecha": {
+              "variant": "primary"
+            }
+          }
+        },
+        {
+          "name": "link-reportar",
+          "type": "link",
+          "category": "navigation",
+          "content": "Reportar un problema",
+          "icon": "warning",
+          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando tu partida de Bug Hunt…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "titulo",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "consigna",
+          "especificacion",
+          "tabs-lenguaje",
+          "codigo",
+          "tests",
+          "aviso-oculto",
+          "alerta-linea",
+          "seleccion",
+          "btn-confirmar",
+          "link-reportar"
+        ],
+        "desktop": [
+          "titulo",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          {
+            "row": "juego",
+            "cols": [
+              {
+                "w": 7,
+                "stack": [
+                  "consigna",
+                  "especificacion",
+                  "tabs-lenguaje",
+                  "codigo"
+                ]
+              },
+              {
+                "w": 5,
+                "stack": [
+                  "tests",
+                  "aviso-oculto",
+                  "alerta-linea",
+                  "seleccion",
+                  "btn-confirmar",
+                  "link-reportar"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "selección hecha",
+          "applies": true
+        },
+        {
+          "name": "error de validación",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "bug-hunt-resultado",
+      "displayName": "Bug Hunt · Resultado",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose / Bug Hunt · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose / Bug Hunt     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "veredicto",
+          "type": "heading",
+          "category": "content",
+          "content": "Encontraste el bug",
+          "level": "h1",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "perdió": {
+              "content": "No era esa línea"
+            },
+            "anulado": {
+              "content": "Desafío anulado"
+            }
+          }
+        },
+        {
+          "name": "alerta-anulado",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "anulado"
+          ]
+        },
+        {
+          "name": "tabs-lenguaje",
+          "type": "tabs",
+          "category": "navigation",
+          "labels": [
+            "JS",
+            "Go",
+            "Java"
+          ],
+          "active": 0,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "codigo",
+          "type": "image",
+          "category": "content",
+          "content": "Código con la línea 4 resaltada",
+          "aspect_ratio": "4:3",
+          "h": 200,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "card-test",
+          "type": "card",
+          "category": "content",
+          "content": "Test que falla",
+          "paragraph": "sumaPares([1, 2, 3, 4]) · esperado 6 · obtenido 10",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "card-fix",
+          "type": "card",
+          "category": "content",
+          "content": "El fix",
+          "paragraph": "línea 4 · - if (n % 2 === 1) · + if (n % 2 === 0)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "card-explicacion",
+          "type": "card",
+          "category": "content",
+          "content": "Por qué falla",
+          "paragraph": "La condición suma los impares en lugar de los pares, así que el resultado no coincide con la especificación.",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "card-rachas",
+          "type": "card",
+          "category": "content",
+          "content": "Rachas",
+          "paragraph": "Bug Hunt: 3 días · Global: 4 días",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-compartir",
+          "type": "button",
+          "category": "input",
+          "content": "Compartir",
+          "variant": "primary",
+          "icon": "share",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "share nativo del sistema; si no está disponible copia al portapapeles"
+        },
+        {
+          "name": "toast-copiado",
+          "type": "toast",
+          "category": "feedback",
+          "content": "Copiado",
+          "kind": "success",
+          "visible_only_in_states": [
+            "success"
+          ]
+        },
+        {
+          "name": "link-reportar",
+          "type": "link",
+          "category": "navigation",
+          "content": "Reportar un problema",
+          "icon": "warning",
+          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "cuenta-regresiva",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Próximo desafío en 05:42:10",
+          "level": "caption",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-siguiente",
+          "type": "button",
+          "category": "input",
+          "content": "Siguiente juego",
+          "variant": "secondary",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "link-stats",
+          "type": "link",
+          "category": "navigation",
+          "content": "Ver mis estadísticas",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "link-volver",
+          "type": "link",
+          "category": "navigation",
+          "content": "Volver a los juegos",
+          "icon": "arrow-left",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando tu resultado de Bug Hunt…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "veredicto",
+          "alerta-anulado",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "tabs-lenguaje",
+          "codigo",
+          "card-test",
+          "card-fix",
+          "card-explicacion",
+          "card-rachas",
+          "btn-compartir",
+          "toast-copiado",
+          "link-reportar",
+          "cuenta-regresiva",
+          "btn-siguiente",
+          "link-stats",
+          "link-volver"
+        ],
+        "desktop": [
+          "veredicto",
+          "alerta-anulado",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          {
+            "row": "resultado",
+            "cols": [
+              {
+                "w": 7,
+                "stack": [
+                  "tabs-lenguaje",
+                  "codigo",
+                  "card-explicacion"
+                ]
+              },
+              {
+                "w": 5,
+                "stack": [
+                  "card-test",
+                  "card-fix",
+                  "card-rachas",
+                  "btn-compartir",
+                  "toast-copiado",
+                  "link-reportar"
+                ]
+              }
+            ]
+          },
+          {
+            "row": "salida",
+            "cols": [
+              {
+                "w": 4,
+                "stack": [
+                  "cuenta-regresiva"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "btn-siguiente"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "link-stats",
+                  "link-volver"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "perdió",
+          "applies": true
+        },
+        {
+          "name": "anulado",
+          "applies": true
+        },
+        {
+          "name": "success",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "big-o-instrucciones",
+      "displayName": "Big O · Instrucciones",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose / Big O · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose / Big O     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Big O",
+          "level": "h1"
+        },
+        {
+          "name": "meta",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Desafío #8 · ~1 min · una partida por día",
+          "level": "caption",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "alerta-sin-desafio",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Hoy no hay desafío de Big O. Es un día neutro: no suma ni corta tu racha.",
+          "kind": "info",
+          "visible_only_in_states": [
+            "sin desafío hoy"
+          ]
+        },
+        {
+          "name": "alerta-anulado",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "anulado"
+          ],
+          "annotation": "el modal O-02 se abre solo al entrar en este estado"
+        },
+        {
+          "name": "reglas-titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Cómo se juega",
+          "level": "h2",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "paso-1",
+          "type": "card",
+          "category": "content",
+          "content": "1 · Leé el código",
+          "paragraph": "Podés verlo en JS, Go o Java: es solo una vista, no cambia la respuesta.",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "paso-2",
+          "type": "card",
+          "category": "content",
+          "content": "2 · Pensá en el peor caso",
+          "paragraph": "¿Cuánto crece el tiempo de ejecución cuando n crece?",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "paso-3",
+          "type": "card",
+          "category": "content",
+          "content": "3 · Elegí una de 8 opciones",
+          "paragraph": "Tenés un solo intento: seleccioná una complejidad y confirmá.",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "aviso-conteo",
+          "type": "alert",
+          "category": "feedback",
+          "content": "La partida no cuenta hasta que la completes.",
+          "kind": "info",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-empezar",
+          "type": "button",
+          "category": "input",
+          "content": "Empezar",
+          "variant": "primary",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "variant": "disabled",
+              "annotation": "deshabilitado mientras no hay sesión (O-03)"
+            }
+          }
+        },
+        {
+          "name": "banner-cookies",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Activá las cookies para poder jugar",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "sin sesión"
+          ]
+        },
+        {
+          "name": "link-volver",
+          "type": "link",
+          "category": "navigation",
+          "content": "Volver a los juegos",
+          "icon": "arrow-left"
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando Big O…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar el desafío de Big O. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "banner-cookies",
+          "titulo",
+          "meta",
+          "alerta-sin-desafio",
+          "alerta-anulado",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "reglas-titulo",
+          "paso-1",
+          "paso-2",
+          "paso-3",
+          "aviso-conteo",
+          "btn-empezar",
+          "link-volver"
+        ],
+        "desktop": [
+          "banner-cookies",
+          {
+            "row": "centrado",
+            "cols": [
+              {
+                "w": 1,
+                "stack": []
+              },
+              {
+                "w": 10,
+                "stack": [
+                  "titulo",
+                  "meta",
+                  "alerta-sin-desafio",
+                  "alerta-anulado",
+                  "loader",
+                  "alerta-sistema",
+                  "btn-reintentar",
+                  "reglas-titulo",
+                  {
+                    "row": "pasos",
+                    "cols": [
+                      {
+                        "w": 4,
+                        "stack": [
+                          "paso-1"
+                        ]
+                      },
+                      {
+                        "w": 4,
+                        "stack": [
+                          "paso-2"
+                        ]
+                      },
+                      {
+                        "w": 4,
+                        "stack": [
+                          "paso-3"
+                        ]
+                      }
+                    ]
+                  },
+                  "aviso-conteo",
+                  {
+                    "row": "acciones",
+                    "cols": [
+                      {
+                        "w": 6,
+                        "stack": [
+                          "btn-empezar"
+                        ]
+                      },
+                      {
+                        "w": 6,
+                        "stack": [
+                          "link-volver"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "w": 1,
+                "stack": []
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "sin desafío hoy",
+          "applies": true
+        },
+        {
+          "name": "anulado",
+          "applies": true
+        },
+        {
+          "name": "sin sesión",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "big-o-partida",
+      "displayName": "Big O · Partida",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose / Big O · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose / Big O     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Big O",
+          "level": "h1",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "consigna",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Leé el código y elegí la complejidad.",
+          "level": "body",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "tabs-lenguaje",
+          "type": "tabs",
+          "category": "navigation",
+          "labels": [
+            "JS",
+            "Go",
+            "Java"
+          ],
+          "active": 0,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "codigo",
+          "type": "image",
+          "category": "content",
+          "content": "Código con numeración de líneas",
+          "aspect_ratio": "4:3",
+          "h": 220,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "a 320 px el código scrollea en horizontal"
+        },
+        {
+          "name": "pregunta",
+          "type": "heading",
+          "category": "content",
+          "content": "¿Cuál es la complejidad temporal (peor caso) de f(n)?",
+          "level": "h2",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "opciones",
+          "type": "chips",
+          "category": "content",
+          "items": [
+            "O(1)",
+            "O(log n)",
+            "O(n)",
+            "O(n log n)",
+            "O(n²)",
+            "O(n³)",
+            "O(2ⁿ)",
+            "O(n!)"
+          ],
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "selección única; las 8 opciones son siempre las mismas"
+        },
+        {
+          "name": "seleccion",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Ninguna opción elegida",
+          "level": "caption",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "selección hecha": {
+              "content": "Elegiste: O(n²)"
+            }
+          }
+        },
+        {
+          "name": "btn-confirmar",
+          "type": "button",
+          "category": "input",
+          "content": "Confirmar respuesta",
+          "variant": "disabled",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "selección hecha": {
+              "variant": "primary"
+            }
+          }
+        },
+        {
+          "name": "link-reportar",
+          "type": "link",
+          "category": "navigation",
+          "content": "Reportar un problema",
+          "icon": "warning",
+          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando tu partida de Big O…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "titulo",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "consigna",
+          "tabs-lenguaje",
+          "codigo",
+          "pregunta",
+          "opciones",
+          "seleccion",
+          "btn-confirmar",
+          "link-reportar"
+        ],
+        "desktop": [
+          "titulo",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          {
+            "row": "juego",
+            "cols": [
+              {
+                "w": 7,
+                "stack": [
+                  "consigna",
+                  "tabs-lenguaje",
+                  "codigo"
+                ]
+              },
+              {
+                "w": 5,
+                "stack": [
+                  "pregunta",
+                  "opciones",
+                  "seleccion",
+                  "btn-confirmar",
+                  "link-reportar"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "selección hecha",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "big-o-resultado",
+      "displayName": "Big O · Resultado",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose / Big O · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose / Big O     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "veredicto",
+          "type": "heading",
+          "category": "content",
+          "content": "Respuesta correcta",
+          "level": "h1",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "perdió": {
+              "content": "No era esa complejidad"
+            },
+            "anulado": {
+              "content": "Desafío anulado"
+            }
+          }
+        },
+        {
+          "name": "alerta-anulado",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "anulado"
+          ]
+        },
+        {
+          "name": "card-respuesta",
+          "type": "card",
+          "category": "content",
+          "content": "Respuesta correcta: O(n log n)",
+          "paragraph": "Elegiste O(n²), confirmaste con Go.",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "tabs-lenguaje",
+          "type": "tabs",
+          "category": "navigation",
+          "labels": [
+            "JS",
+            "Go",
+            "Java"
+          ],
+          "active": 1,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "codigo",
+          "type": "image",
+          "category": "content",
+          "content": "Código analizado",
+          "aspect_ratio": "4:3",
+          "h": 180,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "lista-pasos",
+          "type": "list",
+          "category": "content",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "items": [
+            {
+              "title": "1 · Orden inicial",
+              "subtitle": "ordenar el arreglo cuesta n log n"
+            },
+            {
+              "title": "2 · Recorrido",
+              "subtitle": "un bucle de n pasos cuesta n"
+            },
+            {
+              "title": "3 · Simplificación",
+              "subtitle": "n log n + n se simplifica a n log n"
+            }
+          ]
+        },
+        {
+          "name": "card-rachas",
+          "type": "card",
+          "category": "content",
+          "content": "Rachas",
+          "paragraph": "Big O: 3 días · Global: 4 días",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-compartir",
+          "type": "button",
+          "category": "input",
+          "content": "Compartir",
+          "variant": "primary",
+          "icon": "share",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "share nativo del sistema; si no está disponible copia al portapapeles"
+        },
+        {
+          "name": "toast-copiado",
+          "type": "toast",
+          "category": "feedback",
+          "content": "Copiado",
+          "kind": "success",
+          "visible_only_in_states": [
+            "success"
+          ]
+        },
+        {
+          "name": "link-reportar",
+          "type": "link",
+          "category": "navigation",
+          "content": "Reportar un problema",
+          "icon": "warning",
+          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "cuenta-regresiva",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Próximo desafío en 05:42:10",
+          "level": "caption",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-siguiente",
+          "type": "button",
+          "category": "input",
+          "content": "Siguiente juego",
+          "variant": "secondary",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "link-stats",
+          "type": "link",
+          "category": "navigation",
+          "content": "Ver mis estadísticas",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "link-volver",
+          "type": "link",
+          "category": "navigation",
+          "content": "Volver a los juegos",
+          "icon": "arrow-left",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando tu resultado de Big O…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "veredicto",
+          "alerta-anulado",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "card-respuesta",
+          "tabs-lenguaje",
+          "codigo",
+          "lista-pasos",
+          "card-rachas",
+          "btn-compartir",
+          "toast-copiado",
+          "link-reportar",
+          "cuenta-regresiva",
+          "btn-siguiente",
+          "link-stats",
+          "link-volver"
+        ],
+        "desktop": [
+          "veredicto",
+          "alerta-anulado",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          {
+            "row": "resultado",
+            "cols": [
+              {
+                "w": 7,
+                "stack": [
+                  "card-respuesta",
+                  "tabs-lenguaje",
+                  "codigo"
+                ]
+              },
+              {
+                "w": 5,
+                "stack": [
+                  "lista-pasos",
+                  "card-rachas",
+                  "btn-compartir",
+                  "toast-copiado",
+                  "link-reportar"
+                ]
+              }
+            ]
+          },
+          {
+            "row": "salida",
+            "cols": [
+              {
+                "w": 4,
+                "stack": [
+                  "cuenta-regresiva"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "btn-siguiente"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "link-stats",
+                  "link-volver"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "perdió",
+          "applies": true
+        },
+        {
+          "name": "anulado",
+          "applies": true
+        },
+        {
+          "name": "success",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "timeline-instrucciones",
+      "displayName": "Tech Timeline · Instrucciones",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose / Tech Timeline · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose / Tech Timeline     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Tech Timeline",
+          "level": "h1"
+        },
+        {
+          "name": "meta",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Desafío #8 · ~1 min · una partida por día",
+          "level": "caption",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "alerta-sin-desafio",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Hoy no hay desafío de Tech Timeline. Es un día neutro: no suma ni corta tu racha.",
+          "kind": "info",
+          "visible_only_in_states": [
+            "sin desafío hoy"
+          ]
+        },
+        {
+          "name": "alerta-anulado",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "anulado"
+          ],
+          "annotation": "el modal O-02 se abre solo al entrar en este estado"
+        },
+        {
+          "name": "reglas-titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Cómo se juega",
+          "level": "h2",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "paso-1",
+          "type": "card",
+          "category": "content",
+          "content": "1 · Mirá los 5 hitos",
+          "paragraph": "Cada uno es un hecho de la historia de la tecnología, sin fecha.",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "paso-2",
+          "type": "card",
+          "category": "content",
+          "content": "2 · Ordenalos",
+          "paragraph": "Del más antiguo al más reciente. Arrastrá, o usá las flechas de subir y bajar de cada fila.",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "paso-3",
+          "type": "card",
+          "category": "content",
+          "content": "3 · Confirmá",
+          "paragraph": "Tenés un solo intento: cuando estés listo, confirmá el orden.",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "aviso-conteo",
+          "type": "alert",
+          "category": "feedback",
+          "content": "La partida no cuenta hasta que la completes.",
+          "kind": "info",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-empezar",
+          "type": "button",
+          "category": "input",
+          "content": "Empezar",
+          "variant": "primary",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "variant": "disabled",
+              "annotation": "deshabilitado mientras no hay sesión (O-03)"
+            }
+          }
+        },
+        {
+          "name": "banner-cookies",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Activá las cookies para poder jugar",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "sin sesión"
+          ]
+        },
+        {
+          "name": "link-volver",
+          "type": "link",
+          "category": "navigation",
+          "content": "Volver a los juegos",
+          "icon": "arrow-left"
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando Tech Timeline…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar el desafío de Tech Timeline. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "banner-cookies",
+          "titulo",
+          "meta",
+          "alerta-sin-desafio",
+          "alerta-anulado",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "reglas-titulo",
+          "paso-1",
+          "paso-2",
+          "paso-3",
+          "aviso-conteo",
+          "btn-empezar",
+          "link-volver"
+        ],
+        "desktop": [
+          "banner-cookies",
+          {
+            "row": "centrado",
+            "cols": [
+              {
+                "w": 1,
+                "stack": []
+              },
+              {
+                "w": 10,
+                "stack": [
+                  "titulo",
+                  "meta",
+                  "alerta-sin-desafio",
+                  "alerta-anulado",
+                  "loader",
+                  "alerta-sistema",
+                  "btn-reintentar",
+                  "reglas-titulo",
+                  {
+                    "row": "pasos",
+                    "cols": [
+                      {
+                        "w": 4,
+                        "stack": [
+                          "paso-1"
+                        ]
+                      },
+                      {
+                        "w": 4,
+                        "stack": [
+                          "paso-2"
+                        ]
+                      },
+                      {
+                        "w": 4,
+                        "stack": [
+                          "paso-3"
+                        ]
+                      }
+                    ]
+                  },
+                  "aviso-conteo",
+                  {
+                    "row": "acciones",
+                    "cols": [
+                      {
+                        "w": 6,
+                        "stack": [
+                          "btn-empezar"
+                        ]
+                      },
+                      {
+                        "w": 6,
+                        "stack": [
+                          "link-volver"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "w": 1,
+                "stack": []
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "sin desafío hoy",
+          "applies": true
+        },
+        {
+          "name": "anulado",
+          "applies": true
+        },
+        {
+          "name": "sin sesión",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "timeline-partida",
+      "displayName": "Tech Timeline · Partida",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose / Tech Timeline · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose / Tech Timeline     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Tech Timeline",
+          "level": "h1",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "consigna",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Ordená del más antiguo al más reciente. Categoría: lenguajes de programación.",
+          "level": "body",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "lista-hitos",
+          "type": "list",
+          "category": "content",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "items": [
+            {
+              "title": "Lanzamiento de Java",
+              "subtitle": "arrastrá o usá ↑ ↓"
+            },
+            {
+              "title": "Primer commit de Git",
+              "subtitle": "arrastrá o usá ↑ ↓"
+            },
+            {
+              "title": "Rust 1.0 estable",
+              "subtitle": "arrastrá o usá ↑ ↓"
+            },
+            {
+              "title": "Lanzamiento de Python 1.0",
+              "subtitle": "arrastrá o usá ↑ ↓"
+            },
+            {
+              "title": "Anuncio de Go",
+              "subtitle": "arrastrá o usá ↑ ↓"
+            }
+          ],
+          "annotation": "reordenar con arrastre (touch), teclado y flechas subir/bajar por fila (NFR-U03)"
+        },
+        {
+          "name": "btn-confirmar",
+          "type": "button",
+          "category": "input",
+          "content": "Confirmar orden",
+          "variant": "primary",
+          "icon": "check",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "link-reportar",
+          "type": "link",
+          "category": "navigation",
+          "content": "Reportar un problema",
+          "icon": "warning",
+          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando tu partida de Tech Timeline…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "titulo",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "consigna",
+          "lista-hitos",
+          "btn-confirmar",
+          "link-reportar"
+        ],
+        "desktop": [
+          "titulo",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          {
+            "row": "juego",
+            "cols": [
+              {
+                "w": 7,
+                "stack": [
+                  "consigna",
+                  "lista-hitos"
+                ]
+              },
+              {
+                "w": 5,
+                "stack": [
+                  "btn-confirmar",
+                  "link-reportar"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "timeline-resultado",
+      "displayName": "Tech Timeline · Resultado",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose / Tech Timeline · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose / Tech Timeline     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "puntaje",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Acertaste 3/5 posiciones",
+          "level": "body",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
+        },
+        {
+          "name": "veredicto",
+          "type": "heading",
+          "category": "content",
+          "content": "Orden correcto: 5/5",
+          "level": "h1",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "perdió": {
+              "content": "Acertaste 3/5 posiciones"
+            },
+            "anulado": {
+              "content": "Desafío anulado"
+            }
+          }
+        },
+        {
+          "name": "alerta-anulado",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "anulado"
+          ]
+        },
+        {
+          "name": "lista-tu-orden",
+          "type": "list",
+          "category": "content",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "items": [
+            {
+              "title": "✓ 1 · Primer commit de Git",
+              "subtitle": "tu posición era correcta"
+            },
+            {
+              "title": "✗ 2 · Lanzamiento de Java",
+              "subtitle": "debía ir en la posición 3"
+            },
+            {
+              "title": "✓ 3 · Anuncio de Go",
+              "subtitle": "tu posición era correcta"
+            },
+            {
+              "title": "✓ 4 · Lanzamiento de Python 1.0",
+              "subtitle": "tu posición era correcta"
+            },
+            {
+              "title": "✗ 5 · Rust 1.0 estable",
+              "subtitle": "debía ir en la posición 2"
+            }
+          ]
+        },
+        {
+          "name": "lista-correcto",
+          "type": "list",
+          "category": "content",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "items": [
+            {
+              "title": "1991 · Lanzamiento de Python 1.0",
+              "subtitle": "nota breve del hito"
+            },
+            {
+              "title": "1995 · Lanzamiento de Java",
+              "subtitle": "nota breve del hito"
+            },
+            {
+              "title": "2005 · Primer commit de Git",
+              "subtitle": "nota breve del hito"
+            },
+            {
+              "title": "2009 · Anuncio de Go",
+              "subtitle": "nota breve del hito"
+            },
+            {
+              "title": "2015 · Rust 1.0 estable",
+              "subtitle": "nota breve del hito"
+            }
+          ]
+        },
+        {
+          "name": "card-rachas",
+          "type": "card",
+          "category": "content",
+          "content": "Rachas",
+          "paragraph": "Tech Timeline: 3 días · Global: 4 días",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-compartir",
+          "type": "button",
+          "category": "input",
+          "content": "Compartir",
+          "variant": "primary",
+          "icon": "share",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "share nativo del sistema; si no está disponible copia al portapapeles"
+        },
+        {
+          "name": "toast-copiado",
+          "type": "toast",
+          "category": "feedback",
+          "content": "Copiado",
+          "kind": "success",
+          "visible_only_in_states": [
+            "success"
+          ]
+        },
+        {
+          "name": "link-reportar",
+          "type": "link",
+          "category": "navigation",
+          "content": "Reportar un problema",
+          "icon": "warning",
+          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "cuenta-regresiva",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Próximo desafío en 05:42:10",
+          "level": "caption",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-siguiente",
+          "type": "button",
+          "category": "input",
+          "content": "Siguiente juego",
+          "variant": "secondary",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "link-stats",
+          "type": "link",
+          "category": "navigation",
+          "content": "Ver mis estadísticas",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "link-volver",
+          "type": "link",
+          "category": "navigation",
+          "content": "Volver a los juegos",
+          "icon": "arrow-left",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando tu resultado de Tech Timeline…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "veredicto",
+          "alerta-anulado",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "puntaje",
+          "lista-tu-orden",
+          "lista-correcto",
+          "card-rachas",
+          "btn-compartir",
+          "toast-copiado",
+          "link-reportar",
+          "cuenta-regresiva",
+          "btn-siguiente",
+          "link-stats",
+          "link-volver"
+        ],
+        "desktop": [
+          "veredicto",
+          "alerta-anulado",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          {
+            "row": "resultado",
+            "cols": [
+              {
+                "w": 7,
+                "stack": [
+                  "puntaje",
+                  "lista-tu-orden"
+                ]
+              },
+              {
+                "w": 5,
+                "stack": [
+                  "lista-correcto",
+                  "card-rachas",
+                  "btn-compartir",
+                  "toast-copiado",
+                  "link-reportar"
+                ]
+              }
+            ]
+          },
+          {
+            "row": "salida",
+            "cols": [
+              {
+                "w": 4,
+                "stack": [
+                  "cuenta-regresiva"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "btn-siguiente"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "link-stats",
+                  "link-volver"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "perdió",
+          "applies": true
+        },
+        {
+          "name": "anulado",
+          "applies": true
+        },
+        {
+          "name": "success",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "grep-grid-instrucciones",
+      "displayName": "Grep Grid · Instrucciones",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose / Grep Grid · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose / Grep Grid     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Grep Grid",
+          "level": "h1"
+        },
+        {
+          "name": "meta",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Desafío #8 · ~3 min · una partida por día",
+          "level": "caption",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "alerta-sin-desafio",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Hoy no hay desafío de Grep Grid. Es un día neutro: no suma ni corta tu racha.",
+          "kind": "info",
+          "visible_only_in_states": [
+            "sin desafío hoy"
+          ]
+        },
+        {
+          "name": "alerta-anulado",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "anulado"
+          ],
+          "annotation": "el modal O-02 se abre solo al entrar en este estado"
+        },
+        {
+          "name": "reglas-titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Cómo se juega",
+          "level": "h2",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "paso-1",
+          "type": "card",
+          "category": "content",
+          "content": "1 · Buscá las 8 palabras",
+          "paragraph": "Están escondidas en una grilla de 12×12.",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "paso-2",
+          "type": "card",
+          "category": "content",
+          "content": "2 · Tocá la primera y la última letra",
+          "paragraph": "Las palabras van en 3 direcciones, solo hacia adelante.",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "paso-3",
+          "type": "card",
+          "category": "content",
+          "content": "3 · Sin tiempo",
+          "paragraph": "No hay reloj: contás cuántas encontraste (N/8). Podés rendirte cuando quieras.",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "aviso-conteo",
+          "type": "alert",
+          "category": "feedback",
+          "content": "La partida no cuenta hasta que la completes.",
+          "kind": "info",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-empezar",
+          "type": "button",
+          "category": "input",
+          "content": "Empezar",
+          "variant": "primary",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "variant": "disabled",
+              "annotation": "deshabilitado mientras no hay sesión (O-03)"
+            }
+          }
+        },
+        {
+          "name": "banner-cookies",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Activá las cookies para poder jugar",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "sin sesión"
+          ]
+        },
+        {
+          "name": "link-volver",
+          "type": "link",
+          "category": "navigation",
+          "content": "Volver a los juegos",
+          "icon": "arrow-left"
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando Grep Grid…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar el desafío de Grep Grid. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "banner-cookies",
+          "titulo",
+          "meta",
+          "alerta-sin-desafio",
+          "alerta-anulado",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "reglas-titulo",
+          "paso-1",
+          "paso-2",
+          "paso-3",
+          "aviso-conteo",
+          "btn-empezar",
+          "link-volver"
+        ],
+        "desktop": [
+          "banner-cookies",
+          {
+            "row": "centrado",
+            "cols": [
+              {
+                "w": 1,
+                "stack": []
+              },
+              {
+                "w": 10,
+                "stack": [
+                  "titulo",
+                  "meta",
+                  "alerta-sin-desafio",
+                  "alerta-anulado",
+                  "loader",
+                  "alerta-sistema",
+                  "btn-reintentar",
+                  "reglas-titulo",
+                  {
+                    "row": "pasos",
+                    "cols": [
+                      {
+                        "w": 4,
+                        "stack": [
+                          "paso-1"
+                        ]
+                      },
+                      {
+                        "w": 4,
+                        "stack": [
+                          "paso-2"
+                        ]
+                      },
+                      {
+                        "w": 4,
+                        "stack": [
+                          "paso-3"
+                        ]
+                      }
+                    ]
+                  },
+                  "aviso-conteo",
+                  {
+                    "row": "acciones",
+                    "cols": [
+                      {
+                        "w": 6,
+                        "stack": [
+                          "btn-empezar"
+                        ]
+                      },
+                      {
+                        "w": 6,
+                        "stack": [
+                          "link-volver"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "w": 1,
+                "stack": []
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "sin desafío hoy",
+          "applies": true
+        },
+        {
+          "name": "anulado",
+          "applies": true
+        },
+        {
+          "name": "sin sesión",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "grep-grid-partida",
+      "displayName": "Grep Grid · Partida",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose / Grep Grid · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose / Grep Grid     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "titulo",
+          "type": "heading",
+          "category": "content",
+          "content": "Grep Grid",
+          "level": "h1",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "contador",
+          "type": "heading",
+          "category": "content",
+          "content": "3/8 encontradas",
+          "level": "h2",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "grilla",
+          "type": "image",
+          "category": "content",
+          "content": "Grilla 12×12 · tocá la primera y la última letra de cada palabra",
+          "aspect_ratio": "1:1",
+          "h": 320,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "a 320 px las celdas se escalan al ancho; la selección en reversa se rechaza"
+        },
+        {
+          "name": "alerta-seleccion",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No es una palabra. Probá con otra selección.",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "error de validación"
+          ]
+        },
+        {
+          "name": "lista-palabras",
+          "type": "list",
+          "category": "content",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "items": [
+            {
+              "title": "✓ parser",
+              "subtitle": "analiza texto según una gramática"
+            },
+            {
+              "title": "✓ stack",
+              "subtitle": "pila LIFO"
+            },
+            {
+              "title": "✓ regex",
+              "subtitle": "patrón de búsqueda"
+            },
+            {
+              "title": "· ·····  (5 letras)",
+              "subtitle": "sin encontrar"
+            },
+            {
+              "title": "· ····  (4 letras)",
+              "subtitle": "sin encontrar"
+            },
+            {
+              "title": "· ·······  (7 letras)",
+              "subtitle": "sin encontrar"
+            },
+            {
+              "title": "· ······  (6 letras)",
+              "subtitle": "sin encontrar"
+            },
+            {
+              "title": "· ····  (4 letras)",
+              "subtitle": "sin encontrar"
+            }
+          ]
+        },
+        {
+          "name": "btn-rendirse",
+          "type": "button",
+          "category": "input",
+          "content": "Rendirse",
+          "variant": "error",
+          "icon": "close",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "separado visualmente de la grilla para evitar un toque accidental"
+        },
+        {
+          "name": "link-reportar",
+          "type": "link",
+          "category": "navigation",
+          "content": "Reportar un problema",
+          "icon": "warning",
+          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando tu partida de Grep Grid…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "titulo",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "contador",
+          "grilla",
+          "alerta-seleccion",
+          "lista-palabras",
+          "btn-rendirse",
+          "link-reportar"
+        ],
+        "desktop": [
+          "titulo",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          {
+            "row": "juego",
+            "cols": [
+              {
+                "w": 7,
+                "stack": [
+                  "contador",
+                  "grilla",
+                  "alerta-seleccion"
+                ]
+              },
+              {
+                "w": 5,
+                "stack": [
+                  "lista-palabras",
+                  "btn-rendirse",
+                  "link-reportar"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "error de validación",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "grep-grid-resultado",
+      "displayName": "Grep Grid · Resultado",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose / Grep Grid · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose / Grep Grid     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "veredicto",
+          "type": "heading",
+          "category": "content",
+          "content": "8/8: las encontraste todas",
+          "level": "h1",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "perdió": {
+              "content": "Te rendiste: 6/8"
+            },
+            "anulado": {
+              "content": "Desafío anulado"
+            }
+          }
+        },
+        {
+          "name": "alerta-anulado",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "anulado"
+          ]
+        },
+        {
+          "name": "grilla-final",
+          "type": "image",
+          "category": "content",
+          "content": "Grilla 12×12 con las palabras faltantes reveladas",
+          "aspect_ratio": "1:1",
+          "h": 280,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "lista-palabras",
+          "type": "list",
+          "category": "content",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "items": [
+            {
+              "title": "parser",
+              "subtitle": "analiza texto según una gramática"
+            },
+            {
+              "title": "stack",
+              "subtitle": "pila LIFO"
+            },
+            {
+              "title": "regex",
+              "subtitle": "patrón de búsqueda"
+            },
+            {
+              "title": "kernel",
+              "subtitle": "núcleo del sistema operativo"
+            },
+            {
+              "title": "cache",
+              "subtitle": "almacenamiento rápido temporal"
+            },
+            {
+              "title": "queue",
+              "subtitle": "cola FIFO"
+            },
+            {
+              "title": "socket",
+              "subtitle": "extremo de una conexión"
+            },
+            {
+              "title": "mutex",
+              "subtitle": "exclusión mutua"
+            }
+          ]
+        },
+        {
+          "name": "card-rachas",
+          "type": "card",
+          "category": "content",
+          "content": "Rachas",
+          "paragraph": "Grep Grid: 3 días · Global: 4 días",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-compartir",
+          "type": "button",
+          "category": "input",
+          "content": "Compartir",
+          "variant": "primary",
+          "icon": "share",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "share nativo del sistema; si no está disponible copia al portapapeles"
+        },
+        {
+          "name": "toast-copiado",
+          "type": "toast",
+          "category": "feedback",
+          "content": "Copiado",
+          "kind": "success",
+          "visible_only_in_states": [
+            "success"
+          ]
+        },
+        {
+          "name": "link-reportar",
+          "type": "link",
+          "category": "navigation",
+          "content": "Reportar un problema",
+          "icon": "warning",
+          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "cuenta-regresiva",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Próximo desafío en 05:42:10",
+          "level": "caption",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-siguiente",
+          "type": "button",
+          "category": "input",
+          "content": "Siguiente juego",
+          "variant": "secondary",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "link-stats",
+          "type": "link",
+          "category": "navigation",
+          "content": "Ver mis estadísticas",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "link-volver",
+          "type": "link",
+          "category": "navigation",
+          "content": "Volver a los juegos",
+          "icon": "arrow-left",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "loader",
+          "type": "loader",
+          "category": "feedback",
+          "content": "Cargando tu resultado de Grep Grid…",
+          "visible_only_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "content": "Reintentar",
+          "variant": "secondary",
+          "icon": "refresh",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "veredicto",
+          "alerta-anulado",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          "grilla-final",
+          "lista-palabras",
+          "card-rachas",
+          "btn-compartir",
+          "toast-copiado",
+          "link-reportar",
+          "cuenta-regresiva",
+          "btn-siguiente",
+          "link-stats",
+          "link-volver"
+        ],
+        "desktop": [
+          "veredicto",
+          "alerta-anulado",
+          "loader",
+          "alerta-sistema",
+          "btn-reintentar",
+          {
+            "row": "resultado",
+            "cols": [
+              {
+                "w": 7,
+                "stack": [
+                  "grilla-final"
+                ]
+              },
+              {
+                "w": 5,
+                "stack": [
+                  "lista-palabras",
+                  "card-rachas",
+                  "btn-compartir",
+                  "toast-copiado",
+                  "link-reportar"
+                ]
+              }
+            ]
+          },
+          {
+            "row": "salida",
+            "cols": [
+              {
+                "w": 4,
+                "stack": [
+                  "cuenta-regresiva"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "btn-siguiente"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "link-stats",
+                  "link-volver"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "perdió",
+          "applies": true
+        },
+        {
+          "name": "anulado",
+          "applies": true
+        },
+        {
+          "name": "success",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "o-01-reportar",
+      "displayName": "O-01 · Reportar un problema",
+      "audiences": [
+        "jugador"
+      ],
+      "overlay": true,
+      "overlay_type": "bottom-sheet",
+      "triggered_by": "devdle-partida",
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "Reportar un problema",
+          "icon": "close"
+        },
+        {
+          "name": "aviso-partida",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No incluyas la respuesta si todavía estás jugando.",
+          "kind": "warning",
+          "visible_only_in_states": [
+            "desde partida"
+          ]
+        },
+        {
+          "name": "dd-motivo",
+          "type": "dropdown",
+          "category": "input",
+          "content": "Elegí un motivo",
+          "state": "closed",
+          "options": [
+            "La respuesta es incorrecta",
+            "Es ambiguo",
+            "La explicación es incorrecta",
+            "Problema de traducción",
+            "Error de visualización",
+            "Otro"
+          ],
+          "state_overrides": {
+            "motivo abierto": {
+              "state": "open"
+            }
+          }
+        },
+        {
+          "name": "txt-mensaje",
+          "type": "textarea",
+          "category": "input",
+          "content": "Contanos qué pasa (opcional, máx. 1000 caracteres)",
+          "h": 90,
+          "label": "Mensaje"
+        },
+        {
+          "name": "alerta-validacion",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Elegí un motivo para enviar el reporte.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de validación"
+          ]
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos enviar el reporte. Probá de nuevo.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "alerta-exito",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Gracias, recibimos tu reporte.",
+          "kind": "success",
+          "visible_only_in_states": [
+            "success"
+          ]
+        },
+        {
+          "name": "btn-enviar",
+          "type": "button",
+          "category": "input",
+          "content": "Enviar reporte",
+          "variant": "primary",
+          "icon": "check",
+          "hidden_in_states": [
+            "success"
+          ],
+          "state_overrides": {
+            "loading": {
+              "variant": "disabled",
+              "content": "Enviando…"
+            }
+          }
+        },
+        {
+          "name": "btn-cancelar",
+          "type": "button",
+          "category": "input",
+          "content": "Cancelar",
+          "variant": "tertiary"
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "Un reporte por jugador y desafío"
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "aviso-partida",
+          "dd-motivo",
+          "txt-mensaje",
+          "alerta-validacion",
+          "alerta-sistema",
+          "alerta-exito",
+          "btn-enviar",
+          "btn-cancelar"
+        ],
+        "desktop": [
+          {
+            "row": "centrado",
+            "cols": [
+              {
+                "w": 3,
+                "stack": []
+              },
+              {
+                "w": 6,
+                "stack": [
+                  "aviso-partida",
+                  "dd-motivo",
+                  "txt-mensaje",
+                  "alerta-validacion",
+                  "alerta-sistema",
+                  "alerta-exito",
+                  "btn-enviar",
+                  "btn-cancelar"
+                ]
+              },
+              {
+                "w": 3,
+                "stack": []
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "desde partida",
+          "applies": true
+        },
+        {
+          "name": "motivo abierto",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de validación",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        },
+        {
+          "name": "success",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "o-02-anulado",
+      "displayName": "O-02 · Aviso de desafío anulado",
+      "audiences": [
+        "jugador"
+      ],
+      "overlay": true,
+      "overlay_type": "modal",
+      "triggered_by": "home",
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "Desafío anulado",
+          "icon": "close"
+        },
+        {
+          "name": "texto",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "level": "body"
+        },
+        {
+          "name": "alerta-sistema",
+          "type": "alert",
+          "category": "feedback",
+          "content": "No pudimos marcar el desafío como completado. Probá de nuevo.",
+          "kind": "error",
+          "visible_only_in_states": [
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-marcar",
+          "type": "button",
+          "category": "input",
+          "content": "Marcar como completado",
+          "variant": "primary",
+          "icon": "check",
+          "state_overrides": {
+            "loading": {
+              "variant": "disabled",
+              "content": "Marcando…"
+            }
+          }
+        },
+        {
+          "name": "btn-cerrar",
+          "type": "button",
+          "category": "input",
+          "content": "Cerrar",
+          "variant": "tertiary"
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "texto",
+          "alerta-sistema",
+          "btn-marcar",
+          "btn-cerrar"
+        ],
+        "desktop": [
+          {
+            "row": "centrado",
+            "cols": [
+              {
+                "w": 3,
+                "stack": []
+              },
+              {
+                "w": 6,
+                "stack": [
+                  "texto",
+                  "alerta-sistema",
+                  "btn-marcar",
+                  "btn-cerrar"
+                ]
+              },
+              {
+                "w": 3,
+                "stack": []
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        },
+        {
+          "name": "loading",
+          "applies": true
+        },
+        {
+          "name": "error de sistema",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "o-03-cookies",
+      "displayName": "O-03 · Aviso de cookies bloqueadas",
+      "audiences": [
+        "jugador"
+      ],
+      "overlay": true,
+      "overlay_type": "banner",
+      "triggered_by": "home",
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "Cookies bloqueadas"
+        },
+        {
+          "name": "alerta",
+          "type": "alert",
+          "category": "feedback",
+          "content": "Activá las cookies para poder jugar",
+          "kind": "warning"
+        },
+        {
+          "name": "detalle",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Sin cookies no podemos guardar tu partida. El catálogo, las estadísticas y «Acerca de» siguen disponibles.",
+          "level": "caption"
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "alerta",
+          "detalle"
+        ],
+        "desktop": [
+          "alerta",
+          "detalle"
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "o-04-rendirse",
+      "displayName": "O-04 · Confirmar «Rendirse»",
+      "audiences": [
+        "jugador"
+      ],
+      "overlay": true,
+      "overlay_type": "modal",
+      "triggered_by": "grep-grid-partida",
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "¿Rendirte?",
+          "icon": "close"
+        },
+        {
+          "name": "texto",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Vas a cerrar la partida con 3/8. Cuenta para tu racha y te mostramos las palabras que faltan. No se puede deshacer.",
+          "level": "body",
+          "annotation": "sugerencia fuera de PRD: a validar (pregunta 6 del product-map)"
+        },
+        {
+          "name": "btn-rendirme",
+          "type": "button",
+          "category": "input",
+          "content": "Sí, rendirme",
+          "variant": "error"
+        },
+        {
+          "name": "btn-seguir",
+          "type": "button",
+          "category": "input",
+          "content": "Seguir jugando",
+          "variant": "secondary"
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "texto",
+          "btn-rendirme",
+          "btn-seguir"
+        ],
+        "desktop": [
+          {
+            "row": "centrado",
+            "cols": [
+              {
+                "w": 3,
+                "stack": []
+              },
+              {
+                "w": 6,
+                "stack": [
+                  "texto",
+                  "btn-rendirme",
+                  "btn-seguir"
+                ]
+              },
+              {
+                "w": 3,
+                "stack": []
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        }
+      ]
+    }
+  ],
+  "transitions": [
+    {
+      "src": "home",
+      "srcState": "default",
+      "srcBlock": "cta-devdle",
+      "dst": "devdle-resultado",
+      "trigger": "completado: Ver resultado",
+      "automatic": false
+    },
+    {
+      "src": "home",
+      "srcState": "default",
+      "srcBlock": "cta-bug-hunt",
+      "dst": "bug-hunt-instrucciones",
+      "trigger": "Jugar →",
+      "automatic": false
+    },
+    {
+      "src": "home",
+      "srcState": "default",
+      "srcBlock": "cta-big-o",
+      "dst": "big-o-instrucciones",
+      "trigger": "Jugar →",
+      "automatic": false
+    },
+    {
+      "src": "home",
+      "srcState": "default",
+      "srcBlock": "cta-timeline",
+      "dst": "timeline-instrucciones",
+      "trigger": "Jugar →",
+      "automatic": false
+    },
+    {
+      "src": "home",
+      "srcState": "default",
+      "srcBlock": "cta-grep-grid",
+      "dst": "grep-grid-instrucciones",
+      "trigger": "Jugar →",
+      "automatic": false
+    },
+    {
+      "src": "home",
+      "srcState": "anulado",
+      "srcBlock": "btn-aviso-anulado",
+      "dst": "o-02-anulado",
+      "trigger": "Ver aviso",
+      "automatic": false
+    },
+    {
+      "src": "home",
+      "srcState": "default",
+      "srcBlock": "link-stats",
+      "dst": "estadisticas",
+      "trigger": "ver estadísticas →",
+      "automatic": false
+    },
+    {
+      "src": "home",
+      "srcState": "default",
+      "srcBlock": "link-como-funciona",
+      "dst": "acerca-de",
+      "trigger": "¿Cómo funciona?",
+      "automatic": false
+    },
+    {
+      "src": "home",
+      "srcState": "sin sesión",
+      "srcBlock": "banner-cookies",
+      "dst": "o-03-cookies",
+      "trigger": "detalle del aviso",
+      "automatic": false
+    },
+    {
+      "src": "devdle-instrucciones",
+      "srcState": "default",
+      "srcBlock": "btn-empezar",
+      "dst": "devdle-partida",
+      "trigger": "Empezar",
+      "automatic": false
+    },
+    {
+      "src": "devdle-instrucciones",
+      "srcState": "default",
+      "srcBlock": "link-volver",
+      "dst": "home",
+      "trigger": "Volver a los juegos",
+      "automatic": false
+    },
+    {
+      "src": "devdle-instrucciones",
+      "srcState": "anulado",
+      "srcBlock": "alerta-anulado",
+      "dst": "o-02-anulado",
+      "trigger": "aviso de anulación",
+      "automatic": false
+    },
+    {
+      "src": "devdle-partida",
+      "srcState": "default",
+      "srcBlock": "link-reportar",
+      "dst": "o-01-reportar",
+      "trigger": "Reportar un problema",
+      "automatic": false
+    },
+    {
+      "src": "devdle-partida",
+      "srcState": "default",
+      "srcBlock": "teclado",
+      "dst": "devdle-resultado",
+      "trigger": "fin de partida",
+      "automatic": false
+    },
+    {
+      "src": "devdle-resultado",
+      "srcState": "default",
+      "srcBlock": "link-reportar",
+      "dst": "o-01-reportar",
+      "trigger": "Reportar un problema",
+      "automatic": false
+    },
+    {
+      "src": "devdle-resultado",
+      "srcState": "default",
+      "srcBlock": "link-volver",
+      "dst": "home",
+      "trigger": "Volver a los juegos",
+      "automatic": false
+    },
+    {
+      "src": "devdle-resultado",
+      "srcState": "default",
+      "srcBlock": "link-stats",
+      "dst": "estadisticas",
+      "trigger": "Ver mis estadísticas",
+      "automatic": false
+    },
+    {
+      "src": "devdle-resultado",
+      "srcState": "default",
+      "srcBlock": "btn-siguiente",
+      "dst": "bug-hunt-instrucciones",
+      "trigger": "Siguiente juego",
+      "automatic": false
+    },
+    {
+      "src": "bug-hunt-instrucciones",
+      "srcState": "default",
+      "srcBlock": "btn-empezar",
+      "dst": "bug-hunt-partida",
+      "trigger": "Empezar",
+      "automatic": false
+    },
+    {
+      "src": "bug-hunt-instrucciones",
+      "srcState": "default",
+      "srcBlock": "link-volver",
+      "dst": "home",
+      "trigger": "Volver a los juegos",
+      "automatic": false
+    },
+    {
+      "src": "bug-hunt-instrucciones",
+      "srcState": "anulado",
+      "srcBlock": "alerta-anulado",
+      "dst": "o-02-anulado",
+      "trigger": "aviso de anulación",
+      "automatic": false
+    },
+    {
+      "src": "bug-hunt-partida",
+      "srcState": "default",
+      "srcBlock": "link-reportar",
+      "dst": "o-01-reportar",
+      "trigger": "Reportar un problema",
+      "automatic": false
+    },
+    {
+      "src": "bug-hunt-partida",
+      "srcState": "default",
+      "srcBlock": "btn-confirmar",
+      "dst": "bug-hunt-resultado",
+      "trigger": "fin de partida",
+      "automatic": false
+    },
+    {
+      "src": "bug-hunt-resultado",
+      "srcState": "default",
+      "srcBlock": "link-reportar",
+      "dst": "o-01-reportar",
+      "trigger": "Reportar un problema",
+      "automatic": false
+    },
+    {
+      "src": "bug-hunt-resultado",
+      "srcState": "default",
+      "srcBlock": "link-volver",
+      "dst": "home",
+      "trigger": "Volver a los juegos",
+      "automatic": false
+    },
+    {
+      "src": "bug-hunt-resultado",
+      "srcState": "default",
+      "srcBlock": "link-stats",
+      "dst": "estadisticas",
+      "trigger": "Ver mis estadísticas",
+      "automatic": false
+    },
+    {
+      "src": "bug-hunt-resultado",
+      "srcState": "default",
+      "srcBlock": "btn-siguiente",
+      "dst": "big-o-instrucciones",
+      "trigger": "Siguiente juego",
+      "automatic": false
+    },
+    {
+      "src": "big-o-instrucciones",
+      "srcState": "default",
+      "srcBlock": "btn-empezar",
+      "dst": "big-o-partida",
+      "trigger": "Empezar",
+      "automatic": false
+    },
+    {
+      "src": "big-o-instrucciones",
+      "srcState": "default",
+      "srcBlock": "link-volver",
+      "dst": "home",
+      "trigger": "Volver a los juegos",
+      "automatic": false
+    },
+    {
+      "src": "big-o-instrucciones",
+      "srcState": "anulado",
+      "srcBlock": "alerta-anulado",
+      "dst": "o-02-anulado",
+      "trigger": "aviso de anulación",
+      "automatic": false
+    },
+    {
+      "src": "big-o-partida",
+      "srcState": "default",
+      "srcBlock": "link-reportar",
+      "dst": "o-01-reportar",
+      "trigger": "Reportar un problema",
+      "automatic": false
+    },
+    {
+      "src": "big-o-partida",
+      "srcState": "default",
+      "srcBlock": "btn-confirmar",
+      "dst": "big-o-resultado",
+      "trigger": "fin de partida",
+      "automatic": false
+    },
+    {
+      "src": "big-o-resultado",
+      "srcState": "default",
+      "srcBlock": "link-reportar",
+      "dst": "o-01-reportar",
+      "trigger": "Reportar un problema",
+      "automatic": false
+    },
+    {
+      "src": "big-o-resultado",
+      "srcState": "default",
+      "srcBlock": "link-volver",
+      "dst": "home",
+      "trigger": "Volver a los juegos",
+      "automatic": false
+    },
+    {
+      "src": "big-o-resultado",
+      "srcState": "default",
+      "srcBlock": "link-stats",
+      "dst": "estadisticas",
+      "trigger": "Ver mis estadísticas",
+      "automatic": false
+    },
+    {
+      "src": "big-o-resultado",
+      "srcState": "default",
+      "srcBlock": "btn-siguiente",
+      "dst": "timeline-instrucciones",
+      "trigger": "Siguiente juego",
+      "automatic": false
+    },
+    {
+      "src": "timeline-instrucciones",
+      "srcState": "default",
+      "srcBlock": "btn-empezar",
+      "dst": "timeline-partida",
+      "trigger": "Empezar",
+      "automatic": false
+    },
+    {
+      "src": "timeline-instrucciones",
+      "srcState": "default",
+      "srcBlock": "link-volver",
+      "dst": "home",
+      "trigger": "Volver a los juegos",
+      "automatic": false
+    },
+    {
+      "src": "timeline-instrucciones",
+      "srcState": "anulado",
+      "srcBlock": "alerta-anulado",
+      "dst": "o-02-anulado",
+      "trigger": "aviso de anulación",
+      "automatic": false
+    },
+    {
+      "src": "timeline-partida",
+      "srcState": "default",
+      "srcBlock": "link-reportar",
+      "dst": "o-01-reportar",
+      "trigger": "Reportar un problema",
+      "automatic": false
+    },
+    {
+      "src": "timeline-partida",
+      "srcState": "default",
+      "srcBlock": "btn-confirmar",
+      "dst": "timeline-resultado",
+      "trigger": "fin de partida",
+      "automatic": false
+    },
+    {
+      "src": "timeline-resultado",
+      "srcState": "default",
+      "srcBlock": "link-reportar",
+      "dst": "o-01-reportar",
+      "trigger": "Reportar un problema",
+      "automatic": false
+    },
+    {
+      "src": "timeline-resultado",
+      "srcState": "default",
+      "srcBlock": "link-volver",
+      "dst": "home",
+      "trigger": "Volver a los juegos",
+      "automatic": false
+    },
+    {
+      "src": "timeline-resultado",
+      "srcState": "default",
+      "srcBlock": "link-stats",
+      "dst": "estadisticas",
+      "trigger": "Ver mis estadísticas",
+      "automatic": false
+    },
+    {
+      "src": "timeline-resultado",
+      "srcState": "default",
+      "srcBlock": "btn-siguiente",
+      "dst": "grep-grid-instrucciones",
+      "trigger": "Siguiente juego",
+      "automatic": false
+    },
+    {
+      "src": "grep-grid-instrucciones",
+      "srcState": "default",
+      "srcBlock": "btn-empezar",
+      "dst": "grep-grid-partida",
+      "trigger": "Empezar",
+      "automatic": false
+    },
+    {
+      "src": "grep-grid-instrucciones",
+      "srcState": "default",
+      "srcBlock": "link-volver",
+      "dst": "home",
+      "trigger": "Volver a los juegos",
+      "automatic": false
+    },
+    {
+      "src": "grep-grid-instrucciones",
+      "srcState": "anulado",
+      "srcBlock": "alerta-anulado",
+      "dst": "o-02-anulado",
+      "trigger": "aviso de anulación",
+      "automatic": false
+    },
+    {
+      "src": "grep-grid-partida",
+      "srcState": "default",
+      "srcBlock": "link-reportar",
+      "dst": "o-01-reportar",
+      "trigger": "Reportar un problema",
+      "automatic": false
+    },
+    {
+      "src": "grep-grid-partida",
+      "srcState": "default",
+      "srcBlock": "btn-rendirse",
+      "dst": "o-04-rendirse",
+      "trigger": "Rendirse",
+      "automatic": false
+    },
+    {
+      "src": "grep-grid-resultado",
+      "srcState": "default",
+      "srcBlock": "link-reportar",
+      "dst": "o-01-reportar",
+      "trigger": "Reportar un problema",
+      "automatic": false
+    },
+    {
+      "src": "grep-grid-resultado",
+      "srcState": "default",
+      "srcBlock": "link-volver",
+      "dst": "home",
+      "trigger": "Volver a los juegos",
+      "automatic": false
+    },
+    {
+      "src": "grep-grid-resultado",
+      "srcState": "default",
+      "srcBlock": "link-stats",
+      "dst": "estadisticas",
+      "trigger": "Ver mis estadísticas",
+      "automatic": false
+    },
+    {
+      "src": "grep-grid-resultado",
+      "srcState": "default",
+      "srcBlock": "btn-siguiente",
+      "dst": "devdle-instrucciones",
+      "trigger": "Siguiente juego",
+      "automatic": false
+    },
+    {
+      "src": "grep-grid-partida",
+      "srcState": "default",
+      "srcBlock": "grilla",
+      "dst": "grep-grid-resultado",
+      "trigger": "8/8 encontradas",
+      "automatic": true
+    },
+    {
+      "src": "o-02-anulado",
+      "srcState": "default",
+      "srcBlock": "btn-marcar",
+      "dst": "devdle-resultado",
+      "trigger": "Marcar como completado (→ {juego}-resultado anulado)",
+      "automatic": false
+    },
+    {
+      "src": "o-02-anulado",
+      "srcState": "default",
+      "srcBlock": "btn-cerrar",
+      "dst": "home",
+      "trigger": "Cerrar",
+      "automatic": false
+    },
+    {
+      "src": "o-04-rendirse",
+      "srcState": "default",
+      "srcBlock": "btn-rendirme",
+      "dst": "grep-grid-resultado",
+      "trigger": "Sí, rendirme",
+      "automatic": false
+    },
+    {
+      "src": "o-04-rendirse",
+      "srcState": "default",
+      "srcBlock": "btn-seguir",
+      "dst": "grep-grid-partida",
+      "trigger": "Seguir jugando",
+      "automatic": false
+    },
+    {
+      "src": "estadisticas",
+      "srcState": "empty",
+      "srcBlock": "btn-ir-juegos",
+      "dst": "home",
+      "trigger": "Ir a los juegos",
+      "automatic": false
+    },
+    {
+      "src": "acerca-de",
+      "srcState": "default",
+      "srcBlock": "link-volver",
+      "dst": "home",
+      "trigger": "Volver a los juegos",
+      "automatic": false
+    }
+  ]
+}

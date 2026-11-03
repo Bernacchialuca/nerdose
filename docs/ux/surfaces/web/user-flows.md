@@ -1,0 +1,247 @@
+---
+document: UX User Flows
+surface: web
+version: "1.0"
+date: 2026-11-03
+status: Draft - Punto de partida para discusión
+flows_count: 5
+---
+
+# User Flows — web
+
+> Flujos críticos internos de la superficie. **No son todos los flujos** —
+> son los 3-5 que definen el valor del producto en esta superficie. Otros
+> flujos derivan de estos o son operaciones secundarias. Si un flujo cruza
+> a otra superficie, vive en `cross-surface-flows.md`, no acá.
+
+Todo lo que sigue es hipótesis a validar. Los slugs de pantalla y overlays (O-01 a O-04) son los de `product-map.md`. Trazabilidad: `[fuente: PRD §requirements]` salvo indicación. Los pasos que dependen de una pregunta abierta del product-map se marcan como tales.
+
+## Flujos Documentados
+
+| # | Flujo | JTBD que resuelve | Audiencia |
+|---|-------|-------------------|-----------|
+| 1 | Jugar el desafío del día de un juego (incluye retomar) | "Cuando tengo unos minutos libres en el día, quiero resolver un desafío corto de tecnología igual al de todos, para sostener un hábito diario sin dedicarle más de 1 a 3 minutos por juego." | jugador |
+| 2 | Cambio de día con la partida abierta (`challenge_expired`) | JTBD 1 (sostener el hábito diario sin perder el hilo cuando el día cambia) | jugador |
+| 3 | Desafío anulado: marcar como completado | "Cuando completo un desafío... " (JTBD 1) con el beneficio de gain "mantiene su racha aunque el desafío haya sido anulado" | jugador |
+| 4 | Reportar un problema del desafío | JTBD 2 (ver la solución con una explicación): cuando la solución o el enunciado parecen incorrectos, quiero avisarlo sin revelar la respuesta | jugador |
+| 5 | Ver el resultado, compartirlo y revisar estadísticas | JTBD 3 y JTBD 2 | jugador |
+
+---
+
+## Flujo 1: Jugar el desafío del día de un juego (incluye retomar)
+
+**JTBD que resuelve:** "Cuando tengo unos minutos libres en el día, quiero resolver un desafío corto de tecnología igual al de todos, para sostener un hábito diario sin dedicarle más de 1 a 3 minutos por juego." `[fuente: PRD §goals-and-context G-01, U-01]`
+**Audiencia:** jugador ([research-context](../../audiences/jugador/research-context.md))
+**Trigger:** El jugador abre `nerdose.dev` (por hábito diario) y elige una tarjeta de juego en `home`.
+
+### Happy path
+
+1. `home`: el jugador ve el estado del día (5 tarjetas, racha global, cuenta regresiva `HH:MM:SS`). Toca una tarjeta en estado "Sin jugar" ("Jugar →"). `[fuente: C-05, C-06]`
+2. `{juego}-instrucciones`: lee las reglas (3 pasos) y toca "Empezar". El sistema crea la Play `in_progress` (C-09) y abre `{juego}-partida`. Ver pregunta abierta 1 del product-map (si las instrucciones se muestran todos los días).
+3. `{juego}-partida`: juega según el juego:
+   - Devdle: hasta 6 intentos con teclado en pantalla o físico; cada intento válido devuelve feedback por letra (C-15).
+   - Bug Hunt / Big O / Tech Timeline: un solo intento; selecciona (línea, complejidad u orden) y luego "Confirmar" en un segundo paso (C-30, C-27, C-23, decisión #26).
+   - Grep Grid: toca primera y última letra de cada palabra; el contador `N/8` avanza (C-19).
+4. Al cumplirse el fin de partida del juego, el sistema cierra la Play como `won` o `lost`, actualiza rachas y estadísticas en la misma transacción (C-12, C-33) y abre `{juego}-resultado` con la solución, la explicación y las rachas actualizadas.
+5. En `{juego}-resultado`, el jugador toca "Siguiente juego" o "Volver a los juegos" (pregunta abierta 5 del product-map) y vuelve a `home`, donde la tarjeta aparece como "Completado" con su `history_label`.
+
+### Caminos alternativos
+
+- **Retomar la partida** — El jugador sale (cierra la pestaña, vuelve a `home`) con la Play `in_progress` y regresa el mismo día. `home` muestra la tarjeta "En curso" con "Seguir jugando"; al tocarla, abre `{juego}-partida` en el estado exacto (intentos, selección, palabras encontradas). `[fuente: C-10, C-05]`
+- **Reabrir un juego ya completado** — Entrar a `/:game_id` con la Play terminada muestra `{juego}-resultado`, no una partida nueva. `[fuente: product-map, criterio de inventario]`
+- **Primera visita** — Todos los juegos aparecen "Sin jugar", racha global 0; la sesión anónima se crea sola, sin registro. `[fuente: C-01, F-01]`
+- **Sin desafío hoy** — La tarjeta muestra "sin desafío hoy" y `{juego}-instrucciones` muestra el mensaje con "Volver a los juegos". El día es neutro para la racha de ese juego. `[fuente: C-14]`
+- **Cambio de idioma o de lenguaje de código a mitad de partida** — Control inline ES/EN (C-03) o JS/Go/Java (C-26); la partida no cambia, solo la vista.
+- **Rendirse en Grep Grid** — "Rendirse" (con O-04 si se confirma la pregunta abierta 6) cierra la Play como `lost` con `N/8`, cuenta para la racha y revela las faltantes. `[fuente: C-20]`
+
+### Errores y recuperación
+
+- **Cookies bloqueadas** — Tras `POST /api/session` la cookie no vuelve: aparece O-03 ("Activá las cookies para poder jugar"); los CTA de juego quedan deshabilitados y el catálogo, `estadisticas` y `acerca-de` siguen visibles. Recuperación: el jugador habilita cookies y recarga; la sesión se crea y los CTA se habilitan. `[fuente: C-02]`
+- **Palabra fuera de la lista en Devdle** — Mensaje "no está en la lista" sin consumir intento (`not_in_word_list`); el jugador corrige y reintenta. Palabra de otra longitud: el front no la envía y avisa. `[fuente: C-15]`
+- **Selección inválida** — En Bug Hunt, línea no elegible (firma, solo llaves) o `invalid_move` del servidor: la selección no se acepta y el jugador elige otra; no se pierde el intento. En Grep Grid, "no es una palabra" sin penalización y selección en reversa rechazada. `[fuente: C-30, C-19]`
+- **Toque accidental al confirmar** — La selección y la confirmación van en dos pasos, de modo que el jugador puede cambiar la selección antes de confirmar. `[fuente: decisión #26, NFR-U01]`
+- **Jugada sobre una Play ya terminada (`game_finished`)** — Por ejemplo, desde una segunda pestaña: el front carga `{juego}-resultado` con el resultado ya registrado. `[fuente: C-11]`
+- **Pérdida de conexión durante la partida** — El PRD supone conexión permanente y no hay modo offline; el copy y la pantalla de error no están definidos (product-map, Estados Globales). Recuperación a validar: al volver la conexión, el jugador recarga y retoma desde el estado del servidor (C-10), que es la fuente de verdad (validación 100% en el servidor). `[fuente: PRD §Supuestos, C-10]`
+- **Límite de jugadas (60/min por jugador)** — No está definido el mensaje; a definir en wireframes. `[fuente: C-11]`
+
+### Estado final
+
+`{juego}-resultado` muestra el veredicto, la solución con su explicación, la stat propia del juego y las rachas actualizadas. En `home`, la tarjeta pasa a "Completado" (perder también es completado) y la racha global y la del juego reflejan el día.
+
+### Criterios de éxito
+
+- El jugador puede pasar de `home` a la primera jugada en no más de 2 toques (tarjeta + "Empezar"). `[hipótesis | inferida-PRD, NFR-U06]`
+- Una partida mediana dura de 1 a 3 minutos, en teléfono desde 320 px. `[fuente: NFR-U06; no medido]`
+- El jugador que sale y vuelve el mismo día retoma sin perder jugadas.
+- El jugador entiende, sin ayuda, cuáles juegos le faltan hoy.
+
+---
+
+## Flujo 2: Cambio de día con la partida abierta (`challenge_expired`)
+
+**JTBD que resuelve:** JTBD 1 — sostener el hábito diario: el desafío cambia a las 00:00 UTC, y el jugador que está jugando a esa hora debe entender qué pasó con su partida. `[fuente: PRD §goals-and-context G-01; requirements C-06, C-11]`
+**Audiencia:** jugador ([research-context](../../audiences/jugador/research-context.md))
+**Trigger:** Pasan las 00:00 UTC con `home` o `{juego}-partida` abiertas, o el jugador vuelve a una pestaña abierta del día anterior.
+
+### Happy path
+
+1. El jugador está en `{juego}-partida` (Play `in_progress` del desafío `#N`) y la medianoche UTC pasa.
+2. Hace una jugada. El cliente envía `challenge_number = N`; el servidor responde `challenge_expired`: la jugada se rechaza. `[fuente: C-11]`
+3. El front carga el desafío nuevo (`#N+1`) y vuelve a `{juego}-instrucciones` con el nuevo `#número` en el header. `[fuente: product-map, estado `challenge_expired`]`
+4. El jugador lee las instrucciones y toca "Empezar": se crea la Play del nuevo desafío (C-09) y sigue con el flujo 1 desde el paso 3.
+5. La Play vieja queda `in_progress` para siempre, sin contar para rachas ni estadísticas.
+
+### Caminos alternativos
+
+- **Jugador en `home` a medianoche** — La cuenta regresiva llega a 0, `home` recarga el estado del día tras una espera aleatoria de 0–3 s (ADR-008) y todas las tarjetas vuelven a "Sin jugar" con el nuevo `#número`. `[fuente: C-06]`
+- **Partida terminada antes de medianoche** — No pasa nada: el resultado ya está cerrado y cuenta para el día `#N`.
+- **El nuevo día no tiene desafío publicado en ese juego** — Tras `challenge_expired`, la fase de instrucciones muestra "sin desafío hoy" (día neutro). `[fuente: C-14, C-48]`
+- **Jugador que vuelve a una pestaña vieja** — Misma respuesta `challenge_expired` en la primera acción, con el mismo recorrido.
+
+### Errores y recuperación
+
+- **Pérdida de la partida en curso al cambiar el día** — La jugada rechazada y la Play vieja no cuentan: el jugador pierde ese progreso y ese día no suma racha. Es una consecuencia de la regla del PRD, no un error del sistema. El PRD no define un aviso explícito que lo explique antes de volver a instrucciones; es una **decisión de diseño pendiente** (cómo comunicar "el día cambió" sin que parezca una falla). `[fuente: C-11; pregunta a validar]`
+- **Cambio de día en el último intento de Devdle, Bug Hunt, Big O o Tech Timeline** — Mismo caso: el intento no se registra. Hipótesis a validar: es el momento más costoso para el jugador y el de mayor riesgo de abandono. `[hipótesis | por-analogía]`
+- **Reintentos de recarga al llegar a 0 (`home`)** — La espera aleatoria de 0–3 s evita una avalancha de requests al servidor; si la recarga falla, el jugador puede recargar manualmente. Sin copy definido para el error. `[fuente: ADR-008, PRD §Supuestos]`
+
+### Estado final
+
+El jugador ve las instrucciones (o la tarjeta "Sin jugar") del desafío nuevo con el `#número` actualizado en el header. En el sistema, la Play vieja queda `in_progress` sin contar y no hay Play del día nuevo hasta que el jugador empiece.
+
+### Criterios de éxito
+
+- El jugador nunca juega ni envía jugadas contra un desafío vencido sin enterarse: el desafío nuevo se carga en la primera jugada rechazada.
+- El jugador puede empezar el desafío nuevo en la misma sesión, sin recargar manualmente.
+- El `#número` visible en el header le permite entender que es otro desafío.
+
+---
+
+## Flujo 3: Desafío anulado y marcar como completado
+
+**JTBD que resuelve:** JTBD 1 — sostener el hábito diario sin que un error del producto corte la racha. Gain asociado: "mantiene su racha aunque un día no tenga desafío publicado o haya sido anulado". `[fuente: PRD §goals-and-context decisiones #3, #5, #13; requirements C-33, C-42]`
+**Audiencia:** jugador ([research-context](../../audiences/jugador/research-context.md))
+**Trigger:** El jugador entra a `home` o a `{juego}-instrucciones` y el desafío de hoy fue anulado por el responsable (C-41) antes de que hubiera jugado.
+
+### Happy path
+
+1. `home`: la tarjeta del juego aparece en estado "anulado". El jugador la toca. `[fuente: C-05]`
+2. Se abre O-02: "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada", con la acción "Marcar como completado".
+3. El jugador toca "Marcar como completado". El sistema crea una Play `voided` (C-42): cuenta para la racha del juego, la racha global y `total_completed`, pero no para `played`, `wins` ni `extra`.
+4. Se abre `{juego}-resultado` en estado anulado (con el aviso de anulación). La racha queda protegida.
+5. El jugador vuelve a `home`, donde la tarjeta aparece como completada.
+
+### Caminos alternativos
+
+- **Entrada por URL directa** — El jugador abre `/:game_id` y llega a `{juego}-instrucciones` en estado "Anulado y sin Play": se muestra O-02 y no se puede empezar. Mismo recorrido desde el paso 2. `[fuente: C-08, product-map]`
+- **Anulación mientras jugaba (Play `in_progress`)** — La Play pasa a `voided` y se cierra como completada; al volver, el jugador ve `{juego}-resultado` con el aviso de anulación, sin tener que marcar nada. Si el jugador estaba en `{juego}-partida`, su siguiente jugada recibe `challenge_voided`. `[fuente: C-41, C-11]`
+- **Anulación después de terminar (Play `won`/`lost`)** — La Play pasa a `voided` conservando su `result`; los agregados se recalculan (C-35). Qué ve el jugador en el resultado está abierto: pregunta 2 del product-map (resultado con o sin solución propia, share o no).
+- **Cerrar O-02 sin marcar** — El jugador cierra el modal y vuelve a `home`; la tarjeta sigue "anulado" y puede marcar después, el mismo día.
+- **Varios juegos anulados el mismo día** — El jugador repite el flujo por cada juego (una acción por juego, C-42 es por `challenge_number`).
+
+### Errores y recuperación
+
+- **Doble toque o reintento en "Marcar como completado"** — C-42 crea la Play solo si no hay una previa; el reintento no duplica y lleva al mismo `{juego}-resultado`. Inferencia de la restricción "si el jugador no tenía Play" y de que a lo sumo hay una Play por jugador y Challenge (C-09). `[hipótesis | inferida-PRD]`
+- **El jugador no marca antes del cambio de día** — C-42 es solo para el Challenge `voided` de hoy; pasado el día no se puede marcar y el día no suma. El PRD no define un aviso previo; a validar si el jugador entiende que debe actuar el mismo día. `[fuente: C-42; pregunta a validar]`
+- **Sin sesión (cookies bloqueadas)** — O-03 visible; no se puede crear la Play. Recuperación: habilitar cookies y recargar (flujo 1).
+- **Dudas sobre la racha** — O-02 afirma "Tu racha no se ve afectada" y `acerca-de` explica las reglas de racha (completar cuenta, días neutros, anulados). `[fuente: product-map, `acerca-de`]`
+
+### Estado final
+
+El jugador ve `{juego}-resultado` en estado anulado y la tarjeta en `home` como completada. Las rachas del juego y global suman el día; `played`, `wins` y `extra` no cambian.
+
+### Criterios de éxito
+
+- El jugador conserva su racha sin hacer más que un toque ("Marcar como completado").
+- El jugador entiende que el desafío fue anulado y que no perdió nada, sin leer `acerca-de`.
+- No puede quedar con un desafío anulado "sin cerrar" sin saberlo: la tarjeta y el overlay le muestran el estado. `[hipótesis | inferida-PRD]`
+
+---
+
+## Flujo 4: Reportar un problema del desafío
+
+**JTBD que resuelve:** JTBD 2 — "Cuando termino una partida, quiero ver la solución con una explicación, para aprender algo". Cuando la solución, la traducción o el enunciado parecen incorrectos, el jugador quiere avisarlo sin que eso interrumpa su partida. `[fuente: PRD §goals-and-context G-02; requirements C-36]`
+**Audiencia:** jugador ([research-context](../../audiences/jugador/research-context.md))
+**Trigger:** El jugador detecta un posible error (respuesta ambigua, explicación errónea, traducción, bug visual) en `{juego}-partida` o `{juego}-resultado` y toca "Reportar un problema".
+
+### Happy path
+
+1. En `{juego}-resultado` (o en `{juego}-partida`), el jugador toca "Reportar un problema" (btn-reportar).
+2. Se abre O-01 (bottom-sheet en mobile, modal en desktop). Elige un motivo de los 6 (`wrong_answer`, `ambiguous`, `wrong_explanation`, `translation`, `display_bug`, `other`) y, opcionalmente, escribe un mensaje de hasta 1000 caracteres. Si está en partida, ve el aviso "No incluyas la respuesta si todavía estás jugando".
+3. Toca enviar. El sistema guarda el reporte con contexto (idioma, lenguaje de código, estado de la partida, user agent) (C-36).
+4. O-01 se cierra y el trigger pasa a "ya reportado". El jugador sigue donde estaba, sin perder la partida.
+5. Del lado del sistema (fuera de esta superficie): si se superan los umbrales, se alerta al responsable (C-37). No es un flujo de la web.
+
+### Caminos alternativos
+
+- **Reporte desde la partida** — El jugador reporta sin salir de `{juego}-partida`; al cerrar O-01 la partida sigue en el mismo estado. `[fuente: C-36, product-map]`
+- **Reporte tras ver el resultado** — Mismo formulario, con más contexto para el jugador (ya vio la solución), sin el aviso de no incluir la respuesta. `[fuente: product-map O-01]`
+- **Cancelar** — El jugador cierra O-01 sin enviar; no se guarda nada y el estado del juego no cambia.
+- **Reporte sobre un desafío anulado** — Permitido: C-36 acepta Challenge `published` o `voided`.
+
+### Errores y recuperación
+
+- **Ya reportó este desafío (`already_reported`)** — Un reporte por jugador y desafío: el trigger muestra "ya reportado" y no abre un formulario nuevo; si igual se envía, se informa que ya existe. Recuperación: ninguna necesaria; el reporte previo sigue vigente. `[fuente: C-36]`
+- **Límite por IP (10 por hora)** — El envío se rechaza; el jugador conserva el texto escrito y puede reintentar más tarde. Mensaje sin definir. `[fuente: C-36; hipótesis de diseño]`
+- **Cambio de día con O-01 abierto** — El reporte lleva `challenge_number`; si el desafío cambió, el reporte no corresponde al desafío vigente. El PRD no define este caso: a validar si se reporta contra el desafío viejo o se rechaza.
+- **Sin sesión** — Sin cookie no hay partida ni contexto; el PRD no declara el comportamiento de C-36 sin sesión: **vacío a resolver con el cliente**.
+- **Error de red al enviar** — El PRD no define copy ni reintento (product-map, Estados Globales). Mínimo esperado: no perder el mensaje escrito y permitir reintentar.
+- **El jugador incluye la respuesta en el mensaje** — Se mitiga solo con el aviso del formulario; no hay validación del contenido. `[fuente: C-36]`
+
+### Estado final
+
+El reporte queda guardado y el trigger muestra "ya reportado". El jugador sigue en la pantalla de origen, con la partida intacta.
+
+### Criterios de éxito
+
+- El jugador puede reportar en menos de 30 segundos y sin salir de la partida. `[hipótesis | por-analogía]`
+- El jugador no revela la respuesta a otros por error: el aviso aparece antes de escribir.
+- El jugador sabe que ya reportó y no reporta dos veces.
+
+---
+
+## Flujo 5: Ver el resultado, compartirlo y revisar estadísticas
+
+**JTBD que resuelve:** JTBD 3 — "Cuando completo un desafío, quiero compartir mi resultado en un toque sin revelar la respuesta, para que otros lo entiendan sin arruinarles el juego." Además, JTBD 2 (ver solución y explicación). `[fuente: PRD §goals-and-context G-02, G-05; requirements C-12, C-13, C-34]`
+**Audiencia:** jugador ([research-context](../../audiences/jugador/research-context.md))
+**Trigger:** El jugador termina una partida y llega a `{juego}-resultado`, o toca "ver estadísticas →" en `home`.
+
+### Happy path
+
+1. `{juego}-resultado`: el jugador ve el veredicto, la solución y la explicación, y las rachas actualizadas.
+2. Toca "Compartir" en el header de la pantalla. El sistema abre el share nativo del dispositivo con el texto: emoji del juego + nombre + `#número`, una línea de resultado sin spoilers y `nerdose.dev` (C-13).
+3. El jugador elige la app o contacto y envía. Vuelve a `{juego}-resultado`.
+4. Toca "Ver mis estadísticas" y llega a `estadisticas`: racha global actual y récord, desafíos completados, heatmap de 365 días, bloque por juego (racha, récord, jugadas, % de victorias, stat propia) e historial paginado.
+5. Vuelve a `home` desde el header, o sigue con "Siguiente juego".
+
+### Caminos alternativos
+
+- **Share nativo no disponible (típicamente desktop)** — El texto se copia al portapapeles y se muestra un aviso breve "copiado". `[fuente: C-13, PRD §Supuestos]`
+- **Entrada a estadísticas desde `home`** — El jugador toca "ver estadísticas →" en el resumen "Tu progreso" o "./stats" en el header; llega a la misma pantalla.
+- **Primera visita, sin datos** — `estadisticas` aparece vacía (racha 0, heatmap sin actividad), sin error. `[fuente: C-05, C-34]`
+- **Racha viva o en 0** — La racha se muestra viva si el último día completado es hoy o ayer (contando días neutros); si no, 0 sin un job de reseteo. `[fuente: C-34]`
+- **Historial** — "Ver historial completo" pagina dentro de `estadisticas` (pregunta abierta 3 del product-map; si fuera pantalla propia, cambia el recorrido).
+- **Resultado de una Play `voided`** — Si es "Marcar como completado" no hay `result` ni partida y C-13 no cubre explícitamente compartir una Play `voided` (pregunta abierta 2 del product-map): puede no haber "Compartir".
+- **Reabrir el resultado más tarde el mismo día** — Entrar a `/:game_id` muestra el resultado y permite compartir de nuevo. `[fuente: product-map]`
+
+### Errores y recuperación
+
+- **Falla el share o el portapapeles** — El PRD no define el mensaje; recuperación mínima: el jugador puede reintentar el toque sin salir de la pantalla. El texto no incluye la solución, por lo que un reintento o una copia manual no filtran la respuesta. `[fuente: C-13]`
+- **Cancela el share nativo** — No es un error: el jugador queda en `{juego}-resultado` sin cambios.
+- **Racha en 0 por borrar la cookie o cambiar de dispositivo** — `estadisticas` muestra 0 y sin historial: el PRD no tiene cuenta en v1, así que **no hay recuperación**. Es un pain declarado y la hipótesis de abandono es `por-analogía`. `[fuente: PRD §requirements, entidad Player; research-context, Pains y Lo que NO sabemos]`
+- **Sin sesión (cookies bloqueadas)** — `estadisticas` aparece vacía con O-03; recuperación: habilitar cookies (flujo 1).
+- **Error al cargar estadísticas** — Sin copy ni pantalla de error definidos (product-map, Estados Globales); a resolver en wireframes.
+- **El jugador esperaba ver estadísticas dentro del resultado** — Hipótesis a validar: los jugadores de Wordle y Connections las ven al terminar; acá hay un toque extra. `[hipótesis | inferida-benchmark]`
+
+### Estado final
+
+El jugador compartió o copió su resultado (sin solución) y vio sus rachas y estadísticas actualizadas. En el sistema no cambia nada al compartir (el contador de shares de C-53 es opcional y sin cookies).
+
+### Criterios de éxito
+
+- El jugador puede compartir en un toque desde `{juego}-resultado`, y el texto no revela la respuesta.
+- El jugador llega a sus estadísticas desde el resultado en un toque.
+- El jugador entiende por qué su racha tiene el valor que tiene (completar cuenta, días neutros y anulados).
+
+---
+
+**Relacionados:** Las pantallas usadas en estos flujos están inventariadas en `product-map.md` de esta superficie. Los flujos que cruzan a otras superficies viven en `../cross-surface-flows.md`.
