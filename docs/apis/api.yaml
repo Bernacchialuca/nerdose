@@ -1,0 +1,1787 @@
+openapi: 3.0.3
+info:
+  title: nerdose API
+  version: 0.1.0
+  description: |
+    Única interfaz HTTP de nerdose (servicio `api`, Node 24 + Hono).
+
+    - **Jugador** (`nerdose.dev/api/*`): sesión anónima con la cookie `nd_pid`, estado del día,
+      partidas, reportes, estadísticas y preferencias.
+    - **Admin** (`admin.nerdose.dev/api/admin/*`): login, reportes, anulación, próximos desafíos,
+      regeneración, stock de contenido y métricas, con `Authorization: Bearer <JWT>`.
+
+    Convenciones (ADR-015):
+    - JSON en `snake_case`, con los mismos nombres que el dominio y la DB.
+    - Errores: `{ "error": { "code": "<code>", "message": "<texto en el locale>" } }`.
+    - Locale de la respuesta: `?lang=` → `players.locale` → `Accept-Language` → `es`. Las rutas de
+      jugador nunca devuelven objetos `{ es, en }`: el texto llega resuelto. El admin recibe el `payload`
+      completo con ambos idiomas.
+    - "Hoy" lo calcula siempre el servidor (día UTC). Las mutaciones de partida llevan `challenge_number`
+      para detectar la jugada tardía (`409 challenge_expired`, ADR-008).
+    - Antes de que la Play termine, ninguna respuesta incluye datos del `payload` fuera de `public_view`
+      (anti-spoiler, ADR-006).
+    - Rutas sin versión (ADR-015).
+  contact:
+    name: Responsable de nerdose
+externalDocs:
+  description: Arquitectura del producto
+  url: ../prd/architecture.md
+
+servers:
+  - url: https://nerdose.dev
+    description: Producción, rutas de jugador (`/api/*`)
+  - url: https://admin.nerdose.dev
+    description: Producción, rutas de admin (`/api/admin/*`)
+  - url: http://localhost:3000
+    description: Desarrollo local (api directa)
+
+tags:
+  - name: Health
+    description: Chequeos de salud
+  - name: Session
+    description: Jugador anónimo y preferencias (Identity)
+  - name: Today
+    description: Estado del día y catálogo
+  - name: Gameplay
+    description: Partida del desafío de hoy, genérica sobre el registry de GameDefinition
+  - name: Reports
+    description: Reportes de problemas de los jugadores
+  - name: Stats
+    description: Estadísticas del jugador (Progress)
+  - name: Admin
+    description: Operación del responsable (JWT)
+
+paths:
+  # ───────────────────────────── Health ─────────────────────────────
+  /api/health:
+    get:
+      tags: [Health]
+      summary: Salud de la api (ruta de jugador)
+      operationId: getHealth
+      security: []
+      responses:
+        '200':
+          description: La api está viva y llega a la base
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Health' }
+        '503':
+          description: La api no llega a la base
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Health' }
+              example: { status: degraded, db: error }
+
+  /api/admin/health:
+    get:
+      tags: [Health]
+      summary: Salud de la api (ruta de admin)
+      description: Mismo chequeo que `/api/health`, accesible desde `admin.nerdose.dev`. No exige JWT.
+      operationId: getAdminHealth
+      security: []
+      responses:
+        '200':
+          description: La api está viva y llega a la base
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Health' }
+        '503':
+          description: La api no llega a la base
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Health' }
+
+  # ───────────────────────────── Session ─────────────────────────────
+  /api/session:
+    post:
+      tags: [Session]
+      summary: Crear o renovar la sesión anónima
+      description: |
+        Idempotente (F1, C-01). Si la cookie `nd_pid` es válida y el Player existe, renueva la cookie y
+        actualiza `last_seen_at`. Si no, crea un Player (`locale` desde `Accept-Language` ∈ {es,en}, si no
+        `es`; `preferred_code_language = js`) y emite `Set-Cookie: nd_pid`. El front lo llama en cada carga.
+
+        Rate limit: 20 / 10 min por IP.
+      operationId: createSession
+      security:
+        - {}
+        - playerCookie: []
+      parameters:
+        - $ref: '#/components/parameters/AcceptLanguage'
+      responses:
+        '200':
+          description: Sesión creada o renovada
+          headers:
+            Set-Cookie:
+              description: '`nd_pid=<players.id>; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=34560000`'
+              schema: { type: string }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SessionResponse' }
+              example: { locale: es, preferred_code_language: js, created: true }
+        '403': { $ref: '#/components/responses/ForbiddenOrigin' }
+        '415': { $ref: '#/components/responses/UnsupportedMediaType' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /api/me/preferences:
+    patch:
+      tags: [Session]
+      summary: Cambiar preferencias del jugador
+      description: |
+        Cambia el idioma y/o el lenguaje de código preferido (F13, C-03). Emite `PlayerPreferencesChanged`.
+        Al cambiar el locale a mitad de partida, el front vuelve a pedir `GET /api/games/{game_id}/today`.
+
+        Rate limit: 30 / min por `player_id`.
+      operationId: updatePreferences
+      security:
+        - playerCookie: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PreferencesUpdate' }
+            example: { locale: en }
+      responses:
+        '200':
+          description: Preferencias actualizadas
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Preferences' }
+              example: { locale: en, preferred_code_language: js }
+        '401': { $ref: '#/components/responses/NoSession' }
+        '403': { $ref: '#/components/responses/ForbiddenOrigin' }
+        '415': { $ref: '#/components/responses/UnsupportedMediaType' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  # ───────────────────────────── Today ─────────────────────────────
+  /api/today:
+    get:
+      tags: [Today]
+      summary: Estado del día y de los 5 juegos para el jugador
+      description: |
+        F1, C-05, C-06. Funciona sin cookie (`has_session: false`, `play_status: null`, rachas en 0).
+        `challenge_status` + `play_status` cubren los 5 estados de la home: sin jugar (`published` + `null`),
+        en curso (`in_progress`), completado (`won`/`lost`), sin desafío (`none`) y anulado (`voided`).
+
+        Cuando `seconds_to_reset` llega a 0, el front espera 0–3 s al azar y vuelve a pedir.
+      operationId: getToday
+      security:
+        - {}
+        - playerCookie: []
+      parameters:
+        - $ref: '#/components/parameters/Lang'
+      responses:
+        '200':
+          description: Estado del día
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Today' }
+              example:
+                date: '2026-11-03'
+                number: 128
+                next_reset_at: '2026-11-04T00:00:00Z'
+                seconds_to_reset: 41000
+                has_session: true
+                global_streak: { current: 5, max: 12 }
+                completed_today: 1
+                games:
+                  - { game_id: devdle, challenge_status: published, play_status: won, history_label: '✓ 4/6', current_streak: 5 }
+                  - { game_id: grep-grid, challenge_status: published, play_status: in_progress, history_label: null, current_streak: 2 }
+                  - { game_id: timeline, challenge_status: published, play_status: null, history_label: null, current_streak: 0 }
+                  - { game_id: big-o, challenge_status: none, play_status: null, history_label: null, current_streak: 3 }
+                  - { game_id: bug-hunt, challenge_status: voided, play_status: null, history_label: null, current_streak: 1 }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  # ───────────────────────────── Gameplay ─────────────────────────────
+  /api/games/{game_id}/today:
+    get:
+      tags: [Gameplay]
+      summary: Abrir el juego de hoy (vista pública + partida)
+      description: |
+        F2, C-08, C-10, C-14. Devuelve la vista pública del desafío de hoy (sin solución) y la Play del
+        jugador, si existe. Si la Play terminó, incluye el `result`.
+
+        - `play == null` → pantalla de instrucciones.
+        - `play.status == in_progress` → retoma con `play.state`.
+        - Play terminada → pantalla de resultado.
+        - `challenge_status: none` → "sin desafío hoy"; `voided` → aviso de anulación.
+
+        En Big O y Bug Hunt, `public_view.code` trae los 3 lenguajes: cambiar de lenguaje es solo del cliente.
+      operationId: getGameToday
+      security:
+        - {}
+        - playerCookie: []
+      parameters:
+        - $ref: '#/components/parameters/GameIdPath'
+        - $ref: '#/components/parameters/Lang'
+      responses:
+        '200':
+          description: Desafío de hoy y partida del jugador
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GameToday' }
+              example:
+                game_id: devdle
+                date: '2026-11-03'
+                number: 128
+                challenge_status: published
+                public_view: { length: 5, possible_categories: [programming_languages, databases, git] }
+                play:
+                  status: in_progress
+                  state: { guesses: [ { guess: REACT, marks: [absent, present, absent, absent, absent] } ] }
+                  score: null
+                  code_language: null
+                result: null
+        '404': { $ref: '#/components/responses/NotFound' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /api/games/{game_id}/today/start:
+    post:
+      tags: [Gameplay]
+      summary: Empezar la partida
+      description: |
+        F2, C-09. Crea la Play `in_progress` al salir de las instrucciones, con
+        `state = initState(payload)`. Idempotente: `INSERT … ON CONFLICT (player_id, challenge_id) DO NOTHING`
+        y devuelve la Play existente. Emite `PlayStarted`.
+
+        Rate limit: 30 / min por `player_id`.
+      operationId: startPlay
+      security:
+        - playerCookie: []
+      parameters:
+        - $ref: '#/components/parameters/GameIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ChallengeNumberBody' }
+            example: { challenge_number: 128 }
+      responses:
+        '200':
+          description: Play creada o existente
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [play]
+                properties:
+                  play: { $ref: '#/components/schemas/PlayView' }
+              example:
+                play: { status: in_progress, state: { guesses: [] }, score: null, code_language: null }
+        '401': { $ref: '#/components/responses/NoSession' }
+        '403': { $ref: '#/components/responses/ForbiddenOrigin' }
+        '404': { $ref: '#/components/responses/NoChallengeToday' }
+        '409': { $ref: '#/components/responses/PlayConflict' }
+        '415': { $ref: '#/components/responses/UnsupportedMediaType' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /api/games/{game_id}/today/move:
+    post:
+      tags: [Gameplay]
+      summary: Hacer una jugada
+      description: |
+        F3, C-11, C-12, C-15, C-16, C-33. Valida `move` con `moveSchema` del juego y la aplica con
+        `applyMove` en una transacción con `SELECT plays … FOR UPDATE` (si no existe la Play, la crea
+        `in_progress` como `/start`).
+
+        Si la jugada cierra la partida: `plays.status = won|lost`, `result`, `score`, `code_language`,
+        `finished_at`; se actualizan `player_game_stats` y `player_stats` en la misma transacción (rachas con
+        días neutros, ADR-011). En Big O y Bug Hunt además se guarda `players.preferred_code_language = move.language`.
+
+        Devdle: un intento fuera de la lista válida responde `422 not_in_word_list`, se registra en
+        `rejected_guesses` y **no** consume intento.
+
+        Rate limit: 60 / min por `player_id` y 300 / min por IP.
+      operationId: makeMove
+      security:
+        - playerCookie: []
+      parameters:
+        - $ref: '#/components/parameters/GameIdPath'
+        - $ref: '#/components/parameters/Lang'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MoveRequest' }
+            examples:
+              devdle:
+                value: { challenge_number: 128, move: { guess: REACT } }
+              grep_grid_select:
+                value: { challenge_number: 128, move: { type: select, from: { row: 0, col: 2 }, to: { row: 0, col: 6 } } }
+              grep_grid_give_up:
+                value: { challenge_number: 128, move: { type: give_up } }
+              timeline:
+                value: { challenge_number: 128, move: { order: [k3f9, a01x, z7q2, m4b8, p2c6] } }
+              big_o:
+                value: { challenge_number: 128, move: { language: go, option: o_n_log_n } }
+              bug_hunt:
+                value: { challenge_number: 128, move: { language: java, line: 7 } }
+      responses:
+        '200':
+          description: Jugada aplicada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MoveResponse' }
+              examples:
+                devdle_en_curso:
+                  value:
+                    feedback: { guess: REDIS, marks: [correct, correct, absent, absent, absent] }
+                    play:
+                      status: in_progress
+                      state: { guesses: [ { guess: REDIS, marks: [correct, correct, absent, absent, absent] } ] }
+                      score: null
+                    result: null
+                    streaks: null
+                big_o_cierre:
+                  value:
+                    feedback: null
+                    play: { status: won, state: {}, score: 1 }
+                    result:
+                      win: true
+                      score: 1
+                      answer: o_n_log_n
+                      chosen_option: o_n_log_n
+                      code_language: go
+                      recipe_category: divide_and_conquer
+                      explanation: 'El bucle externo divide n a la mitad en cada paso…'
+                    streaks: { game: { current: 4, max: 9 }, global: { current: 6, max: 12 } }
+        '401': { $ref: '#/components/responses/NoSession' }
+        '403': { $ref: '#/components/responses/ForbiddenOrigin' }
+        '404': { $ref: '#/components/responses/NoChallengeToday' }
+        '409': { $ref: '#/components/responses/PlayConflict' }
+        '415': { $ref: '#/components/responses/UnsupportedMediaType' }
+        '422':
+          description: |
+            `invalid_move` (no pasa `moveSchema` o es inválida para el estado: dirección no permitida en
+            Grep Grid, faltantes/duplicados en Timeline, `line` ∉ `pickable_lines` en Bug Hunt) o
+            `not_in_word_list` (Devdle; no consume intento).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+              examples:
+                invalid_move:
+                  value: { error: { code: invalid_move, message: 'Jugada inválida' } }
+                not_in_word_list:
+                  value: { error: { code: not_in_word_list, message: 'La palabra no está en la lista' } }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /api/games/{game_id}/today/acknowledge-void:
+    post:
+      tags: [Gameplay]
+      summary: Marcar como completado un desafío anulado de hoy
+      description: |
+        F6, C-42. Para un jugador sin Play en el desafío anulado de hoy: crea una Play `voided`
+        (`finished_at = now()`), `ON CONFLICT DO NOTHING`, y actualiza rachas y `total_completed`.
+
+        Rate limit: 30 / min por `player_id`.
+      operationId: acknowledgeVoid
+      security:
+        - playerCookie: []
+      parameters:
+        - $ref: '#/components/parameters/GameIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ChallengeNumberBody' }
+            example: { challenge_number: 128 }
+      responses:
+        '200':
+          description: Play anulada creada (o existente) y rachas actualizadas
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AcknowledgeVoidResponse' }
+              example:
+                play: { status: voided }
+                streaks: { game: { current: 4, max: 9 }, global: { current: 6, max: 12 } }
+        '401': { $ref: '#/components/responses/NoSession' }
+        '403': { $ref: '#/components/responses/ForbiddenOrigin' }
+        '404': { $ref: '#/components/responses/NoChallengeToday' }
+        '409':
+          description: '`challenge_expired` o `not_voided` (el desafío de hoy no está anulado)'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+              example: { error: { code: not_voided, message: 'Este desafío no está anulado' } }
+        '415': { $ref: '#/components/responses/UnsupportedMediaType' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  # ───────────────────────────── Reports ─────────────────────────────
+  /api/games/{game_id}/today/report:
+    post:
+      tags: [Reports]
+      summary: Reportar un problema con el desafío de hoy
+      description: |
+        F5, C-36, C-37. Solo sobre desafíos de hoy `published` o `voided`. Guarda `context`
+        (`code_language`, `play_status`, `play_state`, `user_agent`) y `locale`. Uno por jugador y desafío.
+
+        Si se alcanza el umbral (`REPORT_ALERT_COUNT` = 3, o `REPORT_ALERT_RATIO_MIN_COUNT` = 2 y
+        > `REPORT_ALERT_RATIO` = 5% de las Play terminadas, contando solo `wrong_answer`/`ambiguous`) y
+        `challenges.alert_sent_at IS NULL`, se manda un mail al responsable una sola vez (ADR-013).
+        El fallo del mail no cambia la respuesta.
+
+        Rate limit: 10 / hora por IP.
+      operationId: reportChallenge
+      security:
+        - playerCookie: []
+      parameters:
+        - $ref: '#/components/parameters/GameIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ReportRequest' }
+            example: { challenge_number: 128, reason: wrong_answer, message: 'La línea 7 no tiene el bug', code_language: go }
+      responses:
+        '201':
+          description: Reporte creado
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [report_id]
+                properties:
+                  report_id: { type: string, format: uuid }
+              example: { report_id: 3f6c1d2e-8a4b-4c1f-9e2a-7b5d0c9e1a23 }
+        '401': { $ref: '#/components/responses/NoSession' }
+        '403': { $ref: '#/components/responses/ForbiddenOrigin' }
+        '404': { $ref: '#/components/responses/NoChallengeToday' }
+        '409':
+          description: '`already_reported` o `challenge_expired`'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+              example: { error: { code: already_reported, message: 'Ya reportaste este desafío' } }
+        '415': { $ref: '#/components/responses/UnsupportedMediaType' }
+        '422':
+          description: '`invalid_report` (`reason` inválido o `message` > 1000 caracteres)'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+              example: { error: { code: invalid_report, message: 'El comentario supera los 1000 caracteres' } }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  # ───────────────────────────── Stats ─────────────────────────────
+  /api/me/stats:
+    get:
+      tags: [Stats]
+      summary: Estadísticas del jugador
+      description: |
+        F12, C-34. Rachas vivas (ADR-011), stats por juego, heatmap de los últimos 365 días e historial
+        paginado de a 60 entradas, del más reciente al más antiguo. Las Play `voided` no entran en
+        `played`, `wins` ni `extra`.
+      operationId: getMyStats
+      security:
+        - playerCookie: []
+      parameters:
+        - $ref: '#/components/parameters/Lang'
+        - name: history_before
+          in: query
+          required: false
+          description: Devuelve historial con `date` estrictamente anterior a esta fecha (paginación)
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Estadísticas
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MyStats' }
+        '401': { $ref: '#/components/responses/NoSession' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  # ───────────────────────────── Admin ─────────────────────────────
+  /api/admin/login:
+    post:
+      tags: [Admin]
+      summary: Login del admin
+      description: |
+        C-38, ADR-010. Compara `password` contra `ADMIN_PASSWORD_HASH` (scrypt, tiempo constante) y emite
+        un JWT HS256 de 8 h (`sub: "admin"`). Rate limit: 5 / 15 min por IP.
+      operationId: adminLogin
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password: { type: string, minLength: 1 }
+      responses:
+        '200':
+          description: Login correcto
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AdminLoginResponse' }
+              example: { token: eyJhbGciOiJIUzI1NiJ9..., expires_at: '2026-11-03T20:00:00Z' }
+        '401':
+          description: Contraseña incorrecta
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+              example: { error: { code: invalid_credentials, message: 'Contraseña incorrecta' } }
+        '415': { $ref: '#/components/responses/UnsupportedMediaType' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /api/admin/reports:
+    get:
+      tags: [Admin]
+      summary: Reportes agrupados por desafío
+      description: |
+        F11, C-39. Grupos ordenados por `report_count` desc. El `payload` incluye la solución y ambos idiomas.
+      operationId: listReportGroups
+      security:
+        - adminBearer: []
+      parameters:
+        - name: status
+          in: query
+          required: false
+          schema:
+            allOf: [ { $ref: '#/components/schemas/ReportStatus' } ]
+            default: open
+      responses:
+        '200':
+          description: Reportes agrupados
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [groups]
+                properties:
+                  groups:
+                    type: array
+                    items: { $ref: '#/components/schemas/ReportGroup' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /api/admin/reports/{report_id}:
+    patch:
+      tags: [Admin]
+      summary: Resolver o descartar un reporte
+      description: F11, C-40. Solo desde `open`. Emite `ReportResolved` / `ReportDismissed`.
+      operationId: updateReportStatus
+      security:
+        - adminBearer: []
+      parameters:
+        - name: report_id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status: { type: string, enum: [resolved, dismissed] }
+      responses:
+        '200':
+          description: Reporte actualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AdminReport' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: '`report_not_open` (el reporte ya fue resuelto o descartado)'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+              example: { error: { code: report_not_open, message: 'El reporte ya fue procesado' } }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /api/admin/challenges/{challenge_id}/void:
+    post:
+      tags: [Admin]
+      summary: Anular un desafío
+      description: |
+        F6, C-41. En una transacción:
+        1. `challenges.status = voided`, `void_reason`, `voided_at = now()`.
+        2. Todas sus Play pasan a `voided` (conservan `result`; `finished_at = coalesce(finished_at, now())`).
+        3. Sus reportes `open` pasan a `resolved`.
+        4. El ítem culpable (`term` / `timeline_fact`) pasa a `rejected` con `rejection_reason`.
+        5. Se recalculan `player_game_stats` y `player_stats` de los jugadores afectados (ADR-011).
+
+        Después invalida la cache de desafíos de hoy.
+      operationId: voidChallenge
+      security:
+        - adminBearer: []
+      parameters:
+        - $ref: '#/components/parameters/ChallengeIdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/VoidRequest' }
+            example:
+              void_reason: 'La respuesta correcta era O(n), no O(n log n)'
+              culprit: { kind: template }
+      responses:
+        '200':
+          description: Desafío anulado
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [challenge_id, affected_plays]
+                properties:
+                  challenge_id: { type: string, format: uuid }
+                  affected_plays: { type: integer, minimum: 0 }
+              example: { challenge_id: 6a1b2c3d-4e5f-4a6b-8c7d-9e0f1a2b3c4d, affected_plays: 214 }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: '`not_voidable` (el desafío no está `published`)'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+              example: { error: { code: not_voidable, message: 'Solo se puede anular un desafío publicado' } }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /api/admin/challenges/upcoming:
+    get:
+      tags: [Admin]
+      summary: Próximos desafíos
+      description: |
+        F11, C-43. Para cada día de `today+1` a `today+days`, el desafío vigente de cada juego
+        (`approved`) con `payload` completo y log de verificación, y el pedido de regeneración pendiente
+        si existe. El admin hace polling mientras haya `pending_request`.
+      operationId: listUpcomingChallenges
+      security:
+        - adminBearer: []
+      parameters:
+        - name: days
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 14, default: 14 }
+      responses:
+        '200':
+          description: Próximos días
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [days]
+                properties:
+                  days:
+                    type: array
+                    items: { $ref: '#/components/schemas/UpcomingDay' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /api/admin/challenges/{challenge_id}/regenerate:
+    post:
+      tags: [Admin]
+      summary: Pedir la regeneración de un desafío aprobado
+      description: |
+        F8, C-44, ADR-005. Inserta en `generation_requests` (`status = pending`) y ejecuta
+        `pg_notify('generation_requests', request_id)`. Si ya hay uno pendiente para ese challenge, devuelve
+        ese. El viejo sigue `approved` hasta que el `generator` verifique el nuevo.
+      operationId: regenerateChallenge
+      security:
+        - adminBearer: []
+      parameters:
+        - $ref: '#/components/parameters/ChallengeIdPath'
+      responses:
+        '202':
+          description: Pedido encolado (nuevo o existente)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [request_id]
+                properties:
+                  request_id: { type: string, format: uuid }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: '`not_regenerable` (`status ≠ approved` o `date <= today`)'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+              example: { error: { code: not_regenerable, message: 'Solo se puede regenerar un desafío aprobado de una fecha futura' } }
+
+  /api/admin/content/stock:
+    get:
+      tags: [Admin]
+      summary: Stock de los bancos de contenido
+      description: |
+        F11, C-45, ADR-016. Stock por banco, ítems rechazados con su motivo, última carga del dataset
+        (`job_runs` con `job = 'sync_banks'`) y las 50 palabras más rechazadas en Devdle
+        (`rejected_guesses` agrupadas por cantidad de jugadores distintos).
+      operationId: getContentStock
+      security:
+        - adminBearer: []
+      responses:
+        '200':
+          description: Stock por banco
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [banks, last_sync, top_rejected_guesses]
+                properties:
+                  banks:
+                    type: array
+                    items: { $ref: '#/components/schemas/BankStock' }
+                  last_sync:
+                    type: object
+                    nullable: true
+                    description: Última corrida de `sync_banks`; null si nunca corrió
+                    required: [finished_at, dataset_version, inserted, updated, unchanged, kept_rejected]
+                    properties:
+                      finished_at: { type: string, format: date-time }
+                      dataset_version: { type: string, example: '2026.11.03' }
+                      inserted: { type: integer }
+                      updated: { type: integer }
+                      unchanged: { type: integer }
+                      kept_rejected: { type: integer }
+                  top_rejected_guesses:
+                    type: array
+                    maxItems: 50
+                    items:
+                      type: object
+                      required: [word, distinct_players]
+                      properties:
+                        word: { type: string, pattern: '^[A-Z]+$' }
+                        distinct_players: { type: integer, minimum: 1 }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/admin/metrics:
+    get:
+      tags: [Admin]
+      summary: Métricas de uso, retención y calidad
+      description: F11, C-46, ADR-014. Lee las vistas `metrics_*` en el rango `[from, to]`.
+      operationId: getMetrics
+      security:
+        - adminBearer: []
+      parameters:
+        - name: from
+          in: query
+          required: true
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          required: true
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Métricas
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Metrics' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+components:
+  securitySchemes:
+    playerCookie:
+      type: apiKey
+      in: cookie
+      name: nd_pid
+      description: |
+        Cookie funcional del jugador anónimo (ADR-009). Valor = `players.id` (UUID v4).
+        `HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=34560000`, sin `Domain`. Se emite en `POST /api/session`.
+    adminBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT HS256 de 8 h obtenido en `POST /api/admin/login` (ADR-010). Claims `{ sub: "admin", iat, exp }`.
+
+  parameters:
+    GameIdPath:
+      name: game_id
+      in: path
+      required: true
+      schema: { $ref: '#/components/schemas/GameId' }
+    ChallengeIdPath:
+      name: challenge_id
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    Lang:
+      name: lang
+      in: query
+      required: false
+      description: Fuerza el locale de la respuesta. Si falta, `players.locale` → `Accept-Language` → `es`.
+      schema: { $ref: '#/components/schemas/Locale' }
+    AcceptLanguage:
+      name: Accept-Language
+      in: header
+      required: false
+      schema: { type: string }
+
+  responses:
+    NoSession:
+      description: Falta la cookie `nd_pid` o no corresponde a un Player
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example: { error: { code: no_session, message: 'Activá las cookies para jugar' } }
+    Unauthorized:
+      description: Falta el JWT de admin, es inválido o venció
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example: { error: { code: unauthorized, message: 'Sesión vencida' } }
+    ForbiddenOrigin:
+      description: Mutación con header `Origin` no permitido
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example: { error: { code: forbidden_origin, message: 'Origen no permitido' } }
+    UnsupportedMediaType:
+      description: Mutación sin `Content-Type application/json`
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example: { error: { code: unsupported_media_type, message: 'Se espera application/json' } }
+    NotFound:
+      description: Recurso inexistente (`game_id`, `challenge_id`, `report_id`)
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example: { error: { code: not_found, message: 'No encontrado' } }
+    NoChallengeToday:
+      description: No hay desafío de hoy `published` ni `voided` para ese juego
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example: { error: { code: no_challenge_today, message: 'Hoy no hay desafío para este juego' } }
+    PlayConflict:
+      description: |
+        `challenge_expired` (`challenge_number` ≠ número de hoy), `challenge_voided` (desafío anulado) o
+        `game_finished` (la Play no está `in_progress`).
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          examples:
+            challenge_expired:
+              value: { error: { code: challenge_expired, message: 'El desafío cambió. Cargando el de hoy…' } }
+            challenge_voided:
+              value: { error: { code: challenge_voided, message: 'Este desafío fue anulado' } }
+            game_finished:
+              value: { error: { code: game_finished, message: 'La partida ya terminó' } }
+    ValidationError:
+      description: Body, query o params inválidos
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example: { error: { code: validation_error, message: 'Datos inválidos' } }
+    RateLimited:
+      description: Límite de requests superado (ADR-012)
+      headers:
+        Retry-After:
+          description: Segundos a esperar
+          schema: { type: integer }
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example: { error: { code: rate_limited, message: 'Demasiadas solicitudes. Probá de nuevo en un rato' } }
+
+  schemas:
+    # ─────────── Enums ───────────
+    GameId:
+      type: string
+      enum: [devdle, bug-hunt, big-o, timeline, grep-grid]
+    Locale:
+      type: string
+      enum: [es, en]
+    CodeLanguage:
+      type: string
+      enum: [js, go, java]
+    ChallengeStatus:
+      type: string
+      enum: [draft, approved, published, rejected, voided]
+    PublicChallengeStatus:
+      type: string
+      description: Estado del desafío de hoy visto por el jugador. `none` = no hay desafío publicado.
+      enum: [published, voided, none]
+    PlayStatus:
+      type: string
+      enum: [in_progress, won, lost, voided]
+    ReportReason:
+      type: string
+      enum: [wrong_answer, ambiguous, wrong_explanation, translation, display_bug, other]
+    ReportStatus:
+      type: string
+      enum: [open, resolved, dismissed]
+    BigOOption:
+      type: string
+      enum: [o_1, o_log_n, o_n, o_n_log_n, o_n2, o_n3, o_2n, o_n_fact]
+    RecipeCategory:
+      type: string
+      description: Conjunto inicial; se amplía con el catálogo de bloques
+      enum: [simple_loops, nested_loops, recursion, divide_and_conquer, binary_search]
+    BugType:
+      type: string
+      enum: [off_by_one, comparison, wrong_operator, wrong_variable, bad_initialization, misplaced_return, inverted_condition]
+    TermCategory:
+      type: string
+      enum: [programming_languages, git, databases, networking, linux, apis, security, software_engineering]
+    TimelineCategory:
+      type: string
+      enum: [programming_languages, frameworks, companies, operating_systems, hardware, video_games]
+    DatePrecision:
+      type: string
+      enum: [year, month, day]
+    LetterMark:
+      type: string
+      enum: [correct, present, absent]
+
+    # ─────────── Comunes ───────────
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+              description: Código del catálogo de ADR-015
+              enum:
+                - no_session
+                - unauthorized
+                - invalid_credentials
+                - forbidden_origin
+                - no_challenge_today
+                - not_found
+                - challenge_expired
+                - challenge_voided
+                - game_finished
+                - already_reported
+                - not_voidable
+                - not_regenerable
+                - not_voided
+                - report_not_open
+                - unsupported_media_type
+                - invalid_move
+                - not_in_word_list
+                - invalid_report
+                - validation_error
+                - rate_limited
+                - internal_error
+            message:
+              type: string
+              description: Texto en el locale resuelto de la request
+
+    Health:
+      type: object
+      required: [status, db]
+      properties:
+        status: { type: string, enum: [ok, degraded] }
+        db: { type: string, enum: [ok, error] }
+
+    Streak:
+      type: object
+      required: [current, max]
+      properties:
+        current: { type: integer, minimum: 0 }
+        max: { type: integer, minimum: 0 }
+
+    Streaks:
+      type: object
+      required: [game, global]
+      properties:
+        game: { $ref: '#/components/schemas/Streak' }
+        global: { $ref: '#/components/schemas/Streak' }
+
+    Cell:
+      type: object
+      required: [row, col]
+      properties:
+        row: { type: integer, minimum: 0, maximum: 11 }
+        col: { type: integer, minimum: 0, maximum: 11 }
+
+    CodeByLanguage:
+      type: object
+      required: [js, go, java]
+      properties:
+        js: { type: string }
+        go: { type: string }
+        java: { type: string }
+
+    LocalizedText:
+      type: object
+      description: Texto bilingüe. Solo aparece en respuestas de admin (dentro de `payload`).
+      required: [es, en]
+      properties:
+        es: { type: string }
+        en: { type: string }
+
+    ChallengeNumberBody:
+      type: object
+      required: [challenge_number]
+      properties:
+        challenge_number:
+          type: integer
+          minimum: 1
+          description: Número del desafío que el cliente cree que es hoy. Si no coincide → `409 challenge_expired`.
+
+    # ─────────── Session ───────────
+    Preferences:
+      type: object
+      required: [locale, preferred_code_language]
+      properties:
+        locale: { $ref: '#/components/schemas/Locale' }
+        preferred_code_language: { $ref: '#/components/schemas/CodeLanguage' }
+
+    SessionResponse:
+      allOf:
+        - $ref: '#/components/schemas/Preferences'
+        - type: object
+          required: [created]
+          properties:
+            created:
+              type: boolean
+              description: true si se creó un Player nuevo
+
+    PreferencesUpdate:
+      type: object
+      minProperties: 1
+      properties:
+        locale: { $ref: '#/components/schemas/Locale' }
+        preferred_code_language: { $ref: '#/components/schemas/CodeLanguage' }
+
+    # ─────────── Today ───────────
+    TodayGame:
+      type: object
+      required: [game_id, challenge_status, play_status, history_label, current_streak]
+      properties:
+        game_id: { $ref: '#/components/schemas/GameId' }
+        challenge_status: { $ref: '#/components/schemas/PublicChallengeStatus' }
+        play_status:
+          allOf: [ { $ref: '#/components/schemas/PlayStatus' } ]
+          nullable: true
+          description: null si no hay sesión o no hay Play
+        history_label:
+          type: string
+          nullable: true
+          description: '`historyLabel(result)` si la Play terminó, por ejemplo "✓ 4/6"'
+        current_streak:
+          type: integer
+          minimum: 0
+          description: Racha viva del juego (0 si no está viva)
+
+    Today:
+      type: object
+      required: [date, number, next_reset_at, seconds_to_reset, has_session, global_streak, completed_today, games]
+      properties:
+        date: { type: string, format: date, description: Día UTC de la plataforma }
+        number: { type: integer, minimum: 1, description: 'today − LAUNCH_DATE + 1' }
+        next_reset_at: { type: string, format: date-time }
+        seconds_to_reset: { type: integer, minimum: 0 }
+        has_session: { type: boolean }
+        global_streak: { $ref: '#/components/schemas/Streak' }
+        completed_today:
+          type: integer
+          minimum: 0
+          description: Play de hoy completadas (`won`, `lost`, `voided`)
+        games:
+          type: array
+          minItems: 5
+          maxItems: 5
+          items: { $ref: '#/components/schemas/TodayGame' }
+
+    # ─────────── Vistas públicas (sin solución) ───────────
+    DevdlePublicView:
+      type: object
+      required: [length, possible_categories]
+      properties:
+        length: { type: integer, minimum: 4, maximum: 12 }
+        possible_categories:
+          type: array
+          items: { $ref: '#/components/schemas/TermCategory' }
+
+    GrepGridPublicView:
+      type: object
+      required: [grid, words]
+      properties:
+        grid:
+          type: array
+          description: 12 filas de 12 letras (A–Z)
+          minItems: 12
+          maxItems: 12
+          items:
+            type: array
+            minItems: 12
+            maxItems: 12
+            items: { type: string, minLength: 1, maxLength: 1 }
+        words:
+          type: array
+          minItems: 8
+          maxItems: 8
+          items:
+            type: object
+            required: [term_id, word]
+            properties:
+              term_id: { type: string, format: uuid }
+              word: { type: string }
+
+    TimelinePublicView:
+      type: object
+      required: [category, prompt, items]
+      properties:
+        category: { $ref: '#/components/schemas/TimelineCategory' }
+        prompt: { type: string }
+        items:
+          type: array
+          description: Mezclados; `opaque_id` aleatorio por desafío
+          minItems: 5
+          maxItems: 5
+          items:
+            type: object
+            required: [opaque_id, label]
+            properties:
+              opaque_id: { type: string }
+              label: { type: string }
+
+    BigOPublicView:
+      type: object
+      required: [code, options]
+      properties:
+        code: { $ref: '#/components/schemas/CodeByLanguage' }
+        options:
+          type: array
+          minItems: 8
+          maxItems: 8
+          items: { $ref: '#/components/schemas/BigOOption' }
+
+    BugHuntPublicView:
+      type: object
+      required: [spec, code, pickable_lines, visible_tests]
+      properties:
+        spec: { type: string }
+        code: { $ref: '#/components/schemas/CodeByLanguage' }
+        pickable_lines:
+          type: array
+          description: Números de línea elegibles (1-based); iguales en los 3 lenguajes
+          items: { type: integer, minimum: 1 }
+        visible_tests:
+          type: array
+          items: { $ref: '#/components/schemas/TestCase' }
+
+    TestCase:
+      type: object
+      required: [input, expected]
+      properties:
+        input: { description: Argumentos del test (JSON) }
+        expected: { description: Resultado esperado (JSON) }
+
+    PublicView:
+      description: '`toPublic(payload)` del juego, en el locale resuelto. Nunca incluye la solución.'
+      oneOf:
+        - $ref: '#/components/schemas/DevdlePublicView'
+        - $ref: '#/components/schemas/GrepGridPublicView'
+        - $ref: '#/components/schemas/TimelinePublicView'
+        - $ref: '#/components/schemas/BigOPublicView'
+        - $ref: '#/components/schemas/BugHuntPublicView'
+
+    # ─────────── Estado de partida ───────────
+    DevdleGuess:
+      type: object
+      required: [guess, marks]
+      properties:
+        guess: { type: string, pattern: '^[A-Z]{4,12}$' }
+        marks:
+          type: array
+          items: { $ref: '#/components/schemas/LetterMark' }
+
+    DevdleState:
+      type: object
+      required: [guesses]
+      properties:
+        guesses:
+          type: array
+          maxItems: 6
+          items: { $ref: '#/components/schemas/DevdleGuess' }
+
+    GrepGridState:
+      type: object
+      required: [found_words]
+      properties:
+        found_words:
+          type: array
+          maxItems: 8
+          items:
+            type: object
+            required: [term_id, cells]
+            properties:
+              term_id: { type: string, format: uuid }
+              cells:
+                type: array
+                items: { $ref: '#/components/schemas/Cell' }
+
+    EmptyState:
+      type: object
+      description: Timeline, Big O y Bug Hunt (una sola confirmación) no tienen estado intermedio
+      additionalProperties: false
+
+    PlayState:
+      oneOf:
+        - $ref: '#/components/schemas/DevdleState'
+        - $ref: '#/components/schemas/GrepGridState'
+        - $ref: '#/components/schemas/EmptyState'
+
+    PlayView:
+      type: object
+      required: [status, state, score, code_language]
+      properties:
+        status: { $ref: '#/components/schemas/PlayStatus' }
+        state: { $ref: '#/components/schemas/PlayState' }
+        score:
+          type: integer
+          nullable: true
+          description: 'devdle: intentos usados (1–6); grep-grid: 0–8; timeline: 0–5; big-o / bug-hunt: 1 o 0'
+        code_language:
+          allOf: [ { $ref: '#/components/schemas/CodeLanguage' } ]
+          nullable: true
+          description: Solo big-o y bug-hunt, el lenguaje con el que confirmó
+
+    # ─────────── Jugadas ───────────
+    DevdleMove:
+      type: object
+      required: [guess]
+      properties:
+        guess:
+          type: string
+          pattern: '^[A-Z]{4,12}$'
+          description: En mayúsculas; largo = `public_view.length`
+
+    GrepGridSelectMove:
+      type: object
+      required: [type, from, to]
+      properties:
+        type: { type: string, enum: [select] }
+        from: { $ref: '#/components/schemas/Cell' }
+        to: { $ref: '#/components/schemas/Cell' }
+
+    GrepGridGiveUpMove:
+      type: object
+      required: [type]
+      properties:
+        type: { type: string, enum: [give_up] }
+
+    TimelineMove:
+      type: object
+      required: [order]
+      properties:
+        order:
+          type: array
+          description: Los 5 `opaque_id`, del más antiguo al más reciente, sin faltantes ni duplicados
+          minItems: 5
+          maxItems: 5
+          uniqueItems: true
+          items: { type: string }
+
+    BigOMove:
+      type: object
+      required: [language, option]
+      properties:
+        language: { $ref: '#/components/schemas/CodeLanguage' }
+        option: { $ref: '#/components/schemas/BigOOption' }
+
+    BugHuntMove:
+      type: object
+      required: [language, line]
+      properties:
+        language: { $ref: '#/components/schemas/CodeLanguage' }
+        line:
+          type: integer
+          minimum: 1
+          description: Debe pertenecer a `pickable_lines`
+
+    Move:
+      description: '`Move` del juego; se valida con `moveSchema` de su GameDefinition'
+      oneOf:
+        - $ref: '#/components/schemas/DevdleMove'
+        - $ref: '#/components/schemas/GrepGridSelectMove'
+        - $ref: '#/components/schemas/GrepGridGiveUpMove'
+        - $ref: '#/components/schemas/TimelineMove'
+        - $ref: '#/components/schemas/BigOMove'
+        - $ref: '#/components/schemas/BugHuntMove'
+
+    MoveRequest:
+      type: object
+      required: [challenge_number, move]
+      properties:
+        challenge_number: { type: integer, minimum: 1 }
+        move: { $ref: '#/components/schemas/Move' }
+
+    # ─────────── Feedback ───────────
+    DevdleFeedback:
+      $ref: '#/components/schemas/DevdleGuess'
+
+    GrepGridFeedbackFound:
+      type: object
+      required: [found, term_id, word, definition, cells]
+      properties:
+        found: { type: boolean, enum: [true] }
+        term_id: { type: string, format: uuid }
+        word: { type: string }
+        definition: { type: string }
+        cells:
+          type: array
+          items: { $ref: '#/components/schemas/Cell' }
+
+    GrepGridFeedbackNotFound:
+      type: object
+      required: [found, reason]
+      properties:
+        found: { type: boolean, enum: [false] }
+        reason: { type: string, enum: [not_a_word, already_found] }
+
+    Feedback:
+      description: |
+        Feedback de una jugada en curso. `null` en Timeline, Big O y Bug Hunt (la jugada cierra) y en
+        Grep Grid `give_up`.
+      nullable: true
+      oneOf:
+        - $ref: '#/components/schemas/DevdleFeedback'
+        - $ref: '#/components/schemas/GrepGridFeedbackFound'
+        - $ref: '#/components/schemas/GrepGridFeedbackNotFound'
+
+    # ─────────── Resultados (post-partida, en el locale) ───────────
+    DevdleResult:
+      type: object
+      required: [win, score, word, category, definition, summary, guesses]
+      properties:
+        win: { type: boolean }
+        score: { type: integer, minimum: 1, maximum: 6 }
+        word: { type: string }
+        category: { $ref: '#/components/schemas/TermCategory' }
+        definition: { type: string }
+        summary: { type: string }
+        guesses:
+          type: array
+          items: { $ref: '#/components/schemas/DevdleGuess' }
+
+    GrepGridResult:
+      type: object
+      required: [win, score, gave_up, words]
+      properties:
+        win: { type: boolean }
+        score: { type: integer, minimum: 0, maximum: 8 }
+        gave_up: { type: boolean }
+        words:
+          type: array
+          minItems: 8
+          maxItems: 8
+          items:
+            type: object
+            required: [term_id, word, definition, found, cells]
+            properties:
+              term_id: { type: string, format: uuid }
+              word: { type: string }
+              definition: { type: string }
+              found: { type: boolean }
+              cells:
+                type: array
+                items: { $ref: '#/components/schemas/Cell' }
+
+    TimelineResult:
+      type: object
+      required: [win, score, category, correct_order, submitted_order, items]
+      properties:
+        win: { type: boolean }
+        score: { type: integer, minimum: 0, maximum: 5 }
+        category: { $ref: '#/components/schemas/TimelineCategory' }
+        correct_order:
+          type: array
+          items: { type: string }
+        submitted_order:
+          type: array
+          items: { type: string }
+        items:
+          type: array
+          minItems: 5
+          maxItems: 5
+          items:
+            type: object
+            required: [opaque_id, label, event_date, date_precision, note]
+            properties:
+              opaque_id: { type: string }
+              label: { type: string }
+              event_date: { type: string, format: date }
+              date_precision: { $ref: '#/components/schemas/DatePrecision' }
+              note: { type: string }
+
+    BigOResult:
+      type: object
+      required: [win, score, answer, chosen_option, code_language, recipe_category, explanation]
+      properties:
+        win: { type: boolean }
+        score: { type: integer, enum: [0, 1] }
+        answer: { $ref: '#/components/schemas/BigOOption' }
+        chosen_option: { $ref: '#/components/schemas/BigOOption' }
+        code_language: { $ref: '#/components/schemas/CodeLanguage' }
+        recipe_category: { $ref: '#/components/schemas/RecipeCategory' }
+        explanation: { type: string }
+
+    BugHuntResult:
+      type: object
+      required: [win, score, chosen_line, code_language, bug_line, bug_type, failing_test, fix, explanation]
+      properties:
+        win: { type: boolean }
+        score: { type: integer, enum: [0, 1] }
+        chosen_line: { type: integer, minimum: 1 }
+        code_language: { $ref: '#/components/schemas/CodeLanguage' }
+        bug_line:
+          type: integer
+          minimum: 1
+          description: Línea del bug (igual en los 3 lenguajes, una sentencia por línea)
+        bug_type: { $ref: '#/components/schemas/BugType' }
+        failing_test:
+          type: object
+          required: [input, expected, actual]
+          properties:
+            input: { description: Argumentos (JSON) }
+            expected: { description: Resultado esperado (JSON) }
+            actual: { description: Resultado de la versión con bug (JSON) }
+        fix:
+          type: object
+          description: Diff unificado del fix, por lenguaje
+          required: [js, go, java]
+          properties:
+            js: { type: string }
+            go: { type: string }
+            java: { type: string }
+        explanation: { type: string }
+
+    Result:
+      description: '`result(payload, state)` del juego en el locale. Solo cuando la Play terminó.'
+      nullable: true
+      oneOf:
+        - $ref: '#/components/schemas/DevdleResult'
+        - $ref: '#/components/schemas/GrepGridResult'
+        - $ref: '#/components/schemas/TimelineResult'
+        - $ref: '#/components/schemas/BigOResult'
+        - $ref: '#/components/schemas/BugHuntResult'
+
+    # ─────────── Gameplay: responses ───────────
+    GameToday:
+      type: object
+      required: [game_id, date, number, challenge_status, public_view, play, result]
+      properties:
+        game_id: { $ref: '#/components/schemas/GameId' }
+        date: { type: string, format: date }
+        number: { type: integer, minimum: 1 }
+        challenge_status: { $ref: '#/components/schemas/PublicChallengeStatus' }
+        public_view:
+          allOf: [ { $ref: '#/components/schemas/PublicView' } ]
+          nullable: true
+          description: null si `challenge_status` es `none` o `voided`
+        play:
+          allOf: [ { $ref: '#/components/schemas/PlayView' } ]
+          nullable: true
+        result:
+          allOf: [ { $ref: '#/components/schemas/Result' } ]
+          nullable: true
+
+    MoveResponse:
+      type: object
+      required: [feedback, play, result, streaks]
+      properties:
+        feedback: { $ref: '#/components/schemas/Feedback' }
+        play:
+          type: object
+          required: [status, state, score]
+          properties:
+            status: { $ref: '#/components/schemas/PlayStatus' }
+            state: { $ref: '#/components/schemas/PlayState' }
+            score: { type: integer, nullable: true }
+        result:
+          allOf: [ { $ref: '#/components/schemas/Result' } ]
+          nullable: true
+          description: Solo si la jugada cerró la partida
+        streaks:
+          allOf: [ { $ref: '#/components/schemas/Streaks' } ]
+          nullable: true
+          description: Solo si la jugada cerró la partida
+
+    AcknowledgeVoidResponse:
+      type: object
+      required: [play, streaks]
+      properties:
+        play:
+          type: object
+          required: [status]
+          properties:
+            status: { type: string, enum: [voided] }
+        streaks: { $ref: '#/components/schemas/Streaks' }
+
+    ReportRequest:
+      type: object
+      required: [challenge_number, reason]
+      properties:
+        challenge_number: { type: integer, minimum: 1 }
+        reason: { $ref: '#/components/schemas/ReportReason' }
+        message: { type: string, maxLength: 1000 }
+        code_language: { $ref: '#/components/schemas/CodeLanguage' }
+
+    # ─────────── Stats ───────────
+    GameStatsView:
+      type: object
+      required: [game_id, current_streak, max_streak, played, wins, win_rate, extra]
+      properties:
+        game_id: { $ref: '#/components/schemas/GameId' }
+        current_streak: { type: integer, minimum: 0, description: Racha viva }
+        max_streak: { type: integer, minimum: 0 }
+        played: { type: integer, minimum: 0, description: Excluye Play voided }
+        wins: { type: integer, minimum: 0, description: Excluye Play voided }
+        win_rate:
+          type: number
+          nullable: true
+          minimum: 0
+          maximum: 1
+          description: '`wins / played`; null si `played = 0`'
+        extra:
+          type: object
+          additionalProperties: true
+          description: |
+            Stats propias del juego (`reduceStats`):
+            devdle = distribución de intentos (1–6 y derrotas); grep-grid = promedio de palabras y % 8/8;
+            timeline = promedio de posiciones por categoría; big-o = aciertos por `recipe_category`;
+            bug-hunt = aciertos por `code_language` y por `bug_type`.
+
+    MyStats:
+      type: object
+      required: [global, games, heatmap, history, history_next_before]
+      properties:
+        global:
+          type: object
+          required: [current_streak, max_streak, total_completed]
+          properties:
+            current_streak: { type: integer, minimum: 0 }
+            max_streak: { type: integer, minimum: 0 }
+            total_completed: { type: integer, minimum: 0, description: Incluye Play voided }
+        games:
+          type: array
+          items: { $ref: '#/components/schemas/GameStatsView' }
+        heatmap:
+          type: array
+          description: Últimos 365 días
+          items:
+            type: object
+            required: [date, completed]
+            properties:
+              date: { type: string, format: date }
+              completed: { type: integer, minimum: 0, maximum: 5, description: Play completadas ese día }
+        history:
+          type: array
+          maxItems: 60
+          items:
+            type: object
+            required: [date, number, game_id, status, label]
+            properties:
+              date: { type: string, format: date }
+              number: { type: integer, minimum: 1 }
+              game_id: { $ref: '#/components/schemas/GameId' }
+              status: { $ref: '#/components/schemas/PlayStatus' }
+              label: { type: string, description: '`historyLabel(result)`' }
+        history_next_before:
+          type: string
+          format: date
+          nullable: true
+          description: Valor para pedir la página siguiente; null si no hay más
+
+    # ─────────── Admin ───────────
+    AdminLoginResponse:
+      type: object
+      required: [token, expires_at]
+      properties:
+        token: { type: string }
+        expires_at: { type: string, format: date-time }
+
+    AdminChallenge:
+      type: object
+      required: [id, game_id, date, number, status, payload, verification]
+      properties:
+        id: { type: string, format: uuid }
+        game_id: { $ref: '#/components/schemas/GameId' }
+        date: { type: string, format: date }
+        number: { type: integer, minimum: 1 }
+        status: { $ref: '#/components/schemas/ChallengeStatus' }
+        payload:
+          type: object
+          additionalProperties: true
+          description: '`challenges.payload` completo: incluye la solución y los textos `{ es, en }`'
+        verification:
+          type: object
+          additionalProperties: true
+          description: '`challenges.verification`: log de la verificación'
+
+    AdminReport:
+      type: object
+      required: [id, reason, message, locale, context, status, created_at]
+      properties:
+        id: { type: string, format: uuid }
+        reason: { $ref: '#/components/schemas/ReportReason' }
+        message: { type: string, nullable: true }
+        locale: { $ref: '#/components/schemas/Locale' }
+        context:
+          type: object
+          description: '`code_language`, `play_status`, `play_state`, `user_agent`'
+          additionalProperties: true
+        status: { $ref: '#/components/schemas/ReportStatus' }
+        created_at: { type: string, format: date-time }
+
+    ReportGroup:
+      type: object
+      required: [challenge, report_count, reasons, reports]
+      properties:
+        challenge: { $ref: '#/components/schemas/AdminChallenge' }
+        report_count: { type: integer, minimum: 1 }
+        reasons:
+          type: object
+          description: Conteo por `reason`
+          additionalProperties: { type: integer }
+          example: { wrong_answer: 3, translation: 1 }
+        reports:
+          type: array
+          items: { $ref: '#/components/schemas/AdminReport' }
+
+    VoidRequest:
+      type: object
+      required: [void_reason, culprit]
+      properties:
+        void_reason: { type: string, minLength: 1 }
+        culprit:
+          type: object
+          required: [kind]
+          properties:
+            kind:
+              type: string
+              enum: [term, timeline_fact, template, none]
+              description: '`template` solo queda en `void_reason` (se corrige en código)'
+            id:
+              type: string
+              format: uuid
+              description: Obligatorio si `kind` es `term` o `timeline_fact`
+
+    UpcomingDay:
+      type: object
+      required: [date, number, games]
+      properties:
+        date: { type: string, format: date }
+        number: { type: integer, minimum: 1 }
+        games:
+          type: array
+          items:
+            type: object
+            required: [game_id, challenge, pending_request]
+            properties:
+              game_id: { $ref: '#/components/schemas/GameId' }
+              challenge:
+                type: object
+                nullable: true
+                required: [id, status, payload, verification, generator_version]
+                properties:
+                  id: { type: string, format: uuid }
+                  status: { $ref: '#/components/schemas/ChallengeStatus' }
+                  payload: { type: object, additionalProperties: true }
+                  verification: { type: object, additionalProperties: true }
+                  generator_version: { type: string }
+              pending_request:
+                type: object
+                nullable: true
+                required: [request_id, status]
+                properties:
+                  request_id: { type: string, format: uuid }
+                  status: { type: string, enum: [pending, done, failed] }
+
+    BankStock:
+      type: object
+      required: [bank, approved_available, approved_total, rejected_total, days_of_stock, cycle_ok, rejections]
+      properties:
+        bank: { type: string, enum: [terms, timeline_facts] }
+        approved_available:
+          type: integer
+          description: Ítems approved fuera de su ventana anti-repetición (usables hoy)
+        approved_total: { type: integer }
+        rejected_total: { type: integer }
+        days_of_stock:
+          type: integer
+          description: Días que cubren los `approved_available` al ritmo de consumo actual, sin reutilizar
+        cycle_ok:
+          type: boolean
+          description: |
+            true si el banco alcanza para ciclar indefinidamente respetando las ventanas anti-repetición
+            (terms ≥ 500; timeline_facts ≥ 100 por categoría)
+        rejections:
+          type: array
+          description: Ítems `rejected` (por la importación o por anulación), del más reciente al más antiguo; máximo 200
+          maxItems: 200
+          items:
+            type: object
+            required: [wikidata_id, label, reason]
+            properties:
+              wikidata_id: { type: string }
+              label: { type: string }
+              reason: { type: string }
+
+    Metrics:
+      type: object
+      required: [daily_players, retention, streak_distribution, challenge_quality]
+      properties:
+        daily_players:
+          type: array
+          description: metrics_daily_players
+          items:
+            type: object
+            required: [date, game_id, players]
+            properties:
+              date: { type: string, format: date }
+              game_id:
+                allOf: [ { $ref: '#/components/schemas/GameId' } ]
+                nullable: true
+                description: null = total
+              players: { type: integer }
+        retention:
+          type: array
+          description: metrics_retention
+          items:
+            type: object
+            required: [cohort_date, cohort_size, d1, d7]
+            properties:
+              cohort_date: { type: string, format: date }
+              cohort_size: { type: integer }
+              d1: { type: number, nullable: true, description: '% (0–1); null si la cohorte no llegó a +1' }
+              d7: { type: number, nullable: true, description: '% (0–1); null si la cohorte no llegó a +7' }
+        streak_distribution:
+          type: array
+          description: metrics_streak_distribution
+          items:
+            type: object
+            required: [bucket, players]
+            properties:
+              bucket: { type: string, enum: ['0', '1', '2-6', '7-29', '30+'] }
+              players: { type: integer }
+        challenge_quality:
+          type: array
+          description: metrics_challenge_quality
+          items:
+            type: object
+            required: [challenge_id, game_id, date, number, started, finished, completion_rate, win_rate, reports, status]
+            properties:
+              challenge_id: { type: string, format: uuid }
+              game_id: { $ref: '#/components/schemas/GameId' }
+              date: { type: string, format: date }
+              number: { type: integer }
+              started: { type: integer }
+              finished: { type: integer, description: won + lost }
+              completion_rate: { type: number, nullable: true }
+              win_rate: { type: number, nullable: true }
+              reports: { type: integer }
+              status: { $ref: '#/components/schemas/ChallengeStatus' }
