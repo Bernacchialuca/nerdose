@@ -1,10 +1,15 @@
 import type { z } from 'zod';
+import type { Locale } from './enums';
 
 export const GAME_IDS = ['devdle', 'grep-grid', 'timeline', 'big-o', 'bug-hunt'] as const;
 
 export type GameId = (typeof GAME_IDS)[number];
 
-export type Locale = 'es' | 'en';
+export type { Locale } from './enums';
+
+export function isGameId(value: unknown): value is GameId {
+  return typeof value === 'string' && (GAME_IDS as readonly string[]).includes(value);
+}
 
 export type MoveError = 'invalid_move' | 'not_in_word_list';
 
