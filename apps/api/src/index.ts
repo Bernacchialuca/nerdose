@@ -11,7 +11,7 @@ loadLocalEnvFile();
 
 let env: ReturnType<typeof loadEnv> | undefined;
 try {
-  env = loadEnv(process.env);
+  env = loadEnv();
 } catch (error) {
   console.error(error instanceof Error ? error.message : String(error));
   process.exitCode = 1;

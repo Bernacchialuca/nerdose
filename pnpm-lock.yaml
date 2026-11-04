@@ -105,6 +105,9 @@ importers:
       '@t3-oss/env-core':
         specifier: ^0.13.11
         version: 0.13.11(typescript@6.0.3)(zod@4.6.7)
+      dotenv:
+        specifier: ^18.0.9
+        version: 18.0.9
       hono:
         specifier: ^4.13.16
         version: 4.13.16
@@ -118,9 +121,6 @@ importers:
       '@testcontainers/postgresql':
         specifier: ^12.2.1
         version: 12.2.1
-      dotenv:
-        specifier: ^18.0.9
-        version: 18.0.9
       pino-pretty:
         specifier: ^13.2.0
         version: 13.2.0
