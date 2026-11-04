@@ -1,5 +1,5 @@
 import { AppError } from '@nerdose/core';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { loadEnv } from '@/config/env';
 
@@ -57,5 +57,17 @@ describe('loadEnv', () => {
 
   it('no declara PORT', () => {
     expect('PORT' in loadEnv({ DATABASE_URL: URL_OK, PORT: '3000' })).toBe(false);
+  });
+
+  describe('sin argumento', () => {
+    afterEach(() => {
+      vi.unstubAllEnvs();
+    });
+
+    it('lee process.env', () => {
+      vi.stubEnv('DATABASE_URL', URL_OK);
+      vi.stubEnv('SERVICE_NAME', 'generator-env');
+      expect(loadEnv()).toMatchObject({ DATABASE_URL: URL_OK, SERVICE_NAME: 'generator-env' });
+    });
   });
 });

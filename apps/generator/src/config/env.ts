@@ -5,7 +5,7 @@ import { createEnv } from '@t3-oss/env-core';
 import { config } from 'dotenv';
 import { z } from 'zod';
 
-export function loadEnv(runtimeEnv: Record<string, string | undefined>) {
+export function loadEnv(runtimeEnv: Record<string, string | undefined> = process.env) {
   return createEnv({
     server: {
       NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
