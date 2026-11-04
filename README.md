@@ -2,6 +2,42 @@
 
 Plataforma de juegos diarios para nerds. Monorepo pnpm + Turborepo con `apps/{web,admin,api,generator}` y `packages/{core,db,ui}`.
 
+## Estructura
+
+### `apps/`
+
+```
+apps/
+├── api/            # backend HTTP (Hono, :3000)
+├── generator/      # worker con scheduler (sin puerto)
+├── web/            # sitio público (React + Vite, :5173)
+└── admin/          # panel de administración (React + Vite, :5174)
+```
+
+### `packages/`
+
+```
+packages/
+├── core/           # tipos y contratos compartidos (isomorfo)
+├── db/             # base de datos (Drizzle)
+└── ui/             # identidad visual compartida
+```
+
+### Raíz (workspace)
+
+```
+.
+├── package.json          # scripts que delegan en Turborepo
+├── pnpm-workspace.yaml   # apps/* y packages/*
+├── turbo.json            # tareas dev, lint, typecheck, test
+├── tsconfig.base.json
+├── eslint.config.js      # incluye los límites de importación entre paquetes
+├── vitest.config.ts
+├── compose.yaml          # PostgreSQL 16 local
+├── .env.example
+└── test/                 # tests del workspace
+```
+
 ## Requisitos
 
 - Node.js 24 (`engines.node` `>=24 <25`).
