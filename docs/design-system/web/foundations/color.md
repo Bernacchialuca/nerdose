@@ -1,6 +1,6 @@
 ---
 foundation: color
-version: 1.0.0
+version: 1.1.0
 last_updated: 2026-11-05
 status: defined
 source: docs/nerdose.html
@@ -163,7 +163,7 @@ Ver `tokens/component.md`. Ejemplos: `button.primary.bg → accent.brand`, `stre
 - No usar rojo para el error de Timeline: el prototipo usa ámbar + borde punteado (L1064).
 - No rellenar de amarillo la letra "presente" de Devdle: es borde punteado ámbar.
 - No colorear `✓`/`✗` de la tabla de historial: en el prototipo son texto plano (L374-379).
-- No inventar tintes para un juego a partir de otro: si un estado no está definido para ese juego, queda "Pendiente".
+- No copiar los tintes de un juego en otro. Si un estado no está definido para un juego, se deriva de **su propia** escala (tinte, borde del tinte, apagado, acento, claro, on-accent) siguiendo el mismo patrón que el juego que sí lo tiene. Ejemplo: la tarjeta `next` de Big O usa su borde del tinte + anillo de 1px del acento al 20% + glow; para Devdle se arma igual con la escala de Devdle.
 
 ## Accesibilidad
 
@@ -239,3 +239,4 @@ Ratios medidos (WCAG 2.1, fórmula de luminancia relativa). Umbral: texto ≥ 4,
 - 2026-11-03 — `color.brand.primary` = `#3DDC84`, confirmado por el usuario en /product-ux-generate.
 - 2026-11-05 v0.2.0 — Consumidores de `color.warning` y `color.error` (Banner, Alert); semánticos `text.warning` y `border.warning`.
 - 2026-11-05 v1.0.0 — Reescrita desde el prototipo: 14 neutros nuevos, escala de tintes por juego y por estado, rampa del heatmap, regla "racha siempre ámbar", contrastes medidos de todos los pares de texto y adaptaciones requeridas (números de línea, tecla descartada, selector de idioma). `color.green.950` pasa a `color.green.975`; se elimina `color.info`.
+- 2026-11-05 v1.1.0 — Los estados no definidos para un juego se derivan de su propia escala en lugar de quedar pendientes.

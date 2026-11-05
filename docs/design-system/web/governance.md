@@ -1,5 +1,5 @@
 ---
-version: 1.0.0
+version: 1.1.0
 last_updated: 2026-11-05
 status: defined
 ---
@@ -23,7 +23,7 @@ status: defined
 ### Reglas al documentar
 
 1. **No inventar valores.** Todo valor cita su origen (`L###` del prototipo o la pantalla).
-2. Lo que el prototipo no define se marca **"Pendiente — el prototipo no lo define"** (inputs, modales, toasts, hover de casi todo, foco, transiciones).
+2. Lo que el prototipo no define se marca **"Pendiente — el prototipo no lo define"** (inputs, modales, toasts, hover de casi todo, foco, transiciones). "Pendiente" **no bloquea**: quien lo necesite lo deriva con las reglas de identidad del [README](README.md#identidad-cómo-diseñar-lo-que-el-prototipo-no-tiene) y lo documenta.
 3. Un requisito de accesibilidad sin estética definida se declara como **requisito** (qué tiene que cumplirse) sin inventar el cómo.
 4. Un choque entre prototipo y PRD se documenta con **el valor del prototipo + la adaptación requerida**, marcada como tal.
 5. Las piezas que no existen en el prototipo pero el producto necesita (Alert, Banner `warning`) se declaran **adaptación de producto** y toman su estética de la pieza más cercana del prototipo.
@@ -31,7 +31,8 @@ status: defined
 ## Quién puede modificar
 
 - **Diseño:** cualquier cambio, siempre que respete la precedencia de arriba.
-- **Desarrollo:** propone cambios; los aplica `/product-design-system-update`, o `/service-implement-story` cuando una story necesita una variant nueva. Una story **no puede apartarse del DS** sin cambiar antes el DS.
+- **Desarrollo:** una story puede **crear piezas nuevas** (variant, componente, estado, token) cuando el DS no las tiene, derivándolas de la identidad (README → "Identidad"). Las documenta en el DS en la misma story (`/service-implement-story`, paso de actualización del DS; bump MINOR). Lo que una story **no puede** es contradecir un valor ya definido (por ejemplo, botones sin radio o la racha en verde) ni usar estilos genéricos fuera de los tokens; para cambiar un valor definido hay que pasar por `/product-design-system-update`.
+- **Margen de decisión:** el objetivo es que todo se reconozca como el mismo producto, no una copia píxel a píxel. Una adaptación razonable (reordenar un bloque, ajustar un tamaño para que entre en 320 px, resolver un caso que el prototipo no muestra) está bien si respeta los rasgos de identidad y queda anotada.
 
 ## Cómo proponer cambios
 
@@ -68,3 +69,4 @@ Los wireframes mid-fi (`docs/ux/surfaces/web/`) son agnósticos del DS: declaran
 
 - 2026-11-03 v0.1.0 — Governance inicial (bootstrap).
 - 2026-11-05 v1.0.0 — Se declara `docs/nerdose.html` fuente de verdad visual de `web`, con la precedencia prototipo (estética) / PRD (datos, reglas, accesibilidad), las reglas de documentación (no inventar, Pendiente, requisito, adaptación) y el criterio de MAJOR para cambios de valor.
+- 2026-11-05 v1.1.0 — "Pendiente" deja de bloquear: las stories pueden derivar piezas nuevas con las reglas de identidad del README y documentarlas en el DS; solo no pueden contradecir valores definidos ni usar estilos genéricos.

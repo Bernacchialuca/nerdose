@@ -1,5 +1,5 @@
 ---
-version: 1.0.0
+version: 1.1.0
 last_updated: 2026-11-05
 status: defined
 source: docs/nerdose.html
@@ -10,7 +10,7 @@ source: docs/nerdose.html
 ## Estado actual
 
 - **Surface:** `web`
-- **Versión:** `1.0.0`
+- **Versión:** `1.1.0`
 - **Estado:** definido desde el prototipo
 - **Fuente de verdad visual:** [`docs/nerdose.html`](../../nerdose.html). Ante una duda de estética gana el prototipo; en datos, reglas y accesibilidad gana el PRD (ver [`governance.md`](governance.md)).
 - **Código:** la implementación actual (`@nerdose/ui`, `apps/web`) corresponde a la v0.2.0 y **no está alineada** con esta versión; ver [`CHANGELOG.md`](CHANGELOG.md) → "Desalineaciones conocidas en código".
@@ -18,6 +18,40 @@ source: docs/nerdose.html
 ## Identidad en una línea
 
 Terminal oscura y amable: fondo `#0A0C0F`, Inter para la prosa y JetBrains Mono para todo lo demás, acento verde `#3DDC84` y un acento propio por juego, racha siempre ámbar, botones con radio 10px, títulos `// comentario`, prompts `$` y voseo.
+
+## Identidad: cómo diseñar lo que el prototipo no tiene
+
+**Leé esto antes de planificar o implementar UI.** El prototipo no cubre todo, y el producto va a necesitar piezas que no existen (un botón "próximo juego", un modal, un estado nuevo, una pantalla de instrucciones). En ese caso **no hay que frenar ni improvisar algo genérico**: se deriva de la identidad. El resultado tiene que parecer sacado del mismo HTML.
+
+### Rasgos que no se negocian
+
+1. **Terminal oscura y amable.** Superficies sólidas muy oscuras (`#0A0C0F` → `#0F1318` → `#11151A` → `#141920`), bordes finos (`#1E252E` / `#222A33` / `#2A323C`), sin gradientes ni colores pastel.
+2. **Dos fuentes con reglas claras.** JetBrains Mono para títulos, números, botones, etiquetas, metadatos y código; Inter solo para prosa (párrafos y descripciones). Titulares grandes con tracking negativo y peso 800.
+3. **Radios suaves y consistentes.** Botones y filas 10, paneles 14, tarjetas destacadas 16, celdas y tabs 8, chips `full`. Nunca esquinas rectas en controles, nunca radios fuera de la escala.
+4. **Acento con significado.** Verde `#3DDC84` = plataforma y "avanzar"; cada juego se apropia de su pantalla con su acento y su escala de tintes; **la racha siempre es ámbar**; error `#FF7B72` sin dramatismo.
+5. **Voz de terminal.** Títulos de bloque `// comentario` en Mono 13 `#8D99A6`, prompts `$ comando`, rutas `./juegos`, `exit 0`, cursores, voseo rioplatense. Con medida: decora, no estorba.
+6. **Números protagonistas.** Rachas y puntajes en Mono 800, tamaños display, tracking negativo.
+7. **Punteado = "todavía no".** Borde `dashed` para lo provisional, próximo o "presente en otra posición".
+
+### Cómo derivar una pieza nueva
+
+| Necesito… | Partí de… | Regla |
+|---|---|---|
+| Un botón nuevo ("Próximo juego", "Compartir", "Rendirse") | [button](components/button.md) | Misma familia (radio 10, Mono, 44/48 px). Avanzar = `primary` verde; acción de un juego = acento del juego con su on-accent; secundaria = outline `#2A323C`; destructiva suave = `outline-tinted` de error. |
+| Un contenedor o bloque | [card](components/card.md) / [panel](components/panel.md) | `bg.surface` + borde `#222A33` + radio 14 (16 si es protagonista), padding 20-28, título `// comentario`. |
+| Un estado o variante de color | [color](foundations/color.md) → escalas | Usar la escala del **mismo** acento: tinte de fondo, borde del tinte, texto apagado, acento, claro, on-accent. Nunca un color nuevo suelto. |
+| Hover | El elemento base | Un paso más claro dentro de su escala (borde o texto un tono arriba; link al tono "claro"). Sin transiciones largas. |
+| Foco | Requisito NFR-U02 | Outline 2px en el acento de la pantalla, visible sobre fondo oscuro. |
+| Un aviso, modal o pantalla nueva | [banner](components/banner.md), [panel](components/panel.md), las pantallas del prototipo | Copiar la estructura de la pantalla más parecida (header, `max-width` 1240, gutter 32, secciones con `gap` 24-32) y su tono. |
+| Un texto | [voice-tone](foundations/voice-tone.md) | Corto, voseo, con un guiño de terminal si suma. |
+
+**Prueba final:** ¿se ve como si viniera del mismo archivo que la Home y las pantallas de juego? Si parece un dashboard o un template de Tailwind, no está bien.
+
+**Señales de que algo salió genérico** (pasó en v0.2.0): botones sin radio, todo en Mono (o todo en Inter), `text-2xl` / `rounded-md` / `shadow-md` de Tailwind sin pasar por los tokens, links subrayados, barras de colores planas, racha en verde, fondos liso sin la textura en Home.
+
+### Qué hacer después
+
+Una pieza derivada **se documenta en el DS en la misma story** (variant, componente o token nuevo, bump MINOR), así la próxima la reutiliza. Lo que el DS marca como "Pendiente — el prototipo no lo define" significa **"derivalo con estas reglas y documentalo"**, no "no se puede hacer".
 
 ## Inventario
 

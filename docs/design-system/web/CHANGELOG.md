@@ -3,6 +3,17 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.1.0] - 2026-11-05
+
+### Agregado
+- `README.md`: sección "Identidad: cómo diseñar lo que el prototipo no tiene", con los 7 rasgos que no se negocian, una tabla para derivar piezas nuevas (botón, contenedor, estado de color, hover, foco, aviso o pantalla, texto), la prueba final y las señales de que algo salió genérico.
+
+### Cambiado
+- `governance.md`: "Pendiente — el prototipo no lo define" deja de bloquear. Una story puede crear piezas nuevas derivadas de la identidad y las documenta en el DS en la misma story; no puede contradecir valores definidos ni usar estilos genéricos.
+- `foundations/color.md`: los estados que faltan para un juego se derivan de su propia escala de tintes.
+
+---
+
 ## [1.0.0] - 2026-11-05
 
 **MAJOR.** El DS de `web` se redefine desde el prototipo `docs/nerdose.html`, que pasa a ser la **fuente de verdad visual** del surface (PRD NFR-U07). Cambian valores de tokens existentes (radio de Button, padding de Card, nombres de espaciado y radios), se remapean los tokens de componente y se reemplazan todas las foundations. Ante una duda de estética gana el prototipo; en datos, reglas y accesibilidad gana el PRD.
