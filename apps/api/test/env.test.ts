@@ -4,6 +4,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { loadEnv } from '@/config/env';
 
 const URL_OK = 'postgres://nerdose_api:a@127.0.0.1:5432/nerdose';
+const VALID = {
+  DATABASE_URL: URL_OK,
+  LAUNCH_DATE: '2026-11-24',
+  WEB_ORIGIN: 'http://localhost:5173',
+  ADMIN_ORIGIN: 'http://localhost:5174',
+};
 
 function catchError(fn: () => unknown): unknown {
   try {
@@ -16,31 +22,31 @@ function catchError(fn: () => unknown): unknown {
 
 describe('loadEnv', () => {
   it('lanza validation_error sin DATABASE_URL', () => {
-    const error = catchError(() => loadEnv({}));
+    const rest: Record<string, string> = { ...VALID };
+    delete rest.DATABASE_URL;
+    const error = catchError(() => loadEnv(rest));
     expect(error).toBeInstanceOf(AppError);
     expect((error as AppError).code).toBe('validation_error');
     expect((error as AppError).message).toBe('Variables de entorno inválidas: DATABASE_URL');
   });
 
   it('lanza con DATABASE_URL inválida', () => {
-    const error = catchError(() => loadEnv({ DATABASE_URL: 'no-es-url' })) as AppError;
+    const error = catchError(() => loadEnv({ ...VALID, DATABASE_URL: 'no-es-url' })) as AppError;
     expect(error.message).toBe('Variables de entorno inválidas: DATABASE_URL');
   });
 
   it('lanza con PORT numérico inválido', () => {
-    const error = catchError(() => loadEnv({ DATABASE_URL: URL_OK, PORT: 'abc' })) as AppError;
+    const error = catchError(() => loadEnv({ ...VALID, PORT: 'abc' })) as AppError;
     expect(error.message).toBe('Variables de entorno inválidas: PORT');
   });
 
   it('aplica defaults con valores vacíos', () => {
-    expect(
-      loadEnv({ DATABASE_URL: URL_OK, NODE_ENV: '', PORT: '', LOG_LEVEL: '', SERVICE_NAME: '' }),
-    ).toEqual({
+    expect(loadEnv({ ...VALID, NODE_ENV: '', PORT: '', LOG_LEVEL: '', SERVICE_NAME: '' })).toEqual({
       NODE_ENV: 'development',
       PORT: 3000,
       LOG_LEVEL: 'info',
       SERVICE_NAME: 'api',
-      DATABASE_URL: URL_OK,
+      ...VALID,
     });
   });
 
@@ -50,7 +56,7 @@ describe('loadEnv', () => {
       PORT: '4010',
       LOG_LEVEL: 'silent',
       SERVICE_NAME: 'api-test',
-      DATABASE_URL: URL_OK,
+      ...VALID,
     });
     expect(env).toMatchObject({
       PORT: 4010,
@@ -66,9 +72,44 @@ describe('loadEnv', () => {
     });
 
     it('lee process.env', () => {
-      vi.stubEnv('DATABASE_URL', URL_OK);
+      for (const [name, value] of Object.entries(VALID)) vi.stubEnv(name, value);
       vi.stubEnv('PORT', '4020');
       expect(loadEnv()).toMatchObject({ DATABASE_URL: URL_OK, PORT: 4020 });
+    });
+  });
+
+  describe('variables de seguridad HTTP', () => {
+    it('exige LAUNCH_DATE, WEB_ORIGIN y ADMIN_ORIGIN sin mostrar valores', () => {
+      const error = catchError(() => loadEnv({ DATABASE_URL: URL_OK })) as AppError;
+      expect(error.code).toBe('validation_error');
+      for (const name of ['LAUNCH_DATE', 'WEB_ORIGIN', 'ADMIN_ORIGIN']) {
+        expect(error.message).toContain(name);
+      }
+      expect(error.message).not.toContain(URL_OK);
+    });
+
+    it('rechaza formatos inválidos', () => {
+      const date = catchError(() => loadEnv({ ...VALID, LAUNCH_DATE: '2026/11/24' })) as AppError;
+      expect(date.code).toBe('validation_error');
+      expect(date.message).toContain('LAUNCH_DATE');
+      const origin = catchError(() => loadEnv({ ...VALID, WEB_ORIGIN: 'no-es-url' })) as AppError;
+      expect(origin.code).toBe('validation_error');
+      expect(origin.message).toContain('WEB_ORIGIN');
+    });
+
+    it('normaliza los orígenes y deja TRUST_PROXY_HEADER opcional', () => {
+      const env = loadEnv({
+        ...VALID,
+        WEB_ORIGIN: 'http://localhost:5173/',
+        TRUST_PROXY_HEADER: 'X-Forwarded-For',
+      });
+      expect(env).toMatchObject({
+        LAUNCH_DATE: '2026-11-24',
+        WEB_ORIGIN: 'http://localhost:5173',
+        ADMIN_ORIGIN: 'http://localhost:5174',
+        TRUST_PROXY_HEADER: 'X-Forwarded-For',
+      });
+      expect(loadEnv(VALID).TRUST_PROXY_HEADER).toBeUndefined();
     });
   });
 });
