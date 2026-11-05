@@ -3,6 +3,29 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [0.2.0] - 2026-11-05
+
+### Agregado
+- `components/button.md`: variants `primary`, `secondary` y `disabled` (con `aria-disabled`, sigue siendo focusable), alto mínimo de 44px y sin radio. Queda `experimental`: hover, active y loading están pendientes y la implementación son clases en `web` (`cta.ts`), no un componente de `@nerdose/ui`.
+- `components/card.md`: contenedor `<article>` de `@nerdose/ui`, con radio de 16px, padding de 16px y sin sombra.
+- `components/alert.md`: error con `role="alert"`, barra lateral en `color.error` y slot de acción.
+- `components/banner.md`: advertencia persistente con `role="status"`, barra lateral en `color.warning`, título y detalle opcional (aviso de cookies bloqueadas, O-03).
+- `tokens/reference.md`: `radius.xl` (16px).
+- `tokens/semantic.md`: `text.warning` y `border.warning` (Banner O-03).
+- `tokens/component.md`: `button.disabled.*`, `button.focus.outline`, `button.radius`, `button.height.min`, `button.padding.x`, `button.gap`, `alert.*` y `banner.*`.
+
+### Cambiado
+- `tokens/component.md`: Card alineada con la implementación: `card.radius` pasa de `radius.md` a `radius.xl`, `card.padding` de `space.padding.default` a `space.padding.spacious` y `card.elevation` de `elevation.1` a `elevation.0`. Se agrega `card.gap`.
+- `tokens/component.md`: `button.secondary.border` pasa de `border.focus` a `border.interactive`, según la regla de contraste ≥3:1 de `foundations/color.md`.
+- `foundations/color.md`: se documentan los consumidores de `color.warning` y `color.error` y su contraste sobre `bg.surface` (10,6:1 y 7,4:1).
+
+### Código alineado con el spec
+- `@nerdose/ui/tokens.css` suma `--color-border-interactive: #8D99A6` (`border.interactive`).
+- El CTA `secondary` usa `border-border-interactive` en lugar de `border-border-strong` (1,5:1 → 6,8:1 sobre el fondo de página).
+- `cta.ts` pasa a `apps/web/src/components/` y lo importan también `not-found.tsx` y `route-error.tsx`, en lugar de repetir las clases.
+
+---
+
 ## [0.1.1] - 2026-11-03
 
 ### Cambiado

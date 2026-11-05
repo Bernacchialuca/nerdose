@@ -1,7 +1,7 @@
 ---
 tokens: component
-version: 0.1.1
-last_updated: 2026-11-03
+version: 0.2.0
+last_updated: 2026-11-05
 status: placeholder
 ---
 
@@ -18,24 +18,32 @@ comparten el mismo semántico.
 
 Formato: `{componente}.{variant}.{propiedad}.{estado}`
 
-## Button (placeholder)
+## Button
+
+Implementado como clases en `apps/web/src/components/cta.ts` (spec: `components/button.md`).
 
 ```
 button.primary.bg          : bg.action.primary
-button.primary.bg.hover    : bg.action.primary.hover
-button.primary.bg.active   : color.green.500
-button.primary.bg.disabled : color.neutral.700
+button.primary.bg.hover    : bg.action.primary.hover   # pendiente de implementar
 button.primary.text        : text.inverse
-button.primary.text.disabled : text.dim
 button.primary.border      : transparent
 
 button.secondary.bg        : transparent
-button.secondary.bg.hover  : bg.surface.raised
 button.secondary.text      : text.action.primary
-button.secondary.border    : border.focus
+button.secondary.border    : border.interactive        # --color-border-interactive
 
-button.destructive.bg      : bg.error
-button.destructive.text    : text.inverse
+button.disabled.bg         : transparent
+button.disabled.text       : text.dim
+button.disabled.border     : border.default
+
+button.focus.outline       : border.focus              # 2px, offset 2px
+button.radius              : radius.none
+button.height.min          : 44px
+button.padding.x           : space.4
+button.gap                 : space.2
+
+button.destructive.bg      : bg.error                  # reservado, sin uso en v1
+button.destructive.text    : text.inverse              # reservado, sin uso en v1
 ```
 
 ## TextInput (placeholder)
@@ -50,14 +58,42 @@ input.border.error : border.error
 input.height.md    : 44px
 ```
 
-## Card (placeholder)
+## Card
+
+Implementado en `@nerdose/ui` (spec: `components/card.md`).
 
 ```
 card.bg            : bg.surface
 card.border        : border.default
-card.padding       : space.padding.default
-card.radius        : radius.md
-card.elevation     : elevation.1
+card.padding       : space.padding.spacious   # 16px
+card.gap           : space.stack.sm           # 12px
+card.radius        : radius.xl                # 16px
+card.elevation     : elevation.0              # sin sombra
+```
+
+## Alert
+
+Implementado en `@nerdose/ui` (spec: `components/alert.md`).
+
+```
+alert.bg           : bg.surface
+alert.border       : border.error             # solo lateral izquierdo, 4px
+alert.text         : text.error
+alert.padding      : space.padding.spacious   # 16px
+alert.gap          : space.stack.sm           # 12px entre mensaje y acción
+```
+
+## Banner
+
+Implementado en `@nerdose/ui` (spec: `components/banner.md`).
+
+```
+banner.bg          : bg.surface
+banner.border      : border.warning           # solo lateral izquierdo, 4px
+banner.title       : text.warning             # negrita
+banner.detail      : text.secondary
+banner.padding.y   : space.3
+banner.padding.x   : space.4                  # space.8 desde lg
 ```
 
 ## Reglas
@@ -72,3 +108,4 @@ card.elevation     : elevation.1
 
 - 2026-11-03 v0.1.0 — Placeholder inicial.
 - 2026-11-03 v0.1.1 — Referencias a colores ajustadas a la paleta oscura.
+- 2026-11-05 v0.2.0 — Button, Card y Alert alineados con la implementación de REQ-002: `button.disabled.*`, `button.focus.outline`, `card.radius = radius.xl`, `card.padding = space.padding.spacious`, `card.elevation = elevation.0`, y tokens nuevos de `alert.*` y `banner.*`.

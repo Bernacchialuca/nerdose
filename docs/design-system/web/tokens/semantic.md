@@ -1,7 +1,7 @@
 ---
 tokens: semantic
-version: 0.1.1
-last_updated: 2026-11-03
+version: 0.2.0
+last_updated: 2026-11-05
 status: placeholder
 ---
 
@@ -40,7 +40,8 @@ Los semánticos comunican **intención** (`bg.action.primary`), no apariencia
 | `text.dim` | `color.neutral.400` | Texto terciario, etiquetas |
 | `text.inverse` | `color.green.950` | Texto sobre fondo de acento |
 | `text.action.primary` | `color.green.500` | Links, botón secondary |
-| `text.error` | `color.red.500` | Mensaje de error |
+| `text.error` | `color.red.500` | Mensaje de error (Alert) |
+| `text.warning` | `color.amber.500` | Título de advertencia (Banner O-03) |
 
 ### Border
 | Token | Valor | Uso |
@@ -49,7 +50,8 @@ Los semánticos comunican **intención** (`bg.action.primary`), no apariencia
 | `border.strong` | `color.neutral.650` | Bordes fuertes, divisores |
 | `border.interactive` | `color.neutral.400` | Borde de controles interactivos (≥3:1) |
 | `border.focus` | `color.green.500` | Borde de elemento focused |
-| `border.error` | `color.red.500` | Borde de elemento inválido |
+| `border.error` | `color.red.500` | Borde de elemento inválido, barra de la Alert |
+| `border.warning` | `color.amber.500` | Barra lateral del Banner de advertencia |
 
 ## Spacing (placeholder)
 
@@ -85,3 +87,4 @@ Los semánticos comunican **intención** (`bg.action.primary`), no apariencia
 
 - 2026-11-03 v0.1.0 — Placeholder inicial.
 - 2026-11-03 v0.1.1 — Alias de color remapeados a la paleta oscura.
+- 2026-11-05 v0.2.0 — Se agregan `text.warning` y `border.warning`; se documenta el uso de `text.error` y `border.error` en Alert.

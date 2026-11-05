@@ -1,7 +1,7 @@
 ---
 tokens: reference
-version: 0.1.1
-last_updated: 2026-11-03
+version: 0.2.0
+last_updated: 2026-11-05
 status: placeholder
 ---
 
@@ -93,6 +93,7 @@ radius.none : 0px
 radius.sm   : 4px
 radius.md   : 8px
 radius.lg   : 12px
+radius.xl   : 16px   # Card (prototipo docs/nerdose.html; rounded-2xl en Tailwind)
 radius.full : 9999px
 ```
 
@@ -106,3 +107,4 @@ radius.full : 9999px
 
 - 2026-11-03 v0.1.0 — Placeholder inicial.
 - 2026-11-03 v0.1.1 — Paleta de color oscura del prototipo en lugar de la clara de relleno.
+- 2026-11-05 v0.2.0 — Se agrega `radius.xl` (16px), usado por Card.

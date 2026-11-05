@@ -11,8 +11,9 @@
 ## Estado actual
 
 - **Surface:** `web`
-- **Versión:** `0.1.1` (placeholder; paleta de color oscura del prototipo)
-- **Estado:** sin definir — esperando aportes del equipo de diseño
+- **Versión:** `0.2.0` (paleta oscura del prototipo + primeros componentes)
+- **Estado:** en definición — color y componentes base documentados; tipografía, spacing y el resto de foundations siguen en placeholder
+- **Componentes:** `button` (experimental), `card`, `alert`, `banner`
 
 ## Estructura
 
@@ -35,7 +36,10 @@ docs/design-system/web/
 │   ├── semantic.md        ← alias: bg.primary, text.muted
 │   └── component.md       ← por componente: button.primary.bg
 ├── components/            ← catálogo de componentes (spec por archivo)
-│   └── (a llenar)
+│   ├── button.md
+│   ├── card.md
+│   ├── alert.md
+│   └── banner.md
 ├── patterns/              ← composiciones (forms, empty-states, navigation)
 │   └── (a llenar)
 └── guidelines/            ← transversal a este surface

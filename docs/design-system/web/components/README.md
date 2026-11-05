@@ -11,6 +11,15 @@
 > > agregá un componente Button con variants primary, secondary, disabled
 > ```
 
+## Componentes documentados
+
+| Componente | Estado | Implementación |
+|------------|--------|----------------|
+| [button](button.md) | experimental | Clases en `apps/web/src/components/cta.ts` |
+| [card](card.md) | active | `@nerdose/ui` → `Card` |
+| [alert](alert.md) | active | `@nerdose/ui` → `Alert` |
+| [banner](banner.md) | active | `@nerdose/ui` → `Banner` |
+
 ## Estructura esperada
 
 Cada componente tiene un archivo `.md` con las 12 secciones canónicas

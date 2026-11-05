@@ -1,7 +1,7 @@
 ---
 foundation: color
-version: 0.1.1
-last_updated: 2026-11-03
+version: 0.2.0
+last_updated: 2026-11-05
 status: placeholder
 ---
 
@@ -59,8 +59,8 @@ El feedback nunca depende solo del color (NFR-U04): suma ícono o patrón.
 | Token | Hex | Uso |
 |-------|-----|-----|
 | `color.success` | `#3DDC84` | Estados de éxito (igual al acento de marca) |
-| `color.warning` | `#FFB547` | Advertencia, rachas pendientes (igual al acento de Bug Hunt) |
-| `color.error` | `#FF7B72` | Estados de error / destructivo |
+| `color.warning` | `#FFB547` | Advertencia (Banner O-03), rachas pendientes (igual al acento de Bug Hunt). En código: `--color-warning` |
+| `color.error` | `#FF7B72` | Estados de error / destructivo (Alert). En código: `--color-error` |
 | `color.info` | `#5EB1FF` | Estados informativos (igual al acento de Big O) |
 
 ## Tokens
@@ -78,6 +78,8 @@ El feedback nunca depende solo del color (NFR-U04): suma ícono o patrón.
 | `text.on-action` | `color.brand.on-primary` | Texto sobre fondo de acento |
 | `border.default` | `color.neutral.700` | Bordes decorativos de cards y divisores |
 | `border.interactive` | `color.neutral.400` | Borde de controles interactivos (≥3:1) |
+| `text.warning` / `border.warning` | `color.warning` | Título y barra del Banner de advertencia |
+| `text.error` / `border.error` | `color.error` | Mensaje y barra de la Alert |
 
 ### De componente
 A definir cuando se documenten componentes específicos (ver `components/`).
@@ -98,17 +100,23 @@ A definir cuando se documenten componentes específicos (ver `components/`).
 
 ## Accesibilidad
 
-- Contraste texto sobre fondo: **≥4.5:1** (WCAG AA para body ≥16pt). Medido sobre `#0A0C0F`: texto principal 16,6:1, secundario 7,9:1, terciario 6,8:1, acento 11,0:1, error 7,8:1; texto `#06120B` sobre el acento 10,7:1.
+- Contraste texto sobre fondo: **≥4.5:1** (WCAG AA para body ≥16pt). Medido sobre `#0A0C0F`: texto principal 16,6:1, secundario 7,9:1, terciario 6,8:1, acento 11,0:1, error 7,8:1 (7,4:1 sobre `bg.surface`), advertencia 10,6:1 sobre `bg.surface`; texto `#06120B` sobre el acento 10,7:1.
 - Contraste texto grande (≥18pt o ≥14pt bold): **≥3:1**.
 - Bordes interactivos visibles: **≥3:1** contra fondo adyacente.
 - No comunicar estado solo con color (combinar con icono o texto).
 
 ## Ejemplos
 
-A linkear cuando se documenten componentes que usen esta foundation.
+- `components/button.md` — `bg.action.primary`, `text.inverse`, `border.interactive`.
+- `components/card.md` — `bg.surface`, `border.default`.
+- `components/alert.md` — `text.error`, `border.error`.
+- `components/banner.md` — `text.warning`, `border.warning`.
+
+En código, `border.interactive` es `--color-border-interactive` (`@nerdose/ui/tokens.css`).
 
 ## Historial
 
 - 2026-11-03 v0.1.0 — Placeholder inicial (bootstrap automático).
 - 2026-11-03 v0.1.1 — Se reemplaza la paleta clara de relleno por la oscura del prototipo (`#0A0C0F`, `#3DDC84`).
 - 2026-11-03 — `color.brand.primary` = `#3DDC84`, confirmado por el usuario en /product-ux-generate (acento del prototipo `docs/nerdose.html`).
+- 2026-11-05 v0.2.0 — Se documentan los consumidores de `color.warning` y `color.error` (Banner, Alert) y su contraste sobre `bg.surface`; se agregan los semánticos `text.warning` y `border.warning`.
