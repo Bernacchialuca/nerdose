@@ -30,7 +30,7 @@ describe('createRoles', () => {
 });
 
 describe('truncateAll', () => {
-  it('TS-29: is a no-op without tables', async () => {
+  it('TS-29: resolves on a database with empty tables', async () => {
     await expect(truncateAll({ sql })).resolves.toBeUndefined();
   });
 
