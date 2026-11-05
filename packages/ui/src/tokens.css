@@ -25,4 +25,5 @@
   --color-game-grep-grid: #F472B6;
 
   --color-warning: #FFB547;       /* DS web color.warning: warnings (O-03) */
+  --color-error: #FF7B72;         /* DS web color.error: errors (home alerta-sistema) */
 }

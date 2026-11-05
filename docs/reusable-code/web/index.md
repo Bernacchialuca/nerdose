@@ -26,3 +26,11 @@ App `apps/web` (not a package; imported through the `@/` alias).
 - **server / defaultHandlers** (apps/web/src/test/msw.ts) - Shared MSW server with default API handlers
 - **sessionFixture / todayFixture / todayNoSessionFixture** (apps/web/src/test/fixtures/) - snake_case fixtures
 - **mockViewport** (apps/web/src/test/viewport.ts) - Stubs `window.matchMedia` for mobile/desktop
+
+## Catalog (6 items) - see catalog.md
+- **GAME_CATALOG** (apps/web/src/modules/catalog/games.ts) - Static per-game metadata (minutes, untimed, accent class) in `GAME_IDS` order
+- **deriveHomeView** (apps/web/src/modules/catalog/home-view.ts) - Pure function deriving home state (loading/error/ready, cards, hero, summary) from `Today` and session status
+- **useDayCountdown** (apps/web/src/modules/catalog/api/use-day-countdown.ts) - Seconds to reset; at 0 waits a 0-3 s jitter and invalidates `todayKeys.all` once
+- **ChallengeNumber** (apps/web/src/modules/catalog/components/challenge-number.tsx) - `#number` of the daily challenge for the shell header
+- **GameCard / DayStatus / ProgressSummary** (apps/web/src/modules/catalog/components/) - Presentational components that paint a `HomeView`
+- **formatCountdown** (apps/web/src/lib/format-countdown.ts) - Seconds to `HH:MM:SS`

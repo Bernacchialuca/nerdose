@@ -100,6 +100,66 @@ describe('i18n', () => {
     );
   });
 
+  it('TS-2: claves del catálogo', () => {
+    const keys = flattenKeys(es);
+    expect(flattenKeys(en)).toEqual(keys);
+    const expected = [
+      'catalog.title',
+      'catalog.subtitle',
+      'catalog.howItWorks',
+      'catalog.hero.continue',
+      'catalog.hero.start',
+      'catalog.hero.browse',
+      'catalog.gamesLabel',
+      'catalog.challengeLabel',
+      'catalog.challengeNumber',
+      'catalog.progress.completed',
+      'catalog.progress.completedWithChallenge',
+      'catalog.progress.noChallenges',
+      'catalog.progress.beforeLaunch',
+      'catalog.progress.noSession',
+      'catalog.progress.unavailable',
+      'catalog.globalStreak_one',
+      'catalog.globalStreak_other',
+      'catalog.globalStreakUnknown',
+      'catalog.countdown',
+      'catalog.loading',
+      'catalog.error',
+      'catalog.card.minutes',
+      'catalog.card.untimed',
+      'catalog.card.streak',
+      'catalog.stats',
+      'catalog.summary.title',
+      'catalog.summary.streaks',
+      'catalog.summary.empty',
+      'catalog.summary.noChallenges',
+      'catalog.summary.beforeLaunch',
+      'catalog.summary.noSession',
+      'catalog.summary.unavailable',
+      ...['notPlayed', 'inProgress', 'completed', 'none', 'voided', 'soon', 'noSession'].map(
+        (k) => `catalog.card.status.${k}`,
+      ),
+      ...['play', 'continue', 'result', 'none', 'soon'].map((k) => `catalog.card.cta.${k}`),
+      ...['devdle', 'grep-grid', 'timeline', 'big-o', 'bug-hunt'].flatMap((g) => [
+        `games.${g}.name`,
+        `games.${g}.description`,
+      ]),
+    ];
+    expect(keys).toEqual(expect.arrayContaining(expected));
+  });
+
+  it('TS-3: textos exactos del catálogo en español', () => {
+    expect(es.catalog.title).toBe('Cinco juegos tech. Un desafío por día.');
+    expect(es.catalog.error).toBe(
+      'No pudimos cargar los juegos de hoy. Revisá tu conexión e intentá de nuevo.',
+    );
+    expect(es.catalog.card.status.none).toBe('sin desafío hoy · no afecta tu racha');
+    expect(es.catalog.loading).toBe('Cargando los desafíos de hoy…');
+    expect(es.games['big-o'].name).toBe('Big O');
+    expect(es.games.timeline.name).toBe('Tech Timeline');
+    expect(es.games['grep-grid'].description).toBe('Encontrá 8 palabras en la grilla');
+  });
+
   it('actualiza <html lang> al cambiar de idioma', async () => {
     await i18n.changeLanguage('en');
     expect(document.documentElement.lang).toBe('en');

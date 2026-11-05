@@ -36,6 +36,7 @@ describe('@nerdose/ui package manifest', () => {
       '@types/react-dom',
       '@testing-library/react',
       '@testing-library/jest-dom',
+      '@testing-library/user-event',
       'jsdom',
       'vitest-axe',
     ]) {

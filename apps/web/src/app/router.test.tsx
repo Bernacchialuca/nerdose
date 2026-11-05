@@ -23,7 +23,12 @@ describe('router', () => {
   it('TS-33 Volver a los juegos navega a la home', async () => {
     renderWithProviders({ route: '/no-existe' });
     await userEvent.click(await screen.findByRole('link', { name: /Volver a los juegos/ }));
-    expect(await screen.findByRole('heading', { level: 1, name: 'nerdose' })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', {
+        level: 1,
+        name: 'Cinco juegos tech. Un desafío por día.',
+      }),
+    ).toBeInTheDocument();
   });
 
   it('TS-37 nav en mobile fuera del header', async () => {
@@ -85,7 +90,10 @@ describe('router', () => {
     renderWithProviders({ route: '/' });
     await userEvent.click(await screen.findByRole('link', { name: './about' }));
     await userEvent.click(await screen.findByRole('link', { name: /Volver a los juegos/ }));
-    const h1 = await screen.findByRole('heading', { level: 1, name: 'nerdose' });
+    const h1 = await screen.findByRole('heading', {
+      level: 1,
+      name: 'Cinco juegos tech. Un desafío por día.',
+    });
     expect(h1).toHaveFocus();
     expect(document.title).toBe('nerdose');
   });
@@ -193,7 +201,7 @@ describe('persistencia del idioma', () => {
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'ES' })).toBeEnabled();
     });
-    expect(screen.queryByRole('status')).toBeNull();
+    expect(screen.queryByText(/(Activá las cookies|Enable cookies)/)).toBeNull();
     expect(screen.getByRole('main')).toBeInTheDocument();
     expect(screen.getByRole('contentinfo')).toBeInTheDocument();
   });
@@ -210,6 +218,6 @@ describe('persistencia del idioma', () => {
     });
     await userEvent.click(screen.getByRole('button', { name: 'EN' }));
     expect(await screen.findByRole('link', { name: 'About' })).toBeInTheDocument();
-    expect(screen.queryByRole('status')).toBeNull();
+    expect(screen.queryByText(/(Activá las cookies|Enable cookies)/)).toBeNull();
   });
 });

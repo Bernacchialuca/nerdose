@@ -1,8 +1,8 @@
-import type { Locale } from '@nerdose/core';
+import type { GameId, Locale } from '@nerdose/core';
 
 import { api } from '@/lib/api-client';
 
-export type GameId = 'devdle' | 'bug-hunt' | 'big-o' | 'timeline' | 'grep-grid';
+export type { GameId };
 export type PlayStatus = 'in_progress' | 'won' | 'lost' | 'voided';
 
 export type TodayGame = {
