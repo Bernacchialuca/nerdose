@@ -4,13 +4,15 @@ import type { Logger } from 'pino';
 
 import type { ApiEnv } from '@/config/env';
 import type { IdentityService } from '@/domain/identity/identity.service';
+import type { PublishingService } from '@/domain/publishing/publishing.service';
 import type { Health } from '@/infra/database/health';
 
 export type AppDeps = {
   logger: Logger;
   health: { check(log: Logger): Promise<Health> };
-  config: Pick<ApiEnv, 'WEB_ORIGIN' | 'ADMIN_ORIGIN' | 'TRUST_PROXY_HEADER'>;
+  config: Pick<ApiEnv, 'WEB_ORIGIN' | 'ADMIN_ORIGIN' | 'TRUST_PROXY_HEADER' | 'LAUNCH_DATE'>;
   identity: IdentityService;
+  publishing: Pick<PublishingService, 'getToday'>;
 };
 
 export type AppEnv = {

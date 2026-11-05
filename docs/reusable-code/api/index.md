@@ -16,16 +16,18 @@ App `apps/api` (not a package; imported through the `@/` alias → `src/`). Hono
 - **validationHook** (apps/api/src/http/validation-hook.ts) - zod-validator hook throwing `validation_error`
 - **IdentityService / IdentityRepository / issuePlayerCookie** (apps/api/src/domain/identity/) - Anonymous session, preferences and `nd_pid` cookie
 
-## Infra (3 items) - see infra.md
+## Infra (4 items) - see infra.md
 - **createDatabase / Sql** (apps/api/src/infra/database/db.ts) - Wraps `createDb` from `@nerdose/db`; `Sql` is the postgres.js client type
 - **createHealthCheck / Health** (apps/api/src/infra/database/health.ts) - `SELECT 1` with timeout → `ok` or `degraded`, never throws
 - **verifyDbRole** (apps/api/src/infra/database/verify-role.ts) - Logs `current_user` at startup; returns `null` (no throw) if the DB is down
+- **TodayCache** (apps/api/src/infra/cache/today-cache.ts) - In-memory cache of today's visible challenges (`reload`, `get`, `find`)
 
-## Shared (5 items) - see shared.md
+## Shared (6 items) - see shared.md
 - **loadEnv / ApiEnv / loadLocalEnvFile** (apps/api/src/config/env.ts) - Zod-validated env (t3-env); invalid vars throw `AppError('validation_error')` listing only names
 - **pickLocale / resolveLocale / isLocale** (apps/api/src/shared/locale.ts) - Pure locale helpers: `Accept-Language` parsing and `?lang` → player → header → `es`
 - **createLogger** (apps/api/src/shared/logger.ts) - Pino logger with service/env base fields, ISO time, secret redaction, pretty in dev
 - **withTimeout** (apps/api/src/shared/with-timeout.ts) - Races a promise against a timer and always clears it
+- **Clock / systemClock** (apps/api/src/shared/clock.ts) - Injectable clock (`now(): Date`)
 - **games** (apps/api/src/games/registry.ts) - The api's `GameRegistry` instance (empty for now)
 
 ## Testing utils (7 items) - see testing.md
