@@ -3,10 +3,14 @@ import { serve } from '@hono/node-server';
 import { loadEnv, loadLocalEnvFile } from '@/config/env';
 import { IdentityRepository } from '@/domain/identity/identity.repository';
 import { IdentityService } from '@/domain/identity/identity.service';
+import { PublishingService } from '@/domain/publishing/publishing.service';
+import { EmptyChallengesRepository } from '@/domain/publishing/publishing.repository';
+import { TodayCache } from '@/infra/cache/today-cache';
 import { createDatabase } from '@/infra/database/db';
 import { createHealthCheck } from '@/infra/database/health';
 import { verifyDbRole } from '@/infra/database/verify-role';
 import { buildApp } from '@/http/app';
+import { systemClock } from '@/shared/clock';
 import { createLogger } from '@/shared/logger';
 
 loadLocalEnvFile();
@@ -24,6 +28,10 @@ if (env) {
   const { sql, db } = createDatabase(env.DATABASE_URL);
   await verifyDbRole(sql, logger);
 
+  const clock = systemClock;
+  const todayCache = new TodayCache(new EmptyChallengesRepository(), clock);
+  await todayCache.reload();
+
   const app = buildApp({
     logger,
     health: createHealthCheck({ sql }),
@@ -31,8 +39,14 @@ if (env) {
       WEB_ORIGIN: env.WEB_ORIGIN,
       ADMIN_ORIGIN: env.ADMIN_ORIGIN,
       TRUST_PROXY_HEADER: env.TRUST_PROXY_HEADER,
+      LAUNCH_DATE: env.LAUNCH_DATE,
     },
     identity: new IdentityService(new IdentityRepository(db)),
+    publishing: new PublishingService({
+      cache: todayCache,
+      clock,
+      launchDate: env.LAUNCH_DATE,
+    }),
   });
   const server = serve({ fetch: app.fetch, port: env.PORT }, ({ port }) => {
     logger.info({ port }, 'Server started');

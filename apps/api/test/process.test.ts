@@ -64,6 +64,31 @@ describe('proceso de la api', () => {
     expect(res.headers.get('set-cookie')).toMatch(/^nd_pid=/);
   });
 
+  it('sirve el estado del día', async () => {
+    const port = await freePort();
+    running = startApi({
+      PORT: String(port),
+      DATABASE_URL: inject('apiUrl'),
+      TRUST_PROXY_HEADER: '',
+      ...TEST_ENV,
+    });
+    await running.waitForLog(isServerStarted);
+    const before = new Date().toISOString().slice(0, 10);
+    const res = await fetch(`http://127.0.0.1:${port}/api/today`);
+    const after = new Date().toISOString().slice(0, 10);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.has_session).toBe(false);
+    expect(body.games).toHaveLength(5);
+    expect(
+      body.games.every((g: { challenge_status: string }) => g.challenge_status === 'none'),
+    ).toBe(true);
+    expect([before, after]).toContain(body.date);
+    expect(body.number === null || typeof body.number === 'number').toBe(true);
+    expect(body.seconds_to_reset).toBeGreaterThanOrEqual(1);
+    expect(body.seconds_to_reset).toBeLessThanOrEqual(86400);
+  });
+
   it('aborta sin WEB_ORIGIN', () => {
     const rest: Record<string, string> = { ...TEST_ENV };
     delete rest.WEB_ORIGIN;

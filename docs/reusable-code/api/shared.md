@@ -28,3 +28,9 @@
 - **Location:** apps/api/src/games/registry.ts
 - **Signature:** `games = createGameRegistry([])` (see core `game-registry.md`)
 - **Usage:** register a new game module by adding it to the array
+
+## Clock / systemClock
+- **Location:** apps/api/src/shared/clock.ts
+- **Signature:** `type Clock = { now(): Date }`; `systemClock: Clock`
+- **Description:** injectable clock; domain code never calls `new Date()` directly.
+- **Usage:** `const day = today(clock.now())`

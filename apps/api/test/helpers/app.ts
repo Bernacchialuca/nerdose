@@ -1,5 +1,9 @@
 import type { Logger } from 'pino';
 
+import { EmptyChallengesRepository } from '@/domain/publishing/publishing.repository';
+import { PublishingService } from '@/domain/publishing/publishing.service';
+import { TodayCache } from '@/infra/cache/today-cache';
+import { systemClock } from '@/shared/clock';
 import type { IdentityService } from '@/domain/identity/identity.service';
 import { buildApp } from '@/http/app';
 import type { AppDeps } from '@/http/types';
@@ -10,6 +14,7 @@ export const TEST_CONFIG = {
   WEB_ORIGIN: 'http://localhost:5173',
   ADMIN_ORIGIN: 'http://localhost:5174',
   TRUST_PROXY_HEADER: 'x-forwarded-for',
+  LAUNCH_DATE: '2026-11-24',
 };
 
 export const MUTATION_HEADERS = {
@@ -38,6 +43,13 @@ export function buildTestApp(
     health: overrides.health ?? { check: async () => ({ status: 'ok', db: 'ok' }) },
     identity: overrides.identity ?? stubIdentity,
     config: overrides.config ?? TEST_CONFIG,
+    publishing:
+      overrides.publishing ??
+      new PublishingService({
+        cache: new TodayCache(new EmptyChallengesRepository(), systemClock),
+        clock: systemClock,
+        launchDate: TEST_CONFIG.LAUNCH_DATE,
+      }),
   });
   return { app, lines: captured.lines };
 }
