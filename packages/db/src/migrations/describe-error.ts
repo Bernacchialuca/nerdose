@@ -20,7 +20,9 @@ function codeOf(value: unknown): string | undefined {
 
 export function describeMigrateError(error: unknown): string {
   const cause = error instanceof Error ? error.cause : undefined;
-  const code = [codeOf(error), codeOf(cause)].find((c) => c !== undefined && CONNECTION_CODES.has(c));
+  const code = [codeOf(error), codeOf(cause)].find(
+    (c) => c !== undefined && CONNECTION_CODES.has(c),
+  );
   if (code !== undefined) {
     return `No se pudo conectar a PostgreSQL con DATABASE_URL_OWNER (${code})`;
   }

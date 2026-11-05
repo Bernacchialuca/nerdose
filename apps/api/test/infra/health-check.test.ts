@@ -27,11 +27,15 @@ describe('createHealthCheck', () => {
   it('devuelve degraded con conexión rechazada, rápido y con warn', async () => {
     const port = await freePort();
     const { logger, lines } = captureLogger();
-    const health = createHealthCheck({ sql: open(`postgres://nerdose_api:x@127.0.0.1:${port}/nerdose`) });
+    const health = createHealthCheck({
+      sql: open(`postgres://nerdose_api:x@127.0.0.1:${port}/nerdose`),
+    });
     const start = Date.now();
     await expect(health.check(logger)).resolves.toEqual({ status: 'degraded', db: 'error' });
     expect(Date.now() - start).toBeLessThan(3000);
-    expect(lines()).toContainEqual(expect.objectContaining({ level: 'warn', msg: 'Database health check failed' }));
+    expect(lines()).toContainEqual(
+      expect.objectContaining({ level: 'warn', msg: 'Database health check failed' }),
+    );
   });
 
   it('devuelve degraded al vencer el timeout con base colgada', async () => {

@@ -9,7 +9,9 @@ describe('Shell', () => {
     const { container } = renderWithProviders({ route: '/' });
     const root = container.firstElementChild;
     expect(root).toHaveClass('bg-bg', 'text-text', 'font-mono');
-    expect(within(screen.getByRole('banner')).getByText('nerdose').closest('.text-accent')).not.toBeNull();
+    expect(
+      within(screen.getByRole('banner')).getByText('nerdose').closest('.text-accent'),
+    ).not.toBeNull();
     expect(container.querySelector('[aria-hidden="true"]')).toHaveTextContent('>');
   });
 

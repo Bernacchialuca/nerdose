@@ -23,7 +23,9 @@ describe('root .env.example', () => {
   });
 
   it('documents every variable used by compose.yaml', () => {
-    const used = [...read('compose.yaml').matchAll(/\$\{([A-Z][A-Z0-9_]*)(?:[:?-][^}]*)?\}/g)].map((m) => m[1]);
+    const used = [...read('compose.yaml').matchAll(/\$\{([A-Z][A-Z0-9_]*)(?:[:?-][^}]*)?\}/g)].map(
+      (m) => m[1],
+    );
     const documented = [...envExample().matchAll(/^([A-Z][A-Z0-9_]*)=/gm)].map((m) => m[1]);
     expect(used).toEqual(['POSTGRES_PASSWORD']);
     for (const name of used) {

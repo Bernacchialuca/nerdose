@@ -1,0 +1,9 @@
+node_modules
+dist
+coverage
+.turbo
+pnpm-lock.yaml
+docs
+.claude
+packages/db/migrations
+packages/ui/src/tokens.css

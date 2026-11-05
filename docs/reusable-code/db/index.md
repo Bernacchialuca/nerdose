@@ -6,6 +6,13 @@ Package `@nerdose/db` (`packages/db`), entries `.` and `./testing`.
 - **createDb** (packages/db/src/client.ts) - Creates a postgres.js connection plus Drizzle instance for a role URL
 - **Db / Tx** (packages/db/src/client.ts) - Types of the Drizzle instance and of a transaction
 
+## Schema (5 items) - see schema.md
+- **players** (packages/db/src/schema/identity.ts) - Drizzle table of anonymous players (`id`, `locale`, `preferredCodeLanguage`, `userId`, `createdAt`, `lastSeenAt`)
+- **localeEnum** (packages/db/src/schema/enums.ts) - PostgreSQL enum `locale`, built from `LOCALES` of `@nerdose/core`
+- **codeLanguageEnum** (packages/db/src/schema/enums.ts) - PostgreSQL enum `code_language`, built from `CODE_LANGUAGES` of `@nerdose/core`
+- **Player** (packages/db/src/schema/identity.ts) - Inferred select type of `players`
+- **NewPlayer** (packages/db/src/schema/identity.ts) - Inferred insert type of `players`
+
 ## Migrations (2 items) - see client.md
 - **runMigrations / MIGRATIONS_FOLDER** (packages/db/src/migrations/run-migrations.ts) - Applies the versioned migrations with the Drizzle migrator
 - **syncRolePasswords** (packages/db/src/migrations/sync-role-passwords.ts) - Validates role URLs and runs `ALTER ROLE ... PASSWORD`

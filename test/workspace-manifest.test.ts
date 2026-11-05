@@ -5,11 +5,14 @@ import { describe, expect, it } from 'vitest';
 import { listRepoFiles, REPO_ROOT } from './helpers/repo';
 
 const readText = (file: string): string => readFileSync(join(REPO_ROOT, file), 'utf8');
-const readJson = (file: string): Record<string, unknown> => JSON.parse(readText(file)) as Record<string, unknown>;
+const readJson = (file: string): Record<string, unknown> =>
+  JSON.parse(readText(file)) as Record<string, unknown>;
 
 describe('pnpm-workspace.yaml', () => {
   it('declares exactly the apps, packages and games globs', () => {
-    const entries = [...readText('pnpm-workspace.yaml').matchAll(/^\s*-\s*'([^']+)'/gm)].map((m) => m[1]);
+    const entries = [...readText('pnpm-workspace.yaml').matchAll(/^\s*-\s*'([^']+)'/gm)].map(
+      (m) => m[1],
+    );
     expect(entries).toEqual(['apps/*', 'packages/*', 'packages/games/*']);
   });
 });

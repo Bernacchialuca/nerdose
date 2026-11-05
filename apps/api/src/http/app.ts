@@ -17,7 +17,9 @@ export function buildApp(deps: AppDeps) {
   // Sin CORS: mismo origen (ADR-009).
 
   app.onError(createErrorHandler(deps.logger));
-  app.notFound((c) => c.json({ error: { code: 'not_found', message: errorMessage('not_found') } }, 404));
+  app.notFound((c) =>
+    c.json({ error: { code: 'not_found', message: errorMessage('not_found') } }, 404),
+  );
 
   registerRoutes(app, deps);
   return app;

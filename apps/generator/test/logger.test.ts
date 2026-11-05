@@ -7,7 +7,13 @@ describe('createLogger', () => {
     const { logger, lines } = captureLogger();
     logger.info({ password: 'p' }, 'x');
     const [line] = lines();
-    expect(line).toMatchObject({ level: 'info', service: 'generator', env: 'test', password: '[REDACTED]', msg: 'x' });
+    expect(line).toMatchObject({
+      level: 'info',
+      service: 'generator',
+      env: 'test',
+      password: '[REDACTED]',
+      msg: 'x',
+    });
     expect(new Date(String(line?.time)).toISOString()).toBe(line?.time);
   });
 });

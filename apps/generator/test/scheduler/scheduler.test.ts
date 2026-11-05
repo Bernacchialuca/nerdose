@@ -13,7 +13,9 @@ describe('startScheduler', () => {
     vi.useFakeTimers();
     const { logger, lines } = captureLogger();
     const s = startScheduler({ logger });
-    expect(lines()).toContainEqual(expect.objectContaining({ level: 'info', jobs: 0, msg: 'Scheduler started' }));
+    expect(lines()).toContainEqual(
+      expect.objectContaining({ level: 'info', jobs: 0, msg: 'Scheduler started' }),
+    );
     expect(vi.getTimerCount()).toBe(1);
     s.stop();
   });

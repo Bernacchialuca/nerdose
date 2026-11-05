@@ -28,7 +28,9 @@ describe('loadEnv', () => {
   });
 
   it('lanza con LOG_LEVEL fuera del enum', () => {
-    const error = catchError(() => loadEnv({ DATABASE_URL: URL_OK, LOG_LEVEL: 'verbose' })) as AppError;
+    const error = catchError(() =>
+      loadEnv({ DATABASE_URL: URL_OK, LOG_LEVEL: 'verbose' }),
+    ) as AppError;
     expect(error.message).toBe('Variables de entorno inválidas: LOG_LEVEL');
   });
 
@@ -37,7 +39,7 @@ describe('loadEnv', () => {
       loadEnv({ DATABASE_URL: URL_OK, NODE_ENV: '', LOG_LEVEL: '', SERVICE_NAME: '' }),
     ).toEqual({
       NODE_ENV: 'development',
-      
+
       LOG_LEVEL: 'info',
       SERVICE_NAME: 'generator',
       DATABASE_URL: URL_OK,
@@ -52,7 +54,11 @@ describe('loadEnv', () => {
       SERVICE_NAME: 'generator-test',
       DATABASE_URL: URL_OK,
     });
-    expect(env).toMatchObject({ NODE_ENV: 'test', LOG_LEVEL: 'silent', SERVICE_NAME: 'generator-test' });
+    expect(env).toMatchObject({
+      NODE_ENV: 'test',
+      LOG_LEVEL: 'silent',
+      SERVICE_NAME: 'generator-test',
+    });
   });
 
   it('no declara PORT', () => {

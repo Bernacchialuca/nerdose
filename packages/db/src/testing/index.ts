@@ -16,7 +16,9 @@ function withCredentials(base: string, user: string, pass: string): string {
 
 async function execFormatted(sql: Sql, template: string, ...args: string[]) {
   // CREATE/ALTER ROLE y OWNER TO no admiten parámetros ligados ni los expresa Drizzle: format() arma la sentencia.
-  const [row] = await sql<{ stmt: string }[]>`SELECT format(${template}::text, VARIADIC ${args}::text[]) AS stmt`;
+  const [row] = await sql<
+    { stmt: string }[]
+  >`SELECT format(${template}::text, VARIADIC ${args}::text[]) AS stmt`;
   await sql.unsafe(row!.stmt);
 }
 
@@ -47,7 +49,12 @@ export async function createRoles(
   const owner = postgres(ownerUrl, { max: 1 });
   try {
     await execFormatted(owner, 'CREATE ROLE %I LOGIN PASSWORD %L', 'nerdose_api', apiPass);
-    await execFormatted(owner, 'CREATE ROLE %I LOGIN PASSWORD %L', 'nerdose_generator', generatorPass);
+    await execFormatted(
+      owner,
+      'CREATE ROLE %I LOGIN PASSWORD %L',
+      'nerdose_generator',
+      generatorPass,
+    );
   } finally {
     await owner.end();
   }

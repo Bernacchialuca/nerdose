@@ -16,7 +16,9 @@ export interface TurboDryRun {
 /** Runs `turbo run <task> --dry=json` and returns the resolved task graph without executing anything. */
 export function turboDryRun(task: string): TurboDryRun {
   // Nested inside `turbo run test`: drop inherited TURBO_* variables so the inner run is independent.
-  const env = Object.fromEntries(Object.entries(process.env).filter(([key]) => !key.startsWith('TURBO_')));
+  const env = Object.fromEntries(
+    Object.entries(process.env).filter(([key]) => !key.startsWith('TURBO_')),
+  );
   const result = spawnSync(
     join(REPO_ROOT, 'node_modules/.bin/turbo'),
     ['run', task, '--dry=json', '--no-daemon'],

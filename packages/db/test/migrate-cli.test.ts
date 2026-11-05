@@ -22,7 +22,11 @@ const passwords = [owner, api, generator].map((u) => decodeURIComponent(new URL(
 
 describe('db:migrate CLI', () => {
   it('TS-24: succeeds on a migrated database and syncs credentials', () => {
-    const r = cli({ DATABASE_URL_OWNER: owner, DATABASE_URL_API: api, DATABASE_URL_GENERATOR: generator });
+    const r = cli({
+      DATABASE_URL_OWNER: owner,
+      DATABASE_URL_API: api,
+      DATABASE_URL_GENERATOR: generator,
+    });
     expect(r.status).toBe(0);
     expect(r.stdout).toContain('Migraciones aplicadas.');
     expect(r.stdout).toContain('Credenciales sincronizadas: nerdose_api');
@@ -43,7 +47,7 @@ describe('db:migrate CLI', () => {
     const sql = connectAs(owner);
     try {
       const [row] = await sql`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`;
-      expect(row!.n).toBe(1);
+      expect(row!.n).toBe(2);
     } finally {
       await sql.end();
     }
@@ -52,14 +56,18 @@ describe('db:migrate CLI', () => {
   it('TS-26: reports a down database', () => {
     const r = cli({ DATABASE_URL_OWNER: 'postgres://nerdose_owner:secreto@127.0.0.1:1/nerdose' });
     expect(r.status).toBe(1);
-    expect(r.stderr).toContain('No se pudo conectar a PostgreSQL con DATABASE_URL_OWNER (ECONNREFUSED)');
+    expect(r.stderr).toContain(
+      'No se pudo conectar a PostgreSQL con DATABASE_URL_OWNER (ECONNREFUSED)',
+    );
     expect(r.stderr).not.toContain('secreto');
   });
 
   it('TS-27: requires DATABASE_URL_OWNER', () => {
     const r = cli({});
     expect(r.status).toBe(1);
-    expect(r.stderr).toContain('db:migrate falló: Variables de entorno inválidas: DATABASE_URL_OWNER');
+    expect(r.stderr).toContain(
+      'db:migrate falló: Variables de entorno inválidas: DATABASE_URL_OWNER',
+    );
   });
 
   it('TS-28: rejects a wrong user in DATABASE_URL_API', () => {

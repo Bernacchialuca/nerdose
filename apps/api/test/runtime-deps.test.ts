@@ -32,7 +32,12 @@ describe('dependencias de runtime', () => {
     const packages = new Set(
       listTsFiles(SRC)
         .flatMap((file) => runtimeImports(readFileSync(file, 'utf8')))
-        .filter((specifier) => !specifier.startsWith('node:') && !specifier.startsWith('@/') && !specifier.startsWith('.'))
+        .filter(
+          (specifier) =>
+            !specifier.startsWith('node:') &&
+            !specifier.startsWith('@/') &&
+            !specifier.startsWith('.'),
+        )
         .map(packageName),
     );
     const missing = [...packages].filter((name) => !(name in (PKG.dependencies ?? {})));

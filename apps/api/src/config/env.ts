@@ -10,7 +10,9 @@ export function loadEnv(runtimeEnv: Record<string, string | undefined> = process
     server: {
       NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
       PORT: z.coerce.number().int().min(1).max(65535).default(3000),
-      LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'silent']).default('info'),
+      LOG_LEVEL: z
+        .enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'silent'])
+        .default('info'),
       SERVICE_NAME: z.string().default('api'),
       DATABASE_URL: z.url(),
     },

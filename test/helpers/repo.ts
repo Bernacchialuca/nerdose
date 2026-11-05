@@ -18,7 +18,9 @@ export function listRepoFiles(): string[] {
 
 /** `--no-index` makes the answer depend only on .gitignore rules, even for missing or tracked paths. */
 export function isIgnored(path: string): boolean {
-  return spawnSync('git', ['check-ignore', '--no-index', '-q', path], { cwd: REPO_ROOT }).status === 0;
+  return (
+    spawnSync('git', ['check-ignore', '--no-index', '-q', path], { cwd: REPO_ROOT }).status === 0
+  );
 }
 
 export function findEnvExampleViolations(content: string): string[] {

@@ -14,13 +14,16 @@
     "test": "turbo run test test:workspace",
     "lint:workspace": "eslint eslint.config.js vitest.config.ts test",
     "typecheck:workspace": "tsc -p tsconfig.json",
-    "test:workspace": "vitest run --config test/vitest.config.ts"
+    "test:workspace": "vitest run --config test/vitest.config.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "devDependencies": {
     "@types/node": "^24.19.2",
     "eslint": "^9.39.5",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.1.1",
+    "prettier": "3.6.2",
     "turbo": "^2.11.10",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.1",

@@ -8,6 +8,13 @@
       "when": 1793750081147,
       "tag": "0000_roles_and_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793836875747,
+      "tag": "0001_players",
+      "breakpoints": true
     }
   ]
 }
