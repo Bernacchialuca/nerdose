@@ -42,7 +42,7 @@ apps/api/src/domain/
 import { today, challengeNumber } from '@nerdose/core';
 
 const day = today(clock.now());                         // 'YYYY-MM-DD', UTC
-const number = challengeNumber(day, env.LAUNCH_DATE);   // day - LAUNCH_DATE + 1
+const number = challengeNumber(day, env.LAUNCH_DATE);   // day - LAUNCH_DATE + 1; null if day < LAUNCH_DATE
 ```
 
 ### Lazy single-flight publication

@@ -1,8 +1,8 @@
 ---
 document: UX User Flows
 surface: web
-version: "1.0"
-date: 2026-11-03
+version: "1.1"
+date: 2026-11-04
 status: Draft - Punto de partida para discusión
 flows_count: 5
 ---
@@ -49,14 +49,19 @@ Todo lo que sigue es hipótesis a validar. Los slugs de pantalla y overlays (O-0
 
 - **Retomar la partida** — El jugador sale (cierra la pestaña, vuelve a `home`) con la Play `in_progress` y regresa el mismo día. `home` muestra la tarjeta "En curso" con "Seguir jugando"; al tocarla, abre `{juego}-partida` en el estado exacto (intentos, selección, palabras encontradas). `[fuente: C-10, C-05]`
 - **Reabrir un juego ya completado** — Entrar a `/:game_id` con la Play terminada muestra `{juego}-resultado`, no una partida nueva. `[fuente: product-map, criterio de inventario]`
-- **Primera visita** — Todos los juegos aparecen "Sin jugar", racha global 0; la sesión anónima se crea sola, sin registro. `[fuente: C-01, F-01]`
+- **Primera visita** — Todos los juegos aparecen "Sin jugar", racha global 0; la sesión anónima se crea sola, sin registro, y la interfaz se muestra en el idioma del navegador (`es`/`en`; cualquier otro → `es`). `[fuente: C-01, F-01; REQ-002 CA 1, 2]`
+- **Ningún desafío publicado hoy** — Hasta que existan los generadores, `home` muestra los 5 juegos "sin desafío hoy · no afecta tu racha", sin "Jugar"; el flujo termina en `home`. `[fuente: REQ-002 CA 9]`
+- **Antes del lanzamiento** — El header no muestra `#número` y las tarjetas dicen "próximamente"; el catálogo funciona igual. `[fuente: REQ-002 CA 17]`
 - **Sin desafío hoy** — La tarjeta muestra "sin desafío hoy" y `{juego}-instrucciones` muestra el mensaje con "Volver a los juegos". El día es neutro para la racha de ese juego. `[fuente: C-14]`
-- **Cambio de idioma o de lenguaje de código a mitad de partida** — Control inline ES/EN (C-03) o JS/Go/Java (C-26); la partida no cambia, solo la vista.
+- **Cambio de idioma o de lenguaje de código a mitad de partida** — Control inline ES/EN (C-03) o JS/Go/Java (C-26); la partida no cambia, solo la vista. El cambio de idioma se aplica sin recargar y queda guardado en el Player (al volver, la interfaz sigue en ese idioma); sin sesión solo cambia en el navegador. `[fuente: REQ-002 CA 6]`
+- **Dirección inexistente** — Un enlace roto o un `game_id` desconocido muestra `no-encontrado`; "Volver a los juegos" lleva a `home`. `[fuente: REQ-002, supuesto «Navegación»]`
 - **Rendirse en Grep Grid** — "Rendirse" (con O-04 si se confirma la pregunta abierta 6) cierra la Play como `lost` con `N/8`, cuenta para la racha y revela las faltantes. `[fuente: C-20]`
 
 ### Errores y recuperación
 
-- **Cookies bloqueadas** — Tras `POST /api/session` la cookie no vuelve: aparece O-03 ("Activá las cookies para poder jugar"); los CTA de juego quedan deshabilitados y el catálogo, `estadisticas` y `acerca-de` siguen visibles. Recuperación: el jugador habilita cookies y recarga; la sesión se crea y los CTA se habilitan. `[fuente: C-02]`
+- **Cookies bloqueadas** — `POST /api/session` responde bien pero el estado del día pedido después sigue sin sesión: aparece O-03 ("Activá las cookies para poder jugar"); los CTA de juego quedan deshabilitados y el catálogo, `estadisticas` y `acerca-de` siguen visibles. Recuperación: el jugador habilita cookies y recarga; la sesión se crea y los CTA se habilitan. `[fuente: C-02]`
+- **Límite de creación de sesiones (429)** — `home` pasa a "sesión no disponible": catálogo visible, CTA deshabilitados y **sin** O-03 (no es un problema del navegador). Recuperación: se reintenta solo en la próxima carga. `[fuente: REQ-002 CA 13]`
+- **No se puede cargar el estado del día (500, 429 o red)** — `home` muestra "No pudimos cargar los juegos de hoy. Revisá tu conexión e intentá de nuevo." con "Reintentar"; las 5 tarjetas siguen visibles con nombre y descripción, sin estado ni CTA. Nunca queda en blanco. `[fuente: REQ-002 CA 18]`
 - **Palabra fuera de la lista en Devdle** — Mensaje "no está en la lista" sin consumir intento (`not_in_word_list`); el jugador corrige y reintenta. Palabra de otra longitud: el front no la envía y avisa. `[fuente: C-15]`
 - **Selección inválida** — En Bug Hunt, línea no elegible (firma, solo llaves) o `invalid_move` del servidor: la selección no se acepta y el jugador elige otra; no se pierde el intento. En Grep Grid, "no es una palabra" sin penalización y selección en reversa rechazada. `[fuente: C-30, C-19]`
 - **Toque accidental al confirmar** — La selección y la confirmación van en dos pasos, de modo que el jugador puede cambiar la selección antes de confirmar. `[fuente: decisión #26, NFR-U01]`
@@ -102,7 +107,8 @@ Todo lo que sigue es hipótesis a validar. Los slugs de pantalla y overlays (O-0
 
 - **Pérdida de la partida en curso al cambiar el día** — La jugada rechazada y la Play vieja no cuentan: el jugador pierde ese progreso y ese día no suma racha. Es una consecuencia de la regla del PRD, no un error del sistema. El PRD no define un aviso explícito que lo explique antes de volver a instrucciones; es una **decisión de diseño pendiente** (cómo comunicar "el día cambió" sin que parezca una falla). `[fuente: C-11; pregunta a validar]`
 - **Cambio de día en el último intento de Devdle, Bug Hunt, Big O o Tech Timeline** — Mismo caso: el intento no se registra. Hipótesis a validar: es el momento más costoso para el jugador y el de mayor riesgo de abandono. `[hipótesis | por-analogía]`
-- **Reintentos de recarga al llegar a 0 (`home`)** — La espera aleatoria de 0–3 s evita una avalancha de requests al servidor; si la recarga falla, el jugador puede recargar manualmente. Sin copy definido para el error. `[fuente: ADR-008, PRD §Supuestos]`
+- **Reintentos de recarga al llegar a 0 (`home`)** — La espera aleatoria de 0–3 s evita una avalancha de requests al servidor; si la recarga falla, `home` pasa al estado "error de carga" con "Reintentar" (REQ-002). `[fuente: ADR-008, PRD §Supuestos; REQ-002 CA 18]`
+- **Reloj del dispositivo desfasado (`home`)** — La cuenta regresiva solo descuenta los segundos que informa el servidor y se re-sincroniza en cada respuesta; el número del día nunca lo calcula el cliente. `[fuente: REQ-002, Riesgos]`
 
 ### Estado final
 

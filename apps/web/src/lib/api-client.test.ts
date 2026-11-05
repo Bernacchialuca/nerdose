@@ -1,18 +1,15 @@
 import { http, HttpResponse } from 'msw';
-import { setupServer } from 'msw/node';
-import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+
+import { server } from '@/test/msw';
 
 import { api, ApiError, configureApi } from './api-client';
 
 type Health = { status: 'ok' | 'degraded'; db: 'ok' | 'error' };
 
-const server = setupServer();
-beforeAll(() => server.listen({ onUnhandledFrame: 'error' }));
 afterEach(() => {
-  server.resetHandlers();
   configureApi({});
 });
-afterAll(() => server.close());
 
 describe('api()', () => {
   it('devuelve el JSON intacto con Accept y sin Content-Type', async () => {

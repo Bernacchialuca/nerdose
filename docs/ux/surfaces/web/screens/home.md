@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.0"
-date: 2026-11-03
+version: "1.1"
+date: 2026-11-04
 ---
 
 # Pantalla: Home (catálogo)
@@ -45,33 +45,33 @@ date: 2026-11-03
 
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
-| 1 | header | header | — | layout | ambos | viewport_overrides: desktop | Marca, #número del desafío del día e idioma |
+| 1 | header | header | — | layout | ambos | viewport_overrides: desktop; state_overrides: antes del lanzamiento, error de sistema | Marca, #número del desafío del día e idioma |
 | 2 | nav-movil | nav-bar | — | navigation | solo mobile | — | Navegación principal compacta en mobile (en desktop va en el header) |
 | 3 | banner-cookies | alert | warning | feedback | ambos | visible_only_in_states: sin sesión | Aviso O-03 de sesión no creada, fijo bajo el header |
 | 4 | hero-titulo | heading | h1 | content | ambos | — | Identidad del producto |
 | 5 | hero-sub | paragraph | body | content | ambos | — | Propuesta de valor |
-| 6 | cta-hero | button | primary | input | ambos | state_overrides: empty, sin sesión | CTA principal de la home |
+| 6 | cta-hero | button | primary | input | ambos | state_overrides: empty, sin sesión, sesión no disponible, ningún desafío hoy, antes del lanzamiento | CTA principal de la home |
 | 7 | link-como-funciona | link | — | navigation | ambos | — | Ir a Acerca de |
-| 8 | progreso-dia | progress-bar | — | feedback | ambos | hidden_in_states: loading, error de sistema; state_overrides: en curso, sin desafío hoy, anulado, empty, sin sesión | Progreso del día: juegos completados |
-| 9 | racha-global | label | — | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: empty, sin sesión | Racha global actual |
+| 8 | progreso-dia | progress-bar | — | feedback | ambos | hidden_in_states: loading, error de sistema; state_overrides: en curso, sin desafío hoy, anulado, empty, sin sesión, sesión no disponible, ningún desafío hoy, antes del lanzamiento | Progreso del día: juegos completados |
+| 9 | racha-global | label | — | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: empty, sin sesión, sesión no disponible, ningún desafío hoy, antes del lanzamiento | Racha global actual |
 | 10 | cuenta-regresiva | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Cuenta regresiva a next_reset_at |
-| 11 | card-devdle | card | — | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: empty, sin sesión | Tarjeta de Devdle con descripción, racha y estado |
-| 12 | cta-devdle | button | secondary | input | ambos | hidden_in_states: loading, error de sistema; state_overrides: empty, sin sesión | CTA de Devdle según estado de la Play |
-| 13 | card-bug-hunt | card | — | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: en curso, empty, sin sesión | Tarjeta de Bug Hunt con descripción, racha y estado |
-| 14 | cta-bug-hunt | button | primary | input | ambos | hidden_in_states: loading, error de sistema; state_overrides: en curso, sin sesión | CTA de Bug Hunt según estado de la Play |
-| 15 | card-big-o | card | — | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: anulado, empty, sin sesión | Tarjeta de Big O con descripción, racha y estado |
-| 16 | cta-big-o | button | primary | input | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: anulado, sin sesión | CTA de Big O según estado de la Play |
-| 17 | card-timeline | card | — | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: sin desafío hoy, empty, sin sesión | Tarjeta de Tech Timeline con descripción, racha y estado |
-| 18 | cta-timeline | button | primary | input | ambos | hidden_in_states: loading, error de sistema; state_overrides: sin desafío hoy, sin sesión | CTA de Tech Timeline según estado de la Play |
-| 19 | card-grep-grid | card | — | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: en curso, sin sesión | Tarjeta de Grep Grid con descripción, racha y estado |
-| 20 | cta-grep-grid | button | primary | input | ambos | hidden_in_states: loading, error de sistema; state_overrides: en curso, sin sesión | CTA de Grep Grid según estado de la Play |
+| 11 | card-devdle | card | — | content | ambos | hidden_in_states: loading; state_overrides: error de sistema, empty, sin sesión, ningún desafío hoy, antes del lanzamiento, sesión no disponible | Tarjeta de Devdle con descripción, racha y estado |
+| 12 | cta-devdle | button | secondary | input | ambos | hidden_in_states: loading, error de sistema; state_overrides: empty, sin sesión, ningún desafío hoy, antes del lanzamiento, sesión no disponible | CTA de Devdle según estado de la Play |
+| 13 | card-bug-hunt | card | — | content | ambos | hidden_in_states: loading; state_overrides: error de sistema, en curso, empty, sin sesión, ningún desafío hoy, antes del lanzamiento, sesión no disponible | Tarjeta de Bug Hunt con descripción, racha y estado |
+| 14 | cta-bug-hunt | button | primary | input | ambos | hidden_in_states: loading, error de sistema; state_overrides: en curso, sin sesión, ningún desafío hoy, antes del lanzamiento, sesión no disponible | CTA de Bug Hunt según estado de la Play |
+| 15 | card-big-o | card | — | content | ambos | hidden_in_states: loading; state_overrides: error de sistema, anulado, empty, sin sesión, ningún desafío hoy, antes del lanzamiento, sesión no disponible | Tarjeta de Big O con descripción, racha y estado |
+| 16 | cta-big-o | button | primary | input | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: anulado, sin sesión, ningún desafío hoy, antes del lanzamiento, sesión no disponible | CTA de Big O según estado de la Play |
+| 17 | card-timeline | card | — | content | ambos | hidden_in_states: loading; state_overrides: error de sistema, sin desafío hoy, empty, sin sesión, ningún desafío hoy, antes del lanzamiento, sesión no disponible | Tarjeta de Tech Timeline con descripción, racha y estado |
+| 18 | cta-timeline | button | primary | input | ambos | hidden_in_states: loading, error de sistema; state_overrides: sin desafío hoy, sin sesión, ningún desafío hoy, antes del lanzamiento, sesión no disponible | CTA de Tech Timeline según estado de la Play |
+| 19 | card-grep-grid | card | — | content | ambos | hidden_in_states: loading; state_overrides: error de sistema, en curso, sin sesión, ningún desafío hoy, antes del lanzamiento, sesión no disponible | Tarjeta de Grep Grid con descripción, racha y estado |
+| 20 | cta-grep-grid | button | primary | input | ambos | hidden_in_states: loading, error de sistema; state_overrides: en curso, sin sesión, ningún desafío hoy, antes del lanzamiento, sesión no disponible | CTA de Grep Grid según estado de la Play |
 | 21 | btn-aviso-anulado | button | secondary | input | ambos | visible_only_in_states: anulado | CTA de la tarjeta anulada: abre O-02 |
-| 22 | resumen-progreso | card | — | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: empty, sin sesión | Resumen: racha global, heatmap corto y enlace a estadísticas |
+| 22 | resumen-progreso | card | — | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: empty, sin sesión, sesión no disponible, ningún desafío hoy, antes del lanzamiento | Resumen: racha global, heatmap corto y enlace a estadísticas |
 | 23 | link-stats | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Ir a estadísticas |
 | 24 | loader | loader | — | feedback | ambos | visible_only_in_states: loading | Indicador de carga |
 | 25 | alerta-sistema | alert | error | feedback | ambos | visible_only_in_states: error de sistema | Error de carga con causa y salida |
 | 26 | btn-reintentar | button | secondary | input | ambos | visible_only_in_states: error de sistema | Reintentar la carga |
-| 27 | footer | footer | — | layout | ambos | — | Aviso breve de privacidad |
+| 27 | footer | footer | — | layout | ambos | — | Aviso breve de privacidad y enlace a Acerca de |
 
 ## Layout por viewport
 
@@ -124,7 +124,7 @@ date: 2026-11-03
 - Texto/label: > nerdose · #8 · ES|EN
 - Icono: nada
 - Override desktop: content="> nerdose     ./juegos   ./stats   ./about     #8     ES | EN"
-- Annotation: #número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline
+- Annotation: #número = número de desafío del día, igual para los 5 juegos; se oculta cuando el servidor no lo informa (antes del lanzamiento o error de carga), nunca se muestra un número menor que 1. ES|EN es un control inline: cambia la interfaz sin recargar y persiste en el Player; sin sesión cambia solo en este navegador (REQ-002)
 
 ### nav-movil
 - Texto/label: —
@@ -135,7 +135,7 @@ date: 2026-11-03
 ### banner-cookies
 - Texto/label: Activá las cookies para poder jugar
 - Icono: nada
-- Annotation: Es el overlay O-03; persiste hasta que la sesión se crea
+- Annotation: Es el overlay O-03; persiste hasta que la sesión se crea. Solo aparece si la creación de la sesión respondió bien y el estado del día sigue sin sesión; si la creación fue rechazada por límite (429) no se muestra (estado «sesión no disponible», REQ-002)
 
 ### hero-titulo
 - Texto/label: Cinco juegos tech. Un desafío por día.
@@ -170,7 +170,7 @@ date: 2026-11-03
 ### cuenta-regresiva
 - Texto/label: Próximo desafío en 05:42:10 (HH:MM:SS, 00:00 UTC)
 - Icono: nada
-- Annotation: al llegar a 0 recarga el estado del día tras una espera aleatoria de 0–3 s
+- Annotation: al llegar a 0 recarga el estado del día tras una espera aleatoria de 0–3 s. El reloj solo descuenta los segundos que informa el servidor y se re-sincroniza en cada respuesta; si la recarga falla, la home pasa a «error de sistema» con «Reintentar». No se anuncia cada segundo a lectores de pantalla
 
 ### card-devdle
 - Texto/label: Devdle
@@ -259,9 +259,9 @@ date: 2026-11-03
 - Annotation: nada
 
 ### footer
-- Texto/label: nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso.
+- Texto/label: nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de
 - Icono: nada
-- Annotation: nada
+- Annotation: «Acerca de» es un enlace a `acerca-de`; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)
 
 ## Estados
 
@@ -332,6 +332,64 @@ date: 2026-11-03
   - cta-grep-grid: content="Jugar →", variant="disabled" (state_override)
   - resumen-progreso: paragraph="Sin sesión no hay progreso para mostrar. Activá las cookies y recargá." (state_override)
 
+### ningún desafío hoy
+- Aplica: Sí (sub-estado de default)
+- Mensaje: Hoy no hay desafíos publicados en ningún juego: los 5 figuran «sin desafío hoy · no afecta tu racha», sin «Jugar». Es el estado de la plataforma hasta que existan los generadores (REQ-002, CA 9).
+- Cambios:
+  - cta-hero: content="Ver los juegos" (state_override)
+  - progreso-dia: content="Hoy no hay desafíos publicados", fill=0.0 (state_override)
+  - racha-global: content="Racha global: 0 días" (state_override)
+  - card-devdle: paragraph="Adiviná el término tech en 6 intentos · ~2 min · racha 0 · sin desafío hoy · no afecta tu racha" (state_override)
+  - cta-devdle: content="Sin desafío hoy", variant="disabled" (state_override)
+  - card-bug-hunt: paragraph="Encontrá la línea con el bug · ~2 min · racha 0 · sin desafío hoy · no afecta tu racha" (state_override)
+  - cta-bug-hunt: content="Sin desafío hoy", variant="disabled" (state_override)
+  - card-big-o: paragraph="Elegí la complejidad temporal · ~1 min · racha 0 · sin desafío hoy · no afecta tu racha" (state_override)
+  - cta-big-o: content="Sin desafío hoy", variant="disabled" (state_override)
+  - card-timeline: paragraph="Ordená 5 hitos de la tecnología · ~1 min · racha 0 · sin desafío hoy · no afecta tu racha" (state_override)
+  - cta-timeline: content="Sin desafío hoy", variant="disabled" (state_override)
+  - card-grep-grid: paragraph="Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · racha 0 · sin desafío hoy · no afecta tu racha" (state_override)
+  - cta-grep-grid: content="Sin desafío hoy", variant="disabled" (state_override)
+  - resumen-progreso: paragraph="Todavía no hay datos. Cuando haya desafíos, acá vas a ver tu racha y tu heatmap." (state_override)
+
+### antes del lanzamiento
+- Aplica: Sí (sub-estado de default)
+- Mensaje: Todavía no empezó el desafío #1: el header no muestra número y el catálogo funciona igual, con los 5 juegos sin desafío (REQ-002, CA 17).
+- Cambios:
+  - header: content="> nerdose · ES|EN" (state_override); override desktop content="> nerdose     ./juegos   ./stats   ./about     ES | EN"
+  - cta-hero: content="Ver los juegos" (state_override)
+  - progreso-dia: content="El primer desafío llega pronto", fill=0.0 (state_override)
+  - racha-global: content="Racha global: 0 días" (state_override)
+  - card-devdle: paragraph="Adiviná el término tech en 6 intentos · ~2 min · próximamente" (state_override)
+  - cta-devdle: content="Próximamente", variant="disabled" (state_override)
+  - card-bug-hunt: paragraph="Encontrá la línea con el bug · ~2 min · próximamente" (state_override)
+  - cta-bug-hunt: content="Próximamente", variant="disabled" (state_override)
+  - card-big-o: paragraph="Elegí la complejidad temporal · ~1 min · próximamente" (state_override)
+  - cta-big-o: content="Próximamente", variant="disabled" (state_override)
+  - card-timeline: paragraph="Ordená 5 hitos de la tecnología · ~1 min · próximamente" (state_override)
+  - cta-timeline: content="Próximamente", variant="disabled" (state_override)
+  - card-grep-grid: paragraph="Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · próximamente" (state_override)
+  - cta-grep-grid: content="Próximamente", variant="disabled" (state_override)
+  - resumen-progreso: paragraph="Todavía no hay datos. Cuando empiecen los desafíos, acá vas a ver tu racha y tu heatmap." (state_override)
+
+### sesión no disponible
+- Aplica: Sí (sub-estado de default)
+- Mensaje: No se pudo crear la sesión por exceso de pedidos (429): el catálogo se ve igual, los CTA quedan deshabilitados y se reintenta en la próxima carga. No aparece el banner de cookies, porque no es un problema del navegador (REQ-002, CA 13).
+- Cambios:
+  - cta-hero: content="Empezar a jugar", variant="disabled" (state_override)
+  - progreso-dia: content="No pudimos iniciar tu sesión. Recargá en unos minutos para jugar.", fill=0.0 (state_override)
+  - racha-global: content="Racha global: —" (state_override)
+  - card-devdle: paragraph="Adiviná el término tech en 6 intentos · ~2 min" (state_override)
+  - cta-devdle: content="Jugar →", variant="disabled" (state_override)
+  - card-bug-hunt: paragraph="Encontrá la línea con el bug · ~2 min" (state_override)
+  - cta-bug-hunt: content="Jugar →", variant="disabled" (state_override)
+  - card-big-o: paragraph="Elegí la complejidad temporal · ~1 min" (state_override)
+  - cta-big-o: content="Jugar →", variant="disabled" (state_override)
+  - card-timeline: paragraph="Ordená 5 hitos de la tecnología · ~1 min" (state_override)
+  - cta-timeline: content="Jugar →", variant="disabled" (state_override)
+  - card-grep-grid: paragraph="Encontrá 8 palabras en la grilla · sin tiempo · ~3 min" (state_override)
+  - cta-grep-grid: content="Jugar →", variant="disabled" (state_override)
+  - resumen-progreso: paragraph="Sin sesión no hay progreso para mostrar. Recargá en unos minutos." (state_override)
+
 ### loading
 - Aplica: Sí
 - Mensaje: Cargando los desafíos de hoy…
@@ -357,18 +415,19 @@ date: 2026-11-03
 - Aplica: Sí
 - Mensaje: No pudimos cargar los juegos de hoy. Revisá tu conexión e intentá de nuevo.
 - Cambios:
+  - header: content="> nerdose · ES|EN" (state_override; sin #número porque no se pudo leer el día)
   - progreso-dia: oculto en este estado (hidden_in_states)
   - racha-global: oculto en este estado (hidden_in_states)
   - cuenta-regresiva: oculto en este estado (hidden_in_states)
-  - card-devdle: oculto en este estado (hidden_in_states)
+  - card-devdle: paragraph="Adiviná el término tech en 6 intentos · ~2 min" (state_override; catálogo estático, sin estado del día)
   - cta-devdle: oculto en este estado (hidden_in_states)
-  - card-bug-hunt: oculto en este estado (hidden_in_states)
+  - card-bug-hunt: paragraph="Encontrá la línea con el bug · ~2 min" (state_override)
   - cta-bug-hunt: oculto en este estado (hidden_in_states)
-  - card-big-o: oculto en este estado (hidden_in_states)
+  - card-big-o: paragraph="Elegí la complejidad temporal · ~1 min" (state_override)
   - cta-big-o: oculto en este estado (hidden_in_states)
-  - card-timeline: oculto en este estado (hidden_in_states)
+  - card-timeline: paragraph="Ordená 5 hitos de la tecnología · ~1 min" (state_override)
   - cta-timeline: oculto en este estado (hidden_in_states)
-  - card-grep-grid: oculto en este estado (hidden_in_states)
+  - card-grep-grid: paragraph="Encontrá 8 palabras en la grilla · sin tiempo · ~3 min" (state_override)
   - cta-grep-grid: oculto en este estado (hidden_in_states)
   - resumen-progreso: oculto en este estado (hidden_in_states)
   - link-stats: oculto en este estado (hidden_in_states)
@@ -382,6 +441,9 @@ date: 2026-11-03
 - cta-hero · on click → baja a las tarjetas
 - btn-aviso-anulado · on click → abre O-02
 - cuenta-regresiva · llega a 0 → recarga el estado del día
+- header · ES|EN · on click → cambia el idioma de la interfaz sin recargar; con sesión lo guarda en el Player, sin sesión solo en este navegador
+- btn-reintentar · on click → vuelve a pedir el estado del día
+- footer · «Acerca de» · on click → navega a `acerca-de`
 
 **Validaciones:**
 - No aplica: la pantalla no tiene campos de entrada.
@@ -404,6 +466,11 @@ date: 2026-11-03
 - «Anulado» tiene su propio botón (`btn-aviso-anulado`) en lugar de un CTA de juego, porque el destino es un overlay (O-02).
 - El estado de sin sesión se modela como estado de la home, no como pantalla: el catálogo sigue visible (C-02).
 - Los estados `en curso`, `sin desafío hoy`, `anulado`, `empty` (primera visita) y `sin sesión` son sub-estados de `default` fuera de los 8 fijos, porque el PRD los define por tarjeta (C-05, C-14, C-42).
+- REQ-002: se agrega `ningún desafío hoy` (los 5 juegos sin desafío a la vez, CA 9), que es como se ve la home hasta que existan generadores; se distingue de `sin desafío hoy` (un solo juego) porque el progreso del día no tiene juegos que contar.
+- REQ-002: se agrega `antes del lanzamiento` (CA 17, decisión de diseño 3): el servidor devuelve `number: null` y la home oculta el `#número` en lugar de mostrar un valor ≤ 0. Las tarjetas dicen «próximamente».
+- REQ-002: se agrega `sesión no disponible` (429 al crear la sesión, CA 13) separado de `sin sesión`: el banner O-03 solo aparece cuando la creación respondió bien y la cookie no vuelve, para no culpar al navegador de un límite del servidor (riesgo de falso positivo del diseño técnico).
+- REQ-002: en `error de sistema` las 5 tarjetas siguen visibles con nombre y descripción, porque el catálogo es estático en el front (decisión de diseño 6); se ocultan los CTA y el estado del día. La home nunca queda en blanco (CA 18).
+- REQ-002: el footer suma el enlace a «Acerca de» y aclara que no hay datos personales ni cookies de terceros (RF 14, RF 15, CA 19). Ningún cambio de layout: los cambios de este request son de estados y microcopy, iguales en ambos viewports.
 
 **Alternativas descartadas:**
 - La tarjeta «próximo juego / próximamente» del prototipo: no está en el PRD.
@@ -412,7 +479,9 @@ date: 2026-11-03
 **Preguntas abiertas:**
 - Pregunta 5 del product-map: si el resultado enlaza a «Siguiente juego» o «Volver a los juegos».
 - No hay copy definido para el error de carga: `No pudimos cargar los juegos de hoy…` es propuesta.
+- Antes del lanzamiento: «próximamente» en las tarjetas es propuesta; el REQ admite omitir el número o mostrarlo como «próximamente».
 
 ## Trazabilidad
 
 - F-02, C-05, C-06, C-14, C-41, C-42, C-02, C-01 · flujos 1, 2 y 3 de `user-flows.md`.
+- REQ-002: RF 5, 10, 11, 12, 14, 16 · CA 9, 10, 13, 17, 18, 19.

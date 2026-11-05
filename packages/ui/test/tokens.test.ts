@@ -1,3 +1,4 @@
+// @vitest-environment node
 /// <reference types="node" />
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
@@ -14,6 +15,10 @@ describe('tokens.css', () => {
     expect(declarations['--color-bg']).toBe('#0A0C0F');
     expect(declarations['--color-accent']).toBe('#3DDC84');
     expect(declarations['--font-mono']).toBe("'JetBrains Mono', ui-monospace, monospace");
+  });
+
+  it('declares the warning token of the design system (TS-3)', () => {
+    expect(declarations['--color-warning']).toBe('#FFB547');
   });
 
   it('declares the full prototype token set (TS-4)', () => {
@@ -36,16 +41,21 @@ describe('tokens.css', () => {
       '--color-game-big-o': '#5EB1FF',
       '--color-game-timeline': '#C39BFF',
       '--color-game-grep-grid': '#F472B6',
+      '--color-warning': '#FFB547',
     });
   });
 
   it('has a single @theme block and nothing outside it (TS-5)', () => {
     expect(css.match(/@theme\s*\{/g)).toHaveLength(1);
-    const outside = css.replace(/@theme\s*\{[^}]*\}/, '');
+    const outside = css.replace(/@theme\s*\{[^}]*\}/, '').replace('@source "./components";', '');
     expect(outside.trim()).toBe('');
   });
 
-  it('is dark only and loads no external resources (TS-6)', () => {
+  it('scans the components for utility classes (TS-6)', () => {
+    expect(raw.split('@source "./components";')).toHaveLength(2);
+  });
+
+  it('is dark only and loads no external resources (TS-7)', () => {
     for (const forbidden of ['prefers-color-scheme', '.dark', 'dark:', '@import', 'url(', 'http']) {
       expect(raw).not.toContain(forbidden);
     }

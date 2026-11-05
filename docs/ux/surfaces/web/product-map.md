@@ -1,8 +1,8 @@
 ---
 document: UX Product Map
 surface: web
-version: "1.0"
-date: 2026-11-03
+version: "1.1"
+date: 2026-11-04
 status: Draft - Punto de partida para discusión
 audiences:
   - jugador
@@ -53,17 +53,19 @@ Se inventaría **una pantalla por fase por juego** (15 pantallas), porque cada f
 | 16 | `grep-grid-instrucciones` | Grep Grid · Instrucciones | Explicar el juego (8 palabras, 3 direcciones solo hacia adelante, sin tiempo) | jugador | ambos | F-05, C-08, C-09 |
 | 17 | `grep-grid-partida` | Grep Grid · Partida | Tocar primera y última letra de cada palabra; contador `N/8`; "Rendirse" | jugador | ambos | C-19, C-20, C-36 |
 | 18 | `grep-grid-resultado` | Grep Grid · Resultado | Ver `N/8`, las palabras faltantes reveladas con su definición; compartir | jugador | ambos | C-22, C-12, C-13, C-36 |
+| 19 | `no-encontrado` | No encontrado (404) | Avisar que la dirección no existe y volver a los juegos en un toque | jugador | ambos | REQ-002 (supuesto «Navegación») |
 
 Todas las pantallas existen en ambos viewports. La excepción de contenido a anotar es la grilla de Grep Grid (12×12) y el código de Bug Hunt / Big O a 320 px: se resuelven en layout (scroll horizontal del código, celdas de la grilla escaladas al ancho), no con una pantalla distinta `[fuente: PRD §NFR-U01]`.
 
 ### Bloques por pantalla
 
-Header común a todas las pantallas (shell): marca `> nerdose`, navegación (`./juegos`, `./stats`, `./about`), **`#número` del desafío del día** (reemplaza "desafío del 30/10" del prototipo; decisión #12, F-02), selector de idioma ES/EN y, en las pantallas de juego, el nombre del juego. En las pantallas de resultado se suma el botón "Compartir". El footer lleva el aviso breve de privacidad (C-07).
+Header común a todas las pantallas (shell): marca `> nerdose`, navegación (`./juegos`, `./stats`, `./about`), **`#número` del desafío del día** (reemplaza "desafío del 30/10" del prototipo; decisión #12, F-02), selector de idioma ES/EN y, en las pantallas de juego, el nombre del juego. El `#número` se oculta cuando el servidor no lo informa (antes del lanzamiento, REQ-002). En las pantallas de resultado se suma el botón "Compartir". El footer lleva el aviso breve de privacidad (una única cookie funcional, sin datos personales ni cookies de terceros) y un enlace a `acerca-de` en todas las pantallas (C-07, REQ-002).
 
 | Slug | Bloques principales (de `docs/nerdose.html` ajustados al PRD) |
 |------|-----------------------------------------------------------------|
 | `home` | Hero (identidad, presentación breve, CTA "Seguir jugando" / "¿Cómo funciona?" → `acerca-de`); progreso del día (estado por juego, racha global, cuenta regresiva `HH:MM:SS`); 5 tarjetas de juego (nombre, descripción, duración, racha del juego, estado y CTA); resumen "Tu progreso" (racha global, heatmap corto, enlace a `estadisticas`). La tarjeta "próximo juego / próximamente" del prototipo no está en el PRD: **fuera del inventario** hasta confirmarla |
 | `estadisticas` | Racha global actual, récord, desafíos completados; heatmap de 365 días; bloque por juego (racha, récord, jugadas, % de victorias, stat propia); historial paginado con etiqueta corta ("✓ 4/6", "✗ L7", "6/8"). El prototipo muestra "días con actividad" y "juegos por día activo": no están en C-34, **manda el PRD** |
+| `no-encontrado` | Código `404 · página no encontrada`; mensaje corto; CTA "Volver a los juegos". Mismo header y footer del shell (REQ-002) |
 | `acerca-de` | Qué es nerdose y cómo funciona; los 5 juegos; reglas de racha (completar cuenta, días neutros, anulados); atribución Wikipedia/Wikidata (CC BY-SA); aviso de privacidad (cookie funcional, sin cuenta) |
 | `*-instrucciones` | Nombre y acento del juego; reglas en 3 pasos (patrón "cómo se juega" del prototipo); duración estimada; estado del día de ese juego; CTA "Empezar" (crea la Play); aviso de que la partida no cuenta hasta completarla |
 | `devdle-partida` | Consigna y largo del término; grilla de 6 intentos con feedback por letra (color + ícono/patrón, NFR-U04); teclado en pantalla; pista: lista de categorías posibles (sin la del día); mensaje "no está en la lista" (C-15); leyenda de pistas; acceso a "Reportar un problema" |
@@ -91,7 +93,11 @@ El prototipo menciona "tu tiempo final es tu puntaje" en Grep Grid: **se elimina
 | Sin desafío hoy | `challenge_status = none` | Etiqueta "sin desafío hoy", sin CTA de juego; indica que no afecta la racha | C-14, C-33 |
 | Anulado | `challenge_status = voided` | Etiqueta "anulado" y CTA que lleva al aviso O-02; si ya hay Play `voided`, se ve como completado | C-05, C-41, C-42 |
 | Cuenta regresiva | Siempre visible | `HH:MM:SS` hasta `next_reset_at`; al llegar a 0 recarga el estado del día (con espera aleatoria de 0–3 s, ADR-008) y todo vuelve a "sin jugar" | C-06 |
-| Sin sesión (cookies bloqueadas) | La cookie no vuelve | Se ven los 5 juegos, pero sin estados de partida y con CTA deshabilitados; aviso O-03 | C-02, C-05 |
+| Sin sesión (cookies bloqueadas) | La creación de la sesión respondió bien pero el estado del día sigue sin sesión | Se ven los 5 juegos, pero sin estados de partida y con CTA deshabilitados; aviso O-03 | C-02, C-05, REQ-002 |
+| Sesión no disponible | La creación de la sesión fue rechazada por límite (429) | Igual que sin sesión pero **sin** O-03; se reintenta en la próxima carga | C-01, REQ-002 (CA 13) |
+| Ningún desafío hoy | Los 5 juegos con `challenge_status = none` (hasta que existan generadores) | Las 5 tarjetas "sin desafío hoy · no afecta tu racha", sin CTA de juego; progreso "Hoy no hay desafíos publicados" | C-05, C-14, REQ-002 (CA 9) |
+| Antes del lanzamiento | `number = null` (hoy < día de lanzamiento) | Sin `#número` en el header; tarjetas "próximamente"; nunca se muestra un número ≤ 0 | C-05, REQ-002 (CA 17) |
+| Error de carga | Falla el estado del día (500, 429 o red) | Mensaje de error con "Reintentar"; las 5 tarjetas siguen visibles con nombre y descripción (catálogo estático), sin estado ni CTA | REQ-002 (CA 18) |
 | Primera visita | Player nuevo, sin Play | Todos "sin jugar", racha global 0, resumen sin datos | C-01, C-05 |
 
 **`*-instrucciones`** — la fase de instrucciones cubre también los casos sin partida:
@@ -111,7 +117,7 @@ El prototipo menciona "tu tiempo final es tu puntaje" en Grep Grid: **se elimina
 |---|---------|------|---------|-----------|
 | O-01 | Reportar un problema | bottom-sheet (mobile) / modal (desktop) | `*-partida` · btn-reportar; `*-resultado` · btn-reportar | Formulario con motivo (6 valores de `reason`), mensaje opcional (máx. 1000), aviso "No incluyas la respuesta si todavía estás jugando" (en partida). Un reporte por jugador y desafío: si ya reportó, el trigger muestra "ya reportado" (`already_reported`). Disponible solo con Challenge `published` o `voided` |
 | O-02 | Aviso de desafío anulado | modal (ambos viewports) | `home` · tarjeta en estado "anulado"; `*-instrucciones` · estado "anulado y sin Play" | Texto "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada" y acción **"Marcar como completado"** (C-42), que crea la Play `voided`, suma la racha del juego y la global, y lleva a `*-resultado` en estado anulado. Acción secundaria: cerrar |
-| O-03 | Aviso de cookies bloqueadas | banner (ambos viewports; fijo bajo el header) | Shell · detección tras `POST /api/session` | Texto "Activá las cookies para poder jugar". Persiste hasta que la sesión se crea. El catálogo, `estadisticas` (vacía) y `acerca-de` siguen visibles; los CTA de juego quedan deshabilitados |
+| O-03 | Aviso de cookies bloqueadas | banner (ambos viewports; fijo bajo el header) | Shell · detección: `POST /api/session` respondió 200 y el `GET /api/today` siguiente sigue con `has_session = false` (no se muestra tras un 429, REQ-002) | Texto "Activá las cookies para poder jugar". Persiste hasta que la sesión se crea. El selector ES/EN sigue funcionando, solo en el navegador. El catálogo, `estadisticas` (vacía) y `acerca-de` siguen visibles; los CTA de juego quedan deshabilitados |
 | O-04 | Confirmar "Rendirse" | modal (ambos viewports) | `grep-grid-partida` · btn-rendirse | Confirmar que se cierra la partida como perdida con `N/8`, que cuenta para la racha y que revela las faltantes. **Sugerencia fuera de PRD — a validar** (el PRD define la acción irreversible y el principio de confirmación en dos pasos de la decisión #26, no este modal) |
 
 No hay overlay de selector de idioma: el cambio ES/EN y el cambio de lenguaje de código son **controles inline** (ver Navegación). El share nativo es del sistema operativo; si no está disponible, se copia al portapapeles con un aviso breve ("copiado") `[fuente: PRD §Supuestos, C-13]`.
@@ -129,9 +135,9 @@ Header presente en todas las pantallas:
 - **`./stats`** → `estadisticas` (`/stats`)
 - **`./about`** → `acerca-de` (`/about`)
 - **`#número`** — indicador del día, no navega
-- **ES | EN** — control inline; cambia el idioma de UI y de contenido sin perder la partida (C-03)
+- **ES | EN** — control inline; cambia el idioma de UI y de contenido sin recargar y sin perder la partida; con sesión se guarda en el Player, sin sesión solo en el navegador (C-03, REQ-002)
 
-Rutas: `/` → `home`; `/:game_id` → fase de juego correspondiente; `/stats`; `/about` (ADR de `web`, overview).
+Rutas: `/` → `home`; `/:game_id` → fase de juego correspondiente; `/stats`; `/about`; cualquier otra ruta o `game_id` desconocido → `no-encontrado` (ADR de `web`, overview; REQ-002).
 
 En mobile el header debe caber en 320 px; cómo se compacta la navegación (menú, íconos) se define en wireframes. No se inventa un overlay de menú acá porque el PRD no lo exige.
 
@@ -162,9 +168,9 @@ Pantallas: `{juego}-instrucciones`, `{juego}-partida`, `{juego}-resultado` × 5
 
 ### Agrupación: Información
 
-Pantallas: `acerca-de`
+Pantallas: `acerca-de`, `no-encontrado`
 
-**Por qué se agrupan:** Contenido estático y atribución obligatoria (CC BY-SA). Sin dependencia de sesión. `[fuente: PRD C-07]`
+**Por qué se agrupan:** Contenido estático, sin dependencia de sesión. `acerca-de` lleva la atribución obligatoria (CC BY-SA) `[fuente: PRD C-07]`; `no-encontrado` es la salida de cualquier ruta inexistente `[fuente: REQ-002]`.
 
 ### Agrupación: Configuración personal
 
@@ -179,7 +185,8 @@ Pantallas: (ninguna)
 - **Idioma ES / EN** — Aplica a toda la superficie, también a mitad de partida; el contenido del desafío se resuelve en el servidor (C-03, C-04). `[fuente: PRD NFR-U05]`
 - **Cambio de día (00:00 UTC)** — Cualquier pantalla abierta puede recibir `challenge_expired` al jugar: se carga el desafío nuevo, la Play vieja queda `in_progress` y no cuenta. En `home` la cuenta regresiva recarga sola. `[fuente: PRD C-06, C-11]`
 - **Desafío anulado** — Afecta a la tarjeta, a las instrucciones y al resultado (O-02). La racha no se ve afectada. `[fuente: PRD C-41, C-42]`
-- **Error de red / sin conexión** — El PRD supone conexión permanente y no hay modo offline. El manejo de errores globales vive en el shell; el copy y la pantalla de error no están definidos. `[fuente: PRD §Supuestos]`
+- **Error de red / sin conexión** — El PRD supone conexión permanente y no hay modo offline. El manejo de errores globales vive en el shell. En `home`, REQ-002 define el estado "error de carga" (mensaje con "Reintentar", catálogo estático visible); en el resto de las pantallas el copy sigue sin definir. `[fuente: PRD §Supuestos; REQ-002 CA 18]`
+- **Antes del lanzamiento** — Mientras hoy sea anterior al día del desafío #1, el servidor no informa `#número` y el header lo oculta. `[fuente: REQ-002 CA 17]`
 
 ## Mapa Visual
 
@@ -190,6 +197,8 @@ flowchart TD
     Root --> S[estadisticas /stats]
     Root --> A[acerca-de /about]
     Root --> G["/:game_id (5 juegos)"]
+    Root -.ruta inexistente.-> NF[no-encontrado]
+    NF -->|Volver a los juegos| H
     H -->|tarjeta sin jugar| GI[instrucciones]
     H -->|tarjeta en curso| GP[partida]
     H -->|tarjeta completado| GR[resultado]
@@ -221,12 +230,10 @@ Juegos: `devdle`, `bug-hunt`, `big-o`, `timeline`, `grep-grid`.
    - Si en ambos casos solo se ve el aviso y la racha: una sola variante mínima de `*-resultado`, sin share (C-13 no cubre explícitamente Play `voided`).
 
 3. **¿"Ver historial completo" es una pantalla o está dentro de `estadisticas`?** C-34 pide historial paginado; las rutas del PRD y de `web` solo declaran `/stats`.
-   - Si está inline (paginación o "cargar más"): el inventario queda igual (18 pantallas); en mobile `estadisticas` es larga.
-   - Si es una pantalla propia (`/stats/historial`): se agrega una ruta y un item #19, y la tabla de 5 juegos por fila del prototipo necesita variante mobile.
+   - Si está inline (paginación o "cargar más"): el inventario queda igual (19 pantallas); en mobile `estadisticas` es larga.
+   - Si es una pantalla propia (`/stats/historial`): se agrega una ruta y un item #20, y la tabla de 5 juegos por fila del prototipo necesita variante mobile.
 
-4. **¿Qué pasa con un `/:game_id` que no existe y con rutas desconocidas?** El PRD no define pantalla de error 404.
-   - Si se redirige a `home` con aviso: no se agrega pantalla.
-   - Si se muestra una pantalla "no encontrado": se agrega una pantalla fuera del PRD y su copy en ES/EN.
+4. ~~**¿Qué pasa con un `/:game_id` que no existe y con rutas desconocidas?**~~ **Resuelta por REQ-002:** se muestra la pantalla `no-encontrado` (#19) con enlace a la home; no se redirige.
 
 5. **¿Qué CTA lleva el resultado después del primer juego completado: "Siguiente juego" o "Volver a los juegos"?** El prototipo usa ambos en distintos juegos.
    - Si es "Siguiente juego" (próximo pendiente): `*-resultado` necesita la lista del día y un estado "todos completados" donde el CTA cambia a la cuenta regresiva.

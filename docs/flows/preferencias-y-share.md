@@ -4,8 +4,8 @@ title: Preferencias del jugador y compartir resultado
 type: feature
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-03
-stories: []
+last_updated: 2026-11-04
+stories: [S-007, S-009]
 ---
 
 # Preferencias del jugador y compartir resultado

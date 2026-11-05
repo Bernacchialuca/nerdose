@@ -20,15 +20,6 @@ afterEach(() => {
 });
 
 describe('RouteError', () => {
-  it('una ruta desconocida muestra la pantalla de error', () => {
-    renderWithProviders({ route: '/no-existe' });
-    const alert = screen.getByRole('alert');
-    expect(alert).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 1, name: 'Algo salió mal' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Reintentar' })).toHaveAttribute('type', 'button');
-    expect(screen.queryByText(/error:|stack|\{/i)).toBeNull();
-  });
-
   it('un error de render muestra la pantalla de error sin filtrar el mensaje', () => {
     renderWithProviders({
       route: '/',
@@ -36,18 +27,25 @@ describe('RouteError', () => {
     });
     expect(screen.getByRole('alert')).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1, name: 'Algo salió mal' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Reintentar' })).toHaveAttribute('type', 'button');
     expect(screen.queryByText(/boom/)).toBeNull();
   });
 
   it('no tiene violaciones de axe', async () => {
-    const { container } = renderWithProviders({ route: '/no-existe' });
+    const { container } = renderWithProviders({
+      route: '/',
+      routes: [{ path: '/', element: <Boom />, errorElement: <RouteError /> }],
+    });
     expect(await axe(container)).toHaveNoViolations();
   });
 
   it('Reintentar recarga la página', async () => {
     const reload = vi.fn();
     vi.stubGlobal('location', { ...window.location, reload });
-    renderWithProviders({ route: '/no-existe' });
+    renderWithProviders({
+      route: '/',
+      routes: [{ path: '/', element: <Boom />, errorElement: <RouteError /> }],
+    });
     await userEvent.click(screen.getByRole('button', { name: 'Reintentar' }));
     expect(reload).toHaveBeenCalledTimes(1);
   });
