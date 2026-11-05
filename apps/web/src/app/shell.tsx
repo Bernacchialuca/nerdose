@@ -8,6 +8,7 @@ import { MainNav } from '@/components/main-nav';
 import { SiteFooter } from '@/components/site-footer';
 import { useMediaQuery } from '@/hooks/use-media-query';
 import { DESKTOP_MEDIA_QUERY } from '@/lib/breakpoints';
+import { ChallengeNumber } from '@/modules/catalog';
 import { LanguageSelector, useSession } from '@/modules/session';
 
 export function Shell() {
@@ -38,6 +39,7 @@ export function Shell() {
         }
       >
         {isDesktop ? <MainNav /> : null}
+        <ChallengeNumber />
         <LanguageSelector />
       </AppHeader>
       {isDesktop ? null : <MainNav className="border-b border-border px-4" />}

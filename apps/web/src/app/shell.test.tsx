@@ -22,7 +22,10 @@ const english = () =>
 describe('Shell', () => {
   it('usa fondo, fuente y acento de los tokens', async () => {
     const { container } = renderWithProviders({ route: '/' });
-    await screen.findByRole('heading', { level: 1, name: 'nerdose' });
+    await screen.findByRole('heading', {
+      level: 1,
+      name: 'Cinco juegos tech. Un desafío por día.',
+    });
     expect(container.firstElementChild).toHaveClass('bg-bg', 'text-text', 'font-mono');
     const brand = within(screen.getByRole('banner')).getByRole('link', { name: 'nerdose' });
     expect(brand).toHaveAttribute('href', '/');
@@ -141,7 +144,7 @@ describe('Shell', () => {
     await waitFor(() => {
       expect(screen.getByRole('button', { name: 'ES' })).toBeEnabled();
     });
-    expect(screen.queryByRole('status')).toBeNull();
+    expect(screen.queryByText(/(Activá las cookies|Enable cookies)/)).toBeNull();
     expect(screen.queryByRole('alert')).toBeNull();
     expect(screen.getByRole('banner')).toBeInTheDocument();
     expect(screen.getByRole('main')).toBeInTheDocument();
@@ -157,12 +160,18 @@ describe('Shell', () => {
 
   it('TS-45 axe sin violaciones en mobile y desktop', async () => {
     const mobile = renderWithProviders({ route: '/' });
-    await screen.findByRole('heading', { level: 1, name: 'nerdose' });
+    await screen.findByRole('heading', {
+      level: 1,
+      name: 'Cinco juegos tech. Un desafío por día.',
+    });
     expect(await axe(mobile.container)).toHaveNoViolations();
     mobile.unmount();
     mockViewport('desktop');
     const desktop = renderWithProviders({ route: '/' });
-    await screen.findByRole('heading', { level: 1, name: 'nerdose' });
+    await screen.findByRole('heading', {
+      level: 1,
+      name: 'Cinco juegos tech. Un desafío por día.',
+    });
     expect(await axe(desktop.container)).toHaveNoViolations();
   });
 

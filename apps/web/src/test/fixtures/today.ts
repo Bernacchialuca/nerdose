@@ -1,3 +1,5 @@
+import { GAME_IDS } from '@nerdose/core';
+
 import type { Today } from '@/modules/catalog/api/today';
 
 export const todayFixture = {
@@ -53,4 +55,48 @@ export const todayNoSessionFixture = {
   global_streak: { current: 0, max: 0 },
   completed_today: 0,
   games: todayFixture.games.map((g) => ({ ...g, play_status: null, history_label: null })),
+} satisfies Today;
+
+export const todayNoChallengesFixture = {
+  date: '2026-12-01',
+  number: 8,
+  next_reset_at: '2026-12-02T00:00:00Z',
+  seconds_to_reset: 10,
+  has_session: true,
+  global_streak: { current: 0, max: 0 },
+  completed_today: 0,
+  games: GAME_IDS.map((game_id) => ({
+    game_id,
+    challenge_status: 'none' as const,
+    play_status: null,
+    history_label: null,
+    current_streak: 0,
+  })),
+} satisfies Today;
+
+export const todayNextDayFixture = {
+  ...todayNoChallengesFixture,
+  date: '2026-12-02',
+  number: 9,
+  next_reset_at: '2026-12-03T00:00:00Z',
+  seconds_to_reset: 86400,
+} satisfies Today;
+
+export const todayBeforeLaunchFixture = {
+  ...todayNoChallengesFixture,
+  date: '2026-11-20',
+  number: null,
+  next_reset_at: '2026-11-21T00:00:00Z',
+  seconds_to_reset: 3600,
+} satisfies Today;
+
+export const todayFirstVisitFixture = {
+  ...todayNoChallengesFixture,
+  games: GAME_IDS.map((game_id) => ({
+    game_id,
+    challenge_status: 'published' as const,
+    play_status: null,
+    history_label: null,
+    current_streak: 0,
+  })),
 } satisfies Today;
