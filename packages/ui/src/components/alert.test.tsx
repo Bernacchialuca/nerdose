@@ -63,9 +63,7 @@ describe('Alert', () => {
   });
 
   it('merges className with cn (TS-20)', () => {
-    render(
-      <Alert className="mt-6 bg-bg">{ERROR_MSG}</Alert>,
-    );
+    render(<Alert className="mt-6 bg-bg">{ERROR_MSG}</Alert>);
     const alert = screen.getByRole('alert');
     expect(alert).toHaveClass('mt-6', 'bg-bg');
     expect(alert).not.toHaveClass('bg-surface');

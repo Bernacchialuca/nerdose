@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import type { SummaryKey } from '../home-view';
-import { FOCUS } from './cta';
+import { FOCUS } from '@/components/cta';
 
 export function ProgressSummary({
   summary,

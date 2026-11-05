@@ -7,7 +7,7 @@ import { useDocumentTitle } from '@/hooks/use-document-title';
 import { useSession } from '@/modules/session';
 
 import { useToday } from '../api/use-today';
-import { CTA_DISABLED, CTA_PRIMARY, CTA_SECONDARY, FOCUS } from '../components/cta';
+import { CTA_DISABLED, CTA_PRIMARY, CTA_SECONDARY, FOCUS } from '@/components/cta';
 import { DayStatus } from '../components/day-status';
 import { GameCard } from '../components/game-card';
 import { ProgressSummary } from '../components/progress-summary';

@@ -35,6 +35,7 @@ describe('tokens.css', () => {
       '--color-border': '#222A33',
       '--color-border-strong': '#2A323C',
       '--color-border-subtle': '#1E252E',
+      '--color-border-interactive': '#8D99A6',
       '--color-text': '#E6EDF3',
       '--color-text-muted': '#9AA6B2',
       '--color-text-dim': '#8D99A6',

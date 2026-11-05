@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouteError } from 'react-router';
 
+import { CTA_SECONDARY } from '@/components/cta';
+
 export function RouteError() {
   const { t } = useTranslation();
   const error = useRouteError();
@@ -19,7 +21,7 @@ export function RouteError() {
           onClick={() => {
             location.reload();
           }}
-          className="mt-4 min-h-11 border border-border-strong px-4 text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+          className={`${CTA_SECONDARY} mt-4`}
         >
           {t('errors.retry')}
         </button>

@@ -15,7 +15,8 @@ App `apps/web` (not a package; imported through the `@/` alias).
 - **useToday / todayKeys / fetchToday** (apps/web/src/modules/catalog/api/) - `GET /api/today?lang=` query keyed by the active locale
 - **sessionKeys / createSession / updatePreferences** (apps/web/src/modules/session/api/session.ts) - Session API calls and types
 
-## Components and hooks (6 items) - see components.md
+## Components and hooks (7 items) - see components.md
+- **CTA classes** (apps/web/src/components/cta.ts) - `CTA_PRIMARY` / `CTA_SECONDARY` / `CTA_DISABLED` / `FOCUS`, the DS Button
 - **MainNav** (apps/web/src/components/main-nav.tsx) - Primary navigation `<nav>` with active link
 - **SiteFooter** (apps/web/src/components/site-footer.tsx) - Privacy notice and link to About
 - **NotFound** (apps/web/src/app/not-found.tsx) - 404 screen

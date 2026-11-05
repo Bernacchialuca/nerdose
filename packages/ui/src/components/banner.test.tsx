@@ -13,7 +13,9 @@ describe('Banner', () => {
     const status = screen.getByRole('status');
     expect(status).toHaveTextContent(TITLE);
     expect(status).toHaveTextContent(DETAIL);
-    expect(status.textContent?.indexOf(TITLE)).toBeLessThan(status.textContent?.indexOf(DETAIL) ?? 0);
+    expect(status.textContent?.indexOf(TITLE)).toBeLessThan(
+      status.textContent?.indexOf(DETAIL) ?? 0,
+    );
   });
 
   it('renders only the title without detail container (TS-10)', () => {
@@ -54,7 +56,15 @@ describe('Banner', () => {
   });
 
   it('accepts a node as title (TS-15)', () => {
-    render(<Banner title={<span>Activá las <strong>cookies</strong></span>} />);
+    render(
+      <Banner
+        title={
+          <span>
+            Activá las <strong>cookies</strong>
+          </span>
+        }
+      />,
+    );
     expect(screen.getByRole('status').querySelector('strong')).toHaveTextContent('cookies');
   });
 

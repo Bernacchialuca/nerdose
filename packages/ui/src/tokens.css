@@ -10,6 +10,7 @@
   --color-border: #222A33;
   --color-border-strong: #2A323C;
   --color-border-subtle: #1E252E;
+  --color-border-interactive: #8D99A6; /* DS web border.interactive: control borders (>=3:1) */
 
   --color-text: #E6EDF3;          /* primary text */
   --color-text-muted: #9AA6B2;    /* secondary text */

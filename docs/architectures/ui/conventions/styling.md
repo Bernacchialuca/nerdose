@@ -59,6 +59,7 @@ export default defineConfig({ plugins: [react(), tailwindcss()] });
   --color-surface-3: #141920;
   --color-border: #222A33;
   --color-border-strong: #2A323C;
+  --color-border-interactive: #8D99A6;
   --color-border-subtle: #1E252E;
 
   --color-text: #E6EDF3;          /* primary text */

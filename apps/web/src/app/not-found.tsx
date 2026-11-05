@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
+import { CTA_PRIMARY } from '@/components/cta';
 import { useDocumentTitle } from '@/hooks/use-document-title';
 
 export function NotFound() {
@@ -14,10 +15,7 @@ export function NotFound() {
           {t('notFound.title')}
         </h1>
         <p className="text-base">{t('notFound.message')}</p>
-        <Link
-          to="/"
-          className="inline-flex min-h-11 w-full items-center justify-center gap-2 bg-accent px-4 font-bold text-on-accent lg:w-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-        >
+        <Link to="/" className={`${CTA_PRIMARY} w-full lg:w-auto`}>
           <span aria-hidden="true">←</span>
           {t('notFound.back')}
         </Link>

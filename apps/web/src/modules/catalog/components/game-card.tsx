@@ -6,7 +6,7 @@ import { Link } from 'react-router';
 import type { GameId } from '../api/today';
 import { GAME_CATALOG } from '../games';
 import type { CardView } from '../home-view';
-import { CTA_DISABLED, CTA_PRIMARY, CTA_SECONDARY } from './cta';
+import { CTA_DISABLED, CTA_PRIMARY, CTA_SECONDARY } from '@/components/cta';
 
 export function GameCard({ gameId, view }: { gameId: GameId; view: CardView }) {
   const { t } = useTranslation();
