@@ -4,8 +4,8 @@ title: Primera visita, sesión anónima y home
 type: feature
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-03
-stories: []
+last_updated: 2026-11-04
+stories: [S-006, S-007, S-008, S-009, S-010]
 ---
 
 # Primera visita, sesión anónima y home
@@ -193,3 +193,4 @@ sequenceDiagram
 - `POST /api/session` se llama en cada carga: así la cookie no vence mientras el jugador vuelva.
 - La cookie es host-only (sin `Domain`) y nunca llega a `admin.nerdose.dev`.
 - `GET /api/today` no exige sesión, para que la home cargue al instante y para detectar cookies bloqueadas.
+- Hasta FG-3, `challenge_status` es siempre `none` y el paso 3 no lee `plays`, `player_game_stats`, `player_stats` ni `challenges`. `number` es `null` si hoy es anterior a `LAUNCH_DATE` y la home oculta el `#número`.

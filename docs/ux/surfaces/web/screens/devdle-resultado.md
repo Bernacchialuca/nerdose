@@ -62,7 +62,7 @@ date: 2026-11-03
 | 16 | loader | loader | — | feedback | ambos | visible_only_in_states: loading | Indicador de carga |
 | 17 | alerta-sistema | alert | error | feedback | ambos | visible_only_in_states: error de sistema | Error de carga con causa y salida |
 | 18 | btn-reintentar | button | secondary | input | ambos | visible_only_in_states: error de sistema | Reintentar la carga |
-| 19 | footer | footer | — | layout | ambos | — | Aviso breve de privacidad |
+| 19 | footer | footer | — | layout | ambos | — | Aviso breve de privacidad y enlace a Acerca de |
 
 ## Layout por viewport
 
@@ -197,9 +197,9 @@ date: 2026-11-03
 - Annotation: nada
 
 ### footer
-- Texto/label: nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso.
+- Texto/label: nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de
 - Icono: nada
-- Annotation: nada
+- Annotation: «Acerca de» es un enlace a `acerca-de`; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)
 
 ## Estados
 

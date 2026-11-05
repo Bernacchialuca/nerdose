@@ -1079,7 +1079,7 @@ components:
       required: [date, number, next_reset_at, seconds_to_reset, has_session, global_streak, completed_today, games]
       properties:
         date: { type: string, format: date, description: Día UTC de la plataforma }
-        number: { type: integer, minimum: 1, description: 'today − LAUNCH_DATE + 1' }
+        number: { type: integer, minimum: 1, nullable: true, description: 'today − LAUNCH_DATE + 1; null antes del lanzamiento' }
         next_reset_at: { type: string, format: date-time }
         seconds_to_reset: { type: integer, minimum: 0 }
         has_session: { type: boolean }

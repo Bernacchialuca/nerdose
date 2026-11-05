@@ -4,8 +4,8 @@ title: Cambio de día, publicación y jugada tardía
 type: event
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-03
-stories: []
+last_updated: 2026-11-04
+stories: [S-010]
 ---
 
 # Cambio de día, publicación y jugada tardía

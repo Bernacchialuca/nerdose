@@ -1,3 +1,4 @@
+// @vitest-environment node
 /// <reference types="node" />
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
@@ -14,6 +15,8 @@ describe('@nerdose/ui package manifest', () => {
       exports: unknown;
       scripts: Record<string, string>;
       dependencies: Record<string, string>;
+      peerDependencies: Record<string, string>;
+      devDependencies: Record<string, string>;
     };
     expect(pkg.name).toBe('@nerdose/ui');
     expect(pkg.private).toBe(true);
@@ -24,11 +27,26 @@ describe('@nerdose/ui package manifest', () => {
     expect(pkg.scripts.test).toBe('vitest run');
     expect(pkg.dependencies.clsx).toBeDefined();
     expect(pkg.dependencies['tailwind-merge']).toBeDefined();
+    expect(pkg.dependencies.react).toBeUndefined();
+    expect(pkg.peerDependencies.react).toBe('^19.3.1');
+    for (const dev of [
+      'react',
+      'react-dom',
+      '@types/react',
+      '@types/react-dom',
+      '@testing-library/react',
+      '@testing-library/jest-dom',
+      'jsdom',
+      'vitest-axe',
+    ]) {
+      expect(pkg.devDependencies[dev], dev).toBeDefined();
+    }
   });
 
   it('extends the base tsconfig (TS-2)', () => {
     expect(read('tsconfig.json')).toEqual({
       extends: '../../tsconfig.base.json',
+      compilerOptions: { jsx: 'react-jsx' },
       include: ['src', 'test'],
     });
   });

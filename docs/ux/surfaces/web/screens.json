@@ -23,10 +23,26 @@
           "content": "> nerdose · #8 · ES|EN",
           "viewport_overrides": {
             "desktop": {
-              "content": "> nerdose     ./juegos   ./stats   ./about     #8     ES | EN"
+              "content": "> nerdose     ./juegos   ./stats   ./about     #8     ES | EN",
+              "state_overrides": {
+                "antes del lanzamiento": {
+                  "content": "> nerdose     ./juegos   ./stats   ./about     ES | EN"
+                },
+                "error de sistema": {
+                  "content": "> nerdose     ./juegos   ./stats   ./about     ES | EN"
+                }
+              }
             }
           },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+          "annotation": "#número = número de desafío del día, igual para los 5 juegos; se oculta cuando el servidor no lo informa (antes del lanzamiento o error de carga), nunca se muestra un número menor que 1. ES|EN es un control inline: cambia la interfaz sin recargar y persiste en el Player; sin sesión cambia solo en este navegador (REQ-002)",
+          "state_overrides": {
+            "antes del lanzamiento": {
+              "content": "> nerdose · ES|EN"
+            },
+            "error de sistema": {
+              "content": "> nerdose · ES|EN"
+            }
+          }
         },
         {
           "name": "nav-movil",
@@ -51,7 +67,7 @@
           "visible_only_in_states": [
             "sin sesión"
           ],
-          "annotation": "Es el overlay O-03; persiste hasta que la sesión se crea"
+          "annotation": "Es el overlay O-03; persiste hasta que la sesión se crea. Solo aparece si la creación de la sesión respondió bien y el estado del día sigue sin sesión; si fue rechazada por límite (429) no se muestra (estado «sesión no disponible», REQ-002)"
         },
         {
           "name": "hero-titulo",
@@ -82,6 +98,16 @@
             "sin sesión": {
               "content": "Empezar a jugar",
               "variant": "disabled"
+            },
+            "sesión no disponible": {
+              "content": "Empezar a jugar",
+              "variant": "disabled"
+            },
+            "ningún desafío hoy": {
+              "content": "Ver los juegos"
+            },
+            "antes del lanzamiento": {
+              "content": "Ver los juegos"
             }
           }
         },
@@ -122,6 +148,18 @@
             "sin sesión": {
               "content": "Sin sesión: no podemos mostrar tu progreso",
               "fill": 0.0
+            },
+            "ningún desafío hoy": {
+              "content": "Hoy no hay desafíos publicados",
+              "fill": 0.0
+            },
+            "antes del lanzamiento": {
+              "content": "El primer desafío llega pronto",
+              "fill": 0.0
+            },
+            "sesión no disponible": {
+              "content": "No pudimos iniciar tu sesión. Recargá en unos minutos para jugar.",
+              "fill": 0.0
             }
           }
         },
@@ -140,6 +178,15 @@
             },
             "sin sesión": {
               "content": "Racha global: —"
+            },
+            "ningún desafío hoy": {
+              "content": "Racha global: 0 días"
+            },
+            "antes del lanzamiento": {
+              "content": "Racha global: 0 días"
+            },
+            "sesión no disponible": {
+              "content": "Racha global: —"
             }
           }
         },
@@ -149,7 +196,7 @@
           "category": "content",
           "content": "Próximo desafío en 05:42:10 (HH:MM:SS, 00:00 UTC)",
           "level": "caption",
-          "annotation": "al llegar a 0 recarga el estado del día tras una espera aleatoria de 0–3 s",
+          "annotation": "al llegar a 0 recarga el estado del día tras una espera aleatoria de 0–3 s. Solo descuenta los segundos que informa el servidor y se re-sincroniza en cada respuesta; si la recarga falla, pasa a «error de sistema». No se anuncia cada segundo a lectores de pantalla",
           "hidden_in_states": [
             "loading",
             "error de sistema"
@@ -167,11 +214,22 @@
             },
             "sin sesión": {
               "paragraph": "Adiviná el término tech en 6 intentos · ~2 min · racha 0 · sin sesión"
+            },
+            "error de sistema": {
+              "paragraph": "Adiviná el término tech en 6 intentos · ~2 min"
+            },
+            "ningún desafío hoy": {
+              "paragraph": "Adiviná el término tech en 6 intentos · ~2 min · racha 0 · sin desafío hoy · no afecta tu racha"
+            },
+            "antes del lanzamiento": {
+              "paragraph": "Adiviná el término tech en 6 intentos · ~2 min · próximamente"
+            },
+            "sesión no disponible": {
+              "paragraph": "Adiviná el término tech en 6 intentos · ~2 min"
             }
           },
           "hidden_in_states": [
-            "loading",
-            "error de sistema"
+            "loading"
           ]
         },
         {
@@ -187,6 +245,18 @@
               "variant": "primary"
             },
             "sin sesión": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            },
+            "ningún desafío hoy": {
+              "content": "Sin desafío hoy",
+              "variant": "disabled"
+            },
+            "antes del lanzamiento": {
+              "content": "Próximamente",
+              "variant": "disabled"
+            },
+            "sesión no disponible": {
               "content": "Jugar →",
               "variant": "disabled"
             }
@@ -211,11 +281,22 @@
             },
             "sin sesión": {
               "paragraph": "Encontrá la línea con el bug · ~2 min · racha 0 · sin sesión"
+            },
+            "error de sistema": {
+              "paragraph": "Encontrá la línea con el bug · ~2 min"
+            },
+            "ningún desafío hoy": {
+              "paragraph": "Encontrá la línea con el bug · ~2 min · racha 0 · sin desafío hoy · no afecta tu racha"
+            },
+            "antes del lanzamiento": {
+              "paragraph": "Encontrá la línea con el bug · ~2 min · próximamente"
+            },
+            "sesión no disponible": {
+              "paragraph": "Encontrá la línea con el bug · ~2 min"
             }
           },
           "hidden_in_states": [
-            "loading",
-            "error de sistema"
+            "loading"
           ]
         },
         {
@@ -231,6 +312,18 @@
               "variant": "primary"
             },
             "sin sesión": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            },
+            "ningún desafío hoy": {
+              "content": "Sin desafío hoy",
+              "variant": "disabled"
+            },
+            "antes del lanzamiento": {
+              "content": "Próximamente",
+              "variant": "disabled"
+            },
+            "sesión no disponible": {
               "content": "Jugar →",
               "variant": "disabled"
             }
@@ -255,11 +348,22 @@
             },
             "sin sesión": {
               "paragraph": "Elegí la complejidad temporal · ~1 min · racha 0 · sin sesión"
+            },
+            "error de sistema": {
+              "paragraph": "Elegí la complejidad temporal · ~1 min"
+            },
+            "ningún desafío hoy": {
+              "paragraph": "Elegí la complejidad temporal · ~1 min · racha 0 · sin desafío hoy · no afecta tu racha"
+            },
+            "antes del lanzamiento": {
+              "paragraph": "Elegí la complejidad temporal · ~1 min · próximamente"
+            },
+            "sesión no disponible": {
+              "paragraph": "Elegí la complejidad temporal · ~1 min"
             }
           },
           "hidden_in_states": [
-            "loading",
-            "error de sistema"
+            "loading"
           ]
         },
         {
@@ -274,6 +378,18 @@
               "content": "—"
             },
             "sin sesión": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            },
+            "ningún desafío hoy": {
+              "content": "Sin desafío hoy",
+              "variant": "disabled"
+            },
+            "antes del lanzamiento": {
+              "content": "Próximamente",
+              "variant": "disabled"
+            },
+            "sesión no disponible": {
               "content": "Jugar →",
               "variant": "disabled"
             }
@@ -299,11 +415,22 @@
             },
             "sin sesión": {
               "paragraph": "Ordená 5 hitos de la tecnología · ~1 min · racha 0 · sin sesión"
+            },
+            "error de sistema": {
+              "paragraph": "Ordená 5 hitos de la tecnología · ~1 min"
+            },
+            "ningún desafío hoy": {
+              "paragraph": "Ordená 5 hitos de la tecnología · ~1 min · racha 0 · sin desafío hoy · no afecta tu racha"
+            },
+            "antes del lanzamiento": {
+              "paragraph": "Ordená 5 hitos de la tecnología · ~1 min · próximamente"
+            },
+            "sesión no disponible": {
+              "paragraph": "Ordená 5 hitos de la tecnología · ~1 min"
             }
           },
           "hidden_in_states": [
-            "loading",
-            "error de sistema"
+            "loading"
           ]
         },
         {
@@ -319,6 +446,18 @@
               "variant": "disabled"
             },
             "sin sesión": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            },
+            "ningún desafío hoy": {
+              "content": "Sin desafío hoy",
+              "variant": "disabled"
+            },
+            "antes del lanzamiento": {
+              "content": "Próximamente",
+              "variant": "disabled"
+            },
+            "sesión no disponible": {
               "content": "Jugar →",
               "variant": "disabled"
             }
@@ -340,11 +479,22 @@
             },
             "sin sesión": {
               "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · racha 0 · sin sesión"
+            },
+            "error de sistema": {
+              "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min"
+            },
+            "ningún desafío hoy": {
+              "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · racha 0 · sin desafío hoy · no afecta tu racha"
+            },
+            "antes del lanzamiento": {
+              "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · próximamente"
+            },
+            "sesión no disponible": {
+              "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min"
             }
           },
           "hidden_in_states": [
-            "loading",
-            "error de sistema"
+            "loading"
           ]
         },
         {
@@ -360,6 +510,18 @@
               "variant": "primary"
             },
             "sin sesión": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            },
+            "ningún desafío hoy": {
+              "content": "Sin desafío hoy",
+              "variant": "disabled"
+            },
+            "antes del lanzamiento": {
+              "content": "Próximamente",
+              "variant": "disabled"
+            },
+            "sesión no disponible": {
               "content": "Jugar →",
               "variant": "disabled"
             }
@@ -396,6 +558,15 @@
             },
             "sin sesión": {
               "paragraph": "Sin sesión no hay progreso para mostrar. Activá las cookies y recargá."
+            },
+            "ningún desafío hoy": {
+              "paragraph": "Todavía no hay datos. Cuando haya desafíos, acá vas a ver tu racha y tu heatmap."
+            },
+            "antes del lanzamiento": {
+              "paragraph": "Todavía no hay datos. Cuando empiecen los desafíos, acá vas a ver tu racha y tu heatmap."
+            },
+            "sesión no disponible": {
+              "paragraph": "Sin sesión no hay progreso para mostrar. Recargá en unos minutos."
             }
           }
         },
@@ -444,7 +615,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -591,6 +763,18 @@
         },
         {
           "name": "sin sesión",
+          "applies": true
+        },
+        {
+          "name": "ningún desafío hoy",
+          "applies": true
+        },
+        {
+          "name": "antes del lanzamiento",
+          "applies": true
+        },
+        {
+          "name": "sesión no disponible",
           "applies": true
         },
         {
@@ -899,7 +1083,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -1102,14 +1287,15 @@
           "type": "card",
           "category": "content",
           "content": "Datos y atribución",
-          "paragraph": "Parte del contenido proviene de Wikipedia y Wikidata y se usa bajo licencia CC BY-SA 4.0."
+          "paragraph": "Parte del contenido proviene de Wikipedia y Wikidata y se usa bajo licencia CC BY-SA 4.0.",
+          "annotation": "«Wikipedia», «Wikidata» y «CC BY-SA 4.0» son enlaces externos (pestaña nueva); el texto se muestra en el idioma elegido (ES/EN)"
         },
         {
           "name": "card-privacidad",
           "type": "card",
           "category": "content",
           "content": "Privacidad",
-          "paragraph": "No hay cuenta ni registro. Usamos una cookie funcional para guardar tu progreso; no la usamos para seguirte."
+          "paragraph": "No hay cuenta ni registro. Usamos una única cookie funcional para guardar tu progreso: no guarda datos personales, no la usamos para seguirte y no hay cookies de terceros. Por eso no te mostramos un banner de cookies."
         },
         {
           "name": "link-volver",
@@ -1122,7 +1308,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -1173,6 +1360,108 @@
               },
               {
                 "w": 1,
+                "stack": []
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "no-encontrado",
+      "displayName": "No encontrado (404)",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose · #8 · ES|EN",
+          "viewport_overrides": {
+            "desktop": {
+              "content": "> nerdose     ./juegos   ./stats   ./about     #8     ES | EN"
+            }
+          },
+          "annotation": "mismo header del shell; el #número se oculta si el servidor no lo informa"
+        },
+        {
+          "name": "nav-movil",
+          "type": "nav-bar",
+          "category": "navigation",
+          "visible_only_in_viewports": [
+            "mobile"
+          ],
+          "labels": [
+            "./juegos",
+            "./stats",
+            "./about"
+          ],
+          "active": 0
+        },
+        {
+          "name": "codigo",
+          "type": "heading",
+          "category": "content",
+          "content": "404 · página no encontrada",
+          "level": "h1"
+        },
+        {
+          "name": "mensaje",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Esta dirección no existe en nerdose. Los desafíos de hoy te esperan en la home.",
+          "level": "body"
+        },
+        {
+          "name": "btn-home",
+          "type": "button",
+          "category": "input",
+          "content": "Volver a los juegos",
+          "variant": "primary",
+          "icon": "arrow-left",
+          "annotation": "navega a /"
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          "nav-movil",
+          "codigo",
+          "mensaje",
+          "btn-home"
+        ],
+        "desktop": [
+          {
+            "row": "centrado",
+            "cols": [
+              {
+                "w": 3,
+                "stack": []
+              },
+              {
+                "w": 6,
+                "stack": [
+                  "codigo",
+                  "mensaje",
+                  "btn-home"
+                ]
+              },
+              {
+                "w": 3,
                 "stack": []
               }
             ]
@@ -1394,7 +1683,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -1676,7 +1966,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -1967,7 +2258,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -2279,7 +2571,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -2603,7 +2896,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -2927,7 +3221,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -3243,7 +3538,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -3555,7 +3851,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -3872,7 +4169,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -4186,7 +4484,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -4451,7 +4750,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -4769,7 +5069,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -5081,7 +5382,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -5381,7 +5683,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -5688,7 +5991,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso."
+          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
+          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -6101,7 +6405,8 @@
           "type": "alert",
           "category": "feedback",
           "content": "Activá las cookies para poder jugar",
-          "kind": "warning"
+          "kind": "warning",
+          "annotation": "solo si la creación de la sesión respondió 200 y el estado del día sigue sin sesión; con 429 no se muestra (REQ-002). ES|EN sigue funcionando, el cambio queda solo en este navegador"
         },
         {
           "name": "detalle",
@@ -6693,6 +6998,22 @@
       "srcBlock": "link-volver",
       "dst": "home",
       "trigger": "Volver a los juegos",
+      "automatic": false
+    },
+    {
+      "src": "no-encontrado",
+      "srcState": "default",
+      "srcBlock": "btn-home",
+      "dst": "home",
+      "trigger": "Volver a los juegos",
+      "automatic": false
+    },
+    {
+      "src": "home",
+      "srcState": "error de sistema",
+      "srcBlock": "btn-reintentar",
+      "dst": "home",
+      "trigger": "Reintentar",
       "automatic": false
     }
   ]

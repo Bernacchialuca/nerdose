@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.0"
-date: 2026-11-03
+version: "1.1"
+date: 2026-11-04
 ---
 
 # Pantalla: Acerca de
@@ -28,7 +28,7 @@ date: 2026-11-03
 **Entradas:**
 - `home` · «¿Cómo funciona?»
 - Header · `./about`
-- `home`/`estadisticas`/`*-resultado` · aviso de privacidad del footer
+- Cualquier pantalla · enlace «Acerca de» del footer (REQ-002, CA 19)
 
 **Salidas user-driven:**
 - A `home` · «Volver a los juegos»
@@ -49,7 +49,7 @@ date: 2026-11-03
 | 7 | card-atribucion | card | — | content | ambos | — | Atribución obligatoria de Wikipedia y Wikidata |
 | 8 | card-privacidad | card | — | content | ambos | — | Aviso de privacidad |
 | 9 | link-volver | link | — | navigation | ambos | — | Salida a la home |
-| 10 | footer | footer | — | layout | ambos | — | Aviso breve de privacidad |
+| 10 | footer | footer | — | layout | ambos | — | Aviso breve de privacidad y enlace a Acerca de |
 
 ## Layout por viewport
 
@@ -115,11 +115,11 @@ date: 2026-11-03
 - Texto/label: Datos y atribución
 - Texto secundario: Parte del contenido proviene de Wikipedia y Wikidata y se usa bajo licencia CC BY-SA 4.0.
 - Icono: nada
-- Annotation: nada
+- Annotation: «Wikipedia», «Wikidata» y «CC BY-SA 4.0» son enlaces externos (pestaña nueva); el texto se muestra en el idioma elegido (ES/EN)
 
 ### card-privacidad
 - Texto/label: Privacidad
-- Texto secundario: No hay cuenta ni registro. Usamos una cookie funcional para guardar tu progreso; no la usamos para seguirte.
+- Texto secundario: No hay cuenta ni registro. Usamos una única cookie funcional para guardar tu progreso: no guarda datos personales, no la usamos para seguirte y no hay cookies de terceros. Por eso no te mostramos un banner de cookies.
 - Icono: nada
 - Annotation: nada
 
@@ -129,9 +129,9 @@ date: 2026-11-03
 - Annotation: nada
 
 ### footer
-- Texto/label: nerdose.dev · Sin cuenta: una cookie funcional guarda tu progreso.
+- Texto/label: nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de
 - Icono: nada
-- Annotation: nada
+- Annotation: «Acerca de» es un enlace a `acerca-de`; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)
 
 ## Estados
 
@@ -163,6 +163,7 @@ date: 2026-11-03
 **Decisiones tomadas:**
 - Pantalla estática de un solo estado: no hay datos de sesión ni de red, así que no hay `loading` ni error.
 - La atribución CC BY-SA vive en esta pantalla por obligación de licencia (C-07).
+- REQ-002: el aviso de privacidad explicita «una única cookie funcional, sin datos personales ni cookies de terceros» y por qué no hay banner (RF 15, NFR-PR01); la entrada principal pasa a ser el enlace del footer, presente en todas las pantallas (RF 14, CA 19). Sin cambios de layout.
 
 **Alternativas descartadas:**
 - Un FAQ con acordeones: más interacción para un contenido corto.
@@ -173,3 +174,4 @@ date: 2026-11-03
 ## Trazabilidad
 
 - C-07, F-01 · flujo 3 (dudas sobre la racha).
+- REQ-002: RF 14, RF 15 · CA 19, CA 21.

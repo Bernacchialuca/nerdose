@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.0"
-date: 2026-11-03
+version: "1.1"
+date: 2026-11-04
 overlay: true
 overlay_type: banner
 triggered_by: home
@@ -29,7 +29,7 @@ triggered_by: home
 ## Entrada y salida
 
 **Entradas:**
-- Shell · detección tras `POST /api/session`
+- Shell · detección: la creación de la sesión respondió bien y el estado del día pedido después sigue sin sesión (REQ-002)
 
 **Salidas user-driven:**
 - Ninguna.
@@ -101,6 +101,8 @@ triggered_by: home
 
 **Decisiones tomadas:**
 - Banner, no modal: no bloquea la lectura del catálogo (C-02).
+- REQ-002: solo se muestra si la creación de la sesión respondió 200 y el estado del día siguiente sigue con `has_session = false`. Si la creación fue rechazada por límite (429), no se muestra: la home pasa a «sesión no disponible», para no culpar al navegador de un límite del servidor.
+- REQ-002: con el banner visible, el selector ES/EN sigue funcionando, pero el cambio queda solo en este navegador (no hay Player donde guardarlo).
 
 **Alternativas descartadas:**
 - Modal que bloquea todo: impide ver estadísticas y «Acerca de», que sí funcionan.
@@ -111,3 +113,4 @@ triggered_by: home
 ## Trazabilidad
 
 - C-02, C-01 · flujo 1 (errores).
+- REQ-002: RF 5 · CA 5, CA 13.
