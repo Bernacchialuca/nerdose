@@ -9,7 +9,9 @@ export function loadEnv(runtimeEnv: Record<string, string | undefined> = process
   return createEnv({
     server: {
       NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-      LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'silent']).default('info'),
+      LOG_LEVEL: z
+        .enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'silent'])
+        .default('info'),
       SERVICE_NAME: z.string().default('generator'),
       DATABASE_URL: z.url(),
     },

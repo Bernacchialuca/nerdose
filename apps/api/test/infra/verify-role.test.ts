@@ -22,7 +22,11 @@ describe('verifyDbRole', () => {
     const { logger, lines } = captureLogger();
     await expect(verifyDbRole(open(inject('apiUrl')), logger, 2000)).resolves.toBe('nerdose_api');
     expect(lines()).toContainEqual(
-      expect.objectContaining({ level: 'info', db_role: 'nerdose_api', msg: 'Database role verified' }),
+      expect.objectContaining({
+        level: 'info',
+        db_role: 'nerdose_api',
+        msg: 'Database role verified',
+      }),
     );
   });
 
@@ -30,12 +34,20 @@ describe('verifyDbRole', () => {
     const port = await freePort();
     const { logger, lines } = captureLogger();
     const start = Date.now();
-    const result = await verifyDbRole(open(`postgres://nerdose_api:x@127.0.0.1:${port}/nerdose`), logger, 2000);
+    const result = await verifyDbRole(
+      open(`postgres://nerdose_api:x@127.0.0.1:${port}/nerdose`),
+      logger,
+      2000,
+    );
     expect(result).toBeNull();
     expect(Date.now() - start).toBeLessThan(3000);
     const all = lines();
     expect(all).toContainEqual(
-      expect.objectContaining({ level: 'warn', msg: 'Database unavailable at startup', err: expect.anything() }),
+      expect.objectContaining({
+        level: 'warn',
+        msg: 'Database unavailable at startup',
+        err: expect.anything(),
+      }),
     );
     expect(JSON.stringify(all)).not.toContain(`postgres://nerdose_api:x@127.0.0.1:${port}`);
   });

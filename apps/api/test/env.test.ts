@@ -52,7 +52,12 @@ describe('loadEnv', () => {
       SERVICE_NAME: 'api-test',
       DATABASE_URL: URL_OK,
     });
-    expect(env).toMatchObject({ PORT: 4010, NODE_ENV: 'test', LOG_LEVEL: 'silent', SERVICE_NAME: 'api-test' });
+    expect(env).toMatchObject({
+      PORT: 4010,
+      NODE_ENV: 'test',
+      LOG_LEVEL: 'silent',
+      SERVICE_NAME: 'api-test',
+    });
   });
 
   describe('sin argumento', () => {

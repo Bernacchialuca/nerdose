@@ -22,9 +22,15 @@ afterEach(async () => {
 describe('verifyDbRole', () => {
   it('devuelve nerdose_generator y lo loguea', async () => {
     const { logger, lines } = captureLogger();
-    await expect(verifyDbRole(open(inject('generatorUrl')), logger, 2000)).resolves.toBe('nerdose_generator');
+    await expect(verifyDbRole(open(inject('generatorUrl')), logger, 2000)).resolves.toBe(
+      'nerdose_generator',
+    );
     expect(lines()).toContainEqual(
-      expect.objectContaining({ level: 'info', db_role: 'nerdose_generator', msg: 'Database role verified' }),
+      expect.objectContaining({
+        level: 'info',
+        db_role: 'nerdose_generator',
+        msg: 'Database role verified',
+      }),
     );
   });
 
@@ -45,7 +51,11 @@ describe('verifyDbRole', () => {
     const { logger } = captureLogger();
     const start = Date.now();
     await expect(
-      verifyDbRole(open(`postgres://nerdose_generator:x@127.0.0.1:${silent.port}/nerdose`), logger, 2000),
+      verifyDbRole(
+        open(`postgres://nerdose_generator:x@127.0.0.1:${silent.port}/nerdose`),
+        logger,
+        2000,
+      ),
     ).rejects.toThrow('Timed out after 2000 ms');
     const elapsed = Date.now() - start;
     expect(elapsed).toBeGreaterThanOrEqual(1900);

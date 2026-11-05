@@ -24,7 +24,15 @@ export interface ComposeConfigOptions {
 /** Runs `docker compose config` and returns the normalized configuration. */
 export function composeConfig(options: ComposeConfigOptions = {}): ComposeConfig {
   const { interpolate = true, file = 'compose.yaml' } = options;
-  const args = ['compose', '-f', file, 'config', '--format', 'json', ...(interpolate ? [] : ['--no-interpolate'])];
+  const args = [
+    'compose',
+    '-f',
+    file,
+    'config',
+    '--format',
+    'json',
+    ...(interpolate ? [] : ['--no-interpolate']),
+  ];
   const result = spawnSync('docker', args, {
     cwd: REPO_ROOT,
     encoding: 'utf8',

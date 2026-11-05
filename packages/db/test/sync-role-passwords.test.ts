@@ -58,10 +58,14 @@ describe('syncRolePasswords', () => {
   it('TS-14: validates everything before any ALTER', async () => {
     const would = withUser(apiUrl, 'nerdose_api', 'no-aplica');
     await expect(
-      syncRolePasswords(owner, { api: would, generator: 'postgres://nerdose_api:y@h:5432/nerdose' }),
+      syncRolePasswords(owner, {
+        api: would,
+        generator: 'postgres://nerdose_api:y@h:5432/nerdose',
+      }),
     ).rejects.toMatchObject({
       code: 'validation_error',
-      message: 'DATABASE_URL_GENERATOR debe usar el usuario nerdose_generator (recibido: nerdose_api)',
+      message:
+        'DATABASE_URL_GENERATOR debe usar el usuario nerdose_generator (recibido: nerdose_api)',
     });
     await expect(currentUser(would)).rejects.toMatchObject({ code: '28P01' });
     expect(await currentUser(apiUrl)).toEqual([{ role: 'nerdose_api' }]);
@@ -70,7 +74,10 @@ describe('syncRolePasswords', () => {
   it('TS-15: rejects a URL without password', async () => {
     await expect(
       syncRolePasswords(owner, { api: 'postgres://nerdose_api@127.0.0.1:5432/nerdose' }),
-    ).rejects.toMatchObject({ code: 'validation_error', message: 'DATABASE_URL_API no tiene contraseña' });
+    ).rejects.toMatchObject({
+      code: 'validation_error',
+      message: 'DATABASE_URL_API no tiene contraseña',
+    });
   });
 
   it('TS-16: nothing to sync', async () => {

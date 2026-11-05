@@ -2,7 +2,13 @@ import { readFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-import { findEnvExampleViolations, findJsSourceFiles, isIgnored, listRepoFiles, REPO_ROOT } from './helpers/repo';
+import {
+  findEnvExampleViolations,
+  findJsSourceFiles,
+  isIgnored,
+  listRepoFiles,
+  REPO_ROOT,
+} from './helpers/repo';
 
 describe('.gitignore', () => {
   it.each([
@@ -35,7 +41,9 @@ describe('versioned files', () => {
   const files = listRepoFiles();
 
   it('contains no environment files', () => {
-    const envFiles = files.filter((file) => ['.env', '.env.local', '.env.test'].includes(basename(file)));
+    const envFiles = files.filter((file) =>
+      ['.env', '.env.local', '.env.test'].includes(basename(file)),
+    );
     expect(envFiles).toEqual([]);
   });
 
@@ -54,18 +62,26 @@ describe('versioned files', () => {
 
 describe('findEnvExampleViolations', () => {
   it('reports a line that carries a value', () => {
-    expect(findEnvExampleViolations('# comment\nPOSTGRES_PASSWORD=secret\n')).toEqual(['POSTGRES_PASSWORD=secret']);
+    expect(findEnvExampleViolations('# comment\nPOSTGRES_PASSWORD=secret\n')).toEqual([
+      'POSTGRES_PASSWORD=secret',
+    ]);
   });
 
   it('accepts comments and empty values', () => {
-    expect(findEnvExampleViolations('# Password of the local owner role\nPOSTGRES_PASSWORD=\n')).toEqual([]);
+    expect(
+      findEnvExampleViolations('# Password of the local owner role\nPOSTGRES_PASSWORD=\n'),
+    ).toEqual([]);
   });
 });
 
 describe('findJsSourceFiles', () => {
   it('reports source files and allows tool configuration', () => {
     expect(
-      findJsSourceFiles(['packages/core/src/index.js', 'apps/web/vite.config.js', 'eslint.config.js']),
+      findJsSourceFiles([
+        'packages/core/src/index.js',
+        'apps/web/vite.config.js',
+        'eslint.config.js',
+      ]),
     ).toEqual(['packages/core/src/index.js']);
   });
 });

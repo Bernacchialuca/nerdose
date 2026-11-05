@@ -14,9 +14,11 @@ describe('describeMigrateError', () => {
   );
 
   it('describes other errors', () => {
-    expect(describeMigrateError(new AppError('validation_error', 'DATABASE_URL_API no tiene contraseña'))).toBe(
-      'db:migrate falló: DATABASE_URL_API no tiene contraseña',
-    );
+    expect(
+      describeMigrateError(
+        new AppError('validation_error', 'DATABASE_URL_API no tiene contraseña'),
+      ),
+    ).toBe('db:migrate falló: DATABASE_URL_API no tiene contraseña');
     expect(describeMigrateError(new Error('boom'))).toBe('db:migrate falló: boom');
     expect(describeMigrateError('raro')).toBe('db:migrate falló: raro');
   });

@@ -15,7 +15,12 @@ describe('turbo run dev', () => {
   const running: TurboDryRunTask[] = tasks.filter((task) => task.command !== NONEXISTENT);
 
   it('runs exactly the four apps', () => {
-    expect(running.map((task) => task.taskId).sort()).toEqual(['admin#dev', 'api#dev', 'generator#dev', 'web#dev']);
+    expect(running.map((task) => task.taskId).sort()).toEqual([
+      'admin#dev',
+      'api#dev',
+      'generator#dev',
+      'web#dev',
+    ]);
   });
 
   it('runs each app task as persistent and uncached', () => {
@@ -26,7 +31,9 @@ describe('turbo run dev', () => {
   });
 
   it('uses the expected command per app', () => {
-    expect(Object.fromEntries(running.map((task) => [task.taskId, task.command]))).toEqual(EXPECTED_COMMANDS);
+    expect(Object.fromEntries(running.map((task) => [task.taskId, task.command]))).toEqual(
+      EXPECTED_COMMANDS,
+    );
   });
 
   it('does not run anything for packages without a dev script', () => {

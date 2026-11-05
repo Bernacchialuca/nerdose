@@ -34,7 +34,9 @@ describe('Shell (pantalla de Admin)', () => {
     expect(screen.queryAllByRole('link')).toHaveLength(0);
     expect(screen.queryAllByRole('button')).toHaveLength(0);
     expect(screen.queryAllByRole('navigation')).toHaveLength(0);
-    expect(screen.queryByText(/iniciar sesión|contraseña|cerrar sesión|reportes|métricas/i)).toBeNull();
+    expect(
+      screen.queryByText(/iniciar sesión|contraseña|cerrar sesión|reportes|métricas/i),
+    ).toBeNull();
   });
 
   it('fija el título del documento', () => {

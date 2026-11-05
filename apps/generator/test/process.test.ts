@@ -63,7 +63,10 @@ describe('proceso del generator', () => {
   });
 
   it.each([
-    ['rechazada', async () => `postgres://nerdose_generator:x@127.0.0.1:${await freePort()}/nerdose`],
+    [
+      'rechazada',
+      async () => `postgres://nerdose_generator:x@127.0.0.1:${await freePort()}/nerdose`,
+    ],
     [
       'colgada',
       async () => {
@@ -80,7 +83,11 @@ describe('proceso del generator', () => {
     expect(Date.now() - start).toBeLessThan(10_000);
     const all = running.parsed();
     expect(all).toContainEqual(
-      expect.objectContaining({ level: 'fatal', msg: 'Database unavailable at startup', err: expect.anything() }),
+      expect.objectContaining({
+        level: 'fatal',
+        msg: 'Database unavailable at startup',
+        err: expect.anything(),
+      }),
     );
     expect(all.some(isStarted)).toBe(false);
     expect(running.lines().join('\n')).not.toContain(url);

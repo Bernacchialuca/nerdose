@@ -27,7 +27,10 @@ const frontendsOnlyClient = {
 // Matches only imports that enter the src/ of another app, so a module-level `api/`
 // folder inside web does not trigger a false positive.
 const crossApp = (self) => ({
-  group: APPS.filter((app) => app !== self).flatMap((app) => [`**/${app}/src/**`, `**/apps/${app}/**`]),
+  group: APPS.filter((app) => app !== self).flatMap((app) => [
+    `**/${app}/src/**`,
+    `**/apps/${app}/**`,
+  ]),
   message: 'Apps never import from other apps.',
 });
 

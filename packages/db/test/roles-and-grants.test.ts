@@ -47,8 +47,10 @@ describe('roles and grants', () => {
   });
 
   it('TS-3: the migration creates the roles when they do not exist', async () => {
-    const statements = readFileSync(join(MIGRATIONS_FOLDER, '0000_roles_and_grants.sql'), 'utf8')
-      .split('--> statement-breakpoint');
+    const statements = readFileSync(
+      join(MIGRATIONS_FOLDER, '0000_roles_and_grants.sql'),
+      'utf8',
+    ).split('--> statement-breakpoint');
     const rollback = new Error('rollback');
     let inside: { roles: string[]; usage: boolean } | undefined;
 
@@ -60,14 +62,17 @@ describe('roles and grants', () => {
         for (const statement of statements) await tx.unsafe(statement);
         const roles = await tx<{ rolname: string }[]>`SELECT rolname FROM pg_roles
           WHERE rolname IN ('nerdose_api','nerdose_generator') ORDER BY rolname`;
-        const [priv] = await tx<{ usage: boolean }[]>`SELECT has_schema_privilege('nerdose_api','public','USAGE') AS usage`;
+        const [priv] = await tx<
+          { usage: boolean }[]
+        >`SELECT has_schema_privilege('nerdose_api','public','USAGE') AS usage`;
         inside = { roles: roles.map((r) => r.rolname), usage: priv!.usage };
         throw rollback;
       }),
     ).rejects.toBe(rollback);
 
     expect(inside).toEqual({ roles: ['nerdose_api', 'nerdose_generator'], usage: true });
-    const after = await owner`SELECT rolname FROM pg_roles WHERE rolname IN ('nerdose_api','nerdose_generator')`;
+    const after =
+      await owner`SELECT rolname FROM pg_roles WHERE rolname IN ('nerdose_api','nerdose_generator')`;
     expect(after).toHaveLength(2);
   });
 

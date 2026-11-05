@@ -25,10 +25,16 @@ describe('cn', () => {
   it('accepts conditional values like clsx (TS-11)', () => {
     const isActive = false;
     expect(
-      cn('font-mono', isActive && 'text-accent', undefined, null, 0, '', { 'bg-bg': true, 'bg-surface': false }, [
-        'p-2',
-        ['m-1'],
-      ]),
+      cn(
+        'font-mono',
+        isActive && 'text-accent',
+        undefined,
+        null,
+        0,
+        '',
+        { 'bg-bg': true, 'bg-surface': false },
+        ['p-2', ['m-1']],
+      ),
     ).toBe('font-mono bg-bg p-2 m-1');
   });
 

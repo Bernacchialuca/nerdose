@@ -12,12 +12,19 @@ afterAll(async () => {
 
 describe('createRoles', () => {
   it('TS-10: returns the URLs of the three roles', async () => {
-    const urls = [inject('ownerUrl'), inject('apiUrl'), inject('generatorUrl')].map((u) => new URL(u));
-    expect(urls.map((u) => u.username)).toEqual(['nerdose_owner', 'nerdose_api', 'nerdose_generator']);
+    const urls = [inject('ownerUrl'), inject('apiUrl'), inject('generatorUrl')].map(
+      (u) => new URL(u),
+    );
+    expect(urls.map((u) => u.username)).toEqual([
+      'nerdose_owner',
+      'nerdose_api',
+      'nerdose_generator',
+    ]);
     const passwords = urls.map((u) => u.password);
     expect(passwords.every((p) => p !== '')).toBe(true);
     expect(new Set(passwords).size).toBe(3);
-    const [row] = await sql`SELECT nspowner::regrole::text AS owner FROM pg_namespace WHERE nspname = 'public'`;
+    const [row] =
+      await sql`SELECT nspowner::regrole::text AS owner FROM pg_namespace WHERE nspname = 'public'`;
     expect(row!.owner).toBe('nerdose_owner');
   });
 });

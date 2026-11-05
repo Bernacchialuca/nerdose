@@ -28,14 +28,21 @@ describe('README.md', () => {
     expect(examples.length).toBeGreaterThan(0);
     for (const file of examples) {
       const dir = dirname(file);
-      const command = dir === '.' ? 'cp .env.example .env' : `cp ${dir}/.env.example ${dir}/.env.local`;
+      const command =
+        dir === '.' ? 'cp .env.example .env' : `cp ${dir}/.env.example ${dir}/.env.local`;
       expect(text, command).toContain(command);
     }
   });
 
   it('names the database roles and their URL variables', () => {
     const text = readme();
-    for (const name of ['nerdose_api', 'nerdose_generator', 'nerdose_owner', 'DATABASE_URL_API', 'DATABASE_URL_GENERATOR']) {
+    for (const name of [
+      'nerdose_api',
+      'nerdose_generator',
+      'nerdose_owner',
+      'DATABASE_URL_API',
+      'DATABASE_URL_GENERATOR',
+    ]) {
       expect(text, name).toContain(name);
     }
   });

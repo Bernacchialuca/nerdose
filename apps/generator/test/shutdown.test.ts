@@ -23,7 +23,9 @@ describe('createShutdownHandler', () => {
     expect(controller.signal.aborted).toBe(true);
     expect(vi.getTimerCount()).toBe(0);
     await expect(sql`SELECT 1`).rejects.toBeDefined();
-    expect(lines()).toContainEqual(expect.objectContaining({ level: 'info', msg: 'Shutdown complete' }));
+    expect(lines()).toContainEqual(
+      expect.objectContaining({ level: 'info', msg: 'Shutdown complete' }),
+    );
     expect(exit).toHaveBeenCalledExactlyOnceWith(0);
   });
 
@@ -57,7 +59,11 @@ describe('createShutdownHandler', () => {
     })();
     const all = lines();
     expect(all).toContainEqual(
-      expect.objectContaining({ level: 'error', msg: 'Database close failed', err: expect.anything() }),
+      expect.objectContaining({
+        level: 'error',
+        msg: 'Database close failed',
+        err: expect.anything(),
+      }),
     );
     expect(all.at(-1)).toMatchObject({ msg: 'Shutdown complete' });
     expect(exit).toHaveBeenCalledWith(0);

@@ -18,5 +18,8 @@ export const createErrorHandler =
       );
     }
     log.error({ err }, 'Unexpected error');
-    return c.json({ error: { code: 'internal_error', message: errorMessage('internal_error') } }, 500);
+    return c.json(
+      { error: { code: 'internal_error', message: errorMessage('internal_error') } },
+      500,
+    );
   };
