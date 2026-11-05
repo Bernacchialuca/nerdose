@@ -46,7 +46,7 @@ export default defineConfig({ plugins: [react(), tailwindcss()] });
 
 ## Design tokens
 
-> **Source of truth.** The formal Design System does not exist yet; it will be generated later by `/product-ux-generate` into `docs/design-system/`. **When it exists, its tokens take precedence over the values below**, and `@nerdose/ui/tokens.css` must be updated to match it. Until then, the values below are extracted from the prototype `docs/nerdose.html`, which uses them inline (it declares no CSS variables), so the role names are an interpretation.
+> **Source of truth.** The Design System of each surface (`docs/design-system/<surface>/`) takes precedence over the values below; for `web` it is v1.0.0+, extracted from the prototype `docs/nerdose.html`, which is the visual source of truth (NFR-U07). `@nerdose/ui/tokens.css` must be updated to match the DS. The values below are a historical snapshot and may be outdated.
 
 ```css
 /* packages/ui/src/tokens.css */

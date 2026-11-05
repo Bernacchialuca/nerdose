@@ -1,103 +1,126 @@
 ---
 component: card
-version: 0.2.0
+version: 1.0.0
 status: active
 last_updated: 2026-11-05
-related: [button, alert]
+source: docs/nerdose.html
+related: [panel, button, chip, streak-pill, streak-number, progress-bar]
 ---
 
 # Card
 
 ## Propósito
 
-**Descripción:** contenedor de superficie para agrupar un bloque de contenido autónomo. Es el único elemento del DS con radio. Implementado en `@nerdose/ui` (`packages/ui/src/components/card.tsx`).
+**Descripción:** contenedor autónomo que representa **una cosa**: un juego, un paso, un dato. Las tarjetas destacadas de Home llevan radio 16px; las de datos y pasos, 14px; las celdas de stat internas, 10-12px.
 
 **Cuándo usar:**
-- Tarjeta de cada juego en la home.
-- Resumen "Tu progreso" y otros bloques autónomos de una pantalla.
+- Tarjeta de cada juego en el catálogo (Home) y su placeholder "próximo juego".
+- Paso de "Cómo funciona".
+- Un dato numérico (mini-stat, stat-card, métrica, contador) y la tarjeta por juego de Stats.
 
 **Cuándo NO usar:**
-- Para avisos o errores: usar `alert` (error) o el banner de advertencia (O-03).
-- Como envoltorio de toda la página o de un formulario completo.
-- Anidada dentro de otra Card.
+- Bloque con título `//` y contenido variado → [panel](./panel.md).
+- Mensaje de resultado o aviso → [banner](./banner.md) / [alert](./alert.md).
+- Racha global grande → [streak-number](./streak-number.md) (variant `card`).
 
-## Anatomía
+## Anatomía (tarjeta de juego)
 
-1. **Container** — `<article>` con fondo de superficie, borde y radio.
-2. **Heading** — título del bloque (`h2`), lo aporta quien consume la Card.
-3. **Body** — contenido libre (descripción, metadatos, estado).
-4. **Footer (opcional)** — CTA al pie, empujado con `mt-auto`.
-
-La Card no tiene texto propio ni conoce los juegos: todo entra por `children`.
+1. **Container** — `<article>`, `bg.surface`, borde `border.default`, `radius.feature` (16), `overflow: hidden`, columna (L84).
+2. **Miniatura** — 150px de alto, fondo `game.{j}.tint`, `border-bottom` `game.{j}.tint-border`, `aria-hidden`: mini-maqueta del juego en divs (detalle en [`patterns/game-boards.md`](../patterns/game-boards.md#miniaturas-de-tarjeta)).
+3. **Cuerpo** — padding 20, columna, gap 12, `flex-grow: 1` (L91).
+4. **Fila de título** — `h3` en `type.title.card` con el acento del juego + [badge](./chip.md) de estado a la derecha (`justify-content: space-between`, gap 8, L92).
+5. **Descripción** — `type.body` (Inter 15/1.5), `text.lede` (L96).
+6. **Metadatos** — `type.meta`, `text.dim`, gap 14, `margin-top: auto; padding-top: 8px`; el último ítem "▲ racha N" en `streak.text` (L97-98).
+7. **CTA** — [button](./button.md) `md` de ancho completo: `accent` "Jugar →" si está pendiente, `secondary` "Ver resultado" si está resuelto (L100, L142).
 
 ## Variants
 
-| Variant | Propósito | Tokens / Foundations | Ejemplo de uso |
-|---------|-----------|----------------------|----------------|
-| `default` | Único variant: bloque autónomo | `card.*` | Tarjeta de Devdle |
+| Variant | Propósito | Tokens | Ejemplo | Fuente |
+|---|---|---|---|---|
+| `game` | Tarjeta de un juego del catálogo | `card.game.*` | Devdle, Bug Hunt… | L84-188 |
+| `game` + `next` | El próximo juego a jugar: borde de acento + anillo de 1px + glow | `card.next.*` | Big O | L125 |
+| `placeholder` | "Próximo juego / próximamente": borde punteado, sin fondo (deja ver los puntos) | `card.placeholder.*` | `$ git checkout -b próximo-juego` | L192-196 |
+| `step` | Paso de "Cómo funciona": sin fondo, borde sutil | `card.step.*` | "01 · todos los días" | L248-251 |
+| `mini-stat` | Dato chico dentro de un panel, sin borde | `card.mini-stat.*` | "31 récord de racha" | L225-227 |
+| `stat` | Dato destacado en Stats | `card.stat.*` | "178 desafíos completados" | L314-317 |
+| `metric` | Dato dentro de la tarjeta por juego (grilla 2×2) | `card.metric.*` | "96% victorias" | L344-346 |
+| `counter` | Contador de partida; valor en acento si es puntaje | `card.counter.*` | "3/8 encontradas", "02:14 tiempo" | L1109-1110 |
+| `game-stats` | Tarjeta por juego en Stats, con barra superior de 4px del acento | `card.game-stats.*` | "Devdle · racha 12 · máx 21" | L335-352 |
 
-El acento por juego no es una variant de la Card: se aplica al heading con `color.game.*`.
+**Decisión (prototipo incompleto):** la variant `next` solo está definida para Big O (`#2E4C6E` + `0 0 0 1px #5EB1FF33, 0 18px 40px rgba(20,60,110,0.25)`). Para los otros cuatro juegos el borde, el anillo y el glow quedan **Pendiente — el prototipo no los define**.
 
 ## Sizes
 
-| Size | Padding | Separación interna | Uso |
-|------|---------|--------------------|-----|
-| `default` (único) | `space.4` (16px) | `space.3` (12px) | Todas las tarjetas |
-
-El ancho lo decide la grilla que la contiene (1 columna en mobile, 3 por fila en desktop en la home).
+| Variant | Radio | Padding | Gap | Extra |
+|---|---|---|---|---|
+| `game` | 16 | 20 (cuerpo) | 12 | Miniatura 150px |
+| `placeholder` | 16 | 28 | 12 | `min-height: 300px` |
+| `step` | 14 | 22 | 8 | Kicker Mono 14 con color por paso: 01 `#3DDC84`, 02 `#FFB547`, 03 `#5EB1FF`, 04 `#C39BFF` (L248-251); texto `type.body` `text.body` |
+| `mini-stat` | 12 | 14 16 | 4 | Valor `type.numeric.md`; etiqueta Inter 13 `text.muted` |
+| `stat` | 14 | 20 | 6 | Valor `type.numeric.xl`; etiqueta Inter 14 `text.muted` |
+| `metric` | 10 | 12 | 2 | Valor `type.numeric.sm`; etiqueta Inter 12 `text.muted` |
+| `counter` | 12 | 12 18 | 2 | Valor `type.numeric.lg`; etiqueta Mono 12 `text.muted` |
+| `game-stats` | 14 | 20 | 16 | Barra 4px; `h3` `type.title.card.compact` en acento; "racha N · máx M" Mono 12 `streak.text`; métricas 2×2 gap 10; [link](./link.md) `subtle` al pie |
 
 ## States
 
-| State | Descripción | Tokens afectados |
-|-------|-------------|------------------|
-| default | Estado base | `card.bg`, `card.border` |
-| hover / focus / active | No aplica: la Card no es interactiva. El foco lo reciben los controles de adentro | — |
-| disabled / loading | No aplica | — |
+| State | Descripción |
+|---|---|
+| default | Estado base |
+| pendiente / resuelto (`game`) | Cambia el badge (`pending` / `success`) y el CTA (`accent` / `secondary`) |
+| hover / focus / active | No aplica al contenedor: no es interactivo. El foco lo recibe el CTA. **Pendiente — el prototipo no define** hover de tarjeta. |
+| disabled | Sin sesión o sin desafío (estados de producto): la tarjeta se ve igual y el CTA pasa a deshabilitado neutro (ver [button](./button.md)). |
 
 ## Spacing & sizing rules
 
-- **Padding interno:** `space.4` (16px) en los cuatro lados.
-- **Separación entre hijos:** `space.3` (12px), en columna.
-- **Margen externo:** lo define la grilla (`gap`) del contenedor.
-- **Min/max:** sin ancho fijo; en una fila de tarjetas usar `h-full` para igualar alturas.
+- Grilla del catálogo: `repeat(auto-fit, minmax(300px, 1fr))`, gap 20 (L82); 3 columnas en desktop (5 juegos + placeholder = 2 filas). Adaptación 320px en `foundations/grid.md`.
+- "Cómo funciona": `minmax(240px, 1fr)`, gap 16. Mini-stats: `minmax(140px, 1fr)`, gap 12. Stat-cards: `minmax(160px, 1fr)`, gap 12. Stats por juego: `minmax(220px, 1fr)`, gap 16.
+- Las tarjetas de una fila igualan alto (`grid` + columna con `flex-grow`) y alinean el CTA al pie.
 
 ## Accesibilidad
 
-- **ARIA:** se renderiza como `<article>`. Asociarla a su heading con `aria-labelledby` para que el lector la anuncie por nombre.
-- **Teclado:** no es focusable.
-- **Foco:** no aplica al contenedor.
-- **Screen reader:** el heading tiene que ser un `h2` (o el nivel que corresponda a la jerarquía de la página).
-- **Contraste:** el borde (`border.default` sobre `bg.surface`, 1,3:1) es decorativo; la tarjeta no depende de él para identificarse.
+- **ARIA:** `game` y `game-stats` son `<article>` con `aria-labelledby` a su título. La miniatura es `aria-hidden`.
+- **Jerarquía:** el título de tarjeta es `h3` bajo el `h2` de la sección ("Los desafíos de hoy").
+- **Teclado:** no focusable; el CTA sí.
+- **Estado no solo por color:** el badge lleva texto ("✓ resuelto 4/6", "pendiente"); `next` se reconoce también por ser el destino de "Seguir jugando" (L42).
+- **Contraste:** descripción `#A9B4BF`/`#0F1318` 8,9:1; metadatos `#8D99A6`/`#0F1318` 6,4:1; racha ámbar 10,6:1; títulos en acento ≥ 7,0:1. El borde de la tarjeta (1,4:1) es decorativo.
 
 ## Guidelines de contenido
 
-- El heading es el nombre del bloque, corto ("Devdle", "Tu progreso").
-- Una sola acción principal por Card.
+- Descripción: una o dos frases en voseo ("Adiviná el término técnico del día. Seis intentos, feedback por letra.").
+- Metadatos: 3 ítems cortos, el último la racha ("6 intentos", "~2 min", "▲ racha 12").
+- Placeholder: prompt git + una frase + chip "próximamente".
+- Stat: valor + etiqueta en minúscula ("desafíos completados").
 
 ## Do's & don'ts
 
 **Do:**
-- Usar `h-full` cuando las tarjetas comparten fila.
-- Poner el CTA al pie con `mt-auto` para alinear los botones entre tarjetas.
+- Usar radio 16 en tarjetas de juego y paneles destacados de Home; 14 en el resto.
+- Teñir miniatura, título y CTA pendiente con el acento del juego.
+- Mostrar la racha del juego en ámbar aunque la tarjeta sea de otro color.
 
 **Don't:**
-- No anidar Cards.
-- No agregar sombra: el DS de `web` no usa elevación en tarjetas (`elevation.0`).
-- No poner texto fijo dentro del componente (rompe i18n).
+- No agregar sombra salvo en `next`.
+- No anidar tarjetas `game`.
+- No poner fondo a `placeholder` ni a `step`: dejan ver la textura.
 
 ## API
 
 | Prop | Tipo | Default | Descripción |
-|------|------|---------|-------------|
-| `className` | `string` | — | Clases extra (por ejemplo `h-full`) |
-| `children` | contenido | — | Heading, body y footer |
-| `...props` | atributos de `<article>` | — | `aria-labelledby`, `id`, etc. |
+|---|---|---|---|
+| `variant` | `'game' \| 'placeholder' \| 'step' \| 'mini-stat' \| 'stat' \| 'metric' \| 'counter' \| 'game-stats'` | `'game'` | Variant |
+| `game` | `GameId` | — | Acento (`game`, `game-stats`, `counter` de puntaje) |
+| `next` | `boolean` | `false` | Tarjeta destacada (solo Big O definido) |
+| `status` | `'pending' \| 'done'` | — | Badge y CTA de `game` |
+| `thumbnail` | nodo | — | Miniatura del juego |
+| `value` / `label` | contenido | — | Variants de dato |
+| `children` | contenido | — | Cuerpo libre |
 
 ## Componentes y patterns relacionados
 
-- **button** — CTA al pie de la tarjeta.
-- **alert** — para errores, en lugar de una Card con texto rojo.
+- [panel](./panel.md), [button](./button.md), [chip](./chip.md) (badge), [streak-pill](./streak-pill.md) (racha inline), [link](./link.md), [`patterns/game-boards.md`](../patterns/game-boards.md) (miniaturas).
 
 ## Historial
 
-- 2026-11-05 v0.2.0 — Creación del spec a partir de la implementación de S-010 (`@nerdose/ui`). Radio `radius.xl` (16px), padding `space.4`, sin sombra.
+- 2026-11-05 v0.2.0 — Creación del spec desde `@nerdose/ui` (radio 16, padding 16, sin sombra).
+- 2026-11-05 v1.0.0 — Reescrito desde el prototipo: tarjeta de juego con miniatura de 150px, padding 20, badge, metadatos y CTA de ancho completo; variants `next` (anillo + glow, solo Big O), `placeholder`, `step`, `mini-stat`, `stat`, `metric`, `counter` y `game-stats`.

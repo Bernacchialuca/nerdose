@@ -1,115 +1,143 @@
 ---
 component: button
-version: 0.2.0
-status: experimental
+version: 1.0.0
+status: active
 last_updated: 2026-11-05
-related: [card, alert]
+source: docs/nerdose.html
+related: [link, card, banner, alert, game-header]
 ---
 
 # Button
 
 ## Propósito
 
-**Descripción:** acción o navegación principal de una pantalla, con estética terminal (sin radio, JetBrains Mono). Hoy vive como clases compartidas en `web` (`apps/web/src/components/cta.ts`), no como componente de `@nerdose/ui`: la mayoría de los CTA son enlaces de React Router, que `ui` no puede importar.
+**Descripción:** dispara una acción o lleva a la siguiente pantalla con aspecto de botón. En `web` es una familia de botones en JetBrains Mono con **radio de 10px** (L42, L43, L100, L142, L443, L622, L836, L1043), en dos tamaños (48 y 44px) y con el acento del contexto.
 
 **Cuándo usar:**
-- CTA de una tarjeta de juego ("Jugar", "Seguir jugando", "Ver resultado").
-- Acción de recuperación ("Reintentar" en un error, "Volver a los juegos" en la 404).
-- Cualquier acción que deba verse como botón aunque navegue (renderizado como `<a>`).
+- CTA del hero ("Seguir jugando →", "¿Cómo funciona?").
+- CTA de una tarjeta de juego ("Jugar →", "Ver resultado").
+- Acción del banner de resultado ("Siguiente juego →", "Volver a los juegos").
+- Acciones del header de juego (ayuda, estadísticas, Compartir).
+- Confirmar la jugada ("Confirmar línea 4 →").
 
 **Cuándo NO usar:**
-- Para enlaces dentro de un párrafo o de la navegación del header: usar un link de texto.
-- Para alternar idioma u opciones: usar el selector de idioma (control segmentado).
-- Para más de una acción `primary` en la misma vista de foco (ver Do's & don'ts).
+- Navegación de texto ("ver estadísticas →") → [link](./link.md).
+- Elegir idioma → [language-selector](./language-selector.md).
+- Piezas de juego (teclas, celdas, opciones de Big O) → [`patterns/game-boards.md`](../patterns/game-boards.md).
 
 ## Anatomía
 
-1. **Container** — caja de 44px de alto mínimo, sin radio.
-2. **Label** — texto de la acción, en el idioma activo.
-3. **Icono (opcional)** — flecha `→` o `←`, decorativa (`aria-hidden`), después o antes del label.
+1. **Container** — caja con `radius.control` (10px); relleno, borde de 1px o borde punteado según la variant.
+2. **Label** — texto Mono; peso 700 en rellenos, 500 en outline.
+3. **Ícono (opcional)** — SVG Lucide de 16px antes del label (Compartir), o `→` decorativo (`aria-hidden`) después del label en CTA de avance.
 
 ## Variants
 
-| Variant | Propósito | Tokens / Foundations | Ejemplo de uso |
-|---------|-----------|----------------------|----------------|
-| `primary` | Acción principal de la vista | `button.primary.*` | "Jugar →", "← Volver a los juegos" |
-| `secondary` | Acción alternativa o de recuperación | `button.secondary.*` | "Ver resultado", "Reintentar" |
-| `disabled` | Acción visible pero no disponible (sin desafío, sin sesión) | `button.disabled.*` | "Sin desafío hoy" |
+| Variant | Propósito | Tokens | Ejemplo | Fuente |
+|---|---|---|---|---|
+| `primary` | Acción principal de la plataforma; avanzar | `button.primary.*` (`accent.brand` / `accent.brand.on`) | "Seguir jugando →", "Siguiente juego →" | L42, L622, L877 |
+| `secondary` | Alternativa neutra (outline) | `button.secondary.*` (`border.control`, `text.primary`, 500) | "¿Cómo funciona?", "Ver resultado" | L43, L100, L121 |
+| `accent` | Acción principal **dentro del contexto de un juego**: relleno con el acento del juego | `button.accent.*` (`game.{j}.accent` / `game.{j}.on`) | "Jugar →" en la tarjeta de Big O; Compartir activo; Confirmar | L142, L166, L188, L604, L836, L860, L991 |
+| `outline-tinted` | Salida o alternativa con el borde tintado del contexto | `button.outline-tinted.*` | "Volver a los juegos" (violeta), acción del banner de fallo (rojo) | L634, L1043 |
+| `ghost` | Acción menor, provisional (borde punteado) | `button.ghost.*` | "↺ reiniciar demo" | L745 |
+| `icon` | Acción solo-ícono de 44×44 | `button.icon.*` | "Cómo se juega" (`circle-help`), "Estadísticas" (`chart`) | L443, L444 |
 
-`destructive` no existe todavía en `web` (no hay acciones destructivas del jugador). Los tokens `button.destructive.*` quedan reservados.
+**Compartir** es `accent` (tamaño `share`) con ícono `share`: activo al terminar la partida, deshabilitado durante el juego (L445, L601, L604).
+
+**Decisión (prototipo ambiguo):** el outline mediano aparece con tres pesos: 500 ("Ver resultado", L100), 700 (acción del banner de fallo, L634) y 400 ("Volver a los juegos", L1043). El DS fija **500** para `secondary` y `outline-tinted` (el uso más frecuente); los otros dos se registran como variación del prototipo.
 
 ## Sizes
 
-| Size | Alto | Padding horizontal | Uso |
-|------|------|--------------------|-----|
-| `md` (único) | 44px mínimo (`min-h-11`) | `space.4` (16px) | Todos los CTA; cumple el área táctil de 44px |
-
-En mobile el CTA principal de una vista centrada puede ocupar el ancho completo (`w-full`) y volver a ancho automático desde `lg`.
+| Size | Alto mínimo | Padding horizontal | Gap | Tipografía | Uso | Fuente |
+|---|---|---|---|---|---|---|
+| `lg` | 48px | 22px | 10px | `type.button.lg` (15) | Hero, Confirmar | L42, L43, L836 |
+| `md` | 44px | 16px | 8px | `type.button.md` (14) | Banner, salida | L622, L1043 |
+| `md` full-width | 44px | — (centrado) | — | `type.button.md` | CTA de tarjeta de juego | L100, L142 |
+| `share` | 44px (alto fijo) | 14px | 8px | `type.button.md` | Compartir | L445 |
+| `sm` (solo `ghost`) | 40px | 14px | — | `type.label.comment` (13/400) | Reiniciar | L745 |
+| `icon` | 44×44 | — | — | ícono 18px | Header de juego | L443 |
 
 ## States
 
-| State | Descripción | Tokens afectados |
-|-------|-------------|------------------|
-| default | Estado base | `button.{variant}.bg`, `.text`, `.border` |
-| hover | **Pendiente** — no hay estilo de hover implementado; candidato: `button.primary.bg.hover` (`bg.action.primary.hover`) | — |
-| focus | Contorno de 2px con 2px de separación en el acento | `button.focus.outline` |
-| active | **Pendiente** | — |
-| disabled | Variant propia: no es interactivo pero sigue en el orden de tabulación | `button.disabled.*` |
-| loading | **Pendiente** — no se usa en v1 | — |
+| State | Descripción | Tokens |
+|---|---|---|
+| default | Estado base de cada variant | `button.{variant}.*` |
+| hover | **Pendiente — el prototipo no lo define.** Los botones no cambian en hover (el `a:hover` global no gana sobre el color inline, L264). | `button.hover.*` |
+| focus | **Requisito** de accesibilidad: foco visible con ≥ 3:1. Único precedente del prototipo: `outline 2px solid <acento>; outline-offset: -2px` (L756). Estética global **Pendiente**. | `button.focus.outline` |
+| active | **Pendiente — el prototipo no lo define.** | — |
+| disabled (neutro) | Fondo `bg.control`, borde `border.control`, texto `text.disabled`, `cursor: not-allowed` (Compartir, L445) | `button.disabled.*` |
+| disabled (`accent` de Bug Hunt) | Fondo `#2A2416`, texto `#8A7856`, label que explica qué falta ("Elegí una línea") (L836) | `button.accent.disabled.*` |
+| loading | **Pendiente — el prototipo no lo define.** | — |
+
+**Decisión:** el prototipo solo define deshabilitado para Compartir (neutro) y Confirmar (ámbar). El estado deshabilitado de `primary`, `secondary` y `accent` fuera de Bug Hunt usa el **neutro** de Compartir. El deshabilitado tintado de otros juegos queda Pendiente.
 
 ## Spacing & sizing rules
 
-- **Padding interno:** horizontal `space.4` (16px); el alto lo fija `min-h` de 44px.
-- **Separación label–icono:** `space.2` (8px).
-- **Margen externo:** el contenedor decide; en una Card el CTA va al pie (`mt-auto`), en una Alert dentro del slot de acción (`space.3` arriba).
-- **Min/max:** alto mínimo 44px. Sin ancho máximo; el texto no se corta (sin `whitespace-nowrap`).
+- **Padding interno:** según size (22 / 16 / 14); el alto lo fija `min-height`.
+- **Separación label–ícono:** 10px (`lg`), 8px (`md`, `share`).
+- **Grupo de botones:** `gap: 12px` y `flex-wrap` en el hero (L41, con `padding-top: 6px`); `gap: 10px` en la acción del banner (L876); 8px entre acciones del header de juego (L442).
+- **En tarjeta:** el CTA ocupa el ancho completo y va al pie (después de la fila de metadatos con `margin-top: auto`).
+- **Min/max:** sin ancho máximo; el texto no se corta.
 
 ## Accesibilidad
 
-- **ARIA:** la variant `disabled` se implementa como `<button type="button" aria-disabled="true">`, no con `disabled`, para que siga siendo alcanzable con el teclado y el lector anuncie por qué no se puede jugar.
-- **Teclado:** `Enter` activa (`<a>` y `<button>`), `Space` activa (`<button>`). `Tab` recorre en el orden del DOM.
-- **Foco:** `outline` de 2px en `color.brand.primary` con 2px de offset (contraste 11:1 sobre el fondo de página), solo con `:focus-visible`.
-- **Screen reader:** los iconos de flecha llevan `aria-hidden="true"`; el label tiene que describir la acción sin ellos.
-- **Contraste:** texto `primary` (`#06120B` sobre `#3DDC84`) 10,7:1; texto `secondary` (acento sobre `bg.surface`) 10,4:1; texto `disabled` (`text.dim` sobre `bg.surface`) 6,4:1.
+- **ARIA:**
+  - Deshabilitado: usar `aria-disabled="true"` (no el atributo `disabled`) para que siga en el orden de tabulación y el lector anuncie el motivo. **Adaptación:** el prototipo usa `disabled` + `title="Disponible al terminar la partida"` (L445); `title` no lo ven teclado ni táctil, así que el motivo va en el nombre accesible ("Compartir resultado (disponible al terminar)", como ya hace su `aria-label`) o en un texto visible.
+  - `icon`: `aria-label` obligatorio ("Cómo se juega", "Estadísticas", L443-444); el SVG `aria-hidden`.
+  - `→` decorativo con `aria-hidden` (L42).
+- **Teclado:** `Enter` activa (`<a>` y `<button>`); `Space` activa `<button>`. `Tab` en orden del DOM.
+- **Foco:** requisito, ver States.
+- **Screen reader:** el label se entiende sin el ícono. Para `<a>` que se ve como botón, el rol sigue siendo link.
+- **Contraste:** `primary` 10,7:1; `secondary` `#E6EDF3`/`#0A0C0F` 16,6:1; `accent` on/acento ≥ 7,1:1 en los 5 juegos; `icon` `#C3CCD5`/`#11151A` 11,3:1; `ghost` `#9AA6B2` 7,9:1. Deshabilitados exentos (4,0 y 3,6). El borde `border.control` (1,5:1) no es requisito porque la etiqueta identifica al control (WCAG 1.4.11).
+- **Área táctil:** `ghost` (40px) necesita área de 44px: **adaptación requerida**, forma **Pendiente**.
 
 ## Guidelines de contenido
 
-- Verbo en infinitivo o imperativo corto: "Jugar", "Reintentar", "Ver resultado".
-- Sin punto final ni emojis.
-- La variant `disabled` dice el motivo, no la acción: "Sin desafío hoy", no "Jugar".
-- Todo label pasa por i18n (ES/EN).
+- Verbo en imperativo con voseo o sustantivo de acción: "Jugar", "Confirmar línea 4", "Ver resultado", "Seguir jugando".
+- `→` al final de todo CTA de avance.
+- El deshabilitado dice qué falta: "Elegí una línea" (L836), no "Confirmar".
+- Frase normal (mayúscula inicial) en botones; sin punto final.
+- Todo label pasa por i18n (ES/EN): "Seguir jugando →" / "Keep playing →".
 
 ## Do's & don'ts
 
 **Do:**
-- Una sola acción `primary` por tarjeta o por vista de foco.
-- Usar `<a>` (Link) cuando la acción navega y `<button>` cuando ejecuta algo en el lugar.
-- Mantener la estética sin radio: el radio queda reservado a Card.
+- Usar `radius.control` (10px) en todos los botones.
+- Un solo relleno principal por vista de foco (hero, tarjeta, banner).
+- Usar `accent` con el acento del juego en su pantalla y en su tarjeta; `primary` (verde) para avanzar de juego.
+- Cambiar el CTA de tarjeta según estado: pendiente → `accent` "Jugar →"; resuelto → `secondary` "Ver resultado" (L100 vs L142).
 
 **Don't:**
-- No usar `disabled` HTML: saca el control del foco y el jugador no se entera del motivo.
-- No pintar el borde de un control interactivo con `border.strong` ni más oscuro (1,5:1): usar `border.interactive` (≥3:1).
-- No depender solo del color para distinguir `primary` de `secondary`: el `primary` también va en negrita.
+- No dejar botones sin radio.
+- No usar `#06120B` sobre un acento que no sea verde: cada acento tiene su `on`.
+- No usar `disabled` HTML sin explicar el motivo de forma accesible.
+- No usar `ghost` para acciones principales.
 
 ## API
 
-Clases compartidas en `web` (`cta.ts`), framework-agnóstico en concepto:
-
 | Prop | Tipo | Default | Descripción |
-|------|------|---------|-------------|
-| `variant` | `'primary' \| 'secondary' \| 'disabled'` | `'primary'` | Variant visual y semántica |
-| `as` | `'a' \| 'button'` | `'button'` | Elemento: link de navegación o botón |
-| `fullWidthMobile` | `boolean` | `false` | `w-full` en mobile, ancho automático desde `lg` |
-| `children` | contenido | — | Label (y icono opcional) |
+|---|---|---|---|
+| `variant` | `'primary' \| 'secondary' \| 'accent' \| 'outline-tinted' \| 'ghost' \| 'icon'` | `'primary'` | Variant visual |
+| `size` | `'lg' \| 'md' \| 'share' \| 'sm'` | `'md'` | Tamaño (`sm` solo con `ghost`) |
+| `game` | `GameId` | — | Acento para `accent` y `outline-tinted` |
+| `tint` | `'error' \| 'game'` | `'game'` | Origen del borde de `outline-tinted` |
+| `fullWidth` | `boolean` | `false` | Ancho completo (CTA de tarjeta) |
+| `disabled` | `boolean` | `false` | Se renderiza con `aria-disabled` |
+| `as` | `'a' \| 'button'` | `'button'` | Link de navegación o botón |
+| `icon` | nodo | — | Ícono previo (16px) |
+| `trailingArrow` | `boolean` | `false` | Agrega `→` decorativo |
+| `aria-label` | `string` | — | Obligatorio en `icon` |
 
-**Implementación actual:** `CTA_PRIMARY`, `CTA_SECONDARY`, `CTA_DISABLED` y `FOCUS` en `apps/web/src/components/cta.ts`. Los consumen la home (`catalog`), la 404 (`not-found.tsx`) y la pantalla de error de ruta (`route-error.tsx`). El borde de `secondary` es `border-border-interactive` (`--color-border-interactive`, `#8D99A6`).
+**Slots:** `children` (label), `icon`. **Eventos:** `onClick`.
 
 ## Componentes y patterns relacionados
 
-- **card** — el CTA de una tarjeta de juego va al pie de la Card.
-- **alert** — "Reintentar" va en el slot `action` de la Alert.
+- [link](./link.md) — navegación de texto con flecha.
+- [card](./card.md) — CTA al pie de la tarjeta de juego.
+- [banner](./banner.md) / [alert](./alert.md) — acción del banner.
+- [game-header](./game-header.md) — botones `icon` y Compartir.
 
 ## Historial
 
-- 2026-11-05 v0.2.0 — Creación del spec a partir de la implementación de REQ-002 (`cta.ts`). Variants `primary`, `secondary`, `disabled`; hover, active y loading quedan pendientes.
-- 2026-11-05 v0.2.0 — El código queda alineado con el spec: `secondary` usa `border.interactive` y la 404 y el error de ruta importan `cta.ts`.
+- 2026-11-05 v0.2.0 — Creación del spec a partir de `cta.ts` (sin radio, variants `primary`/`secondary`/`disabled`).
+- 2026-11-05 v1.0.0 — Reescrito desde el prototipo: radio 10px, tamaños `lg` (48) / `md` (44) / `share` / `sm` / `icon` (44×44), variants `accent`, `outline-tinted`, `ghost` e `icon`; `secondary` pasa a texto `text.primary` con borde `border.control` y peso 500; deshabilitado neutro y tintado. Se elimina la variant `disabled` (pasa a ser estado) y los tokens reservados `destructive`.

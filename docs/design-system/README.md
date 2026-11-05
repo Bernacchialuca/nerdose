@@ -16,7 +16,7 @@ es independiente por surface.
 <!-- inventario detallado. -->
 
 - [`admin`](./admin/README.md) — versión 0.1.1
-- [`web`](./web/README.md) — versión 0.2.0
+- [`web`](./web/README.md) — versión 1.0.0 (definido desde el prototipo `docs/nerdose.html`)
 
 ## Estructura
 

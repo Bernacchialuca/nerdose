@@ -1,59 +1,51 @@
-# Componentes del Design System
+---
+version: 1.0.0
+last_updated: 2026-11-05
+status: defined
+source: docs/nerdose.html
+---
 
-> **Carpeta vacía inicial** — Los componentes se documentan uno por uno cuando
-> el equipo de diseño los define.
->
-> Para agregar un componente, ejecutá `/product-design-system-update` y
-> describí lo que querés crear:
->
-> ```
-> /product-design-system-update
-> > agregá un componente Button con variants primary, secondary, disabled
-> ```
+# Componentes del Design System — `web`
 
-## Componentes documentados
+Specs escritos desde el prototipo `docs/nerdose.html` (fuente de verdad visual). Cada spec sigue las 12 secciones de `.claude/templates/ds-component-tmpl.yaml`. Las piezas propias de un solo juego están en [`../patterns/game-boards.md`](../patterns/game-boards.md).
 
-| Componente | Estado | Implementación |
-|------------|--------|----------------|
-| [button](button.md) | experimental | Clases en `apps/web/src/components/cta.ts` |
-| [card](card.md) | active | `@nerdose/ui` → `Card` |
-| [alert](alert.md) | active | `@nerdose/ui` → `Alert` |
-| [banner](banner.md) | active | `@nerdose/ui` → `Banner` |
+> **La implementación actual (DS v0.2.0) NO está alineada con estos specs.** La alineación del código la hace una request posterior; mientras tanto, la lista de diferencias está en `../CHANGELOG.md` → "Desalineaciones conocidas en código".
 
-## Estructura esperada
+## Inventario
 
-Cada componente tiene un archivo `.md` con las 12 secciones canónicas
-(template en `.claude/templates/ds-component-tmpl.yaml`):
+| Componente | Estado del spec | Implementado en código | Alineado con v1.0.0 |
+|---|---|---|---|
+| [button](button.md) | active | Sí — clases en `apps/web/src/components/cta.ts` | **No** |
+| [link](link.md) | active | Parcial — clases ad hoc en `home.tsx`, `progress-summary.tsx`, `about.tsx` | **No** |
+| [card](card.md) | active | Sí — `packages/ui/src/components/card.tsx` (+ `game-card.tsx`, `progress-summary.tsx` en `catalog`) | **No** |
+| [panel](panel.md) | active | No | — |
+| [alert](alert.md) | active (adaptación de producto) | Sí — `packages/ui/src/components/alert.tsx` | **No** |
+| [banner](banner.md) | active (`warning` es adaptación de producto) | Sí — `packages/ui/src/components/banner.tsx` (solo `warning`) | **No** |
+| [app-header](app-header.md) | active | Sí — `packages/ui/src/components/app-header.tsx` + `brand-mark.tsx` + `apps/web/src/components/main-nav.tsx` | **No** |
+| [game-header](game-header.md) | active | No | — |
+| [site-footer](site-footer.md) | active | Sí — `apps/web/src/components/site-footer.tsx` | **No** |
+| [language-selector](language-selector.md) | active | Sí — `apps/web/src/modules/session/components/language-selector.tsx` | **No** |
+| [streak-pill](streak-pill.md) | active | No (el header muestra el número de desafío en su lugar) | — |
+| [chip](chip.md) (chip + badge) | active | No (el estado de la tarjeta es texto plano) | — |
+| [streak-number](streak-number.md) | active | No (la racha se muestra como texto en `day-status.tsx`) | — |
+| [heatmap](heatmap.md) | active | No | — |
+| [progress-bar](progress-bar.md) | active | Parcial — barra continua en `apps/web/src/modules/catalog/components/day-status.tsx` | **No** |
+| [terminal-window](terminal-window.md) | active | No | — |
+| [code-block](code-block.md) | active | No | — |
+| [data-table](data-table.md) | active | No | — |
+| [`patterns/game-boards`](../patterns/game-boards.md) | active | No | — |
 
-```
-components/
-├── button.md
-├── text-input.md
-├── card.md
-├── modal.md
-└── ...
-```
+`BrandMark` (`packages/ui/src/components/brand-mark.tsx`) es el logo del [app-header](app-header.md); no tiene spec propio.
 
-## Secciones obligatorias de un component spec
+## Componentes que el prototipo no define
 
-1. **Propósito** — cuándo usar, cuándo NO usar
-2. **Anatomía** — partes nombradas
-3. **Variants** — variaciones semánticas
-4. **Sizes** — tamaños disponibles
-5. **States** — default/hover/focus/active/disabled/loading/error
-6. **Spacing & sizing rules** — padding/margin/min/max
-7. **Accesibilidad** — ARIA + keyboard + foco + screen reader
-8. **Guidelines de contenido** — microcopy
-9. **Do's & don'ts** — antipatterns
-10. **API** — props/slots/events (framework-agnostic)
-11. **Componentes y patterns relacionados**
-12. **Historial** — changelog del componente
+Inputs de texto, modales (overlay O-01), toasts, tooltips, spinners/skeletons y menús: **Pendiente — el prototipo no los define**. Se especifican cuando una story los necesite.
 
-## Orden recomendado de creación
+## Secciones obligatorias de un spec
 
-Cuando se inicia el DS desde cero:
-1. **Button** — más usado, tiene todas las variantes típicas.
-2. **TextInput** — base de formularios.
-3. **Card** — contenedor genérico.
-4. **Modal** — overlay.
-5. Resto del catálogo del diccionario de wireframes (header, nav-bar, tabs, alert, etc.).
+1. Propósito · 2. Anatomía · 3. Variants · 4. Sizes · 5. States · 6. Spacing & sizing rules · 7. Accesibilidad · 8. Guidelines de contenido · 9. Do's & don'ts · 10. API · 11. Relacionados · 12. Historial.
+
+## Historial
+
+- 2026-11-05 v0.2.0 — Button, Card, Alert y Banner documentados desde el código.
+- 2026-11-05 v1.0.0 — Inventario reescrito desde el prototipo: 18 specs + pattern `game-boards`, con estado de implementación y marca de desalineación del código.

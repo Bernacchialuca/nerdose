@@ -73,7 +73,7 @@ Hay dos tipos de métricas (decisión #1 del análisis funcional):
 
 - `docs/brief.md`: brief original del producto.
 - `docs/ARCHITECTURE.md`: arquitectura previa, ya reconciliada en el análisis técnico.
-- `docs/nerdose.html`: **prototipo y base del diseño UI/UX** (7 pantallas: Home, Estadísticas, Devdle, Bug Hunt, Big O, Tech Timeline y Grep Grid). Identidad terminal/dev, JetBrains Mono, acento `#3DDC84`. Ver la decisión #31.
+- `docs/nerdose.html`: **prototipo y base del diseño UI/UX** (7 pantallas: Home, Estadísticas, Devdle, Bug Hunt, Big O, Tech Timeline y Grep Grid). Identidad terminal/dev, Inter + JetBrains Mono, acento `#3DDC84`. Es la fuente de verdad visual, formalizada en `docs/design-system/web/`. Ver la decisión #31.
 
 ### Decisiones Clave
 
@@ -111,7 +111,7 @@ Decisiones de producto tomadas en el discovery, con su porqué. El registro comp
 | 28 | Big O: criterio | Complejidad temporal en el peor caso, 8 opciones fijas y O(2ⁿ) para la recursión doble. Garantiza una única respuesta indiscutible |
 | 29 | Métricas en el admin | Las métricas de uso, retención y calidad salen de la base y se ven en una sección "Métricas" del admin. Son exactas y no dependen de bloqueadores (análisis técnico) |
 | 30 | Analítica web | Plausible Community Edition self-hosted, integrado desde v1 pero apagado por defecto (flag de build). Sin costo de SaaS; se activa cuando esté instalado (análisis técnico) |
-| 31 | Diseño UI/UX | El prototipo `docs/nerdose.html` es la base de referencia del diseño (identidad visual, layout, pantallas, componentes, tono), no una especificación: no tiene que quedar igual. Donde difiere del PRD (datos, métricas, reglas), manda el PRD. Detalle en NFR-U07 de `requirements.md` |
+| 31 | Diseño UI/UX | El prototipo `docs/nerdose.html` es la fuente de verdad visual (identidad, tipografía, layout, componentes, tono) y se formaliza en el Design System de `web`. Revisado el 2026-11-05: antes era solo una referencia y las primeras pantallas se apartaron de él. En datos, métricas, reglas, textos y accesibilidad manda el PRD. Detalle en NFR-U07 de `requirements.md` |
 | 32 | Bancos de contenido | Dataset versionado en el repo, generado offline desde Wikidata y Wikipedia por un script con reglas automáticas, y cargado por el generator al arrancar. Sin APIs de Wikimedia en producción. Los bancos se reutilizan al vencer su ventana anti-repetición, así que no se agotan (análisis de la fase técnica) |
 
 ## Alcance

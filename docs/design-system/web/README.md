@@ -1,70 +1,72 @@
-# Design System — `web`
+---
+version: 1.0.0
+last_updated: 2026-11-05
+status: defined
+source: docs/nerdose.html
+---
 
-> **Placeholder inicial** — Esta estructura fue generada automáticamente por
-> `/product-ux-generate`. Reemplazá el contenido placeholder con las
-> definiciones reales del Design System de este surface.
->
-> Para iterar este Design System, ejecutá `/product-design-system-update`
-> en modo interactivo. El skill preguntará a qué surface aplica el cambio
-> (este es uno de ellos).
+# Design System — `web`
 
 ## Estado actual
 
 - **Surface:** `web`
-- **Versión:** `0.2.0` (paleta oscura del prototipo + primeros componentes)
-- **Estado:** en definición — color y componentes base documentados; tipografía, spacing y el resto de foundations siguen en placeholder
-- **Componentes:** `button` (experimental), `card`, `alert`, `banner`
+- **Versión:** `1.0.0`
+- **Estado:** definido desde el prototipo
+- **Fuente de verdad visual:** [`docs/nerdose.html`](../../nerdose.html). Ante una duda de estética gana el prototipo; en datos, reglas y accesibilidad gana el PRD (ver [`governance.md`](governance.md)).
+- **Código:** la implementación actual (`@nerdose/ui`, `apps/web`) corresponde a la v0.2.0 y **no está alineada** con esta versión; ver [`CHANGELOG.md`](CHANGELOG.md) → "Desalineaciones conocidas en código".
+
+## Identidad en una línea
+
+Terminal oscura y amable: fondo `#0A0C0F`, Inter para la prosa y JetBrains Mono para todo lo demás, acento verde `#3DDC84` y un acento propio por juego, racha siempre ámbar, botones con radio 10px, títulos `// comentario`, prompts `$` y voseo.
+
+## Inventario
+
+### Foundations
+
+| Archivo | Contenido |
+|---|---|
+| [color](foundations/color.md) | Paleta, escalas por juego y por estado, racha, heatmap, contrastes medidos |
+| [typography](foundations/typography.md) | Inter / JetBrains Mono, regla de uso, ~50 roles, ligaduras desactivadas |
+| [spacing](foundations/spacing.md) | Escala 2-72px, página (1240px, gutter 32), paddings por componente, medidas de control |
+| [grid](foundations/grid.md) | Sin media queries: flex-wrap y auto-fit, breakpoints efectivos, adaptaciones a 320px |
+| [elevation](foundations/elevation.md) | Superficies, las 5 sombras, barras `inset 3px` |
+| [borders](foundations/borders.md) | Grosores, punteado con significado, radios 3-16 + full, textura de puntos |
+| [iconography](foundations/iconography.md) | SVG Lucide 16/18/20, Unicode, 3 emojis |
+| [motion](foundations/motion.md) | Parpadeo 1.1s `steps(1)` y scroll suave; sin transiciones |
+| [voice-tone](foundations/voice-tone.md) | Voz de terminal y voseo |
+
+### Tokens
+
+[reference](tokens/reference.md) (primitivos) → [semantic](tokens/semantic.md) (rol) → [component](tokens/component.md) (por componente).
+
+### Componentes y patterns
+
+Ver [`components/README.md`](components/README.md): button, link, card, panel, alert, banner, app-header, game-header, site-footer, language-selector, streak-pill, chip, streak-number, heatmap, progress-bar, terminal-window, code-block, data-table; y [`patterns/game-boards.md`](patterns/game-boards.md) para las piezas de cada juego.
+
+### Guidelines
+
+[accessibility](guidelines/accessibility.md), [i18n](guidelines/i18n.md), [content](guidelines/content.md) (siguen siendo placeholders de v0.1.0; las reglas de accesibilidad vigentes están en cada foundation y spec).
 
 ## Estructura
 
 ```
 docs/design-system/web/
-├── README.md              ← este archivo
-├── CHANGELOG.md           ← historial de cambios + versionado semver (independiente)
-├── governance.md          ← cómo proponer cambios al DS de este surface
-├── foundations/           ← primitivas visuales
-│   ├── color.md
-│   ├── typography.md
-│   ├── spacing.md
-│   ├── grid.md
-│   ├── iconography.md
-│   ├── motion.md
-│   ├── elevation.md
-│   └── voice-tone.md
-├── tokens/                ← jerarquía de tokens (3 tiers)
-│   ├── reference.md       ← primitivas: color.blue.500, space.4
-│   ├── semantic.md        ← alias: bg.primary, text.muted
-│   └── component.md       ← por componente: button.primary.bg
-├── components/            ← catálogo de componentes (spec por archivo)
-│   ├── button.md
-│   ├── card.md
-│   ├── alert.md
-│   └── banner.md
-├── patterns/              ← composiciones (forms, empty-states, navigation)
-│   └── (a llenar)
-└── guidelines/            ← transversal a este surface
-    ├── accessibility.md
-    ├── i18n.md
-    └── content.md
+├── README.md
+├── CHANGELOG.md
+├── governance.md
+├── foundations/  color, typography, spacing, grid, elevation, borders, iconography, motion, voice-tone
+├── tokens/       reference, semantic, component
+├── components/   README + 18 specs
+├── patterns/     README + game-boards
+└── guidelines/   accessibility, i18n, content
 ```
 
-## Flujo de trabajo
+## Versionado
 
-1. **Definir foundations** (color, typography, spacing) — base obligatoria.
-2. **Definir tokens** semánticos y de componente — derivar de foundations.
-3. **Documentar components** uno a uno — usar `/product-design-system-update`.
-4. **Iterar** — el equipo de diseño puede ejecutar `/product-design-system-update`
-   cuantas veces quiera para modificar, agregar o eliminar.
+Semver independiente del surface `admin`. MAJOR = cambio de valor o rename de token/variant/componente; MINOR = adición; PATCH = corrección. Detalle en [`governance.md`](governance.md).
 
-## Versionado (semver, independiente de otros surfaces)
+## Historial
 
-- **MAJOR** (X.0.0): breaking change. Renombrar componente, remover variant,
-  cambiar API. Requiere revisar wireframes que pinneen versiones anteriores.
-- **MINOR** (0.X.0): agregar componente, agregar variant, agregar foundation.
-- **PATCH** (0.0.X): corrección, ajuste de spec, microcopy en guidelines.
-
-Cambios deprecados se marcan `deprecated: true` con migration path antes de
-removerse en el siguiente MAJOR.
-
-Otros surfaces del producto pueden tener versiones distintas. Cada surface
-es soberano de su propio DS.
+- 2026-11-03 v0.1.0 — Estructura inicial (bootstrap).
+- 2026-11-05 v0.2.0 — Paleta oscura y primeros componentes desde el código.
+- 2026-11-05 v1.0.0 — DS redefinido desde el prototipo `docs/nerdose.html` como fuente de verdad visual.

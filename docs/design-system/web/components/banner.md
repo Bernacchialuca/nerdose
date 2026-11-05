@@ -1,97 +1,108 @@
 ---
 component: banner
-version: 0.2.0
+version: 1.0.0
 status: active
 last_updated: 2026-11-05
-related: [alert, card]
+source: docs/nerdose.html
+related: [alert, button, panel]
 ---
 
 # Banner
 
 ## Propósito
 
-**Descripción:** aviso de advertencia persistente que ocupa el ancho de la página y no interrumpe al lector de pantalla. Implementado en `@nerdose/ui` (`packages/ui/src/components/banner.tsx`); hoy lo usa el aviso de cookies bloqueadas (overlay O-03) en el shell de `web`.
+**Descripción:** franja de mensaje con ícono en círculo, título, subtítulo y acción. En el prototipo existe como **banner de resultado** de partida (éxito, fallo y barra neutra de cierre, L614, L626, L868, L1041). La variant `warning` (aviso de cookies bloqueadas, overlay O-03) **es una adaptación de producto**: el prototipo no tiene avisos de sistema, así que toma el layout del banner de resultado y los tintes del panel ámbar "contexto" (L646-647).
 
 **Cuándo usar:**
-- Una condición que limita lo que el jugador puede hacer, sin ser un error del sistema (cookies bloqueadas: "Activá las cookies para poder jugar").
-- Avisos que deben quedar visibles mientras dure la condición.
+- Resultado de la partida, arriba de la pantalla de juego terminado.
+- Barra de cierre con la racha del juego y la salida.
+- Condición persistente que limita lo que el jugador puede hacer sin ser un error (cookies bloqueadas, O-03).
 
 **Cuándo NO usar:**
-- Para errores que bloquean el contenido: usar `alert` (`role="alert"`, color `error`).
-- Para confirmaciones o mensajes temporales.
-- Para avisos que se pueden cerrar: el Banner no tiene botón de cierre.
+- Error del sistema que bloquea el contenido → [alert](./alert.md).
+- Explicación larga del resultado → [panel](./panel.md) `explain`.
 
 ## Anatomía
 
-1. **Container** — bloque de ancho completo con barra lateral izquierda de 4px.
-2. **Título** — texto principal en negrita, color de advertencia.
-3. **Detalle (opcional)** — explicación breve en texto secundario.
+1. **Container** — `flex-wrap`, `align-items: center`, `justify-content: space-between`, gap 16, padding 18 22, `radius.panel` (14), fondo tintado + borde de 1px del mismo matiz.
+2. **Ícono** — círculo de 40×40 (`radius.pill`) relleno del color de estado, con `check` o `x` de 20px y stroke 3 en el `on` del estado (L616, L628).
+3. **Textos** — columna, gap 2: **título** `type.title.banner` (Mono 700 18, `text.primary`) y **subtítulo** `type.body.sm.tight` (Inter 14) en el texto suave del estado.
+4. **Acción** — [button](./button.md) `md` (grupo con gap 10 y `flex-wrap`).
+
+El grupo ícono + textos va con gap 14 (L615).
 
 ## Variants
 
-| Variant | Propósito | Tokens / Foundations | Ejemplo de uso |
-|---------|-----------|----------------------|----------------|
-| `warning` (único) | Advertencia no urgente | `banner.*` | "Activá las cookies para poder jugar" |
+| Variant | Propósito | Fondo / borde | Ícono | Subtítulo | Acción | Fuente |
+|---|---|---|---|---|---|---|
+| `success` | Ganaste | `#0C1A12` / `#1E4A30` | `check` sobre `#3DDC84`, color `#06120B` | `#A9C9B5` | `primary` "Siguiente juego →" | L614-623, L868-879 |
+| `failure` | Perdiste (sin drama) | `#1C0F0E` / `#4A2220` | `x` sobre `#FF7B72`, color `#1C0605` | `#D9B3AF` | `outline-tinted` con borde `#4A2220` | L626-635 |
+| `neutral` | Barra de cierre: racha del juego + countdown | `#0F1318` / `#222A33` | sin ícono | Texto único Mono 14 `#9AA6B2` con `<b>` ámbar y countdown `#E6EDF3` | `outline-tinted` con el borde del juego ("Volver a los juegos", `#3C2E60`) | L1041-1043 |
+| `warning` *(adaptación)* | Condición persistente (O-03) | `#140F07` / `#3A2A12` (`status.warning.*`) | **Pendiente — el prototipo no define ícono de advertencia**; hasta definirlo, sin ícono | `#C9A46A` | Opcional | L646-647 (tintes) |
 
 ## Sizes
 
 | Size | Padding | Uso |
-|------|---------|-----|
-| `default` (único) | vertical `space.3` (12px); horizontal `space.4` (16px) en mobile y `space.8` (48px) desde `lg` | Todos los casos |
+|---|---|---|
+| `default` (único) | 18px 22px | Todas las variants |
 
 ## States
 
-| State | Descripción | Tokens afectados |
-|-------|-------------|------------------|
-| default | Visible mientras dura la condición | `banner.bg`, `banner.border`, `banner.title`, `banner.detail` |
-| hover / focus / active / disabled | No aplica: el Banner no es interactivo ni toma el foco | — |
+| State | Descripción |
+|---|---|
+| default | Visible mientras dura el resultado o la condición |
+| hover / focus / active / disabled | No aplica al contenedor; el foco lo recibe la acción |
 
 ## Spacing & sizing rules
 
-- **Padding interno:** ver Sizes.
-- **Separación título–detalle:** `space.1` (4px).
-- **Barra lateral:** 4px en `border.warning`; sin borde en los otros lados.
-- **Min/max:** ancho completo (`w-full`). Va entre el header y el contenido de la página.
+- Primer bloque de `main` en la pantalla de juego terminado; `gap` de sección 28 (L611).
+- La acción baja debajo del texto cuando no entra (`flex-wrap`).
+- `warning`: **decisión** — va bajo el header, alineado al contenedor de página (`max-width: 1240px`, gutter 32), no de borde a borde. El product-map lo ubica "fijo bajo el header" (O-03); el prototipo no define la posición.
 
 ## Accesibilidad
 
-- **ARIA:** `role="status"` (región viva educada): el lector lo anuncia sin cortar lo que está leyendo.
-- **Teclado:** no es focusable y no se puede cerrar.
-- **Foco:** no mueve el foco al aparecer.
-- **Screen reader:** el título se tiene que entender solo; el detalle lo complementa.
-- **Contraste:** título `text.warning` sobre `bg.surface` 10,6:1; detalle `text.muted` sobre `bg.surface` 7,5:1.
+- **ARIA:** `role="status"` para `success`, `failure` y `warning` (se anuncian sin interrumpir). `neutral` no necesita rol vivo.
+- **Teclado:** el contenedor no es focusable; la acción sí.
+- **Foco:** al terminar una partida, el foco no se mueve solo al banner; **Pendiente** definir el manejo de foco del fin de partida.
+- **Sin depender del color (NFR-U04):** el ícono (`check` / `x`) y el título ("Bug encontrado en la línea 4", "El bug estaba en la línea 4, no en la 7") dicen el resultado.
+- **Contraste:** título `#E6EDF3` sobre `#0C1A12` 15,2:1 y sobre `#1C0F0E` 15,8:1; subtítulos 10,0:1 (`#A9C9B5`) y 9,8:1 (`#D9B3AF`); `neutral` 7,5:1; `warning` 8,2:1 (`#C9A46A`/`#140F07`). Íconos en círculo: 10,7:1 y 7,7:1.
 
 ## Guidelines de contenido
 
-- Título: qué tiene que hacer el jugador, en imperativo ("Activá las cookies para poder jugar").
-- Detalle: por qué, en una frase.
-- Sin emojis ni signos de exclamación.
-- Todo texto entra por props y pasa por i18n (ES/EN).
+- Título con el dato: "Correcto: O(n log n)", "Bug encontrado en la línea 4".
+- Subtítulo con las rachas: "Racha de Big O: 9 días · racha global: 17 días".
+- Fallo sin culpa: "Desafío completado: tus rachas siguen en pie (Bug Hunt 6 · global 17)".
+- `neutral`: "racha de Timeline: **4 días** · próximo desafío en 08:12:45".
+- `warning`: qué limita y qué sigue funcionando: "Activá las cookies para poder jugar" + detalle.
 
 ## Do's & don'ts
 
 **Do:**
-- Mostrarlo solo mientras la condición siga activa (en O-03: la sesión respondió 200 y el estado del día sigue sin sesión).
-- Mantener visible el contenido que sí funciona (el catálogo).
+- Mantener el CTA de avanzar en verde (`primary`) aunque el juego sea de otro color.
+- Usar `outline-tinted` (no rojo relleno) como acción del banner de fallo.
 
 **Don't:**
-- No usarlo para errores del sistema ni para un 429: eso es una Alert o un estado de la vista.
-- No apilar más de un Banner.
-- No poner texto fijo dentro del componente (rompe i18n).
+- No usar `failure` para errores del sistema: es una partida perdida.
+- No inventar un ícono para `warning` sin pasar por el DS.
+- No poner más de un banner a la vez.
 
 ## API
 
 | Prop | Tipo | Default | Descripción |
-|------|------|---------|-------------|
-| `title` | contenido | — | Título del aviso |
-| `children` | contenido (opcional) | — | Detalle |
-| `className` | `string` | — | Clases extra |
+|---|---|---|---|
+| `variant` | `'success' \| 'failure' \| 'neutral' \| 'warning'` | — | Variant |
+| `title` | contenido | — | Título (no en `neutral`) |
+| `children` | contenido | — | Subtítulo / texto |
+| `action` | nodo | — | Slot para un Button `md` |
+| `game` | `GameId` | — | Borde de la acción en `neutral` |
 
 ## Componentes y patterns relacionados
 
-- **alert** — errores urgentes con `role="alert"`.
-- Overlay **O-03** (`docs/ux/surfaces/web/screens/o-03-cookies.md`) — único uso actual.
+- [alert](./alert.md) — error del sistema, misma estética que `failure`.
+- [button](./button.md) — acción.
+- [panel](./panel.md) — explicación del resultado.
 
 ## Historial
 
-- 2026-11-05 v0.2.0 — Creación del spec a partir de la implementación de S-009 (`@nerdose/ui`).
+- 2026-11-05 v0.2.0 — Creación del spec desde `@nerdose/ui`: aviso de advertencia de ancho completo con barra lateral de 4px (O-03).
+- 2026-11-05 v1.0.0 — Reescrito como banner de resultado del prototipo (`success`, `failure`, `neutral`: radio 14, borde 1px, ícono en círculo de 40px, padding 18 22) más `warning` como adaptación de producto con los tintes ámbar del panel "contexto". Se elimina la barra lateral de 4px.
