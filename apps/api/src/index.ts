@@ -1,6 +1,8 @@
 import { serve } from '@hono/node-server';
 
 import { loadEnv, loadLocalEnvFile } from '@/config/env';
+import { IdentityRepository } from '@/domain/identity/identity.repository';
+import { IdentityService } from '@/domain/identity/identity.service';
 import { createDatabase } from '@/infra/database/db';
 import { createHealthCheck } from '@/infra/database/health';
 import { verifyDbRole } from '@/infra/database/verify-role';
@@ -19,10 +21,19 @@ try {
 
 if (env) {
   const logger = createLogger(env);
-  const { sql } = createDatabase(env.DATABASE_URL);
+  const { sql, db } = createDatabase(env.DATABASE_URL);
   await verifyDbRole(sql, logger);
 
-  const app = buildApp({ logger, health: createHealthCheck({ sql }) });
+  const app = buildApp({
+    logger,
+    health: createHealthCheck({ sql }),
+    config: {
+      WEB_ORIGIN: env.WEB_ORIGIN,
+      ADMIN_ORIGIN: env.ADMIN_ORIGIN,
+      TRUST_PROXY_HEADER: env.TRUST_PROXY_HEADER,
+    },
+    identity: new IdentityService(new IdentityRepository(db)),
+  });
   const server = serve({ fetch: app.fetch, port: env.PORT }, ({ port }) => {
     logger.info({ port }, 'Server started');
   });

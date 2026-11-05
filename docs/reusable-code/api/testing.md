@@ -22,3 +22,13 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 - **Location:** apps/api/test/global-setup.ts
 - **Description:** starts `postgres:16-alpine`, runs `createRoles` + `migrateAsOwner` from `@nerdose/db/testing`, provides `ownerUrl` and `apiUrl`
 - **Usage:** `import { inject } from 'vitest'; const url = inject('apiUrl')`
+
+## buildTestApp / TEST_CONFIG / MUTATION_HEADERS / TEST_ENV / stubIdentity
+- **Location:** apps/api/test/helpers/app.ts
+- **Signature:** `buildTestApp({ logger?, health?, identity?, config? }): { app, lines }`
+- **Usage:** `app.request('/api/session', { method: 'POST', headers: MUTATION_HEADERS, body: '{}' })`; `TEST_ENV` for `startApi`
+
+## useDatabases / parseSetCookie / COOKIE_ATTRS
+- **Location:** apps/api/test/helpers/db.ts
+- **Signature:** `useDatabases(): { owner, api, identity(), reset(), close(), insertPlayer(values?) }`
+- **Usage:** `const dbs = useDatabases(); beforeAll(dbs.reset); afterAll(dbs.close)`

@@ -2,9 +2,8 @@ import { afterEach, describe, expect, inject, it } from 'vitest';
 
 import { createDatabase } from '@/infra/database/db';
 import { createHealthCheck } from '@/infra/database/health';
-import { buildApp } from '@/http/app';
 
-import { captureLogger } from '../helpers/logger';
+import { buildTestApp } from '../helpers/app';
 import { freePort, silentServer } from '../helpers/net';
 
 const opened: Array<{ end(options: { timeout: number }): Promise<void> }> = [];
@@ -12,9 +11,7 @@ const opened: Array<{ end(options: { timeout: number }): Promise<void> }> = [];
 function appFor(url: string, timeoutMs?: number) {
   const { sql } = createDatabase(url);
   opened.push(sql);
-  const captured = captureLogger();
-  const app = buildApp({ logger: captured.logger, health: createHealthCheck({ sql, timeoutMs }) });
-  return { app, ...captured };
+  return buildTestApp({ health: createHealthCheck({ sql, timeoutMs }) });
 }
 
 afterEach(async () => {

@@ -6,6 +6,12 @@
 - **Description:** vars `NODE_ENV` (default development), `PORT` (default 3000), `LOG_LEVEL` (default info), `SERVICE_NAME` (default api), `DATABASE_URL` (required URL). Empty strings count as missing. On error throws `AppError('validation_error', 'Variables de entorno inválidas: A, B')` without values. `loadLocalEnvFile` loads `apps/api/.env.local` only when `NODE_ENV` is not test/production.
 - **Usage:** add new vars to the `server` schema and to `.env.example` (a test checks they match); only `config/env.ts` reads `process.env`; in tests call `loadEnv({ DATABASE_URL: '...' })` instead of touching it
 
+## pickLocale / resolveLocale / isLocale
+- **Location:** apps/api/src/shared/locale.ts
+- **Signature:** `pickLocale(acceptLanguage?: string): Locale`; `resolveLocale({ lang?, playerLocale?, acceptLanguage? }): Locale`; `isLocale(v): v is Locale`
+- **Description:** `pickLocale` orders tags by `q` and returns the first `es`/`en`, else `es`; never throws
+- **Usage:** `resolveLocale({ lang: c.req.query('lang'), playerLocale: player.locale })`
+
 ## createLogger
 - **Location:** apps/api/src/shared/logger.ts
 - **Signature:** `createLogger(env: Pick<ApiEnv, 'LOG_LEVEL' | 'SERVICE_NAME' | 'NODE_ENV'>, destination?: pino.DestinationStream): Logger`

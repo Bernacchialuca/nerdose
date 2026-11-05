@@ -8,7 +8,7 @@
 
 ## AppDeps / AppEnv
 - **Location:** apps/api/src/http/types.ts
-- **Signature:** `AppDeps = { logger: Logger; health: { check(log: Logger): Promise<Health> } }`; `AppEnv = { Variables: { requestId: string; logger: Logger } }`
+- **Signature:** `AppDeps = { logger; health; config: Pick<ApiEnv, 'WEB_ORIGIN' | 'ADMIN_ORIGIN' | 'TRUST_PROXY_HEADER'>; identity: IdentityService }`; `AppEnv = { Variables: { requestId; logger; locale: Locale; player: Player | null } }`
 - **Usage:** new dependencies are added to `AppDeps` and injected in `src/index.ts`; handlers type their factory as `createFactory<AppEnv>()`
 
 ## registerRoutes
@@ -20,7 +20,7 @@
 ## createErrorHandler
 - **Location:** apps/api/src/http/middleware/error-handler.ts
 - **Signature:** `createErrorHandler(baseLogger: Logger): ErrorHandler<AppEnv>`
-- **Description:** `AppError` → logs `warn` with `code`, responds `err.status` + `{ error: { code, message: errorMessage(code) } }` (the internal message never leaks). Other errors → logs `error` and responds 500 `internal_error`.
+- **Description:** `AppError` → logs `warn` with `code`, responds `err.status` + `{ error: { code, message: errorMessage(code, c.var.locale) } }` (the internal message never leaks). A Hono `HTTPException` 400 (malformed JSON) → `422 validation_error`. Other errors → logs `error` and responds 500 `internal_error`.
 - **Usage:** in handlers, `throw new AppError('not_found', 'detail for logs')` from `@nerdose/core`
 
 ## requestContext
@@ -30,5 +30,40 @@
 
 ## errorMessage
 - **Location:** apps/api/src/http/error-messages.ts
-- **Signature:** `errorMessage(code: ErrorCode): string`
-- **Description:** `Record<ErrorCode, string>` in fixed Spanish (transitional until REQ-001 locale resolution). Adding an `ErrorCode` in core requires a message here (type-checked).
+- **Signature:** `errorMessage(code: ErrorCode, locale: Locale): string`
+- **Description:** `Record<Locale, Record<ErrorCode, string>>` (es/en). Adding an `ErrorCode` in core requires both messages here (type-checked).
+
+## locale (middleware)
+- **Location:** apps/api/src/http/middleware/locale.ts
+- **Signature:** `locale(): MiddlewareHandler<AppEnv>`
+- **Description:** sets `c.var.locale` from `?lang` → `Accept-Language` → `es`; `playerSession` recomputes it with the Player's locale
+- **Usage:** `app.use(locale())` right after `requestContext`
+
+## originAndContentType
+- **Location:** apps/api/src/http/middleware/security.ts
+- **Signature:** `originAndContentType(allowedOrigin: string): MiddlewareHandler`
+- **Description:** on POST/PATCH/PUT/DELETE requires exact `Origin` (`403 forbidden_origin`) and `Content-Type: application/json` (`415`)
+- **Usage:** mounted in `buildApp` with `WEB_ORIGIN` for `/api/*` and `ADMIN_ORIGIN` for `/api/admin/*`
+
+## limit / clientIp
+- **Location:** apps/api/src/http/middleware/rate-limit.ts
+- **Signature:** `limit({ windowMs, limit, key: (c) => string }): MiddlewareHandler<AppEnv>`; `clientIp(trustHeader?: string): (c) => string`
+- **Description:** in-memory `hono-rate-limiter`; `429 rate_limited` with `Retry-After`. `clientIp` takes the first IP of the trusted header, else `'unknown'`. Create limiters per app instance (inside route factories), not at module level.
+- **Usage:** `limit({ windowMs: 600_000, limit: 20, key: clientIp(deps.config.TRUST_PROXY_HEADER) })`
+
+## playerSession
+- **Location:** apps/api/src/http/middleware/player-session.ts
+- **Signature:** `playerSession(identity: IdentityService, mode: 'required' | 'optional'): MiddlewareHandler<AppEnv>`
+- **Description:** resolves cookie `nd_pid` to `c.var.player`; `required` throws `no_session`; adds `playerId` to the logger and recomputes `c.var.locale`
+- **Usage:** `factory.createHandlers(playerSession(deps.identity, 'required'), handler)`
+
+## validationHook
+- **Location:** apps/api/src/http/validation-hook.ts
+- **Description:** `@hono/zod-validator` hook that throws `AppError('validation_error')`
+- **Usage:** `zValidator('json', schema, validationHook)`
+
+## IdentityService / IdentityRepository / issuePlayerCookie
+- **Location:** apps/api/src/domain/identity/
+- **Signature:** `startSession({ pid, acceptLanguage })`, `find(pid)`, `updatePreferences(playerId, patch)`; `issuePlayerCookie(c, playerId)`
+- **Description:** idempotent anonymous session over `players` (invalid/unknown pid treated as absent); cookie `nd_pid` with exact ADR-009 attributes
+- **Usage:** `const { player, created } = await deps.identity.startSession(...)`
