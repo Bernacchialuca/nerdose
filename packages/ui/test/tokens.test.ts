@@ -21,6 +21,10 @@ describe('tokens.css', () => {
     expect(declarations['--color-warning']).toBe('#FFB547');
   });
 
+  it('declares the error token of the design system (TS-1)', () => {
+    expect(declarations['--color-error']).toBe('#FF7B72');
+  });
+
   it('declares the full prototype token set (TS-4)', () => {
     expect(declarations).toEqual({
       '--font-mono': "'JetBrains Mono', ui-monospace, monospace",
@@ -42,6 +46,7 @@ describe('tokens.css', () => {
       '--color-game-timeline': '#C39BFF',
       '--color-game-grep-grid': '#F472B6',
       '--color-warning': '#FFB547',
+      '--color-error': '#FF7B72',
     });
   });
 
