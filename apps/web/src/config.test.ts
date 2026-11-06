@@ -52,4 +52,12 @@ describe('index.html', () => {
     expect(html).toContain('<div id="root"></div>');
     expect(html).toContain('<script type="module" src="/src/main.tsx">');
   });
+
+  it('declara el favicon de la marca (>_ en accent) y existe en public/', () => {
+    const html = read('../index.html');
+    expect(html).toContain('<link rel="icon" type="image/svg+xml" href="/favicon.svg" />');
+    const svg = read('../public/favicon.svg');
+    expect(svg).toContain('#3DDC84');
+    expect(svg).toContain('#0A0C0F');
+  });
 });

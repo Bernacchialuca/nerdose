@@ -52,7 +52,8 @@ describe('router', () => {
     renderWithProviders({ route: '/' });
     await userEvent.click(await screen.findByRole('link', { name: './about' }));
     const h1 = await screen.findByRole('heading', { level: 1, name: 'Acerca de nerdose' });
-    expect(h1).toHaveFocus();
+    // El foco se mueve en un efecto pasivo: puede llegar un tick después de que el h1 aparece.
+    await waitFor(() => expect(h1).toHaveFocus());
     expect(h1).toHaveAttribute('tabindex', '-1');
     expect(document.title).toBe('Acerca de · nerdose');
   });
@@ -77,7 +78,8 @@ describe('router', () => {
       level: 1,
       name: 'Una dosis diaria de nerdeo.',
     });
-    expect(h1).toHaveFocus();
+    // El foco se mueve en un efecto pasivo: puede llegar un tick después de que el h1 aparece.
+    await waitFor(() => expect(h1).toHaveFocus());
     expect(document.title).toBe('nerdose');
   });
 

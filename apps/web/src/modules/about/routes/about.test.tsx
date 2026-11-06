@@ -29,6 +29,10 @@ describe('Acerca de', () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/^Cada juego tiene un desafío nuevo por día/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Ver los juegos/ })).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', { name: /Ver tus estadísticas/ })).toHaveAttribute(
+      'href',
+      '/stats',
+    );
     expect(screen.getByText(/^No hay cuenta ni registro\./)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Volver a los juegos' })).toHaveAttribute('href', '/');
     expect(document.title).toBe('Acerca de · nerdose');

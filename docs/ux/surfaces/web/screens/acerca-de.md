@@ -97,7 +97,7 @@ date: 2026-11-06
 
 ### card-rachas
 - Texto/label: Cómo funciona la racha
-- Texto secundario: Completar un desafío, ganando o perdiendo, suma a tu racha. Un día sin desafío es neutro: no suma ni corta. Un desafío anulado no te afecta.
+- Texto secundario: Completar un desafío, ganando o perdiendo, suma a tu racha. Un día sin desafío es neutro: no suma ni corta. Un desafío anulado no te afecta. Ver tus estadísticas →
 - Icono: nada
 - Annotation: nada
 
@@ -169,4 +169,4 @@ date: 2026-11-06
 - C-07, F-01 · flujo 3 (dudas sobre la racha).
 - REQ-002: RF 14, RF 15 · CA 19, CA 21.
 - REQ-003: RF 4, 6, 11, 13 · CA 2.
-- REQ-003 (revisión visual): la intro presenta a nerdose como plataforma y no nombra la cantidad de juegos; la card «Los 5 juegos» pasa a «Los juegos», genérica y con enlace a `home`, para que escale al sumar juegos sin reescribir el texto.
+- REQ-003 (revisión visual): la intro presenta a nerdose como plataforma y no nombra la cantidad de juegos; la card «Los 5 juegos» pasa a «Los juegos», genérica y con enlace a `home`, para que escale al sumar juegos sin reescribir el texto. La card de la racha suma «Ver tus estadísticas →» (a `estadisticas`) para emparejar la altura de la fila.

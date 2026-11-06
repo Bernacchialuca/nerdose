@@ -34,6 +34,7 @@ export const en: Resources = {
     streaks: {
       title: 'How streaks work',
       body: "Completing a challenge, whether you win or lose, adds to your streak. A day without a challenge is neutral: it neither adds nor breaks it. A voided challenge doesn't affect you.",
+      link: 'See your stats',
     },
     attribution: {
       title: 'Data and attribution',
@@ -55,7 +56,8 @@ export const en: Resources = {
   },
   catalog: {
     title: 'A daily dose of <accent>nerdiness</accent>.',
-    subtitle: 'Mini-games for developers and tech-curious folks. A new challenge every day, the same for everyone. Two minutes, something learned, a streak to keep.',
+    subtitle:
+      'Mini-games for developers and tech-curious folks. A new challenge every day, the same for everyone. Two minutes, something learned, a streak to keep.',
     howItWorks: 'How does it work?',
     hero: {
       continue: 'Keep playing',

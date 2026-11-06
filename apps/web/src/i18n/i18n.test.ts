@@ -59,6 +59,7 @@ describe('i18n', () => {
         'about.games.title',
         'about.games.body',
         'about.games.link',
+        'about.streaks.link',
         'about.streaks.title',
         'about.streaks.body',
         'about.attribution.title',

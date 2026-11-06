@@ -51,6 +51,10 @@ export function Component() {
         </Panel>
         <Panel title={t('about.streaks.title')} className={PANEL}>
           <p className={BODY}>{t('about.streaks.body')}</p>
+          <Link to="/stats" className={cn(linkClass(), 'self-start')}>
+            {t('about.streaks.link')}
+            <span aria-hidden="true">→</span>
+          </Link>
         </Panel>
         <Panel title={t('about.attribution.title')} className={PANEL}>
           <p className={BODY}>

@@ -10,7 +10,7 @@ y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 ### Cambiado
 - `components/site-footer.md`: una sola línea (lema + `exit 0`), igual al prototipo. El aviso de privacidad sale del footer y queda solo en "Acerca de"; se quita el link "Acerca de →" (sigue en `./about` del header). PRD C-07 y NFR-PR04 actualizados.
 - Home: el titular y la bajada pasan a los textos del prototipo («Una dosis diaria de **nerdeo**.» con «nerdeo» en `accent`).
-- "Acerca de": la intro dice «Nerdose es una plataforma…» y no nombra la cantidad de juegos; la card «Los 5 juegos» pasa a «Los juegos», genérica y con link «Ver los juegos →». La bajada de la home deja de decir «Cinco». Ningún texto enumera los juegos, así que escalan al sumar juegos.
+- "Acerca de": la intro dice «Nerdose es una plataforma…» y no nombra la cantidad de juegos; la card «Los 5 juegos» pasa a «Los juegos», genérica y con link «Ver los juegos →»; la card de la racha suma «Ver tus estadísticas →», así las dos de la fila tienen texto + link y la misma altura sin huecos. La bajada de la home deja de decir «Cinco». Ningún texto enumera los juegos, así que escalan al sumar juegos.
 - Miniatura de Grep Grid: la palabra encontrada es `MUTEX` completa; `E-R-G` queda como selección en curso bajo la `M`.
 
 ### Corregido

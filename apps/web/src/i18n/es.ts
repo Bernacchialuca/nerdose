@@ -30,6 +30,7 @@ export const es = {
     streaks: {
       title: 'Cómo funciona la racha',
       body: 'Completar un desafío, ganando o perdiendo, suma a tu racha. Un día sin desafío es neutro: no suma ni corta. Un desafío anulado no te afecta.',
+      link: 'Ver tus estadísticas',
     },
     attribution: {
       title: 'Datos y atribución',
@@ -50,7 +51,8 @@ export const es = {
   },
   catalog: {
     title: 'Una dosis diaria de <accent>nerdeo</accent>.',
-    subtitle: 'Minijuegos para developers y curiosos de la tecnología. Un desafío nuevo por día, el mismo para todos. Dos minutos, algo aprendido, una racha que cuidar.',
+    subtitle:
+      'Minijuegos para developers y curiosos de la tecnología. Un desafío nuevo por día, el mismo para todos. Dos minutos, algo aprendido, una racha que cuidar.',
     howItWorks: '¿Cómo funciona?',
     hero: {
       continue: 'Seguir jugando',
