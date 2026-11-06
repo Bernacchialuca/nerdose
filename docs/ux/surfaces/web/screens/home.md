@@ -36,7 +36,7 @@ date: 2026-11-06
 - A `{juego}-resultado` · tarjeta «completado» (CTA «Ver resultado»)
 - A O-02 · tarjeta «anulado» (CTA «Ver aviso de anulación»)
 - A `estadisticas` · «ver estadísticas →» o píldora de racha del header
-- A `acerca-de` · `./about` del header o «Acerca de» del footer
+- A `acerca-de` · `./about` del header
 - Dentro de la misma pantalla · «¿Cómo funciona?» baja a la sección «Cómo funciona» (ancla `#como`) y mueve el foco a su título
 
 **Salidas automáticas:**
@@ -83,7 +83,7 @@ date: 2026-11-06
 | 35 | paso-2 | card | — | content | ambos | — | Paso 02 (`card` variant `step`) |
 | 36 | paso-3 | card | — | content | ambos | — | Paso 03 (`card` variant `step`) |
 | 37 | paso-4 | card | — | content | ambos | — | Paso 04 (`card` variant `step`) |
-| 38 | footer | footer | — | layout | ambos | — | Lema, aviso de privacidad, enlace a Acerca de y `exit 0` (`site-footer`) |
+| 38 | footer | footer | — | layout | ambos | — | Lema y `exit 0` (`site-footer`) |
 
 ## Layout por viewport
 
@@ -167,12 +167,12 @@ date: 2026-11-06
 - Annotation: la fecha es `date` de `/api/today`, formateada en el idioma activo (día de la semana, día y mes abreviado); `// fecha` va en el verde de la plataforma
 
 ### hero-titulo
-- Texto/label: Cinco juegos tech. Un desafío por día.
+- Texto/label: Una dosis diaria de nerdeo.
 - Icono: nada
-- Annotation: titular display (`type.display.hero`); a 320 px se reduce con el mismo criterio que `type.title.page`
+- Annotation: titular display (`type.display.hero`), texto del prototipo con «nerdeo» en el verde de la plataforma; a 320 px se reduce con el mismo criterio que `type.title.page`
 
 ### hero-sub
-- Texto/label: Sin registro, de 1 a 3 minutos por partida. El mismo desafío para todos, cada día.
+- Texto/label: Minijuegos para developers y curiosos de la tecnología. Un desafío nuevo por día, el mismo para todos. Dos minutos, algo aprendido, una racha que cuidar.
 - Icono: nada
 - Annotation: prosa en Inter (lede)
 
@@ -351,7 +351,7 @@ date: 2026-11-06
 ### footer
 - Texto/label: > nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0
 - Icono: nada
-- Annotation: `site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07)
+- Annotation: `site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07)
 
 ## Estados
 
@@ -568,7 +568,6 @@ date: 2026-11-06
 - header · ES | EN · on click → cambia el idioma de la interfaz sin recargar; con sesión lo guarda en el Player, sin sesión solo en este navegador
 - cuenta-regresiva · llega a 0 → recarga el estado del día
 - btn-reintentar · on click → vuelve a pedir el estado del día
-- footer · «Acerca de» · on click → navega a `acerca-de`
 
 **Validaciones:**
 - No aplica: la pantalla no tiene campos de entrada.
@@ -579,7 +578,7 @@ date: 2026-11-06
 ## Accesibilidad
 
 - **Orden de foco:** header (marca → `./juegos` → `./stats` → `./about` → píldora de racha → ES/EN) → «Seguir jugando» → «¿Cómo funciona?» → CTA de cada tarjeta en orden de lectura → «ver estadísticas →» → footer. La terminal, las miniaturas y la tarjeta «próximo juego» no entran en el orden de foco.
-- **Landmarks y jerarquía:** `h1` único: «Cinco juegos tech. Un desafío por día.»; `h2`: «Los desafíos de hoy», «Tu progreso», «Cómo funciona»; el nombre de cada juego es `h3`. Landmarks: header, nav, main, footer.
+- **Landmarks y jerarquía:** `h1` único: «Una dosis diaria de nerdeo.»; `h2`: «Los desafíos de hoy», «Tu progreso», «Cómo funciona»; el nombre de cada juego es `h3`. Landmarks: header, nav, main, footer.
 - **Foco y teclado:** El banner O-03 no atrapa el foco; los CTA deshabilitados siguen siendo alcanzables con `aria-disabled`. «¿Cómo funciona?» deja el foco en el título de la sección (`tabIndex=-1`) para que funcione con teclado.
 - **Propio de esta composición:** El estado de cada juego (tarjeta y terminal) se comunica con texto e ícono, no solo con color (NFR-U04); la cuenta regresiva no se anuncia cada segundo; los cursores (`_` del logo, `▌` de la terminal) no parpadean con «reducir movimiento»; a 320 px no hay scroll horizontal (header con `flex-wrap`, grilla `auto-fit` que baja a una columna, titular del hero reducido).
 
@@ -596,7 +595,7 @@ date: 2026-11-06
 - REQ-003: la racha global ya no es una línea suelta: está en tres lugares con roles distintos (píldora del header → `estadisticas`; línea de la terminal con el récord; número de 88 px en «Tu progreso»). Los tres leen el mismo dato de `/api/today`.
 - REQ-003: el header muestra la píldora de racha **y** el `#número` (supuesto «Número de desafío»): el prototipo solo tiene la píldora y el PRD pide el número.
 - REQ-003: la navegación vive siempre en el header y se acomoda con `flex-wrap`; se elimina la tira `nav-movil`. Es una decisión de layout que afecta solo a mobile: en desktop el header ya tenía la nav.
-- REQ-003: «¿Cómo funciona?» pasa de enlace a `acerca-de` a botón `secondary` que baja a la sección «Cómo funciona» de la misma home (como en el prototipo). «Acerca de» sigue accesible desde `./about` y el footer.
+- REQ-003: «¿Cómo funciona?» pasa de enlace a `acerca-de` a botón `secondary` que baja a la sección «Cómo funciona» de la misma home (como en el prototipo). «Acerca de» sigue accesible desde `./about` del header.
 - REQ-003: la terminal y la barra segmentada usan solo los campos de `/api/today` (estado y etiqueta por juego, `completed_today`, racha global, `seconds_to_reset`). Las filas «sin desafío», «en curso», «anulado» y «próximamente» no están en el prototipo: se derivan de la identidad (ícono + texto) y se documentan en el DS en la misma story.
 - REQ-003: el panel «Tu progreso» muestra solo racha y récord. El heatmap y los mini-stats de desafíos completados y % de victorias no se muestran con datos falsos: llegan con FG-3 / FG-10. Por eso los textos sin datos ya no prometen el heatmap.
 - REQ-003: la tarjeta «próximo juego» (`placeholder`) entra como sexta tarjeta decorativa: en la grilla de 3 columnas completa la segunda fila, que antes ocupaba el resumen.

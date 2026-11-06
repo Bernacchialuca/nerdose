@@ -23,7 +23,7 @@ describe('Shell', () => {
     const { container } = renderWithProviders({ route: '/' });
     await screen.findByRole('heading', {
       level: 1,
-      name: 'Cinco juegos tech. Un desafío por día.',
+      name: 'Una dosis diaria de nerdeo.',
     });
     expect(container.firstElementChild).toHaveClass('bg-bg', 'text-text', 'font-sans');
     expect(container.firstElementChild).not.toHaveClass('font-mono');
@@ -43,25 +43,19 @@ describe('Shell', () => {
   it('TS-2 locale en inglés', async () => {
     english();
     renderWithProviders({ route: '/' });
-    expect(await screen.findByRole('link', { name: 'About' })).toHaveAttribute('href', '/about');
+    expect(await screen.findByText(/one platform, many challenges/)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'EN' })).toHaveAttribute('aria-pressed', 'true');
     expect(document.documentElement.lang).toBe('en');
   });
 
-  it('TS-23 footer con privacidad y enlace a Acerca de en todas las pantallas', async () => {
+  it('TS-23 footer de una línea (lema + exit 0) en todas las pantallas', async () => {
     for (const route of ['/', '/about', '/no-existe']) {
       const { unmount } = renderWithProviders({ route });
       const footer = await screen.findByRole('contentinfo');
       expect(footer).toHaveTextContent('> nerdose — una plataforma, múltiples desafíos.');
       expect(footer).toHaveTextContent('exit 0');
-      expect(footer).not.toHaveTextContent('nerdose.dev');
-      expect(footer).toHaveTextContent(
-        'Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros.',
-      );
-      expect(within(footer).getByRole('link', { name: 'Acerca de' })).toHaveAttribute(
-        'href',
-        '/about',
-      );
+      expect(footer).not.toHaveTextContent('cookie');
+      expect(within(footer).queryByRole('link')).toBeNull();
       unmount();
     }
   });
@@ -71,20 +65,14 @@ describe('Shell', () => {
     renderWithProviders({ route: '/' });
     await waitFor(() => {
       expect(screen.getByRole('contentinfo')).toHaveTextContent(
-        'No account: a single functional cookie keeps your progress, with no personal data or third-party cookies.',
+        '> nerdose — one platform, many challenges.',
       );
     });
-    expect(
-      within(screen.getByRole('contentinfo')).getByRole('link', { name: 'About' }),
-    ).toHaveAttribute('href', '/about');
   });
 
-  it('TS-25 el footer navega a Acerca de', async () => {
-    renderWithProviders({ route: '/' });
-    await userEvent.click(await screen.findByRole('link', { name: 'Acerca de' }));
-    expect(
-      await screen.findByRole('heading', { level: 1, name: 'Acerca de nerdose' }),
-    ).toBeInTheDocument();
+  it('TS-25 el aviso de privacidad vive en Acerca de', async () => {
+    renderWithProviders({ route: '/about' });
+    expect(await screen.findByRole('heading', { name: 'Privacidad' })).toBeInTheDocument();
   });
 
   it('TS-13/TS-17/TS-18 banner O-03 sin controles, tras el header y antes de main', async () => {
@@ -163,7 +151,7 @@ describe('Shell', () => {
     const { container } = renderWithProviders({ route: '/' });
     await screen.findByRole('heading', {
       level: 1,
-      name: 'Cinco juegos tech. Un desafío por día.',
+      name: 'Una dosis diaria de nerdeo.',
     });
     expect(await axe(container)).toHaveNoViolations();
   });

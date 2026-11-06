@@ -19,15 +19,16 @@ describe('Acerca de', () => {
       screen.getByRole('heading', { level: 1, name: 'Acerca de nerdose' }),
     ).toBeInTheDocument();
     expect(screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)).toEqual([
-      'Los 5 juegos',
+      'Los juegos',
       'Cómo funciona la racha',
       'Datos y atribución',
       'Privacidad',
     ]);
     expect(
-      screen.getByText(/^nerdose es un juego diario sobre programación y tecnología/),
+      screen.getByText(/^Nerdose es una plataforma de minijuegos diarios/),
     ).toBeInTheDocument();
-    expect(screen.getByText(/^Devdle: adiviná el término\./)).toBeInTheDocument();
+    expect(screen.getByText(/^Cada juego tiene un desafío nuevo por día/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Ver los juegos/ })).toHaveAttribute('href', '/');
     expect(screen.getByText(/^No hay cuenta ni registro\./)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Volver a los juegos' })).toHaveAttribute('href', '/');
     expect(document.title).toBe('Acerca de · nerdose');
@@ -52,7 +53,7 @@ describe('Acerca de', () => {
       await screen.findByRole('heading', { level: 1, name: 'About nerdose' }),
     ).toBeInTheDocument();
     expect(screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)).toEqual([
-      'The 5 games',
+      'The games',
       'How streaks work',
       'Data and attribution',
       'Privacy',
@@ -69,7 +70,7 @@ describe('Acerca de', () => {
       expect(panel).toHaveClass('grow', 'basis-130', 'min-w-0');
     }
     expect(Array.from(cards?.querySelectorAll('h2') ?? []).map((h) => h.textContent)).toEqual([
-      'Los 5 juegos',
+      'Los juegos',
       'Cómo funciona la racha',
       'Datos y atribución',
       'Privacidad',

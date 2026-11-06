@@ -1,5 +1,5 @@
 ---
-version: 1.4.0
+version: 1.4.1
 last_updated: 2026-11-06
 status: defined
 source: docs/nerdose.html
@@ -10,7 +10,7 @@ source: docs/nerdose.html
 ## Estado actual
 
 - **Surface:** `web`
-- **Versión:** `1.4.0`
+- **Versión:** `1.4.1`
 - **Estado:** definido desde el prototipo
 - **Fuente de verdad visual:** [`docs/nerdose.html`](../../nerdose.html). Ante una duda de estética gana el prototipo; en datos, reglas y accesibilidad gana el PRD (ver [`governance.md`](governance.md)).
 - **Código:** `@nerdose/ui` está alineado desde S-011 (v1.2.0). `apps/web` tiene alineados el shell, "Acerca de" y la 404 (S-012) y la home (S-013) desde la v1.4.0; ver [`CHANGELOG.md`](CHANGELOG.md) → "Desalineaciones conocidas en código".

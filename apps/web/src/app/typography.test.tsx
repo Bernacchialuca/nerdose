@@ -7,7 +7,7 @@ import { fontOf } from '@/test/font-family';
 import { server } from '@/test/msw';
 import { renderWithProviders } from '@/test/render';
 
-const TITLE = 'Cinco juegos tech. Un desafío por día.';
+const TITLE = 'Una dosis diaria de nerdeo.';
 const NAV = 'Navegación principal';
 
 async function renderHome() {
@@ -76,7 +76,7 @@ describe('Tipografía', () => {
     await renderHome();
     const sans = [
       screen.getByText(
-        'Sin registro, de 1 a 3 minutos por partida. El mismo desafío para todos, cada día.',
+        'Minijuegos para developers y curiosos de la tecnología. Un desafío nuevo por día, el mismo para todos. Dos minutos, algo aprendido, una racha que cuidar.',
       ),
       screen.getByText('Adiviná el término tech en 6 intentos'),
       screen.getByText(/Cada juego publica un desafío nuevo/),
@@ -103,7 +103,7 @@ describe('Tipografía', () => {
     expect(h1).toHaveClass('text-title-page', 'break-words');
     expect(h1).not.toHaveClass('text-2xl');
     for (const name of [
-      'Los 5 juegos',
+      'Los juegos',
       'Cómo funciona la racha',
       'Datos y atribución',
       'Privacidad',

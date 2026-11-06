@@ -1,6 +1,6 @@
 import { Alert, buttonClass } from '@nerdose/ui';
 import { GAME_IDS } from '@nerdose/core';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { useDocumentTitle } from '@/hooks/use-document-title';
 import { formatDayLabel } from '@/lib/format-day';
@@ -55,7 +55,10 @@ export function Component() {
             tabIndex={-1}
             className="font-mono text-display-hero text-text break-words hyphens-auto"
           >
-            {t('catalog.title')}
+            <Trans
+              i18nKey="catalog.title"
+              components={{ accent: <span className="text-accent" /> }}
+            />
           </h1>
           <p className="max-w-lede font-sans text-body-lede text-text-lede">
             {t('catalog.subtitle')}

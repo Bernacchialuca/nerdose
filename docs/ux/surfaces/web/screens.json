@@ -72,7 +72,7 @@
           "name": "hero-titulo",
           "type": "heading",
           "category": "content",
-          "content": "Cinco juegos tech. Un desafío por día.",
+          "content": "Una dosis diaria de nerdeo.",
           "level": "h1",
           "annotation": "titular display (`type.display.hero`); a 320 px se reduce con el mismo criterio que `type.title.page`"
         },
@@ -80,7 +80,7 @@
           "name": "hero-sub",
           "type": "paragraph",
           "category": "content",
-          "content": "Sin registro, de 1 a 3 minutos por partida. El mismo desafío para todos, cada día.",
+          "content": "Minijuegos para developers y curiosos de la tecnología. Un desafío nuevo por día, el mismo para todos. Dos minutos, algo aprendido, una racha que cuidar.",
           "level": "body",
           "annotation": "prosa en Inter (lede)"
         },
@@ -797,7 +797,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -1347,7 +1347,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -1508,15 +1508,15 @@
           "name": "intro",
           "type": "paragraph",
           "category": "content",
-          "content": "nerdose es un juego diario sobre programación y tecnología: cinco minijuegos cortos, un único desafío por día igual para todos, sin registro y en español e inglés.",
+          "content": "Nerdose es una plataforma de minijuegos diarios sobre programación y tecnología: un desafío nuevo por día en cada juego, el mismo para todos, sin registro y en español e inglés.",
           "level": "body"
         },
         {
           "name": "card-juegos",
           "type": "card",
           "category": "content",
-          "content": "Los 5 juegos",
-          "paragraph": "Devdle: adiviná el término. Bug Hunt: encontrá la línea con el bug. Big O: elegí la complejidad. Tech Timeline: ordená los hitos. Grep Grid: encontrá las 8 palabras, sin tiempo.",
+          "content": "Los juegos",
+          "paragraph": "Cada juego tiene un desafío nuevo por día, igual para todos. Las partidas duran de 1 a 3 minutos y todos los juegos tratan sobre programación y tecnología. Ver los juegos →",
           "annotation": "`panel` variant `default` del DS (radio 14, título Mono sin peso 600, cuerpo en Inter); lo mismo vale para las otras tres tarjetas"
         },
         {
@@ -1554,7 +1554,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -1661,7 +1661,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
@@ -1922,7 +1922,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -2205,7 +2205,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -2497,7 +2497,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -2810,7 +2810,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -3135,7 +3135,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -3460,7 +3460,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -3777,7 +3777,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -4090,7 +4090,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -4408,7 +4408,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -4723,7 +4723,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -4989,7 +4989,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -5308,7 +5308,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -5621,7 +5621,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -5922,7 +5922,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -6230,7 +6230,7 @@
           "type": "footer",
           "category": "layout",
           "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {

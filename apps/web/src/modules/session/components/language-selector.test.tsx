@@ -55,7 +55,7 @@ describe('LanguageSelector', () => {
     });
     expect(patches).toEqual([{ body: { locale: 'en' }, ct: 'application/json' }]);
     expect(document.documentElement.lang).toBe('en');
-    expect(await screen.findByRole('link', { name: 'About' })).toBeInTheDocument();
+    expect(await screen.findByText(/one platform, many challenges/)).toBeInTheDocument();
   });
 
   it('TS-9 click en el idioma activo no hace nada', async () => {

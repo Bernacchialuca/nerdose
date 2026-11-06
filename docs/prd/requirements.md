@@ -209,7 +209,7 @@ para no cortar mis rachas.
 |----|-----------|-------|--------|-----------|------------|----------------|
 | C-05 | Ver el estado del día | U-01 | Challenge, Play | READ | date (date), number (int), games[]: game_id (enum game_id), challenge_status (enum: published/voided/none), play_status (enum: in_progress/won/lost/voided, opt), history_label (string, opt), current_streak (int); global_streak (int), completed_today (int) | "Hoy" lo calcula el servidor; el cliente nunca manda la fecha. Funciona sin sesión (sin estado de partidas). Estados visibles: sin jugar, en curso, completado, sin desafío, anulado |
 | C-06 | Cuenta regresiva y cambio de día | U-01 | Challenge | READ | next_reset_at (timestamp UTC), seconds_to_reset (int) | El desafío cambia a las 00:00 UTC. Al llegar a 0, la home recarga el estado del día |
-| C-07 | Ver "Acerca de" y aviso de privacidad | U-01 | — | READ | — | "Acerca de" atribuye las fuentes de Wikipedia y Wikidata (CC BY-SA). El footer incluye un aviso breve de privacidad |
+| C-07 | Ver "Acerca de" y aviso de privacidad | U-01 | — | READ | — | "Acerca de" atribuye las fuentes de Wikipedia y Wikidata (CC BY-SA) e incluye el aviso de privacidad (REQ-003: el footer queda como en el prototipo) |
 
 **Criterios de Aceptación:**
 - DADO que hoy es 2026-12-01 y el lanzamiento fue el 2026-11-24
@@ -770,7 +770,7 @@ sin agregar cookies ni un banner.
 | NFR-PR01 | Cookies | Una sola cookie funcional, sin cookies de terceros y **sin banner** | Inspección del navegador |
 | NFR-PR02 | Analítica | Sin cookies; apagada por defecto | Inspección de requests |
 | NFR-PR03 | Retención | Indefinida para jugadores anónimos (historial y rachas) | — |
-| NFR-PR04 | Aviso | Aviso breve de privacidad en el footer y atribución CC BY-SA en "Acerca de" | Revisión visual |
+| NFR-PR04 | Aviso | Aviso de privacidad y atribución CC BY-SA en "Acerca de", accesible desde `./about` en el header de todas las pantallas | Revisión visual |
 
 ### Usabilidad y Accesibilidad
 

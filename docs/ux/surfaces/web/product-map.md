@@ -59,7 +59,7 @@ Todas las pantallas existen en ambos viewports. La excepción de contenido a ano
 
 ### Bloques por pantalla
 
-Header común a todas las pantallas de plataforma (shell, `app-header` del DS): marca `> nerdose_`, navegación (`./juegos`, `./stats`, `./about`) **siempre dentro del header** y acomodada con `flex-wrap` en mobile (sin tira de navegación aparte, REQ-003), **`#número` del desafío del día** (reemplaza "desafío del 30/10" del prototipo; decisión #12, F-02), selector de idioma ES/EN segmentado y, en la home, la **píldora de racha global** que enlaza a `estadisticas` (REQ-003). El `#número` se oculta cuando el servidor no lo informa (antes del lanzamiento, REQ-002). En las pantallas de juego el header es el `game-header` del DS, con el nombre del juego; en las de resultado se suma el botón "Compartir". El footer (`site-footer`) lleva el lema `> nerdose — una plataforma, múltiples desafíos.`, `exit 0`, el aviso breve de privacidad (una única cookie funcional, sin datos personales ni cookies de terceros) y un enlace a `acerca-de` en todas las pantallas (C-07, REQ-002, REQ-003).
+Header común a todas las pantallas de plataforma (shell, `app-header` del DS): marca `> nerdose_`, navegación (`./juegos`, `./stats`, `./about`) **siempre dentro del header** y acomodada con `flex-wrap` en mobile (sin tira de navegación aparte, REQ-003), **`#número` del desafío del día** (reemplaza "desafío del 30/10" del prototipo; decisión #12, F-02), selector de idioma ES/EN segmentado y, en la home, la **píldora de racha global** que enlaza a `estadisticas` (REQ-003). El `#número` se oculta cuando el servidor no lo informa (antes del lanzamiento, REQ-002). En las pantallas de juego el header es el `game-header` del DS, con el nombre del juego; en las de resultado se suma el botón "Compartir". El footer (`site-footer`) es una sola línea, como el prototipo: el lema `> nerdose — una plataforma, múltiples desafíos.` y `exit 0`, en todas las pantallas. El aviso de privacidad (una única cookie funcional, sin datos personales ni cookies de terceros) vive en `acerca-de` (C-07, REQ-003).
 
 > **Pendiente de alineación (FG-3+):** las 15 pantallas de juego todavía declaran la tira `nav-movil` y el header de plataforma; se pasan al `game-header` del DS cuando se diseñe cada juego. REQ-003 alinea solo el shell de plataforma (`home`, `estadisticas`, `acerca-de`, `no-encontrado`) y el footer de todas.
 
@@ -151,7 +151,7 @@ Dentro de las **pantallas de juego**:
 - "Siguiente juego" y "Volver a los juegos" (resultado) → siguiente `*-instrucciones`/`*-partida` pendiente o `home`.
 - Enlace "Ver mis estadísticas" (resultado) → `estadisticas`.
 
-Dentro de **`home`**: tarjeta de juego → fase correspondiente; "ver estadísticas →" → `estadisticas`; "¿Cómo funciona?" → sección "Cómo funciona" de la misma pantalla (ancla `#como`, REQ-003). `acerca-de` se alcanza desde `./about` y el footer.
+Dentro de **`home`**: tarjeta de juego → fase correspondiente; "ver estadísticas →" → `estadisticas`; "¿Cómo funciona?" → sección "Cómo funciona" de la misma pantalla (ancla `#como`, REQ-003). `acerca-de` se alcanza desde `./about` del header.
 
 Dentro de **`estadisticas`**: bloque por juego y "ver historial completo" (paginado en la misma pantalla, ver pregunta 3).
 

@@ -34,7 +34,6 @@ describe('i18n', () => {
 
   it('textos nuevos en español', () => {
     expect(es.cookies.title).toBe('Activá las cookies para poder jugar');
-    expect(es.footer.about).toBe('Acerca de');
     expect(es.about.title).toBe('Acerca de nerdose');
     expect(es.notFound.title).toBe('404 · página no encontrada');
     expect(es.notFound.back).toBe('Volver a los juegos');
@@ -54,13 +53,12 @@ describe('i18n', () => {
         'cookies.detail',
         'footer.tagline',
         'footer.exit',
-        'footer.privacy',
-        'footer.about',
         'about.documentTitle',
         'about.title',
         'about.intro',
         'about.games.title',
         'about.games.body',
+        'about.games.link',
         'about.streaks.title',
         'about.streaks.body',
         'about.attribution.title',
@@ -85,11 +83,8 @@ describe('i18n', () => {
     expect(es.cookies.detail).toBe(
       'Sin cookies no podemos guardar tu partida. El catálogo, las estadísticas y «Acerca de» siguen disponibles.',
     );
-    expect(es.footer.privacy).toBe(
-      'Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros.',
-    );
     expect(es.about.documentTitle).toBe('Acerca de · nerdose');
-    expect(es.about.games.title).toBe('Los 5 juegos');
+    expect(es.about.games.title).toBe('Los juegos');
     expect(es.about.streaks.title).toBe('Cómo funciona la racha');
     expect(es.about.attribution.title).toBe('Datos y atribución');
     expect(es.about.privacy.title).toBe('Privacidad');
@@ -181,7 +176,7 @@ describe('i18n', () => {
   });
 
   it('TS-3: textos exactos del catálogo en español', () => {
-    expect(es.catalog.title).toBe('Cinco juegos tech. Un desafío por día.');
+    expect(es.catalog.title).toBe('Una dosis diaria de <accent>nerdeo</accent>.');
     expect(es.catalog.error).toBe(
       'No pudimos cargar los juegos de hoy. Revisá tu conexión e intentá de nuevo.',
     );

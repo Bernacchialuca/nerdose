@@ -16,18 +16,16 @@ export const es = {
   footer: {
     tagline: 'nerdose — una plataforma, múltiples desafíos.',
     exit: 'exit 0',
-    privacy:
-      'Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros.',
-    about: 'Acerca de',
   },
   about: {
     documentTitle: 'Acerca de · nerdose',
     title: 'Acerca de nerdose',
     intro:
-      'nerdose es un juego diario sobre programación y tecnología: cinco minijuegos cortos, un único desafío por día igual para todos, sin registro y en español e inglés.',
+      'Nerdose es una plataforma de minijuegos diarios sobre programación y tecnología: un desafío nuevo por día en cada juego, el mismo para todos, sin registro y en español e inglés.',
     games: {
-      title: 'Los 5 juegos',
-      body: 'Devdle: adiviná el término. Bug Hunt: encontrá la línea con el bug. Big O: elegí la complejidad. Tech Timeline: ordená los hitos. Grep Grid: encontrá las 8 palabras, sin tiempo.',
+      title: 'Los juegos',
+      body: 'Cada juego tiene un desafío nuevo por día, igual para todos. Las partidas duran de 1 a 3 minutos y todos los juegos tratan sobre programación y tecnología.',
+      link: 'Ver los juegos',
     },
     streaks: {
       title: 'Cómo funciona la racha',
@@ -51,8 +49,8 @@ export const es = {
     back: 'Volver a los juegos',
   },
   catalog: {
-    title: 'Cinco juegos tech. Un desafío por día.',
-    subtitle: 'Sin registro, de 1 a 3 minutos por partida. El mismo desafío para todos, cada día.',
+    title: 'Una dosis diaria de <accent>nerdeo</accent>.',
+    subtitle: 'Minijuegos para developers y curiosos de la tecnología. Un desafío nuevo por día, el mismo para todos. Dos minutos, algo aprendido, una racha que cuidar.',
     howItWorks: '¿Cómo funciona?',
     hero: {
       continue: 'Seguir jugando',

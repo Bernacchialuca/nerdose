@@ -44,7 +44,7 @@ date: 2026-11-06
 | 2 | codigo | heading | h1 | content | ambos | — | Indica el error en el tono terminal de la marca |
 | 3 | mensaje | paragraph | body | content | ambos | — | Explica qué pasó |
 | 4 | btn-home | button | primary | input | ambos | — | Vuelve a la home |
-| 5 | footer | footer | — | layout | ambos | — | Lema, aviso de privacidad, enlace a Acerca de y `exit 0` (`site-footer`) |
+| 5 | footer | footer | — | layout | ambos | — | Lema y `exit 0` (`site-footer`) |
 
 ## Layout por viewport
 
@@ -83,7 +83,7 @@ date: 2026-11-06
 ### footer
 - Texto/label: > nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0
 - Icono: nada
-- Annotation: `site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07)
+- Annotation: `site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07)
 
 ## Estados
 

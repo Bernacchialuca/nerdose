@@ -20,18 +20,16 @@ export const en: Resources = {
   footer: {
     tagline: 'nerdose — one platform, many challenges.',
     exit: 'exit 0',
-    privacy:
-      'No account: a single functional cookie keeps your progress, with no personal data or third-party cookies.',
-    about: 'About',
   },
   about: {
     documentTitle: 'About · nerdose',
     title: 'About nerdose',
     intro:
-      'nerdose is a daily game about programming and technology: five short minigames, a single challenge per day that is the same for everyone, no sign-up, in Spanish and English.',
+      'Nerdose is a platform of daily minigames about programming and technology: a new challenge every day in each game, the same for everyone, no sign-up, in Spanish and English.',
     games: {
-      title: 'The 5 games',
-      body: 'Devdle: guess the term. Bug Hunt: find the line with the bug. Big O: pick the complexity. Tech Timeline: put the milestones in order. Grep Grid: find the 8 words, no timer.',
+      title: 'The games',
+      body: 'Every game has a new challenge each day, the same for everyone. Rounds take 1 to 3 minutes and every game is about programming and technology.',
+      link: 'See the games',
     },
     streaks: {
       title: 'How streaks work',
@@ -56,8 +54,8 @@ export const en: Resources = {
     back: 'Back to the games',
   },
   catalog: {
-    title: 'Five tech games. One challenge a day.',
-    subtitle: 'No sign-up, 1 to 3 minutes per round. The same challenge for everyone, every day.',
+    title: 'A daily dose of <accent>nerdiness</accent>.',
+    subtitle: 'Mini-games for developers and tech-curious folks. A new challenge every day, the same for everyone. Two minutes, something learned, a streak to keep.',
     howItWorks: 'How does it work?',
     hero: {
       continue: 'Keep playing',

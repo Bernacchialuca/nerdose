@@ -25,7 +25,7 @@ describe('router', () => {
     expect(
       await screen.findByRole('heading', {
         level: 1,
-        name: 'Cinco juegos tech. Un desafío por día.',
+        name: 'Una dosis diaria de nerdeo.',
       }),
     ).toBeInTheDocument();
   });
@@ -63,13 +63,19 @@ describe('router', () => {
     expect(document.body).toHaveFocus();
   });
 
+  it('TS-42b la carga inicial no roba el foco en StrictMode (doble efecto)', async () => {
+    renderWithProviders({ route: '/', strict: true });
+    await screen.findByRole('heading', { level: 1, name: 'Una dosis diaria de nerdeo.' });
+    expect(document.body).toHaveFocus();
+  });
+
   it('flujo / -> about -> volver', async () => {
     renderWithProviders({ route: '/' });
     await userEvent.click(await screen.findByRole('link', { name: './about' }));
     await userEvent.click(await screen.findByRole('link', { name: /Volver a los juegos/ }));
     const h1 = await screen.findByRole('heading', {
       level: 1,
-      name: 'Cinco juegos tech. Un desafío por día.',
+      name: 'Una dosis diaria de nerdeo.',
     });
     expect(h1).toHaveFocus();
     expect(document.title).toBe('nerdose');
@@ -121,13 +127,13 @@ describe('persistencia del idioma', () => {
       expect(screen.getByRole('button', { name: 'EN' })).toBeEnabled();
     });
     await userEvent.click(screen.getByRole('button', { name: 'EN' }));
-    expect(await screen.findByRole('link', { name: 'About' })).toBeInTheDocument();
+    expect(await screen.findByText(/one platform, many challenges/)).toBeInTheDocument();
     expect(reload).not.toHaveBeenCalled();
     first.unmount();
     await i18n.changeLanguage('es');
 
     renderWithProviders({ route: '/' });
-    expect(await screen.findByRole('link', { name: 'About' })).toBeInTheDocument();
+    expect(await screen.findByText(/one platform, many challenges/)).toBeInTheDocument();
     expect(document.documentElement.lang).toBe('en');
     vi.unstubAllGlobals();
   });
@@ -159,7 +165,7 @@ describe('persistencia del idioma', () => {
       expect(screen.getByRole('button', { name: 'ES' })).toBeEnabled();
     });
     await userEvent.click(screen.getByRole('button', { name: 'EN' }));
-    await screen.findByRole('link', { name: 'About' });
+    await screen.findByText(/one platform, many challenges/);
     expect(container).toBeInTheDocument();
     expect(posts).toBe(1);
     expect(document.cookie).toBe('');
@@ -196,7 +202,7 @@ describe('persistencia del idioma', () => {
       expect(screen.getByRole('button', { name: 'EN' })).toBeEnabled();
     });
     await userEvent.click(screen.getByRole('button', { name: 'EN' }));
-    expect(await screen.findByRole('link', { name: 'About' })).toBeInTheDocument();
+    expect(await screen.findByText(/one platform, many challenges/)).toBeInTheDocument();
     expect(screen.queryByText(/(Activá las cookies|Enable cookies)/)).toBeNull();
   });
 });

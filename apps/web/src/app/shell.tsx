@@ -14,13 +14,13 @@ export function Shell() {
   const { status } = useSession();
   const { pathname } = useLocation();
   const isHome = pathname === '/';
-  const firstRender = useRef(true);
+  // Compara contra la ruta anterior (y no un flag de "primer render"): en StrictMode
+  // el efecto corre dos veces al montar y el flag dejaba enfocar el h1 al cargar.
+  const previousPath = useRef(pathname);
 
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
+    if (previousPath.current === pathname) return;
+    previousPath.current = pathname;
     document.querySelector<HTMLElement>('main h1')?.focus();
   }, [pathname]);
 

@@ -15,7 +15,7 @@ import {
 import { server } from '@/test/msw';
 import { renderWithProviders } from '@/test/render';
 
-const TITLE = 'Cinco juegos tech. Un desafío por día.';
+const TITLE = 'Una dosis diaria de nerdeo.';
 const ERROR_TEXT = 'No pudimos cargar los juegos de hoy. Revisá tu conexión e intentá de nuevo.';
 const NAMES = ['Devdle', 'Grep Grid', 'Tech Timeline', 'Big O', 'Bug Hunt'];
 
@@ -352,7 +352,7 @@ describe('Home', () => {
     );
     useToday(todayNoChallengesFixture);
     renderWithProviders({ route: '/' });
-    await screen.findByRole('heading', { level: 1, name: 'Five tech games. One challenge a day.' });
+    await screen.findByRole('heading', { level: 1, name: 'A daily dose of nerdiness.' });
     expect(await screen.findByText('No challenges published today')).toBeInTheDocument();
     const term = within(screen.getByRole('region', { name: "Today's progress" }));
     expect(term.getByText('~/today — progress.log')).toBeInTheDocument();
@@ -466,7 +466,7 @@ describe('Home', () => {
       'break-words',
       'hyphens-auto',
     );
-    expect(main.getByText(/El mismo desafío para todos/)).toHaveClass(
+    expect(main.getByText(/Dos minutos, algo aprendido/)).toHaveClass(
       'font-sans',
       'text-body-lede',
       'text-text-lede',

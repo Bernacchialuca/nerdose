@@ -77,7 +77,7 @@ Los 4 servicios corren en local, conectados a la base, con la identidad visual e
 **Descripción:**
 La experiencia de entrada a nerdose: el jugador entra sin registrarse, se le crea un Player anónimo con su cookie funcional, la interfaz se muestra en su idioma (ES/EN) y puede cambiarlo. La home funciona como catálogo, con los 5 juegos, su estado del día (todos "sin desafío" hasta que existan generadores), la racha global, el número de desafío y la cuenta regresiva a las 00:00 UTC.
 
-Incluye "Acerca de" con la atribución de Wikipedia/Wikidata, el aviso de privacidad en el footer y el aviso de cookies bloqueadas.
+Incluye "Acerca de" con la atribución de Wikipedia/Wikidata, el aviso de privacidad (dentro de "Acerca de") y el aviso de cookies bloqueadas.
 
 **¿Por qué es importante?:**
 - Es la puerta de entrada y la identidad del producto: cada juego después se monta sobre este shell.

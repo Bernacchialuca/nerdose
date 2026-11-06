@@ -61,7 +61,7 @@ date: 2026-11-03
 | 15 | loader | loader | — | feedback | ambos | visible_only_in_states: loading | Indicador de carga |
 | 16 | alerta-sistema | alert | error | feedback | ambos | visible_only_in_states: error de sistema | Error de carga con causa y salida |
 | 17 | btn-reintentar | button | secondary | input | ambos | visible_only_in_states: error de sistema | Reintentar la carga |
-| 18 | footer | footer | — | layout | ambos | — | Aviso breve de privacidad y enlace a Acerca de |
+| 18 | footer | footer | — | layout | ambos | — | Lema y `exit 0` (`site-footer`) |
 
 ## Layout por viewport
 
@@ -192,7 +192,7 @@ date: 2026-11-03
 ### footer
 - Texto/label: > nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0
 - Icono: nada
-- Annotation: `site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)
+- Annotation: `site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)
 
 ## Estados
 

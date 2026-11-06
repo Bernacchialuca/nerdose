@@ -27,7 +27,7 @@ date: 2026-11-06
 
 **Entradas:**
 - Header · `./about`
-- Cualquier pantalla · enlace «Acerca de» del footer (REQ-002, CA 19)
+- Cualquier pantalla · `./about` del header (el enlace del footer se quitó en REQ-003 para alinear el footer al prototipo)
 
 **Salidas user-driven:**
 - A `home` · «Volver a los juegos»
@@ -42,12 +42,12 @@ date: 2026-11-06
 | 1 | header | header | — | layout | ambos | — | Marca, nav, #número e idioma (`app-header` variant `default`) |
 | 2 | titulo | heading | h1 | content | ambos | — | Título de la pantalla |
 | 3 | intro | paragraph | body | content | ambos | — | Qué es nerdose |
-| 4 | card-juegos | card | — | content | ambos | — | Los 5 juegos en una línea cada uno (`panel`) |
+| 4 | card-juegos | card | — | content | ambos | — | Cómo funcionan los juegos, sin enumerarlos, con enlace «Ver los juegos →» a `home` (`panel`) |
 | 5 | card-rachas | card | — | content | ambos | — | Reglas de racha (`panel`) |
 | 6 | card-atribucion | card | — | content | ambos | — | Atribución obligatoria de Wikipedia y Wikidata (`panel`) |
 | 7 | card-privacidad | card | — | content | ambos | — | Aviso de privacidad (`panel`) |
 | 8 | link-volver | link | — | navigation | ambos | — | Salida a la home |
-| 9 | footer | footer | — | layout | ambos | — | Lema, aviso de privacidad, enlace a Acerca de y `exit 0` (`site-footer`) |
+| 9 | footer | footer | — | layout | ambos | — | Lema y `exit 0` (`site-footer`) |
 
 ## Layout por viewport
 
@@ -85,13 +85,13 @@ date: 2026-11-06
 - Annotation: nada
 
 ### intro
-- Texto/label: nerdose es un juego diario sobre programación y tecnología: cinco minijuegos cortos, un único desafío por día igual para todos, sin registro y en español e inglés.
+- Texto/label: Nerdose es una plataforma de minijuegos diarios sobre programación y tecnología: un desafío nuevo por día en cada juego, el mismo para todos, sin registro y en español e inglés.
 - Icono: nada
 - Annotation: nada
 
 ### card-juegos
-- Texto/label: Los 5 juegos
-- Texto secundario: Devdle: adiviná el término. Bug Hunt: encontrá la línea con el bug. Big O: elegí la complejidad. Tech Timeline: ordená los hitos. Grep Grid: encontrá las 8 palabras, sin tiempo.
+- Texto/label: Los juegos
+- Texto secundario: Cada juego tiene un desafío nuevo por día, igual para todos. Las partidas duran de 1 a 3 minutos y todos los juegos tratan sobre programación y tecnología. Ver los juegos →
 - Icono: nada
 - Annotation: `panel` variant `default` del DS (radio 14, título Mono sin peso 600, cuerpo en Inter); lo mismo vale para las otras tres tarjetas
 
@@ -121,7 +121,7 @@ date: 2026-11-06
 ### footer
 - Texto/label: > nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0
 - Icono: nada
-- Annotation: `site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07)
+- Annotation: `site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07)
 
 ## Estados
 
@@ -156,7 +156,7 @@ date: 2026-11-06
 - REQ-002: el aviso de privacidad explicita «una única cookie funcional, sin datos personales ni cookies de terceros» y por qué no hay banner (RF 15, NFR-PR01); la entrada principal pasa a ser el enlace del footer, presente en todas las pantallas (RF 14, CA 19). Sin cambios de layout.
 
 - REQ-003: se alinea al DS 1.0.0 sin cambiar contenido ni layout: las tarjetas pasan a ser `panel` del DS (radio 14, tipografía Mono para títulos e Inter para la prosa, sin peso 600), el enlace de salida usa el estilo de `link` y el header es el `app-header` `default`. La tira `nav-movil` se elimina: la nav vive siempre en el header con `flex-wrap` (cambio solo de mobile).
-- REQ-003: la entrada desde «¿Cómo funciona?» de la home desaparece: ese botón ahora baja a la sección «Cómo funciona» de la propia home. Esta pantalla se alcanza desde `./about` y desde el footer.
+- REQ-003: la entrada desde «¿Cómo funciona?» de la home desaparece: ese botón ahora baja a la sección «Cómo funciona» de la propia home. Esta pantalla se alcanza desde `./about` del header.
 
 **Alternativas descartadas:**
 - Un FAQ con acordeones: más interacción para un contenido corto.
@@ -169,3 +169,4 @@ date: 2026-11-06
 - C-07, F-01 · flujo 3 (dudas sobre la racha).
 - REQ-002: RF 14, RF 15 · CA 19, CA 21.
 - REQ-003: RF 4, 6, 11, 13 · CA 2.
+- REQ-003 (revisión visual): la intro presenta a nerdose como plataforma y no nombra la cantidad de juegos; la card «Los 5 juegos» pasa a «Los juegos», genérica y con enlace a `home`, para que escale al sumar juegos sin reescribir el texto.
