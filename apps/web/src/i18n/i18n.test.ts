@@ -111,7 +111,6 @@ describe('i18n', () => {
       'catalog.hero.continue',
       'catalog.hero.start',
       'catalog.hero.browse',
-      'catalog.gamesLabel',
       'catalog.challengeLabel',
       'catalog.challengeNumber',
       'catalog.streakPill.label_one',
@@ -126,18 +125,37 @@ describe('i18n', () => {
       'catalog.progress.beforeLaunch',
       'catalog.progress.noSession',
       'catalog.progress.unavailable',
-      'catalog.globalStreak_one',
-      'catalog.globalStreak_other',
-      'catalog.globalStreakUnknown',
-      'catalog.countdown',
       'catalog.loading',
       'catalog.error',
       'catalog.card.minutes',
       'catalog.card.untimed',
       'catalog.card.streak',
       'catalog.stats',
+      'catalog.hero.prompt',
+      'catalog.hero.date',
+      'catalog.challenges.title',
+      'catalog.terminal.label',
+      'catalog.terminal.title',
+      'catalog.terminal.command',
+      'catalog.terminal.streakLabel',
+      'catalog.terminal.streakValue_one',
+      'catalog.terminal.streakValue_other',
+      'catalog.terminal.streakUnknown',
+      'catalog.terminal.countdown',
+      'catalog.card.neutral',
+      'catalog.placeholder.command',
+      'catalog.placeholder.branch',
+      'catalog.placeholder.body',
+      'catalog.placeholder.chip',
+      'catalog.progressPanel.label',
+      'catalog.progressPanel.unit_one',
+      'catalog.progressPanel.unit_other',
+      'catalog.progressPanel.unitSuffix_one',
+      'catalog.progressPanel.unitSuffix_other',
+      'catalog.progressPanel.unitUnknown',
+      'catalog.progressPanel.record',
+      'catalog.how.title',
       'catalog.summary.title',
-      'catalog.summary.streaks',
       'catalog.summary.empty',
       'catalog.summary.noChallenges',
       'catalog.summary.beforeLaunch',
@@ -146,6 +164,13 @@ describe('i18n', () => {
       ...['notPlayed', 'inProgress', 'completed', 'none', 'voided', 'soon', 'noSession'].map(
         (k) => `catalog.card.status.${k}`,
       ),
+      ...['done', 'notPlayed', 'inProgress', 'none', 'voided', 'soon', 'noSession'].map(
+        (k) => `catalog.terminal.status.${k}`,
+      ),
+      ...['1', '2', '3', '4'].flatMap((n) => [
+        `catalog.how.steps.${n}.kicker`,
+        `catalog.how.steps.${n}.body`,
+      ]),
       ...['play', 'continue', 'result', 'none', 'soon'].map((k) => `catalog.card.cta.${k}`),
       ...['devdle', 'grep-grid', 'timeline', 'big-o', 'bug-hunt'].flatMap((g) => [
         `games.${g}.name`,
@@ -160,7 +185,15 @@ describe('i18n', () => {
     expect(es.catalog.error).toBe(
       'No pudimos cargar los juegos de hoy. Revisá tu conexión e intentá de nuevo.',
     );
-    expect(es.catalog.card.status.none).toBe('sin desafío hoy · no afecta tu racha');
+    expect(es.catalog.card.status.none).toBe('sin desafío hoy');
+    expect(es.catalog.card.neutral).toBe('no afecta tu racha');
+    expect(es.catalog.challenges.title).toBe('Los desafíos de hoy');
+    expect(es.catalog.terminal.title).toBe('~/hoy — progreso.log');
+    expect(es.catalog.terminal.streakValue_other).toBe('{{count}} días · récord {{max}}');
+    expect(es.catalog.placeholder.body).toBe(
+      'Más desafíos en camino. Cada juego nuevo suma su propia racha.',
+    );
+    expect(es.catalog.how.steps['4'].kicker).toBe('04 · compartís sin spoilers');
     expect(es.catalog.loading).toBe('Cargando los desafíos de hoy…');
     expect(es.games['big-o'].name).toBe('Big O');
     expect(es.games.timeline.name).toBe('Tech Timeline');

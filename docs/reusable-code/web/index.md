@@ -27,11 +27,12 @@ App `apps/web` (not a package; imported through the `@/` alias).
 - **sessionFixture / todayFixture / todayNoSessionFixture** (apps/web/src/test/fixtures/) - snake_case fixtures
 - **fontOf** (apps/web/src/test/font-family.ts) - Resolves `'mono' | 'sans'` for an element by walking up to the nearest `font-*` class
 
-## Catalog (7 items) - see catalog.md
+## Catalog (11 items) - see catalog.md
 - **GAME_CATALOG** (apps/web/src/modules/catalog/games.ts) - Static per-game metadata (minutes, untimed, accent class) in `GAME_IDS` order
-- **deriveHomeView** (apps/web/src/modules/catalog/home-view.ts) - Pure function deriving home state (loading/error/ready, cards, hero, summary) from `Today` and session status
+- **deriveHomeView** (apps/web/src/modules/catalog/home-view.ts) - Pure function deriving home state (loading/error/ready, cards with `next`, terminal rows, hero, summary) from `Today` and session status
 - **useDayCountdown** (apps/web/src/modules/catalog/api/use-day-countdown.ts) - Seconds to reset; at 0 waits a 0-3 s jitter and invalidates `todayKeys.all` once
 - **ChallengeNumber** (apps/web/src/modules/catalog/components/challenge-number.tsx) - `#number` of the daily challenge for the shell header
 - **GlobalStreakPill** (apps/web/src/modules/catalog/components/global-streak-pill.tsx) - Header streak pill linking to `/stats`; hidden without data
-- **GameCard / DayStatus / ProgressSummary** (apps/web/src/modules/catalog/components/) - Presentational components that paint a `HomeView`
+- **GameCard / DayTerminal / ProgressPanel / HowItWorks / NextGamePlaceholder** (apps/web/src/modules/catalog/components/) - Presentational components that paint a `HomeView`
+- **formatDayLabel** (apps/web/src/lib/format-day.ts) - `'2026-11-03'` to `'martes 3 nov'` / `'Tuesday Nov 3'` (UTC)
 - **formatCountdown** (apps/web/src/lib/format-countdown.ts) - Seconds to `HH:MM:SS`

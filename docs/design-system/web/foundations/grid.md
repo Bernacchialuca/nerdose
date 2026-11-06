@@ -1,6 +1,6 @@
 ---
 foundation: grid
-version: 1.1.0
+version: 1.2.0
 last_updated: 2026-11-06
 status: defined
 platform: web
@@ -149,3 +149,4 @@ A 320px el contenido útil mide **256px** (320 − 2×32). El prototipo no lo re
 - 2026-11-03 v0.1.0 — Placeholder inicial.
 - 2026-11-05 v1.0.0 — Reescrita desde el prototipo: sin media queries ni grilla de 12 columnas; reglas flex-wrap y auto-fit con sus valores reales, breakpoints efectivos derivados, mapeo a los viewports de UX y adaptaciones requeridas para 320px. Se eliminan los tokens `bp.xs`…`bp.xl`.
 - 2026-11-06 v1.1.0 — S-012: layouts de "Acerca de" y de pantallas de mensaje.
+- 2026-11-06 v1.2.0 — S-013: plantillas `auto-fit` de la home (tarjetas y "Cómo funciona") con `min(N, 100%)`.

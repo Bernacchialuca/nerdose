@@ -115,9 +115,18 @@ describe('componentes', () => {
       'modules/about/routes/about.tsx',
       'modules/catalog/routes/home.tsx',
       'modules/catalog/components/game-card.tsx',
-      'modules/catalog/components/progress-summary.tsx',
+      'modules/catalog/components/day-terminal.tsx',
+      'modules/catalog/components/progress-panel.tsx',
+      'modules/catalog/components/how-it-works.tsx',
+      'modules/catalog/components/next-game-placeholder.tsx',
     ]) {
       expect(relative).toContain(expected);
+    }
+  });
+
+  it('TS-44: los componentes reemplazados por S-013 ya no existen', () => {
+    for (const gone of ['day-status.tsx', 'progress-summary.tsx']) {
+      expect(existsSync(`${srcDir}modules/catalog/components/${gone}`), gone).toBe(false);
     }
   });
 
@@ -202,6 +211,13 @@ describe('layout fluido (S-012)', () => {
     'modules/about/routes/about.tsx',
     'modules/catalog/components/challenge-number.tsx',
     'modules/catalog/components/global-streak-pill.tsx',
+    'modules/catalog/routes/home.tsx',
+    'modules/catalog/components/game-card.tsx',
+    'modules/catalog/components/day-terminal.tsx',
+    'modules/catalog/components/progress-panel.tsx',
+    'modules/catalog/components/how-it-works.tsx',
+    'modules/catalog/components/next-game-placeholder.tsx',
+    'modules/catalog/components/challenges-header.tsx',
     'modules/session/components/language-selector.tsx',
   ];
   const RULES = [

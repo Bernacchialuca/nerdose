@@ -13,7 +13,7 @@ const NAV = 'Navegación principal';
 async function renderHome() {
   const utils = renderWithProviders({ route: '/' });
   await screen.findByRole('heading', { level: 1, name: TITLE });
-  await screen.findByText('Racha global: 5 días');
+  await screen.findByRole('region', { name: 'Progreso de hoy' });
   return utils;
 }
 
@@ -47,25 +47,25 @@ describe('Tipografía', () => {
     await renderHome();
     const h1 = screen.getByRole('heading', { level: 1, name: TITLE });
     expect(fontOf(h1)).toBe('mono');
-    expect(h1).toHaveClass('text-title-page', 'break-words');
-    for (const name of [
-      'Devdle',
-      'Grep Grid',
-      'Tech Timeline',
-      'Big O',
-      'Bug Hunt',
-      'Tu progreso',
-    ]) {
+    expect(h1).toHaveClass('text-display-hero', 'break-words', 'hyphens-auto');
+    for (const name of ['Devdle', 'Grep Grid', 'Tech Timeline', 'Big O', 'Bug Hunt']) {
+      expect(fontOf(screen.getByRole('heading', { level: 3, name })), name).toBe('mono');
+    }
+    for (const name of ['Los desafíos de hoy', 'Tu progreso', 'Cómo funciona']) {
       expect(fontOf(screen.getByRole('heading', { level: 2, name })), name).toBe('mono');
     }
+    const terminal = within(screen.getByRole('region', { name: 'Progreso de hoy' }));
+    const progress = within(screen.getByRole('region', { name: 'Tu progreso' }));
     const mono = [
       screen.getByRole('button', { name: /Seguir jugando/ }),
-      screen.getByRole('link', { name: /¿Cómo funciona\?/ }),
+      screen.getByRole('button', { name: '¿Cómo funciona?' }),
       screen.getByRole('link', { name: /ver estadísticas/ }),
-      screen.getByText('Racha global: 5 días'),
-      screen.getByText(/Próximo desafío en/),
+      screen.getByText(/\$ nerdose --today/),
+      screen.getByText('// martes 3 nov'),
       screen.getByText(/\d de \d.* completados/),
-      screen.getByText('Racha global 5 · Récord 12'),
+      terminal.getByText('5 días · récord 12'),
+      terminal.getByText(/devdle/),
+      progress.getByText('5'),
       within(screen.getByRole('article', { name: 'Devdle' })).getByText(/~2 min/),
       screen.getByText('✓ 4/6'),
     ];
@@ -74,21 +74,23 @@ describe('Tipografía', () => {
 
   it('TS-11 la prosa de la home en Inter', async () => {
     await renderHome();
-    expect(
-      fontOf(
-        screen.getByText(
-          'Sin registro, de 1 a 3 minutos por partida. El mismo desafío para todos, cada día.',
-        ),
+    const sans = [
+      screen.getByText(
+        'Sin registro, de 1 a 3 minutos por partida. El mismo desafío para todos, cada día.',
       ),
-    ).toBe('sans');
-    expect(fontOf(screen.getByText('Adiviná el término tech en 6 intentos'))).toBe('sans');
+      screen.getByText('Adiviná el término tech en 6 intentos'),
+      screen.getByText(/Cada juego publica un desafío nuevo/),
+      screen.getByText(/Más desafíos en camino/),
+      screen.getByText('récord de racha'),
+    ];
+    for (const el of sans) expect(fontOf(el), el.textContent ?? '').toBe('sans');
   });
 
   it('TS-12 el resumen de progreso sin datos es prosa', async () => {
     server.use(http.get('/api/today', () => HttpResponse.json(todayFirstVisitFixture)));
     renderWithProviders({ route: '/' });
     const text = await screen.findByText(
-      'Todavía no hay datos. Completá un desafío y acá vas a ver tu racha y tu heatmap.',
+      'Todavía no hay datos. Completá un desafío y acá vas a ver tu racha.',
     );
     expect(fontOf(text)).toBe('sans');
     expect(fontOf(screen.getByRole('heading', { level: 2, name: 'Tu progreso' }))).toBe('mono');

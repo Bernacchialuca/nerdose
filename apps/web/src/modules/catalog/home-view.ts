@@ -1,4 +1,5 @@
 import { GAME_IDS } from '@nerdose/core';
+import type { TerminalRowState } from '@nerdose/ui';
 
 import type { SessionStatus } from '@/modules/session';
 
@@ -31,6 +32,23 @@ export type CardView = {
   label: string | null;
   streak: number | null;
   cta: CardCta | null;
+  next: boolean;
+};
+
+export type TerminalStatusKey =
+  | 'done'
+  | 'notPlayed'
+  | 'inProgress'
+  | 'none'
+  | 'voided'
+  | 'soon'
+  | 'noSession';
+
+export type TerminalRowView = {
+  game_id: GameId;
+  state: TerminalRowState;
+  metric: string;
+  status: TerminalStatusKey | null;
 };
 
 export type ProgressKey =
@@ -56,6 +74,12 @@ export type HomeView =
   | { kind: 'error'; cards: CardView[] }
   | {
       kind: 'ready';
+      date: string;
+      next: GameId | null;
+      terminal: {
+        rows: TerminalRowView[];
+        streak: { current: number | null; max: number | null; tone: 'streak' | 'dim' };
+      };
       variant: 'before_launch' | 'no_challenges' | 'normal';
       number: number | null;
       secondsToReset: number;
@@ -74,7 +98,7 @@ type Input = {
   sessionStatus: SessionStatus;
 };
 
-const EMPTY_CARD = { status: null, label: null, streak: null, cta: null } as const;
+const EMPTY_CARD = { status: null, label: null, streak: null, cta: null, next: false } as const;
 
 function cardView(
   gameId: GameId,
@@ -82,7 +106,7 @@ function cardView(
   variant: 'before_launch' | 'no_challenges' | 'normal',
   sessionStatus: SessionStatus,
 ): CardView {
-  const base = { game_id: gameId };
+  const base = { game_id: gameId, next: false };
   if (!game) return { ...base, ...EMPTY_CARD };
   if (variant === 'before_launch') {
     return {
@@ -149,6 +173,39 @@ function cardView(
   return make('notPlayed', null, 'play', 'primary');
 }
 
+const ROW_BY_STATUS: Record<
+  NonNullable<CardStatus>,
+  { state: TerminalRowState; status: TerminalStatusKey }
+> = {
+  completed: { state: 'done', status: 'done' },
+  notPlayed: { state: 'pending', status: 'notPlayed' },
+  inProgress: { state: 'in-progress', status: 'inProgress' },
+  none: { state: 'no-challenge', status: 'none' },
+  voided: { state: 'voided', status: 'voided' },
+  soon: { state: 'upcoming', status: 'soon' },
+  noSession: { state: 'unavailable', status: 'noSession' },
+};
+
+function terminalRow(card: CardView): TerminalRowView {
+  if (card.status === null) {
+    return { game_id: card.game_id, state: 'unavailable', metric: '—', status: null };
+  }
+  const { state, status } = ROW_BY_STATUS[card.status];
+  const metric =
+    card.status === 'completed' && card.label ? card.label.replace(/^[✓✗]\s*/, '') : '—';
+  return { game_id: card.game_id, state, metric, status };
+}
+
+function pickNext(today: Today): GameId | null {
+  const candidates = GAME_IDS.map((id) => today.games.find((g) => g.game_id === id)).filter(
+    (g): g is TodayGame => g !== undefined && g.challenge_status === 'published',
+  );
+  const found =
+    candidates.find((g) => g.play_status === 'in_progress') ??
+    candidates.find((g) => g.play_status === null);
+  return found?.game_id ?? null;
+}
+
 export function deriveHomeView({ today, isPending, isError, sessionStatus }: Input): HomeView {
   if (isError) {
     return {
@@ -202,22 +259,37 @@ export function deriveHomeView({ today, isPending, isError, sessionStatus }: Inp
   else if (firstVisit) summary = 'empty';
   else summary = 'streaks';
 
+  const next = variant === 'normal' && sessionStatus === 'active' ? pickNext(today) : null;
+  const cards = GAME_IDS.map((id) => ({
+    ...cardView(
+      id,
+      today.games.find((g) => g.game_id === id),
+      variant,
+      sessionStatus,
+    ),
+    next: id === next,
+  }));
+  const unknownStreak = blocked || unavailable;
+
   return {
     kind: 'ready',
+    date: today.date,
+    next,
+    terminal: {
+      rows: cards.map(terminalRow),
+      streak: {
+        current: unknownStreak ? null : today.global_streak.current,
+        max: unknownStreak ? null : today.global_streak.max,
+        tone: !unknownStreak && today.global_streak.current > 0 ? 'streak' : 'dim',
+      },
+    },
     variant,
     number: today.number,
     secondsToReset: today.seconds_to_reset,
     progress,
     globalStreak: blocked || unavailable ? null : today.global_streak.current,
     streaks: today.global_streak,
-    cards: GAME_IDS.map((id) =>
-      cardView(
-        id,
-        today.games.find((g) => g.game_id === id),
-        variant,
-        sessionStatus,
-      ),
-    ),
+    cards,
     hero,
     summary,
   };

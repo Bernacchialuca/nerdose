@@ -228,4 +228,120 @@ describe('deriveHomeView', () => {
       cta: { label: 'result' },
     });
   });
+
+  describe('next, terminal y racha', () => {
+    const active = { ...base, sessionStatus: 'active' } as const;
+
+    it('TS-1: next = primer en curso', () => {
+      const v = ready(deriveHomeView({ ...active, today: todayFixture }));
+      expect(v.next).toBe('grep-grid');
+      expect(v.cards.find((c) => c.game_id === 'grep-grid')?.next).toBe(true);
+      expect(v.cards.filter((c) => c.next)).toHaveLength(1);
+    });
+
+    it('TS-2: next = primer publicado sin jugar', () => {
+      expect(ready(deriveHomeView({ ...active, today: todayFirstVisitFixture })).next).toBe(
+        'devdle',
+      );
+    });
+
+    it('TS-3: next salta completados, none y anulados', () => {
+      const games = [
+        { ...todayFixture.games[0]!, play_status: 'won' as const },
+        { ...todayFixture.games[1]!, challenge_status: 'none' as const, play_status: null },
+        { ...todayFixture.games[2]!, challenge_status: 'voided' as const },
+        { ...todayFixture.games[3]!, challenge_status: 'published' as const },
+        { ...todayFixture.games[4]!, challenge_status: 'published' as const },
+      ];
+      expect(ready(deriveHomeView({ ...active, today: { ...todayFixture, games } })).next).toBe(
+        'big-o',
+      );
+    });
+
+    it('TS-4: sin next en estados sin destino', () => {
+      const cases = [
+        deriveHomeView({ ...base, today: todayNoChallengesFixture, sessionStatus: 'active' }),
+        deriveHomeView({ ...base, today: todayBeforeLaunchFixture, sessionStatus: 'active' }),
+        deriveHomeView({
+          ...base,
+          today: todayFirstVisitFixture,
+          sessionStatus: 'cookies_blocked',
+        }),
+        deriveHomeView({ ...base, today: todayFirstVisitFixture, sessionStatus: 'unavailable' }),
+        deriveHomeView({ ...base, today: todayFirstVisitFixture, sessionStatus: 'loading' }),
+      ];
+      for (const view of cases) {
+        const v = ready(view);
+        expect(v.next).toBeNull();
+        expect(v.cards.every((c) => !c.next)).toBe(true);
+      }
+    });
+
+    it('TS-5: filas de terminal en estado mixto', () => {
+      const v = ready(deriveHomeView({ ...active, today: todayFixture }));
+      expect(v.terminal.rows).toEqual([
+        { game_id: 'devdle', state: 'done', metric: '4/6', status: 'done' },
+        { game_id: 'grep-grid', state: 'in-progress', metric: '—', status: 'inProgress' },
+        { game_id: 'timeline', state: 'pending', metric: '—', status: 'notPlayed' },
+        { game_id: 'big-o', state: 'no-challenge', metric: '—', status: 'none' },
+        { game_id: 'bug-hunt', state: 'voided', metric: '—', status: 'voided' },
+      ]);
+    });
+
+    it('TS-6: filas sin desafíos, antes del lanzamiento, cookies y no disponible', () => {
+      const rows = (
+        today: Parameters<typeof deriveHomeView>[0]['today'],
+        s: 'active' | 'cookies_blocked' | 'unavailable',
+      ) => ready(deriveHomeView({ ...base, today, sessionStatus: s })).terminal.rows;
+      expect(rows(todayNoChallengesFixture, 'active')).toSatisfy((r: ReturnType<typeof rows>) =>
+        r.every((x) => x.state === 'no-challenge' && x.status === 'none'),
+      );
+      expect(rows(todayBeforeLaunchFixture, 'active')).toSatisfy((r: ReturnType<typeof rows>) =>
+        r.every((x) => x.state === 'upcoming' && x.status === 'soon'),
+      );
+      expect(rows(todayFirstVisitFixture, 'cookies_blocked')).toSatisfy(
+        (r: ReturnType<typeof rows>) =>
+          r.every((x) => x.state === 'unavailable' && x.status === 'noSession'),
+      );
+      expect(rows(todayFirstVisitFixture, 'unavailable')).toSatisfy((r: ReturnType<typeof rows>) =>
+        r.every((x) => x.state === 'unavailable' && x.metric === '—' && x.status === null),
+      );
+    });
+
+    it('TS-7: métrica sin glifo y sin history_label', () => {
+      const games = [
+        { ...todayFixture.games[0]!, play_status: 'won' as const, history_label: '✓ 4/6' },
+        { ...todayFixture.games[1]!, play_status: 'lost' as const, history_label: '✗ X/6' },
+        { ...todayFixture.games[2]!, play_status: 'won' as const, history_label: null },
+        todayFixture.games[3]!,
+        todayFixture.games[4]!,
+      ];
+      const v = ready(deriveHomeView({ ...active, today: { ...todayFixture, games } }));
+      expect(v.terminal.rows.slice(0, 3).map((r) => r.metric)).toEqual(['4/6', 'X/6', '—']);
+      expect(
+        v.terminal.rows.slice(0, 3).every((r) => r.state === 'done' && r.status === 'done'),
+      ).toBe(true);
+      expect(v.cards.slice(0, 3).map((c) => c.label)).toEqual(['✓ 4/6', '✗ X/6', null]);
+    });
+
+    it('TS-8: línea de racha de la terminal', () => {
+      expect(ready(deriveHomeView({ ...active, today: todayFixture })).terminal.streak).toEqual({
+        current: 5,
+        max: 12,
+        tone: 'streak',
+      });
+      expect(
+        ready(deriveHomeView({ ...active, today: todayNoChallengesFixture })).terminal.streak,
+      ).toEqual({ current: 0, max: 0, tone: 'dim' });
+      expect(
+        ready(
+          deriveHomeView({
+            ...base,
+            today: todayFirstVisitFixture,
+            sessionStatus: 'cookies_blocked',
+          }),
+        ).terminal.streak,
+      ).toEqual({ current: null, max: null, tone: 'dim' });
+    });
+  });
 });

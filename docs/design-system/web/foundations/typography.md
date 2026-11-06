@@ -1,6 +1,6 @@
 ---
 foundation: typography
-version: 1.1.0
+version: 1.2.0
 last_updated: 2026-11-06
 status: defined
 source: docs/nerdose.html
@@ -189,3 +189,4 @@ La adaptación al ancho mínimo se resuelve con corte de palabra (`overflow-wrap
 - 2026-11-03 v0.1.0 — Placeholder inicial.
 - 2026-11-05 v1.0.0 — Reescrita desde el prototipo: Inter para prosa y JetBrains Mono para el resto, regla de uso, ligaduras desactivadas en Mono y escala completa de ~50 roles con valores y línea de origen. Se elimina la escala placeholder (`display`, `h1`…`caption`).
 - 2026-11-06 v1.1.0 — S-012: `type.title.page` a 320px resuelto con corte de palabra.
+- 2026-11-06 v1.2.0 — S-013: `type.display.hero` a 320px con corte de palabra y guion, sin reducir el tamaño.
