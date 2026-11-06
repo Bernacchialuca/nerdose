@@ -44,14 +44,14 @@ export function Component() {
       <div className="flex flex-wrap gap-5">
         <Panel title={t('about.games.title')} className={PANEL}>
           <p className={BODY}>{t('about.games.body')}</p>
-          <Link to="/" className={cn(linkClass(), 'self-start')}>
+          <Link to="/" className={cn(linkClass(), 'mt-auto self-start')}>
             {t('about.games.link')}
             <span aria-hidden="true">→</span>
           </Link>
         </Panel>
         <Panel title={t('about.streaks.title')} className={PANEL}>
           <p className={BODY}>{t('about.streaks.body')}</p>
-          <Link to="/stats" className={cn(linkClass(), 'self-start')}>
+          <Link to="/stats" className={cn(linkClass(), 'mt-auto self-start')}>
             {t('about.streaks.link')}
             <span aria-hidden="true">→</span>
           </Link>

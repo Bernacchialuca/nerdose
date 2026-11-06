@@ -66,6 +66,15 @@ describe('Acerca de', () => {
     expect(document.title).toBe('About · nerdose');
   });
 
+  it('los links de las cards quedan al pie, a la misma altura', () => {
+    view();
+    for (const name of [/Ver los juegos/, /Ver tus estadísticas/]) {
+      const link = screen.getByRole('link', { name });
+      expect(link).toHaveClass('mt-auto', 'self-start');
+      expect(link.parentElement).toHaveClass('grow', 'flex-col');
+    }
+  });
+
   it('TS-29 arreglo desktop', () => {
     const { container } = view();
     const cards = container.querySelector('.flex-wrap');

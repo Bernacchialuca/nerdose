@@ -56,7 +56,7 @@ export function Panel({
             title,
           )
         : null}
-      {children ? <div className="flex min-w-0 flex-col gap-3">{children}</div> : null}
+      {children ? <div className="flex min-w-0 grow flex-col gap-3">{children}</div> : null}
       {note ? <p className="font-sans text-caption text-text-muted">{note}</p> : null}
     </section>
   );

@@ -124,3 +124,4 @@ Variación del prototipo: el panel "// orden correcto" de Timeline usa `padding:
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: panel con etiqueta `//`, variants `default`, `feature`, `explain`, `context`, cajas internas y nota al pie.
 - 2026-11-06 v1.0.1 — S-013: composición de "Tu progreso" con un solo panel `feature`.
+- 2026-11-06 v1.0.2 — El cuerpo del panel crece (`flex-grow`): en una fila de paneles de igual altura, una acción final con `mt-auto` queda al pie y alineada entre paneles ("Acerca de").

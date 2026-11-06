@@ -71,6 +71,15 @@ describe('Panel', () => {
     expect(section).toHaveClass('h-full');
   });
 
+  it('body grows so a trailing action can sit at the bottom with mt-auto', () => {
+    render(
+      <Panel title="T">
+        <p>cuerpo</p>
+      </Panel>,
+    );
+    expect(screen.getByText('cuerpo').parentElement).toHaveClass('grow', 'flex-col');
+  });
+
   it('renders no text of its own (TS-55)', () => {
     const { container } = render(<Panel />);
     expect(container.textContent).toBe('');
