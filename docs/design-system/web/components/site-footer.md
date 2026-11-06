@@ -1,8 +1,8 @@
 ---
 component: site-footer
-version: 1.0.0
+version: 1.3.0
 status: active
-last_updated: 2026-11-05
+last_updated: 2026-11-06
 source: docs/nerdose.html
 related: [app-header]
 ---
@@ -73,6 +73,16 @@ Todo en `type.label.comment` (Mono 13), `text.dim`.
 
 - [app-header](./app-header.md), [link](./link.md).
 
+## Ubicación del contenido (resuelto en S-012)
+
+Antes **Pendiente**. Dos filas, `flex-direction: column`, gap 12, padding 24/32, borde superior `border.subtle`, Mono 13 `text.dim` (L256):
+
+- **Fila 1** (`space-between`, wrap): lema `> nerdose — una plataforma, múltiples desafíos.` a la izquierda y `exit 0` a la derecha. El `>` es decorativo (`aria-hidden`).
+- **Fila 2** (wrap): aviso de privacidad (producto) y el link "Acerca de →" con `link` `subtle`.
+
+El dominio `nerdose.dev` ya no se muestra: no está en el prototipo ni en los screen.md. Origen: story S-012, decisión 7.
+
 ## Historial
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: borde superior sutil, padding 24 32, Mono 13 gris, lema + `exit 0`; contenido de privacidad del PRD como agregado de producto.
+- 2026-11-06 v1.3.0 — S-012: ubicación del aviso de privacidad y de "Acerca de" resuelta; se quita el dominio.

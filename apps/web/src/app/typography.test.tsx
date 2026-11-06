@@ -6,7 +6,6 @@ import { todayFirstVisitFixture } from '@/test/fixtures/today';
 import { fontOf } from '@/test/font-family';
 import { server } from '@/test/msw';
 import { renderWithProviders } from '@/test/render';
-import { mockViewport } from '@/test/viewport';
 
 const TITLE = 'Cinco juegos tech. Un desafío por día.';
 const NAV = 'Navegación principal';
@@ -25,8 +24,7 @@ describe('Tipografía', () => {
     expect(container.firstElementChild).not.toHaveClass('font-mono');
   });
 
-  it('TS-8 header, nav y footer en Mono (desktop)', async () => {
-    mockViewport('desktop');
+  it('TS-8 header, nav y footer en Mono', async () => {
     await renderHome();
     const banner = screen.getByRole('banner');
     expect(fontOf(banner)).toBe('mono');
@@ -38,11 +36,10 @@ describe('Tipografía', () => {
     expect(fontOf(within(banner).getByText(/#128/))).toBe('mono');
   });
 
-  it('TS-9 nav móvil en Mono', async () => {
-    mockViewport('mobile');
+  it('TS-9 la nav vive en el header y resuelve Mono', async () => {
     await renderHome();
     const nav = screen.getByRole('navigation', { name: NAV });
-    expect(screen.getByRole('banner')).not.toContainElement(nav);
+    expect(screen.getByRole('banner')).toContainElement(nav);
     expect(fontOf(nav)).toBe('mono');
   });
 
@@ -151,7 +148,7 @@ describe('Tipografía', () => {
       'font-mono',
       'focus-visible:outline-accent',
       'w-full',
-      'lg:w-auto',
     );
+    expect(back).not.toHaveClass('lg:w-auto');
   });
 });

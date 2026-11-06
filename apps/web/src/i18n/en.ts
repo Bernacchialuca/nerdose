@@ -18,7 +18,8 @@ export const en: Resources = {
       "Without cookies we can't save your game. The catalog, stats and “About” are still available.",
   },
   footer: {
-    domain: 'nerdose.dev',
+    tagline: 'nerdose — one platform, many challenges.',
+    exit: 'exit 0',
     privacy:
       'No account: a single functional cookie keeps your progress, with no personal data or third-party cookies.',
     about: 'About',
@@ -62,6 +63,14 @@ export const en: Resources = {
     gamesLabel: "Today's games",
     challengeLabel: "Today's challenge",
     challengeNumber: '#{{number}}',
+    streakPill: {
+      label_one: 'Global streak: {{count}} day',
+      label_other: 'Global streak: {{count}} days',
+      labelUnknown: 'Global streak: no data',
+      value_one: '{{count}} day',
+      value_other: '{{count}} days',
+      unknown: '—',
+    },
     progress: {
       completed: '{{completed}} of {{total}} completed today',
       completedWithChallenge: '{{completed}} of {{total}} with a challenge completed',

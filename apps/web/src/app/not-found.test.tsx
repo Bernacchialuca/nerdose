@@ -42,13 +42,10 @@ describe('NotFound', () => {
 
   it('TS-35 y TS-44 arreglo por viewport, targets y foco', () => {
     const { container } = view();
-    expect(container.firstElementChild).toHaveClass('lg:grid', 'lg:grid-cols-12');
-    expect(container.firstElementChild?.firstElementChild).toHaveClass(
-      'lg:col-span-6',
-      'lg:col-start-4',
-    );
+    expect(container.firstElementChild).toHaveClass('mx-auto', 'w-full', 'max-w-lede');
+    expect(container.innerHTML).not.toMatch(/\b(sm|md|lg|xl):/);
     const link = screen.getByRole('link', { name: /Volver a los juegos/ });
-    expect(link).toHaveClass('w-full', 'lg:w-auto', 'min-h-11');
+    expect(link).toHaveClass('w-full', 'min-h-11');
     expect(link).toHaveClass(
       'focus-visible:outline-2',
       'focus-visible:outline-offset-2',

@@ -3,6 +3,28 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.3.0] - 2026-11-06
+
+**MINOR.** `apps/web` pasa el shell, "Acerca de" y la 404 a las piezas del DS (story S-012) y se documentan las piezas derivadas. Ningún valor definido cambia.
+
+### Agregado
+- `components/link.md`: variant `inline` para links dentro de prosa (subrayado 1px, offset 4px, `accent.brand`).
+- `components/site-footer.md`: ubicación resuelta del lema, `exit 0`, aviso de privacidad y "Acerca de →".
+- `components/app-header.md`: `#número` entre la píldora y el selector.
+- `components/banner.md`: separación de 24px bajo el header para `warning`.
+- `foundations/grid.md` 1.1.0: layouts de "Acerca de" (`flex-wrap`, `1 1 520px`, gap 20) y de pantallas de mensaje (`layout.lede` 540px).
+- `foundations/spacing.md` 1.1.0: `layout.page.padding` 48/56 para pantallas de plataforma sin prototipo.
+- `foundations/typography.md` 1.1.0: `type.title.page` a 320px con corte de palabra.
+
+### Código alineado con el spec
+- `apps/web`: fondo con textura de puntos y header translúcido en la home, nav siempre en el header (`navItemClass`), píldora de racha (`StreakPill`) solo en la home, selector ES/EN con `SegmentedControl`, footer del prototipo, "Acerca de", 404 y error de ruta con `Panel`, `buttonClass` y `linkClass`, contenedor de página `max-w-page` con gutter 32. Se eliminan `useMediaQuery`, `DESKTOP_MEDIA_QUERY` y `mockViewport`.
+
+### Notas para limpiar en otros docs
+- `no-encontrado.md` anota el título como "Mono 800"; `type.title.page` es Mono 700.
+- El CA-2 de la story S-012 dice "cualquier ruta" para la píldora de racha; el DS y el product-map la limitan a la home.
+
+---
+
 ## [1.2.0] - 2026-11-06
 
 **MINOR.** `@nerdose/ui` se alinea con el DS (story S-011) y se documentan las piezas que la story derivó de la identidad (governance 1.1.0). Ningún valor definido cambia.
@@ -89,21 +111,14 @@ y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Desalineaciones conocidas en código
 
-Diferencias del código con el DS. `@nerdose/ui` quedó alineado en la v1.2.0 (S-011); lo que sigue es de `apps/web` (lo corrigen S-012 y S-013). S-011 (plan `web`) resolvió fuentes, CTA (`cta.ts` → `buttonClass` / `linkClass`) y títulos con utilidades genéricas:
+Diferencias del código con el DS. `@nerdose/ui` quedó alineado en la v1.2.0 (S-011); el shell, "Acerca de" y la 404 de `apps/web` quedaron alineados en la v1.3.0 (S-012); lo que sigue es de la home (lo corrige S-013). S-011 (plan `web`) resolvió fuentes, CTA (`cta.ts` → `buttonClass` / `linkClass`) y títulos con utilidades genéricas:
 
-- **Fondo** (`shell.tsx`): liso, sin la textura de puntos de 24px en Home ni el header translúcido.
 - **Tipografía**: tamaños genéricos de Tailwind en cuerpos y metadatos (`text-base`, `text-sm`, `text-xs`) y el titular del hero en `type.title.page` (40) en lugar de `type.display.hero` (64/800); sin los interlineados del DS en esos cuerpos.
 - **Button**: "¿Cómo funciona?" del hero es un link (`linkClass`) a `/about` (prototipo: botón `secondary` `lg` que baja a `#como`; lo resuelve S-013).
 - **Card** (`apps/web/src/modules/catalog/components/game-card.tsx`): título como `h2` (prototipo `h3` bajo el `h2` de sección); descripción Mono 14 `#9AA6B2` (prototipo Inter 15/1.5 `#A9B4BF`); metadatos unidos por " · " en un párrafo y racha sin ámbar ni `▲`; estado como texto plano (prototipo: badge); sin miniatura, `next` ni tarjeta placeholder "próximo juego" (lo resuelve S-013 con las piezas de `@nerdose/ui`).
 - **Catálogo** (`apps/web/src/modules/catalog/routes/home.tsx`): grilla `lg:grid-cols-3` con gap 16/24 (prototipo `auto-fit minmax(300px, 1fr)`, gap 20); "Tu progreso" es una Card más dentro de la grilla (prototipo: sección propia con panel `feature` radio 16 / padding 28, número de racha de 88px, heatmap, mini-stats y panel de rachas por juego); sin ventana terminal en el hero; sin sección "Cómo funciona".
 - **Progreso del día** (`day-status.tsx`): barra continua de 8px sin radio sobre `surface-2` (prototipo: segmentada 36×6 redondeada, pendiente `#2A323C`); racha como texto (prototipo: número display ámbar).
-- **Acerca de** (`apps/web/src/modules/about/routes/about.tsx`): secciones con borde y padding 16 **sin radio** (prototipo: `Panel`; lo resuelve S-012).
-- **App header** (`apps/web/src/app/shell.tsx`): muestra el número de desafío (`ChallengeNumber`) en lugar de la píldora de racha (lo resuelve S-012).
-- **Nav** (`apps/web/src/components/main-nav.tsx`, `shell.tsx`): se saca del header por debajo de 1024px y va en una fila aparte (prototipo: siempre en el header, con wrap); ítems con padding 8 y sin radio; activo en verde (prototipo: padding 12 14, radio 8, activo `#161B22` + `#E6EDF3`).
-- **Selector de idioma** (`language-selector.tsx`): dos botones sueltos de 44×44 con borde `#8D99A6` y activo en verde (prototipo: grupo de 44px con fondo `#11151A`, borde `#2A323C` y radio 10; segmentos 40×36 radio 7; activo `#2A323C` / `#E6EDF3`; Mono 700 12).
-- **Footer** (`site-footer.tsx`): borde `#222A33`, padding 16/48, 12px y otro contenido (prototipo: borde `#1E252E`, padding 24 32, Mono 13 `#8D99A6`, lema + `exit 0`, `space-between`). El aviso de privacidad es contenido de producto y se mantiene.
-- **Layout** (`shell.tsx`, `apps/web/src/lib/breakpoints.ts`): `main` con padding 16/48 y sin `max-width` 1240; grilla de 12 columnas y breakpoint global de 1024px (prototipo: sin media queries, gutter 32 y reglas flex-wrap / auto-fit).
-- **Links** (`about.tsx`, `site-footer.tsx`): subrayados en verde (prototipo: sin subrayado, con `→`, color del acento de la pantalla y hover claro).
+- **Layout de la home** (`home.tsx`, `game-card.tsx`): prefijos `lg:` y grilla de 12 columnas internos (prototipo: sin media queries y reglas flex-wrap / auto-fit); lo resuelve S-013.
 - **Foco**: `outline` 2px verde con offset +2 en todos los controles. El DS lo deja como requisito con estética Pendiente (único precedente del prototipo: 2px en el acento del juego con offset -2, L756); no es una desalineación hasta que se defina.
 
 ---

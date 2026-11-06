@@ -9,7 +9,9 @@ describe('SiteFooter', () => {
   it('muestra privacidad y enlace a Acerca de', () => {
     renderWithProviders({ route: '/', routes: [{ path: '*', element: <SiteFooter /> }] });
     const footer = screen.getByRole('contentinfo');
-    expect(footer).toHaveTextContent('nerdose.dev');
+    expect(footer).toHaveTextContent('> nerdose — una plataforma, múltiples desafíos.');
+    expect(footer).toHaveTextContent('exit 0');
+    expect(footer).not.toHaveTextContent('nerdose.dev');
     expect(footer).toHaveTextContent('una única cookie funcional');
     expect(screen.getByRole('link', { name: 'Acerca de' })).toHaveAttribute('href', '/about');
   });

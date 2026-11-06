@@ -1,7 +1,7 @@
 ---
 foundation: spacing
-version: 1.0.0
-last_updated: 2026-11-05
+version: 1.1.0
+last_updated: 2026-11-06
 status: defined
 source: docs/nerdose.html
 ---
@@ -140,7 +140,12 @@ Otros anchos máximos: lede 540px (L40), teclado 620px (L469), aside de Devdle 3
 
 - `components/card.md`, `components/panel.md`, `components/banner.md`, `components/button.md`.
 
+## Padding de página de pantallas de plataforma sin prototipo (S-012)
+
+"Acerca de", la 404 y el error de ruta usan `layout.page.padding` de la otra pantalla de plataforma (stats, L301): 48 arriba / 56 abajo. La home mantiene 64 / 48 (L34).
+
 ## Historial
 
 - 2026-11-03 v0.1.0 — Placeholder inicial.
 - 2026-11-05 v1.0.0 — Escala real del prototipo (2-72px), medidas de página (1240px, gutter 32px, paddings por tipo de pantalla), paddings y gaps por componente y medidas de control. Los primitivos pasan a nombrarse por su valor en px (`space.4` era 16px y ahora es 4px). Se eliminan `space.xs`…`space.4xl` y los semánticos `space.inline.*`, `space.stack.*`, `space.padding.*`.
+- 2026-11-06 v1.1.0 — S-012: padding de página 48/56 para pantallas sin prototipo.

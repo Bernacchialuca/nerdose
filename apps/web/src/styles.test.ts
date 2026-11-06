@@ -171,3 +171,76 @@ describe('cta.ts', () => {
     }
   });
 });
+
+describe('media queries globales (S-012)', () => {
+  it('los archivos de media queries fueron eliminados y nadie los usa', () => {
+    for (const gone of [
+      'lib/breakpoints.ts',
+      'hooks/use-media-query.ts',
+      'hooks/use-media-query.test.ts',
+      'test/viewport.ts',
+    ]) {
+      expect(existsSync(`${srcDir}${gone}`), gone).toBe(false);
+    }
+    for (const file of filesWith(srcDir, ['.ts', '.tsx'])) {
+      if (file.endsWith('styles.test.ts')) continue;
+      const content = readFileSync(file, 'utf8');
+      for (const legacy of ['useMediaQuery', 'DESKTOP_MEDIA_QUERY', 'mockViewport']) {
+        expect(content, `${file} (${legacy})`).not.toContain(legacy);
+      }
+    }
+  });
+});
+
+describe('layout fluido (S-012)', () => {
+  const FILES = [
+    'app/shell.tsx',
+    'app/not-found.tsx',
+    'app/route-error.tsx',
+    'components/main-nav.tsx',
+    'components/site-footer.tsx',
+    'modules/about/routes/about.tsx',
+    'modules/catalog/components/challenge-number.tsx',
+    'modules/catalog/components/global-streak-pill.tsx',
+    'modules/session/components/language-selector.tsx',
+  ];
+  const RULES = [
+    { name: 'responsive', re: /\b(sm|md|lg|xl|2xl):/ },
+    { name: 'ancho fijo', re: /\b(min-)?w-\[/ },
+    { name: 'nowrap', re: /\bwhitespace-nowrap\b/ },
+    { name: 'grilla de 12', re: /grid-cols-12/ },
+    { name: 'col-span', re: /col-span-/ },
+  ] as const;
+
+  it('los archivos de S-012 existen y no usan prefijos responsive ni anchos fijos', () => {
+    const found: string[] = [];
+    for (const file of FILES) {
+      expect(existsSync(`${srcDir}${file}`), file).toBe(true);
+      const content = readFileSync(`${srcDir}${file}`, 'utf8');
+      for (const { name, re } of RULES) if (re.test(content)) found.push(`${file} (${name})`);
+    }
+    expect(found).toEqual([]);
+  });
+
+  it('la guarda detecta lo prohibido y deja pasar lo permitido', () => {
+    const matches = (s: string) => RULES.some(({ re }) => re.test(s));
+    for (const bad of [
+      'lg:w-auto',
+      'w-[200px]',
+      'min-w-[10px]',
+      'whitespace-nowrap',
+      'lg:grid-cols-12',
+    ]) {
+      expect(matches(bad), bad).toBe(true);
+    }
+    for (const good of ['max-w-page', 'basis-130', 'flex-wrap', 'min-w-0']) {
+      expect(matches(good), good).toBe(false);
+    }
+  });
+
+  it('index.css fija el fondo y el esquema oscuro del documento', () => {
+    const css = readFileSync(`${srcDir}index.css`, 'utf8');
+    expect(css).toContain('@apply bg-bg;');
+    expect(css).toContain('color-scheme: dark;');
+  });
+});

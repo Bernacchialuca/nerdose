@@ -1,6 +1,6 @@
 ---
 component: app-header
-version: 1.2.0
+version: 1.3.0
 status: active
 last_updated: 2026-11-06
 source: docs/nerdose.html
@@ -89,7 +89,12 @@ related: [game-header, language-selector, streak-pill, site-footer]
 
 - [game-header](./game-header.md), [language-selector](./language-selector.md), [streak-pill](./streak-pill.md), [site-footer](./site-footer.md).
 
+## `#número` del desafío (S-012)
+
+Dato de producto (PRD decisión #12): entre la píldora y el selector de idioma, `type.mono.body` en `text.muted` (7,9:1 sobre `#0F1318`), con prefijo `sr-only` "Desafío del día". Se muestra en todas las pantallas de plataforma y se oculta si no hay número o `GET /api/today` falla. La píldora de racha sigue solo en la variant `home`.
+
 ## Historial
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: logo con cursor, nav con rutas `./` y estado activo con fondo, acciones con píldora de racha y selector de idioma, sin media queries.
 - 2026-11-06 v1.2.0 — Hover y área táctil de 44px del ítem de nav; helper `navItemClass`; `AppHeader` de `@nerdose/ui` alineado (variant `home`, slot `nav`).
+- 2026-11-06 v1.3.0 — S-012: `#número` documentado en las acciones del header.

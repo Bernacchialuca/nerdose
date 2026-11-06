@@ -1,7 +1,7 @@
 ---
 foundation: grid
-version: 1.0.0
-last_updated: 2026-11-05
+version: 1.1.0
+last_updated: 2026-11-06
 status: defined
 platform: web
 source: docs/nerdose.html
@@ -138,7 +138,14 @@ A 320px el contenido útil mide **256px** (320 − 2×32). El prototipo no lo re
 - Reflow (WCAG 1.4.10 / NFR-U01): sin scroll horizontal de página a 320px; ver tabla de adaptaciones.
 - Zoom 200%: equivale a un viewport de la mitad del ancho; las reglas intrínsecas lo absorben igual que un mobile.
 
+## Layouts derivados (S-012)
+
+- **Acerca de:** paneles en `flex-wrap`, gap 20, cada uno `flex: 1 1 520px` (base de la columna de texto del hero, L36-47) y `min-width: 0`. Dos columnas desde 1124px de viewport (2×520 + 20 + gutter 64), una columna por debajo; sin media queries.
+- **Pantallas de mensaje (404, error de ruta):** una columna `layout.lede` de 540px centrada (`max-w-lede`), con el botón a ancho completo.
+- Los "6/12" y "10/12" de los screen.md solo indican largo de línea; no hay grilla de 12.
+
 ## Historial
 
 - 2026-11-03 v0.1.0 — Placeholder inicial.
 - 2026-11-05 v1.0.0 — Reescrita desde el prototipo: sin media queries ni grilla de 12 columnas; reglas flex-wrap y auto-fit con sus valores reales, breakpoints efectivos derivados, mapeo a los viewports de UX y adaptaciones requeridas para 320px. Se eliminan los tokens `bp.xs`…`bp.xl`.
+- 2026-11-06 v1.1.0 — S-012: layouts de "Acerca de" y de pantallas de mensaje.
