@@ -9,7 +9,7 @@ export function ChallengeNumber() {
   const number = data?.number;
   if (typeof number !== 'number' || isError) return null;
   return (
-    <p className="text-text-muted">
+    <p className="font-mono text-mono-body text-text-muted">
       <span className="sr-only">{t('catalog.challengeLabel')} </span>
       {t('catalog.challengeNumber', { number })}
     </p>

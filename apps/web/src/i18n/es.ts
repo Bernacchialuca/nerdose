@@ -14,7 +14,8 @@ export const es = {
       'Sin cookies no podemos guardar tu partida. El catálogo, las estadísticas y «Acerca de» siguen disponibles.',
   },
   footer: {
-    domain: 'nerdose.dev',
+    tagline: 'nerdose — una plataforma, múltiples desafíos.',
+    exit: 'exit 0',
     privacy:
       'Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros.',
     about: 'Acerca de',
@@ -57,6 +58,14 @@ export const es = {
     gamesLabel: 'Juegos de hoy',
     challengeLabel: 'Desafío del día',
     challengeNumber: '#{{number}}',
+    streakPill: {
+      label_one: 'Racha global: {{count}} día',
+      label_other: 'Racha global: {{count}} días',
+      labelUnknown: 'Racha global: sin datos',
+      value_one: '{{count}} día',
+      value_other: '{{count}} días',
+      unknown: '—',
+    },
     progress: {
       completed: '{{completed}} de {{total}} completados hoy',
       completedWithChallenge: '{{completed}} de {{total}} con desafío completados',

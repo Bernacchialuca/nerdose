@@ -50,8 +50,10 @@ describe('RouteError', () => {
       'text-text',
       'font-medium',
       'min-h-11',
-      'mt-4',
+      'w-full',
     );
+    expect(retry).not.toHaveClass('mt-4');
+    expect(screen.getByRole('alert').querySelector('section')).toContainElement(retry);
     expect(retry).not.toHaveClass('border-border-interactive');
     expect(retry).not.toHaveClass('text-accent');
   });

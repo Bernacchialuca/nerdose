@@ -8,7 +8,7 @@
 
 ## LanguageSelector
 - **Location:** apps/web/src/modules/session/components/language-selector.tsx
-- **Signature:** `LanguageSelector()` - no props; reads `useSession()`
+- **Signature:** `LanguageSelector()` - no props; reads `useSession()`; renders `SegmentedControl` from `@nerdose/ui`
 
 ## useToday / todayKeys / fetchToday
 - **Location:** apps/web/src/modules/catalog/api/today.ts, use-today.ts

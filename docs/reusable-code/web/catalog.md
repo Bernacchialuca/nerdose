@@ -20,6 +20,11 @@
 - **Signature:** `ChallengeNumber()`
 - **Usage:** `<ChallengeNumber />` inside `AppHeader`
 
+## GlobalStreakPill
+- **Location:** apps/web/src/modules/catalog/components/global-streak-pill.tsx
+- **Signature:** `GlobalStreakPill()` - reads `useToday()` and `useSession()`; renders `null` without data or on error; `—` when cookies are blocked or the session is unavailable
+- **Usage:** `{isHome ? <GlobalStreakPill /> : null}` inside `AppHeader`
+
 ## GameCard / DayStatus / ProgressSummary
 - **Location:** apps/web/src/modules/catalog/components/
 - **Signature:** `GameCard({ gameId, view })`, `DayStatus({ view, syncedAt })`, `ProgressSummary({ summary, streaks })`

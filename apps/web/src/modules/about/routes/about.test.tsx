@@ -63,12 +63,11 @@ describe('Acerca de', () => {
 
   it('TS-29 arreglo desktop', () => {
     const { container } = view();
-    const grid = container.firstElementChild;
-    expect(grid).toHaveClass('lg:grid', 'lg:grid-cols-12');
-    const col = grid?.firstElementChild;
-    expect(col).toHaveClass('lg:col-span-10', 'lg:col-start-2');
-    const cards = container.querySelector('.lg\\:grid-cols-2');
-    expect(cards).not.toBeNull();
+    const cards = container.querySelector('.flex-wrap');
+    expect(cards).toHaveClass('flex', 'gap-5');
+    for (const panel of Array.from(cards?.children ?? [])) {
+      expect(panel).toHaveClass('grow', 'basis-130', 'min-w-0');
+    }
     expect(Array.from(cards?.querySelectorAll('h2') ?? []).map((h) => h.textContent)).toEqual([
       'Los 5 juegos',
       'Cómo funciona la racha',
@@ -79,9 +78,8 @@ describe('Acerca de', () => {
 
   it('TS-30 arreglo mobile', () => {
     const { container } = view();
-    const cards = container.querySelector('.lg\\:grid-cols-2');
-    expect(cards).toHaveClass('grid', 'gap-4');
-    expect(cards?.className.split(' ').some((c) => /^grid-cols-/.test(c))).toBe(false);
+    expect(container.innerHTML).not.toMatch(/\b(sm|md|lg|xl):/);
+    expect(container.innerHTML).not.toMatch(/grid-cols-12|col-span-/);
     expect(container.innerHTML).not.toMatch(/w-\[/);
   });
 

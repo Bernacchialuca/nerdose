@@ -1,7 +1,7 @@
 ---
 foundation: typography
-version: 1.0.0
-last_updated: 2026-11-05
+version: 1.1.0
+last_updated: 2026-11-06
 status: defined
 source: docs/nerdose.html
 ---
@@ -180,7 +180,12 @@ Ejemplos: `button.lg.type → type.button.lg`, `panel.label.type → type.label.
 - `components/streak-number.md` — `type.display.streak`.
 - `components/code-block.md` — `type.code`, `type.label.tab`.
 
+## `type.title.page` a 320px (S-012)
+
+La adaptación al ancho mínimo se resuelve con corte de palabra (`overflow-wrap: break-word`), sin reducir el tamaño.
+
 ## Historial
 
 - 2026-11-03 v0.1.0 — Placeholder inicial.
 - 2026-11-05 v1.0.0 — Reescrita desde el prototipo: Inter para prosa y JetBrains Mono para el resto, regla de uso, ligaduras desactivadas en Mono y escala completa de ~50 roles con valores y línea de origen. Se elimina la escala placeholder (`display`, `h1`…`caption`).
+- 2026-11-06 v1.1.0 — S-012: `type.title.page` a 320px resuelto con corte de palabra.

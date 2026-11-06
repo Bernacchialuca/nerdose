@@ -8,7 +8,6 @@ import { sessionFixture } from '@/test/fixtures/session';
 import { todayNoSessionFixture } from '@/test/fixtures/today';
 import { server } from '@/test/msw';
 import { renderWithProviders } from '@/test/render';
-import { mockViewport } from '@/test/viewport';
 
 const COOKIES = 'Activá las cookies para poder jugar';
 
@@ -53,7 +52,9 @@ describe('Shell', () => {
     for (const route of ['/', '/about', '/no-existe']) {
       const { unmount } = renderWithProviders({ route });
       const footer = await screen.findByRole('contentinfo');
-      expect(footer).toHaveTextContent('nerdose.dev');
+      expect(footer).toHaveTextContent('> nerdose — una plataforma, múltiples desafíos.');
+      expect(footer).toHaveTextContent('exit 0');
+      expect(footer).not.toHaveTextContent('nerdose.dev');
       expect(footer).toHaveTextContent(
         'Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros.',
       );
@@ -86,7 +87,7 @@ describe('Shell', () => {
     ).toBeInTheDocument();
   });
 
-  it('TS-13/TS-17/TS-18 banner O-03 sin controles y bajo la nav en mobile', async () => {
+  it('TS-13/TS-17/TS-18 banner O-03 sin controles, tras el header y antes de main', async () => {
     blocked();
     renderWithProviders({ route: '/' });
     const banner = await screen.findByRole('status');
@@ -103,16 +104,15 @@ describe('Shell', () => {
     }
     const nav = screen.getByRole('navigation');
     const main = screen.getByRole('main');
-    const order = [screen.getByRole('banner'), nav, banner, main];
+    const order = [screen.getByRole('banner'), banner, main];
     order.slice(1).forEach((el, i) => {
       const prev = order[i] as HTMLElement;
       expect(prev.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     });
-    expect(screen.getByRole('banner')).not.toContainElement(nav);
+    expect(screen.getByRole('banner')).toContainElement(nav);
   });
 
   it('TS-19 banner en desktop con la nav dentro del header', async () => {
-    mockViewport('desktop');
     blocked();
     renderWithProviders({ route: '/' });
     const banner = await screen.findByRole('status');
@@ -159,21 +159,13 @@ describe('Shell', () => {
     expect(screen.queryByText(/aceptar cookies|accept cookies/i)).toBeNull();
   });
 
-  it('TS-45 axe sin violaciones en mobile y desktop', async () => {
-    const mobile = renderWithProviders({ route: '/' });
+  it('TS-45 axe sin violaciones en la home', async () => {
+    const { container } = renderWithProviders({ route: '/' });
     await screen.findByRole('heading', {
       level: 1,
       name: 'Cinco juegos tech. Un desafío por día.',
     });
-    expect(await axe(mobile.container)).toHaveNoViolations();
-    mobile.unmount();
-    mockViewport('desktop');
-    const desktop = renderWithProviders({ route: '/' });
-    await screen.findByRole('heading', {
-      level: 1,
-      name: 'Cinco juegos tech. Un desafío por día.',
-    });
-    expect(await axe(desktop.container)).toHaveNoViolations();
+    expect(await axe(container)).toHaveNoViolations();
   });
 
   it('TS-46 axe sin violaciones con el banner visible', async () => {

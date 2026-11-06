@@ -14,7 +14,6 @@ import {
 } from '@/test/fixtures/today';
 import { server } from '@/test/msw';
 import { renderWithProviders } from '@/test/render';
-import { mockViewport } from '@/test/viewport';
 
 const TITLE = 'Cinco juegos tech. Un desafío por día.';
 const ERROR_TEXT = 'No pudimos cargar los juegos de hoy. Revisá tu conexión e intentá de nuevo.';
@@ -72,7 +71,6 @@ describe('Home', () => {
   });
 
   it('TS-26: #número en desktop después de la navegación y antes del idioma', async () => {
-    mockViewport('desktop');
     useToday(todayNoChallengesFixture);
     await renderHome();
     const banner = screen.getByRole('banner');
@@ -331,8 +329,7 @@ describe('Home', () => {
     }
   });
 
-  it.each(['desktop', 'mobile'] as const)('TS-47/48: arreglo %s', async (viewport) => {
-    mockViewport(viewport);
+  it('TS-47/48: arreglo actual de la home', async () => {
     useToday(todayNoChallengesFixture);
     await renderHome();
     await screen.findByText('Hoy no hay desafíos publicados');
@@ -365,7 +362,6 @@ describe('Home', () => {
   });
 
   it('TS-49: axe sin violaciones en desktop', async () => {
-    mockViewport('desktop');
     useToday(todayNoChallengesFixture);
     const { container } = await renderHome();
     await screen.findByText('Hoy no hay desafíos publicados');

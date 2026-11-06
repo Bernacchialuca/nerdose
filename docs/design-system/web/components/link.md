@@ -1,6 +1,6 @@
 ---
 component: link
-version: 1.2.0
+version: 1.3.0
 status: active
 last_updated: 2026-11-06
 source: docs/nerdose.html
@@ -89,7 +89,17 @@ related: [button, panel]
 
 - [button](./button.md), [panel](./panel.md), [card](./card.md) (variant `game-stats`).
 
+## Variant `inline` (link dentro de prosa, derivada en S-012)
+
+Resuelve la estética **Pendiente** del link en prosa (`#3DDC84` contra la prosa `#A9B4BF` da 1,2:1, así que el color no alcanza como señal).
+
+- Hereda la familia y el tamaño del párrafo (Inter), color `accent.brand` (10,5:1 sobre `#0F1318`), hover `accent.brand.hover`, foco del DS.
+- Subrayado de 1px con offset de 4px como señal no cromática.
+- Sin `min-height` de 44px: excepción de target en línea (WCAG 2.5.8, texto dentro de una frase).
+- Si el destino es externo (`target="_blank"`), lleva `rel="noopener noreferrer"` y un texto `sr-only` "(abre en una pestaña nueva)".
+
 ## Historial
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: variants `arrow` y `subtle`, color por acento de pantalla y hover claro; adaptaciones de hover, foco y área táctil.
 - 2026-11-06 v1.2.0 — Hover de `subtle` y área táctil de 44px en `arrow` y `subtle` derivados; helper `linkClass` en `@nerdose/ui`.
+- 2026-11-06 v1.3.0 — S-012: variant `inline` derivada para links dentro de prosa.

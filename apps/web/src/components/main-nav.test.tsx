@@ -12,6 +12,8 @@ describe('MainNav', () => {
     const links = within(nav).getAllByRole('link');
     expect(links.map((l) => l.getAttribute('href'))).toEqual(['/', '/stats', '/about']);
     expect(screen.getByRole('link', { name: './stats' })).toHaveAttribute('aria-current', 'page');
-    for (const l of links) expect(l).toHaveClass('min-h-11', 'focus-visible:outline-accent');
+    for (const l of links)
+      expect(l).toHaveClass('min-h-11', 'rounded-tile', 'focus-visible:outline-accent');
+    expect(screen.getByRole('link', { name: './stats' })).toHaveClass('bg-nav-active', 'text-text');
   });
 });

@@ -1,4 +1,4 @@
-import { act, screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { describe, expect, it, vi } from 'vitest';
@@ -7,7 +7,6 @@ import { axe } from 'vitest-axe';
 import i18n from '@/i18n';
 import { server } from '@/test/msw';
 import { renderWithProviders } from '@/test/render';
-import { mockViewport } from '@/test/viewport';
 
 describe('router', () => {
   it('TS-32 game_id desconocido y /acerca-de caen en 404', async () => {
@@ -31,36 +30,14 @@ describe('router', () => {
     ).toBeInTheDocument();
   });
 
-  it('TS-37 nav en mobile fuera del header', async () => {
+  it('TS-1 una sola nav, siempre dentro del header', async () => {
     renderWithProviders({ route: '/' });
     const nav = await screen.findByRole('navigation', { name: 'Navegación principal' });
     expect(screen.getAllByRole('navigation')).toHaveLength(1);
-    expect(within(screen.getByRole('banner')).queryByRole('navigation')).toBeNull();
+    expect(screen.getByRole('banner')).toContainElement(nav);
     expect(within(nav).getByRole('link', { name: './juegos' })).toHaveAttribute('href', '/');
     expect(within(nav).getByRole('link', { name: './stats' })).toHaveAttribute('href', '/stats');
     expect(within(nav).getByRole('link', { name: './about' })).toHaveAttribute('href', '/about');
-  });
-
-  it('TS-38 nav en desktop dentro del header', async () => {
-    mockViewport('desktop');
-    renderWithProviders({ route: '/' });
-    await screen.findByRole('navigation', { name: 'Navegación principal' });
-    expect(screen.getAllByRole('navigation')).toHaveLength(1);
-    expect(
-      within(screen.getByRole('banner')).getByRole('navigation', { name: 'Navegación principal' }),
-    ).toBeInTheDocument();
-  });
-
-  it('TS-39 cambio de viewport en vivo', async () => {
-    const vp = mockViewport('mobile');
-    renderWithProviders({ route: '/' });
-    await screen.findByRole('navigation');
-    expect(within(screen.getByRole('banner')).queryByRole('navigation')).toBeNull();
-    act(() => {
-      vp.setViewport('desktop');
-    });
-    expect(within(screen.getByRole('banner')).getByRole('navigation')).toBeInTheDocument();
-    expect(screen.getAllByRole('navigation')).toHaveLength(1);
   });
 
   it('TS-40 marca y link activo', async () => {
@@ -110,7 +87,9 @@ describe('router', () => {
       );
       expect(el).not.toHaveClass('outline-none');
     }
-    for (const b of screen.getAllByRole('button')) expect(b).toHaveClass('min-h-11', 'min-w-11');
+    for (const b of screen.getAllByRole('button')) {
+      expect(b).toHaveClass('min-w-11', 'before:-inset-y-1');
+    }
   });
 
   it('TS-46 axe en /about y 404', async () => {
