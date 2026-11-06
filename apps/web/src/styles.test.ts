@@ -1,32 +1,63 @@
 // @vitest-environment node
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 const srcDir = fileURLToPath(new URL('.', import.meta.url));
 
-function tsxFiles(dir: string): string[] {
+function filesWith(dir: string, extensions: string[]): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const full = `${dir}${entry.name}`;
-    if (entry.isDirectory()) return tsxFiles(`${full}/`);
-    return entry.name.endsWith('.tsx') ? [full] : [];
+    if (entry.isDirectory()) return filesWith(`${full}/`, extensions);
+    return extensions.some((ext) => entry.name.endsWith(ext)) ? [full] : [];
   });
+}
+
+const FORBIDDEN = [
+  { name: 'hex', re: /#[0-9a-fA-F]{3,8}\b/ },
+  { name: 'arbitrary', re: /\[(\d|#|rgb)/ },
+  { name: 'generic', re: /\b(rounded-md|shadow-md|text-2xl|font-semibold)\b/ },
+] as const;
+
+const require = createRequire(import.meta.url);
+
+function fontCss(spec: string): string {
+  return readFileSync(require.resolve(spec), 'utf8');
 }
 
 describe('index.css', () => {
   const css = readFileSync(`${srcDir}index.css`, 'utf8');
 
-  it('importa Tailwind, los tokens de @nerdose/ui y JetBrains Mono en orden', () => {
-    const imports = [
-      "@import 'tailwindcss';",
-      "@import '@nerdose/ui/tokens.css';",
-      "@import '@fontsource/jetbrains-mono/400.css';",
-      "@import '@fontsource/jetbrains-mono/500.css';",
-      "@import '@fontsource/jetbrains-mono/700.css';",
-    ];
-    const positions = imports.map((i) => css.indexOf(i));
+  const IMPORTS = [
+    "@import 'tailwindcss';",
+    "@import '@nerdose/ui/tokens.css';",
+    "@import '@fontsource/jetbrains-mono/400.css';",
+    "@import '@fontsource/jetbrains-mono/500.css';",
+    "@import '@fontsource/inter/400.css';",
+    "@import '@fontsource/inter/700.css';",
+    "@import '@fontsource/jetbrains-mono/700.css';",
+    "@import '@fontsource/jetbrains-mono/800.css';",
+  ];
+
+  it('importa Tailwind, los tokens de @nerdose/ui y las fuentes en el orden de la convención', () => {
+    const positions = IMPORTS.map((i) => css.indexOf(i));
     expect(positions.every((p) => p >= 0)).toBe(true);
     expect([...positions].sort((a, b) => a - b)).toEqual(positions);
+  });
+
+  it('importa solo los pesos del Design System', () => {
+    expect(css.match(/@import '@fontsource\/[^']+';/g)).toHaveLength(6);
+    for (const forbidden of [
+      'inter/500.css',
+      'inter/600.css',
+      'jetbrains-mono/600.css',
+      'inter/index.css',
+      'jetbrains-mono/index.css',
+      '-italic.css',
+    ]) {
+      expect(css).not.toContain(forbidden);
+    }
   });
 
   it('no redeclara tokens ni carga recursos externos', () => {
@@ -36,12 +67,107 @@ describe('index.css', () => {
   });
 });
 
+describe('fuentes', () => {
+  const FONTS = [
+    { spec: '@fontsource/inter/400.css', family: 'Inter', weight: 400 },
+    { spec: '@fontsource/inter/700.css', family: 'Inter', weight: 700 },
+    { spec: '@fontsource/jetbrains-mono/400.css', family: 'JetBrains Mono', weight: 400 },
+    { spec: '@fontsource/jetbrains-mono/500.css', family: 'JetBrains Mono', weight: 500 },
+    { spec: '@fontsource/jetbrains-mono/700.css', family: 'JetBrains Mono', weight: 700 },
+    { spec: '@fontsource/jetbrains-mono/800.css', family: 'JetBrains Mono', weight: 800 },
+  ];
+
+  it('web declara Inter y JetBrains Mono como dependencias', () => {
+    const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as {
+      dependencies: Record<string, string>;
+    };
+    expect(pkg.dependencies['@fontsource/inter']).toBe('^5.3.0');
+    expect(pkg.dependencies['@fontsource/jetbrains-mono']).toBe('^5.3.0');
+  });
+
+  it.each(FONTS)('$spec resuelve a la familia y el peso correctos', ({ spec, family, weight }) => {
+    const content = fontCss(spec);
+    expect(content).toContain(`font-family: '${family}'`);
+    expect(content).toContain(`font-weight: ${weight}`);
+    expect(content).toContain('font-display: swap');
+  });
+
+  it.each(FONTS)('$spec es self-hosted', ({ spec }) => {
+    const content = fontCss(spec);
+    for (const external of ['http://', 'https://', '//fonts.']) {
+      expect(content).not.toContain(external);
+    }
+    const urls = content.match(/url\([^)]*\)/g) ?? [];
+    expect(urls.length).toBeGreaterThan(0);
+    for (const url of urls) expect(url).toMatch(/^url\(\.\/files\//);
+  });
+});
+
 describe('componentes', () => {
-  it('no usan colores hex literales ni valores arbitrarios de color', () => {
-    for (const file of tsxFiles(srcDir)) {
+  const sources = filesWith(srcDir, ['.tsx']).filter((f) => !f.endsWith('.test.tsx'));
+
+  it('la guarda recorre las piezas de interfaz de web', () => {
+    const relative = sources.map((f) => f.slice(srcDir.length));
+    for (const expected of [
+      'app/shell.tsx',
+      'app/not-found.tsx',
+      'app/route-error.tsx',
+      'modules/about/routes/about.tsx',
+      'modules/catalog/routes/home.tsx',
+      'modules/catalog/components/game-card.tsx',
+      'modules/catalog/components/progress-summary.tsx',
+    ]) {
+      expect(relative).toContain(expected);
+    }
+  });
+
+  it('no usan hex literales, valores arbitrarios ni utilidades genéricas', () => {
+    const found: string[] = [];
+    for (const file of sources) {
       const content = readFileSync(file, 'utf8');
-      expect(content, file).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
-      expect(content, file).not.toContain('[#');
+      for (const { name, re } of FORBIDDEN) {
+        if (re.test(content)) found.push(`${file.slice(srcDir.length)} (${name})`);
+      }
+    }
+    expect(found).toEqual([]);
+  });
+
+  it('la guarda detecta valores fuera del Design System', () => {
+    const matches = (s: string) => FORBIDDEN.some(({ re }) => re.test(s));
+    for (const bad of [
+      'h-[150px]',
+      'bg-[#fff]',
+      'shadow-[rgba(0,0,0,.4)]',
+      'rounded-md',
+      'shadow-md',
+      'text-2xl',
+      'font-semibold',
+      'text-[#3DDC84]',
+    ]) {
+      expect(matches(bad), bad).toBe(true);
+    }
+    for (const good of [
+      'h-37.5',
+      'rounded-control',
+      'text-title-page',
+      'text-title-card',
+      'font-bold',
+    ]) {
+      expect(matches(good), good).toBe(false);
+    }
+  });
+});
+
+describe('cta.ts', () => {
+  it('fue eliminado y nadie lo importa', () => {
+    expect(existsSync(`${srcDir}components/cta.ts`)).toBe(false);
+    const selfName = 'styles.test.ts';
+    for (const file of filesWith(srcDir, ['.ts', '.tsx'])) {
+      if (file.endsWith(selfName)) continue;
+      const content = readFileSync(file, 'utf8');
+      for (const legacy of ['@/components/cta', 'CTA_PRIMARY', 'CTA_SECONDARY', 'CTA_DISABLED']) {
+        expect(content, `${file} (${legacy})`).not.toContain(legacy);
+      }
     }
   });
 });

@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
-import { CTA_PRIMARY } from '@/components/cta';
+import { buttonClass, cn } from '@nerdose/ui';
+
 import { useDocumentTitle } from '@/hooks/use-document-title';
 
 export function NotFound() {
@@ -11,11 +12,11 @@ export function NotFound() {
   return (
     <div className="lg:grid lg:grid-cols-12 lg:gap-6">
       <div className="space-y-4 lg:col-span-6 lg:col-start-4">
-        <h1 tabIndex={-1} className="text-2xl font-bold">
+        <h1 tabIndex={-1} className="font-mono text-title-page break-words">
           {t('notFound.title')}
         </h1>
         <p className="text-base">{t('notFound.message')}</p>
-        <Link to="/" className={`${CTA_PRIMARY} w-full lg:w-auto`}>
+        <Link to="/" className={cn(buttonClass(), 'w-full lg:w-auto')}>
           <span aria-hidden="true">←</span>
           {t('notFound.back')}
         </Link>

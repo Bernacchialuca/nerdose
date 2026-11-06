@@ -9,11 +9,6 @@
 - **Location:** apps/web/src/components/site-footer.tsx
 - **Signature:** `SiteFooter()`
 
-## CTA classes (Button del DS)
-- **Location:** apps/web/src/components/cta.ts
-- **Signature:** `CTA_PRIMARY`, `CTA_SECONDARY`, `CTA_DISABLED`, `FOCUS` (Tailwind class strings)
-- **Usage:** `<Link to="/" className={`${CTA_PRIMARY} w-full lg:w-auto`}>`; disabled CTA is a `<button aria-disabled="true" className={CTA_DISABLED}>`. Spec: docs/design-system/web/components/button.md
-
 ## NotFound
 - **Location:** apps/web/src/app/not-found.tsx
 - **Signature:** `NotFound()` - element of the `*` route
@@ -30,3 +25,8 @@
 ## MSW server, fixtures, mockViewport
 - **Location:** apps/web/src/test/msw.ts, fixtures/, viewport.ts
 - **Usage:** `server.use(http.get('/api/today', () => HttpResponse.json(todayNoSessionFixture)))`; `mockViewport('desktop')`; `renderWithProviders({ route, strict? })`
+
+## fontOf
+- **Location:** apps/web/src/test/font-family.ts
+- **Signature:** `fontOf(el: Element | null): 'mono' | 'sans' | null`
+- **Usage:** `expect(fontOf(screen.getByRole('heading', { level: 1 }))).toBe('mono');` (jsdom runs with `css: false`, so inheritance is checked through classes)

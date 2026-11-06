@@ -89,22 +89,21 @@ y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Desalineaciones conocidas en código
 
-Diferencias del código con el DS. `@nerdose/ui` quedó alineado en la v1.2.0 (S-011); lo que sigue es de `apps/web` (lo corrigen S-011 plan `web`, S-012 y S-013):
+Diferencias del código con el DS. `@nerdose/ui` quedó alineado en la v1.2.0 (S-011); lo que sigue es de `apps/web` (lo corrigen S-012 y S-013). S-011 (plan `web`) resolvió fuentes, CTA (`cta.ts` → `buttonClass` / `linkClass`) y títulos con utilidades genéricas:
 
-- **Fuentes** (`apps/web/src/index.css`, `apps/web/src/app/shell.tsx`): solo se carga JetBrains Mono 400/500/700; falta Inter y el peso 800. El shell aplica `font-mono` a toda la página, así que la prosa sale en Mono.
 - **Fondo** (`shell.tsx`): liso, sin la textura de puntos de 24px en Home ni el header translúcido.
-- **Tipografía**: tamaños genéricos de Tailwind (`text-2xl/3xl` en `h1` vs 64/800 del hero, `text-xl`, `text-base`, `text-sm`, `text-xs`), sin tracking negativo, sin los interlineados del DS y con ligaduras activas.
-- **Button** (`apps/web/src/components/cta.ts`): sin radio (10px); 44px y padding 16 en todos los casos (el hero usa 48px / 22); tamaño de texto heredado (16px) en lugar de 15/14; `secondary` con texto verde y borde `#8D99A6` (prototipo: `#E6EDF3`, `#2A323C`, peso 500); deshabilitado sin fondo, borde `#222A33` y texto `#8D99A6` (prototipo: `#11151A` / `#2A323C` / `#6B7682`); "Jugar →" siempre verde (prototipo: acento del juego con su on-accent); el CTA de tarjeta no ocupa el ancho completo; "¿Cómo funciona?" del hero es un link subrayado (prototipo: botón `secondary` `lg`).
+- **Tipografía**: tamaños genéricos de Tailwind en cuerpos y metadatos (`text-base`, `text-sm`, `text-xs`) y el titular del hero en `type.title.page` (40) en lugar de `type.display.hero` (64/800); sin los interlineados del DS en esos cuerpos.
+- **Button**: "¿Cómo funciona?" del hero es un link (`linkClass`) a `/about` (prototipo: botón `secondary` `lg` que baja a `#como`; lo resuelve S-013).
 - **Card** (`apps/web/src/modules/catalog/components/game-card.tsx`): título como `h2` (prototipo `h3` bajo el `h2` de sección); descripción Mono 14 `#9AA6B2` (prototipo Inter 15/1.5 `#A9B4BF`); metadatos unidos por " · " en un párrafo y racha sin ámbar ni `▲`; estado como texto plano (prototipo: badge); sin miniatura, `next` ni tarjeta placeholder "próximo juego" (lo resuelve S-013 con las piezas de `@nerdose/ui`).
 - **Catálogo** (`apps/web/src/modules/catalog/routes/home.tsx`): grilla `lg:grid-cols-3` con gap 16/24 (prototipo `auto-fit minmax(300px, 1fr)`, gap 20); "Tu progreso" es una Card más dentro de la grilla (prototipo: sección propia con panel `feature` radio 16 / padding 28, número de racha de 88px, heatmap, mini-stats y panel de rachas por juego); sin ventana terminal en el hero; sin sección "Cómo funciona".
 - **Progreso del día** (`day-status.tsx`): barra continua de 8px sin radio sobre `surface-2` (prototipo: segmentada 36×6 redondeada, pendiente `#2A323C`); racha como texto (prototipo: número display ámbar).
-- **Acerca de** (`apps/web/src/modules/about/routes/about.tsx`): secciones con borde y padding 16 **sin radio**; `h2` con `font-semibold` (600, peso que el DS no usa).
+- **Acerca de** (`apps/web/src/modules/about/routes/about.tsx`): secciones con borde y padding 16 **sin radio** (prototipo: `Panel`; lo resuelve S-012).
 - **App header** (`apps/web/src/app/shell.tsx`): muestra el número de desafío (`ChallengeNumber`) en lugar de la píldora de racha (lo resuelve S-012).
 - **Nav** (`apps/web/src/components/main-nav.tsx`, `shell.tsx`): se saca del header por debajo de 1024px y va en una fila aparte (prototipo: siempre en el header, con wrap); ítems con padding 8 y sin radio; activo en verde (prototipo: padding 12 14, radio 8, activo `#161B22` + `#E6EDF3`).
 - **Selector de idioma** (`language-selector.tsx`): dos botones sueltos de 44×44 con borde `#8D99A6` y activo en verde (prototipo: grupo de 44px con fondo `#11151A`, borde `#2A323C` y radio 10; segmentos 40×36 radio 7; activo `#2A323C` / `#E6EDF3`; Mono 700 12).
 - **Footer** (`site-footer.tsx`): borde `#222A33`, padding 16/48, 12px y otro contenido (prototipo: borde `#1E252E`, padding 24 32, Mono 13 `#8D99A6`, lema + `exit 0`, `space-between`). El aviso de privacidad es contenido de producto y se mantiene.
 - **Layout** (`shell.tsx`, `apps/web/src/lib/breakpoints.ts`): `main` con padding 16/48 y sin `max-width` 1240; grilla de 12 columnas y breakpoint global de 1024px (prototipo: sin media queries, gutter 32 y reglas flex-wrap / auto-fit).
-- **Links** (`home.tsx`, `progress-summary.tsx`, `about.tsx`, `site-footer.tsx`): subrayados en verde (prototipo: sin subrayado, con `→`, color del acento de la pantalla y hover claro).
+- **Links** (`about.tsx`, `site-footer.tsx`): subrayados en verde (prototipo: sin subrayado, con `→`, color del acento de la pantalla y hover claro).
 - **Foco**: `outline` 2px verde con offset +2 en todos los controles. El DS lo deja como requisito con estética Pendiente (único precedente del prototipo: 2px en el acento del juego con offset -2, L756); no es una desalineación hasta que se defina.
 
 ---

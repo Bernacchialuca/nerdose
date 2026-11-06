@@ -13,7 +13,7 @@ export function DayStatus({ view, syncedAt }: { view: ReadyView; syncedAt: numbe
   const { progress, globalStreak } = view;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 font-mono">
       <p className="text-base text-text">
         {t(`catalog.progress.${progress.key}`, {
           completed: progress.completed,
