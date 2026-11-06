@@ -1,4 +1,4 @@
-import { Alert } from '@nerdose/ui';
+import { Alert, buttonClass, linkClass } from '@nerdose/ui';
 import { GAME_IDS } from '@nerdose/core';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -7,7 +7,6 @@ import { useDocumentTitle } from '@/hooks/use-document-title';
 import { useSession } from '@/modules/session';
 
 import { useToday } from '../api/use-today';
-import { CTA_DISABLED, CTA_PRIMARY, CTA_SECONDARY, FOCUS } from '@/components/cta';
 import { DayStatus } from '../components/day-status';
 import { GameCard } from '../components/game-card';
 import { ProgressSummary } from '../components/progress-summary';
@@ -40,26 +39,35 @@ export function Component() {
     <div className="flex flex-col gap-8">
       <section aria-labelledby="home-title" className="grid gap-6 lg:grid-cols-12">
         <div className="flex flex-col items-start gap-4 lg:col-span-7">
-          <h1 id="home-title" tabIndex={-1} className="text-2xl font-bold text-text lg:text-3xl">
+          <h1
+            id="home-title"
+            tabIndex={-1}
+            className="font-mono text-title-page text-text break-words"
+          >
             {t('catalog.title')}
           </h1>
           <p className="text-base text-text-muted">{t('catalog.subtitle')}</p>
           <div className="flex flex-wrap items-center gap-4">
             {hero.disabled ? (
-              <button type="button" aria-disabled="true" className={CTA_DISABLED}>
+              <button
+                type="button"
+                aria-disabled="true"
+                className={buttonClass({ size: 'lg', disabled: true })}
+              >
                 {t(`catalog.hero.${hero.label}`)}
                 <span aria-hidden="true">→</span>
               </button>
             ) : (
-              <button type="button" onClick={scrollToGames} className={CTA_PRIMARY}>
+              <button
+                type="button"
+                onClick={scrollToGames}
+                className={buttonClass({ variant: 'primary', size: 'lg' })}
+              >
                 {t(`catalog.hero.${hero.label}`)}
                 <span aria-hidden="true">→</span>
               </button>
             )}
-            <Link
-              to="/about"
-              className={`inline-flex min-h-11 items-center gap-2 text-accent underline ${FOCUS}`}
-            >
+            <Link to="/about" className={linkClass()}>
               {t('catalog.howItWorks')}
               <span aria-hidden="true">→</span>
             </Link>
@@ -73,14 +81,18 @@ export function Component() {
       </section>
 
       {view.kind === 'loading' ? (
-        <p role="status" className="text-base text-text-muted">
+        <p role="status" className="font-mono text-base text-text-muted">
           {t('catalog.loading')}
         </p>
       ) : null}
       {view.kind === 'error' ? (
         <Alert
           action={
-            <button type="button" onClick={() => void query.refetch()} className={CTA_SECONDARY}>
+            <button
+              type="button"
+              onClick={() => void query.refetch()}
+              className={buttonClass({ variant: 'secondary' })}
+            >
               <span aria-hidden="true">↻</span>
               {t('errors.retry')}
             </button>

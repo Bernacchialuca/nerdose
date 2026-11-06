@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.0"
-date: 2026-11-03
+version: "1.1"
+date: 2026-11-06
 ---
 
 # Pantalla: Estadísticas
@@ -41,33 +41,31 @@ date: 2026-11-03
 
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
-| 1 | header | header | — | layout | ambos | viewport_overrides: desktop | Marca, #número del desafío del día e idioma |
-| 2 | nav-movil | nav-bar | — | navigation | solo mobile | — | Navegación principal compacta en mobile (en desktop va en el header) |
-| 3 | titulo | heading | h1 | content | ambos | — | Título de la pantalla |
-| 4 | kpi-racha | card | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Racha global actual |
-| 5 | kpi-record | card | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Mejor racha global |
-| 6 | kpi-completados | card | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Total de desafíos completados |
-| 7 | heatmap | image | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Heatmap de 365 días |
-| 8 | titulo-juegos | heading | h2 | content | ambos | hidden_in_states: loading, error de sistema, empty | Sección de estadísticas por juego |
-| 9 | stats-devdle | card | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Racha, récord, jugadas, % de victorias y stat propia de Devdle |
-| 10 | stats-bug-hunt | card | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Racha, récord, jugadas, % de victorias y stat propia de Bug Hunt |
-| 11 | stats-big-o | card | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Racha, récord, jugadas, % de victorias y stat propia de Big O |
-| 12 | stats-timeline | card | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Racha, récord, jugadas, % de victorias y stat propia de Tech Timeline |
-| 13 | stats-grep-grid | card | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Racha, récord, jugadas, % de victorias y stat propia de Grep Grid |
-| 14 | titulo-historial | heading | h2 | content | ambos | hidden_in_states: loading, error de sistema, empty | Sección de historial |
-| 15 | tabla-historial | table | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Historial paginado con etiqueta corta por partida |
-| 16 | paginacion | pagination | — | navigation | ambos | hidden_in_states: loading, error de sistema, empty | Paginación del historial |
-| 17 | vacio | empty-state | — | feedback | ambos | visible_only_in_states: empty | Estado vacío sin partidas |
-| 18 | btn-ir-juegos | button | primary | input | ambos | visible_only_in_states: empty | Salida del estado vacío |
-| 19 | loader | loader | — | feedback | ambos | visible_only_in_states: loading | Indicador de carga |
-| 20 | alerta-sistema | alert | error | feedback | ambos | visible_only_in_states: error de sistema | Error de carga con causa y salida |
-| 21 | btn-reintentar | button | secondary | input | ambos | visible_only_in_states: error de sistema | Reintentar la carga |
-| 22 | footer | footer | — | layout | ambos | — | Aviso breve de privacidad y enlace a Acerca de |
+| 1 | header | header | — | layout | ambos | — | Marca, nav, #número e idioma (`app-header` variant `default`) |
+| 2 | titulo | heading | h1 | content | ambos | — | Título de la pantalla |
+| 3 | kpi-racha | card | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Racha global actual |
+| 4 | kpi-record | card | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Mejor racha global |
+| 5 | kpi-completados | card | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Total de desafíos completados |
+| 6 | heatmap | image | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Heatmap de 365 días |
+| 7 | titulo-juegos | heading | h2 | content | ambos | hidden_in_states: loading, error de sistema, empty | Sección de estadísticas por juego |
+| 8 | stats-devdle | card | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Racha, récord, jugadas, % de victorias y stat propia de Devdle |
+| 9 | stats-bug-hunt | card | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Racha, récord, jugadas, % de victorias y stat propia de Bug Hunt |
+| 10 | stats-big-o | card | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Racha, récord, jugadas, % de victorias y stat propia de Big O |
+| 11 | stats-timeline | card | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Racha, récord, jugadas, % de victorias y stat propia de Tech Timeline |
+| 12 | stats-grep-grid | card | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Racha, récord, jugadas, % de victorias y stat propia de Grep Grid |
+| 13 | titulo-historial | heading | h2 | content | ambos | hidden_in_states: loading, error de sistema, empty | Sección de historial |
+| 14 | tabla-historial | table | — | content | ambos | hidden_in_states: loading, error de sistema, empty | Historial paginado con etiqueta corta por partida |
+| 15 | paginacion | pagination | — | navigation | ambos | hidden_in_states: loading, error de sistema, empty | Paginación del historial |
+| 16 | vacio | empty-state | — | feedback | ambos | visible_only_in_states: empty | Estado vacío sin partidas |
+| 17 | btn-ir-juegos | button | primary | input | ambos | visible_only_in_states: empty | Salida del estado vacío |
+| 18 | loader | loader | — | feedback | ambos | visible_only_in_states: loading | Indicador de carga |
+| 19 | alerta-sistema | alert | error | feedback | ambos | visible_only_in_states: error de sistema | Error de carga con causa y salida |
+| 20 | btn-reintentar | button | secondary | input | ambos | visible_only_in_states: error de sistema | Reintentar la carga |
+| 21 | footer | footer | — | layout | ambos | — | Aviso breve de privacidad y enlace a Acerca de |
 
 ## Layout por viewport
 
 ### mobile · 400px
-- nav-movil
 - titulo
 - loader
 - alerta-sistema
@@ -115,16 +113,9 @@ date: 2026-11-03
 ## Contenido
 
 ### header
-- Texto/label: > nerdose · #8 · ES|EN
+- Texto/label: > nerdose_   ./juegos   ./stats   ./about   #8   ES | EN
 - Icono: nada
-- Override desktop: content="> nerdose     ./juegos   ./stats   ./about     #8     ES | EN"
-- Annotation: #número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline
-
-### nav-movil
-- Texto/label: —
-- Etiquetas: ./juegos · ./stats · ./about
-- Icono: nada
-- Annotation: nada
+- Annotation: `app-header` variant `default` del shell (sin píldora de racha, cursor estático); `./stats` es el ítem activo. #número = número de desafío del día, igual para los 5 juegos; ES | EN es el grupo segmentado. En mobile se acomoda con `flex-wrap` (REQ-003)
 
 ### titulo
 - Texto/label: Estadísticas
@@ -233,9 +224,9 @@ date: 2026-11-03
 - Annotation: nada
 
 ### footer
-- Texto/label: nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de
+- Texto/label: > nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0
 - Icono: nada
-- Annotation: «Acerca de» es un enlace a `acerca-de`; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)
+- Annotation: `site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07)
 
 ## Estados
 
@@ -329,6 +320,7 @@ date: 2026-11-03
 - El historial va inline y paginado, no en una pantalla propia: así el inventario se queda en 18 pantallas (pregunta 3 del product-map).
 - Se muestran las métricas de C-34 (racha, récord, completados, % de victorias, stat propia); «días con actividad» y «juegos por día activo» del prototipo se omiten porque manda el PRD.
 - La etiqueta corta del historial usa el `history_label` de C-33 («✓ 4/6», «✗ L7», «6/8»).
+- REQ-003 (solo shell): header `app-header` `default` con la nav siempre visible y `flex-wrap`; se elimina la tira `nav-movil` en mobile; footer con lema y `exit 0`. El contenido de la pantalla se alinea al DS cuando se implemente (FG-10).
 
 **Alternativas descartadas:**
 - Tabla de 5 juegos por fila (prototipo): no entra en 320 px.
@@ -340,3 +332,4 @@ date: 2026-11-03
 ## Trazabilidad
 
 - F-09, C-34, C-33, C-02 · flujo 5 de `user-flows.md`.
+- REQ-003 (shell): RF 4, 6.

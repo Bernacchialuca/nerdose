@@ -1,4 +1,4 @@
-import { Card, cn } from '@nerdose/ui';
+import { buttonClass, Card, cn } from '@nerdose/ui';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -6,7 +6,6 @@ import { Link } from 'react-router';
 import type { GameId } from '../api/today';
 import { GAME_CATALOG } from '../games';
 import type { CardView } from '../home-view';
-import { CTA_DISABLED, CTA_PRIMARY, CTA_SECONDARY } from '@/components/cta';
 
 export function GameCard({ gameId, view }: { gameId: GameId; view: CardView }) {
   const { t } = useTranslation();
@@ -21,11 +20,11 @@ export function GameCard({ gameId, view }: { gameId: GameId; view: CardView }) {
 
   return (
     <Card aria-labelledby={`game-${gameId}`} className="h-full">
-      <h2 id={`game-${gameId}`} className={cn('text-xl font-bold', meta.accentClass)}>
+      <h2 id={`game-${gameId}`} className={cn('font-mono text-title-card', meta.accentClass)}>
         {t(`games.${gameId}.name`)}
       </h2>
       <p className="text-sm text-text-muted">{t(`games.${gameId}.description`)}</p>
-      <p className="text-xs text-text-dim">
+      <p className="font-mono text-xs text-text-dim">
         {metadata.map((item, index) => (
           <Fragment key={item}>
             {index > 0 ? <span aria-hidden="true"> · </span> : null}
@@ -34,17 +33,30 @@ export function GameCard({ gameId, view }: { gameId: GameId; view: CardView }) {
         ))}
       </p>
       {status !== null ? (
-        <p className="text-sm text-text">{view.label ?? t(`catalog.card.status.${status}`)}</p>
+        <p className="font-mono text-sm text-text">
+          {view.label ?? t(`catalog.card.status.${status}`)}
+        </p>
       ) : null}
       {cta ? (
         <div className="mt-auto">
           {cta.kind === 'link' ? (
-            <Link to={cta.to} className={cta.tone === 'primary' ? CTA_PRIMARY : CTA_SECONDARY}>
+            <Link
+              to={cta.to}
+              className={
+                cta.tone === 'primary'
+                  ? buttonClass({ variant: 'accent', game: gameId, fullWidth: true })
+                  : buttonClass({ variant: 'secondary', fullWidth: true })
+              }
+            >
               {t(`catalog.card.cta.${cta.label}`)}
               {cta.label === 'play' ? <span aria-hidden="true">→</span> : null}
             </Link>
           ) : (
-            <button type="button" aria-disabled="true" className={CTA_DISABLED}>
+            <button
+              type="button"
+              aria-disabled="true"
+              className={buttonClass({ disabled: true, fullWidth: true })}
+            >
               {t(`catalog.card.cta.${cta.label}`)}
             </button>
           )}

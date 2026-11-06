@@ -1,8 +1,8 @@
 ---
 component: link
-version: 1.0.0
+version: 1.2.0
 status: active
-last_updated: 2026-11-05
+last_updated: 2026-11-06
 source: docs/nerdose.html
 related: [button, panel]
 ---
@@ -44,7 +44,7 @@ related: [button, panel]
 | State | Descripción | Tokens |
 |---|---|---|
 | default | Acento de la pantalla (`arrow`) o `text.body` (`subtle`) | `link.color` |
-| hover | `arrow`: tono claro del acento (`#7CF0B0` en Home, `#FFD08A` Bug Hunt, `#9ACFFF` Big O, `#DCC4FF` Timeline, `#F9A8D4` Grep). `subtle`: **sin hover efectivo** en el prototipo (el color inline gana, L350) → **Pendiente**; requisito: el hover tiene que percibirse. | `link.color.hover` |
+| hover | `arrow`: tono claro del acento (`#7CF0B0` en Home, `#FFD08A` Bug Hunt, `#9ACFFF` Big O, `#DCC4FF` Timeline, `#F9A8D4` Grep). `subtle`: **derivado (S-011)** `text.body` (`#C3CCD5`) → `text.primary` (`#E6EDF3`), 16,6:1. | `link.color.hover` |
 | focus | **Requisito:** foco visible ≥ 3:1. Estética **Pendiente** (precedente: L756). | `focus.ring.*` |
 | visited / active | **Pendiente — el prototipo no lo define.** | — |
 
@@ -52,7 +52,7 @@ related: [button, panel]
 
 - Sin subrayado (`text-decoration: none`).
 - `arrow` llega a 44px de alto con su padding de 12px.
-- `subtle` queda en ~32px: **adaptación requerida** para el área táctil de 44px (forma **Pendiente**).
+- `arrow` y `subtle` tienen `min-height: 44px` con `inline-flex items-center` (adaptación derivada en S-011; antes `subtle` quedaba en ~32px). Implementado por `linkClass({ tone? })` de `@nerdose/ui`.
 
 ## Accesibilidad
 
@@ -92,3 +92,4 @@ related: [button, panel]
 ## Historial
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: variants `arrow` y `subtle`, color por acento de pantalla y hover claro; adaptaciones de hover, foco y área táctil.
+- 2026-11-06 v1.2.0 — Hover de `subtle` y área táctil de 44px en `arrow` y `subtle` derivados; helper `linkClass` en `@nerdose/ui`.

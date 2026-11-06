@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRouteError } from 'react-router';
 
-import { CTA_SECONDARY } from '@/components/cta';
+import { buttonClass, cn } from '@nerdose/ui';
 
 export function RouteError() {
   const { t } = useTranslation();
@@ -13,15 +13,15 @@ export function RouteError() {
   }, [error]);
 
   return (
-    <main className="min-h-dvh bg-bg px-4 py-8 font-mono text-text">
+    <main className="min-h-dvh bg-bg px-4 py-8 font-sans text-text">
       <div role="alert">
-        <h1 className="text-xl font-bold">{t('errors.title')}</h1>
+        <h1 className="font-mono text-title-page break-words">{t('errors.title')}</h1>
         <button
           type="button"
           onClick={() => {
             location.reload();
           }}
-          className={`${CTA_SECONDARY} mt-4`}
+          className={cn(buttonClass({ variant: 'secondary' }), 'mt-4')}
         >
           {t('errors.retry')}
         </button>

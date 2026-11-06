@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.0"
-date: 2026-11-04
+version: "1.1"
+date: 2026-11-06
 ---
 
 # Pantalla: No encontrado (404)
@@ -20,8 +20,8 @@ date: 2026-11-04
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
 - **JTBD / Propósito:** Avisar que la dirección no existe y devolver al jugador a los juegos en un toque, sin dejarlo en una página en blanco.
 - **Viewports:**
-  - **mobile** — una columna: mensaje corto y botón de ancho completo para volver a la home.
-  - **desktop** — mismo contenido centrado en una columna angosta (6/12), para no estirar dos renglones a 1200 px.
+  - **mobile** — una columna: mensaje corto y botón de ancho completo para volver a la home, dentro de un panel. El header es el mismo que en desktop, acomodado con `flex-wrap`.
+  - **desktop** — mismo panel centrado en una columna angosta (6/12), para no estirar dos renglones a 1200 px.
 
 ## Entrada y salida
 
@@ -40,60 +40,50 @@ date: 2026-11-04
 
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
-| 1 | header | header | — | layout | ambos | viewport_overrides: desktop | Marca, #número del desafío del día e idioma |
-| 2 | nav-movil | nav-bar | — | navigation | solo mobile | — | Navegación principal compacta en mobile (en desktop va en el header) |
-| 3 | codigo | heading | h1 | content | ambos | — | Indica el error en el tono terminal de la marca |
-| 4 | mensaje | paragraph | body | content | ambos | — | Explica qué pasó |
-| 5 | btn-home | button | primary | input | ambos | — | Vuelve a la home |
-| 6 | footer | footer | — | layout | ambos | — | Aviso breve de privacidad y enlace a Acerca de |
+| 1 | header | header | — | layout | ambos | — | Marca, nav, #número e idioma (`app-header` variant `default`) |
+| 2 | codigo | heading | h1 | content | ambos | — | Indica el error en el tono terminal de la marca |
+| 3 | mensaje | paragraph | body | content | ambos | — | Explica qué pasó |
+| 4 | btn-home | button | primary | input | ambos | — | Vuelve a la home |
+| 5 | footer | footer | — | layout | ambos | — | Lema, aviso de privacidad, enlace a Acerca de y `exit 0` (`site-footer`) |
 
 ## Layout por viewport
 
 ### mobile · 400px
-- nav-movil
-- codigo
-- mensaje
-- btn-home
+- row `panel` (card)
+  - col 12/12: codigo, mensaje, btn-home
 
 ### desktop · 1200px
 - row `centrado`
   - col 3/12: (vacía, margen)
-  - col 6/12: codigo, mensaje, btn-home
+  - col 6/12 (card): codigo, mensaje, btn-home
   - col 3/12: (vacía, margen)
 
 ## Contenido
 
 ### header
-- Texto/label: > nerdose · #8 · ES|EN
+- Texto/label: > nerdose_   ./juegos   ./stats   ./about   #8   ES | EN
 - Icono: nada
-- Override desktop: content="> nerdose     ./juegos   ./stats   ./about     #8     ES | EN"
-- Annotation: mismo header del shell; el #número se oculta si el servidor no lo informa
-
-### nav-movil
-- Texto/label: —
-- Etiquetas: ./juegos · ./stats · ./about
-- Icono: nada
-- Annotation: nada
+- Annotation: `app-header` variant `default` del shell (sin píldora de racha, cursor estático, ningún ítem de nav activo); el #número se oculta si el servidor no lo informa. En mobile se acomoda con `flex-wrap`
 
 ### codigo
 - Texto/label: 404 · página no encontrada
 - Icono: nada
-- Annotation: nada
+- Annotation: título de página del DS (Mono 800, tracking negativo, sin peso 600), dentro de un `panel` `default` (radio 14)
 
 ### mensaje
 - Texto/label: Esta dirección no existe en nerdose. Los desafíos de hoy te esperan en la home.
 - Icono: nada
-- Annotation: nada
+- Annotation: prosa en Inter
 
 ### btn-home
 - Texto/label: Volver a los juegos
 - Icono: arrow-left
-- Annotation: navega a `/`
+- Annotation: botón `primary` `md` del DS (radio 10); navega a `/`; ancho completo en mobile
 
 ### footer
-- Texto/label: nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de
+- Texto/label: > nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0
 - Icono: nada
-- Annotation: «Acerca de» es un enlace a `acerca-de`; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)
+- Annotation: `site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07)
 
 ## Estados
 
@@ -128,6 +118,8 @@ date: 2026-11-04
 - Un único CTA: la navegación del header ya ofrece `./stats` y `./about`; repetirlos sumaría opciones sin ayudar a volver.
 - Mismo contenido en ambos viewports; en desktop se centra en 6/12 solo para acotar el largo de línea.
 
+- REQ-003: se alinea al DS 1.0.0 sin cambiar contenido: el mensaje va dentro de un `panel` (radio 14), el título usa la tipografía de página del DS, el botón sigue `button.md` y el header es el `app-header` `default`. La tira `nav-movil` se elimina: la nav vive siempre en el header con `flex-wrap` (cambio solo de mobile).
+
 **Alternativas descartadas:**
 - Redirigir a la home con un aviso: el jugador no entiende por qué terminó ahí si llegó por un enlace roto.
 - Sugerir juegos parecidos al `game_id` mal escrito: fuera del alcance del REQ.
@@ -138,3 +130,4 @@ date: 2026-11-04
 ## Trazabilidad
 
 - REQ-002 · supuesto «Navegación» · product-map, pregunta abierta 4 (resuelta).
+- REQ-003: RF 4, 6, 8, 11 · CA 2.

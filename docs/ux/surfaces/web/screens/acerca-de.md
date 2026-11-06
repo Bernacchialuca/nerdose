@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.1"
-date: 2026-11-04
+version: "1.2"
+date: 2026-11-06
 ---
 
 # Pantalla: Acerca de
@@ -20,13 +20,12 @@ date: 2026-11-04
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
 - **JTBD / Propósito:** Explicar qué es nerdose, las reglas de racha y atribuir Wikipedia y Wikidata, con el aviso de privacidad.
 - **Viewports:**
-  - **mobile** — una columna de tarjetas cortas, lectura de arriba abajo.
+  - **mobile** — una columna de paneles cortos, lectura de arriba abajo. El header es el mismo que en desktop, acomodado con `flex-wrap`.
   - **desktop** — columna centrada (10/12) con las tarjetas en dos columnas, para no dejar renglones de más de ~80 caracteres.
 
 ## Entrada y salida
 
 **Entradas:**
-- `home` · «¿Cómo funciona?»
 - Header · `./about`
 - Cualquier pantalla · enlace «Acerca de» del footer (REQ-002, CA 19)
 
@@ -40,21 +39,19 @@ date: 2026-11-04
 
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
-| 1 | header | header | — | layout | ambos | viewport_overrides: desktop | Marca, #número del desafío del día e idioma |
-| 2 | nav-movil | nav-bar | — | navigation | solo mobile | — | Navegación principal compacta en mobile (en desktop va en el header) |
-| 3 | titulo | heading | h1 | content | ambos | — | Título de la pantalla |
-| 4 | intro | paragraph | body | content | ambos | — | Qué es nerdose |
-| 5 | card-juegos | card | — | content | ambos | — | Los 5 juegos en una línea cada uno |
-| 6 | card-rachas | card | — | content | ambos | — | Reglas de racha |
-| 7 | card-atribucion | card | — | content | ambos | — | Atribución obligatoria de Wikipedia y Wikidata |
-| 8 | card-privacidad | card | — | content | ambos | — | Aviso de privacidad |
-| 9 | link-volver | link | — | navigation | ambos | — | Salida a la home |
-| 10 | footer | footer | — | layout | ambos | — | Aviso breve de privacidad y enlace a Acerca de |
+| 1 | header | header | — | layout | ambos | — | Marca, nav, #número e idioma (`app-header` variant `default`) |
+| 2 | titulo | heading | h1 | content | ambos | — | Título de la pantalla |
+| 3 | intro | paragraph | body | content | ambos | — | Qué es nerdose |
+| 4 | card-juegos | card | — | content | ambos | — | Los 5 juegos en una línea cada uno (`panel`) |
+| 5 | card-rachas | card | — | content | ambos | — | Reglas de racha (`panel`) |
+| 6 | card-atribucion | card | — | content | ambos | — | Atribución obligatoria de Wikipedia y Wikidata (`panel`) |
+| 7 | card-privacidad | card | — | content | ambos | — | Aviso de privacidad (`panel`) |
+| 8 | link-volver | link | — | navigation | ambos | — | Salida a la home |
+| 9 | footer | footer | — | layout | ambos | — | Lema, aviso de privacidad, enlace a Acerca de y `exit 0` (`site-footer`) |
 
 ## Layout por viewport
 
 ### mobile · 400px
-- nav-movil
 - titulo
 - intro
 - card-juegos
@@ -78,16 +75,9 @@ date: 2026-11-04
 ## Contenido
 
 ### header
-- Texto/label: > nerdose · #8 · ES|EN
+- Texto/label: > nerdose_   ./juegos   ./stats   ./about   #8   ES | EN
 - Icono: nada
-- Override desktop: content="> nerdose     ./juegos   ./stats   ./about     #8     ES | EN"
-- Annotation: #número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline
-
-### nav-movil
-- Texto/label: —
-- Etiquetas: ./juegos · ./stats · ./about
-- Icono: nada
-- Annotation: nada
+- Annotation: `app-header` variant `default` (fondo transparente, cursor `_` estático, sin píldora de racha). `./about` es el ítem activo. #número = número de desafío del día, igual para los 5 juegos; ES | EN es el grupo segmentado (`language-selector`). En mobile se acomoda con `flex-wrap`, sin scroll horizontal a 320 px
 
 ### titulo
 - Texto/label: Acerca de nerdose
@@ -103,7 +93,7 @@ date: 2026-11-04
 - Texto/label: Los 5 juegos
 - Texto secundario: Devdle: adiviná el término. Bug Hunt: encontrá la línea con el bug. Big O: elegí la complejidad. Tech Timeline: ordená los hitos. Grep Grid: encontrá las 8 palabras, sin tiempo.
 - Icono: nada
-- Annotation: nada
+- Annotation: `panel` variant `default` del DS (radio 14, título Mono sin peso 600, cuerpo en Inter); lo mismo vale para las otras tres tarjetas
 
 ### card-rachas
 - Texto/label: Cómo funciona la racha
@@ -126,12 +116,12 @@ date: 2026-11-04
 ### link-volver
 - Texto/label: Volver a los juegos
 - Icono: arrow-left
-- Annotation: nada
+- Annotation: `link` del DS: sin subrayado, color del acento, tono más claro en hover; foco visible
 
 ### footer
-- Texto/label: nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de
+- Texto/label: > nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0
 - Icono: nada
-- Annotation: «Acerca de» es un enlace a `acerca-de`; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)
+- Annotation: `site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07)
 
 ## Estados
 
@@ -153,7 +143,7 @@ date: 2026-11-04
 
 ## Accesibilidad
 
-- **Orden de foco:** titulo → enlaces dentro de las tarjetas → «Volver a los juegos».
+- **Orden de foco:** header (marca → nav → ES/EN) → enlaces dentro de los paneles → «Volver a los juegos» → footer.
 - **Landmarks y jerarquía:** `h1` «Acerca de nerdose»; cada tarjeta es `h2`. Landmarks: header, nav, main, footer.
 - **Foco y teclado:** Sin trampas de foco.
 - **Propio de esta composición:** Los enlaces a Wikipedia/Wikidata indican que abren una pestaña nueva.
@@ -165,6 +155,9 @@ date: 2026-11-04
 - La atribución CC BY-SA vive en esta pantalla por obligación de licencia (C-07).
 - REQ-002: el aviso de privacidad explicita «una única cookie funcional, sin datos personales ni cookies de terceros» y por qué no hay banner (RF 15, NFR-PR01); la entrada principal pasa a ser el enlace del footer, presente en todas las pantallas (RF 14, CA 19). Sin cambios de layout.
 
+- REQ-003: se alinea al DS 1.0.0 sin cambiar contenido ni layout: las tarjetas pasan a ser `panel` del DS (radio 14, tipografía Mono para títulos e Inter para la prosa, sin peso 600), el enlace de salida usa el estilo de `link` y el header es el `app-header` `default`. La tira `nav-movil` se elimina: la nav vive siempre en el header con `flex-wrap` (cambio solo de mobile).
+- REQ-003: la entrada desde «¿Cómo funciona?» de la home desaparece: ese botón ahora baja a la sección «Cómo funciona» de la propia home. Esta pantalla se alcanza desde `./about` y desde el footer.
+
 **Alternativas descartadas:**
 - Un FAQ con acordeones: más interacción para un contenido corto.
 
@@ -175,3 +168,4 @@ date: 2026-11-04
 
 - C-07, F-01 · flujo 3 (dudas sobre la racha).
 - REQ-002: RF 14, RF 15 · CA 19, CA 21.
+- REQ-003: RF 4, 6, 11, 13 · CA 2.

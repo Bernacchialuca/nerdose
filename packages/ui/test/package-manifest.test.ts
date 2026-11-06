@@ -25,6 +25,8 @@ describe('@nerdose/ui package manifest', () => {
     expect(pkg.scripts.lint).toBe('eslint .');
     expect(pkg.scripts.typecheck).toBe('tsc --noEmit');
     expect(pkg.scripts.test).toBe('vitest run');
+    expect(Object.keys(pkg.dependencies).sort()).toEqual(['clsx', 'tailwind-merge']);
+    expect(pkg.dependencies['@nerdose/core']).toBeUndefined();
     expect(pkg.dependencies.clsx).toBeDefined();
     expect(pkg.dependencies['tailwind-merge']).toBeDefined();
     expect(pkg.dependencies.react).toBeUndefined();
@@ -38,6 +40,7 @@ describe('@nerdose/ui package manifest', () => {
       '@testing-library/jest-dom',
       '@testing-library/user-event',
       'jsdom',
+      'tailwindcss',
       'vitest-axe',
     ]) {
       expect(pkg.devDependencies[dev], dev).toBeDefined();

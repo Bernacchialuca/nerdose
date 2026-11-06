@@ -1,8 +1,8 @@
 ---
 component: streak-pill
-version: 1.0.0
+version: 1.2.0
 status: active
-last_updated: 2026-11-05
+last_updated: 2026-11-06
 source: docs/nerdose.html
 related: [streak-number, app-header, game-header, card, panel]
 ---
@@ -51,13 +51,14 @@ Stats no muestra la píldora en el header.
 | State | Descripción |
 |---|---|
 | default | Valor actual |
-| sin racha / desconocida | **Pendiente — el prototipo no lo define** (estado de producto: sin sesión o sin datos) |
-| hover / focus (`pill` como link) | **Pendiente** / requisito de foco visible |
+| sin racha (0) / desconocida | **Derivado (S-011):** fondo `bg.control`, borde `border.control`, texto e ícono `text.dim` (`#8D99A6`/`#11151A` 6,3:1). El texto ("0 días" / "—") lo pasa la app. La racha 0 nunca se muestra en ámbar |
+| hover (`pill` como link) | **Derivado (S-011):** borde `streak.border` → `streak.border.hover` (`#5C4419`, `amber.800`); texto → `streak.hover` (`#FFD08A`, `amber.300`; `#FFD08A`/`#1A140A` 12,7:1). Sin racha: texto `text.dim` → `text.muted` (7,4:1) |
+| focus (`pill` como link) | Requisito de foco visible |
 
 ## Spacing & sizing rules
 
 - En el header global va antes del selector (gap 10); en el de juego, al final (gap 8).
-- **Área táctil:** la píldora-link mide ~40px de alto. **Adaptación requerida:** 44px de área táctil cuando es link (forma **Pendiente**).
+- **Área táctil:** la píldora-link mide ~40px de alto. **Adaptación aplicada (S-011):** `min-height: 44px` cuando es link; la `<span>` no cambia. En `@nerdose/ui`, `StreakPill` recibe `render` para que la app arme el `<a>` (sin importar el router).
 
 ## Accesibilidad
 
@@ -91,3 +92,4 @@ Stats no muestra la píldora en el header.
 ## Historial
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: píldora ámbar con llama (link en Home, span en juegos) y formas inline de la racha.
+- 2026-11-06 v1.2.0 — Estado sin racha/sin datos, hover y área táctil de 44px derivados.

@@ -1,7 +1,7 @@
 ---
 tokens: semantic
-version: 1.0.0
-last_updated: 2026-11-05
+version: 1.2.0
+last_updated: 2026-11-06
 status: defined
 source: docs/nerdose.html
 ---
@@ -298,7 +298,11 @@ Todo `type.*` mono aplica `font.ligatures.mono` (`none`).
 | `elevation.flat` | sin sombra |
 | `elevation.window` | `shadow.drop.window` |
 | `elevation.featured.big-o` | `shadow.ring.1` (`game.big-o.ring`) + `shadow.glow.featured` (`game.big-o.glow`) |
-| `elevation.featured.{devdle,bug-hunt,timeline,grep-grid}` | **Pendiente — el prototipo no los define** |
+| `elevation.featured.{devdle,bug-hunt,timeline,grep-grid}` | *Derivados (S-011):* anillo de 1px del acento al 20% + glow del acento oscurecido al 25% (ver `foundations/elevation.md`) |
+| `game.{devdle,bug-hunt,timeline,grep-grid}.featured-border` | *Derivados (S-011):* `#1E4A30`, `#5C4419`, `#3C2E60`, `#5B2147` |
+| `border.control.hover` | *Derivado (S-011):* `color.neutral.600` (`#3A424C`); hover del botón `secondary` |
+| `streak.hover` | *Derivado (S-011):* `#FFD08A` (`amber.300`); hover de la píldora de racha |
+| `streak.border.hover` | *Derivado (S-011):* `#5C4419` (`amber.800`) |
 | `bar.{color}` | `shadow.inset.bar` con un color de estado o de juego |
 | `motion.cursor` | `motion.keyframes.blink` · `motion.duration.blink` · `motion.timing.steps1` · infinito (ver adaptación WCAG 2.2.2 en `foundations/motion.md`) |
 | `motion.anchor-scroll` | `motion.scroll.smooth` (instantáneo con `prefers-reduced-motion`) |
@@ -316,3 +320,4 @@ Todo `type.*` mono aplica `font.ligatures.mono` (`none`).
 - 2026-11-03 v0.1.1 — Alias de color remapeados a la paleta oscura.
 - 2026-11-05 v0.2.0 — Se agregan `text.warning` y `border.warning`; uso de `text.error` y `border.error` en Alert.
 - 2026-11-05 v1.0.0 — Reescritos desde el prototipo: fondos y textos nuevos (`bg.surface.sunken`, `bg.surface.inset`, `text.body`, `text.lede`…), acento por juego con su escala, estados (`status.*`), racha (`streak.*`), heatmap, foco, roles tipográficos `type.*`, layout, inset y radios semánticos. Eliminados: `bg.surface.raised` (→ `bg.control`), `bg.action.primary[.hover]` (→ `accent.brand[.hover]`), `bg.success`/`bg.error` (→ `status.*`), `text.secondary` (→ `text.muted`), `text.inverse` (→ `accent.brand.on` / `game.{j}.on`), `text.action.primary` (→ `accent.brand`), `text.error`/`text.warning`/`border.error`/`border.warning` (→ `status.*`), `border.strong` (→ `border.control`), `border.focus` (→ `focus.ring.color`), `text.heading.*`/`text.body`/`text.caption` tipográficos (→ `type.*`), `space.inline.*`/`space.stack.*`/`space.padding.*` (→ `gap.*`/`inset.*`).
+- 2026-11-06 v1.2.0 — Semánticos derivados: `border.control.hover`, `streak.hover`, `streak.border.hover`, `game.{j}.featured-border` y `elevation.featured.*` de cuatro juegos.

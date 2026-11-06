@@ -1,8 +1,8 @@
 ---
 document: UX Product Map
 surface: web
-version: "1.1"
-date: 2026-11-04
+version: "1.2"
+date: 2026-11-06
 status: Draft - Punto de partida para discusión
 audiences:
   - jugador
@@ -15,7 +15,7 @@ audiences:
 > eso vive en `user-flows.md`. Si el equipo lee esto y no hay objeciones,
 > el documento falló: debería generar fricción para provocar decisiones.
 
-**Base de diseño:** `docs/nerdose.html` (NFR-U07). Donde el prototipo difiere del PRD, manda el PRD. Viewports: `mobile` (primario, desde 320 px) y `desktop`. Fuentes de trazabilidad: `[fuente: PRD §requirements]` salvo que se indique otra.
+**Base de diseño:** `docs/nerdose.html` (NFR-U07, decisión #31) y el Design System `docs/design-system/web/` (v1.1.0), que lo traduce a tokens y componentes. Donde el prototipo difiere del PRD en datos o reglas, manda el PRD; en estética, manda el prototipo (REQ-003). Viewports: `mobile` (primario, desde 320 px) y `desktop`. Fuentes de trazabilidad: `[fuente: PRD §requirements]` salvo que se indique otra.
 
 ## Audiencias en esta Superficie
 
@@ -59,11 +59,13 @@ Todas las pantallas existen en ambos viewports. La excepción de contenido a ano
 
 ### Bloques por pantalla
 
-Header común a todas las pantallas (shell): marca `> nerdose`, navegación (`./juegos`, `./stats`, `./about`), **`#número` del desafío del día** (reemplaza "desafío del 30/10" del prototipo; decisión #12, F-02), selector de idioma ES/EN y, en las pantallas de juego, el nombre del juego. El `#número` se oculta cuando el servidor no lo informa (antes del lanzamiento, REQ-002). En las pantallas de resultado se suma el botón "Compartir". El footer lleva el aviso breve de privacidad (una única cookie funcional, sin datos personales ni cookies de terceros) y un enlace a `acerca-de` en todas las pantallas (C-07, REQ-002).
+Header común a todas las pantallas de plataforma (shell, `app-header` del DS): marca `> nerdose_`, navegación (`./juegos`, `./stats`, `./about`) **siempre dentro del header** y acomodada con `flex-wrap` en mobile (sin tira de navegación aparte, REQ-003), **`#número` del desafío del día** (reemplaza "desafío del 30/10" del prototipo; decisión #12, F-02), selector de idioma ES/EN segmentado y, en la home, la **píldora de racha global** que enlaza a `estadisticas` (REQ-003). El `#número` se oculta cuando el servidor no lo informa (antes del lanzamiento, REQ-002). En las pantallas de juego el header es el `game-header` del DS, con el nombre del juego; en las de resultado se suma el botón "Compartir". El footer (`site-footer`) lleva el lema `> nerdose — una plataforma, múltiples desafíos.`, `exit 0`, el aviso breve de privacidad (una única cookie funcional, sin datos personales ni cookies de terceros) y un enlace a `acerca-de` en todas las pantallas (C-07, REQ-002, REQ-003).
+
+> **Pendiente de alineación (FG-3+):** las 15 pantallas de juego todavía declaran la tira `nav-movil` y el header de plataforma; se pasan al `game-header` del DS cuando se diseñe cada juego. REQ-003 alinea solo el shell de plataforma (`home`, `estadisticas`, `acerca-de`, `no-encontrado`) y el footer de todas.
 
 | Slug | Bloques principales (de `docs/nerdose.html` ajustados al PRD) |
 |------|-----------------------------------------------------------------|
-| `home` | Hero (identidad, presentación breve, CTA "Seguir jugando" / "¿Cómo funciona?" → `acerca-de`); progreso del día (estado por juego, racha global, cuenta regresiva `HH:MM:SS`); 5 tarjetas de juego (nombre, descripción, duración, racha del juego, estado y CTA); resumen "Tu progreso" (racha global, heatmap corto, enlace a `estadisticas`). La tarjeta "próximo juego / próximamente" del prototipo no está en el PRD: **fuera del inventario** hasta confirmarla |
+| `home` | Hero (prompt `$ nerdose --today // fecha`, titular, presentación breve, CTA "Seguir jugando" → tarjetas y "¿Cómo funciona?" → sección "Cómo funciona" de la misma home) con la **ventana de terminal** del día al lado (estado por juego, racha global y récord, cuenta regresiva `HH:MM:SS`); "Los desafíos de hoy" con barra segmentada de progreso y 5 tarjetas de juego (miniatura, nombre, badge de estado, descripción, duración, racha del juego y CTA; la tarjeta del próximo juego a jugar se destaca) + tarjeta decorativa "próximo juego" (`$ git checkout -b próximo-juego`, REQ-003); panel "Tu progreso" (racha global de 88 px, récord, enlace a `estadisticas`; el heatmap y los demás mini-stats esperan a FG-3 / FG-10); "Cómo funciona" en 4 pasos (REQ-003) |
 | `estadisticas` | Racha global actual, récord, desafíos completados; heatmap de 365 días; bloque por juego (racha, récord, jugadas, % de victorias, stat propia); historial paginado con etiqueta corta ("✓ 4/6", "✗ L7", "6/8"). El prototipo muestra "días con actividad" y "juegos por día activo": no están en C-34, **manda el PRD** |
 | `no-encontrado` | Código `404 · página no encontrada`; mensaje corto; CTA "Volver a los juegos". Mismo header y footer del shell (REQ-002) |
 | `acerca-de` | Qué es nerdose y cómo funciona; los 5 juegos; reglas de racha (completar cuenta, días neutros, anulados); atribución Wikipedia/Wikidata (CC BY-SA); aviso de privacidad (cookie funcional, sin cuenta) |
@@ -130,16 +132,17 @@ En desktop, O-01 es un modal centrado y no se vuelve inline: no hay espacio fijo
 
 Header presente en todas las pantallas:
 
-- **Marca `nerdose`** → `home`
+- **Marca `> nerdose_`** → `home`
 - **`./juegos`** → `home` (sección de tarjetas)
 - **`./stats`** → `estadisticas` (`/stats`)
 - **`./about`** → `acerca-de` (`/about`)
+- **Píldora de racha global** (solo en `home`) → `estadisticas` (REQ-003)
 - **`#número`** — indicador del día, no navega
 - **ES | EN** — control inline; cambia el idioma de UI y de contenido sin recargar y sin perder la partida; con sesión se guarda en el Player, sin sesión solo en el navegador (C-03, REQ-002)
 
 Rutas: `/` → `home`; `/:game_id` → fase de juego correspondiente; `/stats`; `/about`; cualquier otra ruta o `game_id` desconocido → `no-encontrado` (ADR de `web`, overview; REQ-002).
 
-En mobile el header debe caber en 320 px; cómo se compacta la navegación (menú, íconos) se define en wireframes. No se inventa un overlay de menú acá porque el PRD no lo exige.
+En mobile el header debe caber en 320 px. **Resuelto por REQ-003:** el header es el mismo en todos los anchos y se acomoda con `flex-wrap` (marca y acciones en un renglón, nav en el siguiente), sin media queries ni tira de navegación aparte. No hay overlay de menú: el PRD no lo exige.
 
 ### Navegación secundaria
 
@@ -148,7 +151,7 @@ Dentro de las **pantallas de juego**:
 - "Siguiente juego" y "Volver a los juegos" (resultado) → siguiente `*-instrucciones`/`*-partida` pendiente o `home`.
 - Enlace "Ver mis estadísticas" (resultado) → `estadisticas`.
 
-Dentro de **`home`**: tarjeta de juego → fase correspondiente; "ver estadísticas →" → `estadisticas`; "¿Cómo funciona?" → `acerca-de`.
+Dentro de **`home`**: tarjeta de juego → fase correspondiente; "ver estadísticas →" → `estadisticas`; "¿Cómo funciona?" → sección "Cómo funciona" de la misma pantalla (ancla `#como`, REQ-003). `acerca-de` se alcanza desde `./about` y el footer.
 
 Dentro de **`estadisticas`**: bloque por juego y "ver historial completo" (paginado en la misma pantalla, ver pregunta 3).
 

@@ -1,6 +1,10 @@
+// @vitest-environment node
 import { describe, expect, it } from 'vitest';
 
 import { cn } from '../src/cn';
+import { RADIUS_ROLES, SHADOW_ROLES, TEXT_ROLES } from '../src/theme';
+
+import { declarations } from './parse-theme';
 
 describe('cn', () => {
   it('keeps the last conflicting utility (TS-7)', () => {
@@ -40,5 +44,30 @@ describe('cn', () => {
 
   it('returns an empty string without arguments (TS-12)', () => {
     expect(cn()).toBe('');
+  });
+});
+
+describe('cn with theme roles', () => {
+  it('keeps a typographic role next to a color (TS-10)', () => {
+    expect(cn('text-display-hero text-streak')).toBe('text-display-hero text-streak');
+  });
+
+  it('resolves role, radius and shadow conflicts (TS-11)', () => {
+    expect(cn('text-meta', 'text-mono-body')).toBe('text-mono-body');
+    expect(cn('rounded-control', 'rounded-panel')).toBe('rounded-panel');
+    expect(cn('shadow-window', 'shadow-next-big-o')).toBe('shadow-next-big-o');
+    expect(cn('p-4.5', 'p-5')).toBe('p-5');
+  });
+
+  it('keeps theme lists in sync with tokens.css (TS-12)', () => {
+    const names = Object.keys(declarations);
+    const pick = (prefix: string) =>
+      names
+        .filter((n) => n.startsWith(prefix) && !n.slice(prefix.length).includes('--'))
+        .map((n) => n.slice(prefix.length))
+        .sort();
+    expect([...TEXT_ROLES].sort()).toEqual(pick('--text-'));
+    expect([...RADIUS_ROLES].sort()).toEqual(pick('--radius-'));
+    expect([...SHADOW_ROLES].sort()).toEqual(pick('--shadow-'));
   });
 });

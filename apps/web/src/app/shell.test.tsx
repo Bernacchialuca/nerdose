@@ -26,7 +26,8 @@ describe('Shell', () => {
       level: 1,
       name: 'Cinco juegos tech. Un desafío por día.',
     });
-    expect(container.firstElementChild).toHaveClass('bg-bg', 'text-text', 'font-mono');
+    expect(container.firstElementChild).toHaveClass('bg-bg', 'text-text', 'font-sans');
+    expect(container.firstElementChild).not.toHaveClass('font-mono');
     const brand = within(screen.getByRole('banner')).getByRole('link', { name: 'nerdose' });
     expect(brand).toHaveAttribute('href', '/');
     expect(brand.querySelector('.text-accent')).not.toBeNull();

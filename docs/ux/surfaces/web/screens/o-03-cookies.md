@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.1"
-date: 2026-11-04
+version: "1.2"
+date: 2026-11-06
 overlay: true
 overlay_type: banner
 triggered_by: home
@@ -23,8 +23,8 @@ triggered_by: home
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
 - **JTBD / Propósito:** Avisar que sin cookies no hay sesión y por lo tanto no se puede jugar; el resto del sitio sigue visible.
 - **Viewports:**
-  - **mobile** — banner de ancho completo fijo bajo el header.
-  - **desktop** — mismo banner, de ancho completo, fijo bajo el header.
+  - **mobile** — banner bajo el header, al ancho del contenedor de página (con el gutter de 32 px).
+  - **desktop** — mismo banner, alineado al contenedor de página de 1240 px (no de borde a borde), bajo el header.
 
 ## Entrada y salida
 
@@ -64,8 +64,8 @@ triggered_by: home
 
 ### alerta
 - Texto/label: Activá las cookies para poder jugar
-- Icono: nada
-- Annotation: nada
+- Icono: warning
+- Annotation: `banner` variant `warning` del DS: tinte de advertencia, borde de 1 px, radio 14, padding 18/22, ícono de advertencia; `role="status"`
 
 ### detalle
 - Texto/label: Sin cookies no podemos guardar tu partida. El catálogo, las estadísticas y «Acerca de» siguen disponibles.
@@ -104,6 +104,8 @@ triggered_by: home
 - REQ-002: solo se muestra si la creación de la sesión respondió 200 y el estado del día siguiente sigue con `has_session = false`. Si la creación fue rechazada por límite (429), no se muestra: la home pasa a «sesión no disponible», para no culpar al navegador de un límite del servidor.
 - REQ-002: con el banner visible, el selector ES/EN sigue funcionando, pero el cambio queda solo en este navegador (no hay Player donde guardarlo).
 
+- REQ-003: el banner es el `banner` `warning` del DS 1.0.0 y se alinea al contenedor de página (1240 px, gutter 32) en lugar de ir de borde a borde, para quedar en la misma columna que el contenido de la home (CA 9). Sin cambios de lógica ni de texto.
+
 **Alternativas descartadas:**
 - Modal que bloquea todo: impide ver estadísticas y «Acerca de», que sí funcionan.
 
@@ -114,3 +116,4 @@ triggered_by: home
 
 - C-02, C-01 · flujo 1 (errores).
 - REQ-002: RF 5 · CA 5, CA 13.
+- REQ-003: RF 12 · CA 9.

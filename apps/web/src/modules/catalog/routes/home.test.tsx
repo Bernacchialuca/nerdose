@@ -225,10 +225,21 @@ describe('Home', () => {
     expect(play).toHaveLength(5);
     for (const b of play) expect(b).toHaveAttribute('aria-disabled', 'true');
     expect(screen.queryAllByRole('link', { name: 'Jugar' })).toHaveLength(0);
-    expect(screen.getByRole('button', { name: /Empezar a jugar/ })).toHaveAttribute(
-      'aria-disabled',
-      'true',
+    const hero = screen.getByRole('button', { name: /Empezar a jugar/ });
+    expect(hero).toHaveAttribute('aria-disabled', 'true');
+    expect(hero).not.toHaveAttribute('disabled');
+    expect(hero).toHaveClass(
+      'bg-control',
+      'text-text-disabled',
+      'cursor-not-allowed',
+      'border-border-strong',
+      'min-h-12',
     );
+    expect(hero.className).not.toContain('bg-accent');
+    for (let i = 0; i < 30 && document.activeElement !== hero; i += 1) await userEvent.tab();
+    expect(hero).toHaveFocus();
+    await userEvent.click(hero);
+    expect(document.getElementById('juegos')).not.toHaveFocus();
     expect(
       screen.getByText('Sin sesión no hay progreso para mostrar. Activá las cookies y recargá.'),
     ).toBeInTheDocument();
@@ -310,7 +321,7 @@ describe('Home', () => {
       expect(el.className).toContain('focus-visible:outline-2');
       expect(el.className).toContain('focus-visible:outline-offset-2');
       expect(el.className).toContain('focus-visible:outline-accent');
-      expect(el.className).toContain('min-h-11');
+      expect(el.className).toMatch(/\bmin-h-1[12]\b/);
       expect(el.className).not.toContain('outline-none');
     }
     for (const el of main.querySelectorAll('*')) {
@@ -491,5 +502,105 @@ describe('Home', () => {
       expect(screen.queryByText(/Próximo desafío en/)).toBeNull();
       expect(screen.getAllByRole('article')).toHaveLength(5);
     });
+  });
+});
+
+describe('Home · CTA del Design System', () => {
+  const classesOf = (el: HTMLElement) => el.className.split(/\s+/);
+
+  it('TS-16 CTA del hero habilitado = primary lg', async () => {
+    await renderHome();
+    const hero = screen.getByRole('button', { name: /Seguir jugando/ });
+    expect(hero).toHaveClass(
+      'min-h-12',
+      'px-5.5',
+      'gap-2.5',
+      'text-button-lg',
+      'rounded-control',
+      'bg-accent',
+      'text-on-accent',
+      'hover:bg-accent-hover',
+    );
+    expect(hero).not.toHaveAttribute('aria-disabled');
+    await userEvent.click(hero);
+    expect(document.getElementById('juegos')).toHaveFocus();
+  });
+
+  it('TS-18/23 los links de navegación usan linkClass y no se subrayan', async () => {
+    await renderHome();
+    const how = screen.getByRole('link', { name: /¿Cómo funciona\?/ });
+    expect(how).toHaveAttribute('href', '/about');
+    expect(how).toHaveClass('font-mono', 'no-underline', 'text-accent', 'hover:text-accent-hover');
+    expect(classesOf(how)).not.toContain('underline');
+    const stats = screen.getByRole('link', { name: /ver estadísticas/ });
+    expect(stats).toHaveAttribute('href', '/stats');
+    expect(stats).toHaveClass('font-mono', 'no-underline', 'mt-auto');
+    expect(classesOf(stats)).not.toContain('underline');
+  });
+
+  it('TS-19/20/21 CTA de tarjeta según estado', async () => {
+    await renderHome();
+    const grep = within(screen.getByRole('article', { name: 'Grep Grid' })).getByRole('link', {
+      name: 'Seguir jugando',
+    });
+    expect(grep).toHaveAttribute('href', '/grep-grid');
+    expect(grep).toHaveClass(
+      'bg-game-grep-grid',
+      'text-game-grep-grid-on',
+      'hover:bg-game-grep-grid-light',
+      'w-full',
+      'min-h-11',
+      'rounded-control',
+      'font-bold',
+    );
+    expect(classesOf(grep)).not.toContain('bg-accent');
+
+    const timeline = within(screen.getByRole('article', { name: 'Tech Timeline' })).getByRole(
+      'link',
+      { name: /Jugar/ },
+    );
+    expect(timeline).toHaveAttribute('href', '/timeline');
+    expect(timeline).toHaveClass(
+      'bg-game-timeline',
+      'text-game-timeline-on',
+      'hover:bg-game-timeline-light',
+      'w-full',
+    );
+    expect(timeline.querySelector('span[aria-hidden="true"]')).toHaveTextContent('→');
+
+    const devdle = within(screen.getByRole('article', { name: 'Devdle' })).getByRole('link', {
+      name: 'Ver resultado',
+    });
+    expect(devdle).toHaveAttribute('href', '/devdle');
+    expect(devdle).toHaveClass('border-border-strong', 'text-text', 'font-medium', 'w-full');
+    expect(classesOf(devdle)).not.toContain('text-accent');
+    expect(classesOf(devdle)).not.toContain('border-border-interactive');
+  });
+
+  it('TS-22 CTA deshabilitados: neutros, focusables y de ancho completo', async () => {
+    useToday(todayNoChallengesFixture);
+    const { container } = await renderHome();
+    await screen.findByText('Hoy no hay desafíos publicados');
+    const disabled = screen.getAllByRole('button', { name: 'Sin desafío hoy' });
+    expect(disabled).toHaveLength(5);
+    for (const el of disabled) {
+      expect(el).toHaveAttribute('aria-disabled', 'true');
+      expect(el).not.toHaveAttribute('disabled');
+      expect(el).toHaveClass(
+        'bg-control',
+        'text-text-disabled',
+        'cursor-not-allowed',
+        'w-full',
+        'min-h-11',
+        'rounded-control',
+      );
+      expect(el.className).not.toMatch(/bg-game-|bg-accent/);
+    }
+    await userEvent.tab();
+    for (let i = 0; i < 20 && !disabled.some((el) => el === document.activeElement); i += 1) {
+      await userEvent.tab();
+    }
+    expect(disabled).toContain(document.activeElement);
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

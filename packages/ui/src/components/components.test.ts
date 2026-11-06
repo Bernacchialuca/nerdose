@@ -5,19 +5,59 @@ import { describe, expect, it } from 'vitest';
 
 const dir = fileURLToPath(new URL('.', import.meta.url));
 
+const isSource = (f: string) => /\.tsx?$/.test(f) && !/\.test\.tsx?$/.test(f);
+
+export const FORBIDDEN = [
+  { name: 'hex', re: /#[0-9a-fA-F]{3,8}\b/ },
+  { name: 'arbitrary', re: /\[(\d|#|rgb)/ },
+  { name: 'generic', re: /\b(rounded-md|shadow-md|text-2xl|font-semibold)\b/ },
+] as const;
+
 describe('ui components', () => {
-  it('use no literal hex colors nor arbitrary color values (TS-26)', () => {
-    const files = readdirSync(dir).filter((f) => f.endsWith('.tsx') && !f.endsWith('.test.tsx'));
-    expect(files.length).toBeGreaterThan(0);
-    expect(files).toEqual(expect.arrayContaining(['alert.tsx', 'card.tsx']));
+  it('use no hex, arbitrary values nor generic utilities (TS-56)', () => {
+    const files = readdirSync(dir).filter(isSource);
+    expect(files).toEqual(
+      expect.arrayContaining([
+        'alert.tsx',
+        'app-header.tsx',
+        'badge.tsx',
+        'banner.tsx',
+        'brand-mark.tsx',
+        'card.tsx',
+        'game-thumbnail.tsx',
+        'panel.tsx',
+        'progress-bar.tsx',
+        'segmented-control.tsx',
+        'streak-number.tsx',
+        'streak-pill.tsx',
+        'terminal-window.tsx',
+        'button-class.ts',
+        'link-class.ts',
+        'nav-item-class.ts',
+        'game-classes.ts',
+      ]),
+    );
     for (const file of files) {
       const content = readFileSync(`${dir}${file}`, 'utf8');
-      expect(content, file).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
-      expect(content, file).not.toContain('[#');
+      for (const { name, re } of FORBIDDEN) expect(content, `${file} (${name})`).not.toMatch(re);
     }
   });
 
-  it('import no game client, router, i18n nor server-only package (TS-24)', () => {
+  it('detects violations instead of passing vacuously (TS-58)', () => {
+    const hit = (s: string) => FORBIDDEN.some(({ re }) => re.test(s));
+    for (const bad of [
+      'h-[150px]',
+      'bg-[#fff]',
+      'shadow-[rgba(0,0,0,.4)]',
+      'rounded-md',
+      'font-semibold',
+    ])
+      expect(hit(bad), bad).toBe(true);
+    for (const good of ['h-37.5', 'rounded-control', 'text-title-card'])
+      expect(hit(good), good).toBe(false);
+  });
+
+  it('import no game client, router, i18n nor server-only package (TS-57)', () => {
     const srcDir = fileURLToPath(new URL('..', import.meta.url));
     const forbidden = [
       "from '@nerdose/game-",
@@ -27,9 +67,7 @@ describe('ui components', () => {
       "from '@nerdose/db'",
       "from '@nerdose/core/notify'",
     ];
-    const files = readdirSync(srcDir, { recursive: true, encoding: 'utf8' }).filter(
-      (f) => /\.tsx?$/.test(f) && !/\.test\.tsx?$/.test(f),
-    );
+    const files = readdirSync(srcDir, { recursive: true, encoding: 'utf8' }).filter(isSource);
     expect(files.length).toBeGreaterThan(0);
     for (const file of files) {
       const content = readFileSync(`${srcDir}${file}`, 'utf8');

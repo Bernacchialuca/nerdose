@@ -4,109 +4,204 @@ import { axe } from 'vitest-axe';
 import { describe, expect, it } from 'vitest';
 
 import { Card } from './card';
+import { GameThumbnail } from './game-thumbnail';
 
 const DEVDLE_DESC =
   'Adiviná el término tech en 6 intentos · ~2 min · racha 0 · sin desafío hoy · no afecta tu racha';
 
-function Devdle() {
-  return (
-    <Card aria-labelledby="game-devdle">
-      <h2 id="game-devdle">Devdle</h2>
-      <p>{DEVDLE_DESC}</p>
-    </Card>
-  );
-}
+describe('Card game', () => {
+  it('renders the thumbnail header and the body (TS-31)', async () => {
+    const { container } = render(
+      <Card game="bug-hunt" thumbnail={<GameThumbnail game="bug-hunt" />} aria-labelledby="t">
+        <h3 id="t">Bug Hunt</h3>
+      </Card>,
+    );
+    const article = screen.getByRole('article', { name: 'Bug Hunt' });
+    expect(article).toHaveClass(
+      'flex',
+      'flex-col',
+      'overflow-hidden',
+      'rounded-feature',
+      'border',
+      'border-border',
+      'bg-surface',
+    );
+    const thumb = article.firstElementChild;
+    expect(thumb).toHaveAttribute('aria-hidden', 'true');
+    expect(thumb).toHaveClass(
+      'h-37.5',
+      'border-b',
+      'bg-game-bug-hunt-tint',
+      'border-game-bug-hunt-border',
+    );
+    expect(article.lastElementChild).toHaveClass('flex', 'flex-1', 'flex-col', 'gap-3', 'p-5');
+    expect(article.className).not.toMatch(/(^|\s)shadow-/);
+    expect(await axe(container)).toHaveNoViolations();
+  });
 
-describe('Card', () => {
-  it('renders an article named by its heading (TS-6)', () => {
-    render(<Devdle />);
+  it('marks the next card with the game border and shadow (TS-32)', () => {
+    render(
+      <Card game="devdle" next aria-labelledby="t">
+        <h3 id="t">Devdle</h3>
+      </Card>,
+    );
     const article = screen.getByRole('article', { name: 'Devdle' });
+    expect(article).toHaveClass('border-game-devdle-featured', 'shadow-next-devdle');
+    expect(article).not.toHaveClass('border-border');
+  });
+
+  it('ignores next without game', () => {
+    render(
+      <Card next aria-labelledby="t">
+        <h3 id="t">x</h3>
+      </Card>,
+    );
+    const article = screen.getByRole('article');
+    expect(article).toHaveClass('border-border');
+    expect(article.className).not.toContain('shadow-next');
+  });
+
+  it('is compatible with web usage without variant nor game (TS-33)', () => {
+    render(
+      <Card aria-labelledby="t" className="h-full">
+        <h2 id="t">Devdle</h2>
+        <p>{DEVDLE_DESC}</p>
+      </Card>,
+    );
+    const article = screen.getByRole('article', { name: 'Devdle' });
+    expect(article).toHaveClass(
+      'rounded-feature',
+      'border',
+      'border-border',
+      'bg-surface',
+      'h-full',
+    );
+    expect(article.querySelector('[aria-hidden]')).toBeNull();
+    expect(article.firstElementChild).toHaveClass('p-5');
     expect(within(article).getByRole('heading', { level: 2, name: 'Devdle' })).toBeInTheDocument();
     expect(article).toHaveTextContent(DEVDLE_DESC);
   });
 
-  it('uses the design tokens (TS-7)', () => {
-    render(<Devdle />);
-    expect(screen.getByRole('article')).toHaveClass(
-      'flex',
-      'flex-col',
-      'gap-3',
-      'rounded-2xl',
-      'border',
-      'border-border',
-      'bg-surface',
-      'p-4',
-    );
-  });
-
-  it('merges className with cn (TS-8)', () => {
-    render(<Card className="h-full p-6">x</Card>);
-    const article = screen.getByRole('article');
-    expect(article).toHaveClass('h-full', 'p-6');
-    expect(article).not.toHaveClass('p-4');
-  });
-
-  it('passes HTML attributes (TS-9)', () => {
+  it('passes HTML attributes and merges className', () => {
     render(
-      <Card id="card-big-o" data-game="big-o" aria-labelledby="t">
+      <Card id="card-big-o" data-game="big-o" aria-labelledby="t" className="rounded-panel">
         <h2 id="t">Big O</h2>
       </Card>,
     );
     const article = screen.getByRole('article', { name: 'Big O' });
     expect(article).toHaveAttribute('id', 'card-big-o');
     expect(article).toHaveAttribute('data-game', 'big-o');
-    expect(article).toHaveAttribute('aria-labelledby', 't');
+    expect(article).toHaveClass('rounded-panel');
+    expect(article).not.toHaveClass('rounded-feature');
   });
 
-  it('is not interactive and does not take focus (TS-10)', () => {
-    render(
-      <Card>
-        <h2>Grep Grid</h2>
-        <p>Encontrá 8 palabras en la grilla · sin tiempo · ~3 min</p>
-      </Card>,
-    );
-    expect(screen.queryAllByRole('button')).toHaveLength(0);
-    expect(screen.queryAllByRole('link')).toHaveLength(0);
-    expect(screen.getByRole('article')).not.toHaveAttribute('tabindex');
-    expect(document.activeElement).toBe(document.body);
-  });
-
-  it('keeps the focus order of its children (TS-11)', async () => {
+  it('keeps the focus order of its children and is not focusable itself', async () => {
     const user = userEvent.setup();
     render(
       <Card>
-        <h2>Bug Hunt</h2>
+        <h3>Bug Hunt</h3>
         <a href="/bug-hunt">Jugar →</a>
         <a href="/stats">ver estadísticas →</a>
       </Card>,
     );
+    expect(screen.getByRole('article')).not.toHaveAttribute('tabindex');
     await user.tab();
     expect(screen.getByRole('link', { name: 'Jugar →' })).toHaveFocus();
     await user.tab();
     expect(screen.getByRole('link', { name: 'ver estadísticas →' })).toHaveFocus();
   });
 
-  it('has no fixed widths nor responsive classes (TS-12)', () => {
-    render(<Devdle />);
+  it('has no fixed widths nor responsive classes', () => {
+    render(<Card>x</Card>);
     const cls = screen.getByRole('article').className;
-    expect(cls).not.toMatch(/(^|\s)(w-\[|min-w-\[|w-\d|whitespace-nowrap)/);
+    expect(cls).not.toMatch(/(^|\s)(w-\d|whitespace-nowrap)/);
     expect(cls).not.toMatch(/(^|\s)(sm|md|lg):/);
   });
 
-  it('has no axe violations (TS-13)', async () => {
-    const { container } = render(
-      <Card>
-        <h2>Bug Hunt</h2>
-        <a href="/bug-hunt">Jugar →</a>
-        <a href="/stats">ver estadísticas →</a>
-      </Card>,
-    );
-    expect(await axe(container)).toHaveNoViolations();
-  });
-
-  it('has no text of its own (TS-14)', () => {
+  it('has no text of its own (TS-55)', () => {
     const { container } = render(<Card />);
     expect(container.textContent).toBe('');
-    expect(container.querySelectorAll('article')).toHaveLength(1);
+  });
+});
+
+describe('Card placeholder', () => {
+  it('is dashed, without background and not interactive (TS-34)', () => {
+    render(
+      <Card variant="placeholder">
+        <p>$ git checkout -b próximo-juego</p>
+      </Card>,
+    );
+    const article = screen.getByRole('article');
+    expect(article).toHaveClass(
+      'flex',
+      'flex-col',
+      'justify-center',
+      'gap-3',
+      'rounded-feature',
+      'border',
+      'border-dashed',
+      'border-border-strong',
+      'p-7',
+      'min-h-75',
+    );
+    expect(article).not.toHaveClass('bg-surface');
+    expect(article.querySelectorAll('a,button,[tabindex]')).toHaveLength(0);
+  });
+});
+
+describe('Card step', () => {
+  it('colors the kicker by tone (TS-35)', () => {
+    const { rerender } = render(
+      <Card variant="step" kicker="02 · reglas propias" tone="bug-hunt">
+        Cada juego tiene su propia mecánica, sus intentos y su puntaje.
+      </Card>,
+    );
+    const article = screen.getByRole('article');
+    expect(article).toHaveClass(
+      'flex',
+      'flex-col',
+      'gap-2',
+      'rounded-panel',
+      'border',
+      'border-border-subtle',
+      'p-5.5',
+    );
+    expect(article.className).not.toMatch(/(^|\s)bg-/);
+    expect(screen.getByText('02 · reglas propias')).toHaveClass(
+      'font-mono',
+      'text-mono-body',
+      'text-game-bug-hunt',
+    );
+    expect(screen.getByText(/Cada juego/)).toHaveClass('font-sans', 'text-body', 'text-text-body');
+    rerender(
+      <Card variant="step" kicker="01 · todos los días">
+        x
+      </Card>,
+    );
+    expect(screen.getByText('01 · todos los días')).toHaveClass('text-accent');
+  });
+});
+
+describe('Card mini-stat', () => {
+  it('renders a div with value and label (TS-36)', () => {
+    const { container } = render(<Card variant="mini-stat" value="9" label="récord de racha" />);
+    expect(screen.queryByRole('article')).toBeNull();
+    const root = container.firstElementChild;
+    expect(root?.tagName).toBe('DIV');
+    expect(root).toHaveClass(
+      'flex',
+      'flex-col',
+      'gap-1',
+      'rounded-inset',
+      'bg-surface-inset',
+      'px-4',
+      'py-3.5',
+    );
+    expect(screen.getByText('9')).toHaveClass('font-mono', 'text-numeric-md', 'text-text');
+    expect(screen.getByText('récord de racha')).toHaveClass(
+      'font-sans',
+      'text-caption-tight',
+      'text-text-muted',
+    );
   });
 });

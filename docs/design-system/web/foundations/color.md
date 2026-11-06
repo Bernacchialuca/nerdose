@@ -1,7 +1,7 @@
 ---
 foundation: color
-version: 1.1.0
-last_updated: 2026-11-05
+version: 1.2.0
+last_updated: 2026-11-06
 status: defined
 source: docs/nerdose.html
 ---
@@ -192,6 +192,10 @@ Ratios medidos (WCAG 2.1, fórmula de luminancia relativa). Umbral: texto ≥ 4,
 | `#8CC8FF` sobre `#0E1D2E` / `#11243A` | | 9,6 / 8,8 |
 | `#F9A8D4` sobre `#2A0F22` / `#1F0D19` | | 9,7 / 10,3 |
 | `#E6EDF3` sobre `#2A323C` (segmento activo, tecla) / `#1D2A3A` (pestaña Big O) | | 11,0 / 12,3 |
+| Pares derivados en S-011: `#06120B`/`#7CF0B0` (hover `primary`) · `#1A1206`/`#FFD08A` (hover `accent` Bug Hunt) · `#06121F`/`#9ACFFF` · `#160E26`/`#DCC4FF` · `#24081A`/`#F9A8D4` | | 13,6 · 12,9 · 11,4 · 11,9 · 10,3 |
+| `#FFD08A` sobre `#1A140A` (hover de la píldora de racha) | | 12,7 |
+| `#8D99A6` sobre `#11151A` (píldora sin racha) | | 6,3 |
+| `#1A1206` sobre `#FFB547` (ícono del banner `warning`) | | 10,5 |
 | Hover de links: `#7CF0B0` / `#FFD08A` / `#9ACFFF` / `#DCC4FF` / `#F9A8D4` sobre `#0A0C0F` | | 13,9 / 13,7 / 11,9 / 12,5 / 10,8 |
 | On-accent: `#06120B`/verde · `#06121F`/azul · `#160E26`/violeta · `#24081A`/rosa · `#1A1206`/ámbar · `#1C0605`/rojo | | 10,7 · 8,3 · 8,4 · 7,1 · 10,6 · 7,7 |
 
@@ -212,7 +216,9 @@ Ratios medidos (WCAG 2.1, fórmula de luminancia relativa). Umbral: texto ≥ 4,
 | Elemento | Ratio | Evaluación |
 |---|---|---|
 | Borde de control `#2A323C` sobre `#0A0C0F` / `#11151A` | 1,5 / 1,4 | Los botones con texto se identifican por su etiqueta; 1.4.11 no exige el borde. Se respeta el valor del prototipo. Cuando el borde sea **lo único** que identifica un control o su estado, usar `border.interactive` (`#8D99A6`, 6,8:1). |
-| Segmento activo del selector de idioma `#2A323C` sobre `#11151A` | 1,4 | **Adaptación requerida:** el estado seleccionado no puede depender solo de este fondo. El texto cambia de `#9AA6B2` a `#E6EDF3` (2,1:1 entre sí). **Pendiente** la señal adicional (ver `components/language-selector.md`). |
+| Indicador del segmento activo `#3DDC84` sobre `#2A323C` / `#11151A` (S-011) | 7,3 / 10,3 | Resuelve la fila siguiente. |
+| Bordes de la tarjeta `next` derivados sobre `#0F1318` (S-011): Devdle `#1E4A30` 1,8 · Bug Hunt `#5C4419` 2,0 · Tech Timeline `#3C2E60` 1,6 · Grep Grid `#5B2147` 1,6 | 1,6 - 2,0 | Decorativos: la señal de `next` es el CTA relleno y ser el destino de "Seguir jugando". |
+| Segmento activo del selector de idioma `#2A323C` sobre `#11151A` | 1,4 | **Resuelta en S-011 con un indicador inferior** (fila anterior). Original: **Adaptación requerida:** el estado seleccionado no puede depender solo de este fondo. El texto cambia de `#9AA6B2` a `#E6EDF3` (2,1:1 entre sí). **Pendiente** la señal adicional (ver `components/language-selector.md`). |
 | Celda "escrita" `#5A6573` sobre `#0F1318` | 3,2 | Pasa. |
 | Celda vacía de Devdle `#222A33` sobre `#0A0C0F` | 1,4 | No interactiva; el estado lo anuncia `aria-label`. |
 | Heatmap nivel 1 `#14532D` / nivel 0 `#1A2028` sobre `#0F1318` | 2,1 / 1,1 | El heatmap lleva alternativa textual (`role="img"` + `aria-label`, L216, L321). Los niveles no son distinguibles a 3:1: si alguna vez el heatmap transmite datos por celda, hace falta una alternativa por celda. |
@@ -240,3 +246,4 @@ Ratios medidos (WCAG 2.1, fórmula de luminancia relativa). Umbral: texto ≥ 4,
 - 2026-11-05 v0.2.0 — Consumidores de `color.warning` y `color.error` (Banner, Alert); semánticos `text.warning` y `border.warning`.
 - 2026-11-05 v1.0.0 — Reescrita desde el prototipo: 14 neutros nuevos, escala de tintes por juego y por estado, rampa del heatmap, regla "racha siempre ámbar", contrastes medidos de todos los pares de texto y adaptaciones requeridas (números de línea, tecla descartada, selector de idioma). `color.green.950` pasa a `color.green.975`; se elimina `color.info`.
 - 2026-11-05 v1.1.0 — Los estados no definidos para un juego se derivan de su propia escala en lugar de quedar pendientes.
+- 2026-11-06 v1.2.0 — Contrastes medidos de los pares derivados (hovers, indicador del selector, ícono `warning`, bordes `next`).

@@ -27,8 +27,9 @@ export function Shell() {
   }, [pathname]);
 
   return (
-    <div className="flex min-h-dvh flex-col bg-bg font-mono text-text">
+    <div className="flex min-h-dvh flex-col bg-bg font-sans text-text">
       <AppHeader
+        className="font-mono"
         brand={
           <Link
             to="/"
@@ -42,7 +43,7 @@ export function Shell() {
         <ChallengeNumber />
         <LanguageSelector />
       </AppHeader>
-      {isDesktop ? null : <MainNav className="border-b border-border px-4" />}
+      {isDesktop ? null : <MainNav className="border-b border-border px-4 font-mono" />}
       {status === 'cookies_blocked' ? (
         <Banner title={t('cookies.title')}>{t('cookies.detail')}</Banner>
       ) : null}

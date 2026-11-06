@@ -1,8 +1,8 @@
 ---
 component: terminal-window
-version: 1.0.0
+version: 1.2.0
 status: active
-last_updated: 2026-11-05
+last_updated: 2026-11-06
 source: docs/nerdose.html
 related: [code-block, app-header]
 ---
@@ -47,6 +47,15 @@ Filas:
 |---|---|---|---|---|
 | resuelto | `✓` `status.success` | "4/6", "L4" (`text.muted`) | "resuelto" / "encontrado" `status.success` | L56-57 |
 | pendiente | `○` `text.dim` | `—` | "pendiente" `status.pending` | L58-60 |
+| en curso *(derivado, S-011)* | `◐` `status.pending` | `—` | `status.pending` (10,6:1) | — |
+| sin desafío *(derivado)* | `–` `text.dim` | `—` | `text.dim` (6,4:1) | — |
+| anulado *(derivado)* | `⊘` `text.muted` | `—` | `text.muted` (7,5:1) | — |
+| próximamente *(derivado)* | `○` `text.dim` | `—` | `text.dim` (6,4:1) | — |
+| sin sesión / no disponible *(derivado)* | `○` `text.dim` | `—` | `text.dim` (6,4:1) | — |
+
+Línea de racha sin racha o sin datos *(derivado)*: el valor va en `text.dim`, no en ámbar vacío (6,4:1). El estado siempre se lee en texto además del ícono (NFR-U04).
+
+**Implementación (S-011):** `TerminalWindow` de `@nerdose/ui`. Las filas usan `flex` con `flex-wrap` (ícono de 22px, gap 14) en lugar de la grilla `22px 1fr auto auto` del prototipo, para poder envolver a 320px sin valores arbitrarios; la raíz lleva `min-w-0`. El cursor `▌` usa `motion-safe:animate-blink` (4 ciclos).
 
 ## Spacing & sizing rules
 
@@ -85,3 +94,4 @@ Filas:
 ## Historial
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: marco con sombra de caída, barra con puntos grises, cuerpo Mono 14/2 con filas de estado, separador punteado y cursor `▌`.
+- 2026-11-06 v1.2.0 — Cinco estados de fila derivados, racha sin datos en gris y layout con flex-wrap.

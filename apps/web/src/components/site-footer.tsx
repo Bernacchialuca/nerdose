@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 export function SiteFooter() {
   const { t } = useTranslation();
   return (
-    <footer className="border-t border-border px-4 py-4 text-xs text-text-dim lg:px-12">
+    <footer className="border-t border-border px-4 py-4 font-mono text-xs text-text-dim lg:px-12">
       {t('footer.domain')}
       <span aria-hidden="true"> · </span> {t('footer.privacy')}
       <span aria-hidden="true"> · </span>

@@ -5,85 +5,93 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { Alert } from './alert';
 
-const ERROR_MSG = 'No pudimos cargar los juegos de hoy. Revisá tu conexión e intentá de nuevo.';
+const TITLE = 'No pudimos cargar los juegos de hoy.';
+const DETAIL = 'Revisá tu conexión e intentá de nuevo.';
+const ERROR_MSG = `${TITLE} ${DETAIL}`;
 
-function withAction(onRetry = vi.fn()) {
+function full(onRetry = vi.fn()) {
   return (
     <Alert
+      title={TITLE}
       action={
         <button type="button" onClick={onRetry}>
           Reintentar
         </button>
       }
     >
-      {ERROR_MSG}
+      {DETAIL}
     </Alert>
   );
 }
 
 describe('Alert', () => {
-  it('renders the message in an alert region (TS-15)', () => {
-    render(<Alert>{ERROR_MSG}</Alert>);
-    expect(screen.getByRole('alert').textContent).toBe(ERROR_MSG);
-  });
-
-  it('renders the action after the message and keeps it working (TS-16)', async () => {
+  it('renders title, detail, icon and action with the DS tokens (TS-24)', async () => {
     const user = userEvent.setup();
     const onRetry = vi.fn();
-    render(withAction(onRetry));
+    const { container } = render(full(onRetry));
     const alert = screen.getByRole('alert');
+    expect(alert).toHaveClass(
+      'rounded-panel',
+      'border',
+      'border-status-error-border',
+      'bg-status-error-bg',
+      'px-5.5',
+      'py-4.5',
+      'flex-wrap',
+      'gap-4',
+    );
+    expect(alert.className).not.toContain('border-l-4');
+    const icon = alert.querySelector('[aria-hidden="true"]');
+    expect(icon).toHaveClass('size-10', 'rounded-full', 'bg-status-error', 'text-status-error-on');
+    expect(icon?.querySelector('svg')).toHaveAttribute('stroke-width', '3');
+    expect(screen.getByText(TITLE)).toHaveClass('font-mono', 'text-title-banner', 'text-text');
+    expect(screen.getByText(DETAIL)).toHaveClass(
+      'font-sans',
+      'text-body-sm-tight',
+      'text-status-error-soft',
+    );
     const button = within(alert).getByRole('button', { name: 'Reintentar' });
     expect(
-      alert.querySelector('p')!.compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING,
+      screen.getByText(DETAIL).compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     await user.click(button);
     expect(onRetry).toHaveBeenCalledTimes(1);
-  });
-
-  it('renders no action container without action (TS-17)', () => {
-    render(<Alert>{ERROR_MSG}</Alert>);
-    const alert = screen.getByRole('alert');
-    expect(alert.children).toHaveLength(1);
-    expect(alert.children[0]?.tagName).toBe('P');
-  });
-
-  it('uses the design tokens (TS-18)', () => {
-    render(withAction());
-    const alert = screen.getByRole('alert');
-    expect(alert).toHaveClass('w-full', 'border-l-4', 'border-error', 'bg-surface', 'p-4');
-    expect(alert.querySelector('p')).toHaveClass('text-base', 'text-error');
-    expect(alert.children[1]).toHaveClass('mt-3');
-    expect(alert.innerHTML).not.toContain('whitespace-nowrap');
-  });
-
-  it('does not move the focus (TS-19)', () => {
-    render(withAction());
-    expect(document.activeElement).toBe(document.body);
-    expect(screen.getByRole('alert')).not.toHaveAttribute('tabindex');
-  });
-
-  it('merges className with cn (TS-20)', () => {
-    render(<Alert className="mt-6 bg-bg">{ERROR_MSG}</Alert>);
-    const alert = screen.getByRole('alert');
-    expect(alert).toHaveClass('mt-6', 'bg-bg');
-    expect(alert).not.toHaveClass('bg-surface');
-  });
-
-  it('has no axe violations (TS-21)', async () => {
-    const { container } = render(withAction());
     expect(await axe(container)).toHaveNoViolations();
   });
 
-  it('accepts nodes and has no text of its own (TS-22)', () => {
-    const { container, unmount } = render(
+  it('works with only children and action, as web uses it today (TS-25)', () => {
+    render(<Alert action={<button type="button">Reintentar</button>}>{ERROR_MSG}</Alert>);
+    const alert = screen.getByRole('alert');
+    expect(alert).toHaveTextContent(ERROR_MSG);
+    expect(within(alert).getByRole('button', { name: 'Reintentar' })).toBeInTheDocument();
+    expect(alert.querySelectorAll('p')).toHaveLength(1);
+    expect(document.activeElement).toBe(document.body);
+    expect(alert).not.toHaveAttribute('tabindex');
+  });
+
+  it('renders no action container without action', () => {
+    render(<Alert>{ERROR_MSG}</Alert>);
+    expect(screen.getByRole('alert').children).toHaveLength(1);
+  });
+
+  it('merges className with cn', () => {
+    render(<Alert className="mt-6 bg-bg">{ERROR_MSG}</Alert>);
+    const alert = screen.getByRole('alert');
+    expect(alert).toHaveClass('mt-6', 'bg-bg');
+    expect(alert).not.toHaveClass('bg-status-error-bg');
+  });
+
+  it('accepts nodes and has no text of its own (TS-55)', () => {
+    render(
       <Alert>
         No pudimos cargar <strong>los juegos</strong>
       </Alert>,
     );
     expect(screen.getByRole('alert').querySelector('strong')).toHaveTextContent('los juegos');
-    unmount();
-    const empty = render(<Alert>{null}</Alert>);
-    expect(empty.container.textContent).toBe('');
-    expect(container).toBeDefined();
+  });
+
+  it('renders no text without content (TS-55)', () => {
+    const { container } = render(<Alert>{null}</Alert>);
+    expect(container.textContent).toBe('');
   });
 });

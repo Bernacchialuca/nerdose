@@ -15,8 +15,8 @@ App `apps/web` (not a package; imported through the `@/` alias).
 - **useToday / todayKeys / fetchToday** (apps/web/src/modules/catalog/api/) - `GET /api/today?lang=` query keyed by the active locale
 - **sessionKeys / createSession / updatePreferences** (apps/web/src/modules/session/api/session.ts) - Session API calls and types
 
-## Components and hooks (7 items) - see components.md
-- **CTA classes** (apps/web/src/components/cta.ts) - `CTA_PRIMARY` / `CTA_SECONDARY` / `CTA_DISABLED` / `FOCUS`, the DS Button
+## Components and hooks (6 items) - see components.md
+- **CTA y links** - use `buttonClass` / `linkClass` from `@nerdose/ui` (see docs/reusable-code/ui/helpers.md)
 - **MainNav** (apps/web/src/components/main-nav.tsx) - Primary navigation `<nav>` with active link
 - **SiteFooter** (apps/web/src/components/site-footer.tsx) - Privacy notice and link to About
 - **NotFound** (apps/web/src/app/not-found.tsx) - 404 screen
@@ -27,6 +27,7 @@ App `apps/web` (not a package; imported through the `@/` alias).
 - **server / defaultHandlers** (apps/web/src/test/msw.ts) - Shared MSW server with default API handlers
 - **sessionFixture / todayFixture / todayNoSessionFixture** (apps/web/src/test/fixtures/) - snake_case fixtures
 - **mockViewport** (apps/web/src/test/viewport.ts) - Stubs `window.matchMedia` for mobile/desktop
+- **fontOf** (apps/web/src/test/font-family.ts) - Resolves `'mono' | 'sans'` for an element by walking up to the nearest `font-*` class
 
 ## Catalog (6 items) - see catalog.md
 - **GAME_CATALOG** (apps/web/src/modules/catalog/games.ts) - Static per-game metadata (minutes, untimed, accent class) in `GAME_IDS` order

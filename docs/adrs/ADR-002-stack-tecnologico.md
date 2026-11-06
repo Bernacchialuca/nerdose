@@ -28,7 +28,7 @@ Vamos a usar **TypeScript en todo**, con Node.js 24 LTS en el backend.
 - React 19 + Vite + React Router (cada juego con `React.lazy`).
 - TanStack Query para datos de servidor.
 - Tailwind CSS v4, con los tokens del prototipo en `@theme`.
-- `@fontsource/jetbrains-mono` (fuente self-hosted).
+- `@fontsource/inter` (prosa) y `@fontsource/jetbrains-mono` (resto), ambas self-hosted.
 - i18next + react-i18next (solo textos de UI; el contenido llega resuelto desde la `api`).
 - dnd-kit (`TouchSensor` + `KeyboardSensor`) para Tech Timeline.
 - Shiki (core, motor de regex JS, gramáticas js/go/java), cargado lazy solo en Big O y Bug Hunt.

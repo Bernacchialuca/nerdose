@@ -22,7 +22,8 @@ Styling uses **Tailwind CSS v4** with CSS-first configuration: the visual tokens
 ```
 tailwindcss                  # v4
 @tailwindcss/vite            # Vite plugin
-@fontsource/jetbrains-mono   # self-hosted font (400, 500, 700)
+@fontsource/inter            # self-hosted prose font (400, 700)
+@fontsource/jetbrains-mono   # self-hosted font (400, 500, 700, 800)
 clsx                         # conditional classes
 tailwind-merge               # conflict-free class merging
 ```
@@ -41,7 +42,10 @@ export default defineConfig({ plugins: [react(), tailwindcss()] });
 @import '@nerdose/ui/tokens.css';   /* the @theme block */
 @import '@fontsource/jetbrains-mono/400.css';
 @import '@fontsource/jetbrains-mono/500.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/700.css';
 @import '@fontsource/jetbrains-mono/700.css';
+@import '@fontsource/jetbrains-mono/800.css';
 ```
 
 ## Design tokens
@@ -51,6 +55,7 @@ export default defineConfig({ plugins: [react(), tailwindcss()] });
 ```css
 /* packages/ui/src/tokens.css */
 @theme {
+  --font-sans: 'Inter', system-ui, sans-serif;   /* prose only */
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
   --color-bg: #0A0C0F;            /* page background */
@@ -113,7 +118,7 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 
 - Use only the tokens above (or later, the Design System's). No literal hex colors, no arbitrary `[#abc]` color values in components.
 - Tokens live only in `packages/ui`; `web` and `admin` must not redeclare them.
-- Font is JetBrains Mono via `@fontsource/jetbrains-mono`, self-hosted. No Google Fonts or other external font requests.
+- Inter for prose, JetBrains Mono for everything else (`foundations/typography.md`), both via `@fontsource/*`, self-hosted. No Google Fonts or other external font requests.
 - Merge conditional classes with `cn()`; never concatenate class strings by hand.
 - Text and interactive-element contrast meets WCAG 2.1 AA against the surface it sits on (4.5:1 text, 3:1 large text and UI components). Verify any new color pair.
 - Focus is always visible: use `focus-visible:` rings with `--color-accent`; never `outline-none` without a replacement.
@@ -126,3 +131,10 @@ export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
 - **accessibility**: contrast, focus rings, touch targets and non-color feedback are checked there.
 - **game-clients**: each game uses its accent token and shared components from `@nerdose/ui`.
 - **testing-e2e**: viewport projects at 320 px and desktop validate the responsive rules.
+
+## Updates from REQ-003 (alignment with the Design System 1.0.0+)
+
+- **Responsive design:** no global media queries. Layout uses `flex-wrap` and `repeat(auto-fit, minmax(min(300px, 100%), 1fr))`; only the 320 px adaptations documented in the Design System are allowed. Page container is `max-w-page` (1240 px) with a 32 px gutter.
+- **Buttons and links:** `@nerdose/ui` exports the class helpers `buttonClass({ variant, size, game?, fullWidth?, disabled? })` and `linkClass({ tone? })`, so they apply both to `<button>` and to router `<Link>` without `@nerdose/ui` importing `react-router`.
+- **Tokens grow additively:** per-game tints, status tints, streak amber family, type roles (`--text-*`), radii (`--radius-*`), shadows, `--animate-blink` and the `texture-dots` utility live in `tokens.css`; existing token names are kept.
+- **Static check:** component and web `.tsx` files must not contain arbitrary values (`/\[(\d|#|rgb)/`) nor generic utilities (`rounded-md`, `shadow-md`, `text-2xl`, `font-semibold`).

@@ -1,7 +1,7 @@
 ---
 tokens: component
-version: 1.0.0
-last_updated: 2026-11-05
+version: 1.2.0
+last_updated: 2026-11-06
 status: defined
 source: docs/nerdose.html
 ---
@@ -62,7 +62,9 @@ button.disabled.text           : text.disabled
 button.accent.disabled.bg      : game.bug-hunt.disabled.bg     # solo definido para Bug Hunt
 button.accent.disabled.text    : game.bug-hunt.disabled.text
 
-button.hover.*                 : Pendiente — el prototipo no lo define
+button.primary.bg.hover        : accent.brand.hover        # derivado S-011
+button.accent.bg.hover         : game.{j}.hover            # derivado S-011
+button.secondary.border.hover  : border.control.hover      # derivado S-011
 button.focus.outline           : focus.ring.color / focus.ring.width   # requisito; estética Pendiente
 ```
 
@@ -76,7 +78,8 @@ link.arrow.padding-y           : space.12
 link.subtle.color              : text.body
 link.subtle.type               : type.label.comment        # 13
 link.subtle.padding-y          : space.8
-link.subtle.color.hover        : Pendiente — el prototipo no lo define
+link.subtle.color.hover        : text.primary              # derivado S-011
+link.min-height                : size.44                   # derivado S-011 (arrow y subtle)
 link.decoration                : none
 ```
 
@@ -100,8 +103,8 @@ card.game.meta.color           : text.dim
 card.game.meta.gap             : gap.inline.meta           # 14
 card.game.meta.streak.color    : streak.text
 
-card.next.border               : game.{j}.featured-border  # solo big-o definido
-card.next.shadow               : elevation.featured.{j}    # solo big-o definido
+card.next.border               : game.{j}.featured-border  # big-o del prototipo; los otros 4 derivados en S-011
+card.next.shadow               : elevation.featured.{j}    # idem
 
 card.placeholder.border        : border.control            # dashed
 card.placeholder.radius        : radius.feature
@@ -224,7 +227,7 @@ banner.neutral.action          : button.outline-tinted (game.{j}.rail)
 banner.warning.bg              : status.warning.bg          # adaptación
 banner.warning.border          : status.warning.border
 banner.warning.subtitle.color  : status.warning.text-soft
-banner.warning.icon            : Pendiente — el prototipo no lo define
+banner.warning.icon            : status.warning / status.warning.on   # derivado S-011: círculo 40 + `!` 20 stroke 3
 ```
 
 ## Alert (`components/alert.md`) — adaptación
@@ -262,6 +265,8 @@ app-header.nav.item.type       : type.mono.body
 app-header.nav.item.color      : text.muted
 app-header.nav.item.active.bg  : bg.nav.active
 app-header.nav.item.active.color : text.primary
+app-header.nav.item.hover.color : text.body                # derivado S-011
+app-header.nav.item.min-height : size.44                   # derivado S-011
 app-header.actions.gap         : space.10
 ```
 
@@ -307,7 +312,10 @@ language-selector.segment.bg        : transparent
 language-selector.segment.color     : text.muted
 language-selector.segment.active.bg    : bg.control.selected
 language-selector.segment.active.color : text.primary
-language-selector.segment.active.indicator : Pendiente — adaptación WCAG 1.4.11
+language-selector.segment.active.indicator : accent.brand   # derivado S-011: 2px, radius.pill, inset 8, a 2px del borde inferior
+language-selector.segment.min-width  : size.44             # derivado S-011 (antes size.40)
+language-selector.segment.hover.color : text.body          # derivado S-011
+language-selector.segment.disabled.color : text.disabled   # derivado S-011
 ```
 
 ## Streak pill (`components/streak-pill.md`)
@@ -321,6 +329,12 @@ streak-pill.border             : streak.border
 streak-pill.color              : streak.text
 streak-pill.type               : type.mono.strong          # 14/700
 streak-pill.icon               : icon.size.sm (flame)
+streak-pill.hover.border       : streak.border.hover       # derivado S-011 (como link)
+streak-pill.hover.color        : streak.hover              # derivado S-011
+streak-pill.min-height         : size.44                   # derivado S-011 (como link)
+streak-pill.empty.bg           : bg.control                # derivado S-011: racha 0 / sin datos
+streak-pill.empty.border       : border.control
+streak-pill.empty.color        : text.dim
 streak-inline.color            : streak.text
 streak-inline.type             : type.label.comment | type.meta
 ```
@@ -344,6 +358,8 @@ badge.success.bg               : status.success.badge.bg
 badge.success.color            : status.success.badge.text
 badge.pending.bg               : status.pending.badge.bg
 badge.pending.color            : status.pending
+badge.neutral.bg               : bg.surface.inset          # derivado S-011
+badge.neutral.color            : text.muted
 badge.strong.weight            : 700                       # marcas de Timeline
 ```
 
@@ -354,6 +370,7 @@ streak-number.gap              : space.10
 streak-number.hero.type        : type.display.streak
 streak-number.compact.type     : type.display.streak.compact
 streak-number.value.color      : streak.text
+streak-number.empty.color      : text.dim                  # derivado S-011: 0 / sin datos
 streak-number.hero.unit.color  : streak.label
 streak-number.compact.unit.color : text.lede
 streak-number.compact.unit.type  : type.mono.unit.compact  # 15/400, L212
@@ -422,6 +439,12 @@ terminal.body.type             : type.code.terminal
 terminal.row.gap               : space.14
 terminal.done.color            : status.success
 terminal.pending.color         : status.pending
+terminal.row.in-progress.color : status.pending            # derivado S-011 (◐)
+terminal.row.no-challenge.color : text.dim                 # derivado S-011 (–)
+terminal.row.voided.color      : text.muted                # derivado S-011 (⊘)
+terminal.row.upcoming.color    : text.dim                  # derivado S-011 (○)
+terminal.row.unavailable.color : text.dim                  # derivado S-011 (○)
+terminal.summary.empty.color   : text.dim                  # racha 0 / sin datos
 terminal.separator             : border.control (dashed, top)
 terminal.cursor                : motion.cursor / accent.brand
 ```
@@ -569,3 +592,4 @@ grep-grid.hint.color           : text.dim
 - 2026-11-03 v0.1.1 — Referencias a colores ajustadas a la paleta oscura.
 - 2026-11-05 v0.2.0 — Button, Card y Alert alineados con la implementación de REQ-002; tokens de `alert.*` y `banner.*`.
 - 2026-11-05 v1.0.0 — Remapeo completo desde el prototipo. `button.radius` pasa de `radius.none` a `radius.control` (10px); Button suma tamaños `lg`/`md` y variants `accent`, `outline-tinted`, `ghost`, `icon`. Card pasa a `card.game.*` con padding 20 y suma `next`, `placeholder`, `step` y las tarjetas de stat. Alert y Banner pasan a la estética del banner de resultado (borde 1px, radio 14, tinte). Nuevos: link, panel, app-header, game-header, site-footer, language-selector, streak-pill, chip/badge, streak-number, heatmap, progress-bar, terminal, code-block, data-table y piezas de juego. Eliminados: `input.*` (no hay inputs en el prototipo), `button.destructive.*`, `button.height.min`, `button.padding.x`, `button.gap`, `card.elevation`, `alert.border` lateral de 4px, `banner.padding.y/x`.
+- 2026-11-06 v1.2.0 — Tokens de componente derivados: hovers de button, link, nav, selector y píldora; áreas táctiles; `card.next.*` de cinco juegos; `badge.neutral.*`; `banner.warning.icon`; `terminal.row.*`.
