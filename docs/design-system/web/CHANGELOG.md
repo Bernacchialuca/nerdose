@@ -3,6 +3,33 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.2.0] - 2026-11-06
+
+**MINOR.** `@nerdose/ui` se alinea con el DS (story S-011) y se documentan las piezas que la story derivó de la identidad (governance 1.1.0). Ningún valor definido cambia.
+
+### Agregado
+- Hover de `button` (derivado): `primary` fondo `#3DDC84` → `#7CF0B0` con `#06120B` (13,6:1); `accent` fondo → `game.{j}.hover` con su on-accent (devdle 13,6 · bug-hunt 12,9 · big-o 11,4 · timeline 11,9 · grep-grid 10,3); `secondary` borde `#2A323C` → `#3A424C` (nuevo semántico `border.control.hover`).
+- Hover de `link` `subtle`: `#C3CCD5` → `#E6EDF3` (16,6:1). Área táctil de 44px en `link` `arrow` y `subtle`.
+- Hover del ítem de nav inactivo: `#9AA6B2` → `#C3CCD5` (12,0:1). Área táctil de 44px del ítem de nav.
+- `streak-pill`: hover como link (borde `#5C4419` y texto `#FFD08A`, 12,7:1; nuevos semánticos `streak.border.hover` y `streak.hover`), área táctil de 44px y estado sin racha / sin datos (`bg.control`, `border.control`, `text.dim`, 6,3:1).
+- `language-selector`: hover del segmento inactivo (`#C3CCD5`/`#11151A` 11,3:1), área táctil 44×44 por segmento (área ampliada con `::before`), indicador inferior del segmento activo (2px `#3DDC84`, 7,3:1 sobre `#2A323C` y 10,3:1 sobre `#11151A`) y estado deshabilitado (`text.disabled`, `cursor: not-allowed`, exento de contraste).
+- `streak-number`: estados 0 y sin datos en `text.dim` (6,4:1); sin datos muestra `—`.
+- `terminal-window`: filas `in-progress` (`◐`, `status.pending` 10,6:1), `no-challenge` (`–`, 6,4:1), `voided` (`⊘`, 7,5:1), `upcoming` y `unavailable` (`○`, 6,4:1); línea de racha sin racha en `text.dim`.
+- `card` `next` para Devdle (`#1E4A30`), Bug Hunt (`#5C4419`), Tech Timeline (`#3C2E60`) y Grep Grid (`#5B2147`), con anillo del acento al 20% y glow al 25%; nuevos `game.{j}.featured-border` y `elevation.featured.{j}`. Bordes decorativos (1,6 a 2,0 sobre `#0F1318`).
+- `chip`: `badge.neutral` (`#141920` + `#9AA6B2`, 7,1:1) para sin desafío, anulado, próximamente y sin sesión.
+- `banner` `warning`: ícono `!` de 20px, stroke 3, en un círculo de 40px `status.warning` (`#1A1206`/`#FFB547` 10,5:1).
+- `foundations/motion.md`: cursor con 4 ciclos (4,4s) y estado final encendido (WCAG 2.2.2), sin animación con `prefers-reduced-motion`.
+- `foundations/color.md`: pares nuevos medidos (hovers de botones por juego, `#FFD08A`/`#1A140A`, `#8D99A6`/`#11151A`, `#3DDC84`/`#2A323C`, `#3DDC84`/`#11151A`, `#1A1206`/`#FFB547`).
+
+### Cambiado
+- `components/README.md`: inventario con la implementación de `@nerdose/ui` (helpers `buttonClass`, `linkClass`, `navItemClass`; `Card`, `Panel`, `Alert`, `Banner`, `AppHeader`, `BrandMark`, `SegmentedControl`, `StreakPill`, `Badge`, `StreakNumber`, `ProgressBar`, `TerminalWindow`, `GameThumbnail`).
+- `tokens/semantic.md` y `tokens/component.md`: `elevation.featured.*` y `banner.warning.icon` dejan de ser Pendiente; se agregan los tokens derivados.
+
+### Código alineado con el spec
+- `packages/ui`: `tokens.css` con neutros, tintes y on-accent por juego, estados, racha, roles tipográficos, radios, contenedores, sombras, parpadeo y textura de puntos; `Alert`, `Banner`, `BrandMark` y `AppHeader` re-estilizados; `Card` con `game`, `next`, `placeholder`, `step` y `mini-stat`; nuevos `Panel`, `Badge`, `StreakPill`, `StreakNumber`, `ProgressBar`, `TerminalWindow`, `SegmentedControl`, `GameThumbnail` y los helpers `buttonClass`, `linkClass` y `navItemClass`.
+
+---
+
 ## [1.1.0] - 2026-11-05
 
 ### Agregado
@@ -62,21 +89,17 @@ y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Desalineaciones conocidas en código
 
-El código implementa el DS v0.2.0. Diferencias con v1.0.0 (las corrige una request posterior):
+Diferencias del código con el DS. `@nerdose/ui` quedó alineado en la v1.2.0 (S-011); lo que sigue es de `apps/web` (lo corrigen S-011 plan `web`, S-012 y S-013):
 
 - **Fuentes** (`apps/web/src/index.css`, `apps/web/src/app/shell.tsx`): solo se carga JetBrains Mono 400/500/700; falta Inter y el peso 800. El shell aplica `font-mono` a toda la página, así que la prosa sale en Mono.
-- **Tokens** (`packages/ui/src/tokens.css`): faltan los 14 neutros nuevos, los tintes y on-accent por juego (solo existe `--color-on-accent: #06120B`), los tintes de estado, la familia ámbar de racha, el heatmap, radios, roles tipográficos y sombras. `--color-border-interactive` (`#8D99A6`) se usa donde el prototipo usa `#2A323C`.
 - **Fondo** (`shell.tsx`): liso, sin la textura de puntos de 24px en Home ni el header translúcido.
 - **Tipografía**: tamaños genéricos de Tailwind (`text-2xl/3xl` en `h1` vs 64/800 del hero, `text-xl`, `text-base`, `text-sm`, `text-xs`), sin tracking negativo, sin los interlineados del DS y con ligaduras activas.
 - **Button** (`apps/web/src/components/cta.ts`): sin radio (10px); 44px y padding 16 en todos los casos (el hero usa 48px / 22); tamaño de texto heredado (16px) en lugar de 15/14; `secondary` con texto verde y borde `#8D99A6` (prototipo: `#E6EDF3`, `#2A323C`, peso 500); deshabilitado sin fondo, borde `#222A33` y texto `#8D99A6` (prototipo: `#11151A` / `#2A323C` / `#6B7682`); "Jugar →" siempre verde (prototipo: acento del juego con su on-accent); el CTA de tarjeta no ocupa el ancho completo; "¿Cómo funciona?" del hero es un link subrayado (prototipo: botón `secondary` `lg`).
-- **Card** (`packages/ui/src/components/card.tsx`, `apps/web/src/modules/catalog/components/game-card.tsx`): padding 16 (prototipo 20); sin miniatura de 150px; sin variant `next` (borde + anillo + glow); título como `h2` (prototipo `h3` bajo el `h2` de sección); descripción Mono 14 `#9AA6B2` (prototipo Inter 15/1.5 `#A9B4BF`); metadatos unidos por " · " en un párrafo y racha sin ámbar ni `▲` (prototipo: ítems con gap 14 y "▲ racha N" ámbar); estado como texto plano (prototipo: badge); sin tarjeta placeholder "próximo juego".
+- **Card** (`apps/web/src/modules/catalog/components/game-card.tsx`): título como `h2` (prototipo `h3` bajo el `h2` de sección); descripción Mono 14 `#9AA6B2` (prototipo Inter 15/1.5 `#A9B4BF`); metadatos unidos por " · " en un párrafo y racha sin ámbar ni `▲`; estado como texto plano (prototipo: badge); sin miniatura, `next` ni tarjeta placeholder "próximo juego" (lo resuelve S-013 con las piezas de `@nerdose/ui`).
 - **Catálogo** (`apps/web/src/modules/catalog/routes/home.tsx`): grilla `lg:grid-cols-3` con gap 16/24 (prototipo `auto-fit minmax(300px, 1fr)`, gap 20); "Tu progreso" es una Card más dentro de la grilla (prototipo: sección propia con panel `feature` radio 16 / padding 28, número de racha de 88px, heatmap, mini-stats y panel de rachas por juego); sin ventana terminal en el hero; sin sección "Cómo funciona".
 - **Progreso del día** (`day-status.tsx`): barra continua de 8px sin radio sobre `surface-2` (prototipo: segmentada 36×6 redondeada, pendiente `#2A323C`); racha como texto (prototipo: número display ámbar).
 - **Acerca de** (`apps/web/src/modules/about/routes/about.tsx`): secciones con borde y padding 16 **sin radio**; `h2` con `font-semibold` (600, peso que el DS no usa).
-- **Alert** (`packages/ui/src/components/alert.tsx`): barra lateral de 4px, sin radio, sin ícono, padding 16, mensaje en rojo (DS: tinte `#1C0F0E`, borde 1px `#4A2220`, radio 14, padding 18 22, ícono `x`, título claro).
-- **Banner** (`packages/ui/src/components/banner.tsx`): de borde a borde con barra lateral de 4px, padding 16/48 y detalle en 12px (DS: tinte ámbar `#140F07` / `#3A2A12`, radio 14, padding 18 22, alineado al contenedor).
-- **App header** (`packages/ui/src/components/app-header.tsx`): padding 16 / 48 (prototipo 18 32), gap 24, sin `border-bottom #1E252E` ni fondo translúcido; muestra el número de desafío (`ChallengeNumber`) en lugar de la píldora de racha.
-- **BrandMark** (`packages/ui/src/components/brand-mark.tsx`): todo el logo en verde (prototipo: solo `>` y `_` en verde, "nerdose" en `#E6EDF3`, Mono 800 20 con tracking -0.5), sin cursor parpadeante.
+- **App header** (`apps/web/src/app/shell.tsx`): muestra el número de desafío (`ChallengeNumber`) en lugar de la píldora de racha (lo resuelve S-012).
 - **Nav** (`apps/web/src/components/main-nav.tsx`, `shell.tsx`): se saca del header por debajo de 1024px y va en una fila aparte (prototipo: siempre en el header, con wrap); ítems con padding 8 y sin radio; activo en verde (prototipo: padding 12 14, radio 8, activo `#161B22` + `#E6EDF3`).
 - **Selector de idioma** (`language-selector.tsx`): dos botones sueltos de 44×44 con borde `#8D99A6` y activo en verde (prototipo: grupo de 44px con fondo `#11151A`, borde `#2A323C` y radio 10; segmentos 40×36 radio 7; activo `#2A323C` / `#E6EDF3`; Mono 700 12).
 - **Footer** (`site-footer.tsx`): borde `#222A33`, padding 16/48, 12px y otro contenido (prototipo: borde `#1E252E`, padding 24 32, Mono 13 `#8D99A6`, lema + `exit 0`, `space-between`). El aviso de privacidad es contenido de producto y se mantiene.

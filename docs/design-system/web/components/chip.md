@@ -1,8 +1,8 @@
 ---
 component: chip
-version: 1.0.0
+version: 1.2.0
 status: active
-last_updated: 2026-11-05
+last_updated: 2026-11-06
 source: docs/nerdose.html
 related: [card, panel, streak-pill]
 ---
@@ -35,6 +35,7 @@ related: [card, panel, streak-pill]
 | `chip.accent` | — | `#5C4419` | `#FFB547` | 6 10 | "tipo: comparación" | L736 |
 | `badge.success` | `#12301F` | — | `#7CF0B0` | 4 10 | "✓ resuelto 4/6", "✓ encontrado" | L94, L115 |
 | `badge.pending` | `#2A1F0B` | — | `#FFB547` | 4 10 | "pendiente" | L136, L160, L182 |
+| `badge.neutral` *(derivado, S-011)* | `bg.surface.inset` `#141920` | — | `text.muted` `#9AA6B2` | 4 10 | "sin desafío hoy", "anulado", "próximamente", "sin sesión" | — |
 | `badge.*` strong | igual | — | igual, peso 700 | 4 10 | "✓ bien", "✗ va en 3°" | L1063 |
 
 `chip.accent` solo está definido en ámbar (Bug Hunt). Chips de acento de otros juegos: **Pendiente — el prototipo no los define**. Los chips O(…) de la miniatura de Big O (radio 8) son parte de la miniatura (ver [`patterns/game-boards.md`](../patterns/game-boards.md)).
@@ -87,3 +88,4 @@ related: [card, panel, streak-pill]
 ## Historial
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: chips outline (neutro, ámbar, loose) y badges tintados (éxito, pendiente, fuerte).
+- 2026-11-06 v1.2.0 — `badge.neutral` derivado (`#141920` + `#9AA6B2`, 7,1:1); implementado como `Badge` de `@nerdose/ui`.

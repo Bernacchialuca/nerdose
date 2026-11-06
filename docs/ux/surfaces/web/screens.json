@@ -20,43 +20,31 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose     ./juegos   ./stats   ./about     #8     ES | EN",
-              "state_overrides": {
-                "antes del lanzamiento": {
-                  "content": "> nerdose     ./juegos   ./stats   ./about     ES | EN"
-                },
-                "error de sistema": {
-                  "content": "> nerdose     ./juegos   ./stats   ./about     ES | EN"
-                }
-              }
-            }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; se oculta cuando el servidor no lo informa (antes del lanzamiento o error de carga), nunca se muestra un número menor que 1. ES|EN es un control inline: cambia la interfaz sin recargar y persiste en el Player; sin sesión cambia solo en este navegador (REQ-002)",
+          "content": "> nerdose_   ./juegos   ./stats   ./about   racha 4 días   #8   ES | EN",
+          "annotation": "`app-header` variant `home` (fondo translúcido sobre la textura de puntos, cursor `_` parpadeante salvo con «reducir movimiento»). `./juegos` es el ítem activo. «racha 4 días» es la píldora de racha (`streak-pill`, ícono de llama, ámbar) y enlaza a `estadisticas` con `aria-label` «Racha global: 4 días». `#8` = número de desafío del día, igual para los 5 juegos; se oculta cuando el servidor no lo informa, nunca se muestra un número menor que 1. ES | EN es el grupo segmentado (`language-selector`): cambia la interfaz sin recargar y persiste en el Player; sin sesión cambia solo en este navegador. Sin media queries: en mobile el header se acomoda con `flex-wrap` (logo y acciones arriba, nav debajo) y a 320 px no hay scroll horizontal",
           "state_overrides": {
+            "empty": {
+              "content": "> nerdose_   ./juegos   ./stats   ./about   racha 0 días   #8   ES | EN"
+            },
+            "sin sesión": {
+              "content": "> nerdose_   ./juegos   ./stats   ./about   racha —   #8   ES | EN"
+            },
+            "ningún desafío hoy": {
+              "content": "> nerdose_   ./juegos   ./stats   ./about   racha 0 días   #8   ES | EN"
+            },
             "antes del lanzamiento": {
-              "content": "> nerdose · ES|EN"
+              "content": "> nerdose_   ./juegos   ./stats   ./about   racha 0 días   ES | EN"
+            },
+            "sesión no disponible": {
+              "content": "> nerdose_   ./juegos   ./stats   ./about   racha —   #8   ES | EN"
+            },
+            "loading": {
+              "content": "> nerdose_   ./juegos   ./stats   ./about   ES | EN"
             },
             "error de sistema": {
-              "content": "> nerdose · ES|EN"
+              "content": "> nerdose_   ./juegos   ./stats   ./about   ES | EN"
             }
           }
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
         },
         {
           "name": "banner-cookies",
@@ -64,24 +52,37 @@
           "category": "feedback",
           "content": "Activá las cookies para poder jugar",
           "kind": "warning",
+          "annotation": "Es el overlay O-03 (`banner` variant `warning`), alineado al contenedor de página (no de borde a borde), con `role=\"status\"`. Persiste hasta que la sesión se crea. Solo aparece si la creación de la sesión respondió bien y el estado del día sigue sin sesión; si la creación fue rechazada por límite (429) no se muestra (estado «sesión no disponible», REQ-002)",
           "visible_only_in_states": [
             "sin sesión"
-          ],
-          "annotation": "Es el overlay O-03; persiste hasta que la sesión se crea. Solo aparece si la creación de la sesión respondió bien y el estado del día sigue sin sesión; si fue rechazada por límite (429) no se muestra (estado «sesión no disponible», REQ-002)"
+          ]
+        },
+        {
+          "name": "hero-eyebrow",
+          "type": "label",
+          "category": "content",
+          "content": "$ nerdose --today // viernes 30 oct",
+          "annotation": "la fecha es `date` de `/api/today`, formateada en el idioma activo (día de la semana, día y mes abreviado); `// fecha` va en el verde de la plataforma",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "hero-titulo",
           "type": "heading",
           "category": "content",
           "content": "Cinco juegos tech. Un desafío por día.",
-          "level": "h1"
+          "level": "h1",
+          "annotation": "titular display (`type.display.hero`); a 320 px se reduce con el mismo criterio que `type.title.page`"
         },
         {
           "name": "hero-sub",
           "type": "paragraph",
           "category": "content",
           "content": "Sin registro, de 1 a 3 minutos por partida. El mismo desafío para todos, cada día.",
-          "level": "body"
+          "level": "body",
+          "annotation": "prosa en Inter (lede)"
         },
         {
           "name": "cta-hero",
@@ -90,7 +91,7 @@
           "content": "Seguir jugando",
           "variant": "primary",
           "icon": "arrow-right",
-          "annotation": "baja a las tarjetas de juego",
+          "annotation": "botón `primary` `lg`; baja a «Los desafíos de hoy» (`#juegos`)",
           "state_overrides": {
             "empty": {
               "content": "Empezar a jugar"
@@ -99,67 +100,61 @@
               "content": "Empezar a jugar",
               "variant": "disabled"
             },
-            "sesión no disponible": {
-              "content": "Empezar a jugar",
-              "variant": "disabled"
-            },
             "ningún desafío hoy": {
               "content": "Ver los juegos"
             },
             "antes del lanzamiento": {
               "content": "Ver los juegos"
+            },
+            "sesión no disponible": {
+              "content": "Empezar a jugar",
+              "variant": "disabled"
             }
           }
         },
         {
-          "name": "link-como-funciona",
-          "type": "link",
-          "category": "navigation",
+          "name": "btn-como-funciona",
+          "type": "button",
+          "category": "input",
           "content": "¿Cómo funciona?",
-          "icon": "arrow-right"
+          "variant": "secondary",
+          "annotation": "botón `secondary` `lg`; baja a la sección «Cómo funciona» de esta misma pantalla (`#como`), sin animación si el sistema pide reducir movimiento, y mueve el foco a su título. Ya no lleva a `acerca-de`"
         },
         {
-          "name": "progreso-dia",
-          "type": "progress-bar",
-          "category": "feedback",
-          "content": "1 de 5 completados hoy",
-          "fill": 0.2,
+          "name": "terminal-hoy",
+          "type": "card",
+          "category": "content",
+          "content": "~/hoy — progreso.log",
+          "paragraph": "$ nerdose status · ✓ devdle 4/6 completado · ○ bug-hunt — sin jugar · ○ big-o — sin jugar · ○ timeline — sin jugar · ○ grep-grid — sin jugar",
+          "annotation": "`terminal-window`: una fila por juego con ícono + slug + métrica + estado, en el orden de los 5 juegos. El estado se lee en texto, no solo por color. Íconos por estado: `✓` completado (métrica = etiqueta corta del resultado), `○` sin jugar, `◐` en curso, `–` sin desafío, `⊘` anulado, `○` próximamente. Decorativa en su forma, pero con datos reales del día",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
           "state_overrides": {
             "en curso": {
-              "content": "1 de 5 completados hoy",
-              "fill": 0.2
+              "paragraph": "$ nerdose status · ✓ devdle 4/6 completado · ◐ bug-hunt — en curso · ○ big-o — sin jugar · ○ timeline — sin jugar · ◐ grep-grid — en curso"
             },
             "sin desafío hoy": {
-              "content": "1 de 4 con desafío completados",
-              "fill": 0.25
+              "paragraph": "$ nerdose status · ✓ devdle 4/6 completado · ○ bug-hunt — sin jugar · ○ big-o — sin jugar · – timeline — sin desafío · ○ grep-grid — sin jugar"
             },
             "anulado": {
-              "content": "1 de 5 completados hoy",
-              "fill": 0.2
+              "paragraph": "$ nerdose status · ✓ devdle 4/6 completado · ○ bug-hunt — sin jugar · ⊘ big-o — anulado · ○ timeline — sin jugar · ○ grep-grid — sin jugar"
             },
             "empty": {
-              "content": "0 de 5 completados hoy",
-              "fill": 0.0
+              "paragraph": "$ nerdose status · ○ devdle — sin jugar · ○ bug-hunt — sin jugar · ○ big-o — sin jugar · ○ timeline — sin jugar · ○ grep-grid — sin jugar"
             },
             "sin sesión": {
-              "content": "Sin sesión: no podemos mostrar tu progreso",
-              "fill": 0.0
+              "paragraph": "$ nerdose status · ○ devdle — sin sesión · ○ bug-hunt — sin sesión · ○ big-o — sin sesión · ○ timeline — sin sesión · ○ grep-grid — sin sesión"
             },
             "ningún desafío hoy": {
-              "content": "Hoy no hay desafíos publicados",
-              "fill": 0.0
+              "paragraph": "$ nerdose status · – devdle — sin desafío · – bug-hunt — sin desafío · – big-o — sin desafío · – timeline — sin desafío · – grep-grid — sin desafío"
             },
             "antes del lanzamiento": {
-              "content": "El primer desafío llega pronto",
-              "fill": 0.0
+              "paragraph": "$ nerdose status · ○ devdle — próximamente · ○ bug-hunt — próximamente · ○ big-o — próximamente · ○ timeline — próximamente · ○ grep-grid — próximamente"
             },
             "sesión no disponible": {
-              "content": "No pudimos iniciar tu sesión. Recargá en unos minutos para jugar.",
-              "fill": 0.0
+              "paragraph": "$ nerdose status · ○ devdle — · ○ bug-hunt — · ○ big-o — · ○ timeline — · ○ grep-grid —"
             }
           }
         },
@@ -167,26 +162,27 @@
           "name": "racha-global",
           "type": "label",
           "category": "content",
-          "content": "Racha global: 4 días",
+          "content": "racha global · 4 días · récord 9",
+          "annotation": "separador punteado arriba; los números en ámbar. Con racha 0 se muestra en gris, nunca ámbar vacío",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
           "state_overrides": {
             "empty": {
-              "content": "Racha global: 0 días"
+              "content": "racha global · 0 días · récord 0"
             },
             "sin sesión": {
-              "content": "Racha global: —"
+              "content": "racha global · — sin datos"
             },
             "ningún desafío hoy": {
-              "content": "Racha global: 0 días"
+              "content": "racha global · 0 días · récord 0"
             },
             "antes del lanzamiento": {
-              "content": "Racha global: 0 días"
+              "content": "racha global · 0 días · récord 0"
             },
             "sesión no disponible": {
-              "content": "Racha global: —"
+              "content": "racha global · — sin datos"
             }
           }
         },
@@ -194,388 +190,9 @@
           "name": "cuenta-regresiva",
           "type": "paragraph",
           "category": "content",
-          "content": "Próximo desafío en 05:42:10 (HH:MM:SS, 00:00 UTC)",
+          "content": "próximo desafío en 05:42:10 ▌",
           "level": "caption",
-          "annotation": "al llegar a 0 recarga el estado del día tras una espera aleatoria de 0–3 s. Solo descuenta los segundos que informa el servidor y se re-sincroniza en cada respuesta; si la recarga falla, pasa a «error de sistema». No se anuncia cada segundo a lectores de pantalla",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
-          "name": "card-devdle",
-          "type": "card",
-          "category": "content",
-          "content": "Devdle",
-          "paragraph": "Adiviná el término tech en 6 intentos · ~2 min · racha 3 · ✓ 4/6",
-          "state_overrides": {
-            "empty": {
-              "paragraph": "Adiviná el término tech en 6 intentos · ~2 min · racha 0 · sin jugar"
-            },
-            "sin sesión": {
-              "paragraph": "Adiviná el término tech en 6 intentos · ~2 min · racha 0 · sin sesión"
-            },
-            "error de sistema": {
-              "paragraph": "Adiviná el término tech en 6 intentos · ~2 min"
-            },
-            "ningún desafío hoy": {
-              "paragraph": "Adiviná el término tech en 6 intentos · ~2 min · racha 0 · sin desafío hoy · no afecta tu racha"
-            },
-            "antes del lanzamiento": {
-              "paragraph": "Adiviná el término tech en 6 intentos · ~2 min · próximamente"
-            },
-            "sesión no disponible": {
-              "paragraph": "Adiviná el término tech en 6 intentos · ~2 min"
-            }
-          },
-          "hidden_in_states": [
-            "loading"
-          ]
-        },
-        {
-          "name": "cta-devdle",
-          "type": "button",
-          "category": "input",
-          "content": "Ver resultado",
-          "variant": "secondary",
-          "annotation": "según el estado: sin jugar → instrucciones, en curso → partida, completado → resultado",
-          "state_overrides": {
-            "empty": {
-              "content": "Jugar →",
-              "variant": "primary"
-            },
-            "sin sesión": {
-              "content": "Jugar →",
-              "variant": "disabled"
-            },
-            "ningún desafío hoy": {
-              "content": "Sin desafío hoy",
-              "variant": "disabled"
-            },
-            "antes del lanzamiento": {
-              "content": "Próximamente",
-              "variant": "disabled"
-            },
-            "sesión no disponible": {
-              "content": "Jugar →",
-              "variant": "disabled"
-            }
-          },
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
-          "name": "card-bug-hunt",
-          "type": "card",
-          "category": "content",
-          "content": "Bug Hunt",
-          "paragraph": "Encontrá la línea con el bug · ~2 min · racha 2 · sin jugar",
-          "state_overrides": {
-            "en curso": {
-              "paragraph": "Encontrá la línea con el bug · ~2 min · racha 2 · en curso"
-            },
-            "empty": {
-              "paragraph": "Encontrá la línea con el bug · ~2 min · racha 0 · sin jugar"
-            },
-            "sin sesión": {
-              "paragraph": "Encontrá la línea con el bug · ~2 min · racha 0 · sin sesión"
-            },
-            "error de sistema": {
-              "paragraph": "Encontrá la línea con el bug · ~2 min"
-            },
-            "ningún desafío hoy": {
-              "paragraph": "Encontrá la línea con el bug · ~2 min · racha 0 · sin desafío hoy · no afecta tu racha"
-            },
-            "antes del lanzamiento": {
-              "paragraph": "Encontrá la línea con el bug · ~2 min · próximamente"
-            },
-            "sesión no disponible": {
-              "paragraph": "Encontrá la línea con el bug · ~2 min"
-            }
-          },
-          "hidden_in_states": [
-            "loading"
-          ]
-        },
-        {
-          "name": "cta-bug-hunt",
-          "type": "button",
-          "category": "input",
-          "content": "Jugar →",
-          "variant": "primary",
-          "annotation": "según el estado: sin jugar → instrucciones, en curso → partida, completado → resultado",
-          "state_overrides": {
-            "en curso": {
-              "content": "Seguir jugando",
-              "variant": "primary"
-            },
-            "sin sesión": {
-              "content": "Jugar →",
-              "variant": "disabled"
-            },
-            "ningún desafío hoy": {
-              "content": "Sin desafío hoy",
-              "variant": "disabled"
-            },
-            "antes del lanzamiento": {
-              "content": "Próximamente",
-              "variant": "disabled"
-            },
-            "sesión no disponible": {
-              "content": "Jugar →",
-              "variant": "disabled"
-            }
-          },
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
-          "name": "card-big-o",
-          "type": "card",
-          "category": "content",
-          "content": "Big O",
-          "paragraph": "Elegí la complejidad temporal · ~1 min · racha 5 · sin jugar",
-          "state_overrides": {
-            "anulado": {
-              "paragraph": "Elegí la complejidad temporal · ~1 min · racha 5 · anulado"
-            },
-            "empty": {
-              "paragraph": "Elegí la complejidad temporal · ~1 min · racha 0 · sin jugar"
-            },
-            "sin sesión": {
-              "paragraph": "Elegí la complejidad temporal · ~1 min · racha 0 · sin sesión"
-            },
-            "error de sistema": {
-              "paragraph": "Elegí la complejidad temporal · ~1 min"
-            },
-            "ningún desafío hoy": {
-              "paragraph": "Elegí la complejidad temporal · ~1 min · racha 0 · sin desafío hoy · no afecta tu racha"
-            },
-            "antes del lanzamiento": {
-              "paragraph": "Elegí la complejidad temporal · ~1 min · próximamente"
-            },
-            "sesión no disponible": {
-              "paragraph": "Elegí la complejidad temporal · ~1 min"
-            }
-          },
-          "hidden_in_states": [
-            "loading"
-          ]
-        },
-        {
-          "name": "cta-big-o",
-          "type": "button",
-          "category": "input",
-          "content": "Jugar →",
-          "variant": "primary",
-          "annotation": "según el estado: sin jugar → instrucciones, en curso → partida, completado → resultado",
-          "state_overrides": {
-            "anulado": {
-              "content": "—"
-            },
-            "sin sesión": {
-              "content": "Jugar →",
-              "variant": "disabled"
-            },
-            "ningún desafío hoy": {
-              "content": "Sin desafío hoy",
-              "variant": "disabled"
-            },
-            "antes del lanzamiento": {
-              "content": "Próximamente",
-              "variant": "disabled"
-            },
-            "sesión no disponible": {
-              "content": "Jugar →",
-              "variant": "disabled"
-            }
-          },
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ]
-        },
-        {
-          "name": "card-timeline",
-          "type": "card",
-          "category": "content",
-          "content": "Tech Timeline",
-          "paragraph": "Ordená 5 hitos de la tecnología · ~1 min · racha 1 · sin jugar",
-          "state_overrides": {
-            "sin desafío hoy": {
-              "paragraph": "Ordená 5 hitos de la tecnología · ~1 min · racha 1 · sin desafío hoy · no afecta tu racha"
-            },
-            "empty": {
-              "paragraph": "Ordená 5 hitos de la tecnología · ~1 min · racha 0 · sin jugar"
-            },
-            "sin sesión": {
-              "paragraph": "Ordená 5 hitos de la tecnología · ~1 min · racha 0 · sin sesión"
-            },
-            "error de sistema": {
-              "paragraph": "Ordená 5 hitos de la tecnología · ~1 min"
-            },
-            "ningún desafío hoy": {
-              "paragraph": "Ordená 5 hitos de la tecnología · ~1 min · racha 0 · sin desafío hoy · no afecta tu racha"
-            },
-            "antes del lanzamiento": {
-              "paragraph": "Ordená 5 hitos de la tecnología · ~1 min · próximamente"
-            },
-            "sesión no disponible": {
-              "paragraph": "Ordená 5 hitos de la tecnología · ~1 min"
-            }
-          },
-          "hidden_in_states": [
-            "loading"
-          ]
-        },
-        {
-          "name": "cta-timeline",
-          "type": "button",
-          "category": "input",
-          "content": "Jugar →",
-          "variant": "primary",
-          "annotation": "según el estado: sin jugar → instrucciones, en curso → partida, completado → resultado",
-          "state_overrides": {
-            "sin desafío hoy": {
-              "content": "Sin desafío hoy",
-              "variant": "disabled"
-            },
-            "sin sesión": {
-              "content": "Jugar →",
-              "variant": "disabled"
-            },
-            "ningún desafío hoy": {
-              "content": "Sin desafío hoy",
-              "variant": "disabled"
-            },
-            "antes del lanzamiento": {
-              "content": "Próximamente",
-              "variant": "disabled"
-            },
-            "sesión no disponible": {
-              "content": "Jugar →",
-              "variant": "disabled"
-            }
-          },
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
-          "name": "card-grep-grid",
-          "type": "card",
-          "category": "content",
-          "content": "Grep Grid",
-          "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · racha 0 · sin jugar",
-          "state_overrides": {
-            "en curso": {
-              "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · racha 0 · en curso"
-            },
-            "sin sesión": {
-              "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · racha 0 · sin sesión"
-            },
-            "error de sistema": {
-              "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min"
-            },
-            "ningún desafío hoy": {
-              "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · racha 0 · sin desafío hoy · no afecta tu racha"
-            },
-            "antes del lanzamiento": {
-              "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · próximamente"
-            },
-            "sesión no disponible": {
-              "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min"
-            }
-          },
-          "hidden_in_states": [
-            "loading"
-          ]
-        },
-        {
-          "name": "cta-grep-grid",
-          "type": "button",
-          "category": "input",
-          "content": "Jugar →",
-          "variant": "primary",
-          "annotation": "según el estado: sin jugar → instrucciones, en curso → partida, completado → resultado",
-          "state_overrides": {
-            "en curso": {
-              "content": "Seguir jugando",
-              "variant": "primary"
-            },
-            "sin sesión": {
-              "content": "Jugar →",
-              "variant": "disabled"
-            },
-            "ningún desafío hoy": {
-              "content": "Sin desafío hoy",
-              "variant": "disabled"
-            },
-            "antes del lanzamiento": {
-              "content": "Próximamente",
-              "variant": "disabled"
-            },
-            "sesión no disponible": {
-              "content": "Jugar →",
-              "variant": "disabled"
-            }
-          },
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
-          "name": "btn-aviso-anulado",
-          "type": "button",
-          "category": "input",
-          "content": "Ver aviso de anulación",
-          "variant": "secondary",
-          "icon": "info",
-          "visible_only_in_states": [
-            "anulado"
-          ]
-        },
-        {
-          "name": "resumen-progreso",
-          "type": "card",
-          "category": "content",
-          "content": "Tu progreso",
-          "paragraph": "Racha global 4 · Récord 9 · 31 desafíos completados · heatmap de los últimos 90 días",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
-          "state_overrides": {
-            "empty": {
-              "paragraph": "Todavía no hay datos. Completá un desafío y acá vas a ver tu racha y tu heatmap."
-            },
-            "sin sesión": {
-              "paragraph": "Sin sesión no hay progreso para mostrar. Activá las cookies y recargá."
-            },
-            "ningún desafío hoy": {
-              "paragraph": "Todavía no hay datos. Cuando haya desafíos, acá vas a ver tu racha y tu heatmap."
-            },
-            "antes del lanzamiento": {
-              "paragraph": "Todavía no hay datos. Cuando empiecen los desafíos, acá vas a ver tu racha y tu heatmap."
-            },
-            "sesión no disponible": {
-              "paragraph": "Sin sesión no hay progreso para mostrar. Recargá en unos minutos."
-            }
-          }
-        },
-        {
-          "name": "link-stats",
-          "type": "link",
-          "category": "navigation",
-          "content": "ver estadísticas →",
-          "icon": "arrow-right",
+          "annotation": "HH:MM:SS hasta las 00:00 UTC. Al llegar a 0 recarga el estado del día tras una espera aleatoria de 0–3 s. El reloj solo descuenta los segundos que informa el servidor y se re-sincroniza en cada respuesta; si la recarga falla, la home pasa a «error de sistema» con «Reintentar». No se anuncia cada segundo a lectores de pantalla. El cursor `▌` no parpadea con «reducir movimiento»",
           "hidden_in_states": [
             "loading",
             "error de sistema"
@@ -596,6 +213,7 @@
           "category": "feedback",
           "content": "No pudimos cargar los juegos de hoy. Revisá tu conexión e intentá de nuevo.",
           "kind": "error",
+          "annotation": "`alert` variant `error` del DS (tinte de error, borde de 1 px, radio 14, ícono `x`)",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -607,32 +225,608 @@
           "content": "Reintentar",
           "variant": "secondary",
           "icon": "refresh",
+          "annotation": "botón `secondary` `md`",
           "visible_only_in_states": [
             "error de sistema"
           ]
         },
         {
+          "name": "titulo-desafios",
+          "type": "heading",
+          "category": "content",
+          "content": "Los desafíos de hoy",
+          "level": "h2",
+          "annotation": "destino de «Seguir jugando» (`#juegos`)"
+        },
+        {
+          "name": "progreso-dia",
+          "type": "progress-bar",
+          "category": "feedback",
+          "content": "// 1 de 5 completados hoy",
+          "annotation": "`progress-bar` variant `segmented`: 5 segmentos, uno lleno por juego completado. El texto va como etiqueta-comentario sobre el título y es también el nombre accesible de la barra",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "en curso": {
+              "content": "// 1 de 5 completados hoy",
+              "fill": 0.2
+            },
+            "sin desafío hoy": {
+              "content": "// 1 de 4 con desafío completados",
+              "fill": 0.25
+            },
+            "anulado": {
+              "content": "// 1 de 5 completados hoy",
+              "fill": 0.2
+            },
+            "empty": {
+              "content": "// 0 de 5 completados hoy",
+              "fill": 0.0
+            },
+            "sin sesión": {
+              "content": "// Sin sesión: no podemos mostrar tu progreso",
+              "fill": 0.0
+            },
+            "ningún desafío hoy": {
+              "content": "// Hoy no hay desafíos publicados",
+              "fill": 0.0
+            },
+            "antes del lanzamiento": {
+              "content": "// El primer desafío llega pronto",
+              "fill": 0.0
+            },
+            "sesión no disponible": {
+              "content": "// No pudimos iniciar tu sesión. Recargá en unos minutos para jugar.",
+              "fill": 0.0
+            }
+          },
+          "fill": 0.2
+        },
+        {
+          "name": "card-devdle",
+          "type": "card",
+          "category": "content",
+          "content": "Devdle",
+          "paragraph": "[✓ 4/6] Adiviná el término tech en 6 intentos · ~2 min · ▲ racha 3",
+          "annotation": "`card` variant `game`: miniatura del juego de 150 px arriba (decorativa, `aria-hidden`, `patterns/game-boards.md`), nombre como `h3` en el acento del juego, badge de estado a la derecha (`[…]` en el wireframe), descripción en Inter y metadatos con la racha en ámbar. Badge `success` para completado; `pending` para sin jugar y en curso; neutro para sin desafío, anulado, próximamente y sin sesión",
+          "hidden_in_states": [
+            "loading"
+          ],
+          "state_overrides": {
+            "empty": {
+              "paragraph": "[sin jugar] Adiviná el término tech en 6 intentos · ~2 min · racha 0"
+            },
+            "sin sesión": {
+              "paragraph": "[sin sesión] Adiviná el término tech en 6 intentos · ~2 min"
+            },
+            "ningún desafío hoy": {
+              "paragraph": "[sin desafío hoy] Adiviná el término tech en 6 intentos · ~2 min · racha 0 · no afecta tu racha"
+            },
+            "antes del lanzamiento": {
+              "paragraph": "[próximamente] Adiviná el término tech en 6 intentos · ~2 min"
+            },
+            "sesión no disponible": {
+              "paragraph": "Adiviná el término tech en 6 intentos · ~2 min"
+            },
+            "error de sistema": {
+              "paragraph": "Adiviná el término tech en 6 intentos · ~2 min"
+            }
+          }
+        },
+        {
+          "name": "cta-devdle",
+          "type": "button",
+          "category": "input",
+          "content": "Ver resultado",
+          "variant": "secondary",
+          "annotation": "`md`, ancho completo. Según el estado: sin jugar → «Jugar →» en el acento del juego, a instrucciones; en curso → «Seguir jugando», a partida; completado → `secondary` «Ver resultado», a resultado",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "empty": {
+              "content": "Jugar →",
+              "variant": "primary"
+            },
+            "sin sesión": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            },
+            "ningún desafío hoy": {
+              "content": "Sin desafío hoy",
+              "variant": "disabled"
+            },
+            "antes del lanzamiento": {
+              "content": "Próximamente",
+              "variant": "disabled"
+            },
+            "sesión no disponible": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            }
+          }
+        },
+        {
+          "name": "card-bug-hunt",
+          "type": "card",
+          "category": "content",
+          "content": "Bug Hunt",
+          "paragraph": "[sin jugar] Encontrá la línea con el bug · ~2 min · ▲ racha 2",
+          "annotation": "es la tarjeta `next` (borde y anillo del acento del juego): el destino de «Seguir jugando», el primer juego en curso o, si no hay, el primero publicado sin jugar",
+          "hidden_in_states": [
+            "loading"
+          ],
+          "state_overrides": {
+            "en curso": {
+              "paragraph": "[en curso] Encontrá la línea con el bug · ~2 min · ▲ racha 2"
+            },
+            "empty": {
+              "paragraph": "[sin jugar] Encontrá la línea con el bug · ~2 min · racha 0"
+            },
+            "sin sesión": {
+              "paragraph": "[sin sesión] Encontrá la línea con el bug · ~2 min"
+            },
+            "ningún desafío hoy": {
+              "paragraph": "[sin desafío hoy] Encontrá la línea con el bug · ~2 min · racha 0 · no afecta tu racha"
+            },
+            "antes del lanzamiento": {
+              "paragraph": "[próximamente] Encontrá la línea con el bug · ~2 min"
+            },
+            "sesión no disponible": {
+              "paragraph": "Encontrá la línea con el bug · ~2 min"
+            },
+            "error de sistema": {
+              "paragraph": "Encontrá la línea con el bug · ~2 min"
+            }
+          }
+        },
+        {
+          "name": "cta-bug-hunt",
+          "type": "button",
+          "category": "input",
+          "content": "Jugar →",
+          "variant": "primary",
+          "annotation": "acento del juego con su texto on-accent, `md`, ancho completo; según el estado: sin jugar → instrucciones, en curso → partida, completado → resultado",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "en curso": {
+              "content": "Seguir jugando",
+              "variant": "primary"
+            },
+            "sin sesión": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            },
+            "ningún desafío hoy": {
+              "content": "Sin desafío hoy",
+              "variant": "disabled"
+            },
+            "antes del lanzamiento": {
+              "content": "Próximamente",
+              "variant": "disabled"
+            },
+            "sesión no disponible": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            }
+          }
+        },
+        {
+          "name": "card-big-o",
+          "type": "card",
+          "category": "content",
+          "content": "Big O",
+          "paragraph": "[sin jugar] Elegí la complejidad temporal · ~1 min · ▲ racha 5",
+          "hidden_in_states": [
+            "loading"
+          ],
+          "state_overrides": {
+            "anulado": {
+              "paragraph": "[anulado] Elegí la complejidad temporal · ~1 min · ▲ racha 5"
+            },
+            "empty": {
+              "paragraph": "[sin jugar] Elegí la complejidad temporal · ~1 min · racha 0"
+            },
+            "sin sesión": {
+              "paragraph": "[sin sesión] Elegí la complejidad temporal · ~1 min"
+            },
+            "ningún desafío hoy": {
+              "paragraph": "[sin desafío hoy] Elegí la complejidad temporal · ~1 min · racha 0 · no afecta tu racha"
+            },
+            "antes del lanzamiento": {
+              "paragraph": "[próximamente] Elegí la complejidad temporal · ~1 min"
+            },
+            "sesión no disponible": {
+              "paragraph": "Elegí la complejidad temporal · ~1 min"
+            },
+            "error de sistema": {
+              "paragraph": "Elegí la complejidad temporal · ~1 min"
+            }
+          }
+        },
+        {
+          "name": "cta-big-o",
+          "type": "button",
+          "category": "input",
+          "content": "Jugar →",
+          "variant": "primary",
+          "annotation": "acento del juego con su texto on-accent, `md`, ancho completo; según el estado: sin jugar → instrucciones, en curso → partida, completado → resultado",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            },
+            "ningún desafío hoy": {
+              "content": "Sin desafío hoy",
+              "variant": "disabled"
+            },
+            "antes del lanzamiento": {
+              "content": "Próximamente",
+              "variant": "disabled"
+            },
+            "sesión no disponible": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            }
+          }
+        },
+        {
+          "name": "btn-aviso-anulado",
+          "type": "button",
+          "category": "input",
+          "content": "Ver aviso de anulación",
+          "variant": "secondary",
+          "icon": "info",
+          "annotation": "`secondary` `md`, ancho completo",
+          "visible_only_in_states": [
+            "anulado"
+          ]
+        },
+        {
+          "name": "card-timeline",
+          "type": "card",
+          "category": "content",
+          "content": "Tech Timeline",
+          "paragraph": "[sin jugar] Ordená 5 hitos de la tecnología · ~1 min · ▲ racha 1",
+          "hidden_in_states": [
+            "loading"
+          ],
+          "state_overrides": {
+            "sin desafío hoy": {
+              "paragraph": "[sin desafío hoy] Ordená 5 hitos de la tecnología · ~1 min · ▲ racha 1 · no afecta tu racha"
+            },
+            "empty": {
+              "paragraph": "[sin jugar] Ordená 5 hitos de la tecnología · ~1 min · racha 0"
+            },
+            "sin sesión": {
+              "paragraph": "[sin sesión] Ordená 5 hitos de la tecnología · ~1 min"
+            },
+            "ningún desafío hoy": {
+              "paragraph": "[sin desafío hoy] Ordená 5 hitos de la tecnología · ~1 min · racha 0 · no afecta tu racha"
+            },
+            "antes del lanzamiento": {
+              "paragraph": "[próximamente] Ordená 5 hitos de la tecnología · ~1 min"
+            },
+            "sesión no disponible": {
+              "paragraph": "Ordená 5 hitos de la tecnología · ~1 min"
+            },
+            "error de sistema": {
+              "paragraph": "Ordená 5 hitos de la tecnología · ~1 min"
+            }
+          }
+        },
+        {
+          "name": "cta-timeline",
+          "type": "button",
+          "category": "input",
+          "content": "Jugar →",
+          "variant": "primary",
+          "annotation": "acento del juego con su texto on-accent, `md`, ancho completo; según el estado: sin jugar → instrucciones, en curso → partida, completado → resultado",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "sin desafío hoy": {
+              "content": "Sin desafío hoy",
+              "variant": "disabled"
+            },
+            "sin sesión": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            },
+            "ningún desafío hoy": {
+              "content": "Sin desafío hoy",
+              "variant": "disabled"
+            },
+            "antes del lanzamiento": {
+              "content": "Próximamente",
+              "variant": "disabled"
+            },
+            "sesión no disponible": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            }
+          }
+        },
+        {
+          "name": "card-grep-grid",
+          "type": "card",
+          "category": "content",
+          "content": "Grep Grid",
+          "paragraph": "[sin jugar] Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · racha 0",
+          "annotation": "con racha 0 el metadato va en gris y sin `▲`",
+          "hidden_in_states": [
+            "loading"
+          ],
+          "state_overrides": {
+            "en curso": {
+              "paragraph": "[en curso] Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · racha 0"
+            },
+            "empty": {
+              "paragraph": "[sin jugar] Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · racha 0"
+            },
+            "sin sesión": {
+              "paragraph": "[sin sesión] Encontrá 8 palabras en la grilla · sin tiempo · ~3 min"
+            },
+            "ningún desafío hoy": {
+              "paragraph": "[sin desafío hoy] Encontrá 8 palabras en la grilla · sin tiempo · ~3 min · racha 0 · no afecta tu racha"
+            },
+            "antes del lanzamiento": {
+              "paragraph": "[próximamente] Encontrá 8 palabras en la grilla · sin tiempo · ~3 min"
+            },
+            "sesión no disponible": {
+              "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min"
+            },
+            "error de sistema": {
+              "paragraph": "Encontrá 8 palabras en la grilla · sin tiempo · ~3 min"
+            }
+          }
+        },
+        {
+          "name": "cta-grep-grid",
+          "type": "button",
+          "category": "input",
+          "content": "Jugar →",
+          "variant": "primary",
+          "annotation": "acento del juego con su texto on-accent, `md`, ancho completo; según el estado: sin jugar → instrucciones, en curso → partida, completado → resultado",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "en curso": {
+              "content": "Seguir jugando",
+              "variant": "primary"
+            },
+            "sin sesión": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            },
+            "ningún desafío hoy": {
+              "content": "Sin desafío hoy",
+              "variant": "disabled"
+            },
+            "antes del lanzamiento": {
+              "content": "Próximamente",
+              "variant": "disabled"
+            },
+            "sesión no disponible": {
+              "content": "Jugar →",
+              "variant": "disabled"
+            }
+          }
+        },
+        {
+          "name": "card-proximo",
+          "type": "card",
+          "category": "content",
+          "content": "$ git checkout -b próximo-juego",
+          "paragraph": "Más desafíos en camino. Cada juego nuevo suma su propia racha. · [próximamente]",
+          "annotation": "`card` variant `placeholder`: borde punteado, sin fondo. Decorativa: no es interactiva, no entra en el orden de foco y no depende de datos",
+          "hidden_in_states": [
+            "loading"
+          ]
+        },
+        {
+          "name": "titulo-progreso",
+          "type": "heading",
+          "category": "content",
+          "content": "Tu progreso",
+          "level": "h2",
+          "annotation": "`panel` variant `feature`; etiqueta-comentario «// racha global» sobre el título",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "link-stats",
+          "type": "link",
+          "category": "navigation",
+          "content": "ver estadísticas →",
+          "icon": "arrow-right",
+          "annotation": "`link` del DS (sin subrayado, color del acento)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "racha-numero",
+          "type": "label",
+          "category": "content",
+          "content": "4 días seguidos",
+          "annotation": "`streak-number` variant `compact`: el número en display de 88 px, ámbar; «días / seguidos» en dos líneas al costado. Con racha 0 el número va en gris; sin datos se muestra `—`",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "empty": {
+              "content": "0 días seguidos"
+            },
+            "sin sesión": {
+              "content": "— sin datos"
+            },
+            "ningún desafío hoy": {
+              "content": "0 días seguidos"
+            },
+            "antes del lanzamiento": {
+              "content": "0 días seguidos"
+            },
+            "sesión no disponible": {
+              "content": "— sin datos"
+            }
+          }
+        },
+        {
+          "name": "mini-stat-record",
+          "type": "card",
+          "category": "content",
+          "content": "9",
+          "paragraph": "récord de racha",
+          "annotation": "`card` variant `mini-stat`. El heatmap y los demás mini-stats del prototipo (desafíos completados, % de victorias) no se muestran hasta que exista su fuente de datos (FG-3 / FG-10)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "empty": {
+              "content": "0"
+            },
+            "sin sesión": {
+              "content": "—"
+            },
+            "ningún desafío hoy": {
+              "content": "0"
+            },
+            "antes del lanzamiento": {
+              "content": "0"
+            },
+            "sesión no disponible": {
+              "content": "—"
+            }
+          }
+        },
+        {
+          "name": "resumen-progreso",
+          "type": "paragraph",
+          "category": "content",
+          "content": "Todavía no hay datos. Completá un desafío y acá vas a ver tu racha.",
+          "level": "caption",
+          "annotation": "solo aparece cuando no hay progreso para mostrar",
+          "visible_only_in_states": [
+            "empty",
+            "sin sesión",
+            "sesión no disponible",
+            "ningún desafío hoy",
+            "antes del lanzamiento"
+          ],
+          "state_overrides": {
+            "empty": {
+              "content": "Todavía no hay datos. Completá un desafío y acá vas a ver tu racha."
+            },
+            "sin sesión": {
+              "content": "Sin sesión no hay progreso para mostrar. Activá las cookies y recargá."
+            },
+            "ningún desafío hoy": {
+              "content": "Todavía no hay datos. Cuando haya desafíos, acá vas a ver tu racha."
+            },
+            "antes del lanzamiento": {
+              "content": "Todavía no hay datos. Cuando empiecen los desafíos, acá vas a ver tu racha."
+            },
+            "sesión no disponible": {
+              "content": "Sin sesión no hay progreso para mostrar. Recargá en unos minutos."
+            }
+          }
+        },
+        {
+          "name": "titulo-como",
+          "type": "heading",
+          "category": "content",
+          "content": "Cómo funciona",
+          "level": "h2",
+          "annotation": "ancla `#como`; recibe el foco al llegar desde «¿Cómo funciona?»"
+        },
+        {
+          "name": "paso-1",
+          "type": "card",
+          "category": "content",
+          "content": "01 · todos los días",
+          "paragraph": "Cada juego publica un desafío nuevo a las 00:00 UTC. Es el mismo para todos.",
+          "annotation": "`card` variant `step`; el número y el título van en Mono, en el verde de la plataforma"
+        },
+        {
+          "name": "paso-2",
+          "type": "card",
+          "category": "content",
+          "content": "02 · reglas propias",
+          "paragraph": "Cada juego tiene su propia mecánica, sus intentos y su puntaje.",
+          "annotation": "título en el acento de Bug Hunt"
+        },
+        {
+          "name": "paso-3",
+          "type": "card",
+          "category": "content",
+          "content": "03 · aprendés algo",
+          "paragraph": "Al terminar, cada desafío explica la respuesta y su contexto.",
+          "annotation": "título en el acento de Big O"
+        },
+        {
+          "name": "paso-4",
+          "type": "card",
+          "category": "content",
+          "content": "04 · compartís sin spoilers",
+          "paragraph": "Copiás tu resultado en cuadraditos y lo pegás donde quieras.",
+          "annotation": "título en el acento de Tech Timeline"
+        },
+        {
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
           "banner-cookies",
+          "hero-eyebrow",
           "hero-titulo",
           "hero-sub",
           "cta-hero",
-          "link-como-funciona",
+          "btn-como-funciona",
+          {
+            "row": "terminal",
+            "card": true,
+            "cols": [
+              {
+                "w": 12,
+                "stack": [
+                  "terminal-hoy",
+                  "racha-global",
+                  "cuenta-regresiva"
+                ]
+              }
+            ]
+          },
           "loader",
           "alerta-sistema",
           "btn-reintentar",
+          "titulo-desafios",
           "progreso-dia",
-          "racha-global",
-          "cuenta-regresiva",
           "card-devdle",
           "cta-devdle",
           "card-bug-hunt",
@@ -644,8 +838,28 @@
           "cta-timeline",
           "card-grep-grid",
           "cta-grep-grid",
-          "resumen-progreso",
-          "link-stats"
+          "card-proximo",
+          {
+            "row": "progreso",
+            "card": true,
+            "cols": [
+              {
+                "w": 12,
+                "stack": [
+                  "titulo-progreso",
+                  "link-stats",
+                  "racha-numero",
+                  "mini-stat-record",
+                  "resumen-progreso"
+                ]
+              }
+            ]
+          },
+          "titulo-como",
+          "paso-1",
+          "paso-2",
+          "paso-3",
+          "paso-4"
         ],
         "desktop": [
           "banner-cookies",
@@ -655,20 +869,21 @@
               {
                 "w": 7,
                 "stack": [
+                  "hero-eyebrow",
                   "hero-titulo",
                   "hero-sub",
                   "cta-hero",
-                  "link-como-funciona"
+                  "btn-como-funciona"
                 ]
               },
               {
                 "w": 5,
+                "card": true,
                 "stack": [
-                  "progreso-dia",
+                  "terminal-hoy",
                   "racha-global",
                   "cuenta-regresiva"
-                ],
-                "card": true
+                ]
               }
             ]
           },
@@ -681,6 +896,23 @@
                   "loader",
                   "alerta-sistema",
                   "btn-reintentar"
+                ]
+              }
+            ]
+          },
+          {
+            "row": "desafios-cabecera",
+            "cols": [
+              {
+                "w": 8,
+                "stack": [
+                  "titulo-desafios"
+                ]
+              },
+              {
+                "w": 4,
+                "stack": [
+                  "progreso-dia"
                 ]
               }
             ]
@@ -732,8 +964,58 @@
               {
                 "w": 4,
                 "stack": [
-                  "resumen-progreso",
-                  "link-stats"
+                  "card-proximo"
+                ]
+              }
+            ]
+          },
+          {
+            "row": "progreso",
+            "card": true,
+            "cols": [
+              {
+                "w": 7,
+                "stack": [
+                  "titulo-progreso",
+                  "racha-numero",
+                  "resumen-progreso"
+                ]
+              },
+              {
+                "w": 5,
+                "stack": [
+                  "link-stats",
+                  "mini-stat-record"
+                ]
+              }
+            ]
+          },
+          "titulo-como",
+          {
+            "row": "pasos",
+            "cols": [
+              {
+                "w": 3,
+                "stack": [
+                  "paso-1"
+                ]
+              },
+              {
+                "w": 3,
+                "stack": [
+                  "paso-2"
+                ]
+              },
+              {
+                "w": 3,
+                "stack": [
+                  "paso-3"
+                ]
+              },
+              {
+                "w": 3,
+                "stack": [
+                  "paso-4"
                 ]
               }
             ]
@@ -798,27 +1080,8 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose     ./juegos   ./stats   ./about     #8     ES | EN"
-            }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
+          "content": "> nerdose_   ./juegos   ./stats   ./about   #8   ES | EN",
+          "annotation": "`app-header` variant `default` del shell (sin píldora de racha, cursor estático); `./stats` es el ítem activo. #número = número de desafío del día, igual para los 5 juegos; ES | EN es el grupo segmentado. En mobile se acomoda con `flex-wrap` (REQ-003)"
         },
         {
           "name": "titulo",
@@ -1083,13 +1346,12 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
           "titulo",
           "loader",
           "alerta-sistema",
@@ -1232,27 +1494,8 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose     ./juegos   ./stats   ./about     #8     ES | EN"
-            }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
+          "content": "> nerdose_   ./juegos   ./stats   ./about   #8   ES | EN",
+          "annotation": "`app-header` variant `default` (fondo transparente, cursor `_` estático, sin píldora de racha). `./about` es el ítem activo. #número = número de desafío del día, igual para los 5 juegos; ES | EN es el grupo segmentado (`language-selector`). En mobile se acomoda con `flex-wrap`, sin scroll horizontal a 320 px"
         },
         {
           "name": "titulo",
@@ -1273,7 +1516,8 @@
           "type": "card",
           "category": "content",
           "content": "Los 5 juegos",
-          "paragraph": "Devdle: adiviná el término. Bug Hunt: encontrá la línea con el bug. Big O: elegí la complejidad. Tech Timeline: ordená los hitos. Grep Grid: encontrá las 8 palabras, sin tiempo."
+          "paragraph": "Devdle: adiviná el término. Bug Hunt: encontrá la línea con el bug. Big O: elegí la complejidad. Tech Timeline: ordená los hitos. Grep Grid: encontrá las 8 palabras, sin tiempo.",
+          "annotation": "`panel` variant `default` del DS (radio 14, título Mono sin peso 600, cuerpo en Inter); lo mismo vale para las otras tres tarjetas"
         },
         {
           "name": "card-rachas",
@@ -1302,19 +1546,19 @@
           "type": "link",
           "category": "navigation",
           "content": "Volver a los juegos",
-          "icon": "arrow-left"
+          "icon": "arrow-left",
+          "annotation": "`link` del DS: sin subrayado, color del acento, tono más claro en hover; foco visible"
         },
         {
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
           "titulo",
           "intro",
           "card-juegos",
@@ -1384,41 +1628,24 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose     ./juegos   ./stats   ./about     #8     ES | EN"
-            }
-          },
-          "annotation": "mismo header del shell; el #número se oculta si el servidor no lo informa"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
+          "content": "> nerdose_   ./juegos   ./stats   ./about   #8   ES | EN",
+          "annotation": "`app-header` variant `default` del shell (sin píldora de racha, cursor estático, ningún ítem de nav activo); el #número se oculta si el servidor no lo informa. En mobile se acomoda con `flex-wrap`"
         },
         {
           "name": "codigo",
           "type": "heading",
           "category": "content",
           "content": "404 · página no encontrada",
-          "level": "h1"
+          "level": "h1",
+          "annotation": "título de página del DS (Mono 800, tracking negativo, sin peso 600), dentro de un `panel` `default` (radio 14)"
         },
         {
           "name": "mensaje",
           "type": "paragraph",
           "category": "content",
           "content": "Esta dirección no existe en nerdose. Los desafíos de hoy te esperan en la home.",
-          "level": "body"
+          "level": "body",
+          "annotation": "prosa en Inter"
         },
         {
           "name": "btn-home",
@@ -1427,22 +1654,32 @@
           "content": "Volver a los juegos",
           "variant": "primary",
           "icon": "arrow-left",
-          "annotation": "navega a /"
+          "annotation": "botón `primary` `md` del DS (radio 10); navega a `/`; ancho completo en mobile"
         },
         {
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
-          "codigo",
-          "mensaje",
-          "btn-home"
+          {
+            "row": "panel",
+            "card": true,
+            "cols": [
+              {
+                "w": 12,
+                "stack": [
+                  "codigo",
+                  "mensaje",
+                  "btn-home"
+                ]
+              }
+            ]
+          }
         ],
         "desktop": [
           {
@@ -1454,6 +1691,7 @@
               },
               {
                 "w": 6,
+                "card": true,
                 "stack": [
                   "codigo",
                   "mensaje",
@@ -1683,8 +1921,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -1966,8 +2204,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -2258,8 +2496,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -2571,8 +2809,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -2896,8 +3134,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -3221,8 +3459,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -3538,8 +3776,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -3851,8 +4089,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -4169,8 +4407,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -4484,8 +4722,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -4750,8 +4988,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -5069,8 +5307,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -5382,8 +5620,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -5683,8 +5921,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -5991,8 +6229,8 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "nerdose.dev · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de",
-          "annotation": "«Acerca de» es un enlace a acerca-de; el footer es del shell y es igual en todas las pantallas (REQ-002, C-07)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "annotation": "`site-footer`: el lema a la izquierda y `exit 0` a la derecha; debajo, el aviso de privacidad y el enlace «Acerca de» (a `acerca-de`), todo en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
@@ -6406,7 +6644,8 @@
           "category": "feedback",
           "content": "Activá las cookies para poder jugar",
           "kind": "warning",
-          "annotation": "solo si la creación de la sesión respondió 200 y el estado del día sigue sin sesión; con 429 no se muestra (REQ-002). ES|EN sigue funcionando, el cambio queda solo en este navegador"
+          "annotation": "`banner` variant `warning` del DS: tinte de advertencia, borde de 1 px, radio 14, padding 18/22, ícono de advertencia; `role=\"status\"`",
+          "icon": "warning"
         },
         {
           "name": "detalle",
@@ -6566,14 +6805,6 @@
       "srcBlock": "link-stats",
       "dst": "estadisticas",
       "trigger": "ver estadísticas →",
-      "automatic": false
-    },
-    {
-      "src": "home",
-      "srcState": "default",
-      "srcBlock": "link-como-funciona",
-      "dst": "acerca-de",
-      "trigger": "¿Cómo funciona?",
       "automatic": false
     },
     {

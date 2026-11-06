@@ -15,7 +15,7 @@ Frontend en React 19 + Vite (SPA, sin SSR), TypeScript estricto.
 - **session** — sesión anónima (`POST /api/session`, cookie `nd_pid` gestionada por la `api`), preferencias (idioma, lenguaje de código preferido) y aviso de cookies bloqueadas.
 
 ## Stack y decisiones aplicadas
-- React 19, Vite, React Router (`/`, `/:game_id`, `/stats`, `/about`), TanStack Query, Tailwind CSS v4 (tokens del prototipo en `@theme`), `@fontsource/jetbrains-mono`, i18next + react-i18next (solo UI), dnd-kit (Timeline, con `TouchSensor` + `KeyboardSensor`), Shiki lazy solo en big-o y bug-hunt, Zod (`moveSchema` de cada juego), Web Share API con Clipboard como alternativa (ADR-002, ADR-006).
+- React 19, Vite, React Router (`/`, `/:game_id`, `/stats`, `/about`), TanStack Query, Tailwind CSS v4 (tokens del prototipo en `@theme`), `@fontsource/inter` (prosa), `@fontsource/jetbrains-mono`, i18next + react-i18next (solo UI), dnd-kit (Timeline, con `TouchSensor` + `KeyboardSensor`), Shiki lazy solo en big-o y bug-hunt, Zod (`moveSchema` de cada juego), Web Share API con Clipboard como alternativa (ADR-002, ADR-006).
 - Cliente HTTP de mismo origen (`/api/*`), JSON en `snake_case` sin transformar y errores por `error.code` (ADR-015). En desarrollo el proxy de Vite emula el mismo origen (`/api` -> api).
 - Identidad anónima por cookie `nd_pid` `HttpOnly`: el front no la lee ni la escribe, solo llama a `POST /api/session` en cada carga (ADR-009).
 - Analítica opcional con `track()` de `@nerdose/ui` detrás de `VITE_PLAUSIBLE_DOMAIN`, apagada por defecto (ADR-014).

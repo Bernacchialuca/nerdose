@@ -3,16 +3,26 @@ import { describe, expect, it } from 'vitest';
 import * as ui from '../src/index';
 
 describe('@nerdose/ui public API', () => {
-  it('exposes the public components and cn (TS-8)', () => {
+  it('exposes the public components, helpers and cn (TS-59)', () => {
     expect(Object.keys(ui).sort()).toEqual([
       'Alert',
       'AppHeader',
+      'Badge',
       'Banner',
       'BrandMark',
       'Card',
+      'GameThumbnail',
+      'Panel',
+      'ProgressBar',
+      'SegmentedControl',
+      'StreakNumber',
+      'StreakPill',
+      'TerminalWindow',
+      'buttonClass',
       'cn',
+      'linkClass',
+      'navItemClass',
     ]);
-    for (const fn of [ui.Alert, ui.AppHeader, ui.Banner, ui.BrandMark, ui.Card, ui.cn])
-      expect(typeof fn).toBe('function');
+    for (const value of Object.values(ui)) expect(typeof value).toBe('function');
   });
 });

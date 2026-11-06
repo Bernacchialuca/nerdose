@@ -1,8 +1,8 @@
 ---
 component: app-header
-version: 1.0.0
+version: 1.2.0
 status: active
-last_updated: 2026-11-05
+last_updated: 2026-11-06
 source: docs/nerdose.html
 related: [game-header, language-selector, streak-pill, site-footer]
 ---
@@ -43,14 +43,14 @@ related: [game-header, language-selector, streak-pill, site-footer]
 |---|---|---|---|
 | Ítem de nav | inactivo | `text.muted` (`#9AA6B2`), sin fondo, padding 12 14, radio 8 | L22-23 |
 | Ítem de nav | activo | `text.primary` + `bg.nav.active` (`#161B22`) | L21, L293 |
-| Ítem de nav | hover | **Pendiente — el prototipo no lo define** | — |
+| Ítem de nav | hover | **Derivado (S-011):** inactivo `text.muted` → `text.body` (`#C3CCD5`, 12,0:1). El activo no cambia | — |
 | Ítem de nav | focus | **Requisito:** foco visible ≥ 3:1; estética **Pendiente** | — |
 | Logo | hover / focus | **Pendiente** / requisito de foco | — |
 
 ## Spacing & sizing rules
 
 - Padding 18 32 (el gutter de 32 coincide con el de `main`).
-- Ítem de nav: padding 12 14 → alto ≈ 41px con texto de 14px. **Adaptación requerida:** área táctil de 44px (forma **Pendiente**).
+- Ítem de nav: padding 12 14 → alto ≈ 41px con texto de 14px. **Adaptación aplicada (S-011):** `min-height: 44px` (antes ≈41px). `navItemClass({ active })` de `@nerdose/ui` devuelve las clases; `aria-current="page"` lo pone el `NavLink` de la app.
 - **Responsive:** sin media queries; los tres grupos (logo, nav, acciones) envuelven con `flex-wrap`. El nav no se oculta ni se mueve a otra fila en mobile.
 
 ## Accesibilidad
@@ -92,3 +92,4 @@ related: [game-header, language-selector, streak-pill, site-footer]
 ## Historial
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: logo con cursor, nav con rutas `./` y estado activo con fondo, acciones con píldora de racha y selector de idioma, sin media queries.
+- 2026-11-06 v1.2.0 — Hover y área táctil de 44px del ítem de nav; helper `navItemClass`; `AppHeader` de `@nerdose/ui` alineado (variant `home`, slot `nav`).

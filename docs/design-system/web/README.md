@@ -1,6 +1,6 @@
 ---
-version: 1.1.0
-last_updated: 2026-11-05
+version: 1.2.0
+last_updated: 2026-11-06
 status: defined
 source: docs/nerdose.html
 ---
@@ -10,10 +10,10 @@ source: docs/nerdose.html
 ## Estado actual
 
 - **Surface:** `web`
-- **Versión:** `1.1.0`
+- **Versión:** `1.2.0`
 - **Estado:** definido desde el prototipo
 - **Fuente de verdad visual:** [`docs/nerdose.html`](../../nerdose.html). Ante una duda de estética gana el prototipo; en datos, reglas y accesibilidad gana el PRD (ver [`governance.md`](governance.md)).
-- **Código:** la implementación actual (`@nerdose/ui`, `apps/web`) corresponde a la v0.2.0 y **no está alineada** con esta versión; ver [`CHANGELOG.md`](CHANGELOG.md) → "Desalineaciones conocidas en código".
+- **Código:** `@nerdose/ui` está alineado desde S-011 (v1.2.0). `apps/web` sigue con diferencias que corrigen S-012 y S-013; ver [`CHANGELOG.md`](CHANGELOG.md) → "Desalineaciones conocidas en código".
 
 ## Identidad en una línea
 
@@ -104,3 +104,4 @@ Semver independiente del surface `admin`. MAJOR = cambio de valor o rename de to
 - 2026-11-03 v0.1.0 — Estructura inicial (bootstrap).
 - 2026-11-05 v0.2.0 — Paleta oscura y primeros componentes desde el código.
 - 2026-11-05 v1.0.0 — DS redefinido desde el prototipo `docs/nerdose.html` como fuente de verdad visual.
+- 2026-11-06 v1.2.0 — S-011: `@nerdose/ui` alineado con el DS y piezas derivadas documentadas (ver CHANGELOG 1.2.0).

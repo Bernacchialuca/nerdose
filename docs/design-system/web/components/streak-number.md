@@ -1,8 +1,8 @@
 ---
 component: streak-number
-version: 1.0.0
+version: 1.2.0
 status: active
-last_updated: 2026-11-05
+last_updated: 2026-11-06
 source: docs/nerdose.html
 related: [streak-pill, panel, card, heatmap]
 ---
@@ -47,7 +47,7 @@ Fijadas por variant (96 / 88 / 56).
 | State | Descripción |
 |---|---|
 | default | Valor actual |
-| sin datos | **Pendiente — el prototipo no lo define** |
+| 0 / sin datos | **Derivado (S-011):** el número va en `text.dim` (`#8D99A6`/`#0F1318` 6,4:1), nunca en ámbar; sin datos muestra `—` y la unidad la decide la app |
 
 ## Spacing & sizing rules
 
@@ -86,3 +86,4 @@ Fijadas por variant (96 / 88 / 56).
 ## Historial
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: número de racha 96/88px ámbar con unidad, tarjeta de racha de Stats y puntaje de 56px en el acento del juego.
+- 2026-11-06 v1.2.0 — Estados 0 y sin datos derivados.

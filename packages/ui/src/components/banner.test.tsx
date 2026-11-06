@@ -8,54 +8,58 @@ const TITLE = 'Activá las cookies para poder jugar';
 const DETAIL = 'Sin cookies no podemos guardar tu partida.';
 
 describe('Banner', () => {
-  it('renders title and detail in a status region (TS-9)', () => {
-    render(<Banner title={TITLE}>{DETAIL}</Banner>);
+  it('renders the warning banner with the DS tokens (TS-26)', async () => {
+    const { container } = render(<Banner title={TITLE}>{DETAIL}</Banner>);
     const status = screen.getByRole('status');
-    expect(status).toHaveTextContent(TITLE);
-    expect(status).toHaveTextContent(DETAIL);
-    expect(status.textContent?.indexOf(TITLE)).toBeLessThan(
-      status.textContent?.indexOf(DETAIL) ?? 0,
+    expect(status).toHaveClass(
+      'rounded-panel',
+      'border',
+      'border-status-warning-border',
+      'bg-status-warning-bg',
+      'px-5.5',
+      'py-4.5',
     );
-  });
-
-  it('renders only the title without detail container (TS-10)', () => {
-    render(<Banner title={TITLE} />);
-    const status = screen.getByRole('status');
-    expect(status.textContent).toBe(TITLE);
-    expect(status.children).toHaveLength(1);
-  });
-
-  it('is not dismissible and does not take focus (TS-11)', () => {
-    render(<Banner title={TITLE}>{DETAIL}</Banner>);
+    for (const c of ['border-l-4', 'px-4', 'lg:px-12']) expect(status).not.toHaveClass(c);
+    expect(status.querySelector('[aria-hidden="true"]')).toHaveClass(
+      'bg-status-warning',
+      'text-status-warning-on',
+    );
+    expect(screen.getByText(TITLE)).toHaveClass('font-mono', 'text-title-banner', 'text-text');
+    expect(screen.getByText(DETAIL)).toHaveClass(
+      'font-sans',
+      'text-body-sm-tight',
+      'text-status-warning-soft',
+    );
     expect(screen.queryAllByRole('button')).toHaveLength(0);
     expect(screen.queryAllByRole('link')).toHaveLength(0);
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('renders title before detail in a status region', () => {
+    render(<Banner title={TITLE}>{DETAIL}</Banner>);
+    const text = screen.getByRole('status').textContent ?? '';
+    expect(text.indexOf(TITLE)).toBeLessThan(text.indexOf(DETAIL));
+  });
+
+  it('renders only the title without detail', () => {
+    render(<Banner title={TITLE} />);
+    expect(screen.getByRole('status').querySelectorAll('p')).toHaveLength(1);
+  });
+
+  it('does not take focus', () => {
+    render(<Banner title={TITLE}>{DETAIL}</Banner>);
     expect(screen.getByRole('status')).not.toHaveAttribute('tabindex');
     expect(document.activeElement).toBe(document.body);
   });
 
-  it('uses the design tokens (TS-12)', () => {
-    render(<Banner title={TITLE}>{DETAIL}</Banner>);
-    const status = screen.getByRole('status');
-    for (const c of ['bg-surface', 'border-l-4', 'border-warning', 'px-4', 'lg:px-12']) {
-      expect(status).toHaveClass(c);
-    }
-    expect(screen.getByText(TITLE)).toHaveClass('text-warning', 'font-bold');
-    expect(screen.getByText(DETAIL)).toHaveClass('text-xs', 'text-text-muted');
-  });
-
-  it('merges className with cn (TS-13)', () => {
+  it('merges className with cn', () => {
     render(<Banner title="t" className="sticky top-0 bg-bg" />);
     const status = screen.getByRole('status');
     expect(status).toHaveClass('sticky', 'top-0', 'bg-bg');
-    expect(status).not.toHaveClass('bg-surface');
+    expect(status).not.toHaveClass('bg-status-warning-bg');
   });
 
-  it('has no axe violations (TS-14)', async () => {
-    const { container } = render(<Banner title={TITLE}>{DETAIL}</Banner>);
-    expect(await axe(container)).toHaveNoViolations();
-  });
-
-  it('accepts a node as title (TS-15)', () => {
+  it('accepts a node as title', () => {
     render(
       <Banner
         title={
@@ -68,7 +72,7 @@ describe('Banner', () => {
     expect(screen.getByRole('status').querySelector('strong')).toHaveTextContent('cookies');
   });
 
-  it('has no text of its own (TS-25)', () => {
+  it('has no text of its own (TS-55)', () => {
     const { container } = render(<Banner title="" />);
     expect(container.textContent).toBe('');
   });

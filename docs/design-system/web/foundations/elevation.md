@@ -1,7 +1,7 @@
 ---
 foundation: elevation
-version: 1.0.0
-last_updated: 2026-11-05
+version: 1.2.0
+last_updated: 2026-11-06
 status: defined
 source: docs/nerdose.html
 ---
@@ -45,7 +45,7 @@ Valores de `shadow.bar` en el prototipo:
 
 ### Tarjeta destacada por juego
 
-El prototipo solo muestra la tarjeta destacada de **Big O** (azul). Para los demás juegos el anillo y el glow **no están definidos**: `shadow.featured.{devdle,bug-hunt,timeline,grep-grid}` quedan **Pendiente — el prototipo no los define**. No derivarlos por analogía sin pasar por `/product-design-system-update`.
+El prototipo solo muestra la tarjeta destacada de **Big O** (azul). Para los demás juegos el anillo y el glow **no están definidos**: `shadow.featured.{devdle,bug-hunt,timeline,grep-grid}` se **derivan en S-011** con el patrón de Big O (anillo de 1px del acento al 20% + glow de 18px/40px con el matiz del acento oscurecido al 25%): devdle `0 0 0 1px #3DDC8433, 0 18px 40px rgba(20,110,60,0.25)`, bug-hunt `0 0 0 1px #FFB54733, 0 18px 40px rgba(110,70,20,0.25)`, timeline `0 0 0 1px #C39BFF33, 0 18px 40px rgba(70,40,110,0.25)`, grep-grid `0 0 0 1px #F472B633, 0 18px 40px rgba(110,20,70,0.25)`.
 
 ### Capas (z-index)
 
@@ -57,7 +57,7 @@ El prototipo solo muestra la tarjeta destacada de **Big O** (azul). Para los dem
 |---|---|
 | `elevation.flat` | Sin sombra; superficie + borde |
 | `elevation.window` | `shadow.window` |
-| `elevation.featured.{juego}` | `shadow.featured.{juego}` (solo Big O definido) |
+| `elevation.featured.{juego}` | `shadow.featured.{juego}` (Big O del prototipo; los otros 4 derivados en S-011) |
 | `bar.{estado}` | `shadow.bar` con el color del estado |
 
 De componente: `terminal-window.shadow → elevation.window`, `card.game.next.shadow → elevation.featured.{juego}`, `code-block.line.highlight.bar → bar.*`.
@@ -87,3 +87,4 @@ De componente: `terminal-window.shadow → elevation.window`, `card.game.next.sh
 
 - 2026-11-03 v0.1.0 — Placeholder inicial.
 - 2026-11-05 v1.0.0 — Las cinco sombras reales del prototipo, jerarquía de superficies sin sombra y barras laterales `inset 3px 0 0`. Se eliminan los niveles placeholder `elevation.0`…`elevation.N`.
+- 2026-11-06 v1.2.0 — `shadow.featured.*` derivadas para los cuatro juegos restantes.

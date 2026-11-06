@@ -1,8 +1,8 @@
 ---
 component: banner
-version: 1.0.0
+version: 1.2.0
 status: active
-last_updated: 2026-11-05
+last_updated: 2026-11-06
 source: docs/nerdose.html
 related: [alert, button, panel]
 ---
@@ -38,7 +38,7 @@ El grupo ícono + textos va con gap 14 (L615).
 | `success` | Ganaste | `#0C1A12` / `#1E4A30` | `check` sobre `#3DDC84`, color `#06120B` | `#A9C9B5` | `primary` "Siguiente juego →" | L614-623, L868-879 |
 | `failure` | Perdiste (sin drama) | `#1C0F0E` / `#4A2220` | `x` sobre `#FF7B72`, color `#1C0605` | `#D9B3AF` | `outline-tinted` con borde `#4A2220` | L626-635 |
 | `neutral` | Barra de cierre: racha del juego + countdown | `#0F1318` / `#222A33` | sin ícono | Texto único Mono 14 `#9AA6B2` con `<b>` ámbar y countdown `#E6EDF3` | `outline-tinted` con el borde del juego ("Volver a los juegos", `#3C2E60`) | L1041-1043 |
-| `warning` *(adaptación)* | Condición persistente (O-03) | `#140F07` / `#3A2A12` (`status.warning.*`) | **Pendiente — el prototipo no define ícono de advertencia**; hasta definirlo, sin ícono | `#C9A46A` | Opcional | L646-647 (tintes) |
+| `warning` *(adaptación)* | Condición persistente (O-03) | `#140F07` / `#3A2A12` (`status.warning.*`) | *Derivado (S-011):* círculo 40×40 `status.warning` con `!` Lucide de 20px, stroke 3, en `status.warning.on` (`#1A1206`/`#FFB547` 10,5:1) | `#C9A46A` | Opcional | L646-647 (tintes) |
 
 ## Sizes
 
@@ -83,7 +83,7 @@ El grupo ícono + textos va con gap 14 (L615).
 
 **Don't:**
 - No usar `failure` para errores del sistema: es una partida perdida.
-- No inventar un ícono para `warning` sin pasar por el DS.
+- No usar para `warning` un ícono distinto del `!` documentado.
 - No poner más de un banner a la vez.
 
 ## API
@@ -106,3 +106,4 @@ El grupo ícono + textos va con gap 14 (L615).
 
 - 2026-11-05 v0.2.0 — Creación del spec desde `@nerdose/ui`: aviso de advertencia de ancho completo con barra lateral de 4px (O-03).
 - 2026-11-05 v1.0.0 — Reescrito como banner de resultado del prototipo (`success`, `failure`, `neutral`: radio 14, borde 1px, ícono en círculo de 40px, padding 18 22) más `warning` como adaptación de producto con los tintes ámbar del panel "contexto". Se elimina la barra lateral de 4px.
+- 2026-11-06 v1.2.0 — Ícono de `warning` derivado (`!` en círculo de 40px); `Banner` de `@nerdose/ui` alineado.

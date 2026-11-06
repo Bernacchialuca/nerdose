@@ -1,0 +1,51 @@
+/** Debe coincidir con los `--text-*`, `--radius-*` y `--shadow-*` de tokens.css (lo verifica cn.test.ts). */
+export const TEXT_ROLES = [
+  'display-streak-compact',
+  'display-hero',
+  'title-page',
+  'title-section-lg',
+  'title-section',
+  'title-panel',
+  'title-card',
+  'title-banner',
+  'brand-logo',
+  'numeric-md',
+  'body-lede',
+  'body',
+  'body-sm-tight',
+  'caption',
+  'caption-tight',
+  'button-lg',
+  'button-md',
+  'mono-body',
+  'mono-strong',
+  'mono-unit-compact',
+  'code-terminal',
+  'label-comment',
+  'meta',
+  'meta-strong',
+  'micro',
+  'micro-xs',
+] as const;
+
+export const RADIUS_ROLES = [
+  'cell-xs',
+  'cell-sm',
+  'cell-md',
+  'segment',
+  'tile',
+  'control',
+  'inset',
+  'panel',
+  'feature',
+] as const;
+
+export const SHADOW_ROLES = [
+  'window',
+  'next-devdle',
+  'next-bug-hunt',
+  'next-big-o',
+  'next-timeline',
+  'next-grep-grid',
+  'bar-bug-hunt',
+] as const;

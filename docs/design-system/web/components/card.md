@@ -1,8 +1,8 @@
 ---
 component: card
-version: 1.0.0
+version: 1.2.0
 status: active
-last_updated: 2026-11-05
+last_updated: 2026-11-06
 source: docs/nerdose.html
 related: [panel, button, chip, streak-pill, streak-number, progress-bar]
 ---
@@ -47,7 +47,19 @@ related: [panel, button, chip, streak-pill, streak-number, progress-bar]
 | `counter` | Contador de partida; valor en acento si es puntaje | `card.counter.*` | "3/8 encontradas", "02:14 tiempo" | L1109-1110 |
 | `game-stats` | Tarjeta por juego en Stats, con barra superior de 4px del acento | `card.game-stats.*` | "Devdle · racha 12 · máx 21" | L335-352 |
 
-**Decisión (prototipo incompleto):** la variant `next` solo está definida para Big O (`#2E4C6E` + `0 0 0 1px #5EB1FF33, 0 18px 40px rgba(20,60,110,0.25)`). Para los otros cuatro juegos el borde, el anillo y el glow quedan **Pendiente — el prototipo no los define**.
+**Decisión (prototipo incompleto):** la variant `next` solo está definida para Big O (`#2E4C6E` + `0 0 0 1px #5EB1FF33, 0 18px 40px rgba(20,60,110,0.25)`). Para los otros cuatro juegos se **derivan (S-011)** con el patrón de Big O: borde = un tono existente de la misma escala entre el borde del tinte y el acento; anillo = acento al 20% (`…33`); glow = el matiz del acento oscurecido, al 25% de opacidad.
+
+| Juego | Borde | Sombra | Contraste del borde sobre `#0F1318` |
+|---|---|---|---|
+| Devdle | `#1E4A30` (`green.800`) | `0 0 0 1px #3DDC8433, 0 18px 40px rgba(20,110,60,0.25)` | 1,8 (decorativo) |
+| Bug Hunt | `#5C4419` (`amber.800`) | `0 0 0 1px #FFB54733, 0 18px 40px rgba(110,70,20,0.25)` | 2,0 (decorativo) |
+| Big O | `#2E4C6E` | `0 0 0 1px #5EB1FF33, 0 18px 40px rgba(20,60,110,0.25)` | definido |
+| Tech Timeline | `#3C2E60` (`purple.850`) | `0 0 0 1px #C39BFF33, 0 18px 40px rgba(70,40,110,0.25)` | 1,6 (decorativo) |
+| Grep Grid | `#5B2147` (`pink.850`) | `0 0 0 1px #F472B633, 0 18px 40px rgba(110,20,70,0.25)` | 1,6 (decorativo) |
+
+La señal de `next` no es el color: es el CTA relleno y ser el destino de "Seguir jugando".
+
+**Implementación (S-011):** `Card` de `@nerdose/ui` con `variant` `game` (+ `next`, `thumbnail`), `placeholder`, `step` y `mini-stat`; las miniaturas son `GameThumbnail`. `stat`, `metric`, `counter` y `game-stats` quedan para las stories que las consuman.
 
 ## Sizes
 
@@ -68,7 +80,7 @@ related: [panel, button, chip, streak-pill, streak-number, progress-bar]
 |---|---|
 | default | Estado base |
 | pendiente / resuelto (`game`) | Cambia el badge (`pending` / `success`) y el CTA (`accent` / `secondary`) |
-| hover / focus / active | No aplica al contenedor: no es interactivo. El foco lo recibe el CTA. **Pendiente — el prototipo no define** hover de tarjeta. |
+| hover / focus / active | No aplica al contenedor: no es interactivo. El foco lo recibe el CTA. La tarjeta no cambia en hover. |
 | disabled | Sin sesión o sin desafío (estados de producto): la tarjeta se ve igual y el CTA pasa a deshabilitado neutro (ver [button](./button.md)). |
 
 ## Spacing & sizing rules
@@ -124,3 +136,4 @@ related: [panel, button, chip, streak-pill, streak-number, progress-bar]
 
 - 2026-11-05 v0.2.0 — Creación del spec desde `@nerdose/ui` (radio 16, padding 16, sin sombra).
 - 2026-11-05 v1.0.0 — Reescrito desde el prototipo: tarjeta de juego con miniatura de 150px, padding 20, badge, metadatos y CTA de ancho completo; variants `next` (anillo + glow, solo Big O), `placeholder`, `step`, `mini-stat`, `stat`, `metric`, `counter` y `game-stats`.
+- 2026-11-06 v1.2.0 — Variant `next` derivada para Devdle, Bug Hunt, Tech Timeline y Grep Grid; implementación en `@nerdose/ui`.

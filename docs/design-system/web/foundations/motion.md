@@ -1,7 +1,7 @@
 ---
 foundation: motion
-version: 1.0.0
-last_updated: 2026-11-05
+version: 1.2.0
+last_updated: 2026-11-06
 status: defined
 source: docs/nerdose.html
 ---
@@ -46,7 +46,7 @@ De componente: `app-header.logo.cursor → motion.cursor`, `terminal-window.curs
 ## Accesibilidad
 
 - **`prefers-reduced-motion: reduce` (requisito):** el scroll vuelve a ser instantáneo y el cursor no parpadea (queda visible, encendido).
-- **WCAG 2.2.2 Pausar, detener, ocultar (nivel A) — adaptación requerida:** el cursor parpadea de forma automática, indefinida y junto a otro contenido. El prototipo lo deja infinito; el requisito es que el parpadeo no dure más de 5 segundos o que exista un mecanismo para detenerlo. **Pendiente** la solución (cantidad de ciclos y estado final); el estado final visible es el cursor encendido.
+- **WCAG 2.2.2 Pausar, detener, ocultar (nivel A) — adaptación requerida:** el cursor parpadea de forma automática, indefinida y junto a otro contenido. El prototipo lo deja infinito; el requisito es que el parpadeo no dure más de 5 segundos o que exista un mecanismo para detenerlo. **Resuelto (S-011):** el parpadeo dura 4 ciclos (`blink 1.1s steps(1) 4` = 4,4s < 5s) y termina con el cursor encendido; con `prefers-reduced-motion: reduce` no se anima (`motion-safe:`).
 - **Destellos (WCAG 2.3.1):** 1.1s de período = menos de 1 destello por segundo; pasa.
 
 ## Ejemplos
@@ -57,3 +57,4 @@ De componente: `app-header.logo.cursor → motion.cursor`, `terminal-window.curs
 
 - 2026-11-03 v0.1.0 — Placeholder inicial.
 - 2026-11-05 v1.0.0 — Solo dos movimientos reales (parpadeo 1.1s `steps(1)` y scroll suave), sin transiciones. Requisitos de `prefers-reduced-motion` y WCAG 2.2.2. Se eliminan las duraciones y easings placeholder.
+- 2026-11-06 v1.2.0 — Cursor: 4 ciclos y estado final encendido (WCAG 2.2.2).

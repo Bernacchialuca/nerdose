@@ -1,8 +1,8 @@
 ---
 document: UX User Flows
 surface: web
-version: "1.1"
-date: 2026-11-04
+version: "1.2"
+date: 2026-11-06
 status: Draft - Punto de partida para discusión
 flows_count: 5
 ---
@@ -222,7 +222,7 @@ El reporte queda guardado y el trigger muestra "ya reportado". El jugador sigue 
 ### Caminos alternativos
 
 - **Share nativo no disponible (típicamente desktop)** — El texto se copia al portapapeles y se muestra un aviso breve "copiado". `[fuente: C-13, PRD §Supuestos]`
-- **Entrada a estadísticas desde `home`** — El jugador toca "ver estadísticas →" en el resumen "Tu progreso" o "./stats" en el header; llega a la misma pantalla.
+- **Entrada a estadísticas desde `home`** — El jugador toca "ver estadísticas →" en el panel "Tu progreso", la píldora de racha del header o "./stats"; llega a la misma pantalla. `[fuente: REQ-003, RF 4]`
 - **Primera visita, sin datos** — `estadisticas` aparece vacía (racha 0, heatmap sin actividad), sin error. `[fuente: C-05, C-34]`
 - **Racha viva o en 0** — La racha se muestra viva si el último día completado es hoy o ayer (contando días neutros); si no, 0 sin un job de reseteo. `[fuente: C-34]`
 - **Historial** — "Ver historial completo" pagina dentro de `estadisticas` (pregunta abierta 3 del product-map; si fuera pantalla propia, cambia el recorrido).

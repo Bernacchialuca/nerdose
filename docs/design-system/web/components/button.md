@@ -1,8 +1,8 @@
 ---
 component: button
-version: 1.0.0
+version: 1.2.0
 status: active
-last_updated: 2026-11-05
+last_updated: 2026-11-06
 source: docs/nerdose.html
 related: [link, card, banner, alert, game-header]
 ---
@@ -62,12 +62,14 @@ related: [link, card, banner, alert, game-header]
 | State | Descripción | Tokens |
 |---|---|---|
 | default | Estado base de cada variant | `button.{variant}.*` |
-| hover | **Pendiente — el prototipo no lo define.** Los botones no cambian en hover (el `a:hover` global no gana sobre el color inline, L264). | `button.hover.*` |
+| hover | **Derivado (S-011).** `primary`: fondo `accent.brand` → `accent.brand.hover` (`#7CF0B0`), texto `#06120B` (13,6:1). `accent`: fondo `game.{j}.accent` → `game.{j}.hover` con su on-accent (devdle 13,6 · bug-hunt 12,9 · big-o 11,4 · timeline 11,9 · grep-grid 10,3). `secondary`: borde `border.control` (`#2A323C`) → `border.control.hover` (`#3A424C`, `neutral.600`); el texto no cambia. Sin transición. Deshabilitado: sin hover. | `button.*.hover` |
 | focus | **Requisito** de accesibilidad: foco visible con ≥ 3:1. Único precedente del prototipo: `outline 2px solid <acento>; outline-offset: -2px` (L756). Estética global **Pendiente**. | `button.focus.outline` |
 | active | **Pendiente — el prototipo no lo define.** | — |
 | disabled (neutro) | Fondo `bg.control`, borde `border.control`, texto `text.disabled`, `cursor: not-allowed` (Compartir, L445) | `button.disabled.*` |
 | disabled (`accent` de Bug Hunt) | Fondo `#2A2416`, texto `#8A7856`, label que explica qué falta ("Elegí una línea") (L836) | `button.accent.disabled.*` |
 | loading | **Pendiente — el prototipo no lo define.** | — |
+
+**Implementación:** `buttonClass({ variant, size, game?, fullWidth?, disabled? })` de `@nerdose/ui` (`packages/ui/src/components/button-class.ts`) devuelve las clases para `<button>` y `<Link>`; el consumidor pone `aria-disabled="true"` y bloquea la acción. Se implementan `primary`, `secondary` y `accent` en `lg`/`md`; el resto de las variants queda para las stories que las consuman.
 
 **Decisión:** el prototipo solo define deshabilitado para Compartir (neutro) y Confirmar (ámbar). El estado deshabilitado de `primary`, `secondary` y `accent` fuera de Bug Hunt usa el **neutro** de Compartir. El deshabilitado tintado de otros juegos queda Pendiente.
 
@@ -141,3 +143,4 @@ related: [link, card, banner, alert, game-header]
 
 - 2026-11-05 v0.2.0 — Creación del spec a partir de `cta.ts` (sin radio, variants `primary`/`secondary`/`disabled`).
 - 2026-11-05 v1.0.0 — Reescrito desde el prototipo: radio 10px, tamaños `lg` (48) / `md` (44) / `share` / `sm` / `icon` (44×44), variants `accent`, `outline-tinted`, `ghost` e `icon`; `secondary` pasa a texto `text.primary` con borde `border.control` y peso 500; deshabilitado neutro y tintado. Se elimina la variant `disabled` (pasa a ser estado) y los tokens reservados `destructive`.
+- 2026-11-06 v1.2.0 — Hover derivado de `primary`, `accent` y `secondary` (con contraste medido) y helper `buttonClass` en `@nerdose/ui`.

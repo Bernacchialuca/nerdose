@@ -1,7 +1,7 @@
 # ui — Overview
 
 ## Proposito
-Paquete `@nerdose/ui` (`packages/ui`): lo visual compartido entre `web` y `admin`. Contiene los tokens (`tokens.css` con el bloque `@theme` de Tailwind v4: fondo `#0A0C0F`, acento `#3DDC84`, `--font-mono`, acentos por juego), los componentes compartidos (header, banners, share, stat cards), el helper `cn()` y `track()` (analítica opcional de ADR-014).
+Paquete `@nerdose/ui` (`packages/ui`): lo visual compartido entre `web` y `admin`. Contiene los tokens (`tokens.css` con el bloque `@theme` de Tailwind v4: fondo `#0A0C0F`, acento `#3DDC84`, `--font-mono`, acentos por juego), los componentes compartidos (header, banners, share, stat cards; desde REQ-003 también `Panel`, `Badge`, `StreakPill`, `StreakNumber`, `ProgressBar`, `TerminalWindow`, `SegmentedControl`), los helpers de clases `buttonClass` y `linkClass`, el helper `cn()` y `track()` (analítica opcional de ADR-014).
 
 ## Tipo de servicio
 Library en React 19 (TypeScript estricto), sin build propio: exporta su fuente. Vive en `packages/ui`. No importa `@nerdose/db` ni `@nerdose/core/notify`.
