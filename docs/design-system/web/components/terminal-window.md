@@ -95,3 +95,4 @@ Línea de racha sin racha o sin datos *(derivado)*: el valor va en `text.dim`, n
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: marco con sombra de caída, barra con puntos grises, cuerpo Mono 14/2 con filas de estado, separador punteado y cursor `▌`.
 - 2026-11-06 v1.2.0 — Cinco estados de fila derivados, racha sin datos en gris y layout con flex-wrap.
+- 2026-11-06 v1.2.1 — S-013: métrica de `done` sin el glifo de `history_label` y slug = `game_id`.

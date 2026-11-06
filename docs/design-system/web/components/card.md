@@ -137,3 +137,4 @@ La señal de `next` no es el color: es el CTA relleno y ser el destino de "Segui
 - 2026-11-05 v0.2.0 — Creación del spec desde `@nerdose/ui` (radio 16, padding 16, sin sombra).
 - 2026-11-05 v1.0.0 — Reescrito desde el prototipo: tarjeta de juego con miniatura de 150px, padding 20, badge, metadatos y CTA de ancho completo; variants `next` (anillo + glow, solo Big O), `placeholder`, `step`, `mini-stat`, `stat`, `metric`, `counter` y `game-stats`.
 - 2026-11-06 v1.2.0 — Variant `next` derivada para Devdle, Bug Hunt, Tech Timeline y Grep Grid; implementación en `@nerdose/ui`.
+- 2026-11-06 v1.2.1 — S-013: tarjeta de juego con `h3`, badge y metadatos en lista; `placeholder` como `li` de la grilla.

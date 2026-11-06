@@ -3,6 +3,31 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.4.0] - 2026-11-06
+
+**MINOR.** `apps/web` pasa la home a las piezas del DS (story S-013) y se documentan las piezas derivadas. Ningún valor definido cambia.
+
+### Agregado
+- `foundations/typography.md` 1.2.0: `type.display.hero` a 320px con corte de palabra y guion (`overflow-wrap: break-word`, `hyphens: auto`), sin reducir el tamaño; mismo criterio que `type.title.page`.
+- `foundations/grid.md` 1.2.0: las plantillas `auto-fit` de la home se escriben como `minmax(min(N, 100%), 1fr)` también para "Cómo funciona" (`min(240px, 100%)`, gap 16) y las tarjetas (`min(300px, 100%)`, gap 20).
+- `components/terminal-window.md`: la métrica de la fila `done` es el `history_label` sin el glifo inicial (`✓ 4/6` pasa a `4/6`) y el slug de cada fila es el `game_id`.
+- `components/panel.md` y `components/streak-number.md`: composición de "Tu progreso" con un solo panel `feature` (cabecera con link a estadísticas, número de racha y mini-stat de récord) y resumen sin datos en `type.caption` (Inter).
+- `components/card.md`: la tarjeta de juego usa `h3`, badge de estado, metadatos en lista y `▲` solo con racha mayor a 0; la `placeholder` es un `li` más de la grilla.
+- Formato de la fecha del eyebrow: `martes 3 nov` / `Tuesday Nov 3`, en UTC, sin coma ni punto final.
+
+### Código alineado con el spec
+- `apps/web` (home): hero con eyebrow, titular `type.display.hero`, botones `lg` y `TerminalWindow` con el estado del día; "Los desafíos de hoy" con barra segmentada, grilla `auto-fit`, tarjetas con miniatura, badge, `next` y tarjeta placeholder; "Tu progreso" con panel `feature`; "Cómo funciona" con 4 pasos y ancla `#como`; sin prefijos `lg:` ni grilla de 12 columnas.
+
+### Desalineaciones conocidas en código
+- Solo queda **Foco** (ver la v1.3.0).
+- Fuera de alcance hasta FG-3 / FG-10: heatmap, mini-stats de desafíos completados y % de victorias, panel de rachas por juego y O-02 desde la tarjeta anulada.
+
+### Notas para limpiar en otros docs
+- El wireframe `home.md` dibuja las tarjetas en otro orden (devdle, bug-hunt, big-o, timeline, grep-grid); el código y la story usan el orden de `GAME_IDS`.
+- La redacción del CA-9 de S-013 dice "se reduce" para el titular; en realidad se adapta con corte de palabra, sin reducir el tamaño.
+
+---
+
 ## [1.3.0] - 2026-11-06
 
 **MINOR.** `apps/web` pasa el shell, "Acerca de" y la 404 a las piezas del DS (story S-012) y se documentan las piezas derivadas. Ningún valor definido cambia.
