@@ -1,0 +1,95 @@
+{
+  "head": {
+    "vars": [
+      "item",
+      "label_en",
+      "label_es",
+      "description_en",
+      "description_es",
+      "sitelinks",
+      "article_en",
+      "article_es"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q476543"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mercurial"
+        },
+        "label_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Mercurial"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "cross-platform, distributed revision-control tool for software developers"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "herramienta de control de revisiones para desarrolladores de software"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "35"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mercurial"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Mercurial"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q186055"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Git"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "distributed version control system"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "software de control de versiones"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "85"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Git"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Git"
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,212 @@
+{
+  "dataset_version": "2026.11.07",
+  "generated_at": "2026-11-07T01:03:21.826Z",
+  "min_sitelinks": 10,
+  "counts": {
+    "terms": {
+      "approved": 505,
+      "rejected": 4185,
+      "by_category": {
+        "programming_languages": {
+          "approved": 131,
+          "rejected": 426
+        },
+        "git": {
+          "approved": 9,
+          "rejected": 29
+        },
+        "databases": {
+          "approved": 7,
+          "rejected": 82
+        },
+        "networking": {
+          "approved": 57,
+          "rejected": 615
+        },
+        "linux": {
+          "approved": 113,
+          "rejected": 413
+        },
+        "apis": {
+          "approved": 9,
+          "rejected": 140
+        },
+        "security": {
+          "approved": 22,
+          "rejected": 244
+        },
+        "software_engineering": {
+          "approved": 157,
+          "rejected": 2236
+        }
+      },
+      "by_reason": {
+        "invalid_chars": 2836,
+        "invalid_length": 187,
+        "missing_translation": 869,
+        "missing_article": 152,
+        "low_sitelinks": 123,
+        "excluded": 16,
+        "duplicate": 2
+      }
+    }
+  },
+  "parameters": {
+    "min_sitelinks": 10,
+    "min_approved_terms": 500,
+    "term_length": {
+      "min": 4,
+      "max": 12
+    },
+    "languages": [
+      "es",
+      "en"
+    ],
+    "classes": [
+      {
+        "wikidata_class": "Q9143",
+        "category": "programming_languages"
+      },
+      {
+        "wikidata_class": "Q165194",
+        "category": "apis"
+      },
+      {
+        "wikidata_class": "Q557770",
+        "category": "apis"
+      },
+      {
+        "wikidata_class": "Q3257930",
+        "category": "git"
+      },
+      {
+        "wikidata_class": "Q176165",
+        "category": "databases"
+      },
+      {
+        "wikidata_class": "Q3932296",
+        "category": "databases"
+      },
+      {
+        "wikidata_class": "Q82231",
+        "category": "databases"
+      },
+      {
+        "wikidata_class": "Q15836568",
+        "category": "networking"
+      },
+      {
+        "wikidata_class": "Q132364",
+        "category": "networking"
+      },
+      {
+        "wikidata_class": "Q1546066",
+        "category": "networking"
+      },
+      {
+        "wikidata_class": "Q131669",
+        "category": "linux"
+      },
+      {
+        "wikidata_class": "Q18343316",
+        "category": "linux"
+      },
+      {
+        "wikidata_class": "Q14663",
+        "category": "linux"
+      },
+      {
+        "wikidata_class": "Q14001",
+        "category": "security"
+      },
+      {
+        "wikidata_class": "Q4071928",
+        "category": "security"
+      },
+      {
+        "wikidata_class": "Q4681865",
+        "category": "security"
+      },
+      {
+        "wikidata_class": "Q181156",
+        "category": "software_engineering"
+      },
+      {
+        "wikidata_class": "Q271680",
+        "category": "software_engineering"
+      },
+      {
+        "wikidata_class": "Q1330336",
+        "category": "software_engineering"
+      },
+      {
+        "wikidata_class": "Q2904257",
+        "category": "software_engineering"
+      },
+      {
+        "wikidata_class": "Q8366",
+        "category": "software_engineering"
+      },
+      {
+        "wikidata_class": "Q175263",
+        "category": "software_engineering"
+      },
+      {
+        "wikidata_class": "Q192588",
+        "category": "databases"
+      },
+      {
+        "wikidata_class": "Q845739",
+        "category": "databases"
+      },
+      {
+        "wikidata_class": "Q6368",
+        "category": "networking"
+      },
+      {
+        "wikidata_class": "Q11288",
+        "category": "networking"
+      },
+      {
+        "wikidata_class": "Q14656",
+        "category": "linux"
+      },
+      {
+        "wikidata_class": "Q183427",
+        "category": "security"
+      },
+      {
+        "wikidata_class": "Q5375622",
+        "category": "security"
+      },
+      {
+        "wikidata_class": "Q631425",
+        "category": "security"
+      },
+      {
+        "wikidata_class": "Q188860",
+        "category": "software_engineering"
+      },
+      {
+        "wikidata_class": "Q783866",
+        "category": "software_engineering"
+      },
+      {
+        "wikidata_class": "Q13741",
+        "category": "software_engineering"
+      },
+      {
+        "wikidata_class": "Q235557",
+        "category": "software_engineering"
+      },
+      {
+        "wikidata_class": "Q37045",
+        "category": "software_engineering"
+      },
+      {
+        "wikidata_class": "Q1077784",
+        "category": "software_engineering"
+      }
+    ]
+  }
+}

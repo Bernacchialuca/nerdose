@@ -1,0 +1,29 @@
+# Lista de exclusión de import:banks.
+# Una entrada por línea: un término (A-Z, se compara en mayúsculas) o un wikidata_id (Q123).
+# Se ignoran las líneas vacías y las que empiezan con #.
+# Sirve para sacar términos ofensivos o demasiado genéricos sin tocar el código.
+
+# Revisión de la primera corrida: ofensivos, de otro dominio o demasiado genéricos.
+AIDS
+BRAINFUCK
+CHROMOSOME
+CINEMASCOPE
+IMAX
+POLYVISION
+TECHNISCOPE
+VISTAVISION
+BETAMAX
+HOLLYWOOD
+LYRICS
+NYCTOGRAPHY
+PROPHYLAXIS
+ASTURIX
+MATTER
+LIMBO
+TIME
+MORE
+TALK
+SOURCE
+STEP
+WALL
+VISION

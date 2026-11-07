@@ -57,7 +57,9 @@ describe('GameThumbnail', () => {
     const { container } = render(<GameThumbnail game="grep-grid" />);
     expect(container.firstElementChild).toHaveClass('grid-cols-7');
     expect(byClass(container, 'size-5.5')).toHaveLength(28);
-    const found = byClass(container, 'bg-game-grep-grid').map((n) => n.textContent).join('');
+    const found = byClass(container, 'bg-game-grep-grid')
+      .map((n) => n.textContent)
+      .join('');
     expect(found).toBe('MUTEX');
   });
 });
