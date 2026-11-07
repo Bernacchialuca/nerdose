@@ -18,3 +18,9 @@ All functions are pure and isomorphic; the clock is injected via `now`.
 ## secondsToReset
 - **Signature:** `secondsToReset(now: Date): number` - integer in 1..86400 (ceil)
 - **Usage:** `secondsToReset(now)`
+
+## nextStreak / liveStreak
+- **Location:** packages/core/src/streaks.ts
+- **Signature:** `nextStreak(input: StreakInput, day: string): number`; `liveStreak(input: StreakInput, today: string): number`; `StreakInput = { current, lastCompleted: string | null, prevActiveDay: string | null }`
+- **Rule:** alive if `lastCompleted !== null && (prevActiveDay === null || lastCompleted >= prevActiveDay)`; `max_*` is computed by the caller.
+- **Usage:** game: `nextStreak({ current: current_streak, lastCompleted: last_completed_date, prevActiveDay: prev_active_day }, D)`; global: same with `global_streak`, `last_active_date`, `prev_active_day_global`.

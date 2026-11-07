@@ -32,3 +32,13 @@ export function makeDefinition(id: GameId): FakeDefinition {
     historyLabel: (r) => (r.won ? '✓' : '✗'),
   };
 }
+
+export function makeWordDefinition(): FakeDefinition {
+  return {
+    ...makeDefinition('devdle'),
+    applyMove: (p, s, m, _now, ctx) =>
+      ctx.isValidWord(m.guess)
+        ? { state: { attempts: s.attempts + 1 }, feedback: { ok: m.guess === p.word } }
+        : { error: 'not_in_word_list' },
+  };
+}

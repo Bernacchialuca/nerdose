@@ -1,7 +1,7 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
-import { CODE_LANGUAGES, LOCALES, isGameId } from '../src/index';
-import type { CodeLanguage, GameId, Locale } from '../src/index';
+import { CODE_LANGUAGES, LOCALES, TERM_CATEGORIES, isGameId } from '../src/index';
+import type { CodeLanguage, GameId, Locale, TermCategory } from '../src/index';
 import { GAME_IDS } from '../src/game-definition';
 
 describe('shared enums', () => {
@@ -32,5 +32,39 @@ describe('shared enums', () => {
     expectTypeOf<CodeLanguage>().toEqualTypeOf<'js' | 'go' | 'java'>();
     const v: unknown = 'devdle';
     if (isGameId(v)) expectTypeOf(v).toEqualTypeOf<GameId>();
+  });
+});
+
+describe('TERM_CATEGORIES', () => {
+  it('lists the eight categories in fixed order (TS-16)', () => {
+    expect(TERM_CATEGORIES).toEqual([
+      'programming_languages',
+      'git',
+      'databases',
+      'networking',
+      'linux',
+      'apis',
+      'security',
+      'software_engineering',
+    ]);
+    expect(TERM_CATEGORIES).toHaveLength(8);
+  });
+
+  it('derives TermCategory and is read-only (TS-17)', () => {
+    expectTypeOf<TermCategory>().toEqualTypeOf<
+      | 'programming_languages'
+      | 'git'
+      | 'databases'
+      | 'networking'
+      | 'linux'
+      | 'apis'
+      | 'security'
+      | 'software_engineering'
+    >();
+    const mutate = (): void => {
+      // @ts-expect-error TERM_CATEGORIES is readonly
+      TERM_CATEGORIES.push('ai');
+    };
+    expectTypeOf(mutate).toBeFunction();
   });
 });
