@@ -23,6 +23,7 @@ describe('@nerdose/core package manifest', () => {
     expect(pkg.scripts.typecheck).toBe('tsc --noEmit');
     expect(pkg.scripts.test).toBe('vitest run');
     expect(pkg.dependencies.zod).toBeDefined();
+    expect(pkg.dependencies['pure-rand']).toBe('^8.4.2');
   });
 
   it('extends the base tsconfig (TS-2)', () => {

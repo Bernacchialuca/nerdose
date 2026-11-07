@@ -13,6 +13,10 @@ export function isGameId(value: unknown): value is GameId {
 
 export type MoveError = 'invalid_move' | 'not_in_word_list';
 
+export interface MoveContext {
+  isValidWord(word: string): boolean;
+}
+
 export interface GameDefinition<Payload, PublicView, State, Move, Feedback, Result, Stats> {
   id: GameId;
   version: number;
@@ -25,6 +29,7 @@ export interface GameDefinition<Payload, PublicView, State, Move, Feedback, Resu
     s: State,
     m: Move,
     now: Date,
+    ctx: MoveContext,
   ): { state: State; feedback: Feedback } | { error: MoveError };
   isFinished(s: State): boolean;
   result(p: Payload, s: State, locale: Locale): Result;
