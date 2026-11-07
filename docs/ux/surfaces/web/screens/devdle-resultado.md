@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.0"
-date: 2026-11-03
+version: "1.1"
+date: 2026-11-06
 ---
 
 # Pantalla: Devdle · Resultado
@@ -18,10 +18,10 @@ date: 2026-11-03
 ## Identidad
 
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
-- **JTBD / Propósito:** Ver el veredicto, la palabra con su definición, la distribución de intentos y compartir sin spoilers.
+- **JTBD / Propósito:** Ver el veredicto, la palabra con su categoría, definición y resumen, la distribución de intentos y las rachas, y compartir sin spoilers.
 - **Viewports:**
   - **mobile** — veredicto arriba, explicación en columna y «Compartir» antes de las salidas.
-  - **desktop** — explicación a la izquierda (7/12); rachas, «Compartir» y reporte a la derecha (5/12), y una fila de salidas al pie.
+  - **desktop** — explicación a la izquierda (7/12); distribución, rachas, «Compartir» y reporte a la derecha (5/12), y una fila de salidas al pie.
 
 ## Entrada y salida
 
@@ -29,13 +29,13 @@ date: 2026-11-03
 - `devdle-partida` · fin de partida (automático)
 - `home` · tarjeta «completado» (CTA «Ver resultado»)
 - URL directa `/devdle` con la Play terminada
-- O-02 · «Marcar como completado» (estado anulado)
+- O-02 · «Marcar como completado» (estado anulado, FG-6)
 
 **Salidas user-driven:**
-- A O-01 · «Reportar un problema»
+- A O-01 · «Reportar un problema» (cuando exista, FG-6)
 - A `home` · «Volver a los juegos»
-- A `estadisticas` · «Ver mis estadísticas»
-- A la siguiente `*-instrucciones` · «Siguiente juego»
+- A `estadisticas` · «Ver mis estadísticas» o botón «Estadísticas» del header
+- A la siguiente `*-instrucciones` · «Siguiente juego» (solo si hay otro juego pendiente hoy)
 
 **Salidas automáticas:**
 - Ninguna.
@@ -44,30 +44,27 @@ date: 2026-11-03
 
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
-| 1 | header | header | — | layout | ambos | viewport_overrides: desktop | Marca, #número del desafío del día e idioma |
-| 2 | nav-movil | nav-bar | — | navigation | solo mobile | — | Navegación principal compacta en mobile (en desktop va en el header) |
-| 3 | veredicto | heading | h1 | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: perdió, anulado | Veredicto y resultado de la partida |
-| 4 | alerta-anulado | alert | warning | feedback | ambos | visible_only_in_states: anulado | Aviso de anulación |
-| 5 | grilla-resultado | image | — | content | ambos | hidden_in_states: loading, error de sistema, anulado | Grilla de intentos jugados |
-| 6 | card-palabra | card | — | content | ambos | hidden_in_states: loading, error de sistema | Palabra, categoría, definición y resumen |
-| 7 | distribucion | chart | bar | content | ambos | hidden_in_states: loading, error de sistema, anulado | Stat propia: distribución de intentos (C-18) |
-| 8 | card-rachas | card | — | content | ambos | hidden_in_states: loading, error de sistema | Rachas del juego y global actualizadas |
-| 9 | btn-compartir | button | primary | input | ambos | hidden_in_states: loading, error de sistema, anulado | Comparte el resultado sin spoilers (emoji, nombre, #número, resultado, nerdose.dev) |
-| 10 | toast-copiado | toast | success | feedback | ambos | visible_only_in_states: success | Aviso tras copiar al portapapeles |
-| 11 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Abre O-01 para avisar que el desafío está mal |
-| 12 | cuenta-regresiva | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Cuenta regresiva al próximo desafío |
-| 13 | btn-siguiente | button | secondary | input | ambos | hidden_in_states: loading, error de sistema | Lleva al siguiente juego pendiente |
-| 14 | link-stats | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Ir a estadísticas |
-| 15 | link-volver | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Salida a la home |
-| 16 | loader | loader | — | feedback | ambos | visible_only_in_states: loading | Indicador de carga |
-| 17 | alerta-sistema | alert | error | feedback | ambos | visible_only_in_states: error de sistema | Error de carga con causa y salida |
-| 18 | btn-reintentar | button | secondary | input | ambos | visible_only_in_states: error de sistema | Reintentar la carga |
-| 19 | footer | footer | — | layout | ambos | — | Lema y `exit 0` (`site-footer`) |
+| 1 | header | header | game-header · finished | layout | ambos | — | Breadcrumb `> nerdose / devdle`, `#número`, Compartir activo, idioma y racha |
+| 2 | veredicto | heading | h1 | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: perdió, anulado | Veredicto y resultado de la partida |
+| 3 | alerta-anulado | alert | warning | feedback | ambos | visible_only_in_states: anulado | Aviso de anulación |
+| 4 | grilla-resultado | image | devdle.cell | content | ambos | hidden_in_states: loading, error de sistema, anulado | Tablero de los intentos jugados |
+| 5 | card-palabra | card | — | content | ambos | hidden_in_states: loading, error de sistema | Palabra, categoría, definición y resumen en el idioma activo |
+| 6 | distribucion | chart | devdle.distribution | content | ambos | hidden_in_states: loading, error de sistema, anulado | Stat propia: distribución de intentos 1–6 y derrotas (C-18) |
+| 7 | card-rachas | card | — | content | ambos | hidden_in_states: loading, error de sistema | Rachas de Devdle y global actualizadas |
+| 8 | btn-compartir | button | primary | input | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: success | Comparte el resultado sin spoilers |
+| 9 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Abre O-01 para avisar que el desafío está mal (FG-6) |
+| 10 | cuenta-regresiva | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Cuenta regresiva al próximo desafío |
+| 11 | btn-siguiente | button | secondary | input | ambos | hidden_in_states: loading, error de sistema, sin juegos pendientes | Lleva al siguiente juego pendiente |
+| 12 | link-stats | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Ir a estadísticas |
+| 13 | link-volver | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Salida a la home |
+| 14 | loader | loader | — | feedback | ambos | visible_only_in_states: loading | Indicador de carga |
+| 15 | alerta-sistema | alert | error | feedback | ambos | visible_only_in_states: error de sistema | Error de carga con causa y salida |
+| 16 | btn-reintentar | button | secondary | input | ambos | visible_only_in_states: error de sistema | Reintentar la carga |
+| 17 | footer | footer | — | layout | ambos | — | Lema y `exit 0` (`site-footer`) |
 
 ## Layout por viewport
 
 ### mobile · 400px
-- nav-movil
 - veredicto
 - alerta-anulado
 - loader
@@ -78,7 +75,6 @@ date: 2026-11-03
 - distribucion
 - card-rachas
 - btn-compartir
-- toast-copiado
 - link-reportar
 - cuenta-regresiva
 - btn-siguiente
@@ -93,7 +89,7 @@ date: 2026-11-03
 - btn-reintentar
 - row `resultado`
   - col 7/12: grilla-resultado, card-palabra
-  - col 5/12: distribucion, card-rachas, btn-compartir, toast-copiado, link-reportar
+  - col 5/12: distribucion, card-rachas, btn-compartir, link-reportar
 - row `salida`
   - col 4/12: cuenta-regresiva
   - col 4/12: btn-siguiente
@@ -102,74 +98,64 @@ date: 2026-11-03
 ## Contenido
 
 ### header
-- Texto/label: > nerdose / Devdle · #8 · ES|EN
+- Texto/label: > nerdose / devdle · #8 · [stats] [Compartir] ES|EN · 🔥 4
 - Icono: nada
-- Override desktop: content="> nerdose / Devdle     ./juegos   ./stats   ./about     #8     ES | EN"
-- Annotation: #número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline
-
-### nav-movil
-- Texto/label: —
-- Etiquetas: ./juegos · ./stats · ./about
-- Icono: nada
-- Annotation: nada
+- Annotation: `game-header` variant `finished` (REQ-004): Compartir activo con el acento del juego (misma acción que `btn-compartir`); «Estadísticas» → `estadisticas`; ES|EN cambia solo la definición y el resumen; píldora con la racha global ya actualizada. «Cómo se juega» no se muestra en el resultado. Sin nav global ni `nav-movil`
 
 ### veredicto
 - Texto/label: Ganaste en 4/6
-- Icono: nada
-- Annotation: nada
+- Icono: check
+- Annotation: banner `success` del DS («Ganaste») / `failure` al perder, sin drama; el veredicto se dice con texto además del color
 
 ### alerta-anulado
 - Texto/label: Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.
-- Icono: nada
-- Annotation: nada
+- Icono: warning
+- Annotation: la anulación llega con FG-6; en REQ-004 solo se respeta el estado al leer
 
 ### grilla-resultado
-- Texto/label: Tus intentos (grilla 4 × 5)
-- Asset: placeholder 5:4
+- Texto/label: Tus intentos · tablero 4 × 6 letras con feedback
+- Asset: placeholder 6:4
 - Icono: nada
-- Annotation: nada
+- Annotation: pattern `devdle.cell`, solo lectura; mismo símbolo + color + `aria-label` que en la partida
 
 ### card-palabra
 - Texto/label: Palabra del día: PARSER
-- Texto secundario: Categoría: concepto. Programa que analiza una secuencia de texto según una gramática. Resumen de Wikipedia con enlace a la fuente.
+- Texto secundario: Categoría: ingeniería de software · Programa que analiza una secuencia de texto según una gramática formal. · Resumen: primer párrafo de Wikipedia en el idioma activo, con enlace a la fuente (CC BY-SA).
 - Icono: nada
-- Annotation: nada
+- Annotation: palabra y categoría no cambian con el idioma; definición y resumen se recalculan en el idioma activo al cambiar ES|EN (CA 15)
 
 ### distribucion
-- Texto/label: Distribución de intentos
+- Texto/label: // tus intentos · racha 3
+- Etiquetas: 1 · 2 · 3 · 4 · 5 · 6 · X
+- Texto secundario: 12 jugadas · 92% victorias
 - Icono: nada
-- Annotation: nada
+- Annotation: pattern `devdle.distribution`, con los datos de `game_stats` (solo vienen con la Play terminada). Barras 1 a 6 y X (derrotas); la barra del intento de hoy se destaca con el acento, con el número visible en la barra (no solo el color)
 
 ### card-rachas
-- Texto/label: Rachas
-- Texto secundario: Devdle: 3 días · Global: 4 días
+- Texto/label: // rachas
+- Texto secundario: Devdle: 3 días · Global: 4 días · récord Devdle: 7
 - Icono: nada
-- Annotation: nada
+- Annotation: rachas que devuelve el cierre (perder también suma). Si el jugador reabre el resultado más tarde, se leen con la racha viva
 
 ### btn-compartir
 - Texto/label: Compartir
 - Icono: share
-- Annotation: share nativo del sistema; si no está disponible copia al portapapeles
-
-### toast-copiado
-- Texto/label: Copiado
-- Icono: nada
-- Annotation: nada
+- Annotation: share nativo del sistema; si no está, copia al portapapeles. Texto: «🟩 Devdle #8 · 4/6» (o «X/6»), una línea de 🟩🟨⬛ por intento y «nerdose.dev». Nunca la palabra ni la categoría
 
 ### link-reportar
 - Texto/label: Reportar un problema
 - Icono: warning
-- Annotation: si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)
+- Annotation: O-01 llega con FG-6: hasta entonces el enlace no se renderiza. Cuando exista, si ya reportó muestra «Ya reportado» (`already_reported`)
 
 ### cuenta-regresiva
 - Texto/label: Próximo desafío en 05:42:10
-- Icono: nada
-- Annotation: nada
+- Icono: clock
+- Annotation: al llegar a 0 recarga el día (Devdle vuelve a instrucciones del desafío nuevo)
 
 ### btn-siguiente
 - Texto/label: Siguiente juego
 - Icono: arrow-right
-- Annotation: nada
+- Annotation: lleva al próximo juego con desafío y sin completar; si no hay ninguno, no se muestra
 
 ### link-stats
 - Texto/label: Ver mis estadísticas
@@ -182,7 +168,7 @@ date: 2026-11-03
 - Annotation: nada
 
 ### loader
-- Texto/label: Cargando tu resultado de Devdle…
+- Texto/label: $ cargando tu resultado de devdle…
 - Icono: nada
 - Annotation: nada
 
@@ -197,9 +183,9 @@ date: 2026-11-03
 - Annotation: nada
 
 ### footer
-- Texto/label: > nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0
+- Texto/label: > nerdose — una plataforma, múltiples desafíos. · exit 0
 - Icono: nada
-- Annotation: `site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)
+- Annotation: `site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)
 
 ## Estados
 
@@ -212,7 +198,13 @@ date: 2026-11-03
 - Aplica: Sí (sub-estado de default)
 - Mensaje: No salió: X/6. Mostramos la palabra y su explicación.
 - Cambios:
-  - veredicto: content="No salió: X/6" (state_override)
+  - veredicto: content="No salió: X/6", icon="x", annotation="banner `failure`; perder también suma a la racha" (state_override)
+
+### sin juegos pendientes
+- Aplica: Sí (sub-estado de default)
+- Mensaje: Ganaste en 4/6. No te quedan juegos pendientes hoy.
+- Cambios:
+  - btn-siguiente: oculto en este estado (hidden_in_states)
 
 ### anulado
 - Aplica: Sí (sub-estado de default)
@@ -226,13 +218,13 @@ date: 2026-11-03
 
 ### success
 - Aplica: Sí (sub-estado de default)
-- Mensaje: Copiado: el resultado quedó en el portapapeles.
+- Mensaje: ✓ Copiado: pegalo donde quieras.
 - Cambios:
-  - toast-copiado: solo visible en este estado (visible_only_in_states)
+  - btn-compartir: content="✓ Copiado", icon="check", annotation="confirmación en el mismo botón (`role=status`) durante unos segundos; vuelve a «Compartir»" (state_override)
 
 ### loading
 - Aplica: Sí
-- Mensaje: Cargando tu resultado de Devdle…
+- Mensaje: $ cargando tu resultado de devdle…
 - Cambios:
   - veredicto: oculto en este estado (hidden_in_states)
   - grilla-resultado: oculto en este estado (hidden_in_states)
@@ -268,22 +260,23 @@ date: 2026-11-03
 ## Interacciones
 
 **Eventos:**
-- btn-compartir · on click → share nativo o copia al portapapeles
+- btn-compartir / Compartir del header · on click → share nativo o copia al portapapeles (estado success)
+- ES|EN · on change → recarga definición y resumen en el otro idioma; palabra, tablero y distribución no cambian
 - btn-siguiente · on click → siguiente juego pendiente
-- link-reportar · on click → abre O-01
+- link-reportar · on click → abre O-01 (FG-6)
 
 **Validaciones:**
 - No aplica: la pantalla no tiene campos de entrada.
 
 **Feedback:**
-- Si se copia al portapapeles: toast «Copiado» (estado success).
+- Si se copia al portapapeles: el botón pasa a «✓ Copiado» (estado success). Si el share falla, el botón vuelve a «Compartir» y se puede reintentar.
 
 ## Accesibilidad
 
-- **Orden de foco:** veredicto → explicación → btn-compartir → link-reportar → salidas.
-- **Landmarks y jerarquía:** `h1` es el veredicto; las secciones de explicación son `h2`. Landmarks: header, nav, main, footer.
+- **Orden de foco:** header → veredicto → explicación → distribución → btn-compartir → link-reportar → salidas.
+- **Landmarks y jerarquía:** `h1` es el veredicto; las secciones `//` (palabra, tus intentos, rachas) son `h2`. Landmarks: header (breadcrumb como `nav` con nombre), main, footer.
 - **Foco y teclado:** O-01 atrapa el foco y lo devuelve a `link-reportar`.
-- **Propio de esta composición:** El toast «Copiado» se anuncia con `role=status`; el veredicto se comunica con texto además del color.
+- **Propio de esta composición:** La confirmación «Copiado» se anuncia con `role=status`; el veredicto y la barra destacada de la distribución se comunican con texto además del color.
 
 ## Decisiones y descartes
 
@@ -291,14 +284,20 @@ date: 2026-11-03
 - `perdió` y `anulado` son sub-estados de la misma pantalla, no pantallas aparte (C-12, C-41).
 - En `anulado` se oculta «Compartir» y la stat propia: C-13 no cubre explícitamente la Play `voided` (pregunta 2 del product-map).
 - Se omiten los extras del prototipo que no están en el PRD.
+- REQ-004: header `game-header` (`finished`) con Compartir activo, como pide el DS; se mantiene también `btn-compartir` en el cuerpo porque en mobile las acciones del header quedan en otra fila, lejos de donde termina la lectura. Es la misma acción.
+- REQ-004: la distribución muestra 1–6 y X (derrotas) desde `game_stats` (decisión 10 del diseño técnico) con el pattern `devdle.distribution`.
+- REQ-004: la confirmación de copia es un cambio de estado de `btn-compartir` («✓ Copiado»), no un toast: el DS no tiene toast y el botón ya cubre el trabajo.
+- REQ-004: «Siguiente juego» solo aparece si queda un juego con desafío sin completar; mientras los otros 4 no tengan desafío (supuesto «Juegos distintos de Devdle»), no se muestra.
+- REQ-004: la categoría es una de las 8 del banco y la definición y el resumen siguen el idioma activo (CA 15).
 
 **Alternativas descartadas:**
-- «Compartir» en el header: se mantiene en el cuerpo para que no compita con la navegación (el header ya carga marca, nav, #número e idioma).
+- Compartir solo en el header: en mobile queda lejos del final de la lectura.
+- Toast «Copiado»: requiere un componente nuevo del DS para un solo uso.
 
 **Preguntas abiertas:**
 - Pregunta 2 del product-map: variantes de resultado anulado con y sin resultado propio.
-- Pregunta 5 del product-map: «Siguiente juego» o «Volver a los juegos».
+- Pregunta 5 del product-map: «Siguiente juego» o «Volver a los juegos» (REQ-004 solo fija que «Siguiente juego» se oculta cuando no hay pendientes).
 
 ## Trazabilidad
 
-- C-18, C-12, C-13, C-36, C-41 · flujos 1, 3, 4 y 5 de `user-flows.md`.
+- C-18, C-12, C-13, C-33, C-36, C-41 · REQ-004 (RF 12-16; CA 8-11, 14, 15) · flujos 1, 3, 4 y 5 de `user-flows.md`.

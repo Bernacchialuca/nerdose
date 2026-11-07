@@ -78,7 +78,7 @@ async move(gameId: string, player: Player, input: { challenge_number: number; mo
   const game = games.get(gameId);
   const parsed = game.moveSchema.safeParse(input.move);
   if (!parsed.success) throw new AppError('invalid_move');
-  // inside one transaction: applyMove -> isFinished -> result/score -> close Play + stats (see platform-day)
+  // inside one transaction: applyMove(p, s, m, now, { isValidWord: wordList.has }) -> isFinished -> result/score -> close Play + stats (see platform-day)
 }
 ```
 
@@ -106,3 +106,8 @@ Each game has a test that serializes `toPublic(payload)` and every pre-result re
 - **memory-cache**: today's challenges are served from cache.
 - **platform-day**: closing a Play and updating stats share one transaction.
 - **testing**: anti-spoiler contract tests per game.
+
+## Update (REQ-004)
+
+- `applyMove(p, s, m, now, ctx: MoveContext)`: `ctx = { isValidWord(word) }` is built by the `api` from `WordList.has`; games that do not need it ignore it.
+- `GameGenerator` declares `historySpec = { bank, lastUsedField, recentDays }` and `usedBankItems(payload)`; the `generator` builds a generic history `{ bankItems, recentChallenges }`, with no per-game logic.

@@ -52,7 +52,8 @@ export class TodayCache {
 
 ```ts
 // apps/api/src/infra/cache/word-list.ts
-import baseWords from '@nerdose/game-devdle/wordlist';   // words.txt as string[] (base list)
+// `./wordlist` is a data resource of the package (words.txt), read with node:fs, not a code entry
+const baseWords = (await readFile(wordlistPath, 'utf8')).split('\n').filter(Boolean);   // base list
 
 export class WordList {
   private set = new Set<string>(baseWords);

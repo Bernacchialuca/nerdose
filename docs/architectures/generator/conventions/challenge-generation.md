@@ -73,7 +73,9 @@ return null;
 
 ### `fill` body
 
-For each `game_id` and each date in `[today+1, today+14]` that has no challenge with `status IN ('approved','published','voided')`, run the pipeline. If tomorrow's date stays empty after all attempts, `UPSERT generation_failures` and claim + send the alert once.
+For each `game_id` and each date in `[max(today+1, LAUNCH_DATE), today+14]` that has no challenge with `status IN ('approved','published','voided')`, run the pipeline. If tomorrow's date stays empty after all attempts, `UPSERT generation_failures` and claim + send the alert once.
+
+> REQ-004: if `approve` collides with `uq_challenges_active_game_date`, the candidate becomes `rejected` (`verification.reason = 'duplicate_active'`) and the date counts as covered, with no error. `generation_failures` and the alert (C-49) arrive in FG-7: until then an exhausted date logs `ChallengeGenerationFailed` and counts in `job_runs.summary.missing`.
 
 ### Registry
 

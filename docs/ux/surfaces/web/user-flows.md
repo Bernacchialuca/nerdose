@@ -1,7 +1,7 @@
 ---
 document: UX User Flows
 surface: web
-version: "1.2"
+version: "1.3"
 date: 2026-11-06
 status: Draft - Punto de partida para discusión
 flows_count: 5
@@ -62,12 +62,14 @@ Todo lo que sigue es hipótesis a validar. Los slugs de pantalla y overlays (O-0
 - **Cookies bloqueadas** — `POST /api/session` responde bien pero el estado del día pedido después sigue sin sesión: aparece O-03 ("Activá las cookies para poder jugar"); los CTA de juego quedan deshabilitados y el catálogo, `estadisticas` y `acerca-de` siguen visibles. Recuperación: el jugador habilita cookies y recarga; la sesión se crea y los CTA se habilitan. `[fuente: C-02]`
 - **Límite de creación de sesiones (429)** — `home` pasa a "sesión no disponible": catálogo visible, CTA deshabilitados y **sin** O-03 (no es un problema del navegador). Recuperación: se reintenta solo en la próxima carga. `[fuente: REQ-002 CA 13]`
 - **No se puede cargar el estado del día (500, 429 o red)** — `home` muestra "No pudimos cargar los juegos de hoy. Revisá tu conexión e intentá de nuevo." con "Reintentar"; las 5 tarjetas siguen visibles con nombre y descripción, sin estado ni CTA. Nunca queda en blanco. `[fuente: REQ-002 CA 18]`
-- **Palabra fuera de la lista en Devdle** — Mensaje "no está en la lista" sin consumir intento (`not_in_word_list`); el jugador corrige y reintenta. Palabra de otra longitud: el front no la envía y avisa. `[fuente: C-15]`
+- **Palabra fuera de la lista en Devdle** — Hint "No está en la lista. Probá con otro término." bajo el tablero, sin consumir intento ni cambiar el tablero (`not_in_word_list`); el jugador corrige y reintenta. Palabra de otra longitud: el front no la envía y avisa "Faltan letras: el término tiene N." Caracteres que no son A–Z se ignoran con el aviso "Solo letras de la A a la Z." `[fuente: C-15; REQ-004 CA 6, 7]`
+- **Sin sesión al empezar o al jugar (`no_session`)** — No se crea la Play ni se procesa la jugada; aparece O-03 explicando que hace falta una única cookie funcional, con "Reintentar" (recrea la sesión y repite la acción). `[fuente: REQ-004 CA 19]`
+- **Desafío anulado a mitad de partida (`challenge_voided`)** — La jugada se rechaza, se muestra el aviso de anulación y el teclado desaparece; la racha no se ve afectada. `[fuente: REQ-004 CA 18]`
 - **Selección inválida** — En Bug Hunt, línea no elegible (firma, solo llaves) o `invalid_move` del servidor: la selección no se acepta y el jugador elige otra; no se pierde el intento. En Grep Grid, "no es una palabra" sin penalización y selección en reversa rechazada. `[fuente: C-30, C-19]`
 - **Toque accidental al confirmar** — La selección y la confirmación van en dos pasos, de modo que el jugador puede cambiar la selección antes de confirmar. `[fuente: decisión #26, NFR-U01]`
 - **Jugada sobre una Play ya terminada (`game_finished`)** — Por ejemplo, desde una segunda pestaña: el front carga `{juego}-resultado` con el resultado ya registrado. `[fuente: C-11]`
 - **Pérdida de conexión durante la partida** — El PRD supone conexión permanente y no hay modo offline; el copy y la pantalla de error no están definidos (product-map, Estados Globales). Recuperación a validar: al volver la conexión, el jugador recarga y retoma desde el estado del servidor (C-10), que es la fuente de verdad (validación 100% en el servidor). `[fuente: PRD §Supuestos, C-10]`
-- **Límite de jugadas (60/min por jugador)** — No está definido el mensaje; a definir en wireframes. `[fuente: C-11]`
+- **Límite de jugadas (60/min por jugador, 300/min por IP)** — HTTP 429: hint genérico "Vas muy rápido. Esperá unos segundos y probá de nuevo."; la jugada no se procesa ni consume intento. `[fuente: C-11; REQ-004 CA 20, NFR-S08]`
 
 ### Estado final
 
@@ -92,7 +94,7 @@ Todo lo que sigue es hipótesis a validar. Los slugs de pantalla y overlays (O-0
 
 1. El jugador está en `{juego}-partida` (Play `in_progress` del desafío `#N`) y la medianoche UTC pasa.
 2. Hace una jugada. El cliente envía `challenge_number = N`; el servidor responde `challenge_expired`: la jugada se rechaza. `[fuente: C-11]`
-3. El front carga el desafío nuevo (`#N+1`) y vuelve a `{juego}-instrucciones` con el nuevo `#número` en el header. `[fuente: product-map, estado `challenge_expired`]`
+3. El front carga el desafío nuevo (`#N+1`) y vuelve a `{juego}-instrucciones` con el nuevo `#número` en el header y el aviso "Empezó el desafío #N+1. La partida de ayer quedó sin terminar y no cuenta para tu racha." `[fuente: product-map, estado `challenge_expired`; REQ-004 supuesto «Jugada tardía», CA 17]`
 4. El jugador lee las instrucciones y toca "Empezar": se crea la Play del nuevo desafío (C-09) y sigue con el flujo 1 desde el paso 3.
 5. La Play vieja queda `in_progress` para siempre, sin contar para rachas ni estadísticas.
 
@@ -105,7 +107,7 @@ Todo lo que sigue es hipótesis a validar. Los slugs de pantalla y overlays (O-0
 
 ### Errores y recuperación
 
-- **Pérdida de la partida en curso al cambiar el día** — La jugada rechazada y la Play vieja no cuentan: el jugador pierde ese progreso y ese día no suma racha. Es una consecuencia de la regla del PRD, no un error del sistema. El PRD no define un aviso explícito que lo explique antes de volver a instrucciones; es una **decisión de diseño pendiente** (cómo comunicar "el día cambió" sin que parezca una falla). `[fuente: C-11; pregunta a validar]`
+- **Pérdida de la partida en curso al cambiar el día** — La jugada rechazada y la Play vieja no cuentan: el jugador pierde ese progreso y ese día no suma racha. Es una consecuencia de la regla del PRD, no un error del sistema. **Resuelto por REQ-004:** las instrucciones muestran el aviso informativo "día nuevo" (no un error) que explica que la partida anterior no cuenta. `[fuente: C-11; REQ-004 supuesto «Jugada tardía»]`
 - **Cambio de día en el último intento de Devdle, Bug Hunt, Big O o Tech Timeline** — Mismo caso: el intento no se registra. Hipótesis a validar: es el momento más costoso para el jugador y el de mayor riesgo de abandono. `[hipótesis | por-analogía]`
 - **Reintentos de recarga al llegar a 0 (`home`)** — La espera aleatoria de 0–3 s evita una avalancha de requests al servidor; si la recarga falla, `home` pasa al estado "error de carga" con "Reintentar" (REQ-002). `[fuente: ADR-008, PRD §Supuestos; REQ-002 CA 18]`
 - **Reloj del dispositivo desfasado (`home`)** — La cuenta regresiva solo descuenta los segundos que informa el servidor y se re-sincroniza en cada respuesta; el número del día nunca lo calcula el cliente. `[fuente: REQ-002, Riesgos]`
@@ -221,7 +223,9 @@ El reporte queda guardado y el trigger muestra "ya reportado". El jugador sigue 
 
 ### Caminos alternativos
 
-- **Share nativo no disponible (típicamente desktop)** — El texto se copia al portapapeles y se muestra un aviso breve "copiado". `[fuente: C-13, PRD §Supuestos]`
+- **Share nativo no disponible (típicamente desktop)** — El texto se copia al portapapeles y el botón confirma "✓ Copiado" (en Devdle, REQ-004). `[fuente: C-13, PRD §Supuestos]`
+- **Texto de Devdle** — "🟩 Devdle #N · 4/6" (o "X/6"), una línea de 🟩🟨⬛ por intento y "nerdose.dev"; nunca la palabra ni la categoría. `[fuente: REQ-004 RF 16, CA 14]`
+- **Sin juegos pendientes** — Si no queda otro juego con desafío sin completar, "Siguiente juego" no se muestra y la salida es "Volver a los juegos". `[fuente: REQ-004 supuesto «Juegos distintos de Devdle»]`
 - **Entrada a estadísticas desde `home`** — El jugador toca "ver estadísticas →" en el panel "Tu progreso", la píldora de racha del header o "./stats"; llega a la misma pantalla. `[fuente: REQ-003, RF 4]`
 - **Primera visita, sin datos** — `estadisticas` aparece vacía (racha 0, heatmap sin actividad), sin error. `[fuente: C-05, C-34]`
 - **Racha viva o en 0** — La racha se muestra viva si el último día completado es hoy o ayer (contando días neutros); si no, 0 sin un job de reseteo. `[fuente: C-34]`

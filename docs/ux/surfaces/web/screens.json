@@ -1724,27 +1724,8 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose / Devdle · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose / Devdle     ./juegos   ./stats   ./about     #8     ES | EN"
-            }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
+          "content": "> nerdose / devdle · #8 · [?] [stats] [Compartir] ES|EN · 🔥 4",
+          "annotation": "`game-header` variant `playing` (REQ-004): `devdle` en el acento del juego y `#número` (se oculta si el servidor no lo informa). «Cómo se juega» → reglas de esta pantalla · «Estadísticas» → estadisticas · Compartir deshabilitado («disponible al terminar la partida») · ES|EN inline · racha global. Sin nav global ni `nav-movil`: en mobile las acciones envuelven a su propia fila"
         },
         {
           "name": "titulo",
@@ -1765,11 +1746,22 @@
           ]
         },
         {
+          "name": "aviso-dia-nuevo",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "info",
+          "content": "Empezó el desafío #9. La partida de ayer quedó sin terminar y no cuenta para tu racha.",
+          "visible_only_in_states": [
+            "día nuevo"
+          ],
+          "annotation": "llega desde devdle-partida por `challenge_expired` (o al detectar el cambio de día); se descarta al tocar «Empezar» o al salir"
+        },
+        {
           "name": "alerta-sin-desafio",
           "type": "alert",
           "category": "feedback",
-          "content": "Hoy no hay desafío de Devdle. Es un día neutro: no suma ni corta tu racha.",
           "kind": "info",
+          "content": "Hoy no hay desafío de Devdle. Es un día neutro: no suma ni corta tu racha.",
           "visible_only_in_states": [
             "sin desafío hoy"
           ]
@@ -1778,18 +1770,18 @@
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "kind": "warning",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "visible_only_in_states": [
             "anulado"
           ],
-          "annotation": "el modal O-02 se abre solo al entrar en este estado"
+          "annotation": "el modal O-02 se abre solo al entrar en este estado; también si «Empezar» responde `challenge_voided`"
         },
         {
           "name": "reglas-titulo",
           "type": "heading",
           "category": "content",
-          "content": "Cómo se juega",
+          "content": "// cómo se juega",
           "level": "h2",
           "hidden_in_states": [
             "sin desafío hoy",
@@ -1803,20 +1795,21 @@
           "type": "card",
           "category": "content",
           "content": "1 · Adiviná el término",
-          "paragraph": "Es un término de tecnología escondido. Tenés 6 intentos para encontrarlo.",
+          "paragraph": "Es un término de tecnología de 4 a 12 letras, el mismo para todos hoy. Tenés 6 intentos para encontrarlo.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "el largo exacto se ve en el tablero al empezar (vista pública `length`)"
         },
         {
           "name": "paso-2",
           "type": "card",
           "category": "content",
           "content": "2 · Leé las pistas",
-          "paragraph": "Cada letra te dice si está en su lugar, en otro lugar o no está. Además del color, cada pista lleva un símbolo.",
+          "paragraph": "Cada letra te dice si está en su lugar (✓), en otro lugar (~) o no está (✗). Además del color, cada pista lleva su símbolo. Solo valen términos de la lista: si no está, no gastás intento.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
@@ -1829,20 +1822,21 @@
           "type": "card",
           "category": "content",
           "content": "3 · Mirá las categorías",
-          "paragraph": "Te mostramos las categorías posibles, sin la del día, para orientarte.",
+          "paragraph": "Te mostramos las 8 categorías del banco —son siempre las mismas— para orientarte. La del día, la definición y un resumen se revelan al terminar.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "la lista es fija y no filtra la categoría del día"
         },
         {
           "name": "aviso-conteo",
-          "type": "alert",
-          "category": "feedback",
-          "content": "La partida no cuenta hasta que la completes.",
-          "kind": "info",
+          "type": "paragraph",
+          "category": "content",
+          "level": "caption",
+          "content": "La partida no cuenta hasta que la completes. Ganar o perder suma a tu racha.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
@@ -1863,10 +1857,11 @@
             "loading",
             "error de sistema"
           ],
+          "annotation": "crea la Play (idempotente: tocar dos veces no crea otra)",
           "state_overrides": {
             "sin sesión": {
               "variant": "disabled",
-              "annotation": "deshabilitado mientras no hay sesión (O-03)"
+              "annotation": "deshabilitado mientras no hay sesión (O-03, `no_session`); no se crea ninguna Play"
             }
           }
         },
@@ -1874,11 +1869,12 @@
           "name": "banner-cookies",
           "type": "alert",
           "category": "feedback",
-          "content": "Activá las cookies para poder jugar",
           "kind": "warning",
+          "content": "Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».",
           "visible_only_in_states": [
             "sin sesión"
-          ]
+          ],
+          "annotation": "banner `warning` del shell (O-03); también si «Empezar» responde `no_session`"
         },
         {
           "name": "link-volver",
@@ -1891,7 +1887,7 @@
           "name": "loader",
           "type": "loader",
           "category": "feedback",
-          "content": "Cargando Devdle…",
+          "content": "$ cargando devdle…",
           "visible_only_in_states": [
             "loading"
           ]
@@ -1900,8 +1896,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos cargar el desafío de Devdle. Revisá tu conexión e intentá de nuevo.",
           "kind": "error",
+          "content": "No pudimos cargar el desafío de Devdle. Revisá tu conexión e intentá de nuevo.",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -1914,34 +1910,40 @@
           "variant": "secondary",
           "icon": "refresh",
           "visible_only_in_states": [
-            "error de sistema"
-          ]
+            "error de sistema",
+            "sin sesión"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "annotation": "recrea la sesión y reintenta «Empezar»"
+            }
+          }
         },
         {
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "content": "> nerdose — una plataforma, múltiples desafíos. · exit 0",
           "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
           "banner-cookies",
           "titulo",
           "meta",
+          "aviso-dia-nuevo",
           "alerta-sin-desafio",
           "alerta-anulado",
           "loader",
           "alerta-sistema",
-          "btn-reintentar",
           "reglas-titulo",
           "paso-1",
           "paso-2",
           "paso-3",
           "aviso-conteo",
           "btn-empezar",
+          "btn-reintentar",
           "link-volver"
         ],
         "desktop": [
@@ -1958,11 +1960,11 @@
                 "stack": [
                   "titulo",
                   "meta",
+                  "aviso-dia-nuevo",
                   "alerta-sin-desafio",
                   "alerta-anulado",
                   "loader",
                   "alerta-sistema",
-                  "btn-reintentar",
                   "reglas-titulo",
                   {
                     "row": "pasos",
@@ -1994,7 +1996,8 @@
                       {
                         "w": 6,
                         "stack": [
-                          "btn-empezar"
+                          "btn-empezar",
+                          "btn-reintentar"
                         ]
                       },
                       {
@@ -2018,6 +2021,10 @@
       "states": [
         {
           "name": "default",
+          "applies": true
+        },
+        {
+          "name": "día nuevo",
           "applies": true
         },
         {
@@ -2053,27 +2060,8 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose / Devdle · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose / Devdle     ./juegos   ./stats   ./about     #8     ES | EN"
-            }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
+          "content": "> nerdose / devdle · #8 · [?] [stats] [Compartir] ES|EN · 🔥 4",
+          "annotation": "`game-header` variant `playing` (REQ-004): «Cómo se juega» → leyenda de pistas de esta pantalla · «Estadísticas» → estadisticas · Compartir deshabilitado («disponible al terminar la partida») · ES|EN sin perder la partida · racha global. Sin nav global ni `nav-movil`"
         },
         {
           "name": "titulo",
@@ -2090,51 +2078,112 @@
           "name": "consigna",
           "type": "paragraph",
           "category": "content",
-          "content": "Adiviná el término de 5 letras. Intento 2 de 6.",
-          "level": "body",
+          "level": "caption",
+          "content": "// término técnico · 6 letras · intento 4 de 6",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "el largo sale de la vista pública (`length`, 4 a 12); al retomar muestra el intento real"
         },
         {
           "name": "grilla-intentos",
           "type": "image",
           "category": "content",
-          "content": "Grilla de 6 intentos × 5 letras · feedback por letra (color + símbolo)",
-          "aspect_ratio": "5:6",
+          "content": "Tablero de 6 intentos × 6 letras · intentos anteriores con su feedback, fila actual escrita, filas vacías",
+          "aspect_ratio": "6:6",
           "h": 260,
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
-          "annotation": "el feedback usa color + ícono/patrón (NFR-U04)"
+          "annotation": "pattern `devdle.cell` (`role=grid`): 4 a 12 columnas según el término; las celdas escalan al ancho. Símbolo + color (✓ ~ ✗, NFR-U04) y `aria-label` por celda. Al retomar se pintan los intentos guardados (C-10)"
         },
         {
-          "name": "alerta-palabra",
+          "name": "aviso-jugada",
           "type": "alert",
           "category": "feedback",
-          "content": "No está en la lista. Probá con otro término.",
           "kind": "warning",
+          "content": "No está en la lista. Probá con otro término.",
           "visible_only_in_states": [
-            "error de validación"
-          ]
+            "error de validación",
+            "faltan letras",
+            "límite de jugadas"
+          ],
+          "annotation": "hint del juego bajo el tablero (`role=status`): `not_in_word_list` no consume intento ni cambia el tablero. Caracteres fuera de A–Z se ignoran con «Solo letras de la A a la Z.»",
+          "state_overrides": {
+            "faltan letras": {
+              "content": "Faltan letras: el término tiene 6.",
+              "annotation": "el front no envía una palabra de otro largo (CA 7)"
+            },
+            "límite de jugadas": {
+              "content": "Vas muy rápido. Esperá unos segundos y probá de nuevo.",
+              "annotation": "HTTP 429 con mensaje genérico; la jugada no se procesa ni consume intento (NFR-S08)"
+            }
+          }
+        },
+        {
+          "name": "alerta-anulado",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "warning",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "visible_only_in_states": [
+            "anulado"
+          ],
+          "annotation": "aparece si una jugada responde `challenge_voided`; el teclado se oculta y no se aceptan más jugadas"
+        },
+        {
+          "name": "banner-cookies",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "warning",
+          "content": "Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».",
+          "visible_only_in_states": [
+            "sin sesión"
+          ],
+          "annotation": "banner `warning` (O-03); aparece si una jugada responde `no_session`. La jugada no se procesa"
+        },
+        {
+          "name": "teclado",
+          "type": "image",
+          "category": "input",
+          "content": "Teclado QWERTY en pantalla · letras, Enviar y Borrar",
+          "aspect_ratio": "10:3",
+          "h": 150,
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "pattern `devdle.key`: cada tecla refleja lo aprendido con texto/estilo además del color. Teclado físico igual (letras, Enter, Backspace); en mobile no abre el teclado del sistema. Enviar se deshabilita mientras se envía"
         },
         {
           "name": "pista-categorias",
-          "type": "card",
+          "type": "chips",
           "category": "content",
-          "content": "Categorías posibles",
-          "paragraph": "Lenguaje · Framework · Herramienta · Protocolo · Concepto",
+          "content": "// categorías posibles",
+          "items": [
+            "lenguajes",
+            "git",
+            "bases de datos",
+            "redes",
+            "linux",
+            "apis",
+            "seguridad",
+            "ingeniería de software"
+          ],
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "La categoría y la definición se revelan al terminar. — chips `neutral` informativos (no se tocan); lista fija, no filtra la del día"
         },
         {
           "name": "leyenda",
           "type": "chips",
           "category": "content",
+          "content": "// cómo leer las pistas",
           "items": [
             "✓ en su lugar",
             "~ en otro lugar",
@@ -2143,20 +2192,8 @@
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
-        },
-        {
-          "name": "teclado",
-          "type": "image",
-          "category": "content",
-          "content": "Teclado en pantalla · letras, Enter y Borrar",
-          "aspect_ratio": "10:4",
-          "h": 150,
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
           ],
-          "annotation": "en desktop se juega también con el teclado físico"
+          "annotation": "pattern `devdle.legend`; destino del botón «Cómo se juega» del header"
         },
         {
           "name": "link-reportar",
@@ -2164,17 +2201,17 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "O-01 llega con FG-6: hasta entonces no se renderiza. Si ya reportó muestra «Ya reportado» (`already_reported`)"
         },
         {
           "name": "loader",
           "type": "loader",
           "category": "feedback",
-          "content": "Cargando tu partida de Devdle…",
+          "content": "$ cargando tu partida de devdle…",
           "visible_only_in_states": [
             "loading"
           ]
@@ -2183,11 +2220,12 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.",
           "kind": "error",
+          "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.",
           "visible_only_in_states": [
             "error de sistema"
-          ]
+          ],
+          "annotation": "también cubre una jugada que falla por red o 500: el intento no se registra y el tablero vuelve al último estado del servidor"
         },
         {
           "name": "btn-reintentar",
@@ -2197,34 +2235,65 @@
           "variant": "secondary",
           "icon": "refresh",
           "visible_only_in_states": [
-            "error de sistema"
-          ]
+            "error de sistema",
+            "sin sesión"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "annotation": "recrea la sesión y reenvía la jugada"
+            }
+          }
         },
         {
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · exit 0",
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
+          "banner-cookies",
           "titulo",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
+          "alerta-anulado",
           "consigna",
           "grilla-intentos",
-          "alerta-palabra",
-          "pista-categorias",
-          "leyenda",
+          "aviso-jugada",
           "teclado",
+          {
+            "row": "pista",
+            "card": true,
+            "title": "// categorías posibles",
+            "cols": [
+              {
+                "w": 12,
+                "stack": [
+                  "pista-categorias"
+                ]
+              }
+            ]
+          },
+          {
+            "row": "leyenda",
+            "card": true,
+            "title": "// cómo leer las pistas",
+            "cols": [
+              {
+                "w": 12,
+                "stack": [
+                  "leyenda"
+                ]
+              }
+            ]
+          },
           "link-reportar"
         ],
         "desktop": [
-          "titulo",
+          "banner-cookies",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
@@ -2234,16 +2303,42 @@
               {
                 "w": 7,
                 "stack": [
+                  "titulo",
                   "consigna",
-                  "alerta-palabra",
-                  "grilla-intentos"
+                  "alerta-anulado",
+                  "grilla-intentos",
+                  "aviso-jugada"
                 ]
               },
               {
                 "w": 5,
                 "stack": [
-                  "pista-categorias",
-                  "leyenda",
+                  {
+                    "row": "pista",
+                    "card": true,
+                    "title": "// categorías posibles",
+                    "cols": [
+                      {
+                        "w": 12,
+                        "stack": [
+                          "pista-categorias"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "row": "leyenda",
+                    "card": true,
+                    "title": "// cómo leer las pistas",
+                    "cols": [
+                      {
+                        "w": 12,
+                        "stack": [
+                          "leyenda"
+                        ]
+                      }
+                    ]
+                  },
                   "teclado",
                   "link-reportar"
                 ]
@@ -2259,6 +2354,22 @@
         },
         {
           "name": "error de validación",
+          "applies": true
+        },
+        {
+          "name": "faltan letras",
+          "applies": true
+        },
+        {
+          "name": "límite de jugadas",
+          "applies": true
+        },
+        {
+          "name": "anulado",
+          "applies": true
+        },
+        {
+          "name": "sin sesión",
           "applies": true
         },
         {
@@ -2282,27 +2393,8 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose / Devdle · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose / Devdle     ./juegos   ./stats   ./about     #8     ES | EN"
-            }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
+          "content": "> nerdose / devdle · #8 · [stats] [Compartir] ES|EN · 🔥 4",
+          "annotation": "`game-header` variant `finished` (REQ-004): Compartir activo con el acento del juego (misma acción que btn-compartir) · «Estadísticas» → estadisticas · ES|EN cambia solo definición y resumen · racha global actualizada. Sin «Cómo se juega», sin nav global ni `nav-movil`"
         },
         {
           "name": "veredicto",
@@ -2310,13 +2402,17 @@
           "category": "content",
           "content": "Ganaste en 4/6",
           "level": "h1",
+          "icon": "check",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
+          "annotation": "banner `success` del DS; el veredicto se dice con texto además del color",
           "state_overrides": {
             "perdió": {
-              "content": "No salió: X/6"
+              "content": "No salió: X/6",
+              "icon": "x",
+              "annotation": "banner `failure`; perder también suma a la racha"
             },
             "anulado": {
               "content": "Desafío anulado"
@@ -2327,59 +2423,64 @@
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "kind": "warning",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "visible_only_in_states": [
             "anulado"
-          ]
+          ],
+          "annotation": "la anulación llega con FG-6; en REQ-004 solo se respeta el estado al leer"
         },
         {
           "name": "grilla-resultado",
           "type": "image",
           "category": "content",
-          "content": "Tus intentos (grilla 4 × 5)",
-          "aspect_ratio": "5:4",
+          "content": "Tus intentos · tablero 4 × 6 letras con feedback",
+          "aspect_ratio": "6:4",
           "h": 160,
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ]
+          ],
+          "annotation": "pattern `devdle.cell`, solo lectura; mismo símbolo + color + `aria-label` que en la partida"
         },
         {
           "name": "card-palabra",
           "type": "card",
           "category": "content",
           "content": "Palabra del día: PARSER",
-          "paragraph": "Categoría: concepto. Programa que analiza una secuencia de texto según una gramática. Resumen de Wikipedia con enlace a la fuente.",
+          "paragraph": "Categoría: ingeniería de software · Programa que analiza una secuencia de texto según una gramática formal. · Resumen: primer párrafo de Wikipedia en el idioma activo, con enlace a la fuente (CC BY-SA).",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "palabra y categoría no cambian con el idioma; definición y resumen siguen ES|EN (CA 15)"
         },
         {
           "name": "distribucion",
           "type": "chart",
           "category": "content",
-          "content": "Distribución de intentos",
+          "content": "// tus intentos · racha 3",
           "kind": "bar",
           "h": 140,
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ]
+          ],
+          "annotation": "pattern `devdle.distribution` (`game_stats`): barras 1 · 2 · 3 · 4 · 5 · 6 · X; la de hoy con el acento y su número visible. 12 jugadas · 92% victorias"
         },
         {
           "name": "card-rachas",
           "type": "card",
           "category": "content",
-          "content": "Rachas",
-          "paragraph": "Devdle: 3 días · Global: 4 días",
+          "content": "// rachas",
+          "paragraph": "Devdle: 3 días · Global: 4 días · récord Devdle: 7",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "rachas que devuelve el cierre (perder también suma); al reabrir se leen con la racha viva"
         },
         {
           "name": "btn-compartir",
@@ -2393,17 +2494,14 @@
             "error de sistema",
             "anulado"
           ],
-          "annotation": "share nativo del sistema; si no está disponible copia al portapapeles"
-        },
-        {
-          "name": "toast-copiado",
-          "type": "toast",
-          "category": "feedback",
-          "content": "Copiado",
-          "kind": "success",
-          "visible_only_in_states": [
-            "success"
-          ]
+          "annotation": "share nativo; si no está, copia al portapapeles. «🟩 Devdle #8 · 4/6» + una línea de 🟩🟨⬛ por intento + «nerdose.dev». Nunca la palabra ni la categoría",
+          "state_overrides": {
+            "success": {
+              "content": "✓ Copiado",
+              "icon": "check",
+              "annotation": "confirmación en el mismo botón (`role=status`) durante unos segundos; vuelve a «Compartir»"
+            }
+          }
         },
         {
           "name": "link-reportar",
@@ -2411,22 +2509,23 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "O-01 llega con FG-6: hasta entonces no se renderiza. Si ya reportó muestra «Ya reportado» (`already_reported`)"
         },
         {
           "name": "cuenta-regresiva",
           "type": "paragraph",
           "category": "content",
-          "content": "Próximo desafío en 05:42:10",
           "level": "caption",
+          "content": "Próximo desafío en 05:42:10",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "al llegar a 0 recarga el día (Devdle vuelve a instrucciones del desafío nuevo)"
         },
         {
           "name": "btn-siguiente",
@@ -2437,8 +2536,10 @@
           "icon": "arrow-right",
           "hidden_in_states": [
             "loading",
-            "error de sistema"
-          ]
+            "error de sistema",
+            "sin juegos pendientes"
+          ],
+          "annotation": "lleva al próximo juego con desafío y sin completar; si no hay ninguno, no se muestra"
         },
         {
           "name": "link-stats",
@@ -2466,7 +2567,7 @@
           "name": "loader",
           "type": "loader",
           "category": "feedback",
-          "content": "Cargando tu resultado de Devdle…",
+          "content": "$ cargando tu resultado de devdle…",
           "visible_only_in_states": [
             "loading"
           ]
@@ -2475,8 +2576,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
           "kind": "error",
+          "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -2496,13 +2597,12 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · exit 0",
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
           "veredicto",
           "alerta-anulado",
           "loader",
@@ -2513,7 +2613,6 @@
           "distribucion",
           "card-rachas",
           "btn-compartir",
-          "toast-copiado",
           "link-reportar",
           "cuenta-regresiva",
           "btn-siguiente",
@@ -2542,7 +2641,6 @@
                   "distribucion",
                   "card-rachas",
                   "btn-compartir",
-                  "toast-copiado",
                   "link-reportar"
                 ]
               }
@@ -2581,6 +2679,10 @@
         },
         {
           "name": "perdió",
+          "applies": true
+        },
+        {
+          "name": "sin juegos pendientes",
           "applies": true
         },
         {
@@ -6825,6 +6927,14 @@
     },
     {
       "src": "devdle-instrucciones",
+      "srcState": "día nuevo",
+      "srcBlock": "btn-empezar",
+      "dst": "devdle-partida",
+      "trigger": "Empezar",
+      "automatic": false
+    },
+    {
+      "src": "devdle-instrucciones",
       "srcState": "default",
       "srcBlock": "link-volver",
       "dst": "home",
@@ -6842,6 +6952,14 @@
     {
       "src": "devdle-partida",
       "srcState": "default",
+      "srcBlock": "teclado",
+      "dst": "devdle-resultado",
+      "trigger": "fin de partida",
+      "automatic": false
+    },
+    {
+      "src": "devdle-partida",
+      "srcState": "default",
       "srcBlock": "link-reportar",
       "dst": "o-01-reportar",
       "trigger": "Reportar un problema",
@@ -6850,10 +6968,16 @@
     {
       "src": "devdle-partida",
       "srcState": "default",
-      "srcBlock": "teclado",
       "dst": "devdle-resultado",
-      "trigger": "fin de partida",
-      "automatic": false
+      "trigger": "game_finished",
+      "automatic": true
+    },
+    {
+      "src": "devdle-partida",
+      "srcState": "default",
+      "dst": "devdle-instrucciones",
+      "trigger": "challenge_expired (día nuevo)",
+      "automatic": true
     },
     {
       "src": "devdle-resultado",
@@ -6886,6 +7010,13 @@
       "dst": "bug-hunt-instrucciones",
       "trigger": "Siguiente juego",
       "automatic": false
+    },
+    {
+      "src": "devdle-resultado",
+      "srcState": "default",
+      "dst": "devdle-instrucciones",
+      "trigger": "cuenta regresiva en 0",
+      "automatic": true
     },
     {
       "src": "bug-hunt-instrucciones",

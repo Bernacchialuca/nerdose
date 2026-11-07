@@ -79,7 +79,8 @@ pnpm --filter @nerdose/content import:banks
 - Only `import:banks` and `build:wordlist` may request `*.wikidata.org`, `*.wikipedia.org` or `*.wiktionary.org`, and runtime code never imports them. `api` and `generator` never request those domains.
 - Every request sends the `User-Agent` above.
 - JSON files are written ordered by `wikidata_id`, 2-space indentation, one item per block (diff-friendly); package tests verify it.
-- `import:banks` exits with an error if any v1 category (`programming_languages`, `frameworks`, `companies`, `operating_systems`, `hardware`, `video_games`) has fewer than 500 `approved` `terms` or fewer than 100 `approved` `timeline_facts`, and prints the counts.
+- `import:banks` exits with an error if there are fewer than 500 `approved` `terms` in total (not per category; `TermCategory` is the Devdle set) and prints the counts. `timeline_facts` is optional until FG-5 (its minimum of 100 applies from then); a missing `timeline_facts.json` is read as an empty list.
+- The exclusion list lives in `packages/content/data/exclusions.txt`.
 - `words.txt` has one word per line, uppercase, A-Z, 4-12 letters, alphabetically sorted, no duplicates.
 - `LICENSE-DATA.md` is always present with the CC BY-SA 4.0 and CC0 attribution.
 - Items are never curated by hand; sorting is by rule. A wrong text is handled by report, void and `rejected`, and `sync_banks` never revives it.

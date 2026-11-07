@@ -24,7 +24,7 @@ export interface GameDefinition<Payload, PublicView, State, Move, Feedback, Resu
 
   toPublic(p: Payload, locale: Locale): PublicView;          // sin solución
   initState(p: Payload, now: Date): State;
-  applyMove(p: Payload, s: State, m: Move, now: Date):
+  applyMove(p: Payload, s: State, m: Move, now: Date, ctx: MoveContext):
     { state: State; feedback: Feedback } | { error: MoveError };   // 'invalid_move' | 'not_in_word_list'
   isFinished(s: State): boolean;
   result(p: Payload, s: State, locale: Locale): Result;      // incluye solución y explicación
@@ -37,10 +37,15 @@ export interface GameDefinition<Payload, PublicView, State, Move, Feedback, Resu
 }
 
 // entrada ./generator
+export interface MoveContext { isValidWord(word: string): boolean }   // lo arma la api (WordList.has); los juegos que no lo usan lo ignoran
+
 export interface GameGenerator<Payload> {
-  generate(input: { date: string; seed: Uint8Array; history: HistoryItem[] }): Payload;
-  verify(p: Payload, ctx: VerifyContext): VerificationLog;   // { ok, checks[], reason? }
+  historySpec: { bank: 'terms' | 'timeline_facts' | null; lastUsedField: string; recentDays: number };
+  usedBankItems(p: Payload): string[];                       // ids del banco que consume el payload
+  generate(input: { date: string; seed: Uint8Array; history: GeneratorHistory }): Payload;
+  verify(p: Payload, history: GeneratorHistory): VerificationLog;   // { ok, checks[], reason? }
 }
+// GeneratorHistory = { bankItems (ítems approved con su last_used_*), recentChallenges (no rejected, [D - recentDays, D - 1]) }
 
 // entrada ./client
 //   Instructions, Game, Result (componentes React) y share(result, number): string

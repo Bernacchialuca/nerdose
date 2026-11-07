@@ -12,6 +12,12 @@ package: "@nerdose/content"
 
 The content banks (`terms`, `timeline_facts`) come from a dataset versioned in the repo and loaded by the `generator` at startup with the `sync_banks` job (ADR-016). No deployed service queries Wikimedia; the dataset is generated offline by the `import:banks` script and committed.
 
+## Update (REQ-004)
+
+- Only `terms` is loaded until FG-5; `timeline_facts.json` missing is an empty list.
+- A new `rejected` item whose `term` does not match `^[A-Z]{4,12}$` or already exists is not inserted and counts in `summary.skipped`. If the `wikidata_id` is already in the database, the `approved -> rejected` rule still applies.
+- Exclusion list: `packages/content/data/exclusions.txt`.
+
 ## When to use
 
 - The `sync_banks` job of the `generator`.

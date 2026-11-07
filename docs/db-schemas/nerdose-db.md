@@ -228,7 +228,7 @@ Table player_game_stats {
   played integer [not null, default: 0, note: 'Excluye plays voided']
   wins integer [not null, default: 0, note: 'Excluye plays voided']
   last_completed_date date [null]
-  extra jsonb [not null, default: `'{}'::jsonb`, note: 'Stats propias del juego (reduceStats). Excluye voided']
+  extra jsonb [not null, default: `'{}'::jsonb`, note: 'Stats propias del juego (reduceStats). Excluye voided. Devdle: { guesses: { "1": n, …, "6": n }, losses: n }']
 
   indexes {
     (player_id, game_id) [pk]
@@ -365,7 +365,7 @@ Table job_runs {
   status job_run_status [not null, default: 'running']
   started_at timestamptz [not null, default: `now()`]
   finished_at timestamptz [null]
-  summary jsonb [not null, default: `'{}'::jsonb`, note: "fill: { generated, approved, rejected, missing }; sync_banks: { dataset_version, inserted, updated, unchanged, kept_rejected }"]
+  summary jsonb [not null, default: `'{}'::jsonb`, note: "fill: { generated, approved, rejected, missing }; sync_banks: { dataset_version, inserted, updated, unchanged, kept_rejected, skipped }"]
 
   indexes {
     (job, started_at) [name: 'idx_job_runs_job_started_at']

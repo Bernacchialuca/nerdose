@@ -226,13 +226,14 @@ paths:
                 date: '2026-11-03'
                 number: 128
                 challenge_status: published
-                public_view: { length: 5, possible_categories: [programming_languages, databases, git] }
+                public_view: { length: 5, possible_categories: [programming_languages, git, databases, networking, linux, apis, security, software_engineering] }
                 play:
                   status: in_progress
                   state: { guesses: [ { guess: REACT, marks: [absent, present, absent, absent, absent] } ] }
                   score: null
                   code_language: null
                 result: null
+                game_stats: null
         '404': { $ref: '#/components/responses/NotFound' }
         '429': { $ref: '#/components/responses/RateLimited' }
 
@@ -271,7 +272,11 @@ paths:
                 play: { status: in_progress, state: { guesses: [] }, score: null, code_language: null }
         '401': { $ref: '#/components/responses/NoSession' }
         '403': { $ref: '#/components/responses/ForbiddenOrigin' }
-        '404': { $ref: '#/components/responses/NoChallengeToday' }
+        '404':
+          description: '`no_challenge_today` (sin desafío hoy) o `not_found` (juego sin paquete registrado)'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
         '409': { $ref: '#/components/responses/PlayConflict' }
         '415': { $ref: '#/components/responses/UnsupportedMediaType' }
         '422': { $ref: '#/components/responses/ValidationError' }
@@ -1472,11 +1477,15 @@ components:
     # ─────────── Gameplay: responses ───────────
     GameToday:
       type: object
-      required: [game_id, date, number, challenge_status, public_view, play, result]
+      required: [game_id, date, number, challenge_status, public_view, play, result, game_stats]
       properties:
         game_id: { $ref: '#/components/schemas/GameId' }
         date: { type: string, format: date }
-        number: { type: integer, minimum: 1 }
+        number:
+          type: integer
+          minimum: 1
+          nullable: true
+          description: null antes de `LAUNCH_DATE` (`challenge_status` es `none`)
         challenge_status: { $ref: '#/components/schemas/PublicChallengeStatus' }
         public_view:
           allOf: [ { $ref: '#/components/schemas/PublicView' } ]
@@ -1488,10 +1497,14 @@ components:
         result:
           allOf: [ { $ref: '#/components/schemas/Result' } ]
           nullable: true
+        game_stats:
+          allOf: [ { $ref: '#/components/schemas/GameStatsView' } ]
+          nullable: true
+          description: Solo si la Play terminó
 
     MoveResponse:
       type: object
-      required: [feedback, play, result, streaks]
+      required: [feedback, play, result, streaks, game_stats]
       properties:
         feedback: { $ref: '#/components/schemas/Feedback' }
         play:
@@ -1507,6 +1520,10 @@ components:
           description: Solo si la jugada cerró la partida
         streaks:
           allOf: [ { $ref: '#/components/schemas/Streaks' } ]
+          nullable: true
+          description: Solo si la jugada cerró la partida
+        game_stats:
+          allOf: [ { $ref: '#/components/schemas/GameStatsView' } ]
           nullable: true
           description: Solo si la jugada cerró la partida
 

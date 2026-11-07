@@ -1,7 +1,7 @@
 ---
 document: UX Product Map
 surface: web
-version: "1.2"
+version: "1.3"
 date: 2026-11-06
 status: Draft - Punto de partida para discusión
 audiences:
@@ -15,7 +15,7 @@ audiences:
 > eso vive en `user-flows.md`. Si el equipo lee esto y no hay objeciones,
 > el documento falló: debería generar fricción para provocar decisiones.
 
-**Base de diseño:** `docs/nerdose.html` (NFR-U07, decisión #31) y el Design System `docs/design-system/web/` (v1.1.0), que lo traduce a tokens y componentes. Donde el prototipo difiere del PRD en datos o reglas, manda el PRD; en estética, manda el prototipo (REQ-003). Viewports: `mobile` (primario, desde 320 px) y `desktop`. Fuentes de trazabilidad: `[fuente: PRD §requirements]` salvo que se indique otra.
+**Base de diseño:** `docs/nerdose.html` (NFR-U07, decisión #31) y el Design System `docs/design-system/web/` (v1.4.1), que lo traduce a tokens y componentes. Donde el prototipo difiere del PRD en datos o reglas, manda el PRD; en estética, manda el prototipo (REQ-003). Viewports: `mobile` (primario, desde 320 px) y `desktop`. Fuentes de trazabilidad: `[fuente: PRD §requirements]` salvo que se indique otra.
 
 ## Audiencias en esta Superficie
 
@@ -61,7 +61,7 @@ Todas las pantallas existen en ambos viewports. La excepción de contenido a ano
 
 Header común a todas las pantallas de plataforma (shell, `app-header` del DS): marca `> nerdose_`, navegación (`./juegos`, `./stats`, `./about`) **siempre dentro del header** y acomodada con `flex-wrap` en mobile (sin tira de navegación aparte, REQ-003), **`#número` del desafío del día** (reemplaza "desafío del 30/10" del prototipo; decisión #12, F-02), selector de idioma ES/EN segmentado y, en la home, la **píldora de racha global** que enlaza a `estadisticas` (REQ-003). El `#número` se oculta cuando el servidor no lo informa (antes del lanzamiento, REQ-002). En las pantallas de juego el header es el `game-header` del DS, con el nombre del juego; en las de resultado se suma el botón "Compartir". El footer (`site-footer`) es una sola línea, como el prototipo: el lema `> nerdose — una plataforma, múltiples desafíos.` y `exit 0`, en todas las pantallas. El aviso de privacidad (una única cookie funcional, sin datos personales ni cookies de terceros) vive en `acerca-de` (C-07, REQ-003).
 
-> **Pendiente de alineación (FG-3+):** las 15 pantallas de juego todavía declaran la tira `nav-movil` y el header de plataforma; se pasan al `game-header` del DS cuando se diseñe cada juego. REQ-003 alinea solo el shell de plataforma (`home`, `estadisticas`, `acerca-de`, `no-encontrado`) y el footer de todas.
+> **Pendiente de alineación (FG-4+):** las 12 pantallas de juego de Bug Hunt, Big O, Tech Timeline y Grep Grid todavía declaran la tira `nav-movil` y el header de plataforma; se pasan al `game-header` del DS cuando se diseñe cada juego. REQ-003 alineó el shell de plataforma (`home`, `estadisticas`, `acerca-de`, `no-encontrado`) y el footer de todas; **REQ-004 pasó las 3 de Devdle al `game-header`** (`playing` en instrucciones y partida, `finished` en resultado), sin `nav-movil`.
 
 | Slug | Bloques principales (de `docs/nerdose.html` ajustados al PRD) |
 |------|-----------------------------------------------------------------|
@@ -70,8 +70,8 @@ Header común a todas las pantallas de plataforma (shell, `app-header` del DS): 
 | `no-encontrado` | Código `404 · página no encontrada`; mensaje corto; CTA "Volver a los juegos". Mismo header y footer del shell (REQ-002) |
 | `acerca-de` | Qué es nerdose y cómo funciona; los 5 juegos; reglas de racha (completar cuenta, días neutros, anulados); atribución Wikipedia/Wikidata (CC BY-SA); aviso de privacidad (cookie funcional, sin cuenta) |
 | `*-instrucciones` | Nombre y acento del juego; reglas en 3 pasos (patrón "cómo se juega" del prototipo); duración estimada; estado del día de ese juego; CTA "Empezar" (crea la Play); aviso de que la partida no cuenta hasta completarla |
-| `devdle-partida` | Consigna y largo del término; grilla de 6 intentos con feedback por letra (color + ícono/patrón, NFR-U04); teclado en pantalla; pista: lista de categorías posibles (sin la del día); mensaje "no está en la lista" (C-15); leyenda de pistas; acceso a "Reportar un problema" |
-| `devdle-resultado` | Veredicto (ganó/perdió, `N/6` o `X/6`); la grilla de intentos; palabra, categoría, definición y resumen; distribución de intentos (stat propia, C-18); rachas actualizadas; "Compartir"; "Reportar un problema"; próximo desafío en `HH:MM:SS`; "Siguiente juego" |
+| `devdle-partida` | Consigna (`// término técnico · N letras · intento K de 6`); tablero de 6 intentos × 4 a 12 letras con feedback por letra (color + símbolo, NFR-U04), escalado al ancho; teclado en pantalla y físico; pista: las 8 categorías del banco, fijas todos los días (REQ-004); hint de jugada que no consume intento ("no está en la lista", faltan letras, caracteres no A–Z, demasiadas jugadas); leyenda de pistas; acceso a "Reportar un problema" (FG-6) |
+| `devdle-resultado` | Veredicto (ganó/perdió, `N/6` o `X/6`); la grilla de intentos; palabra, categoría, definición y resumen en el idioma activo; distribución de intentos 1–6 y X (stat propia, C-18); rachas actualizadas; "Compartir" en el header y en el cuerpo (confirmación "✓ Copiado" en el botón); "Reportar un problema" (FG-6); próximo desafío en `HH:MM:SS`; "Siguiente juego" solo si queda un juego pendiente (REQ-004) |
 | `bug-hunt-partida` | Especificación ("qué debería hacer"); código con numeración de líneas y pestañas JS/Go/Java; líneas no elegibles marcadas (firma, solo llaves); tests visibles; aviso "1 test oculto falla"; selección de línea y botón "Confirmar" (dos pasos, decisión #26); "Reportar un problema" |
 | `bug-hunt-resultado` | Veredicto y línea del bug; test que falla (input, esperado vs obtenido); fix como diff; explicación paso a paso; tipo de bug y mutación (del prototipo; **no figuran en C-32**, a validar); rachas; "Compartir"; "Reportar un problema" |
 | `big-o-partida` | Código con pestañas JS/Go/Java; pregunta "¿Cuál es la complejidad temporal (peor caso) de `f(n)`?"; 8 opciones fijas; "Confirmar" tras seleccionar; "Reportar un problema" |
@@ -110,8 +110,8 @@ El prototipo menciona "tu tiempo final es tu puntaje" en Grep Grid: **se elimina
 | Sin desafío hoy | Mensaje "sin desafío hoy" (día neutro, no afecta la racha) y "Volver a los juegos"; sin CTA "Empezar" | C-14 |
 | Anulado y sin Play | Overlay O-02 con "Marcar como completado" + "Volver a los juegos"; no se puede empezar | C-08, C-42 |
 | Anulado con Play `in_progress` previa | La Play pasó a `voided`: se muestra `*-resultado` con el aviso de anulación | C-41 |
-| Sin sesión | CTA "Empezar" deshabilitado y O-03 | C-02, C-09 |
-| `challenge_expired` | Si el día cambió con la pantalla abierta: se carga el desafío nuevo (nuevo `#número`), vuelve a instrucciones | C-11 |
+| Sin sesión | CTA "Empezar" deshabilitado, O-03 explicando la cookie funcional y "Reintentar" (recrea la sesión). También tras un `no_session` al empezar | C-02, C-09, REQ-004 (CA 19) |
+| `challenge_expired` / día nuevo | Si el día cambió con la pantalla abierta o una jugada respondió `challenge_expired`: se carga el desafío nuevo (nuevo `#número`), vuelve a instrucciones con el aviso "Empezó el desafío #N. La partida de ayer quedó sin terminar y no cuenta para tu racha." | C-11, REQ-004 (CA 17) |
 
 ## Inventario de Overlays
 
@@ -241,6 +241,7 @@ Juegos: `devdle`, `bug-hunt`, `big-o`, `timeline`, `grep-grid`.
 5. **¿Qué CTA lleva el resultado después del primer juego completado: "Siguiente juego" o "Volver a los juegos"?** El prototipo usa ambos en distintos juegos.
    - Si es "Siguiente juego" (próximo pendiente): `*-resultado` necesita la lista del día y un estado "todos completados" donde el CTA cambia a la cuenta regresiva.
    - Si es solo "Volver a los juegos": se simplifica el resultado, pero el jugador pasa siempre por `home` para encadenar partidas.
+   - **Avance de REQ-004:** en Devdle, "Siguiente juego" se oculta cuando no queda ningún juego con desafío sin completar (estado "sin juegos pendientes"); la decisión de fondo sigue abierta.
 
 6. **¿Se confirma el modal O-04 de "Rendirse" (y se agrega una confirmación al "Confirmar" de los otros juegos)?** El PRD pide selección y confirmación en dos pasos para evitar un toque accidental, pero no define confirmación para una acción irreversible como rendirse.
    - Si sí: se mantiene O-04 en el inventario.

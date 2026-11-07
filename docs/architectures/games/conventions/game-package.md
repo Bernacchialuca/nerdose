@@ -54,7 +54,8 @@ packages/games/<game_id>/
   "exports": {
     "./definition": "./src/definition/index.ts",
     "./client": "./src/client/index.ts",
-    "./generator": "./src/generator/index.ts"
+    "./generator": "./src/generator/index.ts",
+    "./wordlist": "./wordlist/words.txt"   // devdle only: data resource, not code
   }
 }
 ```
@@ -90,7 +91,7 @@ There is no root `.` export: a consumer must pick an entry.
 ## Rules
 
 - One package per game, with `game_id` in `devdle | grep-grid | timeline | big-o | bug-hunt` and package name `@nerdose/game-<game_id>`.
-- `exports` contains exactly `./definition`, `./client` and `./generator`. No default entry.
+- `exports` contains exactly `./definition`, `./client` and `./generator` (code entries). No default entry. A package may add a data resource (e.g. `./wordlist` in `devdle`, read only by the `api` with `node:fs`; `web` and `admin` never import it).
 - `./definition` implements every method of `GameDefinition`; `toPublic` never includes the solution (per-game list in ADR-006).
 - Every game has an anti-spoiler contract test: serialize `toPublic(payload)` and every pre-result response and verify none contains a solution value.
 - `moveSchema` is the single schema used by `web` (before sending) and by `api` (validation); a parse failure is `422 invalid_move`.
