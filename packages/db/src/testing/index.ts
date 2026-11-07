@@ -2,7 +2,15 @@ import { randomBytes } from 'node:crypto';
 
 import postgres, { type Sql } from 'postgres';
 
-import { createDb } from '../client';
+import { createDb, type Db } from '../client';
+import {
+  challenges,
+  players,
+  type Challenge,
+  type NewChallenge,
+  type NewPlayer,
+  type Player,
+} from '../schema';
 import { runMigrations } from '../migrations/run-migrations';
 
 const password = () => randomBytes(18).toString('base64url');
@@ -82,4 +90,31 @@ export async function truncateAll(owner: { sql: Sql }): Promise<void> {
     SELECT 'TRUNCATE TABLE ' || string_agg(format('%I', tablename), ', ') || ' RESTART IDENTITY CASCADE' AS stmt
     FROM pg_tables WHERE schemaname = 'public'`;
   if (row?.stmt) await sql.unsafe(row.stmt);
+}
+
+export async function makePlayer(db: Db, overrides: Partial<NewPlayer> = {}): Promise<Player> {
+  const [row] = await db
+    .insert(players)
+    .values({ ...overrides })
+    .returning();
+  return row!;
+}
+
+export async function makeChallenge(
+  db: Db,
+  values: Pick<NewChallenge, 'gameId' | 'date'> & Partial<NewChallenge>,
+): Promise<Challenge> {
+  const [row] = await db
+    .insert(challenges)
+    .values({
+      status: 'published',
+      number: 1,
+      payload: {},
+      generatorVersion: 'test',
+      seed: 'test',
+      attempt: 0,
+      ...values,
+    })
+    .returning();
+  return row!;
 }

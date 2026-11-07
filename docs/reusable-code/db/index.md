@@ -6,18 +6,29 @@ Package `@nerdose/db` (`packages/db`), entries `.` and `./testing`.
 - **createDb** (packages/db/src/client.ts) - Creates a postgres.js connection plus Drizzle instance for a role URL
 - **Db / Tx** (packages/db/src/client.ts) - Types of the Drizzle instance and of a transaction
 
-## Schema (5 items) - see schema.md
+## Schema (23 items) - see schema.md
 - **players** (packages/db/src/schema/identity.ts) - Drizzle table of anonymous players (`id`, `locale`, `preferredCodeLanguage`, `userId`, `createdAt`, `lastSeenAt`)
 - **localeEnum** (packages/db/src/schema/enums.ts) - PostgreSQL enum `locale`, built from `LOCALES` of `@nerdose/core`
 - **codeLanguageEnum** (packages/db/src/schema/enums.ts) - PostgreSQL enum `code_language`, built from `CODE_LANGUAGES` of `@nerdose/core`
 - **Player** (packages/db/src/schema/identity.ts) - Inferred select type of `players`
 - **NewPlayer** (packages/db/src/schema/identity.ts) - Inferred insert type of `players`
 
+- **gameIdEnum / termCategoryEnum** (packages/db/src/schema/enums.ts) - PostgreSQL enums `game_id` and `term_category`, built from `GAME_IDS` and `TERM_CATEGORIES` of `@nerdose/core`
+- **challengeStatusEnum / playStatusEnum / bankItemStatusEnum / jobRunStatusEnum** (packages/db/src/schema/enums.ts) - Literal PostgreSQL enums `challenge_status`, `play_status`, `bank_item_status`, `job_run_status`
+- **challenges** (packages/db/src/schema/publishing.ts) - Drizzle table of daily challenges (payload with solution, status lifecycle, seed); only the generator creates them
+- **plays / rejectedGuesses** (packages/db/src/schema/gameplay.ts) - Drizzle tables of a player's play per challenge and of rejected Devdle words
+- **playerGameStats / playerStats** (packages/db/src/schema/progress.ts) - Drizzle tables of per-game and global streak aggregates
+- **terms** (packages/db/src/schema/banks.ts) - Drizzle table of the Devdle/Grep term bank (unique `term` and `wikidataId`)
+- **jobRuns** (packages/db/src/schema/jobs.ts) - Drizzle table of generator job executions (`fill`, `sync_banks`)
+- **Challenge / NewChallenge, Play / NewPlay, RejectedGuess / NewRejectedGuess, PlayerGameStats / NewPlayerGameStats, PlayerStats / NewPlayerStats, Term / NewTerm, JobRun / NewJobRun** (packages/db/src/schema/*.ts) - Inferred select and insert types of the new tables
+
 ## Migrations (2 items) - see client.md
 - **runMigrations / MIGRATIONS_FOLDER** (packages/db/src/migrations/run-migrations.ts) - Applies the versioned migrations with the Drizzle migrator
 - **syncRolePasswords** (packages/db/src/migrations/sync-role-passwords.ts) - Validates role URLs and runs `ALTER ROLE ... PASSWORD`
 
-## Testing utils, entry `@nerdose/db/testing` (3 items) - see client.md
+## Testing utils, entry `@nerdose/db/testing` (5 items) - see client.md
 - **createRoles** (packages/db/src/testing/index.ts) - Creates the owner and service roles on a fresh container, returns the three URLs
 - **migrateAsOwner** (packages/db/src/testing/index.ts) - Applies migrations with the owner URL
 - **truncateAll** (packages/db/src/testing/index.ts) - Truncates every table in `public` restarting identities
+- **makePlayer** (packages/db/src/testing/index.ts) - Seeds a player with the owner connection
+- **makeChallenge** (packages/db/src/testing/index.ts) - Seeds a challenge (default `published`) with the owner connection
