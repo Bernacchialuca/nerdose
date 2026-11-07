@@ -1,0 +1,203 @@
+{
+  "head": {
+    "vars": [
+      "item",
+      "label_en",
+      "label_es",
+      "description_en",
+      "description_es",
+      "sitelinks",
+      "article_en",
+      "article_es"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q28865"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Python"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "general-purpose programming language"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "lenguaje de programación de alto nivel"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "164"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Python (programming language)"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Python"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q2005"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "JavaScript"
+        },
+        "label_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "JavaScript"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "high-level programming language"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "lenguaje de programación interpretado orientado a objetos"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "163"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "JavaScript"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "JavaScript"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q2407"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "C++"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "general-purpose programming language"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "lenguaje de programación de propósito general"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "149"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "C++"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "C++"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q251"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Java"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "object-oriented programming language"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "lenguaje de programación orientado a objetos"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "159"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Java (programming language)"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Java (lenguaje de programación)"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q47607"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "SQL"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "relational database language that allows to extract from data tables a series of records with selection, sorting and computation criteria, or to update, delete or add records"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "lenguaje de bases de datos relacionales"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "111"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "SQL"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "SQL"
+        }
+      }
+    ]
+  }
+}

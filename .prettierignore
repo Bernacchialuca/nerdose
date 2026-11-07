@@ -7,3 +7,4 @@ docs
 .claude
 packages/db/migrations
 packages/ui/src/tokens.css
+packages/content/data/
