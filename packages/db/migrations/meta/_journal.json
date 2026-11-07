@@ -15,6 +15,13 @@
       "when": 1793836875747,
       "tag": "0001_players",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794011188493,
+      "tag": "0002_gameplay_and_banks",
+      "breakpoints": true
     }
   ]
 }
