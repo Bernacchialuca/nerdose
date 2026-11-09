@@ -1,0 +1,69 @@
+{
+  "dataset_version": "2026.12.01",
+  "generated_at": "2026-11-06T22:10:00.000Z",
+  "min_sitelinks": 20,
+  "counts": {
+    "terms": {
+      "approved": 1,
+      "rejected": 0,
+      "by_category": {
+        "programming_languages": {
+          "approved": 1,
+          "rejected": 0
+        },
+        "git": {
+          "approved": 0,
+          "rejected": 0
+        },
+        "databases": {
+          "approved": 0,
+          "rejected": 0
+        },
+        "networking": {
+          "approved": 0,
+          "rejected": 0
+        },
+        "linux": {
+          "approved": 0,
+          "rejected": 0
+        },
+        "apis": {
+          "approved": 0,
+          "rejected": 0
+        },
+        "security": {
+          "approved": 0,
+          "rejected": 0
+        },
+        "software_engineering": {
+          "approved": 0,
+          "rejected": 0
+        }
+      },
+      "by_reason": {
+        "invalid_chars": 0,
+        "invalid_length": 0,
+        "missing_translation": 0,
+        "missing_article": 0,
+        "low_sitelinks": 0,
+        "excluded": 0,
+        "duplicate": 0
+      }
+    }
+  },
+  "parameters": {
+    "min_sitelinks": 20,
+    "min_approved_terms": 500,
+    "term_length": {
+      "min": 4,
+      "max": 12
+    },
+    "languages": ["es", "en"],
+    "classes": [
+      {
+        "wikidata_class": "Q9143",
+        "category": "programming_languages"
+      }
+    ]
+  }
+}

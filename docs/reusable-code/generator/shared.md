@@ -22,3 +22,15 @@ Same shape as the api equivalents (`docs/reusable-code/api/shared.md`), copied p
 - **Location:** apps/generator/src/infra/database/db.ts
 - **Signature:** `createDatabase(url: string): { db, sql }`; `type Sql`
 - **Usage:** `const { sql } = createDatabase(env.DATABASE_URL)`; closed by the shutdown handler
+
+## Clock / systemClock
+- **Location:** apps/generator/src/shared/clock.ts
+- **Signature:** `type Clock = { now(): Date }`; `systemClock: Clock`
+- **Description:** injectable time source; tests pass a fixed clock.
+- **Usage:** `const now = clock.now()`
+
+## addDays / maxDate
+- **Location:** apps/generator/src/shared/dates.ts
+- **Signature:** `addDays(date: string, days: number): string`; `maxDate(a: string, b: string): string`
+- **Description:** UTC day arithmetic on `YYYY-MM-DD` strings, no clock.
+- **Usage:** `addDays('2026-12-31', 1) // '2027-01-01'`

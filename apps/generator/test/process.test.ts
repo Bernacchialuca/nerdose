@@ -1,11 +1,28 @@
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { afterEach, describe, expect, inject, it } from 'vitest';
+import { loadDataset } from '@nerdose/content';
+import { challenges, createDb, jobRuns, terms } from '@nerdose/db';
+import { truncateAll } from '@nerdose/db/testing';
+import { today } from '@nerdose/core';
+import { asc, eq } from 'drizzle-orm';
+import { afterAll, afterEach, beforeEach, describe, expect, inject, it } from 'vitest';
 
 import { freePort, silentServer } from './helpers/net';
 import { startGenerator } from './helpers/process';
 
 const CWD = fileURLToPath(new URL('..', import.meta.url));
+const SECRET = 'test-secret-0123456789abcdef0123456789';
+const owner = createDb(inject('ownerUrl'), { max: 2 });
+const startEnv = (extra: Record<string, string> = {}) => ({
+  DATABASE_URL: inject('generatorUrl'),
+  LAUNCH_DATE: '2026-01-01',
+  GENERATOR_SECRET: SECRET,
+  ...extra,
+});
+
+beforeEach(() => truncateAll(owner));
+afterAll(() => owner.sql.end());
+
 let running: ReturnType<typeof startGenerator> | undefined;
 const closers: Array<() => Promise<void>> = [];
 
@@ -30,31 +47,90 @@ describe('proceso del generator', () => {
     expect(result.stdout).not.toContain('Scheduler started');
   });
 
-  it('arranca con la base disponible: rol y scheduler sin jobs', async () => {
+  it('aborta sin LAUNCH_DATE, nombrando la variable', () => {
+    const result = spawnSync(process.execPath, ['--import', 'tsx', 'src/index.ts'], {
+      cwd: CWD,
+      env: {
+        PATH: process.env.PATH,
+        NODE_ENV: 'test',
+        DATABASE_URL: inject('generatorUrl'),
+        GENERATOR_SECRET: SECRET,
+      },
+      encoding: 'utf8',
+      timeout: 60_000,
+    });
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toContain('LAUNCH_DATE');
+    expect(result.stdout).not.toContain('Scheduler started');
+  });
+
+  it('arranca en orden: rol, sync_banks, fill y scheduler', async () => {
     const url = inject('generatorUrl');
-    running = startGenerator({ DATABASE_URL: url });
+    running = startGenerator(startEnv());
     const started = await running.waitForLog(isStarted);
-    expect(started.jobs).toBe(0);
+    expect(started.jobs).toBe(1);
     const all = running.parsed();
-    const roleIndex = all.findIndex((line) => line.db_role === 'nerdose_generator');
-    expect(roleIndex).toBeGreaterThanOrEqual(0);
-    expect(roleIndex).toBeLessThan(all.findIndex(isStarted));
-    expect(all.some((line) => 'job' in line)).toBe(false);
-    const password = new URL(url).password;
+    const indexOf = (predicate: (line: Record<string, unknown>) => boolean) =>
+      all.findIndex(predicate);
+    const role = indexOf((l) => l.db_role === 'nerdose_generator');
+    const sync = indexOf(
+      (l) => l.job === 'sync_banks' && l.msg === 'Job finished' && l.status === 'success',
+    );
+    const fill = indexOf(
+      (l) => l.job === 'fill' && l.msg === 'Job finished' && l.status === 'success',
+    );
+    const scheduler = indexOf(isStarted);
+    expect(role).toBeGreaterThanOrEqual(0);
+    expect(role).toBeLessThan(sync);
+    expect(sync).toBeLessThan(fill);
+    expect(fill).toBeLessThan(scheduler);
+
+    const approvedTerms = await owner.db.select().from(terms).where(eq(terms.status, 'approved'));
+    expect(approvedTerms).toHaveLength(loadDataset().manifest.counts.terms.approved);
+    const runs = await owner.db.select().from(jobRuns).orderBy(asc(jobRuns.startedAt));
+    expect(runs.map((r) => [r.job, r.status])).toEqual([
+      ['sync_banks', 'success'],
+      ['fill', 'success'],
+    ]);
+    const fillStart = runs[1]!.startedAt;
+    const expected = Array.from({ length: 14 }, (_, i) => {
+      const day = new Date(`${today(fillStart)}T00:00:00.000Z`);
+      day.setUTCDate(day.getUTCDate() + i + 1);
+      return day.toISOString().slice(0, 10);
+    });
+    const rows = await owner.db
+      .select()
+      .from(challenges)
+      .where(eq(challenges.status, 'approved'))
+      .orderBy(asc(challenges.date));
+    expect(rows.every((r) => r.gameId === 'devdle')).toBe(true);
+    expect(rows.map((r) => r.date)).toEqual(expected);
+
     const raw = running.lines().join('\n');
-    expect(raw).not.toContain(password);
+    expect(raw).not.toContain(SECRET);
+    expect(raw).not.toContain(new URL(url).password);
     expect(raw).not.toContain(url);
   });
 
-  it('se apaga con SIGTERM y código 0', async () => {
-    running = startGenerator({ DATABASE_URL: inject('generatorUrl') });
+  it('se apaga con SIGTERM, código 0 y sin locks tomados', async () => {
+    running = startGenerator(startEnv());
     await running.waitForLog(isStarted);
     expect(await running.stop('SIGTERM')).toBe(0);
-    expect(running.parsed()).toContainEqual(expect.objectContaining({ msg: 'Shutdown complete' }));
+    expect(running.parsed().filter((l) => l.msg === 'Shutdown complete')).toHaveLength(1);
+    const reserved = await owner.sql.reserve();
+    try {
+      for (const key of [7001, 7002]) {
+        const [row] = await reserved<{ l: boolean }[]>`SELECT pg_try_advisory_lock(${key}) AS l`;
+        expect(row?.l).toBe(true);
+        await reserved`SELECT pg_advisory_unlock(${key})`;
+      }
+    } finally {
+      reserved.release();
+    }
   });
 
   it('un SIGTERM repetido no reinicia el apagado', async () => {
-    running = startGenerator({ DATABASE_URL: inject('generatorUrl') });
+    running = startGenerator(startEnv());
     await running.waitForLog(isStarted);
     running.kill('SIGTERM');
     running.kill('SIGTERM');
@@ -78,7 +154,7 @@ describe('proceso del generator', () => {
   ])('con la base %s sale con código 1', async (_name, makeUrl) => {
     const url = await makeUrl();
     const start = Date.now();
-    running = startGenerator({ DATABASE_URL: url });
+    running = startGenerator(startEnv({ DATABASE_URL: url }));
     expect(await running.exited).toBe(1);
     expect(Date.now() - start).toBeLessThan(10_000);
     const all = running.parsed();

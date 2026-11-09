@@ -1,0 +1,18 @@
+[
+  {
+    "wikidata_id": "Q100",
+    "term": "abc",
+    "category": "programming_languages",
+    "definition": {
+      "es": "def es",
+      "en": "def en"
+    },
+    "summary": {
+      "es": "sum es",
+      "en": "sum en"
+    },
+    "sitelinks": 50,
+    "status": "approved",
+    "rejection_reason": null
+  }
+]

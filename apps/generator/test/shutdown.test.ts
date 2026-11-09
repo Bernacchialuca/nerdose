@@ -68,4 +68,28 @@ describe('createShutdownHandler', () => {
     expect(all.at(-1)).toMatchObject({ msg: 'Shutdown complete' });
     expect(exit).toHaveBeenCalledWith(0);
   });
+
+  it('espera a los jobs en curso antes de cerrar la base', async () => {
+    const { logger } = captureLogger();
+    let release!: () => void;
+    const idle = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const end = vi.fn(() => Promise.resolve());
+    const exit = vi.fn();
+    const done = createShutdownHandler({
+      logger,
+      controller: new AbortController(),
+      scheduler: { stop: vi.fn() },
+      tracker: { idle: () => idle },
+      sql: { end },
+      exit,
+    })();
+    await new Promise((resolve) => setImmediate(resolve));
+    expect(end).not.toHaveBeenCalled();
+    release();
+    await done;
+    expect(end).toHaveBeenCalledTimes(1);
+    expect(exit).toHaveBeenCalledExactlyOnceWith(0);
+  });
 });

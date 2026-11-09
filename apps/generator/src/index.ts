@@ -1,9 +1,13 @@
 import { loadEnv, loadLocalEnvFile } from '@/config/env';
 import { createDatabase } from '@/infra/database/db';
 import { verifyDbRole } from '@/infra/database/verify-role';
-import { startScheduler } from '@/scheduler/scheduler';
+import { generatorRegistry } from '@/games/registry';
+import { createJobTracker } from '@/scheduler/job-tracker';
+import type { Scheduler } from '@/scheduler/scheduler';
+import { systemClock } from '@/shared/clock';
 import { createLogger } from '@/shared/logger';
 import { createShutdownHandler } from '@/shared/shutdown';
+import { runStartup } from '@/startup';
 
 loadLocalEnvFile();
 
@@ -17,7 +21,7 @@ try {
 
 if (env) {
   const logger = createLogger(env);
-  const { sql } = createDatabase(env.DATABASE_URL);
+  const { db, sql } = createDatabase(env.DATABASE_URL);
   let dbReady = true;
   try {
     await verifyDbRole(sql, logger);
@@ -30,9 +34,26 @@ if (env) {
 
   if (dbReady) {
     const controller = new AbortController();
-    const scheduler = startScheduler({ logger });
-    const shutdown = createShutdownHandler({ logger, controller, scheduler, sql });
+    const tracker = createJobTracker();
+    const running: { scheduler?: Scheduler } = {};
+    const shutdown = createShutdownHandler({
+      logger,
+      controller,
+      scheduler: { stop: () => running.scheduler?.stop() },
+      tracker,
+      sql,
+    });
     process.on('SIGTERM', () => void shutdown());
     process.on('SIGINT', () => void shutdown());
+    running.scheduler = await runStartup({
+      sql,
+      db,
+      logger,
+      clock: systemClock,
+      signal: controller.signal,
+      tracker,
+      env,
+      registry: generatorRegistry,
+    });
   }
 }

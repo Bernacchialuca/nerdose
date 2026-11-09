@@ -22,3 +22,20 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 - **Location:** apps/generator/test/global-setup.ts
 - **Description:** starts `postgres:16-alpine`, runs `createRoles` + `migrateAsOwner` from `@nerdose/db/testing`, provides `ownerUrl` and `generatorUrl`
 - **Usage:** `import { inject } from 'vitest'; const url = inject('generatorUrl')`
+
+## setupTestDb
+- **Location:** apps/generator/test/helpers/db.ts
+- **Signature:** `setupTestDb(): { owner, svc, reset(), cleanup() }`
+- **Description:** owner-role and `nerdose_generator`-role connections to the shared container; `reset()` truncates every table.
+- **Usage:** `const t = setupTestDb(); beforeEach(() => t.reset()); afterAll(() => t.cleanup())`
+
+## insertTerms / BANK16
+- **Location:** apps/generator/test/helpers/bank.ts
+- **Signature:** `insertTerms(ownerDb, specs: TermSpec[])`; `BANK16: TermSpec[]`
+- **Description:** inserts approved `terms` fixtures (`dataset_version: 'test'`); `BANK16` has 2 terms per category.
+- **Usage:** `await insertTerms(t.owner.db, BANK16)`
+
+## Dataset fixtures
+- **Location:** apps/generator/test/fixtures/datasets/{v1,v2,invalid,dup-rejected,conflict}
+- **Description:** valid `manifest.json` + `terms.json` pairs for `sync_banks` scenarios, loadable with `loadDataset(dir)`.
+- **Usage:** `loadDataset(fileURLToPath(new URL('../fixtures/datasets/v1/', import.meta.url)))`
