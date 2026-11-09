@@ -1,0 +1,53 @@
+{
+  "head": {
+    "vars": ["item", "label"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q1"
+        },
+        "label": {
+          "type": "literal",
+          "value": "JavaScript",
+          "xml:lang": "en"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q2"
+        },
+        "label": {
+          "type": "literal",
+          "value": "Rust",
+          "xml:lang": "en"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q3"
+        },
+        "label": {
+          "type": "literal",
+          "value": "C++",
+          "xml:lang": "en"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q4"
+        },
+        "label": {
+          "type": "literal",
+          "value": "Go",
+          "xml:lang": "en"
+        }
+      }
+    ]
+  }
+}
