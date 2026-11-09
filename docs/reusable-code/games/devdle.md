@@ -15,6 +15,18 @@
 - **Location:** packages/games/devdle/src/definition/schemas.ts (re-exported by `./definition`)
 - **Description:** `payloadSchema` also carries `date` (`YYYY-MM-DD`) so `verify` can check the 365-day rule. The api parses stored jsonb with `payloadSchema.parse(challenge.payload)`.
 
+## Devdle client
+- **Location:** packages/games/devdle/src/client/index.ts
+- **Description:** `./client` entry. `Instructions`, `Game`, `Result` render the three screens; `web` passes data as `unknown` and the client parses it with the `./definition` schemas (a `ZodError` goes to the route error boundary). Slots: `notices` (all), `actions` (Instructions), `aside` (Result). `i18n` exposes the `devdle` namespace resources; the client does not depend on react-i18next. `HELP_TARGET_ID` (`game-help`) is the id of the how-to-play section and legend.
+- **Signature:** `Instructions(props: InstructionsProps)`, `Game(props: GameProps)`, `Result(props: ResultProps)`, `share(result: unknown, number: number): string`, `i18n: { namespace: 'devdle'; resources: { es; en } }`, `HELP_TARGET_ID: 'game-help'`
+- **Usage:** `const { Game, i18n } = await import('@nerdose/game-devdle/client')`
+
+## Devdle client internals (reference for other games)
+- **SectionPanel** (`section-panel.tsx`): `({ title, datum?, id?, children })` panel with `// title` as `h2`.
+- **Board** (`board.tsx`): `({ length, guesses, draft?, rows?, label, t })` grid scaled with CSS variables (`--board-cols`, `--board-max`, `--tile-font`).
+- **useDevdleInput** (`use-devdle-input.ts`): `({ enabled, onLetter, onBackspace, onSubmit, onInvalid })` window keydown handler; ignores modifiers and leaves Enter/Space to focused buttons.
+- **keyStates / isFinished** (`marks.ts`): best letter state per key and finished-game rule without importing `definition/index.ts`.
+
 ## generator
 - **Location:** packages/games/devdle/src/generator/index.ts
 - **Description:** `historySpec = { bank: 'terms', lastUsedField: 'last_used_devdle', recentDays: 3 }`. `generate` filters eligible terms (`last_used_devdle` null or `<= date - 365`, category not among `recentChallenges`), sorts by `term` and picks with `rngFrom(seed)`; with no eligible term it picks from the whole bank so `verify` rejects it. `verify` runs `word_shape`, `texts_bilingual`, `term_in_bank`, `not_used_365`, `category_rotation` (all evaluated; `reason` is the first failure).

@@ -1,0 +1,95 @@
+export const es = {
+  title: 'Devdle',
+  instructions: {
+    meta: 'Desafío #{{number}} · ~2 min · una partida por día',
+    rulesTitle: 'cómo se juega',
+    step1: {
+      kicker: '1 · Adiviná el término',
+      body: 'Es un término de tecnología de 4 a 12 letras, el mismo para todos hoy. Tenés 6 intentos para encontrarlo.',
+    },
+    step2: {
+      kicker: '2 · Leé las pistas',
+      body: 'Cada letra te dice si está en su lugar (✓), en otro lugar (~) o no está (✗). Además del color, cada pista lleva su símbolo. Solo valen términos de la lista: si no está, no gastás intento.',
+    },
+    step3: {
+      kicker: '3 · Mirá las categorías',
+      body: 'Te mostramos las 8 categorías del banco —son siempre las mismas— para orientarte. La del día, la definición y un resumen se revelan al terminar.',
+    },
+    countNotice: 'La partida no cuenta hasta que la completes. Ganar o perder suma a tu racha.',
+    start: 'Empezar',
+  },
+  game: { prompt: 'término técnico · {{length}} letras · intento {{attempt}} de {{max}}' },
+  board: {
+    label: 'Tablero: {{max}} intentos de {{length}} letras',
+    resultLabel: 'Tus intentos',
+    row: 'Intento {{n}}',
+  },
+  cell: {
+    label: '{{letter}}, {{state}}',
+    blank: 'casilla',
+    correct: 'correcta',
+    present: 'en otra posición',
+    absent: 'no está',
+    written: 'escrita',
+    empty: 'vacía',
+  },
+  keyboard: {
+    label: 'Teclado',
+    enter: 'Enviar',
+    enterGlyph: 'ENTER',
+    backspace: 'Borrar',
+  },
+  key: {
+    label: '{{letter}}, {{state}}',
+    correct: 'correcta',
+    present: 'presente',
+    absent: 'descartada',
+  },
+  hint: {
+    onlyLetters: 'Solo letras de la A a la Z.',
+    missingLetters: 'Faltan letras: el término tiene {{length}}.',
+    notInList: 'No está en la lista. Probá con otro término.',
+    rateLimited: 'Vas muy rápido. Esperá unos segundos y probá de nuevo.',
+  },
+  categories: {
+    title: 'categorías posibles',
+    note: 'La categoría y la definición se revelan al terminar.',
+  },
+  category: {
+    programming_languages: 'lenguajes',
+    git: 'git',
+    databases: 'bases de datos',
+    networking: 'redes',
+    linux: 'linux',
+    apis: 'apis',
+    security: 'seguridad',
+    software_engineering: 'ingeniería de software',
+  },
+  legend: {
+    title: 'cómo leer las pistas',
+    correct: 'en su lugar',
+    present: 'en otro lugar',
+    absent: 'no está',
+  },
+  result: {
+    won: 'Ganaste en {{score}}/{{max}}',
+    lost: 'No salió: X/{{max}}',
+    lostDetail: 'Mostramos la palabra y su explicación.',
+    wordTitle: 'palabra del día',
+    category: 'Categoría: {{category}}',
+    summaryLabel: 'Resumen',
+    source: 'Fuente: Wikipedia (CC BY-SA)',
+  },
+  distribution: {
+    title: 'tus intentos',
+    streak: 'racha {{count}}',
+    lossLabel: 'X',
+    today: 'hoy',
+    rowLabel: '{{label}}: {{count}} partidas',
+    played: 'jugadas',
+    winRate: '{{value}}%',
+    wins: 'victorias',
+  },
+};
+
+export type Resources = typeof es;

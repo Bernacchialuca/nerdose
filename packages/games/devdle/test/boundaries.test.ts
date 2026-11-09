@@ -6,14 +6,21 @@ import { describe, expect, it } from 'vitest';
 
 const srcDir = fileURLToPath(new URL('../src', import.meta.url));
 
+const isSource = (f: string) =>
+  /\.tsx?$/.test(f) && !/\.test\.tsx?$/.test(f) && !f.endsWith('test-fixtures.ts') && !f.endsWith('test-utils.ts');
+
 const files = readdirSync(srcDir, { recursive: true, encoding: 'utf8' })
-  .filter((f) => f.endsWith('.ts') && !f.endsWith('.test.ts') && !f.endsWith('test-fixtures.ts'))
+  .map((f) => f.replace(/\\/g, '/'))
+  .filter(isSource)
   .map((f) => ({ file: f, text: readFileSync(join(srcDir, f), 'utf8') }));
 
 const importsOf = (text: string): string[] =>
   [...text.matchAll(/from\s+'([^']+)'/g)].map((m) => m[1] as string);
 
-describe('game-devdle entry boundaries (TS-3)', () => {
+const resolveRelative = (file: string, spec: string): string =>
+  join('src', file, '..', spec).replace(/\\/g, '/');
+
+describe('game-devdle entry boundaries (TS-3, TS-4)', () => {
   it('has source files to check', () => {
     expect(files.length).toBeGreaterThan(0);
   });
@@ -22,8 +29,8 @@ describe('game-devdle entry boundaries (TS-3)', () => {
     for (const { file, text } of files.filter((f) => f.file.startsWith(`${entry}/`))) {
       for (const spec of importsOf(text)) {
         if (spec.startsWith('.')) {
-          const resolved = join('src', entry, file.slice(entry.length + 1), '..', spec);
-          const normalized = resolved.replace(/\\/g, '/');
+          const normalized = resolveRelative(file, spec);
+          expect(normalized.startsWith('src/client'), `${file} -> ${spec}`).toBe(false);
           const okDefinition = normalized.startsWith('src/definition');
           const okGenerator = entry === 'generator' && normalized.startsWith('src/generator');
           if (entry === 'definition') expect(okDefinition, `${file} -> ${spec}`).toBe(true);
@@ -31,6 +38,25 @@ describe('game-devdle entry boundaries (TS-3)', () => {
         } else {
           expect(['@nerdose/core', 'zod'], `${file} -> ${spec}`).toContain(spec);
         }
+      }
+    }
+  });
+
+  it('client only imports allowed packages and the schemas of definition (TS-3)', () => {
+    for (const { file, text } of files.filter((f) => f.file.startsWith('client/'))) {
+      for (const spec of importsOf(text)) {
+        if (spec.startsWith('.')) {
+          const normalized = resolveRelative(file, spec);
+          const ok =
+            normalized.startsWith('src/client') ||
+            normalized === 'src/definition/schemas';
+          expect(ok, `${file} -> ${spec}`).toBe(true);
+        } else {
+          expect(['@nerdose/core', '@nerdose/ui', 'zod', 'react'], `${file} -> ${spec}`).toContain(spec);
+        }
+      }
+      for (const forbidden of ['window.plausible', '@nerdose/game-']) {
+        expect(text.includes(forbidden), `${file} contains ${forbidden}`).toBe(false);
       }
     }
   });

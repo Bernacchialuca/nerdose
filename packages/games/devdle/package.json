@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     "./definition": "./src/definition/index.ts",
+    "./client": "./src/client/index.ts",
     "./generator": "./src/generator/index.ts",
     "./wordlist": "./wordlist/words.txt"
   },
@@ -16,10 +17,23 @@
   },
   "dependencies": {
     "@nerdose/core": "workspace:*",
+    "@nerdose/ui": "workspace:*",
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "dotenv": "^18.0.9",
-    "tsx": "^4.23.15"
+    "jsdom": "^30.1.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tsx": "^4.23.15",
+    "vitest-axe": "^0.1.0"
+  },
+  "peerDependencies": {
+    "react": "^19.3.1"
   }
 }
