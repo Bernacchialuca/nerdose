@@ -3,8 +3,15 @@ import type { GameId } from '@nerdose/core';
 export type PublicChallengeStatus = 'published' | 'voided' | 'none';
 export type PlayStatus = 'in_progress' | 'won' | 'lost' | 'voided';
 
-// FG-3 lo amplía (id, number, payload).
-export type CachedChallenge = { game_id: GameId; status: 'published' | 'voided' };
+/** `payload` lleva la solución: nunca se serializa en una respuesta de jugador. */
+export type CachedChallenge = {
+  id: string;
+  game_id: GameId;
+  date: string;
+  number: number;
+  status: 'published' | 'voided';
+  payload: unknown;
+};
 
 export type TodayGame = {
   game_id: GameId;

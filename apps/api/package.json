@@ -14,6 +14,7 @@
     "@hono/zod-validator": "^0.9.1",
     "@nerdose/core": "workspace:*",
     "@nerdose/db": "workspace:*",
+    "@nerdose/game-devdle": "workspace:*",
     "@t3-oss/env-core": "^0.13.11",
     "dotenv": "^18.0.9",
     "drizzle-orm": "^0.45.4",

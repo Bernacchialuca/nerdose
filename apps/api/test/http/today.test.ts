@@ -1,12 +1,13 @@
 import { randomUUID } from 'node:crypto';
 
+import { devdle, scoreGuess } from '@nerdose/game-devdle/definition';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { IdentityService } from '@/domain/identity/identity.service';
 import type { IdentityRepository } from '@/domain/identity/identity.repository';
 
-import { buildTestApp } from '../helpers/app';
-import { useDatabases } from '../helpers/db';
+import { buildDbApp, buildTestApp } from '../helpers/app';
+import { PAYLOAD, useDatabases } from '../helpers/db';
 
 const dbs = useDatabases();
 beforeAll(() => dbs.reset());
@@ -149,6 +150,7 @@ describe('GET /api/today', () => {
 
 describe('GET /api/today: idioma de los errores', () => {
   const boom = {
+    ensureToday: async () => undefined,
     getToday: () => {
       throw new Error('boom');
     },
@@ -183,5 +185,195 @@ describe('GET /api/today: idioma de los errores', () => {
     expect(await msg('/api/today', { 'Accept-Language': 'en' })).toBe(EN);
     expect(await msg('/api/today')).toBe(ES);
     expect(await msg('/api/today?lang=fr', { 'Accept-Language': 'fr-FR' })).toBe(ES);
+  });
+});
+
+describe('GET /api/today con estado real', () => {
+  const G_REACT = { guess: 'REACT', marks: scoreGuess('MERGE', 'REACT') };
+  const G_MERGE = { guess: 'MERGE', marks: scoreGuess('MERGE', 'MERGE') };
+  const LOST6 = ['REACT', 'CACHE', 'LINUX', 'PROXY', 'QUERY', 'SHELL'].map((w) => ({
+    guess: w,
+    marks: scoreGuess('MERGE', w),
+  }));
+  const publish = () =>
+    dbs.insertChallenge({
+      gameId: 'devdle',
+      date: '2026-12-01',
+      number: 8,
+      payload: PAYLOAD,
+      status: 'published',
+    });
+  const cookie = (id: string) => ({ Cookie: `nd_pid=${id}` });
+  const devdleGame = (overrides: object = {}) => ({
+    game_id: 'devdle',
+    challenge_status: 'published',
+    play_status: null,
+    history_label: null,
+    current_streak: 0,
+    ...overrides,
+  });
+  const fetchToday = async (headers: Record<string, string> = {}) => {
+    const { app } = await buildDbApp(dbs);
+    const res = await app.request('/api/today', { headers });
+    expect(res.status).toBe(200);
+    return res.json();
+  };
+  const play = async (
+    playerId: string,
+    challengeId: string,
+    status: 'in_progress' | 'won' | 'lost',
+  ) => {
+    const state = {
+      guesses: status === 'won' ? [G_REACT, G_MERGE] : status === 'lost' ? LOST6 : [G_REACT],
+    };
+    await dbs.insertPlay({
+      playerId,
+      challengeId,
+      gameId: 'devdle',
+      date: '2026-12-01',
+      state,
+      status,
+      ...(status === 'in_progress'
+        ? {}
+        : {
+            score: status === 'won' ? 2 : 6,
+            result: devdle.result(PAYLOAD as never, state as never, 'es'),
+            finishedAt: new Date('2026-12-01T09:30:00Z'),
+          }),
+    });
+  };
+  const stats = (playerId: string, last: string) =>
+    Promise.all([
+      dbs.insertGameStats({
+        playerId,
+        gameId: 'devdle',
+        currentStreak: 3,
+        maxStreak: 5,
+        played: 10,
+        wins: 8,
+        lastCompletedDate: last,
+        extra: {},
+      }),
+      dbs.insertPlayerStats({
+        playerId,
+        globalStreak: 4,
+        maxGlobalStreak: 9,
+        lastActiveDate: last,
+        totalCompleted: 20,
+      }),
+    ]);
+
+  beforeEach(() => dbs.reset());
+
+  it('TS-42 Devdle sin empezar; el resto en none', async () => {
+    await publish();
+    const player = await dbs.insertPlayer();
+    const body = await fetchToday(cookie(player.id));
+    expect(body).toMatchObject({
+      has_session: true,
+      global_streak: { current: 0, max: 0 },
+      completed_today: 0,
+    });
+    expect(body.games[0]).toEqual(devdleGame());
+    expect(body.games.slice(1)).toEqual(none.slice(1));
+  });
+
+  it('TS-43 Devdle en curso', async () => {
+    const c = await publish();
+    const player = await dbs.insertPlayer();
+    await play(player.id, c.id, 'in_progress');
+    const body = await fetchToday(cookie(player.id));
+    expect(body.games[0]).toEqual(devdleGame({ play_status: 'in_progress' }));
+    expect(body.completed_today).toBe(0);
+  });
+
+  it('TS-44 Devdle ganado con rachas vivas', async () => {
+    const c = await publish();
+    const player = await dbs.insertPlayer();
+    await play(player.id, c.id, 'won');
+    await stats(player.id, '2026-12-01');
+    const body = await fetchToday(cookie(player.id));
+    expect(body.games[0]).toEqual(
+      devdleGame({ play_status: 'won', history_label: '✓ 2/6', current_streak: 3 }),
+    );
+    expect(body.global_streak).toEqual({ current: 4, max: 9 });
+    expect(body.completed_today).toBe(1);
+  });
+
+  it('TS-45 Devdle perdido', async () => {
+    const c = await publish();
+    const player = await dbs.insertPlayer();
+    await play(player.id, c.id, 'lost');
+    const body = await fetchToday(cookie(player.id));
+    expect(body.games[0]).toMatchObject({ play_status: 'lost', history_label: '✗ X/6' });
+    expect(body.completed_today).toBe(1);
+  });
+
+  it('TS-46 racha no viva en 0 sin escribir', async () => {
+    await publish();
+    const player = await dbs.insertPlayer();
+    await stats(player.id, '2026-11-29');
+    await dbs.insertChallenge({ gameId: 'devdle', date: '2026-11-30', status: 'published' });
+    const body = await fetchToday(cookie(player.id));
+    expect(body.games[0].current_streak).toBe(0);
+    expect(body.global_streak).toEqual({ current: 0, max: 9 });
+    const [row] = await dbs.owner
+      .sql`SELECT current_streak FROM player_game_stats WHERE player_id = ${player.id}`;
+    expect(row!.current_streak).toBe(3);
+  });
+
+  it('TS-47 un día neutro no corta la racha', async () => {
+    await publish();
+    const player = await dbs.insertPlayer();
+    await stats(player.id, '2026-11-29');
+    await dbs.insertChallenge({ gameId: 'devdle', date: '2026-11-29', status: 'published' });
+    const body = await fetchToday(cookie(player.id));
+    expect(body.games[0].current_streak).toBe(3);
+    expect(body.global_streak.current).toBe(4);
+  });
+
+  it('TS-48 la racha global usa el último día activo de cualquier juego', async () => {
+    await publish();
+    const player = await dbs.insertPlayer();
+    await stats(player.id, '2026-11-29');
+    await dbs.insertChallenge({ gameId: 'devdle', date: '2026-11-29', status: 'published' });
+    await dbs.insertChallenge({ gameId: 'big-o', date: '2026-11-30', status: 'published' });
+    const body = await fetchToday(cookie(player.id));
+    expect(body.games[0].current_streak).toBe(3);
+    expect(body.global_streak.current).toBe(0);
+  });
+
+  it('TS-49 juego no registrado con desafío en la base aparece none', async () => {
+    await publish();
+    await dbs.insertChallenge({ gameId: 'grep-grid', date: '2026-12-01', status: 'published' });
+    const body = await fetchToday();
+    expect(body.games[1]).toEqual(none[1]);
+    expect(body.games[0].challenge_status).toBe('published');
+  });
+
+  it('TS-50 sin sesión no consulta datos del jugador', async () => {
+    await publish();
+    const calls: string[] = [];
+    const boom = new Proxy(
+      {},
+      {
+        get: (_t, name) => () => {
+          calls.push(String(name));
+          throw new Error('db');
+        },
+      },
+    ) as never;
+    const { app } = await buildDbApp(dbs, { gameplayRepo: boom, progressRepo: boom });
+    for (const headers of [{} as Record<string, string>, { Cookie: 'nd_pid=xyz' }]) {
+      const res = await app.request('/api/today', { headers });
+      expect(res.status).toBe(200);
+      expect(await res.json()).toMatchObject({
+        has_session: false,
+        global_streak: { current: 0, max: 0 },
+        completed_today: 0,
+        games: [devdleGame(), ...none.slice(1)],
+      });
+    }
+    expect(calls).toEqual([]);
   });
 });

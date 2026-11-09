@@ -3,7 +3,10 @@ import { fileURLToPath } from 'node:url';
 import net from 'node:net';
 import { afterEach, describe, expect, inject, it } from 'vitest';
 
+import { createDb } from '@nerdose/db';
+
 import { freePort } from './helpers/net';
+import { PAYLOAD } from './helpers/db';
 import { MUTATION_HEADERS, TEST_ENV } from './helpers/app';
 import { startApi } from './helpers/process';
 
@@ -87,6 +90,40 @@ describe('proceso de la api', () => {
     expect(body.number === null || typeof body.number === 'number').toBe(true);
     expect(body.seconds_to_reset).toBeGreaterThanOrEqual(1);
     expect(body.seconds_to_reset).toBeLessThanOrEqual(86400);
+  });
+
+  it('TS-52 el arranque publica el approved de hoy y sirve el juego', async () => {
+    const day = (offset = 0) =>
+      new Date(Date.now() + offset * 86_400_000).toISOString().slice(0, 10);
+    const todayUtc = day();
+    const launch = day(-7);
+    const owner = createDb(inject('ownerUrl'), { max: 1 });
+    try {
+      await owner.sql`TRUNCATE TABLE challenges RESTART IDENTITY CASCADE`;
+      await owner.sql`
+        INSERT INTO challenges (game_id, date, number, payload, status, generator_version, seed, attempt)
+        VALUES ('devdle', ${todayUtc}, 8, ${JSON.stringify({ ...PAYLOAD, date: todayUtc })}::jsonb, 'approved', 'test', 'test', 0)`;
+    } finally {
+      await owner.sql.end({ timeout: 0 });
+    }
+    const port = await freePort();
+    running = startApi({
+      PORT: String(port),
+      DATABASE_URL: inject('apiUrl'),
+      ...TEST_ENV,
+      LAUNCH_DATE: launch,
+    });
+    await running.waitForLog(isServerStarted);
+    const res = await fetch(`http://127.0.0.1:${port}/api/games/devdle/today`);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body).toMatchObject({
+      game_id: 'devdle',
+      challenge_status: 'published',
+      number: 8,
+      public_view: { length: 5 },
+    });
+    expect(body.public_view.possible_categories).toHaveLength(8);
   });
 
   it('aborta sin WEB_ORIGIN', () => {

@@ -108,6 +108,9 @@ importers:
       '@nerdose/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@nerdose/game-devdle':
+        specifier: workspace:*
+        version: link:../../packages/games/devdle
       '@t3-oss/env-core':
         specifier: ^0.13.11
         version: 0.13.11(typescript@6.0.3)(zod@4.6.7)
