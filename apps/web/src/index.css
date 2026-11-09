@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import '@nerdose/ui/tokens.css';
-@source "../../../packages/games/*/src/client";
+@source "../../../packages/games/*/src/client/**/*.{ts,tsx}";
 @import '@fontsource/jetbrains-mono/400.css';
 @import '@fontsource/jetbrains-mono/500.css';
 @import '@fontsource/inter/400.css';

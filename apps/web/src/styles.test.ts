@@ -47,10 +47,36 @@ describe('index.css', () => {
   });
 
   it('TS-3: escanea los clients de juego después de los tokens', () => {
-    const source = '@source "../../../packages/games/*/src/client";';
+    // Tailwind v4 no expande un comodín de directorio sin patrón de archivo
+    // (`games/*/src/client` no escanea nada); hace falta `**/*.{ts,tsx}`.
+    const source = '@source "../../../packages/games/*/src/client/**/*.{ts,tsx}";';
     expect(css).toContain(source);
     expect(css.indexOf(source)).toBeGreaterThan(css.indexOf("@import '@nerdose/ui/tokens.css';"));
   });
+
+  it('TS-3: el CSS compilado incluye las clases del client de Devdle', async () => {
+    const { build } = await import('vite');
+    const output = await build({
+      root: fileURLToPath(new URL('..', import.meta.url)),
+      logLevel: 'silent',
+      build: { write: false },
+    });
+    const outputs = Array.isArray(output) ? output : [output];
+    const compiled = outputs
+      .flatMap((o) => ('output' in o ? o.output : []))
+      .filter((chunk) => chunk.type === 'asset' && chunk.fileName.endsWith('.css'))
+      .map((chunk) => (chunk.type === 'asset' ? String(chunk.source) : ''))
+      .join('\n');
+    // Clases y tokens que solo usa el client de Devdle (tablero y teclado).
+    for (const used of [
+      '--board-cols',
+      '--board-max',
+      '--color-status-present',
+      '--container-keyboard',
+    ]) {
+      expect(compiled).toContain(used);
+    }
+  }, 60_000);
 
   it('importa solo los pesos del Design System', () => {
     expect(css.match(/@import '@fontsource\/[^']+';/g)).toHaveLength(6);
