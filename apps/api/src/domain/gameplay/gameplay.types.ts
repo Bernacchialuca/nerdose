@@ -1,7 +1,9 @@
 import type { CodeLanguage, GameId } from '@nerdose/core';
 
-import type { GameStatsView } from '@/domain/progress/progress.types';
+import type { GameStatsView, ProgressWriteRepo, Streaks } from '@/domain/progress/progress.types';
 import type { PlayStatus, PublicChallengeStatus } from '@/domain/publishing/publishing.types';
+
+import type { GameplayRepository } from './gameplay.repository';
 
 export type PlayView = {
   status: PlayStatus;
@@ -20,3 +22,19 @@ export type GameToday = {
   result: unknown;
   game_stats: GameStatsView | null;
 };
+
+export type MoveResponse = {
+  feedback: unknown;
+  play: { status: PlayStatus; state: unknown; score: number | null };
+  result: unknown;
+  streaks: Streaks | null;
+  game_stats: GameStatsView | null;
+};
+
+export type MoveTxRepos = {
+  plays: Pick<GameplayRepository, 'insertPlayIfAbsent' | 'lockPlay' | 'updateState' | 'closePlay'>;
+  progress: ProgressWriteRepo;
+};
+
+/** Ejecuta `fn` en una transacción: si lanza, ROLLBACK y relanza. */
+export type MoveTx = <T>(fn: (r: MoveTxRepos) => Promise<T>) => Promise<T>;

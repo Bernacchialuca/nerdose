@@ -1,7 +1,7 @@
 import { AppError } from '@nerdose/core';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { GameplayRepository } from '@/domain/gameplay/gameplay.repository';
+import { GameplayRepository, moveTransaction } from '@/domain/gameplay/gameplay.repository';
 import { GameplayService } from '@/domain/gameplay/gameplay.service';
 import { ProgressRepository } from '@/domain/progress/progress.repository';
 import { ProgressService } from '@/domain/progress/progress.service';
@@ -34,6 +34,9 @@ async function build() {
     cache,
     repo: new GameplayRepository(dbs.api.db),
     progress: new ProgressService({ repo: new ProgressRepository(dbs.api.db) }),
+    runInTx: moveTransaction(dbs.api.db),
+    wordList: { has: () => true },
+    rejected: new GameplayRepository(dbs.api.db),
     clock: systemClock,
     launchDate: '2026-11-24',
   });
@@ -250,6 +253,9 @@ describe('GameplayService.getToday', () => {
       cache,
       repo: boom,
       progress: boom,
+      runInTx: boom,
+      wordList: boom,
+      rejected: boom,
       clock: systemClock,
       launchDate: '2026-11-24',
     });

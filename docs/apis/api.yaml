@@ -339,6 +339,7 @@ paths:
                       score: null
                     result: null
                     streaks: null
+                    game_stats: null
                 big_o_cierre:
                   value:
                     feedback: null
@@ -354,7 +355,11 @@ paths:
                     streaks: { game: { current: 4, max: 9 }, global: { current: 6, max: 12 } }
         '401': { $ref: '#/components/responses/NoSession' }
         '403': { $ref: '#/components/responses/ForbiddenOrigin' }
-        '404': { $ref: '#/components/responses/NoChallengeToday' }
+        '404':
+          description: '`no_challenge_today` (sin desafío hoy) o `not_found` (juego sin paquete registrado)'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
         '409': { $ref: '#/components/responses/PlayConflict' }
         '415': { $ref: '#/components/responses/UnsupportedMediaType' }
         '422':

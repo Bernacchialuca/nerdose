@@ -24,8 +24,8 @@ App `apps/api` (not a package; imported through the `@/` alias → `src/`). Hono
 - **TodayCache** (apps/api/src/infra/cache/today-cache.ts) - In-memory cache of today's visible challenges (`reload(day)`, `get`, `find`)
 - **WordList / resolveWordlistPath** (apps/api/src/infra/cache/word-list.ts) - Valid Devdle words: `words.txt` ∪ approved terms (`load`, `reload`, `has`)
 - **PublishingService / PublishingRepository** (apps/api/src/domain/publishing/) - Lazy single-flight `ensureToday()` and real `getToday`
-- **GameplayService / GameplayRepository** (apps/api/src/domain/gameplay/) - Open today's game and idempotent `start`
-- **ProgressService / ProgressRepository** (apps/api/src/domain/progress/) - Read-only live streaks and `GameStatsView`
+- **GameplayService / GameplayRepository / moveTransaction** (apps/api/src/domain/gameplay/) - Open today's game, idempotent `start` and `move` (serialized transaction, close, rejected guesses)
+- **ProgressService / ProgressRepository** (apps/api/src/domain/progress/) - Live streaks, `GameStatsView` and `applyResult` (ADR-011 streaks and counters on completion)
 
 ## Shared (6 items) - see shared.md
 - **loadEnv / ApiEnv / loadLocalEnvFile** (apps/api/src/config/env.ts) - Zod-validated env (t3-env); invalid vars throw `AppError('validation_error')` listing only names
@@ -41,6 +41,6 @@ App `apps/api` (not a package; imported through the `@/` alias → `src/`). Hono
 - **silentServer** (apps/api/test/helpers/net.ts) - TCP server that accepts and never answers (simulates a hung DB)
 - **startApi** (apps/api/test/helpers/process.ts) - Spawns `src/index.ts` as a child process with `waitForLog` / `stop`
 - **global-setup (ownerUrl / apiUrl)** (apps/api/test/global-setup.ts) - Testcontainers Postgres with roles and migrations, provided via `inject()`
-- **buildDbApp / buildDbServices / buildMemoryServices / tempWordList** (apps/api/test/helpers/app.ts) - App with real api-role services or in-memory fakes
+- **buildDbApp / buildDbServices / buildMemoryServices / tempWordList** (apps/api/test/helpers/app.ts) - App with real api-role services or in-memory fakes; `buildDbServices` accepts `wrapTxRepos` to inject failures inside the move transaction
 - **buildTestApp / TEST_CONFIG / MUTATION_HEADERS / TEST_ENV / stubIdentity** (apps/api/test/helpers/app.ts) - Builds the app with default deps and valid mutation headers
 - **useDatabases / parseSetCookie / COOKIE_ATTRS** (apps/api/test/helpers/db.ts) - Owner and api connections, fixtures (`insertChallenge/Play/GameStats/PlayerStats/Term`, `PAYLOAD`, `CATS`) and `Set-Cookie` parsing
