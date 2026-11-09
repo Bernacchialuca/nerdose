@@ -3,7 +3,7 @@ import { serve } from '@hono/node-server';
 import { loadEnv, loadLocalEnvFile } from '@/config/env';
 import { IdentityRepository } from '@/domain/identity/identity.repository';
 import { IdentityService } from '@/domain/identity/identity.service';
-import { GameplayRepository } from '@/domain/gameplay/gameplay.repository';
+import { GameplayRepository, moveTransaction } from '@/domain/gameplay/gameplay.repository';
 import { GameplayService } from '@/domain/gameplay/gameplay.service';
 import { ProgressRepository } from '@/domain/progress/progress.repository';
 import { ProgressService } from '@/domain/progress/progress.service';
@@ -88,6 +88,9 @@ if (env) {
         cache: todayCache,
         repo: gameplayRepo,
         progress,
+        runInTx: moveTransaction(db),
+        wordList,
+        rejected: gameplayRepo,
         clock,
         launchDate: env.LAUNCH_DATE,
       }),

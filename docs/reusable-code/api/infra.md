@@ -34,10 +34,10 @@
 
 ## GameplayService / GameplayRepository
 - **Location:** apps/api/src/domain/gameplay/
-- **Signature:** `getToday(gameId, player | null, locale): Promise<GameToday>`; `start(gameId, player, challengeNumber, log): Promise<{ play }>` (idempotent); `GameplayRepository(db)`: `findPlay`, `findPlaysOfDay`, `insertPlayIfAbsent`
-- **Description:** generic over the game registry, never serializes `payload`.
+- **Signature:** `getToday(gameId, player | null, locale): Promise<GameToday>`; `start(gameId, player, challengeNumber, log): Promise<{ play }>` (idempotent); `move(gameId, player, { challenge_number, move }, locale, log): Promise<MoveResponse>`; `GameplayRepository(db | tx)`: `findPlay`, `findPlaysOfDay`, `insertPlayIfAbsent`, `lockPlay` (FOR UPDATE), `updateState`, `closePlay`, `insertRejectedGuess`; `moveTransaction(db): MoveTx` builds the transactional repos
+- **Description:** generic over the game registry, never serializes `payload`. `move` validates in order (game, day, cache, voided, moveSchema), then runs one transaction (insert-if-absent + lock, `applyMove`, close + `applyResult`). Domain logs are emitted after COMMIT; rejected guesses are recorded best-effort outside the transaction.
 
 ## ProgressService / ProgressRepository
 - **Location:** apps/api/src/domain/progress/
-- **Signature:** `gameStatsView(playerId, game, day): Promise<GameStatsView>`; `todayStreaks(playerId, day)`; `ProgressRepository(db)`: `findGameStats`, `findAllGameStats`, `findPlayerStats`, `prevActiveDays(day)`
-- **Description:** read-only; live streaks via `liveStreak()` from `@nerdose/core`.
+- **Signature:** `gameStatsView(playerId, game, day): Promise<GameStatsView>`; `todayStreaks(playerId, day)`; `applyResult(repo: ProgressWriteRepo, { playerId, game, date, outcome }): Promise<{ streaks, gameStats }>` (outcome `won | lost | voided`); `ProgressRepository(db | tx)`: `findGameStats`, `findAllGameStats`, `findPlayerStats`, `prevActiveDays(day)`, `lockGameStats`, `lockPlayerStats`, `saveGameStats`, `savePlayerStats`
+- **Description:** live streaks via `liveStreak()` and incremental streak/counter update via `nextStreak()` from `@nerdose/core`. `voided` counts for streaks and `total_completed` but not `played`, `wins` or `extra`.

@@ -1,0 +1,201 @@
+import { AppError } from '@nerdose/core';
+import { scoreGuess } from '@nerdose/game-devdle/definition';
+import { describe, expect, it, vi } from 'vitest';
+
+import { GameplayService } from '@/domain/gameplay/gameplay.service';
+import type { MoveTx, MoveTxRepos } from '@/domain/gameplay/gameplay.types';
+import { games } from '@/games/registry';
+
+import { PAYLOAD } from '../helpers/db';
+
+const NOW = new Date('2026-12-01T10:00:00Z');
+const player = { id: 'player-1' } as never;
+const G = (g: string) => ({ guess: g, marks: scoreGuess('MERGE', g) });
+
+function setup(
+  opts: {
+    cache?: { get: () => unknown };
+    play?: Record<string, unknown>;
+    has?: (w: string) => boolean;
+    runInTx?: (repos: MoveTxRepos) => MoveTx;
+    insertRejected?: () => Promise<void>;
+    inserted?: boolean;
+  } = {},
+) {
+  const calls = {
+    updateState: vi.fn(async (_id: string, state: unknown) => ({
+      status: 'in_progress',
+      state,
+    })),
+    closePlay: vi.fn(async (_id: string, v: Record<string, unknown>) => ({
+      status: v.status,
+      state: v.state,
+      score: v.score,
+    })),
+    applyResult: vi.fn(async () => ({
+      streaks: { game: { current: 1, max: 1 }, global: { current: 1, max: 1 } },
+      gameStats: { game_id: 'devdle' },
+    })),
+    runInTx: vi.fn(),
+  };
+  const repos = {
+    plays: {
+      insertPlayIfAbsent: async () => ({
+        inserted: opts.inserted ? ({ id: 'play-1' } as never) : null,
+      }),
+      lockPlay: async () => ({
+        id: 'play-1',
+        status: 'in_progress',
+        state: { guesses: [G('REACT'), G('CACHE'), G('REACT')] },
+        ...opts.play,
+      }),
+      updateState: calls.updateState,
+      closePlay: calls.closePlay,
+    },
+    progress: {} as never,
+  } as unknown as MoveTxRepos;
+  const runInTx: MoveTx = opts.runInTx
+    ? opts.runInTx(repos)
+    : ((async (fn: (r: MoveTxRepos) => Promise<unknown>) => {
+        calls.runInTx();
+        return fn(repos);
+      }) as MoveTx);
+  const rejected = { insertRejectedGuess: vi.fn(opts.insertRejected ?? (async () => undefined)) };
+  const service = new GameplayService({
+    games,
+    cache: (opts.cache ?? {
+      get: () => ({
+        id: 'c1',
+        game_id: 'devdle',
+        date: '2026-12-01',
+        number: 8,
+        status: 'published',
+        payload: PAYLOAD,
+      }),
+    }) as never,
+    repo: {} as never,
+    progress: { gameStatsView: vi.fn(), applyResult: calls.applyResult } as never,
+    runInTx,
+    wordList: { has: opts.has ?? ((w: string) => w === 'REACT' || w === 'CACHE') },
+    rejected,
+    clock: { now: () => NOW },
+    launchDate: '2026-11-24',
+  });
+  const log = { info: vi.fn(), warn: vi.fn(), debug: vi.fn() };
+  return {
+    service,
+    calls,
+    rejected,
+    log,
+    run: (gameId: string, num: number, move: unknown) =>
+      service.move(gameId, player, { challenge_number: num, move }, 'es', log as never),
+  };
+}
+
+describe('GameplayService.move (unit)', () => {
+  it('TS-43 orden de validaciones, sin abrir transacción', async () => {
+    const throwing = (code: string) => ({
+      get: () => {
+        throw new AppError(code as never);
+      },
+    });
+    const a = setup();
+    await expect(a.run('foo', 1, { guess: 'REACT' })).rejects.toMatchObject({ code: 'not_found' });
+    const b = setup({ cache: throwing('no_challenge_today') });
+    await expect(b.run('devdle', 1, { guess: 'REACT' })).rejects.toMatchObject({
+      code: 'challenge_expired',
+    });
+    const c = setup({ cache: throwing('no_challenge_today') });
+    await expect(c.run('devdle', 8, { guess: 'REACT' })).rejects.toMatchObject({
+      code: 'no_challenge_today',
+    });
+    const d = setup({
+      cache: { get: () => ({ id: 'c', status: 'voided', date: '2026-12-01', payload: PAYLOAD }) },
+    });
+    await expect(d.run('devdle', 8, {})).rejects.toMatchObject({ code: 'challenge_voided' });
+    const e = setup();
+    await expect(e.run('devdle', 8, {})).rejects.toMatchObject({ code: 'invalid_move' });
+    for (const s of [a, b, c, d, e]) expect(s.calls.runInTx).not.toHaveBeenCalled();
+  });
+
+  it('TS-44 ctx.isValidWord usa la WordList y registra la palabra rechazada', async () => {
+    const s = setup();
+    await expect(s.run('devdle', 8, { guess: 'ZZZZZ' })).rejects.toMatchObject({
+      code: 'not_in_word_list',
+    });
+    expect(s.rejected.insertRejectedGuess).toHaveBeenCalledWith('ZZZZZ', 'player-1');
+    const ok = setup();
+    await ok.run('devdle', 8, { guess: 'REACT' });
+    expect(ok.rejected.insertRejectedGuess).not.toHaveBeenCalled();
+  });
+
+  it('TS-6 si el registro del rechazo falla: warn y misma respuesta', async () => {
+    const s = setup({
+      insertRejected: async () => {
+        throw new Error('db down');
+      },
+    });
+    await expect(s.run('devdle', 8, { guess: 'ZZZZZ' })).rejects.toMatchObject({
+      code: 'not_in_word_list',
+      status: 422,
+    });
+    expect(s.log.warn).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'GuessRejectedNotRecorded', err: expect.any(Error) }),
+      expect.any(String),
+    );
+  });
+
+  it('TS-45 los logs de dominio se emiten solo después del COMMIT', async () => {
+    const s = setup({
+      play: { state: { guesses: [G('REACT'), G('CACHE'), G('REACT')] } },
+      runInTx: (repos) =>
+        (async (fn: (r: MoveTxRepos) => Promise<unknown>) => {
+          await fn(repos);
+          throw new Error('commit failed');
+        }) as MoveTx,
+    });
+    await expect(s.run('devdle', 8, { guess: 'MERGE' })).rejects.toThrow('commit failed');
+    const events = s.log.info.mock.calls.map((c) => (c[0] as { event: string }).event);
+    expect(events).not.toContain('PlayFinished');
+    expect(events).not.toContain('StreaksUpdated');
+  });
+
+  it('game_finished no llama a updateState, closePlay ni applyResult', async () => {
+    const s = setup({ play: { status: 'won' } });
+    await expect(s.run('devdle', 8, { guess: 'REACT' })).rejects.toMatchObject({
+      code: 'game_finished',
+    });
+    expect(s.calls.updateState).not.toHaveBeenCalled();
+    expect(s.calls.closePlay).not.toHaveBeenCalled();
+    expect(s.calls.applyResult).not.toHaveBeenCalled();
+  });
+
+  it('jugada que no cierra: updateState sí, closePlay y applyResult no', async () => {
+    const s = setup();
+    const res = await s.run('devdle', 8, { guess: 'REACT' });
+    expect(s.calls.updateState).toHaveBeenCalledOnce();
+    expect(s.calls.closePlay).not.toHaveBeenCalled();
+    expect(s.calls.applyResult).not.toHaveBeenCalled();
+    expect(res).toMatchObject({ result: null, streaks: null, game_stats: null });
+  });
+
+  it('cierre: closePlay won score 4 y applyResult con outcome won', async () => {
+    const s = setup({ inserted: true });
+    const res = await s.run('devdle', 8, { guess: 'MERGE' });
+    expect(s.calls.closePlay).toHaveBeenCalledWith(
+      'play-1',
+      expect.objectContaining({ status: 'won', score: 4, finishedAt: NOW }),
+    );
+    expect(s.calls.applyResult).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        outcome: expect.objectContaining({ status: 'won' }),
+        date: '2026-12-01',
+      }),
+    );
+    expect(res.streaks).toEqual({ game: { current: 1, max: 1 }, global: { current: 1, max: 1 } });
+    expect(res.game_stats).toEqual({ game_id: 'devdle' });
+    const events = s.log.info.mock.calls.map((c) => (c[0] as { event: string }).event);
+    expect(events).toEqual(['PlayStarted', 'PlayFinished', 'StreaksUpdated']);
+  });
+});

@@ -2,10 +2,12 @@ import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
+import type { Db } from '@nerdose/db';
 import type { Logger } from 'pino';
 
-import { GameplayRepository } from '@/domain/gameplay/gameplay.repository';
+import { GameplayRepository, moveTransaction } from '@/domain/gameplay/gameplay.repository';
 import { GameplayService } from '@/domain/gameplay/gameplay.service';
+import type { MoveTxRepos } from '@/domain/gameplay/gameplay.types';
 import type { IdentityService } from '@/domain/identity/identity.service';
 import { ProgressRepository } from '@/domain/progress/progress.repository';
 import { ProgressService } from '@/domain/progress/progress.service';
@@ -89,6 +91,32 @@ export function buildMemoryServices(opts: { clock?: Clock; logger: Logger }) {
     cache,
     repo: gameplayRepo,
     progress,
+    runInTx: async (fn) =>
+      fn({
+        plays: {
+          insertPlayIfAbsent: async () => ({ inserted: null }),
+          lockPlay: async () => null,
+          updateState: async () => {
+            throw new Error('sin base en este test');
+          },
+          closePlay: async () => {
+            throw new Error('sin base en este test');
+          },
+        },
+        progress: {
+          prevActiveDays: async () => ({ byGame: {}, global: null }),
+          lockGameStats: async () => {
+            throw new Error('sin base en este test');
+          },
+          lockPlayerStats: async () => {
+            throw new Error('sin base en este test');
+          },
+          saveGameStats: async () => undefined,
+          savePlayerStats: async () => undefined,
+        },
+      }),
+    wordList: { has: () => true },
+    rejected: { insertRejectedGuess: async () => undefined },
     clock,
     launchDate: TEST_CONFIG.LAUNCH_DATE,
   });
@@ -103,7 +131,7 @@ export async function tempWordList(words: string[] = ['CACHE', 'REACT']) {
 }
 
 type Dbs = {
-  api: { db: ConstructorParameters<typeof PublishingRepository>[0] };
+  api: { db: Db };
   identity(): IdentityService;
 };
 
@@ -115,6 +143,8 @@ export async function buildDbServices(
     clock?: Clock;
     gameplayRepo?: Pick<GameplayRepository, 'findPlay' | 'findPlaysOfDay' | 'insertPlayIfAbsent'>;
     progressRepo?: ConstructorParameters<typeof ProgressService>[0]['repo'];
+    /** Envuelve los repos de la transacción (p. ej. para forzar una falla en el cierre). */
+    wrapTxRepos?: (r: MoveTxRepos) => MoveTxRepos;
   },
 ) {
   const clock = opts.clock ?? systemClock;
@@ -137,11 +167,16 @@ export async function buildDbServices(
     gameplay: gameplayRepo,
     progress,
   });
+  const baseTx = moveTransaction(dbs.api.db);
+  const wrap = opts.wrapTxRepos;
   const gameplay = new GameplayService({
     games,
     cache,
     repo: gameplayRepo,
     progress,
+    runInTx: wrap ? (fn) => baseTx((r) => fn(wrap(r))) : baseTx,
+    wordList,
+    rejected: new GameplayRepository(dbs.api.db),
     clock,
     launchDate: TEST_CONFIG.LAUNCH_DATE,
   });

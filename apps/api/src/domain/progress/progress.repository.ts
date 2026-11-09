@@ -3,7 +3,7 @@ import { challenges, playerGameStats, playerStats } from '@nerdose/db';
 import type { Db, PlayerGameStats, PlayerStats, Tx } from '@nerdose/db';
 import { and, eq, inArray, lt, max } from 'drizzle-orm';
 
-/** Solo lecturas: este módulo nunca escribe. */
+/** Lecturas de progreso y escrituras del cierre de partida (siempre dentro de una transacción). */
 export class ProgressRepository {
   constructor(private readonly db: Db | Tx) {}
 
@@ -44,5 +44,66 @@ export class ProgressRepository {
       if (global === null || r.day > global) global = r.day;
     }
     return { byGame, global };
+  }
+
+  /** Asegura la fila (con `extra` inicial) y la bloquea con FOR UPDATE. */
+  async lockGameStats(
+    playerId: string,
+    gameId: GameId,
+    initialExtra: unknown,
+  ): Promise<PlayerGameStats> {
+    await this.db
+      .insert(playerGameStats)
+      .values({ playerId, gameId, extra: initialExtra })
+      .onConflictDoNothing({ target: [playerGameStats.playerId, playerGameStats.gameId] });
+    const [row] = await this.db
+      .select()
+      .from(playerGameStats)
+      .where(and(eq(playerGameStats.playerId, playerId), eq(playerGameStats.gameId, gameId)))
+      .for('update');
+    return row!;
+  }
+
+  async lockPlayerStats(playerId: string): Promise<PlayerStats> {
+    await this.db
+      .insert(playerStats)
+      .values({ playerId })
+      .onConflictDoNothing({ target: [playerStats.playerId] });
+    const [row] = await this.db
+      .select()
+      .from(playerStats)
+      .where(eq(playerStats.playerId, playerId))
+      .for('update');
+    return row!;
+  }
+
+  async saveGameStats(
+    row: Pick<
+      PlayerGameStats,
+      | 'playerId'
+      | 'gameId'
+      | 'currentStreak'
+      | 'maxStreak'
+      | 'played'
+      | 'wins'
+      | 'lastCompletedDate'
+      | 'extra'
+    >,
+  ): Promise<void> {
+    const { playerId, gameId, ...set } = row;
+    await this.db
+      .update(playerGameStats)
+      .set(set)
+      .where(and(eq(playerGameStats.playerId, playerId), eq(playerGameStats.gameId, gameId)));
+  }
+
+  async savePlayerStats(
+    row: Pick<
+      PlayerStats,
+      'playerId' | 'globalStreak' | 'maxGlobalStreak' | 'lastActiveDate' | 'totalCompleted'
+    >,
+  ): Promise<void> {
+    const { playerId, ...set } = row;
+    await this.db.update(playerStats).set(set).where(eq(playerStats.playerId, playerId));
   }
 }

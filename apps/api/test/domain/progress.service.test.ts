@@ -139,3 +139,187 @@ describe('ProgressService', () => {
     });
   });
 });
+
+describe('ProgressService.applyResult (unit)', () => {
+  const INITIAL = { guesses: { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0 }, losses: 0 };
+  const G_MERGE = { guess: 'MERGE', marks: Array(5).fill('correct') };
+  const PAYLOAD_U = {
+    term_id: 't',
+    word: 'MERGE',
+    category: 'git',
+    definition: { es: 'd', en: 'd' },
+    summary: { es: 's', en: 's' },
+    date: '2026-12-01',
+  };
+
+  function fakeRepo(opts: {
+    gs?: Partial<Record<string, unknown>>;
+    ps?: Partial<Record<string, unknown>>;
+    prev?: { byGame: Record<string, string>; global: string | null };
+  }) {
+    const saved: { game?: Record<string, unknown>; player?: Record<string, unknown> } = {};
+    const repo = {
+      prevActiveDays: async () => opts.prev ?? { byGame: {}, global: null },
+      lockGameStats: async () => ({
+        playerId: 'p',
+        gameId: 'devdle',
+        currentStreak: 0,
+        maxStreak: 0,
+        played: 0,
+        wins: 0,
+        lastCompletedDate: null,
+        extra: INITIAL,
+        ...opts.gs,
+      }),
+      lockPlayerStats: async () => ({
+        playerId: 'p',
+        globalStreak: 0,
+        maxGlobalStreak: 0,
+        lastActiveDate: null,
+        totalCompleted: 0,
+        ...opts.ps,
+      }),
+      saveGameStats: async (r: Record<string, unknown>) => void (saved.game = r),
+      savePlayerStats: async (r: Record<string, unknown>) => void (saved.player = r),
+    };
+    return { repo: repo as never, saved };
+  }
+  const svc = () => new ProgressService({ repo: {} as never });
+  const run = (
+    f: ReturnType<typeof fakeRepo>,
+    outcome: Parameters<ProgressService['applyResult']>[1]['outcome'],
+    date = '2026-12-01',
+  ) => svc().applyResult(f.repo, { playerId: 'p', game: devdle as never, date, outcome });
+  const won = (n: number) => ({
+    status: 'won' as const,
+    result: devdle.result(
+      PAYLOAD_U as never,
+      {
+        guesses: Array(n - 1)
+          .fill({ guess: 'REACT', marks: [] })
+          .concat(G_MERGE),
+      } as never,
+      'es',
+    ),
+  });
+
+  it('TS-17 voided: rachas y total_completed, sin played, wins ni extra', async () => {
+    const f = fakeRepo({
+      gs: {
+        currentStreak: 2,
+        maxStreak: 2,
+        played: 4,
+        wins: 3,
+        lastCompletedDate: '2026-11-30',
+      },
+      ps: {
+        globalStreak: 2,
+        maxGlobalStreak: 2,
+        lastActiveDate: '2026-11-30',
+        totalCompleted: 4,
+      },
+      prev: { byGame: { devdle: '2026-11-30' }, global: '2026-11-30' },
+    });
+    const res = await run(f, { status: 'voided' });
+    expect(f.saved.game).toEqual({
+      playerId: 'p',
+      gameId: 'devdle',
+      currentStreak: 3,
+      maxStreak: 3,
+      played: 4,
+      wins: 3,
+      lastCompletedDate: '2026-12-01',
+      extra: INITIAL,
+    });
+    expect(f.saved.player).toEqual({
+      playerId: 'p',
+      globalStreak: 3,
+      maxGlobalStreak: 3,
+      lastActiveDate: '2026-12-01',
+      totalCompleted: 5,
+    });
+    expect(res.streaks).toEqual({
+      game: { current: 3, max: 3 },
+      global: { current: 3, max: 3 },
+    });
+  });
+
+  it('TS-18 won después de un voided reconocido', async () => {
+    const f = fakeRepo({
+      gs: { currentStreak: 2, maxStreak: 2, played: 4, wins: 3, lastCompletedDate: '2026-11-30' },
+      ps: { globalStreak: 2, maxGlobalStreak: 2, lastActiveDate: '2026-11-30', totalCompleted: 4 },
+      prev: { byGame: { devdle: '2026-11-30' }, global: '2026-11-30' },
+    });
+    const res = await run(f, won(1));
+    expect(f.saved.game).toMatchObject({ currentStreak: 3, played: 5, wins: 4 });
+    expect((res.gameStats.extra as typeof INITIAL).guesses['1']).toBe(1);
+  });
+
+  it('TS-19 mismo día: la racha no cambia pero played suma', async () => {
+    const f = fakeRepo({
+      gs: { currentStreak: 4, maxStreak: 4, lastCompletedDate: '2026-12-01' },
+      prev: { byGame: { devdle: '2026-11-30' }, global: '2026-11-30' },
+    });
+    await run(f, won(2));
+    expect(f.saved.game).toMatchObject({ currentStreak: 4, played: 1 });
+  });
+
+  it('sin filas previas: 1/1', async () => {
+    const f = fakeRepo({});
+    const res = await run(f, won(3));
+    expect(res.streaks).toEqual({ game: { current: 1, max: 1 }, global: { current: 1, max: 1 } });
+  });
+
+  it('corta: lastCompleted < prevActiveDay reinicia en 1 y conserva el máximo', async () => {
+    const f = fakeRepo({
+      gs: { currentStreak: 5, maxStreak: 5, played: 5, wins: 5, lastCompletedDate: '2026-11-29' },
+      ps: { globalStreak: 5, maxGlobalStreak: 7, lastActiveDate: '2026-11-29', totalCompleted: 9 },
+      prev: { byGame: { devdle: '2026-11-30' }, global: '2026-11-30' },
+    });
+    const res = await run(f, won(3));
+    expect(res.streaks).toEqual({ game: { current: 1, max: 5 }, global: { current: 1, max: 7 } });
+  });
+
+  it('día neutro: continúa; prevActiveDay null con lastCompleted no nulo suma', async () => {
+    const neutral = fakeRepo({
+      gs: { currentStreak: 5, maxStreak: 5, played: 5, wins: 5, lastCompletedDate: '2026-11-29' },
+      ps: { globalStreak: 5, maxGlobalStreak: 7, lastActiveDate: '2026-11-29', totalCompleted: 9 },
+      prev: { byGame: { devdle: '2026-11-29' }, global: '2026-11-29' },
+    });
+    expect((await run(neutral, won(3))).streaks).toEqual({
+      game: { current: 6, max: 6 },
+      global: { current: 6, max: 7 },
+    });
+    const nullPrev = fakeRepo({
+      gs: { currentStreak: 1, maxStreak: 1, lastCompletedDate: '2026-11-20' },
+      ps: { globalStreak: 1, maxGlobalStreak: 1, lastActiveDate: '2026-11-20' },
+    });
+    expect((await run(nullPrev, won(3))).streaks.game.current).toBe(2);
+  });
+
+  it('lost: wins igual, losses + 1 y win_rate correcto', async () => {
+    const f = fakeRepo({ gs: { played: 4, wins: 3, extra: INITIAL } });
+    const res = await run(f, {
+      status: 'lost',
+      result: devdle.result(
+        PAYLOAD_U as never,
+        {
+          guesses: Array(6).fill({
+            guess: 'REACT',
+            marks: ['absent', 'absent', 'absent', 'absent', 'absent'],
+          }),
+        } as never,
+        'es',
+      ),
+    });
+    expect(res.gameStats).toMatchObject({ played: 5, wins: 3, win_rate: 3 / 5 });
+    expect((res.gameStats.extra as typeof INITIAL).losses).toBe(1);
+  });
+
+  it('won con score 4 suma guesses["4"]', async () => {
+    const f = fakeRepo({});
+    const res = await run(f, won(4));
+    expect((res.gameStats.extra as typeof INITIAL).guesses['4']).toBe(1);
+    expect(res.gameStats.win_rate).toBe(1);
+  });
+});

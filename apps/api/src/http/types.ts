@@ -14,7 +14,7 @@ export type AppDeps = {
   config: Pick<ApiEnv, 'WEB_ORIGIN' | 'ADMIN_ORIGIN' | 'TRUST_PROXY_HEADER' | 'LAUNCH_DATE'>;
   identity: IdentityService;
   publishing: Pick<PublishingService, 'getToday' | 'ensureToday'>;
-  gameplay: Pick<GameplayService, 'getToday' | 'start'>;
+  gameplay: Pick<GameplayService, 'getToday' | 'start' | 'move'>;
 };
 
 export type AppEnv = {
