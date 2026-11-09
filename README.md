@@ -58,17 +58,19 @@ packages/
    cp .env.example .env
    cp packages/db/.env.example packages/db/.env.local
    cp packages/content/.env.example packages/content/.env.local
+   cp packages/games/devdle/.env.example packages/games/devdle/.env.local
    cp apps/api/.env.example apps/api/.env.local
    cp apps/generator/.env.example apps/generator/.env.local
    ```
 
-   | Archivo destino               | Variables                                                                                                                                                                                                                                             |
-   | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-   | `.env` (raíz, Compose)        | `POSTGRES_PASSWORD` (local: cualquier valor, p. ej. `localdev`)                                                                                                                                                                                       |
-   | `packages/db/.env.local`      | `DATABASE_URL_OWNER` (requerida; `postgres://nerdose_owner:<POSTGRES_PASSWORD>@127.0.0.1:5432/nerdose`), `DATABASE_URL_API` y `DATABASE_URL_GENERATOR` (opcionales; `db:migrate` fija con ellas la contraseña de `nerdose_api` y `nerdose_generator`) |
-   | `packages/content/.env.local` | `WIKIMEDIA_CONTACT` (requerida solo para `pnpm --filter @nerdose/content import:banks`; mail o URL que va en el `User-Agent` de Wikimedia)                                                                                                            |
-   | `apps/api/.env.local`         | `DATABASE_URL` (requerida; `postgres://nerdose_api:<password>@127.0.0.1:5432/nerdose`), `NODE_ENV`, `PORT` (default `3000`), `LOG_LEVEL`, `SERVICE_NAME` (opcionales)                                                                                 |
-   | `apps/generator/.env.local`   | `DATABASE_URL` (requerida; `postgres://nerdose_generator:<password>@127.0.0.1:5432/nerdose`), `NODE_ENV`, `LOG_LEVEL`, `SERVICE_NAME` (opcionales)                                                                                                    |
+   | Archivo destino                    | Variables                                                                                                                                                                                                                                             |
+   | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+   | `.env` (raíz, Compose)             | `POSTGRES_PASSWORD` (local: cualquier valor, p. ej. `localdev`)                                                                                                                                                                                       |
+   | `packages/db/.env.local`           | `DATABASE_URL_OWNER` (requerida; `postgres://nerdose_owner:<POSTGRES_PASSWORD>@127.0.0.1:5432/nerdose`), `DATABASE_URL_API` y `DATABASE_URL_GENERATOR` (opcionales; `db:migrate` fija con ellas la contraseña de `nerdose_api` y `nerdose_generator`) |
+   | `packages/content/.env.local`      | `WIKIMEDIA_CONTACT` (requerida solo para `pnpm --filter @nerdose/content import:banks`; mail o URL que va en el `User-Agent` de Wikimedia)                                                                                                            |
+   | `packages/games/devdle/.env.local` | `WIKIMEDIA_CONTACT` (requerida solo para `pnpm --filter @nerdose/game-devdle build:wordlist`; mail o URL que va en el `User-Agent` de Wikimedia)                                                                                                      |
+   | `apps/api/.env.local`              | `DATABASE_URL` (requerida; `postgres://nerdose_api:<password>@127.0.0.1:5432/nerdose`), `NODE_ENV`, `PORT` (default `3000`), `LOG_LEVEL`, `SERVICE_NAME` (opcionales)                                                                                 |
+   | `apps/generator/.env.local`        | `DATABASE_URL` (requerida; `postgres://nerdose_generator:<password>@127.0.0.1:5432/nerdose`), `NODE_ENV`, `LOG_LEVEL`, `SERVICE_NAME` (opcionales)                                                                                                    |
 
    `web` y `admin` no necesitan variables.
 
@@ -99,6 +101,16 @@ El dataset de `@nerdose/content` está commiteado en `packages/content/data/`. P
 ```bash
 pnpm --filter @nerdose/content import:banks [--min-sitelinks N] [--cache-dir <ruta>]
 ```
+
+## Lista válida de Devdle
+
+La lista base de palabras válidas de Devdle está commiteada en `packages/games/devdle/wordlist/words.txt` (ENABLE filtrado A–Z de 4 a 12 letras, unido con labels en inglés de conceptos de computación de Wikidata). Se genera una sola vez y el resultado se commitea (solo desarrollo, requiere red y `WIKIMEDIA_CONTACT` en `packages/games/devdle/.env.local`):
+
+```bash
+pnpm --filter @nerdose/game-devdle build:wordlist --enable https://raw.githubusercontent.com/dolph/dictionary/master/enable1.txt
+```
+
+La fuente de ENABLE usada es el `enable1.txt` de `dolph/dictionary` (172.823 palabras en minúsculas); `--enable` también acepta una ruta local.
 
 ## Qué levanta `pnpm dev`
 

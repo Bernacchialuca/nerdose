@@ -1,0 +1,42 @@
+{
+  "head": {
+    "vars": ["item", "label"]
+  },
+  "results": {
+    "bindings": [
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q1"
+        },
+        "label": {
+          "type": "literal",
+          "value": "PostgreSQL",
+          "xml:lang": "en"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q2"
+        },
+        "label": {
+          "type": "literal",
+          "value": "Redis",
+          "xml:lang": "en"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q3"
+        },
+        "label": {
+          "type": "literal",
+          "value": "Node.js",
+          "xml:lang": "en"
+        }
+      }
+    ]
+  }
+}

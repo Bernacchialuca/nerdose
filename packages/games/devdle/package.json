@@ -1,0 +1,25 @@
+{
+  "name": "@nerdose/game-devdle",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./definition": "./src/definition/index.ts",
+    "./generator": "./src/generator/index.ts",
+    "./wordlist": "./wordlist/words.txt"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "build:wordlist": "tsx scripts/build-wordlist.ts"
+  },
+  "dependencies": {
+    "@nerdose/core": "workspace:*",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "dotenv": "^18.0.9",
+    "tsx": "^4.23.15"
+  }
+}
