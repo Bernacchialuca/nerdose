@@ -153,6 +153,7 @@ curl -i http://localhost:5174/api/health
 ## Problemas comunes
 
 - **Una tarea falla y se cortan todas:** `turbo run dev` detiene todo si una tarea termina con error. Lo típico es el `generator` sin base (`Database unavailable at startup`): levantar Postgres y migrar.
+- **Los juegos siguen en "próximamente" con la base recién creada:** el `generator` solo genera desde mañana (`[hoy+1, hoy+14]`, ADR-007) y la `api` muestra "próximamente" antes de `LAUNCH_DATE`. En local, poner `LAUNCH_DATE` en una fecha pasada (la misma en `api` y `generator`), correr `pnpm --filter generator generate:today` (solo dev, se niega en producción) y reiniciar `pnpm dev`, porque la `api` publica el día una sola vez por día.
 - **`502`/`504` en `/api/...` desde `web` o `admin`:** la `api` no está corriendo.
 - **Puerto ocupado:** `5173` y `5174` usan `strictPort` y fallan en lugar de cambiar de puerto.
 - **`password authentication failed for user "nerdose_api"`:** las contraseñas de los `.env.local` no coinciden. Corregirlas y volver a correr `db:migrate`.

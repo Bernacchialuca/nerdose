@@ -36,13 +36,35 @@ export function fillRange(now: Date, launchDate: string): string[] {
   return dates;
 }
 
-export async function runFill(
-  ctx: { now: Date; log: Logger; signal: AbortSignal },
-  deps: FillDeps,
-): Promise<{ summary: FillSummary; failed: boolean }> {
-  const { now, log, signal } = ctx;
+type FillCtx = { now: Date; log: Logger; signal: AbortSignal };
+type FillOutcome = { summary: FillSummary; failed: boolean };
+
+export function runFill(ctx: FillCtx, deps: FillDeps): Promise<FillOutcome> {
+  return fillDates(ctx, deps, fillRange(ctx.now, deps.env.LAUNCH_DATE));
+}
+
+/**
+ * Solo desarrollo local: genera el desafío de HOY si falta. ADR-007 prohíbe que `fill` genere
+ * para hoy; esto existe para poder jugar con una base recién creada sin esperar al día siguiente.
+ * Se niega a correr en producción y antes de `LAUNCH_DATE`.
+ */
+export async function runGenerateToday(
+  ctx: FillCtx,
+  deps: FillDeps & { nodeEnv: 'development' | 'test' | 'production' },
+): Promise<FillOutcome> {
+  if (deps.nodeEnv === 'production') {
+    throw new Error('generate:today is a local development tool; refusing to run in production');
+  }
+  const day = today(ctx.now);
+  if (day < deps.env.LAUNCH_DATE) {
+    throw new Error(`Today (${day}) is before LAUNCH_DATE (${deps.env.LAUNCH_DATE})`);
+  }
+  return fillDates(ctx, deps, [day]);
+}
+
+async function fillDates(ctx: FillCtx, deps: FillDeps, range: string[]): Promise<FillOutcome> {
+  const { log, signal } = ctx;
   const repo = deps.repo ?? new ChallengePublishingRepository(deps.db);
-  const range = fillRange(now, deps.env.LAUNCH_DATE);
   const summary: FillSummary = { generated: 0, approved: 0, rejected: 0, missing: 0 };
   let failed = false;
   const first = range[0];
