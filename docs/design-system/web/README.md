@@ -13,7 +13,7 @@ source: docs/nerdose.html
 - **Versión:** `1.4.1`
 - **Estado:** definido desde el prototipo
 - **Fuente de verdad visual:** [`docs/nerdose.html`](../../nerdose.html). Ante una duda de estética gana el prototipo; en datos, reglas y accesibilidad gana el PRD (ver [`governance.md`](governance.md)).
-- **Código:** `@nerdose/ui` está alineado desde S-011 (v1.2.0). `apps/web` tiene alineados el shell, "Acerca de" y la 404 (S-012) y la home (S-013) desde la v1.4.0; ver [`CHANGELOG.md`](CHANGELOG.md) → "Desalineaciones conocidas en código".
+- **Código:** `@nerdose/ui` está alineado desde S-011 (v1.2.0). `apps/web` tiene alineados el shell, "Acerca de" y la 404 (S-012), la home (S-013) desde la v1.4.0 y las tres pantallas de Devdle (S-021, v1.5.0); ver [`CHANGELOG.md`](CHANGELOG.md) → "Desalineaciones conocidas en código".
 
 ## Identidad en una línea
 

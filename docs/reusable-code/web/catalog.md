@@ -12,8 +12,13 @@
 
 ## useDayCountdown
 - **Location:** apps/web/src/modules/catalog/api/use-day-countdown.ts
-- **Signature:** `useDayCountdown(secondsToReset: number, syncedAt: number): number`
+- **Signature:** `useDayCountdown(secondsToReset: number, syncedAt: number, extraKeys?: readonly QueryKey[]): number` - on expiry it invalidates `todayKeys.all` and every key in `extraKeys`
 - **Usage:** `useDayCountdown(view.secondsToReset, query.dataUpdatedAt)`
+
+## nextPendingGame
+- **Location:** apps/web/src/modules/catalog/home-view.ts
+- **Signature:** `nextPendingGame(today: Today, exclude?: GameId): GameId | null` - first published game in progress (in `GAME_IDS` order), else the first not started
+- **Usage:** `nextPendingGame(today, 'devdle') // 'grep-grid'`
 
 ## ChallengeNumber
 - **Location:** apps/web/src/modules/catalog/components/challenge-number.tsx

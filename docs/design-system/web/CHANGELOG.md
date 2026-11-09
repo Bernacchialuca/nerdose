@@ -16,12 +16,15 @@ y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Código alineado con el spec
 - `@nerdose/ui`: tokens (roles `type.title.game`, `type.brand.*`, `type.game.*`, `type.body.sm*`, `type.code.share`; colores `status.present`, `status.absent.*`, `text.separator`; anchos), `GameHeader`, `HelpIcon`/`ChartIcon`/`ShareIcon`, `Banner` (`success`/`failure`/`neutral`, `titleAs`, `announce`, `action`), `buttonClass` (`icon`, `share`), `Badge` (`loose`) y `track()`/`injectAnalytics()` (ADR-014, `share:<game_id>`).
+- `apps/web` (S-021): `GameHeader` en las 3 pantallas de Devdle (`playing`/`finished` según el estado del botón Compartir), `Banner` `neutral`/`warning` para los avisos informativos, Compartir `accent` `share` con el estado «✓ Copiado» y el loader `$ cargando …` (gap aceptado).
 - `@nerdose/game-devdle/client`: `Instructions`, `Game`, `Result`, `share()` y las piezas `devdle.cell`, `devdle.key`, `devdle.legend`, `devdle.distribution` según `game-boards` 1.1.0.
 
 ### Notas para limpiar en otros docs
 - El spec de `game-header` decía «desafío del dd/mm»; el producto usa `#número`.
 - Desktop de `devdle-partida.md`: el teclado va en la columna 7/12, como en el prototipo.
 - `devdle-resultado.md` pide «enlace a la fuente» del resumen, pero `DevdleResult` no trae URL; el client muestra «Fuente: Wikipedia (CC BY-SA)» sin enlace.
+- `devdle-resultado.md` pide `btn-compartir` `primary` y `button.md` dice `accent` (`size: share`): el código sigue al DS.
+- El resultado anulado fusiona veredicto y `alerta-anulado` en un solo banner `warning` con `h1` (el DS pide no más de un banner a la vez).
 - El ejemplo de share de `docs/flows/preferencias-y-share.md` es anterior al formato de REQ-004 (`🟩 Devdle #N · k/6`).
 
 ---

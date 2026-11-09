@@ -4,3 +4,5 @@ export { useToday } from './api/use-today';
 export { GAME_CATALOG } from './games';
 export { ChallengeNumber } from './components/challenge-number';
 export { GlobalStreakPill } from './components/global-streak-pill';
+export { useDayCountdown } from './api/use-day-countdown';
+export { nextPendingGame } from './home-view';

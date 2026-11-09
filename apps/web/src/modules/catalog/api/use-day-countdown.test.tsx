@@ -7,13 +7,15 @@ import { useDayCountdown } from './use-day-countdown';
 
 const advance = (ms: number) => act(async () => void (await vi.advanceTimersByTimeAsync(ms)));
 
-function setup(initial: { s: number; at: number }) {
+const EXTRA_KEYS = [['game-today']] as const;
+
+function setup(initial: { s: number; at: number }, extraKeys?: readonly (readonly string[])[]) {
   const queryClient = new QueryClient();
   const spy = vi.spyOn(queryClient, 'invalidateQueries').mockResolvedValue();
   const wrapper = ({ children }: { children: ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
-  const hook = renderHook(({ s, at }) => useDayCountdown(s, at), {
+  const hook = renderHook(({ s, at }) => useDayCountdown(s, at, extraKeys), {
     wrapper,
     initialProps: initial,
   });
@@ -58,6 +60,16 @@ describe('useDayCountdown', () => {
     expect(spy).toHaveBeenCalledWith({ queryKey: ['today'] });
     await advance(10000);
     expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it('TS-44: al expirar invalida también las extraKeys', async () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+    const { spy } = setup({ s: 1, at: Date.now() }, EXTRA_KEYS);
+    await advance(1000);
+    await advance(1);
+    expect(spy).toHaveBeenCalledWith({ queryKey: ['today'] });
+    expect(spy).toHaveBeenCalledWith({ queryKey: ['game-today'] });
+    expect(spy).toHaveBeenCalledTimes(2);
   });
 
   it('TS-22: jitter máximo y mínimo', async () => {

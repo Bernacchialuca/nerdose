@@ -8,7 +8,7 @@ import {
   todayNoChallengesFixture,
 } from '@/test/fixtures/today';
 
-import { deriveHomeView } from './home-view';
+import { deriveHomeView, nextPendingGame } from './home-view';
 import type { HomeView } from './home-view';
 
 const base = { isPending: false, isError: false } as const;
@@ -343,5 +343,23 @@ describe('deriveHomeView', () => {
         ).terminal.streak,
       ).toEqual({ current: null, max: null, tone: 'dim' });
     });
+  });
+});
+
+describe('nextPendingGame', () => {
+  it('TS-45: prioriza la partida en curso y luego la primera sin empezar', () => {
+    expect(nextPendingGame(todayFixture)).toBe('grep-grid');
+    const noneInProgress = {
+      ...todayFixture,
+      games: todayFixture.games.map((g) =>
+        g.play_status === 'in_progress' ? { ...g, play_status: 'won' as const } : g,
+      ),
+    };
+    expect(nextPendingGame(noneInProgress)).toBe('timeline');
+  });
+
+  it('salta el juego excluido y devuelve null sin pendientes', () => {
+    expect(nextPendingGame(todayFixture, 'grep-grid')).toBe('timeline');
+    expect(nextPendingGame(todayNoChallengesFixture)).toBeNull();
   });
 });

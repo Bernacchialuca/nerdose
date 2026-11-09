@@ -10,7 +10,7 @@
 - **Signature:** `SiteFooter()` - tagline + `exit 0`, privacy notice, `Acerca de →` link
 
 ## NotFound
-- **Location:** apps/web/src/app/not-found.tsx
+- **Location:** apps/web/src/components/not-found.tsx
 - **Signature:** `NotFound()` - element of the `*` route
 
 ## useDocumentTitle
@@ -19,7 +19,7 @@
 
 ## MSW server, fixtures
 - **Location:** apps/web/src/test/msw.ts, fixtures/
-- **Usage:** `server.use(http.get('/api/today', () => HttpResponse.json(todayNoSessionFixture)))`; `renderWithProviders({ route, strict? })`
+- **Usage:** `server.use(http.get('/api/today', () => HttpResponse.json(todayNoSessionFixture)))`; `server.use(gameHandlers.today(gameTodayWon))` for the game endpoints (fixtures in fixtures/game-today.ts); `renderWithProviders({ route, strict? })`
 
 ## fontOf
 - **Location:** apps/web/src/test/font-family.ts
