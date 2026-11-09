@@ -1,7 +1,7 @@
 ---
 foundation: iconography
-version: 1.0.0
-last_updated: 2026-11-05
+version: 1.0.1
+last_updated: 2026-11-09
 status: defined
 source: docs/nerdose.html
 ---
@@ -94,3 +94,4 @@ Semánticos: `icon.size.*`, `icon.stroke.*`. De componente: `button.icon.size �
 
 - 2026-11-03 v0.1.0 — Placeholder inicial.
 - 2026-11-05 v1.0.0 — Inventario real: 6 SVG estilo Lucide (16/18/20, stroke 2/3), caracteres Unicode con significado y los 3 emojis permitidos.
+- 2026-11-09 v1.0.1 — S-021: `HelpIcon` (`circle-help`, 18), `ChartIcon` (18) y `ShareIcon` (`share`, 16) implementados en `@nerdose/ui`; `aria-hidden`, color por `currentColor`.

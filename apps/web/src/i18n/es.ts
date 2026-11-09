@@ -169,6 +169,47 @@ export const es = {
     },
     stats: 'ver estadísticas',
   },
+  gameHost: {
+    documentTitle: '{{game}} · nerdose',
+    loading: '$ cargando {{slug}}…',
+    header: {
+      nav: 'Ruta',
+      help: 'Cómo se juega',
+      stats: 'Estadísticas',
+      share: 'Compartir',
+      shareDisabled: 'Compartir resultado (disponible al terminar)',
+      shareDisabledTitle: 'Disponible al terminar la partida',
+      streak: 'Racha global:',
+    },
+    notice: {
+      dayChanged:
+        'Empezó el desafío #{{number}}. La partida de ayer quedó sin terminar y no cuenta para tu racha.',
+      noChallenge: 'Hoy no hay desafío de {{game}}. Es un día neutro: no suma ni corta tu racha.',
+      voided: 'Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.',
+      voidedTitle: 'Desafío anulado',
+      cookies:
+        'Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».',
+    },
+    error: {
+      load: 'No pudimos cargar el desafío de {{game}}. Revisá tu conexión e intentá de nuevo.',
+      move: 'No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.',
+    },
+    retry: 'Reintentar',
+    back: 'Volver a los juegos',
+    result: {
+      streaksTitle: 'rachas',
+      gameStreak_one: '{{game}}: {{count}} día',
+      gameStreak_other: '{{game}}: {{count}} días',
+      globalStreak_one: 'Global: {{count}} día',
+      globalStreak_other: 'Global: {{count}} días',
+      record: 'récord {{game}}: {{count}}',
+      share: 'Compartir',
+      copied: '✓ Copiado',
+      countdown: 'Próximo desafío en {{time}}',
+      next: 'Siguiente juego',
+      stats: 'Ver mis estadísticas',
+    },
+  },
   games: {
     devdle: { name: 'Devdle', description: 'Adiviná el término tech en 6 intentos' },
     'grep-grid': { name: 'Grep Grid', description: 'Encontrá 8 palabras en la grilla' },

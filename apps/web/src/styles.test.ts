@@ -46,6 +46,12 @@ describe('index.css', () => {
     expect([...positions].sort((a, b) => a - b)).toEqual(positions);
   });
 
+  it('TS-3: escanea los clients de juego después de los tokens', () => {
+    const source = '@source "../../../packages/games/*/src/client";';
+    expect(css).toContain(source);
+    expect(css.indexOf(source)).toBeGreaterThan(css.indexOf("@import '@nerdose/ui/tokens.css';"));
+  });
+
   it('importa solo los pesos del Design System', () => {
     expect(css.match(/@import '@fontsource\/[^']+';/g)).toHaveLength(6);
     for (const forbidden of [
@@ -110,7 +116,7 @@ describe('componentes', () => {
     const relative = sources.map((f) => f.slice(srcDir.length));
     for (const expected of [
       'app/shell.tsx',
-      'app/not-found.tsx',
+      'components/not-found.tsx',
       'app/route-error.tsx',
       'modules/about/routes/about.tsx',
       'modules/catalog/routes/home.tsx',
@@ -204,7 +210,7 @@ describe('media queries globales (S-012)', () => {
 describe('layout fluido (S-012)', () => {
   const FILES = [
     'app/shell.tsx',
-    'app/not-found.tsx',
+    'components/not-found.tsx',
     'app/route-error.tsx',
     'components/main-nav.tsx',
     'components/site-footer.tsx',

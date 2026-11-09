@@ -126,13 +126,13 @@ describe('tokens.css', () => {
     });
   });
 
-  it('declares the 26 typographic roles with their companions (TS-6)', () => {
+  it('declares the 36 typographic roles with their companions (TS-6)', () => {
     const roles = Object.keys(declarations)
       .filter(
         (n) => n.startsWith('--text-') && !n.includes('--', 2) && !/^--text-[a-z-]+--/.test(n),
       )
       .map((n) => n.slice('--text-'.length));
-    expect(roles).toHaveLength(26);
+    expect(roles).toHaveLength(36);
     for (const role of roles) {
       expect(declarations[`--text-${role}--line-height`], role).toBeDefined();
       if (role !== 'button-lg' && role !== 'button-md') {
@@ -178,6 +178,42 @@ describe('tokens.css', () => {
       '--animate-blink': 'blink 1.1s steps(1) 4',
     });
     expect(themeBody).toMatch(/@keyframes blink\s*\{/);
+  });
+
+  it('declares the game-piece roles, colors and widths (S-021 TS-1, TS-2)', () => {
+    expectTokens({
+      '--text-title-game': '34px',
+      '--text-title-game--letter-spacing': '-1px',
+      '--text-title-game--font-weight': '700',
+      '--text-brand-logo-compact': '18px',
+      '--text-brand-logo-compact--font-weight': '800',
+      '--text-brand-crumb': '18px',
+      '--text-brand-crumb--font-weight': '700',
+      '--text-game-tile-lg': '28px',
+      '--text-game-tile-lg--font-weight': '800',
+      '--text-game-tile-sm': '16px',
+      '--text-game-tile-sm--font-weight': '800',
+      '--text-game-key': '15px',
+      '--text-game-key--font-weight': '700',
+      '--text-game-key-small': '12px',
+      '--text-game-key-small--font-weight': '700',
+      '--text-body-sm': '14px',
+      '--text-body-sm--line-height': '1.5',
+      '--text-body-sm--font-weight': '400',
+      '--text-body-sm-legend': '14px',
+      '--text-body-sm-legend--line-height': '1.4',
+      '--text-body-sm-legend--font-weight': '400',
+      '--text-code-share': '14px',
+      '--text-code-share--line-height': '1.7',
+      '--text-code-share--font-weight': '400',
+      '--color-status-present': '#FFB547',
+      '--color-status-absent-bg': '#1A2028',
+      '--color-status-absent-text': '#8D99A6',
+      '--color-text-separator': '#2A323C',
+      '--container-keyboard': '620px',
+      '--container-devdle-aside': '380px',
+    });
+    expectTokens(EXISTING);
   });
 
   it('has only @source and texture-dots outside @theme (TS-8)', () => {

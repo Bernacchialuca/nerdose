@@ -11,17 +11,23 @@ describe('@nerdose/ui public API', () => {
       'Banner',
       'BrandMark',
       'Card',
+      'ChartIcon',
+      'GameHeader',
       'GameThumbnail',
+      'HelpIcon',
       'Panel',
       'ProgressBar',
       'SegmentedControl',
+      'ShareIcon',
       'StreakNumber',
       'StreakPill',
       'TerminalWindow',
       'buttonClass',
       'cn',
+      'injectAnalytics',
       'linkClass',
       'navItemClass',
+      'track',
     ]);
     for (const value of Object.values(ui)) expect(typeof value).toBe('function');
   });

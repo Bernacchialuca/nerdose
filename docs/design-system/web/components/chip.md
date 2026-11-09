@@ -1,8 +1,8 @@
 ---
 component: chip
-version: 1.2.0
+version: 1.3.0
 status: active
-last_updated: 2026-11-06
+last_updated: 2026-11-09
 source: docs/nerdose.html
 related: [card, panel, streak-pill]
 ---
@@ -89,3 +89,4 @@ related: [card, panel, streak-pill]
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: chips outline (neutro, ámbar, loose) y badges tintados (éxito, pendiente, fuerte).
 - 2026-11-06 v1.2.0 — `badge.neutral` derivado (`#141920` + `#9AA6B2`, 7,1:1); implementado como `Badge` de `@nerdose/ui`.
+- 2026-11-09 v1.3.0 — S-021: `loose` implementado en `Badge` de `@nerdose/ui` (`loose?: boolean`, default `false`): chip 6 10 por defecto y 6 12 con `loose` («próximamente»).

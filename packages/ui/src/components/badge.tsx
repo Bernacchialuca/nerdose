@@ -6,6 +6,8 @@ export type BadgeProps = {
   variant?: 'badge' | 'chip';
   tone?: 'success' | 'pending' | 'neutral';
   strong?: boolean;
+  /** Solo `chip`: padding 6 12 (`próximamente`) en lugar de 6 10. */
+  loose?: boolean;
   children: ReactNode;
   className?: string;
 };
@@ -14,6 +16,7 @@ export function Badge({
   variant = 'badge',
   tone = 'neutral',
   strong = false,
+  loose = false,
   children,
   className,
 }: BadgeProps) {
@@ -21,7 +24,8 @@ export function Badge({
     return (
       <span
         className={cn(
-          'inline-flex flex-none items-center whitespace-nowrap rounded-full border border-border-strong px-3 py-1.5 font-mono text-meta text-text-muted',
+          'inline-flex flex-none items-center whitespace-nowrap rounded-full border border-border-strong py-1.5 font-mono text-meta text-text-muted',
+          loose ? 'px-3' : 'px-2.5',
           className,
         )}
       >

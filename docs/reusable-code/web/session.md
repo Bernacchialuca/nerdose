@@ -17,4 +17,4 @@
 
 ## sessionKeys / createSession / updatePreferences
 - **Location:** apps/web/src/modules/session/api/session.ts
-- **Signature:** `createSession(): Promise<SessionResponse>`; `updatePreferences(body: PreferencesUpdate): Promise<Preferences>`
+- **Signature:** `createSession(): Promise<SessionResponse>` (also exported from `modules/session/index.ts`); `updatePreferences(body: PreferencesUpdate): Promise<Preferences>`

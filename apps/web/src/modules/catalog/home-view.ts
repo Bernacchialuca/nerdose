@@ -196,9 +196,14 @@ function terminalRow(card: CardView): TerminalRowView {
   return { game_id: card.game_id, state, metric, status };
 }
 
-function pickNext(today: Today): GameId | null {
+/**
+ * Próximo juego a jugar: el primero con desafío publicado y partida en curso (en orden `GAME_IDS`);
+ * si no hay, el primero publicado sin empezar. `exclude` salta un juego (el que se acaba de abrir).
+ */
+export function nextPendingGame(today: Today, exclude?: GameId): GameId | null {
   const candidates = GAME_IDS.map((id) => today.games.find((g) => g.game_id === id)).filter(
-    (g): g is TodayGame => g !== undefined && g.challenge_status === 'published',
+    (g): g is TodayGame =>
+      g !== undefined && g.challenge_status === 'published' && g.game_id !== exclude,
   );
   const found =
     candidates.find((g) => g.play_status === 'in_progress') ??
@@ -259,7 +264,7 @@ export function deriveHomeView({ today, isPending, isError, sessionStatus }: Inp
   else if (firstVisit) summary = 'empty';
   else summary = 'streaks';
 
-  const next = variant === 'normal' && sessionStatus === 'active' ? pickNext(today) : null;
+  const next = variant === 'normal' && sessionStatus === 'active' ? nextPendingGame(today) : null;
   const cards = GAME_IDS.map((id) => ({
     ...cardView(
       id,

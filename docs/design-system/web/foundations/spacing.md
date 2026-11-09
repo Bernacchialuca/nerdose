@@ -1,7 +1,7 @@
 ---
 foundation: spacing
-version: 1.1.0
-last_updated: 2026-11-06
+version: 1.1.1
+last_updated: 2026-11-09
 status: defined
 source: docs/nerdose.html
 ---
@@ -56,7 +56,7 @@ Los nombres de los primitivos son el valor en píxeles (`space.20` = 20px).
 | `layout.section.gap.game` | 28px | L611, L866, L997, L1101 |
 | Ancho de contenido máximo | 1240 − 2×32 = **1176px** | derivado |
 
-Otros anchos máximos: lede 540px (L40), teclado 620px (L469), aside de Devdle 380px (L480).
+Otros anchos máximos: lede 540px (L40), teclado 620px (L469), aside de Devdle 380px (L480). Tokens en `@nerdose/ui`: `--container-lede`, `--container-keyboard` (620px) y `--container-devdle-aside` (380px).
 
 ## Componentes (paddings y gaps recurrentes)
 
@@ -149,3 +149,4 @@ Otros anchos máximos: lede 540px (L40), teclado 620px (L469), aside de Devdle 3
 - 2026-11-03 v0.1.0 — Placeholder inicial.
 - 2026-11-05 v1.0.0 — Escala real del prototipo (2-72px), medidas de página (1240px, gutter 32px, paddings por tipo de pantalla), paddings y gaps por componente y medidas de control. Los primitivos pasan a nombrarse por su valor en px (`space.4` era 16px y ahora es 4px). Se eliminan `space.xs`…`space.4xl` y los semánticos `space.inline.*`, `space.stack.*`, `space.padding.*`.
 - 2026-11-06 v1.1.0 — S-012: padding de página 48/56 para pantallas sin prototipo.
+- 2026-11-09 v1.1.1 — S-021: tokens `--container-keyboard` (620px) y `--container-devdle-aside` (380px) en `@nerdose/ui`.

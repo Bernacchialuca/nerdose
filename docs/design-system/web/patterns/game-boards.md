@@ -1,8 +1,8 @@
 ---
 pattern: game-boards
-version: 1.0.0
+version: 1.1.0
 status: active
-last_updated: 2026-11-05
+last_updated: 2026-11-09
 source: docs/nerdose.html
 related: [card, panel, code-block, button, chip, streak-pill]
 ---
@@ -42,8 +42,8 @@ Layout: tablero (`flex: 999 1 560px`, columna centrada, gap 28) + aside (`1 1 30
 `aria-label` por celda: "{letra|casilla}, {correcta|en otra posición|no está|escrita|vacía}" (L537).
 
 **Adaptaciones requeridas:**
-- **NFR-U04:** "en otra posición" tiene patrón (punteado). "Correcta" vs "no está" se distinguen por relleno claro/oscuro (9,2:1) y `aria-label`, pero no por ícono o patrón. **Pendiente** la señal adicional.
-- **320px (NFR-U01):** la grilla mide 424px fijos; a 320px hay 256px. La celda tiene que bajar a ≤ 36px con gap 8. **Pendiente** la regla de escalado (celda, gap, letra).
+- **NFR-U04:** "en otra posición" tiene patrón (punteado). "Correcta" vs "no está" se distinguen por relleno claro/oscuro (9,2:1) y `aria-label`, pero no por ícono o patrón. **Resuelto (1.1.0):** glifo en la esquina superior derecha de cada celda evaluada: `✓` correcta, `~` en otra posición, `✗` no está (`aria-hidden`, mismo color que la letra, tamaño `--tile-mark` = 40% de la letra, mín 8px, máx 12px). Las celdas escrita y vacía no llevan glifo.
+- **320px (NFR-U01):** la grilla mide 424px fijos; a 320px hay 256px. La celda tiene que bajar a ≤ 36px con gap 8. **Resuelto (1.1.0):** grilla `repeat(N, minmax(0, 1fr))` con celdas `aspect-ratio: 1` y ancho máximo `N*64px + (N-1)*gap`; gap 8px si N ≤ 8 y 4px si N ≥ 9 (filas con el mismo gap); letra `clamp(10px, (ancho útil - (N-1)*gap) / N * 0.4375, 28px)` con el tablero como contenedor. A 320px (256px útiles): 6 letras → celda 36px; 12 letras → ~17,7px.
 - **Contraste no texto:** celda vacía `#222A33` 1,4:1 sobre la página; no es interactiva y su estado lo dice `aria-label`.
 
 ### `devdle.legend` — leyenda de pistas (L483-485)
@@ -58,16 +58,29 @@ Tecla: alto 54, `radius.tile` (8), sin borde, `type.game.key` (Mono 700 15); let
 |---|---|---|---|---|
 | sin usar | `#2A323C` | `#E6EDF3` | — | L564 |
 | correcta | `#3DDC84` | `#06120B` | — | L562 |
-| descartada | `#12161B` | `#5F6B78` | `text-decoration: line-through` | L563 |
-| presente | **Pendiente — el prototipo no lo define** (el mock solo asigna correcta y descartada) | | | L556-557 |
+| descartada | `#11151A` (1.1.0) | `#8D99A6` (≈ 6:1, antes `#5F6B78` 3,3:1) | `text-decoration: line-through` | L563 |
+| presente (1.1.0) | `#2A323C` | `#FFB547` | **2px dashed** `#FFB547`; nunca relleno amarillo | derivado |
 | ENTER | `#3DDC84` | `#06120B` | `flex: 1.6 1 0; max-width: 84px`; 12px (`type.game.key.small`); `aria-label="Enviar"` | L570 |
 | ⌫ | `#2A323C` | `#E6EDF3` | `flex: 1.6 1 0; max-width: 84px`; `aria-label="Borrar"` | L571 |
 
-**Adaptaciones requeridas:** texto de tecla descartada 3,3:1 → ≥ 4,5:1 (tono **Pendiente**); hover/active/focus **Pendiente** (foco visible es requisito); el teclado físico tiene que funcionar igual que el virtual (NFR-U03).
+**Adaptaciones resueltas (1.1.0):**
+- **Borde estable:** todas las teclas llevan borde de 2px; en los estados sin borde visible es del color del fondo.
+- **Hover / foco:** sin usar y ⌫ `hover` un paso más claro (`#3A424C`); ENTER `hover` `#7CF0B0`; correcta, presente y descartada sin hover. Foco: `outline 2px` con offset 2 en `--color-accent`.
+- **Deshabilitado:** ENTER con `pending` → `aria-disabled="true"`, neutro (`#11151A` / `text.disabled`), sin hover; la acción se bloquea en el handler.
+- **Ancho a 320px:** se mantiene `flex: 1 1 0; min-width: 0`: la tecla mide ~20 × 54px con pitch de 26px. Excepción documentada al target 44×44: cumple WCAG 2.5.8 por espaciado (≥ 24px).
+- El teclado físico funciona igual que el virtual (NFR-U03): A–Z, Enter y Backspace; Enter/Espacio sobre un botón enfocado quedan al comportamiento nativo.
+
+### `devdle.hint` — aviso de jugada (1.1.0)
+
+`<p role="status">` siempre montado, sin ícono, Mono 13 en ámbar `status.present` (advertencia del juego, sin rojo), centrado, con `min-height: 20px` reservada para no mover el layout. Se descarta al escribir.
+
+### Cabecera `//` de panel (1.1.0)
+
+En las pantallas de Devdle las cabeceras `// …` de pistas, palabra y distribución son `h2` (Mono 13 `text.dim`, el `//` `aria-hidden`), con dato opcional en `text.streak`.
 
 ### `devdle.distribution` — tus intentos (L501-514, L575-581)
 
-Panel con cabecera "// tus intentos" + "racha 12" ámbar. Fila `grid-template-columns: 16px 1fr`, gap 10, Mono 12; etiqueta `1…6, X` en `text.muted`. Barra: `width: max(8%, n/máx)`, `min-width: 22px`, padding 3 8, `radius.cell.xs` (4), número alineado a la derecha; destacada (intento ganador) `#3DDC84` / `#06120B`, resto `#2A323C` / `#E6EDF3`. Totales: Mono 12 `text.muted` con `<b>` `text.primary` ("**48** jugadas **96%** victorias", gap 20).
+Panel con cabecera "// tus intentos" + "racha 12" ámbar. Fila `grid-template-columns: 16px 1fr`, gap 10, Mono 12; etiqueta `1…6, X` en `text.muted`. Barra: `width: max(8%, n/máx)`, `min-width: 22px`, padding 3 8, `radius.cell.xs` (4), número alineado a la derecha; destacada (intento ganador) `#3DDC84` / `#06120B` con peso 800 y texto solo-lector «hoy» (1.1.0), resto `#2A323C` / `#E6EDF3`. Totales: Mono 12 `text.muted` con `<b>` `text.primary` ("**48** jugadas **96%** victorias", gap 20).
 
 ### Pista de categoría (L488-498)
 
@@ -228,8 +241,9 @@ Cabecera de 150px de la [tarjeta de juego](../components/card.md), `aria-hidden`
 - No animar celdas ni filas.
 - No usar rojo para el error de Timeline ni para la jugada fallida de Grep.
 - No rellenar de amarillo el "presente" de Devdle.
-- No implementar estados marcados **Pendiente** sin pasar antes por `/product-design-system-update`.
+- No implementar estados marcados **Pendiente** sin pasar antes por `/product-design-system-update`. Los de Devdle quedaron resueltos en 1.1.0 (story S-021).
 
 ## Historial
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: piezas de Devdle (celda, leyenda, tecla, distribución), Bug Hunt (línea elegible, confirmar, tests, pasos, resultado), Big O (opción, caja "en números"), Tech Timeline (fila, riel) y Grep Grid (tablero, celda, hint, palabra), miniaturas de tarjeta y adaptaciones requeridas por NFR-U01/U03/U04.
+- 2026-11-09 v1.1.0 — Story S-021: se resuelven los «Pendiente» de Devdle (glifo no cromático, escalado a 320px, tecla presente, descartada ≥ 4,5:1, borde estable, hover/foco/deshabilitado, ancho de tecla a 320px) y se documentan el aviso de jugada y la cabecera `//` como `h2`.

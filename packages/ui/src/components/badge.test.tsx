@@ -50,7 +50,7 @@ describe('Badge', () => {
       'rounded-full',
       'border',
       'border-border-strong',
-      'px-3',
+      'px-2.5',
       'py-1.5',
       'font-mono',
       'text-meta',
@@ -58,6 +58,18 @@ describe('Badge', () => {
     );
     expect(chip.className).not.toMatch(/(^|\s)bg-/);
     expect(chip.tagName).toBe('SPAN');
+  });
+
+  it('renders the loose chip (S-021 TS-24, TS-25)', () => {
+    const { rerender } = render(<Badge variant="chip">git</Badge>);
+    expect(screen.getByText('git')).not.toHaveClass('px-3');
+    rerender(
+      <Badge variant="chip" loose>
+        próximamente
+      </Badge>,
+    );
+    expect(screen.getByText('próximamente')).toHaveClass('px-3', 'py-1.5');
+    expect(screen.getByText('próximamente')).not.toHaveClass('px-2.5');
   });
 
   it('merges className and has no text of its own (TS-55)', () => {

@@ -174,6 +174,48 @@ export const en: Resources = {
     },
     stats: 'see stats',
   },
+  gameHost: {
+    documentTitle: '{{game}} · nerdose',
+    loading: '$ loading {{slug}}…',
+    header: {
+      nav: 'Breadcrumb',
+      help: 'How to play',
+      stats: 'Stats',
+      share: 'Share',
+      shareDisabled: 'Share result (available when you finish)',
+      shareDisabledTitle: 'Available when the game ends',
+      streak: 'Global streak:',
+    },
+    notice: {
+      dayChanged:
+        "Challenge #{{number}} has started. Yesterday's game was left unfinished and doesn't count toward your streak.",
+      noChallenge:
+        "There's no {{game}} challenge today. It's a neutral day: it doesn't add to or break your streak.",
+      voided: 'This challenge had an error and was voided. Your streak is not affected.',
+      voidedTitle: 'Challenge voided',
+      cookies:
+        'To play we need a single functional cookie, with no personal data. Enable cookies and tap “Retry”.',
+    },
+    error: {
+      load: "We couldn't load the {{game}} challenge. Check your connection and try again.",
+      move: "We couldn't load your game. Check your connection and try again: you'll pick up where you left off.",
+    },
+    retry: 'Retry',
+    back: 'Back to the games',
+    result: {
+      streaksTitle: 'streaks',
+      gameStreak_one: '{{game}}: {{count}} day',
+      gameStreak_other: '{{game}}: {{count}} days',
+      globalStreak_one: 'Global: {{count}} day',
+      globalStreak_other: 'Global: {{count}} days',
+      record: '{{game}} record: {{count}}',
+      share: 'Share',
+      copied: '✓ Copied',
+      countdown: 'Next challenge in {{time}}',
+      next: 'Next game',
+      stats: 'See my stats',
+    },
+  },
   games: {
     devdle: { name: 'Devdle', description: 'Guess the tech term in 6 tries' },
     'grep-grid': { name: 'Grep Grid', description: 'Find 8 words in the grid' },

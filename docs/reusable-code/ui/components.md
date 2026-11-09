@@ -16,14 +16,14 @@ Components hold no visible text of their own (ADR-002): all text comes in throug
 
 ## Badge
 - **Location:** packages/ui/src/components/badge.tsx
-- **Description:** Status badge (`success`, `pending`, `neutral`, optional `strong`) or the "coming soon" `chip` (outline, no background). Non-interactive `<span>`.
-- **Signature:** `Badge({ variant?: 'badge' | 'chip'; tone?: 'success' | 'pending' | 'neutral'; strong?: boolean; children: ReactNode; className?: string })`
-- **Usage:** `<Badge tone="success">✓ 4/6</Badge>` · `<Badge variant="chip">{t('home.soon')}</Badge>`
+- **Description:** Status badge (`success`, `pending`, `neutral`, optional `strong`) or the outline `chip` (`px-2.5`; `loose` gives `px-3` for "coming soon"). Non-interactive `<span>`.
+- **Signature:** `Badge({ variant?: 'badge' | 'chip'; tone?: 'success' | 'pending' | 'neutral'; strong?: boolean; loose?: boolean; children: ReactNode; className?: string })`
+- **Usage:** `<Badge tone="success">✓ 4/6</Badge>` · `<Badge variant="chip" loose>{t('home.soon')}</Badge>`
 
 ## Banner
 - **Location:** packages/ui/src/components/banner.tsx
-- **Description:** Persistent `role="status"` warning (`warning` variant): tinted panel with a 40px `!` icon, mono title and Inter detail. No action; aligned to the page container by the app.
-- **Signature:** `Banner({ title: ReactNode; children?: ReactNode; variant?: 'warning'; className?: string })`
+- **Description:** Tinted notice with `warning` (default), `success`, `failure` and `neutral` variants: 40px status icon (none in `neutral`), mono title (`titleAs` `p`/`h1`/`h2`) and detail, optional `action` slot. `role="status"` unless `announce` is false (default false only for `neutral`).
+- **Signature:** `Banner({ variant?: 'warning' | 'success' | 'failure' | 'neutral'; title?: ReactNode; titleAs?: 'p' | 'h1' | 'h2'; children?: ReactNode; action?: ReactNode; announce?: boolean; className?: string })`
 - **Usage:** `<Banner title={t('cookies.title')}>{t('cookies.detail')}</Banner>`
 
 ## BrandMark
@@ -37,6 +37,18 @@ Components hold no visible text of their own (ADR-002): all text comes in throug
 - **Description:** `game` (default; `<article>`, optional 150px `thumbnail` header tinted by `game`, `next` adds the game's border and shadow), `placeholder` (dashed, no background), `step` (kicker with `tone`) and `mini-stat` (`<div>`, value + label). Not interactive; passes `<article>` props and merges `className`.
 - **Signature:** `Card(props: CardProps)` (discriminated by `variant`; see `CardProps`)
 - **Usage:** `<Card game="bug-hunt" next thumbnail={<GameThumbnail game="bug-hunt" />} aria-labelledby="g-bh">…</Card>`
+
+## GameHeader
+- **Location:** packages/ui/src/components/game-header.tsx
+- **Description:** Header of game screens: `<nav aria-label>` + `<ol>` breadcrumb `> nerdose / {game}` (crumb in the game accent via `GAME_CLASSES`, `aria-current="page"`), optional `#number` meta and an actions slot (`children`). The home link is built by the app through `renderHome`. No per-game conditionals.
+- **Signature:** `GameHeader({ game: UiGameId; navLabel: string; homeLabel: ReactNode; renderHome: (props: { className: string; children: ReactNode }) => ReactElement; crumb: ReactNode; meta?: ReactNode; children?: ReactNode; className?: string })`
+- **Usage:** `<GameHeader game="devdle" navLabel={t('nav')} homeLabel="nerdose" renderHome={(p) => <Link to="/" {...p} />} crumb="devdle" meta="#8">{actions}</GameHeader>`
+
+## HelpIcon / ChartIcon / ShareIcon
+- **Location:** packages/ui/src/components/icons.tsx
+- **Description:** Lucide icons for the game header actions: `HelpIcon` (`circle-help`, 18px), `ChartIcon` (stats bars, 18px) and `ShareIcon` (`share`, 16px). `aria-hidden`, `currentColor`.
+- **Signature:** `HelpIcon({ className?: string })` (same for `ChartIcon`, `ShareIcon`); `IconProps = { className?: string }`
+- **Usage:** `<button aria-label={t('stats')} className={buttonClass({ variant: 'icon' })}><ChartIcon /></button>`
 
 ## GameThumbnail
 - **Location:** packages/ui/src/components/game-thumbnail.tsx

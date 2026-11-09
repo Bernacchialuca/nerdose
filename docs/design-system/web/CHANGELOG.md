@@ -3,6 +3,32 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.5.0] - 2026-11-09
+
+**MINOR.** `@nerdose/ui` suma las piezas transversales de las pantallas de Devdle (story S-021). Ningún valor definido cambia. Los otros planes de S-021 (`games`, `web`) suman sus ítems a esta misma entrada.
+
+### Agregado
+- `foundations/spacing.md` 1.1.1: tokens `--container-keyboard` (620px) y `--container-devdle-aside` (380px).
+- `foundations/iconography.md` 1.0.1: `HelpIcon`, `ChartIcon` y `ShareIcon` en `@nerdose/ui`.
+- `components/game-header.md` 1.1.0: API de slots, breadcrumb `<nav>` + `<ol>` con `aria-current`, metadato `#número` y Compartir como estado.
+- `patterns/game-boards.md` 1.1.0: resueltos los «Pendiente» de Devdle (`devdle.cell`, `devdle.key`), aviso de jugada y cabecera `//` como `h2` (`games`).
+- `components/banner.md` 1.4.0, `components/button.md` 1.3.0, `components/chip.md` 1.3.0: variants y tamaños implementados (ver cada Historial).
+
+### Código alineado con el spec
+- `@nerdose/ui`: tokens (roles `type.title.game`, `type.brand.*`, `type.game.*`, `type.body.sm*`, `type.code.share`; colores `status.present`, `status.absent.*`, `text.separator`; anchos), `GameHeader`, `HelpIcon`/`ChartIcon`/`ShareIcon`, `Banner` (`success`/`failure`/`neutral`, `titleAs`, `announce`, `action`), `buttonClass` (`icon`, `share`), `Badge` (`loose`) y `track()`/`injectAnalytics()` (ADR-014, `share:<game_id>`).
+- `apps/web` (S-021): `GameHeader` en las 3 pantallas de Devdle (`playing`/`finished` según el estado del botón Compartir), `Banner` `neutral`/`warning` para los avisos informativos, Compartir `accent` `share` con el estado «✓ Copiado» y el loader `$ cargando …` (gap aceptado).
+- `@nerdose/game-devdle/client`: `Instructions`, `Game`, `Result`, `share()` y las piezas `devdle.cell`, `devdle.key`, `devdle.legend`, `devdle.distribution` según `game-boards` 1.1.0.
+
+### Notas para limpiar en otros docs
+- El spec de `game-header` decía «desafío del dd/mm»; el producto usa `#número`.
+- Desktop de `devdle-partida.md`: el teclado va en la columna 7/12, como en el prototipo.
+- `devdle-resultado.md` pide «enlace a la fuente» del resumen, pero `DevdleResult` no trae URL; el client muestra «Fuente: Wikipedia (CC BY-SA)» sin enlace.
+- `devdle-resultado.md` pide `btn-compartir` `primary` y `button.md` dice `accent` (`size: share`): el código sigue al DS.
+- El resultado anulado fusiona veredicto y `alerta-anulado` en un solo banner `warning` con `h1` (el DS pide no más de un banner a la vez).
+- El ejemplo de share de `docs/flows/preferencias-y-share.md` es anterior al formato de REQ-004 (`🟩 Devdle #N · k/6`).
+
+---
+
 ## [1.4.1] - 2026-11-06
 
 **PATCH.** Ajustes de la revisión visual de REQ-003 contra `docs/nerdose.html`.

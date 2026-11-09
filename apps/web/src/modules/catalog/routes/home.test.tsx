@@ -813,3 +813,43 @@ describe('Home · CTA del Design System', () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 });
+
+describe('Home con Devdle jugable', () => {
+  const withDevdle = (play_status: 'in_progress' | 'won' | null) => ({
+    ...todayFixture,
+    games: [
+      {
+        game_id: 'devdle' as const,
+        challenge_status: 'published' as const,
+        play_status,
+        history_label: play_status === 'won' ? '✓ 3/6' : null,
+        current_streak: 3,
+      },
+      ...(['grep-grid', 'timeline', 'big-o', 'bug-hunt'] as const).map((game_id) => ({
+        game_id,
+        challenge_status: 'none' as const,
+        play_status: null,
+        history_label: null,
+        current_streak: 0,
+      })),
+    ],
+  });
+
+  it.each([
+    [null, 'Jugar'],
+    ['in_progress', 'Seguir jugando'],
+    ['won', 'Ver resultado'],
+  ] as const)('TS-48: la tarjeta de Devdle con la partida %s ofrece «%s»', async (play, label) => {
+    useToday(withDevdle(play));
+    await renderHome();
+    const devdle = screen.getByRole('article', { name: 'Devdle' });
+    expect(within(devdle).getByRole('link', { name: new RegExp(label) })).toHaveAttribute(
+      'href',
+      '/devdle',
+    );
+    for (const name of NAMES.slice(1)) {
+      const card = screen.getByRole('article', { name });
+      expect(within(card).getByRole('button', { name: /Sin desafío hoy/i })).toBeInTheDocument();
+    }
+  });
+});

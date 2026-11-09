@@ -26,6 +26,16 @@ export const TEXT_ROLES = [
   'meta-strong',
   'micro',
   'micro-xs',
+  'title-game',
+  'brand-logo-compact',
+  'brand-crumb',
+  'game-tile-lg',
+  'game-tile-sm',
+  'game-key',
+  'game-key-small',
+  'body-sm',
+  'body-sm-legend',
+  'code-share',
 ] as const;
 
 export const RADIUS_ROLES = [

@@ -52,6 +52,26 @@ describe('cn with theme roles', () => {
     expect(cn('text-display-hero text-streak')).toBe('text-display-hero text-streak');
   });
 
+  it('keeps the game-piece roles next to a color (S-021 TS-4)', () => {
+    expect(cn('text-game-tile-lg text-status-absent-text')).toBe(
+      'text-game-tile-lg text-status-absent-text',
+    );
+    expect(cn('text-brand-crumb text-game-devdle')).toBe('text-brand-crumb text-game-devdle');
+    for (const r of [
+      'title-game',
+      'brand-logo-compact',
+      'brand-crumb',
+      'game-tile-lg',
+      'game-tile-sm',
+      'game-key',
+      'game-key-small',
+      'body-sm',
+      'body-sm-legend',
+      'code-share',
+    ])
+      expect(TEXT_ROLES).toContain(r);
+  });
+
   it('resolves role, radius and shadow conflicts (TS-11)', () => {
     expect(cn('text-meta', 'text-mono-body')).toBe('text-mono-body');
     expect(cn('rounded-control', 'rounded-panel')).toBe('rounded-panel');

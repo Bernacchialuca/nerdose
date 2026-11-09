@@ -1,8 +1,8 @@
 ---
 component: button
-version: 1.2.0
+version: 1.3.0
 status: active
-last_updated: 2026-11-06
+last_updated: 2026-11-09
 source: docs/nerdose.html
 related: [link, card, banner, alert, game-header]
 ---
@@ -144,3 +144,4 @@ related: [link, card, banner, alert, game-header]
 - 2026-11-05 v0.2.0 — Creación del spec a partir de `cta.ts` (sin radio, variants `primary`/`secondary`/`disabled`).
 - 2026-11-05 v1.0.0 — Reescrito desde el prototipo: radio 10px, tamaños `lg` (48) / `md` (44) / `share` / `sm` / `icon` (44×44), variants `accent`, `outline-tinted`, `ghost` e `icon`; `secondary` pasa a texto `text.primary` con borde `border.control` y peso 500; deshabilitado neutro y tintado. Se elimina la variant `disabled` (pasa a ser estado) y los tokens reservados `destructive`.
 - 2026-11-06 v1.2.0 — Hover derivado de `primary`, `accent` y `secondary` (con contraste medido) y helper `buttonClass` en `@nerdose/ui`.
+- 2026-11-09 v1.3.0 — S-021: `icon` (44×44) y tamaño `share` implementados en `buttonClass` de `@nerdose/ui`. Hover de `icon` derivado (`border.control` a `border.control.hover`). `outline-tinted` y `ghost` siguen pendientes de implementación.

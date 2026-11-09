@@ -14,6 +14,7 @@ describe('@nerdose/game-devdle package manifest', () => {
       exports: unknown;
       scripts: Record<string, string>;
       dependencies: Record<string, string>;
+      peerDependencies: Record<string, string>;
       devDependencies: Record<string, string>;
     };
     expect(pkg.name).toBe('@nerdose/game-devdle');
@@ -21,6 +22,7 @@ describe('@nerdose/game-devdle package manifest', () => {
     expect(pkg.type).toBe('module');
     expect(pkg.exports).toEqual({
       './definition': './src/definition/index.ts',
+      './client': './src/client/index.ts',
       './generator': './src/generator/index.ts',
       './wordlist': './wordlist/words.txt',
     });
@@ -29,6 +31,8 @@ describe('@nerdose/game-devdle package manifest', () => {
     expect(pkg.scripts.test).toBe('vitest run');
     expect(pkg.scripts['build:wordlist']).toBe('tsx scripts/build-wordlist.ts');
     expect(pkg.dependencies['@nerdose/core']).toBe('workspace:*');
+    expect(pkg.dependencies['@nerdose/ui']).toBe('workspace:*');
+    expect(pkg.peerDependencies.react).toBe('^19.3.1');
     expect(pkg.dependencies.zod).toBe('^4.6.7');
     expect(pkg.devDependencies.tsx).toBeDefined();
     expect(pkg.devDependencies.dotenv).toBeDefined();
