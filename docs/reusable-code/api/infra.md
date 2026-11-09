@@ -17,6 +17,27 @@
 
 ## TodayCache
 - **Location:** apps/api/src/infra/cache/today-cache.ts
-- **Signature:** `new TodayCache(repo: ChallengesReadRepository, clock: Clock)`; `reload(): Promise<void>`, `get(gameId): CachedChallenge` (throws `AppError('no_challenge_today')`), `find(gameId): CachedChallenge | undefined`
+- **Signature:** `new TodayCache(repo: ChallengesReadRepository)`; `reload(day: string): Promise<void>`, `get(gameId): CachedChallenge` (throws `AppError('no_challenge_today')`), `find(gameId): CachedChallenge | undefined`
 - **Description:** in-memory map of today's visible challenges. A failed `reload()` rejects and keeps the previous content.
-- **Usage:** `await cache.reload(); cache.find('devdle')?.status`
+- **Usage:** `await cache.reload('2026-12-01'); cache.find('devdle')?.status`
+
+## WordList / resolveWordlistPath
+- **Location:** apps/api/src/infra/cache/word-list.ts
+- **Signature:** `WordList.load(path: string): Promise<WordList>`; `reload(repo: TermsReadRepository): Promise<void>`; `has(word: string): boolean`; `resolveWordlistPath(): string`
+- **Description:** valid Devdle word set = base `words.txt` ∪ approved `terms`. A failed `reload` rejects and keeps the previous set. The set is never exposed.
+- **Usage:** `const wl = await WordList.load(resolveWordlistPath()); await wl.reload(repo); wl.has('react')`
+
+## PublishingService / PublishingRepository
+- **Location:** apps/api/src/domain/publishing/
+- **Signature:** `ensureToday(): Promise<void>` (single-flight per instance, publishes `approved` of today, reloads caches); `getToday({ player, locale }): Promise<Today>`; `PublishingRepository(db)` implements `ChallengesReadRepository`, `ChallengesPublishRepository`, `TermsReadRepository`
+- **Usage:** `app.use('/api/today', ensureToday(publishing))`
+
+## GameplayService / GameplayRepository
+- **Location:** apps/api/src/domain/gameplay/
+- **Signature:** `getToday(gameId, player | null, locale): Promise<GameToday>`; `start(gameId, player, challengeNumber, log): Promise<{ play }>` (idempotent); `GameplayRepository(db)`: `findPlay`, `findPlaysOfDay`, `insertPlayIfAbsent`
+- **Description:** generic over the game registry, never serializes `payload`.
+
+## ProgressService / ProgressRepository
+- **Location:** apps/api/src/domain/progress/
+- **Signature:** `gameStatsView(playerId, game, day): Promise<GameStatsView>`; `todayStreaks(playerId, day)`; `ProgressRepository(db)`: `findGameStats`, `findAllGameStats`, `findPlayerStats`, `prevActiveDays(day)`
+- **Description:** read-only; live streaks via `liveStreak()` from `@nerdose/core`.

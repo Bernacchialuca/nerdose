@@ -1,20 +1,16 @@
-import { AppError, today, type GameId } from '@nerdose/core';
+import { AppError, type GameId } from '@nerdose/core';
 
 import type { ChallengesReadRepository } from '@/domain/publishing/publishing.repository';
 import type { CachedChallenge } from '@/domain/publishing/publishing.types';
-import type { Clock } from '@/shared/clock';
 
 export class TodayCache {
   private map = new Map<GameId, CachedChallenge>();
 
-  constructor(
-    private readonly repo: ChallengesReadRepository,
-    private readonly clock: Clock,
-  ) {}
+  constructor(private readonly repo: ChallengesReadRepository) {}
 
   /** Si la consulta falla rechaza y conserva el contenido anterior. */
-  async reload(): Promise<void> {
-    const rows = await this.repo.findTodayVisible(today(this.clock.now()));
+  async reload(day: string): Promise<void> {
+    const rows = await this.repo.findTodayVisible(day);
     this.map = new Map(rows.map((c) => [c.game_id, c]));
   }
 
