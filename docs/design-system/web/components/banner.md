@@ -1,8 +1,8 @@
 ---
 component: banner
-version: 1.3.0
+version: 1.4.0
 status: active
-last_updated: 2026-11-06
+last_updated: 2026-11-09
 source: docs/nerdose.html
 related: [alert, button, panel]
 ---
@@ -112,3 +112,4 @@ El banner O-03 va dentro del contenedor de página (`max-width` 1240, gutter 32)
 - 2026-11-05 v1.0.0 — Reescrito como banner de resultado del prototipo (`success`, `failure`, `neutral`: radio 14, borde 1px, ícono en círculo de 40px, padding 18 22) más `warning` como adaptación de producto con los tintes ámbar del panel "contexto". Se elimina la barra lateral de 4px.
 - 2026-11-06 v1.2.0 — Ícono de `warning` derivado (`!` en círculo de 40px); `Banner` de `@nerdose/ui` alineado.
 - 2026-11-06 v1.3.0 — S-012: separación de 24px bajo el header para `warning`.
+- 2026-11-09 v1.4.0 — S-021: `success`, `failure` y `neutral` implementados en `Banner` de `@nerdose/ui`. `neutral` es informativo, con título opcional y sin ícono (REQ-004); `titleAs` (`p` | `h1` | `h2`) para el veredicto como `h1`; `announce` (por defecto `true`, salvo `neutral`) controla `role="status"`; slot `action` con `flex flex-wrap gap-2.5`.

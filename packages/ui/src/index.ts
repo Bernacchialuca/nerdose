@@ -1,4 +1,6 @@
 export { cn } from './cn';
+export { injectAnalytics, track } from './analytics';
+export type { AnalyticsEvent } from './analytics';
 export { Alert } from './components/alert';
 export type { AlertProps } from './components/alert';
 export { AppHeader } from './components/app-header';
@@ -13,6 +15,10 @@ export { buttonClass } from './components/button-class';
 export type { ButtonClassOptions } from './components/button-class';
 export { Card } from './components/card';
 export type { CardProps } from './components/card';
+export { GameHeader } from './components/game-header';
+export type { GameHeaderProps } from './components/game-header';
+export { ChartIcon, HelpIcon, ShareIcon } from './components/icons';
+export type { IconProps } from './components/icons';
 export { GameThumbnail } from './components/game-thumbnail';
 export type { GameThumbnailProps } from './components/game-thumbnail';
 export type { UiGameId } from './components/game-classes';

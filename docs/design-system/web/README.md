@@ -1,6 +1,6 @@
 ---
-version: 1.4.1
-last_updated: 2026-11-06
+version: 1.5.0
+last_updated: 2026-11-09
 status: defined
 source: docs/nerdose.html
 ---
@@ -106,3 +106,4 @@ Semver independiente del surface `admin`. MAJOR = cambio de valor o rename de to
 - 2026-11-05 v1.0.0 — DS redefinido desde el prototipo `docs/nerdose.html` como fuente de verdad visual.
 - 2026-11-06 v1.2.0 — S-011: `@nerdose/ui` alineado con el DS y piezas derivadas documentadas (ver CHANGELOG 1.2.0).
 - 2026-11-06 v1.3.0 — S-012: shell, "Acerca de" y 404 alineados; piezas derivadas documentadas (ver CHANGELOG 1.3.0).
+- 2026-11-09 v1.5.0 — S-021: piezas de juego en `@nerdose/ui` (tokens, `GameHeader`, íconos, `Banner`, `buttonClass`, `Badge`, `track`/`injectAnalytics`); ver CHANGELOG 1.5.0.

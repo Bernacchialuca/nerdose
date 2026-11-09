@@ -10,7 +10,7 @@ export function NextGamePlaceholder() {
         <span className="text-text">{t('catalog.placeholder.branch')}</span>
       </p>
       <p className="font-sans text-body text-text-muted">{t('catalog.placeholder.body')}</p>
-      <Badge variant="chip" className="self-start">
+      <Badge variant="chip" loose className="self-start">
         {t('catalog.placeholder.chip')}
       </Badge>
     </Card>

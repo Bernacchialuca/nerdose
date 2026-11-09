@@ -1,16 +1,17 @@
-export type StatusIconProps = { tone: 'error' | 'warning' };
+export type StatusIconProps = { tone: 'error' | 'warning' | 'success' };
+
+const TONE_CLASSES: Record<StatusIconProps['tone'], string> = {
+  error:
+    'flex size-10 flex-none items-center justify-center rounded-full bg-status-error text-status-error-on',
+  warning:
+    'flex size-10 flex-none items-center justify-center rounded-full bg-status-warning text-status-warning-on',
+  success:
+    'flex size-10 flex-none items-center justify-center rounded-full bg-status-success text-status-success-on',
+};
 
 export function StatusIcon({ tone }: StatusIconProps) {
-  const isError = tone === 'error';
   return (
-    <span
-      aria-hidden="true"
-      className={
-        isError
-          ? 'flex size-10 flex-none items-center justify-center rounded-full bg-status-error text-status-error-on'
-          : 'flex size-10 flex-none items-center justify-center rounded-full bg-status-warning text-status-warning-on'
-      }
-    >
+    <span aria-hidden="true" className={TONE_CLASSES[tone]}>
       <svg
         width="20"
         height="20"
@@ -21,11 +22,13 @@ export function StatusIcon({ tone }: StatusIconProps) {
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        {isError ? (
+        {tone === 'error' ? (
           <>
             <path d="M18 6 6 18" />
             <path d="m6 6 12 12" />
           </>
+        ) : tone === 'success' ? (
+          <path d="M20 6 9 17l-5-5" />
         ) : (
           <>
             <path d="M12 7v6" />

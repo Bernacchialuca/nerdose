@@ -113,6 +113,11 @@
   --color-status-warning-soft: #C9A46A;
   --color-status-pending: #FFB547;
   --color-status-pending-badge: #2A1F0B;
+  /* DS 1.5.0 (S-021): piezas de juego */
+  --color-status-present: #FFB547;     /* status.present */
+  --color-status-absent-bg: #1A2028;   /* status.absent.bg */
+  --color-status-absent-text: #8D99A6; /* status.absent.text */
+  --color-text-separator: #2A323C;     /* text.separator */
 
   /* streak.*: la racha siempre es ámbar */
   --color-streak: #FFB547;
@@ -208,6 +213,39 @@
   --text-micro-xs--line-height: normal;
   --text-micro-xs--font-weight: 400;
 
+  /* DS 1.5.0 (S-021): roles de pantallas de juego */
+  --text-title-game: 34px;
+  --text-title-game--line-height: normal;
+  --text-title-game--letter-spacing: -1px;
+  --text-title-game--font-weight: 700;
+  --text-brand-logo-compact: 18px;
+  --text-brand-logo-compact--line-height: normal;
+  --text-brand-logo-compact--font-weight: 800;
+  --text-brand-crumb: 18px;
+  --text-brand-crumb--line-height: normal;
+  --text-brand-crumb--font-weight: 700;
+  --text-game-tile-lg: 28px;
+  --text-game-tile-lg--line-height: normal;
+  --text-game-tile-lg--font-weight: 800;
+  --text-game-tile-sm: 16px;
+  --text-game-tile-sm--line-height: normal;
+  --text-game-tile-sm--font-weight: 800;
+  --text-game-key: 15px;
+  --text-game-key--line-height: normal;
+  --text-game-key--font-weight: 700;
+  --text-game-key-small: 12px;
+  --text-game-key-small--line-height: normal;
+  --text-game-key-small--font-weight: 700;
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 1.5;
+  --text-body-sm--font-weight: 400;
+  --text-body-sm-legend: 14px;
+  --text-body-sm-legend--line-height: 1.4;
+  --text-body-sm-legend--font-weight: 400;
+  --text-code-share: 14px;
+  --text-code-share--line-height: 1.7;
+  --text-code-share--font-weight: 400;
+
   --radius-cell-xs: 4px;
   --radius-cell-sm: 5px;
   --radius-cell-md: 6px;
@@ -220,6 +258,8 @@
 
   --container-page: 1240px;
   --container-lede: 540px;
+  --container-keyboard: 620px;     /* teclado de Devdle */
+  --container-devdle-aside: 380px; /* aside de Devdle */
 
   --shadow-window: 0 24px 60px rgba(0, 0, 0, 0.45);
   --shadow-next-devdle: 0 0 0 1px #3DDC8433, 0 18px 40px rgba(20, 110, 60, 0.25);

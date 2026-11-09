@@ -1,8 +1,8 @@
 ---
 component: game-header
-version: 1.0.0
+version: 1.1.0
 status: active
-last_updated: 2026-11-05
+last_updated: 2026-11-09
 source: docs/nerdose.html
 related: [app-header, button, language-selector, streak-pill]
 ---
@@ -91,3 +91,4 @@ related: [app-header, button, language-selector, streak-pill]
 ## Historial
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: breadcrumb `> nerdose / {juego}` en acento, metadato, botones-ícono 44×44, Compartir activo/deshabilitado, selector y píldora de racha.
+- 2026-11-09 v1.1.0 — S-021: `GameHeader` de `@nerdose/ui` implementado. API de slots: `navLabel`, `homeLabel`, `renderHome` (el consumidor arma el `<Link>`), `crumb`, `meta` y `children` (acciones). Breadcrumb como `<nav aria-label>` + `<ol>` con `aria-current="page"` en el juego (requisito resuelto). Metadato `#número` del desafío (decisión #12). `playing`/`finished` no es una prop: lo expresa el estado de Compartir (`buttonClass` con `variant: 'accent'`, `size: 'share'` y `disabled`). Hover del botón-ícono derivado (`border.control` a `border.control.hover`).

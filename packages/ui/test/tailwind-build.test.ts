@@ -24,6 +24,16 @@ const CANDIDATES = [
   'w-6/13',
   'w-2/7',
   'w-7/12',
+  'text-title-game',
+  'text-game-tile-lg',
+  'text-game-key',
+  'text-brand-crumb',
+  'border-status-present',
+  'bg-status-absent-bg',
+  'text-status-absent-text',
+  'text-text-separator',
+  'max-w-keyboard',
+  'max-w-devdle-aside',
 ];
 
 describe('tokens.css compiled by Tailwind (TS-9)', () => {
@@ -57,5 +67,13 @@ describe('tokens.css compiled by Tailwind (TS-9)', () => {
     expect(flat).toContain('.bg-game-grep-grid-tint');
     expect(flat).toContain('.w-6\\/13');
     expect(flat).toContain('.w-2\\/7');
+    expect(flat).toMatch(/\.text-title-game \{[^}]*font-size: var\(--text-title-game\)/);
+    expect(flat).toContain('--text-title-game--letter-spacing');
+    expect(flat).toContain('.border-status-present');
+    expect(flat).toContain('.bg-status-absent-bg');
+    expect(flat).toContain('.text-status-absent-text');
+    expect(flat).toContain('.text-text-separator');
+    expect(flat).toMatch(/\.max-w-keyboard \{ max-width: var\(--container-keyboard\)/);
+    expect(flat).toContain('.max-w-devdle-aside');
   });
 });
