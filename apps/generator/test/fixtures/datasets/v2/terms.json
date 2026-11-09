@@ -1,0 +1,50 @@
+[
+  {
+    "wikidata_id": "Q100",
+    "term": "REACT",
+    "category": "programming_languages",
+    "definition": {
+      "es": "biblioteca de UI",
+      "en": "JavaScript UI library"
+    },
+    "summary": {
+      "es": "React es…",
+      "en": "React is…"
+    },
+    "sitelinks": 60,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q101",
+    "term": "MERGE",
+    "category": "git",
+    "definition": {
+      "es": "def es",
+      "en": "def en"
+    },
+    "summary": {
+      "es": "sum es",
+      "en": "sum en"
+    },
+    "sitelinks": 40,
+    "status": "rejected",
+    "rejection_reason": "excluded"
+  },
+  {
+    "wikidata_id": "Q200",
+    "term": "ROUTER",
+    "category": "networking",
+    "definition": {
+      "es": "def es",
+      "en": "def en"
+    },
+    "summary": {
+      "es": "sum es",
+      "en": "sum en"
+    },
+    "sitelinks": 50,
+    "status": "approved",
+    "rejection_reason": null
+  }
+]

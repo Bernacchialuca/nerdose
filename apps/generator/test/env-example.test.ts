@@ -14,6 +14,14 @@ describe('.env.example', () => {
       expect(lines[index - 1]?.startsWith('#')).toBe(true);
       names.push(line.slice(0, -1));
     });
-    expect(names).toEqual(['NODE_ENV', 'LOG_LEVEL', 'SERVICE_NAME', 'DATABASE_URL']);
+    expect(names).toEqual([
+      'NODE_ENV',
+      'LOG_LEVEL',
+      'SERVICE_NAME',
+      'DATABASE_URL',
+      'LAUNCH_DATE',
+      'GENERATOR_SECRET',
+      'GENERATION_MAX_ATTEMPTS',
+    ]);
   });
 });

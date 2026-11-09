@@ -63,14 +63,14 @@ packages/
    cp apps/generator/.env.example apps/generator/.env.local
    ```
 
-   | Archivo destino                    | Variables                                                                                                                                                                                                                                             |
-   | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-   | `.env` (raíz, Compose)             | `POSTGRES_PASSWORD` (local: cualquier valor, p. ej. `localdev`)                                                                                                                                                                                       |
-   | `packages/db/.env.local`           | `DATABASE_URL_OWNER` (requerida; `postgres://nerdose_owner:<POSTGRES_PASSWORD>@127.0.0.1:5432/nerdose`), `DATABASE_URL_API` y `DATABASE_URL_GENERATOR` (opcionales; `db:migrate` fija con ellas la contraseña de `nerdose_api` y `nerdose_generator`) |
-   | `packages/content/.env.local`      | `WIKIMEDIA_CONTACT` (requerida solo para `pnpm --filter @nerdose/content import:banks`; mail o URL que va en el `User-Agent` de Wikimedia)                                                                                                            |
-   | `packages/games/devdle/.env.local` | `WIKIMEDIA_CONTACT` (requerida solo para `pnpm --filter @nerdose/game-devdle build:wordlist`; mail o URL que va en el `User-Agent` de Wikimedia)                                                                                                      |
-   | `apps/api/.env.local`              | `DATABASE_URL` (requerida; `postgres://nerdose_api:<password>@127.0.0.1:5432/nerdose`), `NODE_ENV`, `PORT` (default `3000`), `LOG_LEVEL`, `SERVICE_NAME` (opcionales)                                                                                 |
-   | `apps/generator/.env.local`        | `DATABASE_URL` (requerida; `postgres://nerdose_generator:<password>@127.0.0.1:5432/nerdose`), `NODE_ENV`, `LOG_LEVEL`, `SERVICE_NAME` (opcionales)                                                                                                    |
+   | Archivo destino                    | Variables                                                                                                                                                                                                                                                                                                                                     |
+   | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+   | `.env` (raíz, Compose)             | `POSTGRES_PASSWORD` (local: cualquier valor, p. ej. `localdev`)                                                                                                                                                                                                                                                                               |
+   | `packages/db/.env.local`           | `DATABASE_URL_OWNER` (requerida; `postgres://nerdose_owner:<POSTGRES_PASSWORD>@127.0.0.1:5432/nerdose`), `DATABASE_URL_API` y `DATABASE_URL_GENERATOR` (opcionales; `db:migrate` fija con ellas la contraseña de `nerdose_api` y `nerdose_generator`)                                                                                         |
+   | `packages/content/.env.local`      | `WIKIMEDIA_CONTACT` (requerida solo para `pnpm --filter @nerdose/content import:banks`; mail o URL que va en el `User-Agent` de Wikimedia)                                                                                                                                                                                                    |
+   | `packages/games/devdle/.env.local` | `WIKIMEDIA_CONTACT` (requerida solo para `pnpm --filter @nerdose/game-devdle build:wordlist`; mail o URL que va en el `User-Agent` de Wikimedia)                                                                                                                                                                                              |
+   | `apps/api/.env.local`              | `DATABASE_URL` (requerida; `postgres://nerdose_api:<password>@127.0.0.1:5432/nerdose`), `NODE_ENV`, `PORT` (default `3000`), `LOG_LEVEL`, `SERVICE_NAME` (opcionales)                                                                                                                                                                         |
+   | `apps/generator/.env.local`        | `DATABASE_URL` (requerida; `postgres://nerdose_generator:<password>@127.0.0.1:5432/nerdose`), `LAUNCH_DATE` (requerida, la misma que en la api), `GENERATOR_SECRET` (requerida, 32 o más caracteres aleatorios, solo en el generator), `GENERATION_MAX_ATTEMPTS` (opcional, default 20), `NODE_ENV`, `LOG_LEVEL`, `SERVICE_NAME` (opcionales) |
 
    `web` y `admin` no necesitan variables.
 
@@ -121,7 +121,7 @@ La fuente de ENABLE usada es el `enable1.txt` de `dolph/dictionary` (172.823 pal
 | `web`       | `vite`                   | `5173` (`strictPort`) | `/api` → `http://localhost:3000`       |
 | `admin`     | `vite`                   | `5174` (`strictPort`) | `/api/admin` → `http://localhost:3000` |
 
-Logs esperados: la `api` informa `Database role verified` con `db_role: nerdose_api` y `Server started` en el puerto `3000`; el `generator` informa `Database role verified` con `db_role: nerdose_generator` y `Scheduler started` con `jobs: 0`.
+Logs esperados: la `api` informa `Database role verified` con `db_role: nerdose_api` y `Server started` en el puerto `3000`; el `generator` informa `Database role verified` con `db_role: nerdose_generator`, `Job finished` de `sync_banks` y de `fill`, y `Scheduler started` con `jobs: 1`.
 
 ## Verificar
 

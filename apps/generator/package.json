@@ -10,11 +10,14 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@nerdose/content": "workspace:*",
     "@nerdose/core": "workspace:*",
     "@nerdose/db": "workspace:*",
+    "@nerdose/game-devdle": "workspace:*",
     "@t3-oss/env-core": "^0.13.11",
     "croner": "^11.0.0",
     "dotenv": "^18.0.9",
+    "drizzle-orm": "^0.45.4",
     "pino": "^10.4.0",
     "zod": "^4.6.7"
   },

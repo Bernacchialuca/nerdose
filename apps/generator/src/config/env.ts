@@ -14,6 +14,15 @@ export function loadEnv(runtimeEnv: Record<string, string | undefined> = process
         .default('info'),
       SERVICE_NAME: z.string().default('generator'),
       DATABASE_URL: z.url(),
+      LAUNCH_DATE: z
+        .string()
+        .regex(/^\d{4}-\d{2}-\d{2}$/)
+        .refine((day) => {
+          const parsed = new Date(`${day}T00:00:00.000Z`);
+          return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === day;
+        }),
+      GENERATOR_SECRET: z.string().min(32),
+      GENERATION_MAX_ATTEMPTS: z.coerce.number().int().min(1).default(20),
     },
     runtimeEnv,
     emptyStringAsUndefined: true,

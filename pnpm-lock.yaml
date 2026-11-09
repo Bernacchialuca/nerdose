@@ -142,12 +142,18 @@ importers:
 
   apps/generator:
     dependencies:
+      '@nerdose/content':
+        specifier: workspace:*
+        version: link:../../packages/content
       '@nerdose/core':
         specifier: workspace:*
         version: link:../../packages/core
       '@nerdose/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@nerdose/game-devdle':
+        specifier: workspace:*
+        version: link:../../packages/games/devdle
       '@t3-oss/env-core':
         specifier: ^0.13.11
         version: 0.13.11(typescript@6.0.3)(zod@4.6.7)
@@ -157,6 +163,9 @@ importers:
       dotenv:
         specifier: ^18.0.9
         version: 18.0.9
+      drizzle-orm:
+        specifier: ^0.45.4
+        version: 0.45.4(postgres@4.0.0)
       pino:
         specifier: ^10.4.0
         version: 10.4.0
