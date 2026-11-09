@@ -12,7 +12,7 @@ type Props = {
   gameId: GameId;
   /** El texto lo arma el `share()` del juego; el shell nunca lo compone. */
   getText: () => string;
-  variant: 'body' | 'header';
+  variant: 'header';
 };
 
 const isAbort = (error: unknown) => (error as { name?: string } | null)?.name === 'AbortError';
@@ -70,7 +70,7 @@ export function ClientShareButton({
   gameId: GameId;
   result: unknown;
   number: number;
-  variant: 'body' | 'header';
+  variant: 'header';
 }) {
   const client = useLoadedGameClient(gameId);
   return (

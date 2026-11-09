@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 
 import type { GameId } from '@nerdose/core';
-import { buttonClass, linkClass } from '@nerdose/ui';
+import { buttonClass } from '@nerdose/ui';
 
 import { formatCountdown } from '@/lib/format-countdown';
 import { nextPendingGame, useDayCountdown, useToday } from '@/modules/catalog';
@@ -24,30 +24,28 @@ function Countdown({ secondsToReset, syncedAt }: { secondsToReset: number; synce
   );
 }
 
-/** Fila de salidas del resultado: cuenta regresiva, «Siguiente juego», estadísticas y volver. */
+/**
+ * Barra de salidas al pie del resultado (como en el prototipo): cuenta regresiva a la izquierda,
+ * «Siguiente juego» y «Volver a los juegos» a la derecha. Envuelve en pantallas angostas.
+ */
 export function ResultExits({ gameId }: { gameId: GameId }) {
   const { t } = useTranslation();
   const { data, dataUpdatedAt } = useToday();
   const next = data ? nextPendingGame(data, gameId) : null;
 
   return (
-    <div className="grid grid-cols-[repeat(auto-fit,minmax(min(240px,100%),1fr))] items-center gap-4">
-      <div>
-        {data ? (
-          <Countdown secondsToReset={data.seconds_to_reset} syncedAt={dataUpdatedAt} />
-        ) : null}
-      </div>
-      <div>
+    <div className="flex flex-wrap items-center justify-between gap-4 rounded-panel border border-border bg-surface px-5 py-4">
+      {data ? (
+        <Countdown secondsToReset={data.seconds_to_reset} syncedAt={dataUpdatedAt} />
+      ) : (
+        <span />
+      )}
+      <div className="flex flex-wrap items-center gap-5">
         {next !== null ? (
           <Link to={`/${next}`} className={buttonClass({ variant: 'secondary' })}>
             {t('gameHost.result.next')} <span aria-hidden="true">→</span>
           </Link>
         ) : null}
-      </div>
-      <div className="flex flex-col items-start">
-        <Link to="/stats" className={linkClass()}>
-          {t('gameHost.result.stats')} <span aria-hidden="true">→</span>
-        </Link>
         <BackLink />
       </div>
     </div>

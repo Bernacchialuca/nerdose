@@ -35,6 +35,7 @@ export type GameView =
       moveError: MoveErrorInfo | null;
       session: Session;
       moveFailed: boolean;
+      gameStats: GameStatsView | null;
     }
   | { kind: 'result'; number: number; result: unknown; gameStats: GameStatsView | null };
 
@@ -100,6 +101,7 @@ export function deriveGameView({
       locked: voidedDuringPlay,
       moveError: toMoveError(actionError),
       session,
+      gameStats: data.game_stats,
       moveFailed:
         actionError !== null &&
         actionError !== undefined &&

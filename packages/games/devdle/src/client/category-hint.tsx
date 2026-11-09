@@ -4,7 +4,13 @@ import { Badge } from '@nerdose/ui';
 import { SectionPanel } from './section-panel';
 import type { Translate } from './types';
 
-export function CategoryHint({ categories, t }: { categories: readonly TermCategory[]; t: Translate }) {
+export function CategoryHint({
+  categories,
+  t,
+}: {
+  categories: readonly TermCategory[];
+  t: Translate;
+}) {
   return (
     <SectionPanel title={t('categories.title')}>
       <ul className="flex flex-wrap gap-1.5">

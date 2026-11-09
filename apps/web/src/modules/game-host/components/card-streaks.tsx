@@ -1,8 +1,9 @@
 import { useId } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router';
 
 import type { GameId } from '@nerdose/core';
-import { cn } from '@nerdose/ui';
+import { cn, linkClass } from '@nerdose/ui';
 
 import type { GameStatsView } from '../types';
 
@@ -36,6 +37,9 @@ export function CardStreaks({ gameId, gameStats, globalStreak }: Props) {
           {t('gameHost.result.record', { game, count: gameStats.max_streak })}
         </li>
       </ul>
+      <Link to="/stats" className={cn(linkClass(), 'self-start')}>
+        {t('gameHost.result.stats')} <span aria-hidden="true">→</span>
+      </Link>
     </section>
   );
 }

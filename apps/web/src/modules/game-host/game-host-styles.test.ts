@@ -42,9 +42,9 @@ describe('estilos del módulo game-host (TS-54)', () => {
     expect(found).toEqual([]);
   });
 
-  it('la fila de salidas usa auto-fit y las acciones del header envuelven', () => {
+  it('la barra de salidas envuelve y las acciones del header envuelven', () => {
     const exits = readFileSync(join(DIR, 'components', 'result-exits.tsx'), 'utf8');
-    expect(exits).toContain('minmax(min(240px,100%),1fr)');
+    expect(exits).toContain('flex flex-wrap items-center justify-between');
     const header = readFileSync(
       join(
         DIR,

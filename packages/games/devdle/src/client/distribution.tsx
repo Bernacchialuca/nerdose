@@ -15,7 +15,8 @@ export function Distribution({
   stats,
   t,
 }: {
-  result: DevdleResult;
+  /** Sin resultado (partida en curso) no se resalta la barra de hoy. */
+  result?: DevdleResult;
   stats: GameStatsView;
   t: Translate;
 }) {
@@ -31,7 +32,7 @@ export function Distribution({
   ];
   const max = Math.max(...rows.map(([, n]) => n));
   const pct = (n: number) => (max === 0 ? 8 : Math.max(8, Math.round((n / max) * 100)));
-  const today = result.win ? String(result.score) : 'X';
+  const today = result ? (result.win ? String(result.score) : 'X') : null;
 
   return (
     <SectionPanel

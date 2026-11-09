@@ -179,6 +179,7 @@ export const en: Resources = {
     loading: '$ loading {{slug}}…',
     header: {
       nav: 'Breadcrumb',
+      challengeDate: 'challenge of {{date}}',
       help: 'How to play',
       stats: 'Stats',
       share: 'Share',

@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react';
+
 import { cn } from '@nerdose/ui';
 
 import { HELP_TARGET_ID } from './help-target';
@@ -10,6 +12,8 @@ const SAMPLE_CLASS = {
   present: 'border-2 border-dashed border-status-present text-status-present',
   absent: 'border-2 border-status-absent-bg bg-status-absent-bg text-status-absent-text',
 } as const;
+
+const SAMPLE_MARK_VARS = { '--tile-mark': '8px' } as CSSProperties;
 
 const SAMPLES = [
   { mark: 'correct', letter: 'O' },
@@ -27,14 +31,20 @@ export function Legend({ t }: { t: Translate }) {
             <span
               aria-hidden="true"
               className={cn(
-                'flex size-9 flex-none items-center justify-center rounded-cell-md font-mono text-game-tile-sm',
+                'relative flex size-9 flex-none items-center justify-center rounded-cell-md font-mono text-game-tile-sm',
                 SAMPLE_CLASS[mark],
               )}
             >
               {letter}
+              {/* Misma marca que la celda del tablero: la leyenda explica el símbolo sin texto. */}
+              <span
+                className="absolute top-0.5 right-1 text-(length:--tile-mark) leading-none"
+                style={SAMPLE_MARK_VARS}
+              >
+                {MARK_GLYPH[mark]}
+              </span>
             </span>
             <span className="font-sans text-body-sm-legend text-text-body">
-              <span aria-hidden="true">{MARK_GLYPH[mark]} </span>
               {t(`legend.${mark}`)}
             </span>
           </li>

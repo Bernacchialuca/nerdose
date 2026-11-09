@@ -7,7 +7,10 @@ import { describe, expect, it } from 'vitest';
 const srcDir = fileURLToPath(new URL('../src', import.meta.url));
 
 const isSource = (f: string) =>
-  /\.tsx?$/.test(f) && !/\.test\.tsx?$/.test(f) && !f.endsWith('test-fixtures.ts') && !f.endsWith('test-utils.ts');
+  /\.tsx?$/.test(f) &&
+  !/\.test\.tsx?$/.test(f) &&
+  !f.endsWith('test-fixtures.ts') &&
+  !f.endsWith('test-utils.ts');
 
 const files = readdirSync(srcDir, { recursive: true, encoding: 'utf8' })
   .map((f) => f.replace(/\\/g, '/'))
@@ -47,12 +50,12 @@ describe('game-devdle entry boundaries (TS-3, TS-4)', () => {
       for (const spec of importsOf(text)) {
         if (spec.startsWith('.')) {
           const normalized = resolveRelative(file, spec);
-          const ok =
-            normalized.startsWith('src/client') ||
-            normalized === 'src/definition/schemas';
+          const ok = normalized.startsWith('src/client') || normalized === 'src/definition/schemas';
           expect(ok, `${file} -> ${spec}`).toBe(true);
         } else {
-          expect(['@nerdose/core', '@nerdose/ui', 'zod', 'react'], `${file} -> ${spec}`).toContain(spec);
+          expect(['@nerdose/core', '@nerdose/ui', 'zod', 'react'], `${file} -> ${spec}`).toContain(
+            spec,
+          );
         }
       }
       for (const forbidden of ['window.plausible', '@nerdose/game-']) {

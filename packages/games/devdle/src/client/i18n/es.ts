@@ -18,7 +18,10 @@ export const es = {
     countNotice: 'La partida no cuenta hasta que la completes. Ganar o perder suma a tu racha.',
     start: 'Empezar',
   },
-  game: { prompt: 'término técnico · {{length}} letras · intento {{attempt}} de {{max}}' },
+  game: {
+    title: 'Adiviná el término del día',
+    prompt: 'término técnico · {{length}} letras · intento {{attempt}} de {{max}}',
+  },
   board: {
     label: 'Tablero: {{max}} intentos de {{length}} letras',
     resultLabel: 'Tus intentos',
@@ -52,7 +55,7 @@ export const es = {
     rateLimited: 'Vas muy rápido. Esperá unos segundos y probá de nuevo.',
   },
   categories: {
-    title: 'categorías posibles',
+    title: 'pista de categoría',
     note: 'La categoría y la definición se revelan al terminar.',
   },
   category: {
@@ -67,9 +70,9 @@ export const es = {
   },
   legend: {
     title: 'cómo leer las pistas',
-    correct: 'en su lugar',
-    present: 'en otro lugar',
-    absent: 'no está',
+    correct: 'Letra correcta en el lugar correcto.',
+    present: 'Está en la palabra, pero en otra posición.',
+    absent: 'No está en la palabra.',
   },
   result: {
     won: 'Ganaste en {{score}}/{{max}}',

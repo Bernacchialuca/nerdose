@@ -46,10 +46,14 @@ export type GameProps = ClientBaseProps & {
   moveError: MoveErrorInfo | null;
   /** Voided: hides the keyboard and ignores input. */
   locked?: boolean;
+  /** GameToday.game_stats: "tus intentos" panel in the aside while playing. */
+  gameStats?: GameStatsView | null;
 };
 export type ResultProps = ClientBaseProps & {
   result: unknown;
   gameStats: GameStatsView | null;
-  /** Slot for streak card and share button (aside column). */
+  /** Slot for the streak card (aside column). */
   aside?: ReactNode;
+  /** Slot at the bottom of the main column (web's exits bar). */
+  footer?: ReactNode;
 };

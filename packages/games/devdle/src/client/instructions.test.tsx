@@ -19,7 +19,9 @@ const base = (over: Partial<InstructionsProps> = {}): InstructionsProps => ({
 describe('Instructions', () => {
   it('shows the content (TS-43)', () => {
     render(<Instructions {...base()} />);
-    expect(screen.getByRole('heading', { level: 1, name: 'Devdle' })).toHaveClass('text-game-devdle');
+    expect(screen.getByRole('heading', { level: 1, name: 'Devdle' })).toHaveClass(
+      'text-game-devdle',
+    );
     expect(screen.getByText('Desafío #128 · ~2 min · una partida por día')).toBeInTheDocument();
     const h2 = screen.getByRole('heading', { level: 2, name: /cómo se juega/ });
     expect(h2.closest('section')).toHaveAttribute('id', 'game-help');
@@ -31,7 +33,9 @@ describe('Instructions', () => {
     expect(articles[0]).toHaveTextContent('de 4 a 12 letras');
     expect(articles[2]).toHaveTextContent('8 categorías');
     expect(
-      screen.getByText('La partida no cuenta hasta que la completes. Ganar o perder suma a tu racha.'),
+      screen.getByText(
+        'La partida no cuenta hasta que la completes. Ganar o perder suma a tu racha.',
+      ),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Empezar/ })).toBeInTheDocument();
   });
@@ -76,7 +80,9 @@ describe('Instructions', () => {
     const row = screen.getByRole('button', { name: /Empezar/ }).parentElement as HTMLElement;
     expect(within(row).getByRole('link', { name: 'Volver' })).toBeInTheDocument();
     expect(container.firstElementChild).toHaveClass('mx-auto', 'max-w-5xl');
-    expect(screen.getByRole('list')).toHaveClass('grid-cols-[repeat(auto-fit,minmax(min(240px,100%),1fr))]');
+    expect(screen.getByRole('list')).toHaveClass(
+      'grid-cols-[repeat(auto-fit,minmax(min(240px,100%),1fr))]',
+    );
     expect(row.parentElement).toHaveClass('flex', 'flex-wrap', 'justify-between');
   });
 

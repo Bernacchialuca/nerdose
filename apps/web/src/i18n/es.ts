@@ -174,6 +174,7 @@ export const es = {
     loading: '$ cargando {{slug}}…',
     header: {
       nav: 'Ruta',
+      challengeDate: 'desafío del {{date}}',
       help: 'Cómo se juega',
       stats: 'Estadísticas',
       share: 'Compartir',

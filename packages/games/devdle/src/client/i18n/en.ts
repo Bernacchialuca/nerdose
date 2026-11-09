@@ -17,10 +17,14 @@ export const en: Resources = {
       kicker: '3 · Check the categories',
       body: "We show you the 8 categories of the bank —always the same ones— to guide you. Today's category, the definition and a summary are revealed at the end.",
     },
-    countNotice: "The game doesn't count until you finish it. Winning or losing adds to your streak.",
+    countNotice:
+      "The game doesn't count until you finish it. Winning or losing adds to your streak.",
     start: 'Start',
   },
-  game: { prompt: 'tech term · {{length}} letters · try {{attempt}} of {{max}}' },
+  game: {
+    title: 'Guess the term of the day',
+    prompt: 'tech term · {{length}} letters · try {{attempt}} of {{max}}',
+  },
   board: {
     label: 'Board: {{max}} tries of {{length}} letters',
     resultLabel: 'Your tries',
@@ -54,7 +58,7 @@ export const en: Resources = {
     rateLimited: "You're going too fast. Wait a few seconds and try again.",
   },
   categories: {
-    title: 'possible categories',
+    title: 'category hint',
     note: 'The category and the definition are revealed at the end.',
   },
   category: {
@@ -69,9 +73,9 @@ export const en: Resources = {
   },
   legend: {
     title: 'how to read the clues',
-    correct: 'in the right place',
-    present: 'in another place',
-    absent: 'not in the word',
+    correct: 'Right letter in the right place.',
+    present: 'It is in the word, but in another position.',
+    absent: 'Not in the word.',
   },
   result: {
     won: 'You won in {{score}}/{{max}}',

@@ -20,8 +20,8 @@ date: 2026-11-06
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
 - **JTBD / Propósito:** Ver el veredicto, la palabra con su categoría, definición y resumen, la distribución de intentos y las rachas, y compartir sin spoilers.
 - **Viewports:**
-  - **mobile** — veredicto arriba, explicación en columna y «Compartir» antes de las salidas.
-  - **desktop** — explicación a la izquierda (7/12); distribución, rachas, «Compartir» y reporte a la derecha (5/12), y una fila de salidas al pie.
+  - **mobile** — veredicto arriba, explicación en columna y las salidas al pie de la columna principal.
+  - **desktop** — columna principal a la izquierda (7/12) con veredicto, grilla, explicación y barra de salidas al pie, todos con el mismo ancho; distribución, rachas y reporte a la derecha (5/12) como sección aparte. «Compartir» solo en el header.
 
 ## Entrada y salida
 
@@ -51,7 +51,6 @@ date: 2026-11-06
 | 5 | card-palabra | card | — | content | ambos | hidden_in_states: loading, error de sistema | Palabra, categoría, definición y resumen en el idioma activo |
 | 6 | distribucion | chart | devdle.distribution | content | ambos | hidden_in_states: loading, error de sistema, anulado | Stat propia: distribución de intentos 1–6 y derrotas (C-18) |
 | 7 | card-rachas | card | — | content | ambos | hidden_in_states: loading, error de sistema | Rachas de Devdle y global actualizadas |
-| 8 | btn-compartir | button | primary | input | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: success | Comparte el resultado sin spoilers |
 | 9 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Abre O-01 para avisar que el desafío está mal (FG-6) |
 | 10 | cuenta-regresiva | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Cuenta regresiva al próximo desafío |
 | 11 | btn-siguiente | button | secondary | input | ambos | hidden_in_states: loading, error de sistema, sin juegos pendientes | Lleva al siguiente juego pendiente |
@@ -74,7 +73,6 @@ date: 2026-11-06
 - card-palabra
 - distribucion
 - card-rachas
-- btn-compartir
 - link-reportar
 - cuenta-regresiva
 - btn-siguiente
@@ -88,19 +86,15 @@ date: 2026-11-06
 - alerta-sistema
 - btn-reintentar
 - row `resultado`
-  - col 7/12: grilla-resultado, card-palabra
-  - col 5/12: distribucion, card-rachas, btn-compartir, link-reportar
-- row `salida`
-  - col 4/12: cuenta-regresiva
-  - col 4/12: btn-siguiente
-  - col 4/12: link-stats, link-volver
+  - col 7/12: veredicto, grilla-resultado, card-palabra, barra `salida` (tarjeta: cuenta-regresiva a la izquierda; btn-siguiente y link-volver a la derecha)
+  - col 5/12: distribucion, card-rachas (con link-stats al pie), link-reportar
 
 ## Contenido
 
 ### header
 - Texto/label: > nerdose / devdle · #8 · [stats] [Compartir] ES|EN · 🔥 4
 - Icono: nada
-- Annotation: `game-header` variant `finished` (REQ-004): Compartir activo con el acento del juego (misma acción que `btn-compartir`); «Estadísticas» → `estadisticas`; ES|EN cambia solo la definición y el resumen; píldora con la racha global ya actualizada. «Cómo se juega» no se muestra en el resultado. Sin nav global ni `nav-movil`
+- Annotation: `game-header` variant `finished` (REQ-004): Compartir activo con el acento del juego (único botón de compartir de la pantalla; texto: «🟩 Devdle #8 · 4/6» o «X/6», una línea de 🟩🟨⬛ por intento y «nerdose.dev», nunca la palabra ni la categoría); «Estadísticas» → `estadisticas`; ES|EN cambia solo la definición y el resumen; píldora con la racha global ya actualizada. «Cómo se juega» no se muestra en el resultado. Sin nav global ni `nav-movil`
 
 ### veredicto
 - Texto/label: Ganaste en 4/6
@@ -136,11 +130,6 @@ date: 2026-11-06
 - Texto secundario: Devdle: 3 días · Global: 4 días · récord Devdle: 7
 - Icono: nada
 - Annotation: rachas que devuelve el cierre (perder también suma). Si el jugador reabre el resultado más tarde, se leen con la racha viva
-
-### btn-compartir
-- Texto/label: Compartir
-- Icono: share
-- Annotation: share nativo del sistema; si no está, copia al portapapeles. Texto: «🟩 Devdle #8 · 4/6» (o «X/6»), una línea de 🟩🟨⬛ por intento y «nerdose.dev». Nunca la palabra ni la categoría
 
 ### link-reportar
 - Texto/label: Reportar un problema
@@ -214,13 +203,13 @@ date: 2026-11-06
   - alerta-anulado: solo visible en este estado (visible_only_in_states)
   - grilla-resultado: oculto en este estado (hidden_in_states)
   - distribucion: oculto en este estado (hidden_in_states)
-  - btn-compartir: oculto en este estado (hidden_in_states)
+  - Compartir del header: oculto en este estado
 
 ### success
 - Aplica: Sí (sub-estado de default)
 - Mensaje: ✓ Copiado: pegalo donde quieras.
 - Cambios:
-  - btn-compartir: content="✓ Copiado", icon="check", annotation="confirmación en el mismo botón (`role=status`) durante unos segundos; vuelve a «Compartir»" (state_override)
+  - Compartir del header: content="✓ Copiado", icon="check", annotation="confirmación en el mismo botón (`role=status`) durante unos segundos; vuelve a «Compartir»" (state_override)
 
 ### loading
 - Aplica: Sí
@@ -231,7 +220,7 @@ date: 2026-11-06
   - card-palabra: oculto en este estado (hidden_in_states)
   - distribucion: oculto en este estado (hidden_in_states)
   - card-rachas: oculto en este estado (hidden_in_states)
-  - btn-compartir: oculto en este estado (hidden_in_states)
+  - Compartir del header: oculto en este estado
   - link-reportar: oculto en este estado (hidden_in_states)
   - cuenta-regresiva: oculto en este estado (hidden_in_states)
   - btn-siguiente: oculto en este estado (hidden_in_states)
@@ -248,7 +237,7 @@ date: 2026-11-06
   - card-palabra: oculto en este estado (hidden_in_states)
   - distribucion: oculto en este estado (hidden_in_states)
   - card-rachas: oculto en este estado (hidden_in_states)
-  - btn-compartir: oculto en este estado (hidden_in_states)
+  - Compartir del header: oculto en este estado
   - link-reportar: oculto en este estado (hidden_in_states)
   - cuenta-regresiva: oculto en este estado (hidden_in_states)
   - btn-siguiente: oculto en este estado (hidden_in_states)
@@ -260,7 +249,7 @@ date: 2026-11-06
 ## Interacciones
 
 **Eventos:**
-- btn-compartir / Compartir del header · on click → share nativo o copia al portapapeles (estado success)
+- Compartir del header · on click → share nativo o copia al portapapeles (estado success)
 - ES|EN · on change → recarga definición y resumen en el otro idioma; palabra, tablero y distribución no cambian
 - btn-siguiente · on click → siguiente juego pendiente
 - link-reportar · on click → abre O-01 (FG-6)
@@ -273,7 +262,7 @@ date: 2026-11-06
 
 ## Accesibilidad
 
-- **Orden de foco:** header → veredicto → explicación → distribución → btn-compartir → link-reportar → salidas.
+- **Orden de foco:** header → veredicto → explicación → distribución → rachas → link-reportar → salidas (Compartir va en el header).
 - **Landmarks y jerarquía:** `h1` es el veredicto; las secciones `//` (palabra, tus intentos, rachas) son `h2`. Landmarks: header (breadcrumb como `nav` con nombre), main, footer.
 - **Foco y teclado:** O-01 atrapa el foco y lo devuelve a `link-reportar`.
 - **Propio de esta composición:** La confirmación «Copiado» se anuncia con `role=status`; el veredicto y la barra destacada de la distribución se comunican con texto además del color.
@@ -284,14 +273,14 @@ date: 2026-11-06
 - `perdió` y `anulado` son sub-estados de la misma pantalla, no pantallas aparte (C-12, C-41).
 - En `anulado` se oculta «Compartir» y la stat propia: C-13 no cubre explícitamente la Play `voided` (pregunta 2 del product-map).
 - Se omiten los extras del prototipo que no están en el PRD.
-- REQ-004: header `game-header` (`finished`) con Compartir activo, como pide el DS; se mantiene también `btn-compartir` en el cuerpo porque en mobile las acciones del header quedan en otra fila, lejos de donde termina la lectura. Es la misma acción.
+- REQ-004: header `game-header` (`finished`) con Compartir activo, como pide el DS. Revisión visual (2026-11-09): se quitó el `btn-compartir` del cuerpo; el prototipo tiene un único Compartir en el header, en el mismo lugar en todos los juegos. El veredicto y la barra de salidas pasan a la columna principal para que la lateral quede como sección aparte.
 - REQ-004: la distribución muestra 1–6 y X (derrotas) desde `game_stats` (decisión 10 del diseño técnico) con el pattern `devdle.distribution`.
-- REQ-004: la confirmación de copia es un cambio de estado de `btn-compartir` («✓ Copiado»), no un toast: el DS no tiene toast y el botón ya cubre el trabajo.
+- REQ-004: la confirmación de copia es un cambio de estado del Compartir del header («✓ Copiado»), no un toast: el DS no tiene toast y el botón ya cubre el trabajo.
 - REQ-004: «Siguiente juego» solo aparece si queda un juego con desafío sin completar; mientras los otros 4 no tengan desafío (supuesto «Juegos distintos de Devdle»), no se muestra.
 - REQ-004: la categoría es una de las 8 del banco y la definición y el resumen siguen el idioma activo (CA 15).
 
 **Alternativas descartadas:**
-- Compartir solo en el header: en mobile queda lejos del final de la lectura.
+- Compartir también en el cuerpo: dos botones iguales compiten; el prototipo usa solo el del header.
 - Toast «Copiado»: requiere un componente nuevo del DS para un solo uso.
 
 **Preguntas abiertas:**

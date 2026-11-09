@@ -65,7 +65,12 @@ export function Instructions({
             type="button"
             aria-disabled={blocked || undefined}
             onClick={handleStart}
-            className={buttonClass({ variant: 'accent', game: 'devdle', size: 'lg', disabled: blocked })}
+            className={buttonClass({
+              variant: 'accent',
+              game: 'devdle',
+              size: 'lg',
+              disabled: blocked,
+            })}
           >
             {t('instructions.start')} <span aria-hidden="true">→</span>
           </button>

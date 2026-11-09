@@ -30,11 +30,13 @@ export type GameProps = ClientBaseProps & {
   pending: boolean;
   moveError: MoveErrorInfo | null;
   locked?: boolean;
+  gameStats?: GameStatsView | null;
 };
 export type ResultProps = ClientBaseProps & {
   result: unknown;
   gameStats: GameStatsView | null;
   aside?: ReactNode;
+  footer?: ReactNode;
 };
 
 export type GameClient = {

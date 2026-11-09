@@ -57,7 +57,11 @@ describe('Result', () => {
         {...base({
           locale: 'en',
           t: makeT('en'),
-          result: { ...RESULT_WIN, definition: 'A program that analyzes…', summary: 'A parser is…' },
+          result: {
+            ...RESULT_WIN,
+            definition: 'A program that analyzes…',
+            summary: 'A parser is…',
+          },
         })}
       />,
     );
@@ -73,9 +77,15 @@ describe('Result', () => {
     const heading = screen.getByRole('heading', { level: 2, name: /tus intentos/ });
     expect(heading.parentElement).toHaveTextContent('racha 3');
     const labels = ['1', '2', '3', '4', '5', '6', 'X'];
-    expect(labels.map((l) => bar(l).querySelector('[aria-hidden]')?.textContent)).toEqual(
-      ['0', '1', '4', '3', '2', '1', '1'],
-    );
+    expect(labels.map((l) => bar(l).querySelector('[aria-hidden]')?.textContent)).toEqual([
+      '0',
+      '1',
+      '4',
+      '3',
+      '2',
+      '1',
+      '1',
+    ]);
     expect(bar('3')).toHaveClass('bg-game-devdle');
     expect(bar('3')).toHaveTextContent('hoy');
     expect(bar('4')).toHaveClass('bg-control-selected');
@@ -111,8 +121,14 @@ describe('Result', () => {
       extra: { guesses: { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0 }, losses: 0 },
     };
     render(<Result {...base({ gameStats: stats })} />);
-    const section = screen.getByRole('heading', { level: 2, name: /tus intentos/ }).closest('section') as HTMLElement;
-    expect(within(section).getAllByText('0').some((e) => e.tagName === 'B')).toBe(true);
+    const section = screen
+      .getByRole('heading', { level: 2, name: /tus intentos/ })
+      .closest('section') as HTMLElement;
+    expect(
+      within(section)
+        .getAllByText('0')
+        .some((e) => e.tagName === 'B'),
+    ).toBe(true);
     expect(within(section).getByText('—')).toBeInTheDocument();
     for (const l of ['1', '2', '3', '4', '5', '6', 'X']) {
       expect(bar(l).style.getPropertyValue('--w')).toBe('8%');
@@ -120,12 +136,17 @@ describe('Result', () => {
   });
 
   it('renders slots and layout (TS-58)', () => {
-    const { container } = render(<Result {...base({ aside: <p>rachas</p>, notices: <p>nota</p> })} />);
+    const { container } = render(
+      <Result {...base({ aside: <p>rachas</p>, notices: <p>nota</p>, footer: <p>salidas</p> })} />,
+    );
     const banner = screen.getByRole('heading', { level: 1 });
     const nota = screen.getByText('nota');
     expect(banner.compareDocumentPosition(nota) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    const cols = (container.firstElementChild?.lastElementChild as HTMLElement).children;
+    const cols = (container.firstElementChild as HTMLElement).children;
     expect(cols[0]).toHaveClass('basis-140', 'grow-999');
+    // Veredicto y salidas van en la columna principal: la lateral queda como sección aparte.
+    expect(cols[0]).toContainElement(banner);
+    expect((cols[0] as HTMLElement).lastElementChild).toHaveTextContent('salidas');
     expect(cols[1]).toHaveClass('basis-75', 'max-w-devdle-aside');
     const aside = cols[1] as HTMLElement;
     expect(aside.lastElementChild).toHaveTextContent('rachas');

@@ -121,6 +121,7 @@ export function GameScreens({
           pending={movePending}
           moveError={view.moveError}
           locked={view.locked}
+          gameStats={view.gameStats}
           notices={
             view.locked ? (
               <Banner variant="warning">{host('gameHost.notice.voided')}</Banner>
@@ -140,19 +141,9 @@ export function GameScreens({
         t={t}
         result={view.result}
         gameStats={view.gameStats}
-        aside={
-          <ResultAside
-            gameId={gameId}
-            client={client}
-            result={view.result}
-            number={view.number}
-            gameStats={view.gameStats}
-          />
-        }
+        aside={<ResultAside gameId={gameId} gameStats={view.gameStats} />}
+        footer={<ResultExits gameId={gameId} />}
       />
-      <div className="mt-8">
-        <ResultExits gameId={gameId} />
-      </div>
     </>
   );
 }

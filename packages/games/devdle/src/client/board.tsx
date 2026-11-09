@@ -28,7 +28,11 @@ const CELL_CLASS: Record<CellState, string> = {
 
 type Cell = { letter: string; state: CellState };
 
-function rowCells(length: number, guess: DevdleGuess | undefined, draft: string | undefined): Cell[] {
+function rowCells(
+  length: number,
+  guess: DevdleGuess | undefined,
+  draft: string | undefined,
+): Cell[] {
   return Array.from({ length }, (_, i): Cell => {
     if (guess) return { letter: guess.guess[i] ?? '', state: guess.marks[i] ?? 'absent' };
     const letter = draft?.[i];

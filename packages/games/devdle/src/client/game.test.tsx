@@ -12,6 +12,7 @@ import {
   GUESS_SERVER,
   PUBLIC_VIEW_12,
   PUBLIC_VIEW_6,
+  GAME_STATS,
   STATE_2,
 } from './test-fixtures';
 import { makeT } from './test-utils';
@@ -30,13 +31,18 @@ const base = (over: Partial<GameProps> = {}): GameProps => ({
 });
 
 const row = (n: number) => screen.getAllByRole('row')[n - 1] as HTMLElement;
-const labels = (n: number) => within(row(n)).getAllByRole('gridcell').map((c) => c.getAttribute('aria-label'));
+const labels = (n: number) =>
+  within(row(n))
+    .getAllByRole('gridcell')
+    .map((c) => c.getAttribute('aria-label'));
 const hint = () => screen.getAllByRole('status')[0] as HTMLElement;
 
 describe('Game', () => {
   it('resumes the board (TS-12, TS-13, TS-14)', () => {
     render(<Game {...base()} />);
-    expect(screen.getByRole('grid', { name: 'Tablero: 6 intentos de 6 letras' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('grid', { name: 'Tablero: 6 intentos de 6 letras' }),
+    ).toBeInTheDocument();
     expect(screen.getAllByRole('row')).toHaveLength(6);
     expect(screen.getAllByRole('gridcell')).toHaveLength(36);
     expect(labels(1)).toEqual([
@@ -53,7 +59,9 @@ describe('Game', () => {
     const correct = screen.getAllByRole('gridcell', { name: 'R, correcta' })[0] as HTMLElement;
     expect(correct).toHaveTextContent('✓');
     expect(correct.querySelector('[aria-hidden="true"]')).not.toBeNull();
-    const present = screen.getAllByRole('gridcell', { name: 'R, en otra posición' })[0] as HTMLElement;
+    const present = screen.getAllByRole('gridcell', {
+      name: 'R, en otra posición',
+    })[0] as HTMLElement;
     expect(present).toHaveTextContent('~');
     expect(present).toHaveClass('border-dashed');
     expect(screen.getAllByRole('gridcell', { name: 'B, no está' })[0]).toHaveTextContent('✗');
@@ -90,22 +98,44 @@ describe('Game', () => {
 
   it('shows categories and legend (TS-18, TS-19)', () => {
     render(<Game {...base()} />);
-    expect(screen.getByRole('heading', { level: 2, name: /categorías posibles/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { level: 2, name: /pista de categoría/ }),
+    ).toBeInTheDocument();
     const items = screen.getAllByRole('listitem').map((li) => li.textContent);
-    expect(items).toEqual(expect.arrayContaining(['lenguajes', 'git', 'bases de datos', 'redes', 'linux', 'apis', 'seguridad', 'ingeniería de software']));
-    expect(screen.getByText('La categoría y la definición se revelan al terminar.')).toBeInTheDocument();
-    const legend = screen.getByRole('heading', { level: 2, name: /cómo leer las pistas/ }).closest('section');
+    expect(items).toEqual(
+      expect.arrayContaining([
+        'lenguajes',
+        'git',
+        'bases de datos',
+        'redes',
+        'linux',
+        'apis',
+        'seguridad',
+        'ingeniería de software',
+      ]),
+    );
+    expect(
+      screen.getByText('La categoría y la definición se revelan al terminar.'),
+    ).toBeInTheDocument();
+    const legend = screen
+      .getByRole('heading', { level: 2, name: /cómo leer las pistas/ })
+      .closest('section');
     expect(legend).toHaveAttribute('id', 'game-help');
-    expect(legend).toHaveTextContent('en su lugar');
-    expect(legend).toHaveTextContent('en otro lugar');
-    expect(legend).toHaveTextContent('no está');
+    expect(legend).toHaveTextContent('Letra correcta en el lugar correcto.');
+    expect(legend).toHaveTextContent('Está en la palabra, pero en otra posición.');
+    expect(legend).toHaveTextContent('No está en la palabra.');
   });
 
   it('types with the physical keyboard (TS-20, TS-22, TS-23, TS-28)', async () => {
     const user = userEvent.setup();
     render(<Game {...base()} />);
     await user.keyboard('par');
-    expect(labels(3).slice(0, 4)).toEqual(['P, escrita', 'A, escrita', 'R, escrita', 'casilla, vacía']);
+    expect(labels(3).slice(0, 4)).toEqual([
+      'P, escrita',
+      'A, escrita',
+      'R, escrita',
+      'casilla, vacía',
+    ]);
     await user.keyboard('{Backspace}');
     expect(labels(3).slice(0, 3)).toEqual(['P, escrita', 'A, escrita', 'casilla, vacía']);
     await user.click(screen.getByRole('button', { name: 'Borrar' }));
@@ -220,7 +250,11 @@ describe('Game', () => {
     expect(container.querySelector('[aria-live="polite"]')).toHaveTextContent('');
     await user.keyboard('PARSER');
     rerender(<Game {...props} state={{ guesses: [GUESS_BRANCH, GUESS_SERVER, GUESS_PARSER] }} />);
-    expect(labels(3)).toEqual(Array(6).fill(null).map((_, i) => `${'PARSER'[i]}, correcta`));
+    expect(labels(3)).toEqual(
+      Array(6)
+        .fill(null)
+        .map((_, i) => `${'PARSER'[i]}, correcta`),
+    );
     expect(labels(4)).toEqual(Array(6).fill('casilla, vacía'));
     expect(container.querySelector('[aria-live="polite"]')).toHaveTextContent(
       'P, correcta, A, correcta, R, correcta, S, correcta, E, correcta y R, correcta',
@@ -257,9 +291,32 @@ describe('Game', () => {
     expect(within(col).getByRole('group', { name: 'Teclado' })).toHaveClass('max-w-keyboard');
     const aside = container.querySelector('aside') as HTMLElement;
     expect(aside).toHaveClass('basis-75', 'grow', 'max-w-devdle-aside', 'min-w-0');
-    const heads = within(aside).getAllByRole('heading', { level: 2 }).map((h) => h.textContent);
-    expect(heads[0]).toMatch(/categorías posibles/);
-    expect(heads[1]).toMatch(/cómo leer/);
+    const heads = within(aside)
+      .getAllByRole('heading', { level: 2 })
+      .map((h) => h.textContent);
+    // Orden del prototipo: pistas, categoría y, si hay stats, tus intentos.
+    expect(heads[0]).toMatch(/cómo leer/);
+    expect(heads[1]).toMatch(/pista de categoría/);
+    expect(heads).toHaveLength(2);
+  });
+
+  it('titles the game like the prototype', () => {
+    render(<Game {...base()} />);
+    expect(
+      screen.getByRole('heading', { level: 1, name: 'Adiviná el término del día' }),
+    ).toBeInTheDocument();
+  });
+
+  it('shows "tus intentos" in the aside while playing when there are stats', () => {
+    const { container } = render(<Game {...base({ gameStats: GAME_STATS })} />);
+    const aside = container.querySelector('aside') as HTMLElement;
+    const heads = within(aside)
+      .getAllByRole('heading', { level: 2 })
+      .map((h) => h.textContent);
+    expect(heads[2]).toMatch(/tus intentos/);
+    expect(within(aside).getByText('racha 3')).toBeInTheDocument();
+    // Partida en curso: ninguna barra se marca como la de hoy.
+    expect(within(aside).queryByText(/· hoy/)).toBeNull();
   });
 
   it('throws on invalid publicView (TS-39)', () => {
@@ -297,6 +354,10 @@ describe('Game', () => {
     await user.keyboard('parser{Enter}');
     rerender(<Game {...props} state={{ guesses: [GUESS_BRANCH, GUESS_PARSER] }} />);
     expect(onMove.mock.calls).toEqual([[{ guess: 'BRANCH' }], [{ guess: 'PARSER' }]]);
-    expect(labels(2)).toEqual(Array(6).fill(null).map((_, i) => `${'PARSER'[i]}, correcta`));
+    expect(labels(2)).toEqual(
+      Array(6)
+        .fill(null)
+        .map((_, i) => `${'PARSER'[i]}, correcta`),
+    );
   });
 });

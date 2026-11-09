@@ -15,6 +15,12 @@ describe('focusMainHeading', () => {
     expect(h1).toHaveFocus();
   });
 
+  it('el título enfocado no muestra anillo de foco', () => {
+    document.body.innerHTML = '<main><h1>Hola</h1></main>';
+    focusMainHeading();
+    expect(document.querySelector('h1')).toHaveClass('outline-none');
+  });
+
   it('respeta un tabindex existente', () => {
     document.body.innerHTML = '<main><h1 tabindex="0">Hola</h1></main>';
     focusMainHeading();

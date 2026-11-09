@@ -15,6 +15,13 @@ import { hasGameClient } from '../registry';
 
 import { ClientShareButton } from './share-button';
 
+/** `YYYY-MM-DD` (día de plataforma, UTC) → `09/11` en es, `11/09` en en. */
+// A mano y no con Intl: el ICU de `es` ignora `day: '2-digit'` y da `3/11`.
+function formatDayMonth(date: string, locale: string): string {
+  const [, month, day] = date.split('-');
+  return locale.startsWith('en') ? `${month}/${day}` : `${day}/${month}`;
+}
+
 function DisabledShare({ gameId }: { gameId: GameId }) {
   const { t } = useTranslation();
   return (
@@ -48,7 +55,7 @@ function scrollToHelp(gameId: GameId) {
  * través del `handle` de la ruta. Lee la misma query que la ruta, así que no pide nada extra.
  */
 export function GameHostHeader({ gameId }: { gameId: GameId }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { status } = useSession();
   const hasClient = hasGameClient(gameId);
   const query = useGameToday(gameId, { enabled: hasClient });
@@ -64,6 +71,7 @@ export function GameHostHeader({ gameId }: { gameId: GameId }) {
   });
 
   const number = hasClient ? (query.data?.number ?? null) : null;
+  const date = number !== null ? (query.data?.date ?? null) : null;
   const streak =
     today.data && status !== 'cookies_blocked' && status !== 'unavailable'
       ? today.data.global_streak.current
@@ -77,7 +85,11 @@ export function GameHostHeader({ gameId }: { gameId: GameId }) {
       homeLabel={t('shell.brand')}
       renderHome={(props) => <Link to="/" {...props} />}
       crumb={gameId}
-      meta={number !== null ? t('catalog.challengeNumber', { number }) : undefined}
+      meta={
+        date !== null
+          ? t('gameHost.header.challengeDate', { date: formatDayMonth(date, i18n.language) })
+          : undefined
+      }
     >
       {showHelp ? (
         <button

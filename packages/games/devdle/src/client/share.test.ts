@@ -21,7 +21,13 @@ describe('share', () => {
   it('never leaks the solution (TS-9)', () => {
     for (const r of [RESULT_WIN, RESULT_LOSS]) {
       const text = share(r, 128);
-      for (const secret of ['PARSER', 'software_engineering', 'ingeniería', r.definition, r.summary]) {
+      for (const secret of [
+        'PARSER',
+        'software_engineering',
+        'ingeniería',
+        r.definition,
+        r.summary,
+      ]) {
         expect(text.includes(secret)).toBe(false);
       }
       expect(text.endsWith('nerdose.dev')).toBe(true);

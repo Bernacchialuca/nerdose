@@ -4,6 +4,7 @@ import { MAX_GUESSES, moveSchema } from '../definition/schemas';
 
 import { Board } from './board';
 import { CategoryHint } from './category-hint';
+import { Distribution } from './distribution';
 import { Keyboard } from './keyboard';
 import { Legend } from './legend';
 import { isFinished, keyStates } from './marks';
@@ -24,6 +25,7 @@ export function Game({
   pending,
   moveError,
   locked = false,
+  gameStats = null,
 }: GameProps) {
   const view = parsePublicView(publicView);
   const play = parseState(state);
@@ -50,7 +52,9 @@ export function Game({
       setLocalHint(null);
       setAnnouncement(
         listFormat.format(
-          last.marks.map((m, i) => t('cell.label', { letter: last.guess[i], state: t(`cell.${m}`) })),
+          last.marks.map((m, i) =>
+            t('cell.label', { letter: last.guess[i], state: t(`cell.${m}`) }),
+          ),
         ),
       );
     }
@@ -110,7 +114,7 @@ export function Game({
       >
         <div className="flex flex-col items-center gap-2 text-center">
           <h1 id={titleId} className="font-mono text-title-game text-text">
-            {t('title')}
+            {t('game.title')}
           </h1>
           <p className="font-mono text-label-comment text-text-dim">
             <span aria-hidden="true">// </span>
@@ -141,8 +145,9 @@ export function Game({
         </p>
       </section>
       <aside className="flex min-w-0 max-w-devdle-aside grow basis-75 flex-col gap-4">
-        <CategoryHint categories={view.possible_categories} t={t} />
         <Legend t={t} />
+        <CategoryHint categories={view.possible_categories} t={t} />
+        {gameStats ? <Distribution stats={gameStats} t={t} /> : null}
       </aside>
     </div>
   );

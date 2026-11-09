@@ -29,7 +29,14 @@ const KEY_CLASS = {
 
 const GROW_VARS = { '--key-grow': 1.6 } as CSSProperties;
 
-export function Keyboard({ states, onLetter, onBackspace, onSubmit, submitDisabled, t }: KeyboardProps) {
+export function Keyboard({
+  states,
+  onLetter,
+  onBackspace,
+  onSubmit,
+  submitDisabled,
+  t,
+}: KeyboardProps) {
   const enter = (
     <button
       key="enter"
@@ -65,7 +72,11 @@ export function Keyboard({ states, onLetter, onBackspace, onSubmit, submitDisabl
   );
 
   return (
-    <div role="group" aria-label={t('keyboard.label')} className="flex w-full max-w-keyboard flex-col gap-2">
+    <div
+      role="group"
+      aria-label={t('keyboard.label')}
+      className="flex w-full max-w-keyboard flex-col gap-2"
+    >
       {ROWS.map((row, i) => (
         <div key={row} className="flex justify-center gap-1.5">
           {i === 2 ? enter : null}
@@ -75,11 +86,7 @@ export function Keyboard({ states, onLetter, onBackspace, onSubmit, submitDisabl
               <button
                 key={letter}
                 type="button"
-                aria-label={
-                  state
-                    ? t('key.label', { letter, state: t(`key.${state}`) })
-                    : letter
-                }
+                aria-label={state ? t('key.label', { letter, state: t(`key.${state}`) }) : letter}
                 onClick={() => {
                   onLetter(letter);
                 }}

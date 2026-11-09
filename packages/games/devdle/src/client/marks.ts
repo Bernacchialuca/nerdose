@@ -1,4 +1,9 @@
-import { MAX_GUESSES, type DevdleGuess, type DevdleState, type LetterMark } from '../definition/schemas';
+import {
+  MAX_GUESSES,
+  type DevdleGuess,
+  type DevdleState,
+  type LetterMark,
+} from '../definition/schemas';
 
 export const MARK_EMOJI: Record<LetterMark, string> = {
   correct: '🟩',

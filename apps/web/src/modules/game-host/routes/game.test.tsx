@@ -99,7 +99,7 @@ describe('abrir /devdle', () => {
     const nav = within(header).getByRole('navigation', { name: 'Ruta' });
     expect(within(nav).getByRole('link', { name: 'nerdose' })).toHaveAttribute('href', '/');
     expect(within(nav).getByText('devdle')).toHaveAttribute('aria-current', 'page');
-    expect(within(header).getByText('#128')).toBeInTheDocument();
+    expect(within(header).getByText('desafío del 03/11')).toBeInTheDocument();
     expect(screen.queryByRole('link', { name: './juegos' })).toBeNull();
     expect(document.title).toBe('Devdle · nerdose');
   });
@@ -159,9 +159,12 @@ describe('abrir /devdle', () => {
     view();
     expect(await h1('Ganaste en 3/6')).toBeInTheDocument();
     expect(screen.getAllByText('PARSER').length).toBeGreaterThan(0);
+    // Un único «Compartir», en el header (como en el prototipo); no se repite en el cuerpo.
+    await within(screen.getByRole('banner')).findByRole('button', { name: 'Compartir' });
     const compartir = screen.getAllByRole('button', { name: 'Compartir' });
-    expect(compartir.length).toBeGreaterThan(0);
-    for (const b of compartir) expect(b).not.toHaveAttribute('aria-disabled');
+    expect(compartir).toHaveLength(1);
+    expect(screen.getByRole('banner')).toContainElement(compartir[0]!);
+    expect(compartir[0]).not.toHaveAttribute('aria-disabled');
     expect(screen.getByRole('heading', { level: 2, name: 'rachas' })).toBeInTheDocument();
   });
 
@@ -376,7 +379,7 @@ describe('jugar', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'Devdle' })).toBeInTheDocument();
     const notice = screen.getByText(/Empezó el desafío #129\./);
     expect(notice.closest('[role="status"]')).not.toBeNull();
-    expect(within(screen.getByRole('banner')).getByText('#129')).toBeInTheDocument();
+    expect(within(screen.getByRole('banner')).getByText('desafío del 04/11')).toBeInTheDocument();
     expect(countOf(calls, 'GET', '/api/games/devdle/today?lang=es')).toBe(2);
     await user.click(screen.getByRole('button', { name: /Empezar/ }));
     await screen.findByRole('group', { name: 'Teclado' });
@@ -687,8 +690,8 @@ describe('compartir', () => {
     );
     view();
     await screen.findByRole('heading', { level: 1 });
-    const main = within(screen.getByRole('main'));
-    return { user, button: await main.findByRole('button', { name: /Compartir/ }) };
+    const header = within(screen.getByRole('banner'));
+    return { user, button: await header.findByRole('button', { name: /Compartir/ }) };
   }
 
   it('TS-38: usa el share nativo y no incluye la solución', async () => {
@@ -829,11 +832,14 @@ describe('resultado', () => {
   it('TS-46: salidas del resultado', async () => {
     server.use(gameHandlers.today(gameTodayWon));
     view();
-    expect(await screen.findByRole('link', { name: /Ver mis estadísticas/ })).toHaveAttribute(
-      'href',
-      '/stats',
-    );
-    expect(screen.getByRole('link', { name: /Volver a los juegos/ })).toHaveAttribute('href', '/');
+    const stats = await screen.findByRole('link', { name: /Ver mis estadísticas/ });
+    expect(stats).toHaveAttribute('href', '/stats');
+    // Vive en la tarjeta de rachas, no en la barra de salidas.
+    expect(stats.closest('section')).toHaveTextContent('rachas');
+    const back = screen.getByRole('link', { name: /Volver a los juegos/ });
+    expect(back).toHaveAttribute('href', '/');
+    // Barra al pie: cuenta regresiva y «Volver a los juegos» en la misma tarjeta.
+    expect(back.closest('.rounded-panel')).toHaveTextContent(/Próximo desafío en/);
   });
 
   it('TS-47: «Reportar un problema» no se renderiza', async () => {
