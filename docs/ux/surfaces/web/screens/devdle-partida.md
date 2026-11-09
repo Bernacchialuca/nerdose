@@ -44,7 +44,7 @@ date: 2026-11-06
 
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
-| 1 | header | header | game-header · playing | layout | ambos | — | Breadcrumb `> nerdose / devdle`, `#número`, acciones de juego, idioma y racha |
+| 1 | header | header | game-header · playing | layout | ambos | — | Breadcrumb `> nerdose / devdle`, «desafío del dd/mm», acciones de juego, idioma y racha |
 | 2 | titulo | heading | h1 | content | ambos | hidden_in_states: loading, error de sistema | Nombre del juego |
 | 3 | consigna | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Largo del término e intento actual |
 | 4 | grilla-intentos | image | devdle.cell | content | ambos | hidden_in_states: loading, error de sistema | Tablero de 6 filas × N letras (4 a 12) con feedback por letra |
@@ -89,7 +89,7 @@ date: 2026-11-06
 ## Contenido
 
 ### header
-- Texto/label: > nerdose / devdle · #8 · [?] [stats] [Compartir] ES|EN · 🔥 4
+- Texto/label: > nerdose / devdle · desafío del 30/10 · [?] [stats] [Compartir] ES|EN · 🔥 4
 - Icono: nada
 - Annotation: `game-header` variant `playing` (REQ-004): «Cómo se juega» lleva a la leyenda de pistas de esta pantalla; «Estadísticas» → `estadisticas`; Compartir deshabilitado («disponible al terminar la partida»); ES|EN cambia el idioma sin perder la partida; píldora con la racha global. Sin nav global ni `nav-movil`
 
@@ -265,7 +265,7 @@ date: 2026-11-06
 
 **Decisiones tomadas:**
 - Una pantalla por fase por juego: la partida de Devdle difiere por completo de la de los otros.
-- El `#número` del desafío está en el header, no en el cuerpo.
+- El día del desafío («desafío del dd/mm») está en el header, no en el cuerpo.
 - REQ-004: header `game-header` (`playing`) en lugar del header de plataforma y la tira `nav-movil`.
 - REQ-004: el tablero tiene de 4 a 12 columnas según el término (supuesto «Longitud de la palabra»); las celdas escalan al ancho en lugar de cambiar de layout.
 - REQ-004: la pista de categorías lista las 8 categorías fijas del banco como chips `neutral` (antes era una `card` con categorías inventadas).

@@ -98,7 +98,7 @@ El prototipo menciona "tu tiempo final es tu puntaje" en Grep Grid: **se elimina
 | Sin sesión (cookies bloqueadas) | La creación de la sesión respondió bien pero el estado del día sigue sin sesión | Se ven los 5 juegos, pero sin estados de partida y con CTA deshabilitados; aviso O-03 | C-02, C-05, REQ-002 |
 | Sesión no disponible | La creación de la sesión fue rechazada por límite (429) | Igual que sin sesión pero **sin** O-03; se reintenta en la próxima carga | C-01, REQ-002 (CA 13) |
 | Ningún desafío hoy | Los 5 juegos con `challenge_status = none` (hasta que existan generadores) | Las 5 tarjetas "sin desafío hoy · no afecta tu racha", sin CTA de juego; progreso "Hoy no hay desafíos publicados" | C-05, C-14, REQ-002 (CA 9) |
-| Antes del lanzamiento | `number = null` (hoy < día de lanzamiento) | Sin `#número` en el header; tarjetas "próximamente"; nunca se muestra un número ≤ 0 | C-05, REQ-002 (CA 17) |
+| Antes del lanzamiento | `number = null` (hoy < día de lanzamiento) | Sin indicador del día en el header («desafío del dd/mm»); tarjetas "próximamente"; nunca se muestra un número ≤ 0 | C-05, REQ-002 (CA 17) |
 | Error de carga | Falla el estado del día (500, 429 o red) | Mensaje de error con "Reintentar"; las 5 tarjetas siguen visibles con nombre y descripción (catálogo estático), sin estado ni CTA | REQ-002 (CA 18) |
 | Primera visita | Player nuevo, sin Play | Todos "sin jugar", racha global 0, resumen sin datos | C-01, C-05 |
 
@@ -137,7 +137,7 @@ Header presente en todas las pantallas:
 - **`./stats`** → `estadisticas` (`/stats`)
 - **`./about`** → `acerca-de` (`/about`)
 - **Píldora de racha global** (solo en `home`) → `estadisticas` (REQ-003)
-- **`#número`** — indicador del día, no navega
+- **«desafío del dd/mm»** (header de juego) — indicador del día del desafío, no navega. El `#número` se sigue mostrando en el cuerpo: instrucciones («Desafío #N»), aviso de día nuevo y texto de share (revisión visual 2026-11-09, alineado al prototipo)
 - **ES | EN** — control inline; cambia el idioma de UI y de contenido sin recargar y sin perder la partida; con sesión se guarda en el Player, sin sesión solo en el navegador (C-03, REQ-002)
 
 Rutas: `/` → `home`; `/:game_id` → fase de juego correspondiente; `/stats`; `/about`; cualquier otra ruta o `game_id` desconocido → `no-encontrado` (ADR de `web`, overview; REQ-002).
@@ -189,7 +189,7 @@ Pantallas: (ninguna)
 - **Cambio de día (00:00 UTC)** — Cualquier pantalla abierta puede recibir `challenge_expired` al jugar: se carga el desafío nuevo, la Play vieja queda `in_progress` y no cuenta. En `home` la cuenta regresiva recarga sola. `[fuente: PRD C-06, C-11]`
 - **Desafío anulado** — Afecta a la tarjeta, a las instrucciones y al resultado (O-02). La racha no se ve afectada. `[fuente: PRD C-41, C-42]`
 - **Error de red / sin conexión** — El PRD supone conexión permanente y no hay modo offline. El manejo de errores globales vive en el shell. En `home`, REQ-002 define el estado "error de carga" (mensaje con "Reintentar", catálogo estático visible); en el resto de las pantallas el copy sigue sin definir. `[fuente: PRD §Supuestos; REQ-002 CA 18]`
-- **Antes del lanzamiento** — Mientras hoy sea anterior al día del desafío #1, el servidor no informa `#número` y el header lo oculta. `[fuente: REQ-002 CA 17]`
+- **Antes del lanzamiento** — Mientras hoy sea anterior al día del desafío #1, el servidor no informa el desafío y el header no muestra «desafío del dd/mm». `[fuente: REQ-002 CA 17]`
 
 ## Mapa Visual
 

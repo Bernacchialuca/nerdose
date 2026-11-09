@@ -51,7 +51,7 @@ Todo lo que sigue es hipótesis a validar. Los slugs de pantalla y overlays (O-0
 - **Reabrir un juego ya completado** — Entrar a `/:game_id` con la Play terminada muestra `{juego}-resultado`, no una partida nueva. `[fuente: product-map, criterio de inventario]`
 - **Primera visita** — Todos los juegos aparecen "Sin jugar", racha global 0; la sesión anónima se crea sola, sin registro, y la interfaz se muestra en el idioma del navegador (`es`/`en`; cualquier otro → `es`). `[fuente: C-01, F-01; REQ-002 CA 1, 2]`
 - **Ningún desafío publicado hoy** — Hasta que existan los generadores, `home` muestra los 5 juegos "sin desafío hoy · no afecta tu racha", sin "Jugar"; el flujo termina en `home`. `[fuente: REQ-002 CA 9]`
-- **Antes del lanzamiento** — El header no muestra `#número` y las tarjetas dicen "próximamente"; el catálogo funciona igual. `[fuente: REQ-002 CA 17]`
+- **Antes del lanzamiento** — El header no muestra el día del desafío («desafío del dd/mm») y las tarjetas dicen "próximamente"; el catálogo funciona igual. `[fuente: REQ-002 CA 17]`
 - **Sin desafío hoy** — La tarjeta muestra "sin desafío hoy" y `{juego}-instrucciones` muestra el mensaje con "Volver a los juegos". El día es neutro para la racha de ese juego. `[fuente: C-14]`
 - **Cambio de idioma o de lenguaje de código a mitad de partida** — Control inline ES/EN (C-03) o JS/Go/Java (C-26); la partida no cambia, solo la vista. El cambio de idioma se aplica sin recargar y queda guardado en el Player (al volver, la interfaz sigue en ese idioma); sin sesión solo cambia en el navegador. `[fuente: REQ-002 CA 6]`
 - **Dirección inexistente** — Un enlace roto o un `game_id` desconocido muestra `no-encontrado`; "Volver a los juegos" lleva a `home`. `[fuente: REQ-002, supuesto «Navegación»]`
@@ -94,7 +94,7 @@ Todo lo que sigue es hipótesis a validar. Los slugs de pantalla y overlays (O-0
 
 1. El jugador está en `{juego}-partida` (Play `in_progress` del desafío `#N`) y la medianoche UTC pasa.
 2. Hace una jugada. El cliente envía `challenge_number = N`; el servidor responde `challenge_expired`: la jugada se rechaza. `[fuente: C-11]`
-3. El front carga el desafío nuevo (`#N+1`) y vuelve a `{juego}-instrucciones` con el nuevo `#número` en el header y el aviso "Empezó el desafío #N+1. La partida de ayer quedó sin terminar y no cuenta para tu racha." `[fuente: product-map, estado `challenge_expired`; REQ-004 supuesto «Jugada tardía», CA 17]`
+3. El front carga el desafío nuevo (`#N+1`) y vuelve a `{juego}-instrucciones` con la fecha nueva en el header («desafío del dd/mm») y el aviso "Empezó el desafío #N+1. La partida de ayer quedó sin terminar y no cuenta para tu racha." `[fuente: product-map, estado `challenge_expired`; REQ-004 supuesto «Jugada tardía», CA 17]`
 4. El jugador lee las instrucciones y toca "Empezar": se crea la Play del nuevo desafío (C-09) y sigue con el flujo 1 desde el paso 3.
 5. La Play vieja queda `in_progress` para siempre, sin contar para rachas ni estadísticas.
 
@@ -114,13 +114,13 @@ Todo lo que sigue es hipótesis a validar. Los slugs de pantalla y overlays (O-0
 
 ### Estado final
 
-El jugador ve las instrucciones (o la tarjeta "Sin jugar") del desafío nuevo con el `#número` actualizado en el header. En el sistema, la Play vieja queda `in_progress` sin contar y no hay Play del día nuevo hasta que el jugador empiece.
+El jugador ve las instrucciones (o la tarjeta "Sin jugar") del desafío nuevo con la fecha actualizada en el header («desafío del dd/mm»). En el sistema, la Play vieja queda `in_progress` sin contar y no hay Play del día nuevo hasta que el jugador empiece.
 
 ### Criterios de éxito
 
 - El jugador nunca juega ni envía jugadas contra un desafío vencido sin enterarse: el desafío nuevo se carga en la primera jugada rechazada.
 - El jugador puede empezar el desafío nuevo en la misma sesión, sin recargar manualmente.
-- El `#número` visible en el header le permite entender que es otro desafío.
+- La fecha del header y el aviso con el `#número` nuevo le permiten entender que es otro desafío.
 
 ---
 

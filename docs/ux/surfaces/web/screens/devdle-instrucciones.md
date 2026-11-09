@@ -44,7 +44,7 @@ date: 2026-11-06
 
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
-| 1 | header | header | game-header · playing | layout | ambos | — | Breadcrumb `> nerdose / devdle`, `#número`, acciones de juego, idioma y racha |
+| 1 | header | header | game-header · playing | layout | ambos | — | Breadcrumb `> nerdose / devdle`, «desafío del dd/mm», acciones de juego, idioma y racha |
 | 2 | titulo | heading | h1 | content | ambos | — | Nombre del juego (con su acento propio) |
 | 3 | meta | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Duración y regla de una partida diaria |
 | 4 | aviso-dia-nuevo | alert | info | feedback | ambos | visible_only_in_states: día nuevo | Explica que empezó un desafío nuevo y que la partida de ayer no cuenta |
@@ -109,9 +109,9 @@ date: 2026-11-06
 ## Contenido
 
 ### header
-- Texto/label: > nerdose / devdle · #8 · [?] [stats] [Compartir] ES|EN · 🔥 4
+- Texto/label: > nerdose / devdle · desafío del 30/10 · [?] [stats] [Compartir] ES|EN · 🔥 4
 - Icono: nada
-- Annotation: `game-header` variant `playing` (REQ-004): breadcrumb con `devdle` en el acento del juego y metadato `#número` (decisión #12; se oculta si el servidor no lo informa). Acciones: «Cómo se juega» (lleva a «Cómo se juega» de esta misma pantalla), «Estadísticas» → `estadisticas`, Compartir deshabilitado («disponible al terminar la partida»), ES|EN inline y píldora con la racha global. Sin nav global ni tira `nav-movil`: en mobile las acciones envuelven a su propia fila
+- Annotation: `game-header` variant `playing` (REQ-004): breadcrumb con `devdle` en el acento del juego y metadato «desafío del dd/mm» (decisión #12; se oculta si el servidor no lo informa). Acciones: «Cómo se juega» (lleva a «Cómo se juega» de esta misma pantalla), «Estadísticas» → `estadisticas`, Compartir deshabilitado («disponible al terminar la partida»), ES|EN inline y píldora con la racha global. Sin nav global ni tira `nav-movil`: en mobile las acciones envuelven a su propia fila
 
 ### titulo
 - Texto/label: Devdle

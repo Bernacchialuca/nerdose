@@ -44,7 +44,7 @@ date: 2026-11-06
 
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
-| 1 | header | header | game-header · finished | layout | ambos | — | Breadcrumb `> nerdose / devdle`, `#número`, Compartir activo, idioma y racha |
+| 1 | header | header | game-header · finished | layout | ambos | — | Breadcrumb `> nerdose / devdle`, «desafío del dd/mm», Compartir activo, idioma y racha |
 | 2 | veredicto | heading | h1 | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: perdió, anulado | Veredicto y resultado de la partida |
 | 3 | alerta-anulado | alert | warning | feedback | ambos | visible_only_in_states: anulado | Aviso de anulación |
 | 4 | grilla-resultado | image | devdle.cell | content | ambos | hidden_in_states: loading, error de sistema, anulado | Tablero de los intentos jugados |
@@ -73,10 +73,10 @@ date: 2026-11-06
 - card-palabra
 - distribucion
 - card-rachas
+- link-stats
 - link-reportar
 - cuenta-regresiva
 - btn-siguiente
-- link-stats
 - link-volver
 
 ### desktop · 1200px
@@ -92,7 +92,7 @@ date: 2026-11-06
 ## Contenido
 
 ### header
-- Texto/label: > nerdose / devdle · #8 · [stats] [Compartir] ES|EN · 🔥 4
+- Texto/label: > nerdose / devdle · desafío del 30/10 · [stats] [Compartir] ES|EN · 🔥 4
 - Icono: nada
 - Annotation: `game-header` variant `finished` (REQ-004): Compartir activo con el acento del juego (único botón de compartir de la pantalla; texto: «🟩 Devdle #8 · 4/6» o «X/6», una línea de 🟩🟨⬛ por intento y «nerdose.dev», nunca la palabra ni la categoría); «Estadísticas» → `estadisticas`; ES|EN cambia solo la definición y el resumen; píldora con la racha global ya actualizada. «Cómo se juega» no se muestra en el resultado. Sin nav global ni `nav-movil`
 
