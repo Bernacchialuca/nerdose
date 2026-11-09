@@ -3,6 +3,13 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.5.1] - 2026-11-09
+
+**PATCH.** Corrección de alineación, sin valores nuevos.
+
+### Cambiado
+- `components/streak-number.md`: la fila alinea por `last baseline` (antes `baseline`). Con la unidad en dos líneas («día / seguido»), la base del número queda alineada con la segunda línea y no con la primera. Código: `StreakNumber` usa `items-baseline-last`.
+
 ## [1.5.0] - 2026-11-09
 
 **MINOR.** `@nerdose/ui` suma las piezas transversales de las pantallas de Devdle (story S-021). Ningún valor definido cambia. Los otros planes de S-021 (`games`, `web`) suman sus ítems a esta misma entrada.

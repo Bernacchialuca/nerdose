@@ -206,7 +206,7 @@ export const es = {
       record: 'récord {{game}}: {{count}}',
       share: 'Compartir',
       copied: '✓ Copiado',
-      countdown: 'Próximo desafío en {{time}}',
+      countdown: 'Próximo desafío en',
       next: 'Siguiente juego',
       stats: 'Ver mis estadísticas',
     },

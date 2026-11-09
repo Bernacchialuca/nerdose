@@ -135,6 +135,17 @@ describe('Result', () => {
     }
   });
 
+  it('reveals the word in the game accent', () => {
+    render(<Result {...base()} />);
+    const card = screen
+      .getByRole('heading', { level: 2, name: /palabra del día/ })
+      .closest('section');
+    const word = Array.from(card?.querySelectorAll('p') ?? []).find((p) =>
+      p.classList.contains('text-title-panel'),
+    );
+    expect(word).toHaveClass('text-game-devdle');
+  });
+
   it('renders slots and layout (TS-58)', () => {
     const { container } = render(
       <Result {...base({ aside: <p>rachas</p>, notices: <p>nota</p>, footer: <p>salidas</p> })} />,

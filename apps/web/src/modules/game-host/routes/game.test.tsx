@@ -89,6 +89,12 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
+/** El contador separa el rótulo de la hora en dos nodos: se compara el texto del párrafo entero. */
+const countdown =
+  (re: RegExp) =>
+  (_content: string, el: Element | null): boolean =>
+    el?.tagName === 'P' && re.test(el.textContent ?? '');
+
 describe('abrir /devdle', () => {
   it('TS-9: sin Play muestra instrucciones con el header de juego', async () => {
     view();
@@ -788,7 +794,9 @@ describe('resultado', () => {
       }),
     );
     view();
-    expect(await screen.findByText(/^Próximo desafío en 00:00:0[0-2]$/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(countdown(/^Próximo desafío en 00:00:0[0-2]$/)),
+    ).toBeInTheDocument();
     const gameCallsBefore = countOf(calls, 'GET', '/api/games/devdle/today?lang=es');
     await act(async () => {
       await vi.advanceTimersByTimeAsync(2000 + 3000);
@@ -808,11 +816,13 @@ describe('resultado', () => {
     vi.setSystemTime(new Date('2026-11-03T12:36:40Z'));
     server.use(gameHandlers.today(gameTodayWon));
     view();
-    expect(await screen.findByText('Próximo desafío en 11:23:20')).toBeInTheDocument();
+    const timer = await screen.findByText(countdown(/^Próximo desafío en 11:23:20$/));
+    // La hora va brillante (no verde: el verde es para lo que se toca).
+    expect(within(timer).getByText('11:23:20')).toHaveClass('text-text');
     await act(async () => {
       await vi.advanceTimersByTimeAsync(1000);
     });
-    expect(screen.getByText('Próximo desafío en 11:23:19')).toBeInTheDocument();
+    expect(screen.getByText(countdown(/^Próximo desafío en 11:23:19$/))).toBeInTheDocument();
   });
 
   it('TS-45: «Siguiente juego» solo si hay otro pendiente', async () => {
@@ -825,7 +835,7 @@ describe('resultado', () => {
     a.unmount();
     server.use(http.get('/api/today', () => HttpResponse.json(todayOnlyDevdle)));
     view();
-    await screen.findByText(/^Próximo desafío en/);
+    await screen.findByText(countdown(/^Próximo desafío en/));
     expect(screen.queryByRole('link', { name: /Siguiente juego/ })).toBeNull();
   });
 

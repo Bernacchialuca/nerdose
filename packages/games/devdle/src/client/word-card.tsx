@@ -6,7 +6,7 @@ import type { Translate } from './types';
 export function WordCard({ result, t }: { result: DevdleResult; t: Translate }) {
   return (
     <SectionPanel title={t('result.wordTitle')}>
-      <p className="font-mono text-title-panel text-text">{result.word}</p>
+      <p className="font-mono text-title-panel text-game-devdle">{result.word}</p>
       <p className="font-mono text-label-comment text-text-muted">
         {t('result.category', { category: t(`category.${result.category}`) })}
       </p>

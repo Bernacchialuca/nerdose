@@ -212,7 +212,7 @@ export const en: Resources = {
       record: '{{game}} record: {{count}}',
       share: 'Share',
       copied: '✓ Copied',
-      countdown: 'Next challenge in {{time}}',
+      countdown: 'Next challenge in',
       next: 'Next game',
       stats: 'See my stats',
     },

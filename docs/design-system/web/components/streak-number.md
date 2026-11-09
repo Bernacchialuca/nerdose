@@ -1,8 +1,8 @@
 ---
 component: streak-number
-version: 1.2.0
+version: 1.2.1
 status: active
-last_updated: 2026-11-06
+last_updated: 2026-11-09
 source: docs/nerdose.html
 related: [streak-pill, panel, card, heatmap]
 ---
@@ -11,7 +11,7 @@ related: [streak-pill, panel, card, heatmap]
 
 ## Propósito
 
-**Descripción:** número gigante y apretado (Mono 800, tracking negativo, interlineado < 1) con una unidad chica al costado alineada por baseline. Es el protagonista de la racha (Home L210-212, Stats L308-312) y se reutiliza para el puntaje de resultado (Timeline L1003-1005).
+**Descripción:** número gigante y apretado (Mono 800, tracking negativo, interlineado < 1) con una unidad chica al costado; la última línea de la unidad se alinea con la base del número. Es el protagonista de la racha (Home L210-212, Stats L308-312) y se reutiliza para el puntaje de resultado (Timeline L1003-1005).
 
 **Cuándo usar:**
 - Racha global en "Tu progreso" (Home) y en Stats.
@@ -23,7 +23,7 @@ related: [streak-pill, panel, card, heatmap]
 
 ## Anatomía
 
-1. **Fila** — `display: flex; align-items: baseline; gap: 10px`.
+1. **Fila** — `display: flex; align-items: last baseline; gap: 10px`. Con la unidad en dos líneas, la base del número coincide con la segunda («seguidos»), no con la primera (el prototipo usaba `baseline` y la segunda línea quedaba colgando).
 2. **Número** — display Mono 800.
 3. **Unidad** — texto chico, a veces en dos líneas (`días<br>seguidos`, `posiciones<br>correctas`).
 4. **Tarjeta (solo `hero`)** — contenedor ámbar con etiqueta `//` y nota.
@@ -67,7 +67,7 @@ Fijadas por variant (96 / 88 / 56).
 
 ## Do's & don'ts
 
-**Do:** alinear por baseline. **Don't:** usar el tamaño display para otros datos; pintar la racha con otro color.
+**Do:** alinear por la última baseline (`last baseline`). **Don't:** usar el tamaño display para otros datos; pintar la racha con otro color.
 
 ## API
 

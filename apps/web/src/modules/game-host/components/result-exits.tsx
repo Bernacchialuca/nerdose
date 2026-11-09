@@ -18,8 +18,11 @@ function Countdown({ secondsToReset, syncedAt }: { secondsToReset: number; synce
   const { t } = useTranslation();
   const remaining = useDayCountdown(secondsToReset, syncedAt, EXTRA_KEYS);
   return (
+    // Rótulo apagado y hora brillante, como el contador de la home del prototipo. No va en verde:
+    // en esta UI el verde marca lo que se puede tocar.
     <p className="font-mono text-mono-body text-text-muted">
-      {t('gameHost.result.countdown', { time: formatCountdown(remaining) })}
+      {t('gameHost.result.countdown')}{' '}
+      <span className="text-text">{formatCountdown(remaining)}</span>
     </p>
   );
 }

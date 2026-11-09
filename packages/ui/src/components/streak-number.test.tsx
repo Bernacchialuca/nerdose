@@ -18,7 +18,8 @@ describe('StreakNumber', () => {
       />,
     );
     const p = container.querySelector('p')!;
-    expect(p).toHaveClass('flex', 'items-baseline', 'gap-2.5', 'font-mono');
+    // Última línea de la unidad («seguidos») sobre la base del número, no la primera.
+    expect(p).toHaveClass('flex', 'items-baseline-last', 'gap-2.5', 'font-mono');
     const [num, unit] = p.querySelectorAll('span');
     expect(num).toHaveClass('text-display-streak-compact', 'text-streak');
     expect(num?.textContent).toBe('4');
