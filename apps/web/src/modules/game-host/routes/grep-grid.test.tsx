@@ -462,10 +462,13 @@ describe('compartir', () => {
   it('TS-28: portapapeles con «✓ Copiado»', async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     const { user, button } = await openResult();
+    // Nombre explícito: Chrome no lo deriva del hijo con role="status" (jsdom sí).
+    expect(button).toHaveAttribute('aria-label', 'Compartir');
     const write = vi.spyOn(navigator.clipboard, 'writeText');
     await user.click(button);
     await waitFor(() => expect(write).toHaveBeenCalledWith(SHARE_LOST6));
     expect(await within(button).findByText('✓ Copiado')).toHaveAttribute('role', 'status');
+    expect(button).toHaveAttribute('aria-label', '✓ Copiado');
     expect(track).toHaveBeenCalledTimes(1);
     expect(track).toHaveBeenCalledWith('share:grep-grid');
     await act(async () => {

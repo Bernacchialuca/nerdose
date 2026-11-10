@@ -47,15 +47,21 @@ export function ShareButton({ gameId, getText, variant }: Props) {
     }
   }
 
+  const label = copied ? t('gameHost.result.copied') : t('gameHost.result.share');
+
   return (
     <button
       type="button"
       data-variant={variant}
+      // Nombre explícito: Chrome no toma el nombre del botón desde un hijo con `role="status"`
+      // (quedaba «botón» sin nombre para lectores de pantalla). jsdom sí lo calcula, por eso
+      // los tests de ruta no lo detectaban (verificación manual TS-40 de S-024).
+      aria-label={label}
       onClick={() => void handleClick()}
       className={buttonClass({ variant: 'accent', game: gameId, size: 'share' })}
     >
       <ShareIcon />
-      <span role="status">{copied ? t('gameHost.result.copied') : t('gameHost.result.share')}</span>
+      <span role="status">{label}</span>
     </button>
   );
 }
