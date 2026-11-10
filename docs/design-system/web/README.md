@@ -1,6 +1,6 @@
 ---
-version: 1.5.1
-last_updated: 2026-11-09
+version: 1.6.0
+last_updated: 2026-11-10
 status: defined
 source: docs/nerdose.html
 ---
@@ -108,3 +108,4 @@ Semver independiente del surface `admin`. MAJOR = cambio de valor o rename de to
 - 2026-11-06 v1.3.0 — S-012: shell, "Acerca de" y 404 alineados; piezas derivadas documentadas (ver CHANGELOG 1.3.0).
 - 2026-11-09 v1.5.1 — `streak-number` alinea la base del número con la última línea de la unidad; ver CHANGELOG 1.5.1.
 - 2026-11-09 v1.5.0 — S-021: piezas de juego en `@nerdose/ui` (tokens, `GameHeader`, íconos, `Banner`, `buttonClass`, `Badge`, `track`/`injectAnalytics`); ver CHANGELOG 1.5.0.
+- 2026-11-10 v1.6.0 — Grep Grid jugable (S-024): `@nerdose/ui` alineado con `selected-bg`, `found-bg` y `type.numeric.lg`.

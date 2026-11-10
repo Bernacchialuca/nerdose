@@ -1,6 +1,6 @@
 # Reusable Code Index - games
 
-Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, and `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition` and `./generator` (`./client` arrives with S-024). The build script lives in `scripts/` and is never importable from `src/` or other packages.
+Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, and `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition`, `./client` and `./generator`. The build script lives in `scripts/` and is never importable from `src/` or other packages.
 
 ## Devdle definition (6 items) - see devdle.md
 - **devdle / definition** (packages/games/devdle/src/definition/index.ts) - `GameDefinition` of Devdle (`id: 'devdle'`, `version: 1`); `definition` is an alias
@@ -44,6 +44,21 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **WORD_PATTERN / WORDS_COUNT** (packages/games/grep-grid/src/definition/schemas.ts) - `/^[A-Z]{4,12}$/` and 8
 - **GrepGridPayload / GrepGridWord / GrepGridPlacement / GrepGridMove / GrepGridState / GrepGridPublicView / GrepGridFeedback / GrepGridResult / GrepGridStats** (packages/games/grep-grid/src/definition/schemas.ts) - Types inferred from the schemas
 - **PAYLOAD / GRID_DUPLICATE / ID / NOW / CTX_ES / CTX_EN / S0 / select / selectWord / cellsOf / playAll** (packages/games/grep-grid/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry
+
+## Grep Grid client (13 items) - see grep-grid.md
+- **Instructions / Game / Result** (packages/games/grep-grid/src/client/{instructions,game,result}.tsx) - React screens of the `./client` entry; data props are `unknown` and parsed with the definition schemas; `Game` also takes `feedback` (last `MoveResponse.feedback`, processed by identity after mount); `Result` takes an optional `publicView` for the 144 letters
+- **share** (packages/games/grep-grid/src/client/share.ts) - `share(result, number)`: `🔎 Grep Grid #N` / `S/8` / `nerdose.dev`; never words nor surrender
+- **i18n** (packages/games/grep-grid/src/client/i18n/index.ts) - `{ namespace: 'grep-grid', resources: { es, en } }` for web to register
+- **HELP_TARGET_ID** (packages/games/grep-grid/src/client/help-target.ts) - `'game-help'`
+- **Translate / ClientBaseProps / InstructionsProps / GameProps / ResultProps / MoveErrorInfo / GameStatsView** (packages/games/grep-grid/src/client/types.ts) - Prop contract
+- **Board** (packages/games/grep-grid/src/client/board.tsx) - 12x12 grid, `play` mode (roving tabindex, two taps) and `result` mode (read-only table); scales with `@container` variables
+- **WordList** (packages/games/grep-grid/src/client/word-list.tsx) - 8 word rows (pending / found / revealed) with definitions
+- **CounterCard** (packages/games/grep-grid/src/client/counter-card.tsx) - `N/8` counter card (no live region); candidate for `@nerdose/ui`
+- **ConsoleHint** (packages/games/grep-grid/src/client/console-hint.tsx) - Silent console line plus a polite region with one keyed node per announcement
+- **SurrenderDialog / SURRENDER_BUTTON** (packages/games/grep-grid/src/client/{surrender-dialog.tsx,surrender-button.ts}) - O-04 `alertdialog` with focus trap and the error-tinted outline button class
+- **SectionPanel** (packages/games/grep-grid/src/client/section-panel.tsx) - Copy of the Devdle panel with a `//` header as `h2`
+- **playCells / resultCells / cellKey / CELL_GLYPH / moveFocus** (packages/games/grep-grid/src/client/{cells,focus}.ts) - Pure cell model (start > found > revealed > free) and arrow-key navigation
+- **makeT / client fixtures** (packages/games/grep-grid/src/client/{test-utils,test-fixtures}.ts) - Test-only helpers, not exported from the entry
 
 ## Grep Grid generator (8 items) - see grep-grid.md
 - **generator / GrepGridTerm** (packages/games/grep-grid/src/generator/index.ts) - `GameGenerator<GrepGridPayload, GrepGridTerm>` with `historySpec`, `usedBankItems`, `generate`, `verify`

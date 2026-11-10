@@ -6,7 +6,7 @@ import type { GameStatsView } from './api/game-today';
 
 export type { GameStatsView };
 
-// Copia estructural del contrato del `./client` del paquete de Devdle: la capa de `web` no importa
+// Copia estructural del contrato de los `./client` (Devdle, Grep Grid): la capa de `web` no importa
 // tipos de ningún juego (solo el registry toca los paquetes).
 export type Translate = (key: string, options?: Record<string, unknown>) => string;
 export type MoveErrorInfo = { code: string; message: string };
@@ -26,6 +26,8 @@ export type InstructionsProps = ClientBaseProps & {
 export type GameProps = ClientBaseProps & {
   publicView: unknown;
   state: unknown;
+  /** Último `MoveResponse.feedback`; `null` hasta la primera jugada. El host no lo interpreta. */
+  feedback: unknown | null;
   onMove: (move: unknown) => void;
   pending: boolean;
   moveError: MoveErrorInfo | null;
@@ -34,6 +36,8 @@ export type GameProps = ClientBaseProps & {
 };
 export type ResultProps = ClientBaseProps & {
   result: unknown;
+  /** `GameToday.public_view`; el client puede usarla para dibujar el tablero final. */
+  publicView?: unknown;
   gameStats: GameStatsView | null;
   aside?: ReactNode;
   footer?: ReactNode;

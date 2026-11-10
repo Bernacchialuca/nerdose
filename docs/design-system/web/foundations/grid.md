@@ -57,7 +57,7 @@ Con `flex-grow: 999` (Devdle, Grep) el tablero se queda con casi todo el espacio
 | Pieza | Ancho | Comportamiento | Fuente |
 |---|---|---|---|
 | Tablero de Devdle | 6×64 + 5×8 = **424px** | Sin regla responsive | L461 |
-| Tablero de Grep | 12×48 + 11×4 + 32 + 2 = **654px** | `overflow-x: auto` en el wrapper | L1116-1117 |
+| Tablero de Grep | 12×48 + 11×4 + 32 + 2 = **654px** | Se escala por debajo de 654px (`@container`, celdas `aspect-ratio: 1`), sin scroll horizontal (S-024) | L1116-1117 |
 | Tabla de historial (Stats) | `min-width: 640px` | `overflow-x: auto` en el contenedor | L359-360 |
 | Heatmap de Stats | 12×14 + 11×4 = 212px | `overflow-x: auto` | L320-321 |
 
@@ -102,7 +102,7 @@ A 320px el contenido útil mide **256px** (320 − 2×32). El prototipo no lo re
 |---|---|---|
 | Tarjetas de juego `minmax(300px, 1fr)` | La columna mínima (300) supera el contenedor → scroll horizontal | La columna mínima no puede superar el ancho disponible (equivalente a `minmax(min(300px, 100%), 1fr)`). Mantiene el aspecto. |
 | Tablero de Devdle (424px) | Desborda | Tiene que entrar en 256px: 6 celdas + 5 gaps → celda ≤ 36px con gap de 8px. **Pendiente** la regla de escalado (celda, gap, tamaño de letra). |
-| Tablero de Grep (654px) | Scroll horizontal interno | La página no puede scrollear en horizontal. El scroll dentro de un contenedor de grilla 2D de juego entra en la excepción de WCAG 1.4.10, pero NFR-U01 pide 320px sin scroll horizontal. **Pendiente** decidir si se escala o se acepta la excepción. |
+| Tablero de Grep (654px) | Se escala | La página no puede scrollear en horizontal y NFR-U01 pide 320px sin scroll horizontal: se escala (celdas `aspect-ratio: 1`, padding y letra por `clamp` sobre el ancho del contenedor; ver `patterns/game-boards.md` 1.2.0). A 256px la celda mide ≈ 16px: área táctil < 40px aceptada (S-024). |
 | Opciones de Big O (4 columnas fijas) | ~56px por opción; "O(n log n)" en 16px necesita ~96px | Menos columnas en anchos chicos. **Pendiente** cuántas. |
 | `type.title.page` 40px | "estadísticas" ocupa ~270px | Ver `foundations/typography.md`. |
 | Tabla de historial (640px) | Scroll horizontal del contenedor | Excepción WCAG 1.4.10 para tablas de datos: se mantiene el scroll del contenedor; la página no scrollea. |

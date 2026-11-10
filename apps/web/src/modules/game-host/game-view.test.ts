@@ -10,8 +10,10 @@ import {
   gameTodayVoidedFinished,
   gameTodayWon,
   GAME_STATS,
+  PUBLIC_VIEW_6,
   RESULT_WIN,
 } from '@/test/fixtures/game-today';
+import { grepGridLost6 } from '@/test/fixtures/grep-grid-today';
 
 import type { GameToday } from './api/game-today';
 import { deriveGameView, toMoveError } from './game-view';
@@ -103,7 +105,18 @@ describe('deriveGameView', () => {
       kind: 'result',
       number: 128,
       result: RESULT_WIN,
+      publicView: PUBLIC_VIEW_6,
       gameStats: GAME_STATS,
+    });
+  });
+
+  it('TS-5: el resultado lleva la public_view de Grep Grid', () => {
+    expect(view(grepGridLost6)).toEqual({
+      kind: 'result',
+      number: 128,
+      result: grepGridLost6.result,
+      publicView: grepGridLost6.public_view,
+      gameStats: grepGridLost6.game_stats,
     });
   });
 

@@ -32,4 +32,4 @@ Package `@nerdose/ui` (`packages/ui`), consumed by `web` and `admin`.
 - **TerminalWindow** (packages/ui/src/components/terminal-window.tsx) - Terminal window with status rows, streak summary and countdown
 
 ## Tokens (1 item) - see tokens.md
-- **tokens.css** (packages/ui/src/tokens.css) - Tailwind v4 `@theme` with the DS 1.5.0 tokens plus the `texture-dots` utility
+- **tokens.css** (packages/ui/src/tokens.css) - Tailwind v4 `@theme` with the DS 1.6.0 tokens plus the `texture-dots` utility

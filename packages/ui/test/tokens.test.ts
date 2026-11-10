@@ -126,13 +126,44 @@ describe('tokens.css', () => {
     });
   });
 
-  it('declares the 36 typographic roles with their companions (TS-6)', () => {
+  it('declares the Grep Grid colors and the numeric-lg role (S-024 TS-1, TS-2)', () => {
+    expect(declarations['--color-game-grep-grid-selected-bg']).toBe('#2A0F22');
+    expect(declarations['--color-game-grep-grid-found-bg']).toBe('#1F0D19');
+    expect(declarations['--text-numeric-lg']).toBe('26px');
+    expect(declarations['--text-numeric-lg--line-height']).toBe('normal');
+    expect(declarations['--text-numeric-lg--font-weight']).toBe('800');
+    expect(declarations['--text-numeric-lg--letter-spacing']).toBeUndefined();
+    expectTokens(EXISTING);
+    expectTokens({
+      '--color-game-grep-grid': '#F472B6',
+      '--color-game-grep-grid-on': '#24081A',
+      '--color-game-grep-grid-tint': '#1A0B16',
+      '--color-game-grep-grid-border': '#3A1530',
+      '--color-game-grep-grid-muted': '#8A5C7A',
+      '--color-game-grep-grid-light': '#F9A8D4',
+      '--color-game-grep-grid-featured': '#5B2147',
+      '--text-numeric-md': '22px',
+      '--text-numeric-md--line-height': 'normal',
+      '--text-numeric-md--font-weight': '700',
+    });
+    expect(declarations['--color-game-grep-grid-found-border']).toBeUndefined();
+    expect(declarations['--color-game-grep-grid-hover']).toBeUndefined();
+    const grepValues = Object.entries(declarations)
+      .filter(([n]) => n.startsWith('--color-game-grep-grid-'))
+      .map(([, v]) => v);
+    expect(grepValues.filter((v) => v === '#5B2147')).toHaveLength(1);
+    expect(tokensRaw.split('--color-game-grep-grid-selected-bg:')).toHaveLength(2);
+    expect(tokensRaw.split('--color-game-grep-grid-found-bg:')).toHaveLength(2);
+    expect(tokensRaw.split('--text-numeric-lg:')).toHaveLength(2);
+  });
+
+  it('declares the 37 typographic roles with their companions (TS-6)', () => {
     const roles = Object.keys(declarations)
       .filter(
         (n) => n.startsWith('--text-') && !n.includes('--', 2) && !/^--text-[a-z-]+--/.test(n),
       )
       .map((n) => n.slice('--text-'.length));
-    expect(roles).toHaveLength(36);
+    expect(roles).toHaveLength(37);
     for (const role of roles) {
       expect(declarations[`--text-${role}--line-height`], role).toBeDefined();
       if (role !== 'button-lg' && role !== 'button-md') {

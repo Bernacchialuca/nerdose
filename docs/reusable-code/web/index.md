@@ -6,8 +6,9 @@ App `apps/web` (not a package; imported through the `@/` alias).
 - **api / ApiError / configureApi** (apps/web/src/lib/api-client.ts) - Only place that calls `fetch`; typed `ApiError` with `code`, `status`, `retryAfter`
 - **queryClient** (apps/web/src/app/query-client.ts) - TanStack Query client with the retry/staleTime policy
 
-## Testing utils (1 item) - see api-client.md
+## Testing utils (2 items) - see api-client.md, game-host.md
 - **renderWithProviders** (apps/web/src/test/render.tsx) - Renders routes in a memory router with a fresh QueryClient and i18n in `es`
+- **gameHandlersFor / grepGridHandlers / Grep Grid fixtures / game-route-helpers** (apps/web/src/test/) - Per-game MSW handlers, Grep Grid API fixtures and shared route-test helpers
 
 ## Game host (11 items) - see game-host.md
 - **clientRegistry / hasGameClient** (apps/web/src/modules/game-host/registry.ts) - Only place that lists games (partial registry of dynamic `import()`s)

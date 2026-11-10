@@ -1,8 +1,8 @@
 ---
 pattern: game-boards
-version: 1.1.0
+version: 1.2.0
 status: active
-last_updated: 2026-11-09
+last_updated: 2026-11-10
 source: docs/nerdose.html
 related: [card, panel, code-block, button, chip, streak-pill]
 ---
@@ -182,41 +182,62 @@ El error es **ámbar + punteado**, no rojo, y el badge dice dónde va. Nota Inte
 
 ## Grep Grid
 
-Layout: encabezado (`$ grep -o '[A-Z]*' hoy.txt` + `h1` + bajada Inter 16/1.5 `text.lede`) ↔ 2 [cards `counter`](../components/card.md) ("3/8 encontradas" en rosa, "02:14 tiempo") → tablero (`999 1 620px`, centrado, gap 14) + aside (`1 1 340px`), gap 28 (L1101-1146).
+Layout (1.2.0, sin reloj): encabezado (`$ grep -o '[A-Z]*' hoy.txt` · consigna + `h1`) → **una** [card `counter`](../components/card.md) ("3/8 encontradas" en rosa) → tablero (`grow-7 basis-155`, centrado, gap 14) + aside (`grow-5 basis-85`), gap 28 con `flex-wrap`, sin media queries (L1101-1146). El prototipo traía una segunda card "02:14 tiempo": se descarta, la partida no tiene reloj.
 
-### `grep-grid.board` (L1116-1117)
+### `grep-grid.board` (L1116-1117) — escalado (1.2.0)
 
-Wrapper `overflow-x: auto; max-width: 100%`. Grilla `repeat(12, 48px)`, gap 4, padding 16, `radius.feature` (16), borde `border.default`, fondo `bg.surface.sunken` (`#0D1116`). `role="grid"`, `aria-label="Grilla de 12 por 12"`.
+Sin `overflow-x`. Wrapper `@container w-full max-w-163.5` (654px = 12×48 + 11×4 + 2×16 + 2) con tres variables:
+
+- `--board-pad: clamp(6px, 2.5cqi, 16px)`
+- `--cell-font: clamp(9px, calc((100cqi - 2 * var(--board-pad) - 46px) / 12 * 0.375), 18px)` (18/48 = 0,375; 46 = 11 gaps × 4 + 2 de borde)
+- `--cell-mark: clamp(6px, calc((100cqi - 2 * var(--board-pad) - 46px) / 12 * 0.22), 11px)`
+
+Grilla `grid grid-cols-12 gap-1 rounded-feature border border-border bg-surface-sunken p-(--board-pad)`; celdas `aspect-square`. A 1200px (columna ≥ 654) la celda mide 48 y la letra 18. A 320px (256px útiles) el padding es 6,4, la celda ≈ 16,4px y la letra 9px: el área táctil queda por debajo de 40px, **adaptación aceptada** por la story (CA-13). `role="grid"`, `aria-label="Grilla de 12 por 12"`, `aria-disabled` mientras se envía una jugada o la partida está anulada.
 
 ### `grep-grid.cell` (L1191-1202)
 
-`<button role="gridcell">` 48×48, `radius.tile` (8), `type.game.tile.md` (Mono 700 18), borde 2px. Prioridad: inicio > encontrada > default.
+1.2.0: la celda de la partida es un `<div role="gridcell">` con un `<button>` adentro (`role="gridcell"` no está permitido en `<button>`: axe `aria-allowed-role`); en el resultado, `<div role="cell">` sin botón. `radius.tile` (8), Mono, borde 2px estable, letra `text-(length:--cell-font)`, glifo en la esquina superior derecha (`aria-hidden`, `--cell-mark`). Prioridad: inicio > encontrada > revelada > default. **La selección la valida el servidor y solo hacia adelante** (se elimina «en ambos sentidos»: el client no decide).
 
-| Estado | Fondo | Letra | Borde | Fuente |
+| Estado | Fondo | Letra | Borde | Señal no cromática |
 |---|---|---|---|---|
-| default | `#141920` | `#C3CCD5` | 2px solid `#141920` | L1199 |
-| inicio seleccionado | `#2A0F22` | `#F9A8D4` | 2px solid `#F472B6` | L1197 |
-| encontrada | `#F472B6` | `#24081A` | 2px solid `#F472B6` | L1198 |
-| hover / foco / error | **Pendiente — el prototipo no lo define** (el error solo cambia el hint) | | | — |
+| default | `#141920` | `#C3CCD5` | 2px solid `#141920` | — |
+| hover (default, partida) | igual | igual | 2px solid `game.grep-grid.found-border` (`#5B2147`) | decorativo |
+| inicio seleccionado | `#2A0F22` | `#F9A8D4` | 2px solid `#F472B6` | `aria-label` «…, inicio» |
+| encontrada | `#F472B6` | `#24081A` | 2px solid `#F472B6` | glifo `✓` + peso 800 |
+| revelada (solo resultado) | sin relleno | `#F9A8D4` | 2px dashed `#F472B6` | borde punteado + glifo `○` |
+| foco (partida) | — | — | outline 2px `#F472B6`, offset 2 | outline |
+| bloqueada (`locked` / enviando) | sin cambio visual | | | `aria-disabled` en el `grid` |
 
-`aria-label`: "{letra}, fila {r}, columna {c}" (L1202). Interacción: primer toque marca el inicio; segundo toque compara contra los extremos de cada palabra en ambos sentidos; tocar la misma celda cancela sin error.
-
-**Adaptaciones requeridas:** el tablero mide 654px y scrollea dentro del wrapper; NFR-U01 pide 320px sin scroll horizontal → **Pendiente** (ver `foundations/grid.md`). Navegación por flechas dentro de la grilla (patrón `grid`) y foco visible: requisito, estética **Pendiente**.
+`aria-label`: «{letra}, fila {r+1}, columna {c+1}, {libre|inicio|encontrada|revelada}». Interacción: primer toque (o Enter/Espacio) marca el inicio; segundo toque envía `{ from, to }`; tocar de nuevo el inicio o Escape lo desmarca sin enviar. Navegación por flechas, Home y End con roving tabindex (una sola parada de tabulación).
 
 ### `grep-grid.hint` — línea de consola (L1123, L1221)
 
-Mono 13 `text.dim`, `min-height: 20px` (evita saltos). Textos: "> tocá la primera letra de una palabra" · "> ahora tocá la última letra" · "> no es una palabra de la lista, probá de nuevo". El error es **silencioso**: mismo gris, sin rojo ni shake. **Requisito:** región `aria-live="polite"` para que el cambio se anuncie.
+Mono 13 `text.dim`, `min-height: 20px` (evita saltos). Textos (1.2.0): «> tocá la primera letra de una palabra» · «> ahora tocá la última letra» · «> {PALABRA} encontrada · N/8» · «> no es una palabra de la lista, probá de nuevo» · «> las palabras se marcan de la primera a la última letra, hacia adelante» (`invalid_move`) · «> vas muy rápido. Esperá unos segundos y probá de nuevo» (429) · «> {mensaje}» para cualquier otro error. El error es **silencioso**: mismo gris, sin rojo ni shake. **Anuncio:** la línea visible no es live region; una región aparte `aria-live="polite"` `sr-only` recibe **un nodo por resultado de selección** (`key` distinta, para que el mismo texto repetido se vuelva a anunciar). La guía de los toques no se anuncia (el estado «inicio» lo dice el `aria-label` de la celda).
 
 ### `grep-grid.word` — fila de palabra (L1127-1146, L1215-1218)
 
-Panel "// palabras de hoy" + "racha 6" ámbar; lista gap 8 en orden fijo. Fila: columna gap 4, padding 10 12, `radius.control` (10); línea superior `space-between`, gap 8.
+Panel `SectionPanel` "// palabras de hoy" (`h2`); lista gap 8 en orden fijo. Fila: columna gap 4, padding 10 12, `radius.control` (10); línea superior `space-between`, gap 8. 1.2.0: se quitan la nota «compartís el reloj» y el `datum` «racha N» (sin reloj; la racha vive en el header y en `card-rachas`).
 
 | Estado | Fondo | Borde | Nombre (Mono 700 15) | Tag (Mono 12) |
 |---|---|---|---|---|
 | pendiente | `#141920` | 1px solid `#141920` | `text.primary` | "{n} letras" `text.dim` |
-| encontrada | `#1F0D19` | 1px solid `#5B2147` | `#F9A8D4` tachado | "✓" `#F472B6`, 800 |
+| encontrada (partida) | `#1F0D19` | 1px solid `#5B2147` | `#F9A8D4` tachado | "✓" `#F472B6` 800 + «encontrada» solo para lectores de pantalla |
+| encontrada (resultado) | igual | igual | igual | "✓ encontrada" `#F472B6` 800 |
+| revelada (resultado) | estilo pendiente | igual | `text.primary` | "○ no la encontraste" `text.dim` |
 
-Encontrada suma la **definición** (Inter 13/1.45 `text.body`): el momento de aprendizaje. Nota al pie: "…compartís el reloj, no las palabras."
+Encontrada y revelada suman la **definición** (Inter 13/1.5 `text.body`, rol `text-caption`; el prototipo dice 1.45): el momento de aprendizaje.
+
+### `grep-grid.counter` — card `counter` local (1.2.0)
+
+`card` `counter` (`card.counter.*`) implementada dentro de `@nerdose/game-grep-grid/client` (`CounterCard`), candidata a `@nerdose/ui`: `<p>` con valor `text-numeric-lg text-game-grep-grid` ("3/8") y etiqueta `text-meta text-text-muted`. **No es live region**: el avance se anuncia en la región del hint.
+
+### `grep-grid.surrender` — botón «Rendirse» (`outline-tinted`, 1.2.0)
+
+`button` `outline-tinted` de error implementado como constante local (`SURRENDER_BUTTON`), candidata a `buttonClass`: `min-h-11 rounded-control border border-status-error-border px-4 font-mono text-button-md font-medium text-text`, hover `border-status-error`, foco outline 2px del acento del juego. Ícono `✕` `aria-hidden`. Deshabilitado: estilo neutro + `aria-disabled`.
+
+### `grep-grid.surrender-dialog` — O-04 «¿Rendirte?» (1.2.0)
+
+Gap de DS aceptado en REQ-005: el DS no define modales; se deriva de `panel` + `button` según la guía de identidad. Overlay `fixed inset-0 z-50 flex items-center justify-center bg-header px-4` (clic en el overlay = «Seguir jugando»); panel `role="alertdialog" aria-modal="true"` `flex w-full max-w-xl flex-col gap-4 rounded-panel border border-border bg-surface p-6`; cabecera con `h2` Mono `text-title-panel` y botón cerrar `buttonClass({ variant: 'icon' })`; texto `font-sans text-body text-text-body`; acciones `flex flex-wrap gap-3` con cada botón `grow basis-50` («Seguir jugando» `primary` primero; «Sí, rendirme» `outline-tinted`). Foco inicial en «Seguir jugando» (nunca en la destructiva), trampa de foco, Escape / cerrar / overlay cierran salvo en `loading` («Cerrando…», ambos botones `aria-disabled`), el foco vuelve a «Rendirse» y el contenido de la partida queda `inert`. Sin animación.
 
 ## Miniaturas de tarjeta
 
@@ -241,9 +262,10 @@ Cabecera de 150px de la [tarjeta de juego](../components/card.md), `aria-hidden`
 - No animar celdas ni filas.
 - No usar rojo para el error de Timeline ni para la jugada fallida de Grep.
 - No rellenar de amarillo el "presente" de Devdle.
-- No implementar estados marcados **Pendiente** sin pasar antes por `/product-design-system-update`. Los de Devdle quedaron resueltos en 1.1.0 (story S-021).
+- No implementar estados marcados **Pendiente** sin pasar antes por `/product-design-system-update`. Los de Devdle quedaron resueltos en 1.1.0 (story S-021) y los de Grep Grid en 1.2.0 (story S-024).
 
 ## Historial
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: piezas de Devdle (celda, leyenda, tecla, distribución), Bug Hunt (línea elegible, confirmar, tests, pasos, resultado), Big O (opción, caja "en números"), Tech Timeline (fila, riel) y Grep Grid (tablero, celda, hint, palabra), miniaturas de tarjeta y adaptaciones requeridas por NFR-U01/U03/U04.
 - 2026-11-09 v1.1.0 — Story S-021: se resuelven los «Pendiente» de Devdle (glifo no cromático, escalado a 320px, tecla presente, descartada ≥ 4,5:1, borde estable, hover/foco/deshabilitado, ancho de tecla a 320px) y se documentan el aviso de jugada y la cabecera `//` como `h2`.
+- 2026-11-10 v1.2.0 — Story S-024: se resuelven los «Pendiente» de Grep Grid (tablero escalado a 320px, estados revelada/hover/foco/bloqueada de la celda, `<div role="gridcell">` + `<button>`, textos y anuncio del hint, estado revelada de la palabra, `outline-tinted` de error) y se documentan el contador sin reloj y O-04 «¿Rendirte?».
