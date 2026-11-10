@@ -49,7 +49,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
   | game_id | Payload (resumen) | Vista pública |
   |---|---|---|
   | devdle | term_id, word, category, definition `{es,en}`, summary `{es,en}` | length, possible_categories |
-  | grep-grid | grid (12×12), words (8: term_id, word, definition `{es,en}`), placements (posición y dirección de cada palabra) | grid, words (term_id, word) |
+  | grep-grid | grid (12×12), words (8: term_id, word, definition `{es,en}`), placements (posición y dirección de cada palabra) | grid, words (term_id, word; definition solo de las ya encontradas por la Play en curso) |
   | timeline | category, prompt `{es,en}`, items (5: fact_id, opaque_id, label, event_date, date_precision, note `{es,en}`), correct_order (opaque_ids) | category, prompt, items mezclados (opaque_id, label) |
   | big-o | recipe, recipe_category, code `{js,go,java}`, answer (enum big_o_option), explanation `{es,en}` | code, options (las 8 `big_o_option`) |
   | bug-hunt | template, params, tree, bug_node_id, bug_type, mutation, fix (diff), spec `{es,en}`, code `{js,go,java}`, line_of `{js,go,java}`, pickable_lines, visible_tests, failing_test, explanation `{es,en}` | spec, code, pickable_lines, visible_tests |
@@ -67,7 +67,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
   | game_id | State | Fin de partida | Score | Win | Etiqueta en el historial |
   |---|---|---|---|---|---|
   | devdle | guesses (con feedback por letra) | adivina o 6 intentos válidos | intentos usados (1–6) | adivinó | "✓ 4/6" / "✗ X/6" |
-  | grep-grid | found_words | 8 encontradas o se rinde | palabras encontradas (0–8) | 8/8 | "8/8" / "5/8" |
+  | grep-grid | found_words, gave_up | 8 encontradas o se rinde | palabras encontradas (0–8) | 8/8 | "8/8" / "5/8" |
   | timeline | — | 1 confirmación | posiciones correctas (0–5) | 5/5 | "3/5" |
   | big-o | — | 1 confirmación | 1/0 | opción correcta | "✓ O(n log n)" / "✗" |
   | bug-hunt | — | 1 confirmación | 1/0 | línea correcta | "✓ L7" / "✗ L7" |
@@ -77,7 +77,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
 - **Relationships:** belongs_to Player
 - **Notes:** PK (player_id, game_id). Agregado que se actualiza en la misma transacción que cierra la Play. `played` y `wins` excluyen las Play `voided`. Contenido de `extra`:
   - devdle: distribución de intentos (1–6 y derrotas);
-  - grep-grid: promedio de palabras encontradas y porcentaje de 8/8;
+  - grep-grid: distribución de palabras encontradas por partida (0–8), de la que salen el promedio de palabras encontradas y el porcentaje de 8/8;
   - timeline: promedio de posiciones correctas por categoría;
   - big-o: aciertos por `recipe_category`;
   - bug-hunt: aciertos por `code_language` y por `bug_type`.

@@ -87,3 +87,8 @@ const Client = lazy(clientRegistry[gameId]);
 - **data-fetching**: public view, play state and moves go through TanStack Query hooks.
 - **analytics**: share events use `track()`.
 - **accessibility**: every game must be fully playable with keyboard and its feedback must not rely only on color.
+
+## Update (REQ-005)
+
+- `GameProps.feedback: unknown | null`: the host passes the last `MoveResponse.feedback` to the `Game` component (`null` until the first move; it comes from `useSubmitMove().data`). The host does not interpret it; `GameRoute`/`GameScreens` forward it as-is.
+- A client that needs it (Grep Grid: `not_a_word` and `already_found` do not change the state, they only exist in `feedback`) validates its shape and discards repeated values by identity, the same pattern as `moveError`. Clients that do not need it ignore it (Devdle).

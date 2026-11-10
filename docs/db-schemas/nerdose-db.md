@@ -228,7 +228,7 @@ Table player_game_stats {
   played integer [not null, default: 0, note: 'Excluye plays voided']
   wins integer [not null, default: 0, note: 'Excluye plays voided']
   last_completed_date date [null]
-  extra jsonb [not null, default: `'{}'::jsonb`, note: 'Stats propias del juego (reduceStats). Excluye voided. Devdle: { guesses: { "1": n, …, "6": n }, losses: n }']
+  extra jsonb [not null, default: `'{}'::jsonb`, note: 'Stats propias del juego (reduceStats). Excluye voided. Devdle: { guesses: { "1": n, …, "6": n }, losses: n }. Grep Grid: { words_found: { "0": n, …, "8": n } } (partidas por cantidad de palabras encontradas)']
 
   indexes {
     (player_id, game_id) [pk]

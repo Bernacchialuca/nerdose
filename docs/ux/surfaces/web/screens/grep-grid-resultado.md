@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.0"
-date: 2026-11-03
+version: "1.1"
+date: 2026-11-10
 ---
 
 # Pantalla: Grep Grid · Resultado
@@ -18,24 +18,24 @@ date: 2026-11-03
 ## Identidad
 
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
-- **JTBD / Propósito:** Ver N/8, las palabras faltantes reveladas con su definición; compartir sin palabras.
+- **JTBD / Propósito:** Ver el veredicto `N/8` (victoria solo con 8/8), la grilla con las 8 palabras marcadas distinguiendo las encontradas de las reveladas, la lista de las 8 palabras con su definición y las rachas actualizadas; compartir `N/8` sin revelar las palabras.
 - **Viewports:**
-  - **mobile** — veredicto arriba, explicación en columna y «Compartir» antes de las salidas.
-  - **desktop** — explicación a la izquierda (7/12); rachas, «Compartir» y reporte a la derecha (5/12), y una fila de salidas al pie.
+  - **mobile** — veredicto arriba, grilla final, lista de palabras con definiciones, rachas y las salidas al pie, en una columna.
+  - **desktop** — columna principal a la izquierda (7/12) con veredicto, grilla final y barra de salidas; lista de palabras con definiciones, rachas y reporte a la derecha (5/12), como el layout tablero + aside del prototipo. «Compartir» solo en el header.
 
 ## Entrada y salida
 
 **Entradas:**
-- `grep-grid-partida` · fin de partida (automático)
+- `grep-grid-partida` · fin de partida (automático: octava palabra o rendición confirmada)
 - `home` · tarjeta «completado» (CTA «Ver resultado»)
 - URL directa `/grep-grid` con la Play terminada
-- O-02 · «Marcar como completado» (estado anulado)
+- O-02 · «Marcar como completado» (estado anulado, FG-6)
 
 **Salidas user-driven:**
-- A O-01 · «Reportar un problema»
-- A `home` · «Volver a los juegos»
-- A `estadisticas` · «Ver mis estadísticas»
-- A la siguiente `*-instrucciones` · «Siguiente juego»
+- A O-01 · «Reportar un problema» (cuando exista, FG-6)
+- A `home` · «Volver a los juegos» o marca `> nerdose` del header
+- A `estadisticas` · «Ver mis estadísticas» o botón «Estadísticas» del header
+- A la siguiente `*-instrucciones` · «Siguiente juego» (solo si hay otro juego pendiente hoy)
 
 **Salidas automáticas:**
 - Ninguna.
@@ -44,29 +44,25 @@ date: 2026-11-03
 
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
-| 1 | header | header | — | layout | ambos | viewport_overrides: desktop | Marca, #número del desafío del día e idioma |
-| 2 | nav-movil | nav-bar | — | navigation | solo mobile | — | Navegación principal compacta en mobile (en desktop va en el header) |
-| 3 | veredicto | heading | h1 | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: perdió, anulado | Veredicto y resultado de la partida |
-| 4 | alerta-anulado | alert | warning | feedback | ambos | visible_only_in_states: anulado | Aviso de anulación |
-| 5 | grilla-final | image | — | content | ambos | hidden_in_states: loading, error de sistema | Grilla final con las faltantes si se rindió |
-| 6 | lista-palabras | list | — | content | ambos | hidden_in_states: loading, error de sistema | Las 8 palabras con su definición |
-| 7 | card-rachas | card | — | content | ambos | hidden_in_states: loading, error de sistema | Rachas del juego y global actualizadas |
-| 8 | btn-compartir | button | primary | input | ambos | hidden_in_states: loading, error de sistema, anulado | Comparte el resultado sin spoilers (emoji, nombre, #número, resultado, nerdose.dev) |
-| 9 | toast-copiado | toast | success | feedback | ambos | visible_only_in_states: success | Aviso tras copiar al portapapeles |
-| 10 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Abre O-01 para avisar que el desafío está mal |
-| 11 | cuenta-regresiva | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Cuenta regresiva al próximo desafío |
-| 12 | btn-siguiente | button | secondary | input | ambos | hidden_in_states: loading, error de sistema | Lleva al siguiente juego pendiente |
-| 13 | link-stats | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Ir a estadísticas |
-| 14 | link-volver | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Salida a la home |
-| 15 | loader | loader | — | feedback | ambos | visible_only_in_states: loading | Indicador de carga |
-| 16 | alerta-sistema | alert | error | feedback | ambos | visible_only_in_states: error de sistema | Error de carga con causa y salida |
-| 17 | btn-reintentar | button | secondary | input | ambos | visible_only_in_states: error de sistema | Reintentar la carga |
-| 18 | footer | footer | — | layout | ambos | — | Lema y `exit 0` (`site-footer`) |
+| 1 | header | header | game-header · finished | layout | ambos | — | Breadcrumb `> nerdose / grep-grid`, «desafío del dd/mm», Compartir activo, idioma y racha |
+| 2 | veredicto | heading | h1 | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: perdió, anulado | Veredicto y resultado `N/8` de la partida |
+| 3 | alerta-anulado | alert | warning | feedback | ambos | visible_only_in_states: anulado | Aviso de anulación |
+| 4 | grilla-final | image | grep-grid.cell | content | ambos | hidden_in_states: loading, error de sistema, anulado | Grilla 12×12 con las 8 palabras marcadas: encontradas y reveladas, distinguidas por algo más que el color |
+| 5 | lista-palabras | list | grep-grid.word | content | ambos | hidden_in_states: loading, error de sistema, anulado | Las 8 palabras con su definición en el idioma activo; las reveladas marcadas como no encontradas |
+| 6 | card-rachas | card | — | content | ambos | hidden_in_states: loading, error de sistema | Rachas de Grep Grid y global actualizadas |
+| 7 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Abre O-01 para avisar que el desafío está mal (FG-6) |
+| 8 | cuenta-regresiva | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Cuenta regresiva al próximo desafío |
+| 9 | btn-siguiente | button | secondary | input | ambos | hidden_in_states: loading, error de sistema, sin juegos pendientes | Lleva al siguiente juego pendiente |
+| 10 | link-stats | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Ir a estadísticas |
+| 11 | link-volver | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Salida a la home |
+| 12 | loader | loader | — | feedback | ambos | visible_only_in_states: loading | Indicador de carga |
+| 13 | alerta-sistema | alert | error | feedback | ambos | visible_only_in_states: error de sistema | Error de carga con causa y salida |
+| 14 | btn-reintentar | button | secondary | input | ambos | visible_only_in_states: error de sistema | Reintentar la carga |
+| 15 | footer | footer | — | layout | ambos | — | Lema y `exit 0` (`site-footer`) |
 
 ## Layout por viewport
 
 ### mobile · 400px
-- nav-movil
 - veredicto
 - alerta-anulado
 - loader
@@ -75,94 +71,70 @@ date: 2026-11-03
 - grilla-final
 - lista-palabras
 - card-rachas
-- btn-compartir
-- toast-copiado
+- link-stats
 - link-reportar
 - cuenta-regresiva
 - btn-siguiente
-- link-stats
 - link-volver
 
 ### desktop · 1200px
-- veredicto
 - alerta-anulado
 - loader
 - alerta-sistema
 - btn-reintentar
 - row `resultado`
-  - col 7/12: grilla-final
-  - col 5/12: lista-palabras, card-rachas, btn-compartir, toast-copiado, link-reportar
-- row `salida`
-  - col 4/12: cuenta-regresiva
-  - col 4/12: btn-siguiente
-  - col 4/12: link-stats, link-volver
+  - col 7/12: veredicto, grilla-final, barra `salida` (tarjeta: cuenta-regresiva a la izquierda; btn-siguiente y link-volver a la derecha)
+  - col 5/12: lista-palabras, card-rachas (con link-stats al pie), link-reportar
 
 ## Contenido
 
 ### header
-- Texto/label: > nerdose / Grep Grid · #8 · ES|EN
+- Texto/label: > nerdose / grep-grid · desafío del 30/10 · [stats] [Compartir] ES|EN · 🔥 4
 - Icono: nada
-- Override desktop: content="> nerdose / Grep Grid     ./juegos   ./stats   ./about     #8     ES | EN"
-- Annotation: #número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline
-
-### nav-movil
-- Texto/label: —
-- Etiquetas: ./juegos · ./stats · ./about
-- Icono: nada
-- Annotation: nada
+- Annotation: `game-header` variant `finished` (REQ-005): Compartir activo con el acento del juego (único botón de compartir de la pantalla; texto en tres líneas: «🔎 Grep Grid #8», «5/8» y «nerdose.dev», nunca las palabras ni si el jugador se rindió, CA 16); «Estadísticas» → `estadisticas`; ES|EN cambia solo las definiciones; píldora con la racha global ya actualizada. «Cómo se juega» no se muestra en el resultado. Sin nav global ni `nav-movil`
 
 ### veredicto
 - Texto/label: 8/8: las encontraste todas
-- Icono: nada
-- Annotation: nada
+- Icono: check
+- Annotation: banner `success` del DS al ganar / `failure` al rendirse, sin drama; el veredicto se dice con texto además del color. Victoria solo con 8/8 (RF 13)
 
 ### alerta-anulado
 - Texto/label: Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.
-- Icono: nada
-- Annotation: nada
+- Icono: warning
+- Annotation: la anulación llega con FG-6; en REQ-005 solo se respeta el estado al leer
 
 ### grilla-final
-- Texto/label: Grilla 12×12 con las palabras faltantes reveladas
+- Texto/label: Grilla 12×12 · las 8 palabras marcadas · encontradas con relleno y ✓ · reveladas con borde punteado y ○
 - Asset: placeholder 1:1
 - Icono: nada
-- Annotation: nada
+- Annotation: pattern `grep-grid.cell`, solo lectura. Encontradas: relleno del acento + glifo; reveladas (solo si se rindió): borde punteado del acento («todavía no» del DS) + glifo distinto, sin relleno, y `aria-label` «{letra}, {encontrada|revelada}» (RF 13, NFR-U04). Las posiciones llegan recién con el cierre (`result.words[].cells`). Al ganar no hay reveladas
 
 ### lista-palabras
-- Texto/label: —
-- Forma: lista de 8 elementos (título + detalle)
+- Texto/label: // palabras de hoy
+- Forma: lista de 8 filas en el orden del desafío; cada fila: nombre de la palabra + etiqueta («✓ encontrada» o «○ no la encontraste») + definición breve en el idioma activo
 - Icono: nada
-- Annotation: nada
+- Annotation: pattern `grep-grid.word`; ahora las 8 tienen definición (RF 13). Las reveladas usan el estilo «pendiente» con la etiqueta «○ no la encontraste» en lugar del largo, para distinguirlas de las encontradas por texto y glifo, no solo por color. La cabecera `//` es `h2`. Las definiciones se recalculan en el idioma activo al cambiar ES|EN (CA 19)
 
 ### card-rachas
-- Texto/label: Rachas
-- Texto secundario: Grep Grid: 3 días · Global: 4 días
+- Texto/label: // rachas
+- Texto secundario: Grep Grid: 3 días · Global: 4 días · récord Grep Grid: 7
 - Icono: nada
-- Annotation: nada
-
-### btn-compartir
-- Texto/label: Compartir
-- Icono: share
-- Annotation: share nativo del sistema; si no está disponible copia al portapapeles
-
-### toast-copiado
-- Texto/label: Copiado
-- Icono: nada
-- Annotation: nada
+- Annotation: rachas que devuelve el cierre (rendirse también suma, CA 10, 17). Si el jugador reabre el resultado más tarde, se leen con la racha viva. La stat propia de Grep Grid (promedio de palabras y % de 8/8) se muestra en `estadisticas` (FG-10), no acá (supuesto «Stats propias»)
 
 ### link-reportar
 - Texto/label: Reportar un problema
 - Icono: warning
-- Annotation: si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)
+- Annotation: O-01 llega con FG-6: hasta entonces el enlace no se renderiza. Cuando exista, si ya reportó muestra «Ya reportado» (`already_reported`)
 
 ### cuenta-regresiva
 - Texto/label: Próximo desafío en 05:42:10
-- Icono: nada
-- Annotation: nada
+- Icono: clock
+- Annotation: al llegar a 0 recarga el día (Grep Grid vuelve a instrucciones del desafío nuevo)
 
 ### btn-siguiente
 - Texto/label: Siguiente juego
 - Icono: arrow-right
-- Annotation: nada
+- Annotation: lleva al próximo juego con desafío y sin completar; si no hay ninguno, no se muestra
 
 ### link-stats
 - Texto/label: Ver mis estadísticas
@@ -175,7 +147,7 @@ date: 2026-11-03
 - Annotation: nada
 
 ### loader
-- Texto/label: Cargando tu resultado de Grep Grid…
+- Texto/label: $ cargando tu resultado de grep-grid…
 - Icono: nada
 - Annotation: nada
 
@@ -190,9 +162,9 @@ date: 2026-11-03
 - Annotation: nada
 
 ### footer
-- Texto/label: > nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0
+- Texto/label: > nerdose — una plataforma, múltiples desafíos. · exit 0
 - Icono: nada
-- Annotation: `site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)
+- Annotation: `site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)
 
 ## Estados
 
@@ -203,9 +175,17 @@ date: 2026-11-03
 
 ### perdió
 - Aplica: Sí (sub-estado de default)
-- Mensaje: Te rendiste: 6/8. Mostramos las palabras que faltaban.
+- Mensaje: Te rendiste con 5/8. Estas son las palabras que faltaban.
 - Cambios:
-  - veredicto: content="Te rendiste: 6/8" (state_override)
+  - veredicto: content="Te rendiste con 5/8", icon="x", annotation="banner `failure`; rendirse también suma a la racha. Con 0/8 dice «Te rendiste con 0/8» (CA 12)" (state_override)
+  - grilla-final: annotation="las 3 palabras faltantes aparecen reveladas: borde punteado + ○, distintas de las 5 encontradas (CA 10)" (state_override)
+  - lista-palabras: las 3 palabras no encontradas llevan la etiqueta «○ no la encontraste» en lugar de «✓ encontrada» (state_override)
+
+### sin juegos pendientes
+- Aplica: Sí (sub-estado de default)
+- Mensaje: 8/8: las encontraste todas. No te quedan juegos pendientes hoy.
+- Cambios:
+  - btn-siguiente: oculto en este estado (hidden_in_states)
 
 ### anulado
 - Aplica: Sí (sub-estado de default)
@@ -213,23 +193,25 @@ date: 2026-11-03
 - Cambios:
   - veredicto: content="Desafío anulado" (state_override)
   - alerta-anulado: solo visible en este estado (visible_only_in_states)
-  - btn-compartir: oculto en este estado (hidden_in_states)
+  - grilla-final: oculto en este estado (hidden_in_states)
+  - lista-palabras: oculto en este estado (hidden_in_states)
+  - Compartir del header: oculto en este estado
 
 ### success
 - Aplica: Sí (sub-estado de default)
-- Mensaje: Copiado: el resultado quedó en el portapapeles.
+- Mensaje: ✓ Copiado: pegalo donde quieras.
 - Cambios:
-  - toast-copiado: solo visible en este estado (visible_only_in_states)
+  - Compartir del header: content="✓ Copiado", icon="check", annotation="confirmación en el mismo botón (`role=status`) durante unos segundos; vuelve a «Compartir»" (state_override)
 
 ### loading
 - Aplica: Sí
-- Mensaje: Cargando tu resultado de Grep Grid…
+- Mensaje: $ cargando tu resultado de grep-grid…
 - Cambios:
   - veredicto: oculto en este estado (hidden_in_states)
   - grilla-final: oculto en este estado (hidden_in_states)
   - lista-palabras: oculto en este estado (hidden_in_states)
   - card-rachas: oculto en este estado (hidden_in_states)
-  - btn-compartir: oculto en este estado (hidden_in_states)
+  - Compartir del header: oculto en este estado
   - link-reportar: oculto en este estado (hidden_in_states)
   - cuenta-regresiva: oculto en este estado (hidden_in_states)
   - btn-siguiente: oculto en este estado (hidden_in_states)
@@ -245,7 +227,7 @@ date: 2026-11-03
   - grilla-final: oculto en este estado (hidden_in_states)
   - lista-palabras: oculto en este estado (hidden_in_states)
   - card-rachas: oculto en este estado (hidden_in_states)
-  - btn-compartir: oculto en este estado (hidden_in_states)
+  - Compartir del header: oculto en este estado
   - link-reportar: oculto en este estado (hidden_in_states)
   - cuenta-regresiva: oculto en este estado (hidden_in_states)
   - btn-siguiente: oculto en este estado (hidden_in_states)
@@ -257,37 +239,47 @@ date: 2026-11-03
 ## Interacciones
 
 **Eventos:**
-- btn-compartir · on click → share nativo o copia al portapapeles
+- Compartir del header · on click → share nativo con «🔎 Grep Grid #8 / 5/8 / nerdose.dev» o copia al portapapeles (estado success); registra `share:grep-grid`
+- ES|EN · on change → recarga las definiciones en el otro idioma; grilla, palabras, encontradas y reveladas no cambian (CA 19)
 - btn-siguiente · on click → siguiente juego pendiente
-- link-reportar · on click → abre O-01
+- link-reportar · on click → abre O-01 (FG-6)
 
 **Validaciones:**
 - No aplica: la pantalla no tiene campos de entrada.
 
 **Feedback:**
-- Si se copia al portapapeles: toast «Copiado» (estado success).
+- Si se copia al portapapeles: el botón pasa a «✓ Copiado» (estado success). Si el share falla, el botón vuelve a «Compartir» y se puede reintentar.
 
 ## Accesibilidad
 
-- **Orden de foco:** veredicto → explicación → btn-compartir → link-reportar → salidas.
-- **Landmarks y jerarquía:** `h1` es el veredicto; las secciones de explicación son `h2`. Landmarks: header, nav, main, footer.
-- **Foco y teclado:** O-01 atrapa el foco y lo devuelve a `link-reportar`.
-- **Propio de esta composición:** El toast «Copiado» se anuncia con `role=status`; el veredicto se comunica con texto además del color.
+- **Orden de foco:** header → veredicto → grilla final (lectura) → lista de palabras (lectura) → rachas → link-reportar → salidas (Compartir va en el header).
+- **Landmarks y jerarquía:** `h1` es el veredicto; las secciones `//` (palabras de hoy, rachas) son `h2`. Landmarks: header (breadcrumb como `nav` con nombre), main, footer.
+- **Foco y teclado:** O-01 atrapa el foco y lo devuelve a `link-reportar`. La grilla final no es interactiva: se recorre como lectura, con `aria-label` por celda.
+- **Propio de esta composición:** La confirmación «Copiado» se anuncia con `role=status`; el veredicto, y la diferencia entre palabras encontradas y reveladas, se comunican con texto y glifo además del color (NFR-U04, RF 13).
 
 ## Decisiones y descartes
 
 **Decisiones tomadas:**
 - `perdió` y `anulado` son sub-estados de la misma pantalla, no pantallas aparte (C-12, C-41).
-- En `anulado` se oculta «Compartir» y la stat propia: C-13 no cubre explícitamente la Play `voided` (pregunta 2 del product-map).
-- Se omiten los extras del prototipo que no están en el PRD.
+- En `anulado` se oculta «Compartir», la grilla y la lista: una Play `voided` por «Marcar como completado» no tiene resultado (pregunta 2 del product-map).
+- Se omiten los extras del prototipo que no están en el PRD («tu tiempo final es tu puntaje», reloj).
+- REQ-005: header `game-header` (`finished`) con Compartir activo, como Devdle (revisión visual 2026-11-09): se quitan `btn-compartir` y `toast-copiado` del cuerpo; la confirmación de copia es el estado «✓ Copiado» del botón del header, no un toast (el DS no tiene toast).
+- REQ-005: el share es `🔎 Grep Grid #N` / `N/8` / `nerdose.dev`, sin palabras ni indicio de rendición (supuesto «Formato del share», CA 16).
+- REQ-005: encontradas y reveladas se distinguen con relleno + ✓ frente a borde punteado + ○, siguiendo el rasgo «punteado = todavía no» del DS, y en la lista con la etiqueta «○ no la encontraste» (RF 13, NFR-U04). El estado «revelada» de `grep-grid.cell` no existe en el DS: queda anotado para que la story lo documente.
+- REQ-005: la lista muestra las 8 definiciones en el idioma activo (RF 13, CA 19); la stat propia (promedio y % de 8/8) no se muestra en el resultado sino en `estadisticas` (FG-10).
+- REQ-005: «Siguiente juego» solo aparece si queda un juego con desafío sin completar, como en Devdle.
+- REQ-005: la grilla final va en la columna principal y la lista con definiciones en la lateral, como el layout tablero + aside del prototipo; en mobile la lista sigue a la grilla porque es el momento de aprendizaje.
 
 **Alternativas descartadas:**
-- «Compartir» en el header: se mantiene en el cuerpo para que no compita con la navegación (el header ya carga marca, nav, #número e idioma).
+- Compartir también en el cuerpo: dos botones iguales compiten; el prototipo usa solo el del header.
+- Toast «Copiado»: requiere un componente nuevo del DS para un solo uso.
+- Revelar las faltantes con relleno de otro color: no cumple NFR-U04 por sí solo y agrega un color fuera de la escala del acento.
+- Mostrar el promedio y el % de 8/8 en el resultado: la pantalla que los muestra es de FG-10 y el DS no define la pieza; las rachas alcanzan para el cierre.
 
 **Preguntas abiertas:**
 - Pregunta 2 del product-map: variantes de resultado anulado con y sin resultado propio.
-- Pregunta 5 del product-map: «Siguiente juego» o «Volver a los juegos».
+- Pregunta 5 del product-map: «Siguiente juego» o «Volver a los juegos» (REQ-005 sigue el criterio de REQ-004).
 
 ## Trazabilidad
 
-- C-22, C-12, C-13, C-36, C-41 · flujos 1, 3, 4 y 5 de `user-flows.md`.
+- C-22, C-12, C-13, C-33, C-36, C-41 · REQ-005 (RF 12-14, 22; CA 9, 10, 12, 16-19) · flujos 1, 3, 4 y 5 de `user-flows.md`.

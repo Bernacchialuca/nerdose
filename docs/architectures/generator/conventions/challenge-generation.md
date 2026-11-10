@@ -108,3 +108,8 @@ import { generator as devdle } from '@nerdose/game-devdle/generator';
 - **alerts-mail**: generation failure alert.
 - **orm**: inserts into `challenges` through the repository with `nerdose_generator`.
 - **testing**: determinism test per game (same input, same payload).
+
+## Update (REQ-005)
+
+- Optional, generic improvement in `ChallengePublishingRepository.approve`: write `last_used = GREATEST(last_used, date)` instead of `last_used = date`, so that filling an earlier gap does not move the date of a bank item backwards. It does not change Devdle's behavior. Adopted or not in S-023.
+- Grep Grid registers as `{ gameId: 'grep-grid', generator, payloadSchema, version: 'grep-grid@1' }`; its `verify` checks are listed in the flow `generacion-diaria`.

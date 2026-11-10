@@ -1,8 +1,8 @@
 ---
 document: UX Product Map
 surface: web
-version: "1.3"
-date: 2026-11-06
+version: "1.4"
+date: 2026-11-10
 status: Draft - Punto de partida para discusión
 audiences:
   - jugador
@@ -50,18 +50,18 @@ Se inventaría **una pantalla por fase por juego** (15 pantallas), porque cada f
 | 13 | `timeline-instrucciones` | Tech Timeline · Instrucciones | Explicar el juego (orden de más antiguo a más reciente, un intento) | jugador | ambos | F-06, C-08, C-09 |
 | 14 | `timeline-partida` | Tech Timeline · Partida | Ordenar 5 hitos (arrastrar y soltar con touch y teclado) y confirmar | jugador | ambos | C-23, C-36, NFR-U03 |
 | 15 | `timeline-resultado` | Tech Timeline · Resultado | Ver el orden correcto con fechas y notas, y las posiciones acertadas; compartir | jugador | ambos | C-25, C-12, C-13, C-36 |
-| 16 | `grep-grid-instrucciones` | Grep Grid · Instrucciones | Explicar el juego (8 palabras, 3 direcciones solo hacia adelante, sin tiempo) | jugador | ambos | F-05, C-08, C-09 |
-| 17 | `grep-grid-partida` | Grep Grid · Partida | Tocar primera y última letra de cada palabra; contador `N/8`; "Rendirse" | jugador | ambos | C-19, C-20, C-36 |
-| 18 | `grep-grid-resultado` | Grep Grid · Resultado | Ver `N/8`, las palabras faltantes reveladas con su definición; compartir | jugador | ambos | C-22, C-12, C-13, C-36 |
+| 16 | `grep-grid-instrucciones` | Grep Grid · Instrucciones | Explicar el juego (8 palabras, 4 direcciones solo hacia adelante, dos toques, sin tiempo, se puede rendir) | jugador | ambos | F-05, C-08, C-09, REQ-005 |
+| 17 | `grep-grid-partida` | Grep Grid · Partida | Tocar (o marcar con teclado) primera y última letra de cada palabra; contador `N/8`; definición de cada palabra encontrada; "Rendirse" | jugador | ambos | C-19, C-20, C-10, C-36, REQ-005 |
+| 18 | `grep-grid-resultado` | Grep Grid · Resultado | Ver `N/8`, la grilla con las 8 palabras marcadas (encontradas y reveladas), las 8 definiciones y las rachas; compartir | jugador | ambos | C-22, C-12, C-13, C-36, REQ-005 |
 | 19 | `no-encontrado` | No encontrado (404) | Avisar que la dirección no existe y volver a los juegos en un toque | jugador | ambos | REQ-002 (supuesto «Navegación») |
 
-Todas las pantallas existen en ambos viewports. La excepción de contenido a anotar es la grilla de Grep Grid (12×12) y el código de Bug Hunt / Big O a 320 px: se resuelven en layout (scroll horizontal del código, celdas de la grilla escaladas al ancho), no con una pantalla distinta `[fuente: PRD §NFR-U01]`.
+Todas las pantallas existen en ambos viewports. La excepción de contenido a anotar es la grilla de Grep Grid (12×12) y el código de Bug Hunt / Big O a 320 px: se resuelven en layout (scroll horizontal del código, celdas de la grilla escaladas al ancho: la grilla de Grep Grid entra completa a 320 px sin scroll horizontal, REQ-005 CA 36), no con una pantalla distinta `[fuente: PRD §NFR-U01]`.
 
 ### Bloques por pantalla
 
 Header común a todas las pantallas de plataforma (shell, `app-header` del DS): marca `> nerdose_`, navegación (`./juegos`, `./stats`, `./about`) **siempre dentro del header** y acomodada con `flex-wrap` en mobile (sin tira de navegación aparte, REQ-003), **`#número` del desafío del día** (reemplaza "desafío del 30/10" del prototipo; decisión #12, F-02), selector de idioma ES/EN segmentado y, en la home, la **píldora de racha global** que enlaza a `estadisticas` (REQ-003). El `#número` se oculta cuando el servidor no lo informa (antes del lanzamiento, REQ-002). En las pantallas de juego el header es el `game-header` del DS, con el nombre del juego; en las de resultado se suma el botón "Compartir". El footer (`site-footer`) es una sola línea, como el prototipo: el lema `> nerdose — una plataforma, múltiples desafíos.` y `exit 0`, en todas las pantallas. El aviso de privacidad (una única cookie funcional, sin datos personales ni cookies de terceros) vive en `acerca-de` (C-07, REQ-003).
 
-> **Pendiente de alineación (FG-4+):** las 12 pantallas de juego de Bug Hunt, Big O, Tech Timeline y Grep Grid todavía declaran la tira `nav-movil` y el header de plataforma; se pasan al `game-header` del DS cuando se diseñe cada juego. REQ-003 alineó el shell de plataforma (`home`, `estadisticas`, `acerca-de`, `no-encontrado`) y el footer de todas; **REQ-004 pasó las 3 de Devdle al `game-header`** (`playing` en instrucciones y partida, `finished` en resultado), sin `nav-movil`.
+> **Pendiente de alineación (FG-5+):** las 9 pantallas de juego de Bug Hunt, Big O y Tech Timeline todavía declaran la tira `nav-movil` y el header de plataforma; se pasan al `game-header` del DS cuando se diseñe cada juego. REQ-003 alineó el shell de plataforma (`home`, `estadisticas`, `acerca-de`, `no-encontrado`) y el footer de todas; **REQ-004 pasó las 3 de Devdle al `game-header`** (`playing` en instrucciones y partida, `finished` en resultado), sin `nav-movil`; **REQ-005 hizo lo mismo con las 3 de Grep Grid**.
 
 | Slug | Bloques principales (de `docs/nerdose.html` ajustados al PRD) |
 |------|-----------------------------------------------------------------|
@@ -78,8 +78,8 @@ Header común a todas las pantallas de plataforma (shell, `app-header` del DS): 
 | `big-o-resultado` | Veredicto y respuesta correcta; explicación paso a paso (costo por bloque, reglas, simplificación); lenguaje con el que confirmó; rachas; "Compartir"; "Reportar un problema". El bloque "en números, con n = 1024" del prototipo no está en C-29: a validar |
 | `timeline-partida` | Consigna ("del más antiguo al más reciente") y categoría; 5 elementos mezclados y sin fecha; reordenar por arrastre, teclado y flechas subir/bajar por fila; "Confirmar"; "Reportar un problema" |
 | `timeline-resultado` | Puntaje `N/5`; "tu orden" vs "orden correcto" con fecha y nota de cada hito; indicador por posición (ícono + color); rachas; "Compartir"; "Reportar un problema"; próximo desafío |
-| `grep-grid-partida` | Grilla 12×12; contador **`N/8 encontradas`** (reemplaza el reloj "02:14 tiempo", decisión #6); lista de las 8 palabras con tachado al encontrarlas y definición breve revelada; **botón "Rendirse"** (decisión #7, C-20); "Reportar un problema". **Sin cronómetro en ningún punto** |
-| `grep-grid-resultado` | `N/8` y veredicto (victoria solo con 8/8); grilla con las faltantes reveladas si se rindió; lista de las 8 palabras con definición; rachas; "Compartir" (`N/8`, sin palabras); "Reportar un problema" |
+| `grep-grid-partida` | Consigna (`$ grep -o '[A-Z]*' hoy.txt`); contador **`N/8 encontradas`** (reemplaza el reloj "02:14 tiempo", decisión #6); grilla 12×12 escalada al ancho, con dos toques o teclado (flechas + Enter/Espacio) y celdas encontradas marcadas con color y glifo (NFR-U04); hint de consola que guía la selección y avisa, sin penalizar, "no es una palabra", selección inválida (en reversa o no alineada) y demasiadas jugadas; lista de las 8 palabras en orden fijo, con tachado y definición breve solo en las encontradas (anti-spoiler); **botón "Rendirse"** separado de la grilla, que abre O-04 (decisión #7, C-20); estados "anulado" y "sin sesión" a mitad de partida; acceso a "Reportar un problema" (FG-6). **Sin cronómetro en ningún punto** (REQ-005) |
+| `grep-grid-resultado` | `N/8` y veredicto (victoria solo con 8/8; "Te rendiste con N/8" si se rindió); grilla con las 8 palabras marcadas: encontradas (relleno + ✓) y reveladas (borde punteado + ○); lista de las 8 palabras con definición en el idioma activo; rachas actualizadas; "Compartir" solo en el header (`🔎 Grep Grid #N` / `N/8` / `nerdose.dev`, sin palabras ni indicio de rendición; confirmación "✓ Copiado" en el botón); "Reportar un problema" (FG-6); próximo desafío en `HH:MM:SS`; "Siguiente juego" solo si queda un juego pendiente (REQ-005) |
 
 El prototipo menciona "tu tiempo final es tu puntaje" en Grep Grid: **se elimina** (C-22, el puntaje son las palabras encontradas).
 
@@ -120,7 +120,7 @@ El prototipo menciona "tu tiempo final es tu puntaje" en Grep Grid: **se elimina
 | O-01 | Reportar un problema | bottom-sheet (mobile) / modal (desktop) | `*-partida` · btn-reportar; `*-resultado` · btn-reportar | Formulario con motivo (6 valores de `reason`), mensaje opcional (máx. 1000), aviso "No incluyas la respuesta si todavía estás jugando" (en partida). Un reporte por jugador y desafío: si ya reportó, el trigger muestra "ya reportado" (`already_reported`). Disponible solo con Challenge `published` o `voided` |
 | O-02 | Aviso de desafío anulado | modal (ambos viewports) | `home` · tarjeta en estado "anulado"; `*-instrucciones` · estado "anulado y sin Play" | Texto "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada" y acción **"Marcar como completado"** (C-42), que crea la Play `voided`, suma la racha del juego y la global, y lleva a `*-resultado` en estado anulado. Acción secundaria: cerrar |
 | O-03 | Aviso de cookies bloqueadas | banner (ambos viewports; fijo bajo el header) | Shell · detección: `POST /api/session` respondió 200 y el `GET /api/today` siguiente sigue con `has_session = false` (no se muestra tras un 429, REQ-002) | Texto "Activá las cookies para poder jugar". Persiste hasta que la sesión se crea. El selector ES/EN sigue funcionando, solo en el navegador. El catálogo, `estadisticas` (vacía) y `acerca-de` siguen visibles; los CTA de juego quedan deshabilitados |
-| O-04 | Confirmar "Rendirse" | modal (ambos viewports) | `grep-grid-partida` · btn-rendirse | Confirmar que se cierra la partida como perdida con `N/8`, que cuenta para la racha y que revela las faltantes. **Sugerencia fuera de PRD — a validar** (el PRD define la acción irreversible y el principio de confirmación en dos pasos de la decisión #26, no este modal) |
+| O-04 | Confirmar "Rendirse" | modal (ambos viewports) | `grep-grid-partida` · btn-rendirse | Confirmar que se cierra la partida como perdida con `N/8`, que cuenta para la racha y que revela las faltantes. Acciones: "Seguir jugando" (foco inicial; también Escape, sin request, devuelve el foco a "Rendirse") y "Sí, rendirme". Disponible desde 0/8. **Confirmado por REQ-005** (supuesto «Confirmación de "Rendirse"», CA 10-12; decisión #26 del PRD) |
 
 No hay overlay de selector de idioma: el cambio ES/EN y el cambio de lenguaje de código son **controles inline** (ver Navegación). El share nativo es del sistema operativo; si no está disponible, se copia al portapapeles con un aviso breve ("copiado") `[fuente: PRD §Supuestos, C-13]`.
 
@@ -243,9 +243,7 @@ Juegos: `devdle`, `bug-hunt`, `big-o`, `timeline`, `grep-grid`.
    - Si es solo "Volver a los juegos": se simplifica el resultado, pero el jugador pasa siempre por `home` para encadenar partidas.
    - **Avance de REQ-004:** en Devdle, "Siguiente juego" se oculta cuando no queda ningún juego con desafío sin completar (estado "sin juegos pendientes"); la decisión de fondo sigue abierta.
 
-6. **¿Se confirma el modal O-04 de "Rendirse" (y se agrega una confirmación al "Confirmar" de los otros juegos)?** El PRD pide selección y confirmación en dos pasos para evitar un toque accidental, pero no define confirmación para una acción irreversible como rendirse.
-   - Si sí: se mantiene O-04 en el inventario.
-   - Si no (el botón actúa directo, con "Rendirse" visualmente separado de la grilla): se elimina O-04 y el riesgo de rendirse por error recae en el diseño del botón.
+6. ~~**¿Se confirma el modal O-04 de "Rendirse"?**~~ **Resuelta por REQ-005:** O-04 se implementa (rendirse es irreversible; decisión #26 del PRD), con foco inicial en "Seguir jugando". Los otros juegos no suman un modal: ya separan selección y "Confirmar" en dos pasos.
 
 ---
 

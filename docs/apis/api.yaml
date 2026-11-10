@@ -208,6 +208,10 @@ paths:
         - `challenge_status: none` → "sin desafío hoy"; `voided` → aviso de anulación.
 
         En Big O y Bug Hunt, `public_view.code` trae los 3 lenguajes: cambiar de lenguaje es solo del cliente.
+
+        Grep Grid: `public_view = toPublic(payload, locale, state)`; la `api` pasa el `state` solo si la Play
+        está `in_progress`. `words[].definition` viene únicamente en las palabras ya encontradas por esa Play,
+        en el locale resuelto (retomar y cambio de idioma); nunca en las no encontradas ni sin sesión.
       operationId: getGameToday
       security:
         - {}
@@ -221,19 +225,46 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/GameToday' }
-              example:
-                game_id: devdle
-                date: '2026-11-03'
-                number: 128
-                challenge_status: published
-                public_view: { length: 5, possible_categories: [programming_languages, git, databases, networking, linux, apis, security, software_engineering] }
-                play:
-                  status: in_progress
-                  state: { guesses: [ { guess: REACT, marks: [absent, present, absent, absent, absent] } ] }
-                  score: null
-                  code_language: null
-                result: null
-                game_stats: null
+              examples:
+                devdle:
+                  value:
+                    game_id: devdle
+                    date: '2026-11-03'
+                    number: 128
+                    challenge_status: published
+                    public_view: { length: 5, possible_categories: [programming_languages, git, databases, networking, linux, apis, security, software_engineering] }
+                    play:
+                      status: in_progress
+                      state: { guesses: [ { guess: REACT, marks: [absent, present, absent, absent, absent] } ] }
+                      score: null
+                      code_language: null
+                    result: null
+                    game_stats: null
+                grep_grid_una_encontrada:
+                  summary: Grep Grid en curso con 1 palabra encontrada (solo ella trae `definition`; la grilla y la lista están abreviadas)
+                  value:
+                    game_id: grep-grid
+                    date: '2026-11-03'
+                    number: 8
+                    challenge_status: published
+                    public_view:
+                      grid:
+                        - [X, Q, D, O, C, K, E, R, M, B, T, A]
+                        - [L, R, E, D, I, S, P, W, Z, K, U, N]
+                      words:
+                        - { term_id: 7c9e6679-7425-40de-944b-e07fc1f90ae7, word: DOCKER, definition: 'Plataforma para empaquetar y ejecutar aplicaciones en contenedores.' }
+                        - { term_id: 3f2504e0-4f89-41d3-9a0c-0305e82c3301, word: REDIS }
+                    play:
+                      status: in_progress
+                      state:
+                        found_words:
+                          - term_id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                            cells: [ { row: 0, col: 2 }, { row: 0, col: 3 }, { row: 0, col: 4 }, { row: 0, col: 5 }, { row: 0, col: 6 }, { row: 0, col: 7 } ]
+                        gave_up: false
+                      score: null
+                      code_language: null
+                    result: null
+                    game_stats: null
         '404': { $ref: '#/components/responses/NotFound' }
         '429': { $ref: '#/components/responses/RateLimited' }
 
@@ -298,6 +329,12 @@ paths:
         Devdle: un intento fuera de la lista válida responde `422 not_in_word_list`, se registra en
         `rejected_guesses` y **no** consume intento.
 
+        Grep Grid: una línea válida hacia adelante que no coincide exactamente con una de las 8 palabras
+        (`not_a_word`) y una palabra ya encontrada (`already_found`) responden `200` con el `state` sin
+        cambios y sin penalización. Una selección en reversa, no alineada, de una sola celda o fuera de
+        0–11 responde `422 invalid_move`. `give_up` cierra la Play como `lost` con `score` = palabras
+        encontradas (0–7) y `feedback: null`.
+
         Rate limit: 60 / min por `player_id` y 300 / min por IP.
       operationId: makeMove
       security:
@@ -314,7 +351,7 @@ paths:
               devdle:
                 value: { challenge_number: 128, move: { guess: REACT } }
               grep_grid_select:
-                value: { challenge_number: 128, move: { type: select, from: { row: 0, col: 2 }, to: { row: 0, col: 6 } } }
+                value: { challenge_number: 128, move: { type: select, from: { row: 0, col: 2 }, to: { row: 0, col: 7 } } }
               grep_grid_give_up:
                 value: { challenge_number: 128, move: { type: give_up } }
               timeline:
@@ -340,6 +377,84 @@ paths:
                     result: null
                     streaks: null
                     game_stats: null
+                grep_grid_found:
+                  value:
+                    feedback:
+                      found: true
+                      term_id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                      word: DOCKER
+                      definition: 'Plataforma para empaquetar y ejecutar aplicaciones en contenedores.'
+                      cells: [ { row: 0, col: 2 }, { row: 0, col: 3 }, { row: 0, col: 4 }, { row: 0, col: 5 }, { row: 0, col: 6 }, { row: 0, col: 7 } ]
+                    play:
+                      status: in_progress
+                      state:
+                        found_words:
+                          - term_id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                            cells: [ { row: 0, col: 2 }, { row: 0, col: 3 }, { row: 0, col: 4 }, { row: 0, col: 5 }, { row: 0, col: 6 }, { row: 0, col: 7 } ]
+                        gave_up: false
+                      score: null
+                    result: null
+                    streaks: null
+                    game_stats: null
+                grep_grid_not_a_word:
+                  summary: Línea válida que no es una de las 8 palabras; el estado no cambia
+                  value:
+                    feedback: { found: false, reason: not_a_word }
+                    play: { status: in_progress, state: { found_words: [], gave_up: false }, score: null }
+                    result: null
+                    streaks: null
+                    game_stats: null
+                grep_grid_already_found:
+                  summary: Palabra ya encontrada; se ignora sin error
+                  value:
+                    feedback: { found: false, reason: already_found }
+                    play:
+                      status: in_progress
+                      state:
+                        found_words:
+                          - term_id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                            cells: [ { row: 0, col: 2 }, { row: 0, col: 3 }, { row: 0, col: 4 }, { row: 0, col: 5 }, { row: 0, col: 6 }, { row: 0, col: 7 } ]
+                        gave_up: false
+                      score: null
+                    result: null
+                    streaks: null
+                    game_stats: null
+                grep_grid_give_up:
+                  summary: Rendirse con 1/8 (la lista `words` del resultado está abreviada; trae las 8)
+                  value:
+                    feedback: null
+                    play:
+                      status: lost
+                      state:
+                        found_words:
+                          - term_id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                            cells: [ { row: 0, col: 2 }, { row: 0, col: 3 }, { row: 0, col: 4 }, { row: 0, col: 5 }, { row: 0, col: 6 }, { row: 0, col: 7 } ]
+                        gave_up: true
+                      score: 1
+                    result:
+                      win: false
+                      score: 1
+                      gave_up: true
+                      words:
+                        - term_id: 7c9e6679-7425-40de-944b-e07fc1f90ae7
+                          word: DOCKER
+                          definition: 'Plataforma para empaquetar y ejecutar aplicaciones en contenedores.'
+                          found: true
+                          cells: [ { row: 0, col: 2 }, { row: 0, col: 3 }, { row: 0, col: 4 }, { row: 0, col: 5 }, { row: 0, col: 6 }, { row: 0, col: 7 } ]
+                        - term_id: 3f2504e0-4f89-41d3-9a0c-0305e82c3301
+                          word: REDIS
+                          definition: 'Base de datos en memoria de tipo clave-valor.'
+                          found: false
+                          cells: [ { row: 1, col: 1 }, { row: 1, col: 2 }, { row: 1, col: 3 }, { row: 1, col: 4 }, { row: 1, col: 5 } ]
+                    streaks: { game: { current: 5, max: 9 }, global: { current: 6, max: 12 } }
+                    game_stats:
+                      game_id: grep-grid
+                      current_streak: 5
+                      max_streak: 9
+                      played: 12
+                      wins: 7
+                      win_rate: 0.58
+                      extra: { words_found: { '0': 0, '1': 1, '2': 0, '3': 1, '4': 0, '5': 1, '6': 1, '7': 1, '8': 7 } }
                 big_o_cierre:
                   value:
                     feedback: null
@@ -364,8 +479,8 @@ paths:
         '415': { $ref: '#/components/responses/UnsupportedMediaType' }
         '422':
           description: |
-            `invalid_move` (no pasa `moveSchema` o es inválida para el estado: dirección no permitida en
-            Grep Grid, faltantes/duplicados en Timeline, `line` ∉ `pickable_lines` en Bug Hunt) o
+            `invalid_move` (no pasa `moveSchema` o es inválida para el estado: selección en reversa, no
+            alineada o de una sola celda en Grep Grid, faltantes/duplicados en Timeline, `line` ∉ `pickable_lines` en Bug Hunt) o
             `not_in_word_list` (Devdle; no consume intento).
           content:
             application/json:
@@ -1138,6 +1253,11 @@ components:
             properties:
               term_id: { type: string, format: uuid }
               word: { type: string }
+              definition:
+                type: string
+                description: |
+                  Opcional. Solo en las palabras ya encontradas por la Play `in_progress` del jugador, en
+                  el locale resuelto. Nunca en las no encontradas ni sin sesión (anti-spoiler, ADR-006).
 
     TimelinePublicView:
       type: object
@@ -1219,10 +1339,14 @@ components:
 
     GrepGridState:
       type: object
-      required: [found_words]
+      required: [found_words, gave_up]
       properties:
+        gave_up:
+          type: boolean
+          description: '`true` si el jugador se rindió. La partida termina con `gave_up` o con 8 palabras encontradas'
         found_words:
           type: array
+          description: Palabras encontradas, en el orden en que se encontraron
           maxItems: 8
           items:
             type: object
@@ -1573,7 +1697,9 @@ components:
           additionalProperties: true
           description: |
             Stats propias del juego (`reduceStats`):
-            devdle = distribución de intentos (1–6 y derrotas); grep-grid = promedio de palabras y % 8/8;
+            devdle = distribución de intentos (1–6 y derrotas);
+            grep-grid = `{ words_found: { "0": n, …, "8": n } }` (partidas por cantidad de palabras encontradas;
+            de ahí salen el promedio de palabras y el % de 8/8);
             timeline = promedio de posiciones por categoría; big-o = aciertos por `recipe_category`;
             bug-hunt = aciertos por `code_language` y por `bug_type`.
 

@@ -1,6 +1,6 @@
 # Reusable Code Index - games
 
-Package `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`. The build script lives in `scripts/` and is never importable from `src/` or other packages.
+Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, and `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition` and `./generator` (`./client` arrives with S-024). The build script lives in `scripts/` and is never importable from `src/` or other packages.
 
 ## Devdle definition (6 items) - see devdle.md
 - **devdle / definition** (packages/games/devdle/src/definition/index.ts) - `GameDefinition` of Devdle (`id: 'devdle'`, `version: 1`); `definition` is an alias
@@ -8,7 +8,7 @@ Package `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`
 - **payloadSchema / moveSchema / guessSchema / stateSchema / publicViewSchema / resultSchema / statsSchema / letterMarkSchema** (packages/games/devdle/src/definition/schemas.ts) - Zod schemas, snake_case as in `api.yaml`
 - **WORD_PATTERN / MAX_GUESSES** (packages/games/devdle/src/definition/schemas.ts) - `/^[A-Z]{4,12}$/` and 6
 - **DevdlePayload / DevdleMove / DevdleGuess / DevdleFeedback / DevdleState / DevdlePublicView / DevdleResult / DevdleStats / LetterMark** (packages/games/devdle/src/definition/schemas.ts) - Types inferred from the schemas
-- **PAYLOAD_REACT / PAYLOAD_MERGE / ALL_VALID / NONE_VALID / NOW** (packages/games/devdle/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry
+- **PAYLOAD_REACT / PAYLOAD_MERGE / ALL_VALID / NONE_VALID / NOW** (packages/games/devdle/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry; `ALL_VALID` / `NONE_VALID` carry `locale: 'es'` (required by `MoveContext`)
 
 ## Devdle client (9 items) - see devdle.md
 - **Instructions / Game / Result** (packages/games/devdle/src/client/{instructions,game,result}.tsx) - React screens of the `./client` entry; game data props are `unknown` and parsed with the definition schemas
@@ -34,3 +34,23 @@ Package `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`
 - **createHttpClient / buildUserAgent / HttpRequestError** (packages/games/devdle/scripts/build-wordlist/http.ts) - Polite HTTP client (`getText`, `getJson`): User-Agent, pause, retries with backoff
 - **buildLabelsQuery / parseLabels / fetchClassLabels** (packages/games/devdle/scripts/build-wordlist/wikidata.ts) - SPARQL access to English labels per class
 - **loadWordlistEnv / parseWordlistArgs / WORDLIST_CLASSES** (packages/games/devdle/scripts/build-wordlist/{env,args,classes}.ts) - `WIKIMEDIA_CONTACT`, `--enable` and the QID list
+
+## Grep Grid shared (1 item) - see grep-grid.md
+- **GRID_SIZE / DIRECTIONS / DIRECTION_STEPS / Cell / Direction / inGrid / sameCell / directionOf / lineCells** (packages/games/grep-grid/src/shared/geometry.ts) - Pure geometry of the 12x12 grid and the 4 forward directions; `lineCells` returns `null` for invalid lines
+
+## Grep Grid definition (5 items) - see grep-grid.md
+- **grepGrid / definition** (packages/games/grep-grid/src/definition/index.ts) - `GameDefinition` of Grep Grid (`id: 'grep-grid'`, `version: 1`); `definition` is an alias
+- **payloadSchema / moveSchema / stateSchema / publicViewSchema / feedbackSchema / feedbackFoundSchema / feedbackNotFoundSchema / resultSchema / statsSchema / cellSchema** (packages/games/grep-grid/src/definition/schemas.ts) - Zod schemas, snake_case as in `api.yaml`
+- **WORD_PATTERN / WORDS_COUNT** (packages/games/grep-grid/src/definition/schemas.ts) - `/^[A-Z]{4,12}$/` and 8
+- **GrepGridPayload / GrepGridWord / GrepGridPlacement / GrepGridMove / GrepGridState / GrepGridPublicView / GrepGridFeedback / GrepGridResult / GrepGridStats** (packages/games/grep-grid/src/definition/schemas.ts) - Types inferred from the schemas
+- **PAYLOAD / GRID_DUPLICATE / ID / NOW / CTX_ES / CTX_EN / S0 / select / selectWord / cellsOf / playAll** (packages/games/grep-grid/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry
+
+## Grep Grid generator (8 items) - see grep-grid.md
+- **generator / GrepGridTerm** (packages/games/grep-grid/src/generator/index.ts) - `GameGenerator<GrepGridPayload, GrepGridTerm>` with `historySpec`, `usedBankItems`, `generate`, `verify`
+- **verifyPayload** (packages/games/grep-grid/src/generator/verify.ts) - Nine ordered checks returning a `VerificationLog`; never throws
+- **eligibleTerms / sortByTerm / isReusable / related / REUSE_WINDOW_DAYS** (packages/games/grep-grid/src/generator/eligibility.ts) - 30-day filter (excluding recent challenges), ordinal ordering, substring relation
+- **chooseTerms** (packages/games/grep-grid/src/generator/choose.ts) - Picks 8 terms without substring relations, completing with ineligible ones when needed
+- **placeWords / fillGrid / canPlace / MAX_PLACEMENT_STEPS / MAX_FILL_REDRAWS** (packages/games/grep-grid/src/generator/placement.ts) - Deterministic placement with crossings and bounded backtracking; filler with re-draws
+- **countOccurrences** (packages/games/grep-grid/src/generator/occurrences.ts) - Occurrences of a word in the 4 forward directions
+- **addDays / isValidDate** (packages/games/grep-grid/src/generator/dates.ts) - Copy of the Devdle helpers (cross-game imports are forbidden)
+- **BANK / BANK_FIXTURE / DATE / seed / mk / history** (packages/games/grep-grid/src/generator/test-fixtures.ts) - Test-only fixtures

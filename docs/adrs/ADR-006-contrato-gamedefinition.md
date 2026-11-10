@@ -22,7 +22,7 @@ export interface GameDefinition<Payload, PublicView, State, Move, Feedback, Resu
   version: number;                  // versión del schema de Payload
   moveSchema: z.ZodType<Move>;
 
-  toPublic(p: Payload, locale: Locale): PublicView;          // sin solución
+  toPublic(p: Payload, locale: Locale, state?: State): PublicView;   // sin solución; state solo con la Play in_progress (REQ-005)
   initState(p: Payload, now: Date): State;
   applyMove(p: Payload, s: State, m: Move, now: Date, ctx: MoveContext):
     { state: State; feedback: Feedback } | { error: MoveError };   // 'invalid_move' | 'not_in_word_list'
@@ -37,7 +37,7 @@ export interface GameDefinition<Payload, PublicView, State, Move, Feedback, Resu
 }
 
 // entrada ./generator
-export interface MoveContext { isValidWord(word: string): boolean }   // lo arma la api (WordList.has); los juegos que no lo usan lo ignoran
+export interface MoveContext { isValidWord(word: string): boolean; locale: Locale }   // lo arma la api (WordList.has y el locale resuelto, REQ-005); los juegos que no lo usan lo ignoran
 
 export interface GameGenerator<Payload> {
   historySpec: { bank: 'terms' | 'timeline_facts' | null; lastUsedField: string; recentDays: number };
@@ -58,9 +58,11 @@ Hay un **registry** en `api`, en `web`/`admin` y en `generator` que mapea `game_
 - Cada juego MUST vivir en `packages/games/<game_id>`, con `game_id` ∈ `devdle | grep-grid | timeline | big-o | bug-hunt`.
 - La entrada `./definition` MUST exportar un objeto que implemente `GameDefinition` de `@nerdose/core`, con todos los métodos de la interfaz.
 - Las rutas de juego de la `api` MUST resolver el juego por el registry. MUST NOT haber `if (game_id === '…')` ni `switch` por juego en `apps/api` ni en el shell de `apps/web`.
-- La `api` MUST NOT serializar `challenges.payload` en ninguna respuesta de jugador. Antes de terminar la Play solo puede responder `toPublic(payload)`; después, `result(payload, state)`.
+- La `api` MUST NOT serializar `challenges.payload` en ninguna respuesta de jugador. Antes de terminar la Play solo puede responder `toPublic(payload, locale, state?)`; después, `result(payload, state)`.
+- La `api` MUST pasar `state` a `toPublic` solo si la Play está `in_progress` (sin Play o con la Play terminada, `undefined`). Con `state`, `toPublic` MAY revelar únicamente lo que el jugador ya descubrió en esa Play (Grep Grid: `words[].definition` de los `term_id` presentes en `found_words`); MUST NOT revelar nada de lo no descubierto (REQ-005).
+- `Feedback` MUST ir en el locale del jugador (`ctx.locale`), nunca como `{ es, en }` (ADR-015).
 - `toPublic` MUST NOT incluir: la palabra de Devdle, `placements` de Grep Grid, `correct_order`/`event_date`/`fact_id` de Timeline, `answer` de Big O, ni `bug_node_id`/`failing_test`/`fix`/`line_of`/`mutation` de Bug Hunt.
-- Cada juego MUST tener un test de contrato anti-spoiler: se serializa `toPublic(payload)` y toda respuesta pre-resultado, y se verifica que no contienen ningún valor de la solución.
+- Cada juego MUST tener un test de contrato anti-spoiler: se serializa `toPublic(payload)` (sin estado y con estados intermedios, si el juego usa `state`) y toda respuesta pre-resultado, y se verifica que no contienen ningún valor de la solución.
 - `moveSchema` MUST usarse tanto en `web` (antes de enviar) como en la `api` (`@hono/zod-validator`). Si el parse falla, la respuesta es `422 invalid_move`.
 - `share(result, number)` MUST NOT incluir la solución y MUST terminar en `nerdose.dev`.
 - `generate` MUST ser determinista: el mismo `{ date, seed, history }` da el mismo `Payload`. MUST NOT usar `Math.random()` ni la hora actual.

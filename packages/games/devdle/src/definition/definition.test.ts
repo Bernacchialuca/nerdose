@@ -16,7 +16,7 @@ function play(words: string[]): DevdleState {
   }
   return s;
 }
-const spy = (valid: boolean) => ({ isValidWord: vi.fn(() => valid) });
+const spy = (valid: boolean) => ({ isValidWord: vi.fn(() => valid), locale: 'es' as const });
 
 describe('devdle definition', () => {
   it('registers in the core registry (TS-4)', () => {

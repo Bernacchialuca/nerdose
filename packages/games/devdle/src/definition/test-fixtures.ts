@@ -32,6 +32,6 @@ export const PAYLOAD_MERGE: DevdlePayload = {
   date: '2026-12-03',
 };
 
-export const ALL_VALID: MoveContext = { isValidWord: () => true };
-export const NONE_VALID: MoveContext = { isValidWord: () => false };
+export const ALL_VALID: MoveContext = { isValidWord: () => true, locale: 'es' };
+export const NONE_VALID: MoveContext = { isValidWord: () => false, locale: 'es' };
 export const NOW = new Date('2026-12-02T10:00:00.000Z');
