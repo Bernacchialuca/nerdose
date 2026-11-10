@@ -4,8 +4,8 @@ title: Jugada y cierre de partida con rachas
 type: feature
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-03
-stories: []
+last_updated: 2026-11-10
+stories: [S-022, S-023, S-024]
 ---
 
 # Jugada y cierre de partida con rachas
@@ -13,8 +13,8 @@ stories: []
 **Tipo:** Feature
 **Status:** Draft
 **Creado:** 2026-11-03
-**Última actualización:** 2026-11-03
-**Stories:** —
+**Última actualización:** 2026-11-10
+**Stories:** S-022, S-023, S-024
 
 ## Descripción
 
@@ -45,7 +45,7 @@ sequenceDiagram
     else jugada inválida para el estado
         A->>DB: ROLLBACK
         A-->>W: 422 invalid_move
-    else jugada válida, partida sigue
+    else jugada válida, partida sigue (con o sin cambio de estado)
         A->>DB: UPDATE plays SET state; COMMIT
         A-->>W: 200 { feedback, play, result: null, streaks: null }
     else jugada cierra la partida
@@ -103,10 +103,13 @@ sequenceDiagram
 - **Operación:** SELECT … FOR UPDATE WHERE `player_id` AND `challenge_id`. Si no existe, INSERT con `status = 'in_progress'` y `state = initState(payload)`.
 - **Validación:** `plays.status != 'in_progress'` → `409 game_finished`.
 
-**Acción:** `applyMove(payload, state, move, now)` del `GameDefinition`:
+**Acción:** `applyMove(payload, state, move, now, ctx)` del `GameDefinition`, con `ctx = { isValidWord, locale }` armado por la `api` (`locale` es el mismo que usa `result`):
 - `{ error: 'not_in_word_list' }` (solo Devdle) → **Operación de BD:** `rejected_guesses` INSERT (`word`, `player_id`, `created_at`) ON CONFLICT DO NOTHING; COMMIT; respuesta `422 not_in_word_list`. El `state` no cambia y no consume intento.
 - `{ error: 'invalid_move' }` → ROLLBACK; `422 invalid_move`.
 - `{ state, feedback }` → **Operación de BD:** `plays` UPDATE `state`.
+- Jugada válida sin cambio de estado (solo Grep Grid): una línea válida hacia adelante que no coincide exactamente con una de las 8 palabras (`feedback.reason = 'not_a_word'`) o una palabra ya encontrada (`feedback.reason = 'already_found'`) devuelven el mismo `state`. No son errores: el UPDATE con el mismo `state` es idempotente y la respuesta es `200`, sin penalización.
+
+Grep Grid, `move.type = 'select'`: si `from` y `to` coinciden exactamente con la primera y la última celda de una palabra no encontrada, se agrega `{ term_id, cells }` al final de `state.found_words` y `feedback.definition` va en `ctx.locale`. `move.type = 'give_up'`: `state.gave_up = true` y `feedback = null`.
 
 **Eventos de dominio:** `GuessRejected` o `MoveApplied`, solo en los logs.
 
@@ -119,6 +122,8 @@ sequenceDiagram
 **Tipo:** Interno (misma transacción que el paso 2)
 
 **Acción:** `result = result(payload, state, locale)`, `win = isWin(result)`, `score = score(result)`.
+
+En Grep Grid, `isFinished(state) = state.gave_up || state.found_words.length === 8`: la octava palabra cierra `won` con `score = 8`; `give_up` cierra `lost` con `score = found_words.length` (0–7), cuenta para la racha y `result` trae `gave_up: true` y las 8 `words` con `found` y `cells`. `extra` de grep-grid = `{ words_found: { "0": n, …, "8": n } }`; `reduceStats` suma 1 en `String(score)`.
 
 **Operación de BD:**
 - **Tabla:** `plays`
@@ -176,7 +181,7 @@ sequenceDiagram
 | 1 | `move` no pasa `moveSchema` | 422 | `{ "error": { "code": "invalid_move", … } }` | web muestra "jugada inválida" |
 | 2 | Play terminada | 409 | `{ "error": { "code": "game_finished", … } }` | web pide de nuevo `GET …/today` y muestra el resultado |
 | 2 | Palabra fuera de la lista (Devdle) | 422 | `{ "error": { "code": "not_in_word_list", … } }` | web muestra "no está en la lista"; el intento no cuenta |
-| 2 | Inválida para el estado (dirección de Grep Grid, `line` ∉ `pickable_lines`, faltantes en Timeline) | 422 | `{ "error": { "code": "invalid_move", … } }` | web muestra el error; nada cambia |
+| 2 | Inválida para el estado (selección en reversa, no alineada o de una sola celda en Grep Grid, `line` ∉ `pickable_lines`, faltantes en Timeline) | 422 | `{ "error": { "code": "invalid_move", … } }` | web muestra el error; nada cambia |
 | 1 | Rate limit (60/min por player, 300/min por IP) | 429 | `{ "error": { "code": "rate_limited", … } }` | Reintento después de `Retry-After` |
 | 2–3 | Error de BD | 500 | `{ "error": { "code": "internal_error", … } }` | ROLLBACK completo: ni la Play ni las rachas quedan a medias |
 

@@ -4,8 +4,8 @@ title: Preferencias del jugador y compartir resultado
 type: feature
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-04
-stories: [S-007, S-009]
+last_updated: 2026-11-10
+stories: [S-007, S-009, S-024]
 ---
 
 # Preferencias del jugador y compartir resultado
@@ -13,8 +13,8 @@ stories: [S-007, S-009]
 **Tipo:** Feature
 **Status:** Draft
 **Creado:** 2026-11-03
-**Última actualización:** 2026-11-03
-**Stories:** —
+**Última actualización:** 2026-11-10
+**Stories:** S-007, S-009, S-024
 
 ## Descripción
 
@@ -96,7 +96,7 @@ sequenceDiagram
 
 **Request:** `GET /api/games/{game_id}/today`
 
-**Acción:** la `api` resuelve el locale con `players.locale` y devuelve `public_view` (y `result`, si terminó) en el idioma nuevo. La partida (`plays.state`) no cambia.
+**Acción:** la `api` resuelve el locale con `players.locale` y devuelve `public_view` (y `result`, si terminó) en el idioma nuevo. La partida (`plays.state`) no cambia. En Grep Grid a mitad de partida, `public_view.words[].definition` de las palabras ya encontradas vuelve en el idioma nuevo; `grid`, `words` y `found_words` no cambian.
 
 ---
 
@@ -113,6 +113,12 @@ sequenceDiagram
    🟩🟨⬛⬛⬛
    🟩🟩🟩🟩🟩
    2/6
+   nerdose.dev
+   ```
+   Grep Grid (sin las palabras ni indicio de rendición):
+   ```
+   🔎 Grep Grid #8
+   6/8
    nerdose.dev
    ```
 2. `navigator.share({ text })` si está disponible; si no, `navigator.clipboard.writeText(text)` y el aviso "copiado".

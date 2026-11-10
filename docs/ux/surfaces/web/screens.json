@@ -5503,27 +5503,8 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose / Grep Grid · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose / Grep Grid     ./juegos   ./stats   ./about     #8     ES | EN"
-            }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
+          "content": "> nerdose / grep-grid · desafío del 30/10 · [?] [stats] [Compartir] ES|EN · 🔥 4",
+          "annotation": "`game-header` variant `playing` (REQ-005, como Devdle en REQ-004): `grep-grid` en el acento del juego (`#F472B6`) y «desafío del dd/mm» (se oculta si el servidor no lo informa). «Cómo se juega» → reglas de esta pantalla · «Estadísticas» → estadisticas · Compartir deshabilitado («disponible al terminar la partida») · ES|EN inline · racha global. Sin nav global ni `nav-movil`: en mobile las acciones envuelven a su propia fila"
         },
         {
           "name": "titulo",
@@ -5536,39 +5517,53 @@
           "name": "meta",
           "type": "paragraph",
           "category": "content",
-          "content": "Desafío #8 · ~3 min · una partida por día",
           "level": "caption",
+          "content": "Desafío #8 · ~3 min · una partida por día",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "la duración es orientativa: no hay límite de tiempo (RF 8)"
+        },
+        {
+          "name": "aviso-dia-nuevo",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "info",
+          "icon": "info",
+          "content": "Empezó el desafío #9. La partida de ayer quedó sin terminar y no cuenta para tu racha.",
+          "visible_only_in_states": [
+            "día nuevo"
+          ],
+          "annotation": "llega desde grep-grid-partida por `challenge_expired` (o al detectar el cambio de día con la pantalla abierta); se descarta al tocar «Empezar» o al salir. Si el día nuevo no tiene desafío, se muestra junto a `alerta-sin-desafio` (CA 20)"
         },
         {
           "name": "alerta-sin-desafio",
           "type": "alert",
           "category": "feedback",
-          "content": "Hoy no hay desafío de Grep Grid. Es un día neutro: no suma ni corta tu racha.",
           "kind": "info",
+          "content": "Hoy no hay desafío de Grep Grid. Es un día neutro: no suma ni corta tu racha.",
           "visible_only_in_states": [
             "sin desafío hoy"
-          ]
+          ],
+          "annotation": "también es el estado del día en que se despliega el juego (supuesto «Primera puesta en marcha»): Grep Grid se juega desde el día siguiente"
         },
         {
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "kind": "warning",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "visible_only_in_states": [
             "anulado"
           ],
-          "annotation": "el modal O-02 se abre solo al entrar en este estado"
+          "annotation": "el modal O-02 se abre solo al entrar en este estado; también si «Empezar» responde `challenge_voided`"
         },
         {
           "name": "reglas-titulo",
           "type": "heading",
           "category": "content",
-          "content": "Cómo se juega",
+          "content": "// cómo se juega",
           "level": "h2",
           "hidden_in_states": [
             "sin desafío hoy",
@@ -5582,52 +5577,56 @@
           "type": "card",
           "category": "content",
           "content": "1 · Buscá las 8 palabras",
-          "paragraph": "Están escondidas en una grilla de 12×12.",
+          "paragraph": "Son términos de tecnología escondidos en una grilla de 12×12 letras. La lista de palabras está a la vista: lo que tenés que encontrar es dónde están.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "`card` variant `step`. Las 8 palabras salen del mismo banco de términos que Devdle, sin tema común; la grilla y las palabras son iguales en ES y EN (supuesto «Idioma»)"
         },
         {
           "name": "paso-2",
           "type": "card",
           "category": "content",
           "content": "2 · Tocá la primera y la última letra",
-          "paragraph": "Las palabras van en 3 direcciones, solo hacia adelante.",
+          "paragraph": "Las palabras van en 4 direcciones, siempre hacia adelante: → horizontal, ↓ vertical, ↘ y ↗ en diagonal. Nunca al revés. El primer toque marca el inicio y el segundo envía la selección; tocar de nuevo el inicio la cancela. Si la selección no es una palabra de la lista, no pasa nada: probás de nuevo.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "las 4 direcciones y la mecánica de dos toques son supuestos de REQ-005; con teclado se recorre la grilla con las flechas y se marca con Enter o Espacio (CA 35)"
         },
         {
           "name": "paso-3",
           "type": "card",
           "category": "content",
           "content": "3 · Sin tiempo",
-          "paragraph": "No hay reloj: contás cuántas encontraste (N/8). Podés rendirte cuando quieras.",
+          "paragraph": "No hay reloj: el contador N/8 lleva la cuenta. Podés rendirte cuando quieras; la partida cierra con las palabras que encontraste y te mostramos las que faltaban, con su definición.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "sin cronómetro en ningún punto (RF 8, decisión #6 del PRD); «Rendirse» pide confirmación (O-04)"
         },
         {
           "name": "aviso-conteo",
-          "type": "alert",
-          "category": "feedback",
-          "content": "La partida no cuenta hasta que la completes.",
-          "kind": "info",
+          "type": "paragraph",
+          "category": "content",
+          "level": "caption",
+          "content": "La partida no cuenta hasta que la completes. Encontrar las 8 o rendirte suma a tu racha.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "rendirse cierra la partida como perdida y también cuenta como completada (decisión #3 del PRD; CA 10, 12)"
         },
         {
           "name": "btn-empezar",
@@ -5642,10 +5641,11 @@
             "loading",
             "error de sistema"
           ],
+          "annotation": "crea la Play con 0/8 (idempotente: tocar dos veces no crea otra, CA 2)",
           "state_overrides": {
             "sin sesión": {
               "variant": "disabled",
-              "annotation": "deshabilitado mientras no hay sesión (O-03)"
+              "annotation": "deshabilitado mientras no hay sesión (O-03, `no_session`); no se crea ninguna Play"
             }
           }
         },
@@ -5653,11 +5653,13 @@
           "name": "banner-cookies",
           "type": "alert",
           "category": "feedback",
-          "content": "Activá las cookies para poder jugar",
           "kind": "warning",
+          "icon": "warning",
+          "content": "Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».",
           "visible_only_in_states": [
             "sin sesión"
-          ]
+          ],
+          "annotation": "banner `warning` del shell (O-03). También aparece si «Empezar» responde `no_session` (CA 23)"
         },
         {
           "name": "link-volver",
@@ -5670,7 +5672,7 @@
           "name": "loader",
           "type": "loader",
           "category": "feedback",
-          "content": "Cargando Grep Grid…",
+          "content": "$ cargando grep-grid…",
           "visible_only_in_states": [
             "loading"
           ]
@@ -5679,8 +5681,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos cargar el desafío de Grep Grid. Revisá tu conexión e intentá de nuevo.",
           "kind": "error",
+          "content": "No pudimos cargar el desafío de Grep Grid. Revisá tu conexión e intentá de nuevo.",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -5693,34 +5695,41 @@
           "variant": "secondary",
           "icon": "refresh",
           "visible_only_in_states": [
-            "error de sistema"
-          ]
+            "error de sistema",
+            "sin sesión"
+          ],
+          "annotation": "en `error de sistema` recarga el desafío",
+          "state_overrides": {
+            "sin sesión": {
+              "annotation": "recrea la sesión y reintenta «Empezar»"
+            }
+          }
         },
         {
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
+          "content": "> nerdose — una plataforma, múltiples desafíos. · exit 0",
           "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
           "banner-cookies",
           "titulo",
           "meta",
+          "aviso-dia-nuevo",
           "alerta-sin-desafio",
           "alerta-anulado",
           "loader",
           "alerta-sistema",
-          "btn-reintentar",
           "reglas-titulo",
           "paso-1",
           "paso-2",
           "paso-3",
           "aviso-conteo",
           "btn-empezar",
+          "btn-reintentar",
           "link-volver"
         ],
         "desktop": [
@@ -5737,11 +5746,11 @@
                 "stack": [
                   "titulo",
                   "meta",
+                  "aviso-dia-nuevo",
                   "alerta-sin-desafio",
                   "alerta-anulado",
                   "loader",
                   "alerta-sistema",
-                  "btn-reintentar",
                   "reglas-titulo",
                   {
                     "row": "pasos",
@@ -5773,7 +5782,8 @@
                       {
                         "w": 6,
                         "stack": [
-                          "btn-empezar"
+                          "btn-empezar",
+                          "btn-reintentar"
                         ]
                       },
                       {
@@ -5797,6 +5807,10 @@
       "states": [
         {
           "name": "default",
+          "applies": true
+        },
+        {
+          "name": "día nuevo",
           "applies": true
         },
         {
@@ -5832,27 +5846,8 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose / Grep Grid · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose / Grep Grid     ./juegos   ./stats   ./about     #8     ES | EN"
-            }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
+          "content": "> nerdose / grep-grid · desafío del 30/10 · [?] [stats] [Compartir] ES|EN · 🔥 4",
+          "annotation": "`game-header` variant `playing` (REQ-005): «Cómo se juega» → consigna y hint de esta pantalla · «Estadísticas» → estadisticas · Compartir deshabilitado («disponible al terminar la partida») · ES|EN sin perder la partida: cambian las definiciones de las encontradas, la grilla y las palabras no (CA 19) · racha global. Sin nav global ni `nav-movil`"
         },
         {
           "name": "titulo",
@@ -5866,81 +5861,145 @@
           ]
         },
         {
-          "name": "contador",
-          "type": "heading",
+          "name": "consigna",
+          "type": "paragraph",
           "category": "content",
-          "content": "3/8 encontradas",
-          "level": "h2",
+          "level": "caption",
+          "content": "$ grep -o '[A-Z]*' hoy.txt · tocá la primera y la última letra de cada palabra",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "prompt del prototipo en Mono 13 `text.dim`; la segunda parte es la consigna en Inter. Sin «tu tiempo final es tu puntaje» (C-22)"
+        },
+        {
+          "name": "contador",
+          "type": "card",
+          "category": "content",
+          "content": "3/8 encontradas",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "`card` variant `counter` con el valor en el acento del juego; `role=status`. Al retomar muestra el valor real de la Play (CA 14). Sin tarjeta de tiempo (decisión #6)"
         },
         {
           "name": "grilla",
           "type": "image",
           "category": "content",
-          "content": "Grilla 12×12 · tocá la primera y la última letra de cada palabra",
+          "content": "Grilla 12×12 · 144 letras A–Z · las celdas de las palabras encontradas quedan marcadas",
           "aspect_ratio": "1:1",
-          "h": 320,
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
-          "annotation": "a 320 px las celdas se escalan al ancho; la selección en reversa se rechaza"
+          "annotation": "pattern `grep-grid.board` / `grep-grid.cell` (`role=grid`, roving tabindex). Primer toque marca la celda inicial; el segundo envía `{ from, to }` y el servidor decide; tocar de nuevo la inicial la desmarca. Encontradas: relleno del acento + peso/glifo (NFR-U04). Nunca se pintan palabras no encontradas (RF 2, CA 15). A 320 px las celdas escalan al ancho, sin scroll horizontal (CA 36)",
+          "state_overrides": {
+            "primera letra marcada": {
+              "annotation": "la celda inicial se muestra en el estado «inicio seleccionado» del DS (tinte + borde del acento); Escape o tocar la misma celda la desmarca sin enviar nada"
+            },
+            "anulado": {
+              "annotation": "bloqueada: no acepta toques ni teclado"
+            }
+          }
         },
         {
-          "name": "alerta-seleccion",
+          "name": "hint-jugada",
+          "type": "paragraph",
+          "category": "feedback",
+          "level": "caption",
+          "content": "> tocá la primera letra de una palabra",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "`grep-grid.hint`: Mono 13 `text.dim`, siempre montada con `min-height`, `aria-live=polite`. Hint del juego, no error: sin rojo ni shake. Al encontrar una palabra anuncia «> DOCKER encontrada · 4/8»; `already_found` no muestra aviso (CA 7)",
+          "state_overrides": {
+            "primera letra marcada": {
+              "content": "> ahora tocá la última letra"
+            },
+            "error de validación": {
+              "content": "> no es una palabra de la lista, probá de nuevo",
+              "annotation": "`feedback.reason = not_a_word`: una línea válida hacia adelante que no coincide exactamente con una de las 8 palabras (incluido un tramo parcial). Sin penalización ni cambio de estado (CA 6)"
+            },
+            "selección inválida": {
+              "content": "> las palabras se marcan de la primera a la última letra, hacia adelante",
+              "annotation": "`422 invalid_move`: selección en reversa, no alineada, de una sola celda o fuera de la grilla. La partida no cambia (CA 4, 8)"
+            },
+            "límite de jugadas": {
+              "content": "> vas muy rápido. Esperá unos segundos y probá de nuevo",
+              "annotation": "HTTP 429 con mensaje genérico; la selección no se procesa (CA 24, NFR-S08)"
+            }
+          }
+        },
+        {
+          "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "content": "No es una palabra. Probá con otra selección.",
           "kind": "warning",
+          "icon": "warning",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "visible_only_in_states": [
-            "error de validación"
-          ]
+            "anulado"
+          ],
+          "annotation": "aparece si una selección responde `challenge_voided` (CA 22); la grilla queda bloqueada y «Rendirse» se oculta"
+        },
+        {
+          "name": "banner-cookies",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "warning",
+          "icon": "warning",
+          "content": "Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».",
+          "visible_only_in_states": [
+            "sin sesión"
+          ],
+          "annotation": "banner `warning` (O-03); aparece si una selección responde `no_session` (CA 23). La selección no se procesa"
         },
         {
           "name": "lista-palabras",
           "type": "list",
           "category": "content",
+          "content": "// palabras de hoy",
+          "items": [
+            {
+              "title": "DOCKER ✓",
+              "subtitle": "Plataforma para empaquetar y ejecutar aplicaciones en contenedores."
+            },
+            {
+              "title": "KERNEL",
+              "subtitle": "6 letras"
+            },
+            {
+              "title": "CACHE ✓",
+              "subtitle": "Almacén temporal que guarda resultados para responder más rápido."
+            },
+            {
+              "title": "MUTEX",
+              "subtitle": "5 letras"
+            },
+            {
+              "title": "LAMBDA",
+              "subtitle": "6 letras"
+            },
+            {
+              "title": "COMMIT ✓",
+              "subtitle": "Registro de un conjunto de cambios en el historial de un repositorio."
+            },
+            {
+              "title": "SOCKET",
+              "subtitle": "6 letras"
+            },
+            {
+              "title": "PARSER",
+              "subtitle": "6 letras"
+            }
+          ],
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
-          "items": [
-            {
-              "title": "✓ parser",
-              "subtitle": "analiza texto según una gramática"
-            },
-            {
-              "title": "✓ stack",
-              "subtitle": "pila LIFO"
-            },
-            {
-              "title": "✓ regex",
-              "subtitle": "patrón de búsqueda"
-            },
-            {
-              "title": "· ·····  (5 letras)",
-              "subtitle": "sin encontrar"
-            },
-            {
-              "title": "· ····  (4 letras)",
-              "subtitle": "sin encontrar"
-            },
-            {
-              "title": "· ·······  (7 letras)",
-              "subtitle": "sin encontrar"
-            },
-            {
-              "title": "· ······  (6 letras)",
-              "subtitle": "sin encontrar"
-            },
-            {
-              "title": "· ····  (4 letras)",
-              "subtitle": "sin encontrar"
-            }
-          ]
+          "annotation": "pattern `grep-grid.word`, orden fijo del servidor. Pendiente = nombre + «{n} letras»; encontrada = nombre tachado, ✓ y definición en el idioma activo (RF 4). Las definiciones pendientes no llegan al cliente hasta el cierre (RF 2). La cabecera `//` es `h2`"
         },
         {
           "name": "btn-rendirse",
@@ -5951,9 +6010,10 @@
           "icon": "close",
           "hidden_in_states": [
             "loading",
-            "error de sistema"
+            "error de sistema",
+            "anulado"
           ],
-          "annotation": "separado visualmente de la grilla para evitar un toque accidental"
+          "annotation": "`button` `outline-tinted` con tinte de error (destructiva suave, sin relleno rojo). Separado de la grilla para evitar un toque accidental (CA 36). Abre O-04; disponible desde 0/8 (CA 12). Deshabilitado mientras se envía la rendición"
         },
         {
           "name": "link-reportar",
@@ -5961,17 +6021,17 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "O-01 llega con FG-6: hasta entonces no se renderiza. Si ya reportó muestra «Ya reportado» (`already_reported`)"
         },
         {
           "name": "loader",
           "type": "loader",
           "category": "feedback",
-          "content": "Cargando tu partida de Grep Grid…",
+          "content": "$ cargando tu partida de grep-grid…",
           "visible_only_in_states": [
             "loading"
           ]
@@ -5980,11 +6040,12 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.",
           "kind": "error",
+          "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.",
           "visible_only_in_states": [
             "error de sistema"
-          ]
+          ],
+          "annotation": "también cubre una selección que falla por red o 500: la selección no se registra y la grilla vuelve al último estado del servidor"
         },
         {
           "name": "btn-reintentar",
@@ -5994,33 +6055,53 @@
           "variant": "secondary",
           "icon": "refresh",
           "visible_only_in_states": [
-            "error de sistema"
-          ]
+            "error de sistema",
+            "sin sesión"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "annotation": "recrea la sesión y reenvía la selección"
+            }
+          }
         },
         {
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · exit 0",
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
+          "banner-cookies",
           "titulo",
+          "consigna",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
+          "alerta-anulado",
           "contador",
           "grilla",
-          "alerta-seleccion",
-          "lista-palabras",
+          "hint-jugada",
+          {
+            "row": "palabras",
+            "card": true,
+            "title": "// palabras de hoy",
+            "cols": [
+              {
+                "w": 12,
+                "stack": [
+                  "lista-palabras"
+                ]
+              }
+            ]
+          },
           "btn-rendirse",
           "link-reportar"
         ],
         "desktop": [
-          "titulo",
+          "banner-cookies",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
@@ -6030,15 +6111,30 @@
               {
                 "w": 7,
                 "stack": [
+                  "titulo",
+                  "consigna",
+                  "alerta-anulado",
                   "contador",
                   "grilla",
-                  "alerta-seleccion"
+                  "hint-jugada"
                 ]
               },
               {
                 "w": 5,
                 "stack": [
-                  "lista-palabras",
+                  {
+                    "row": "palabras",
+                    "card": true,
+                    "title": "// palabras de hoy",
+                    "cols": [
+                      {
+                        "w": 12,
+                        "stack": [
+                          "lista-palabras"
+                        ]
+                      }
+                    ]
+                  },
                   "btn-rendirse",
                   "link-reportar"
                 ]
@@ -6053,7 +6149,27 @@
           "applies": true
         },
         {
+          "name": "primera letra marcada",
+          "applies": true
+        },
+        {
           "name": "error de validación",
+          "applies": true
+        },
+        {
+          "name": "selección inválida",
+          "applies": true
+        },
+        {
+          "name": "límite de jugadas",
+          "applies": true
+        },
+        {
+          "name": "anulado",
+          "applies": true
+        },
+        {
+          "name": "sin sesión",
           "applies": true
         },
         {
@@ -6077,27 +6193,26 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose / Grep Grid · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose / Grep Grid     ./juegos   ./stats   ./about     #8     ES | EN"
+          "content": "> nerdose / grep-grid · desafío del 30/10 · [stats] [Compartir] ES|EN · 🔥 4",
+          "annotation": "`game-header` variant `finished` (REQ-005): Compartir activo con el acento del juego (único botón de compartir de la pantalla; texto en tres líneas: «🔎 Grep Grid #8», «5/8» y «nerdose.dev», nunca las palabras ni si el jugador se rindió, CA 16) · «Estadísticas» → estadisticas · ES|EN cambia solo las definiciones · racha global actualizada. Sin «Cómo se juega», sin nav global ni `nav-movil`",
+          "state_overrides": {
+            "success": {
+              "content": "> nerdose / grep-grid · desafío del 30/10 · [stats] [✓ Copiado] ES|EN · 🔥 4",
+              "annotation": "✓ Copiado: pegalo donde quieras. — confirmación en el mismo botón Compartir (`role=status`) durante unos segundos; vuelve a «Compartir»"
+            },
+            "anulado": {
+              "content": "> nerdose / grep-grid · desafío del 30/10 · [stats] ES|EN · 🔥 4",
+              "annotation": "`game-header` variant `finished`: Compartir no se muestra en este estado"
+            },
+            "loading": {
+              "content": "> nerdose / grep-grid · desafío del 30/10 · [stats] ES|EN · 🔥 4",
+              "annotation": "`game-header` variant `finished`: Compartir no se muestra en este estado"
+            },
+            "error de sistema": {
+              "content": "> nerdose / grep-grid · desafío del 30/10 · [stats] ES|EN · 🔥 4",
+              "annotation": "`game-header` variant `finished`: Compartir no se muestra en este estado"
             }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
+          }
         },
         {
           "name": "veredicto",
@@ -6105,13 +6220,17 @@
           "category": "content",
           "content": "8/8: las encontraste todas",
           "level": "h1",
+          "icon": "check",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
+          "annotation": "banner `success` del DS al ganar / `failure` al rendirse, sin drama; el veredicto se dice con texto además del color. Victoria solo con 8/8 (RF 13)",
           "state_overrides": {
             "perdió": {
-              "content": "Te rendiste: 6/8"
+              "content": "Te rendiste con 5/8",
+              "icon": "x",
+              "annotation": "banner `failure`; rendirse también suma a la racha. Con 0/8 dice «Te rendiste con 0/8» (CA 12)"
             },
             "anulado": {
               "content": "Desafío anulado"
@@ -6122,101 +6241,127 @@
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "kind": "warning",
+          "icon": "warning",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "visible_only_in_states": [
             "anulado"
-          ]
+          ],
+          "annotation": "la anulación llega con FG-6; en REQ-005 solo se respeta el estado al leer"
         },
         {
           "name": "grilla-final",
           "type": "image",
           "category": "content",
-          "content": "Grilla 12×12 con las palabras faltantes reveladas",
+          "content": "Grilla 12×12 · las 8 palabras marcadas · encontradas con relleno y ✓ · reveladas con borde punteado y ○",
           "aspect_ratio": "1:1",
-          "h": 280,
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
-          "name": "lista-palabras",
-          "type": "list",
-          "category": "content",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
-          "items": [
-            {
-              "title": "parser",
-              "subtitle": "analiza texto según una gramática"
-            },
-            {
-              "title": "stack",
-              "subtitle": "pila LIFO"
-            },
-            {
-              "title": "regex",
-              "subtitle": "patrón de búsqueda"
-            },
-            {
-              "title": "kernel",
-              "subtitle": "núcleo del sistema operativo"
-            },
-            {
-              "title": "cache",
-              "subtitle": "almacenamiento rápido temporal"
-            },
-            {
-              "title": "queue",
-              "subtitle": "cola FIFO"
-            },
-            {
-              "title": "socket",
-              "subtitle": "extremo de una conexión"
-            },
-            {
-              "title": "mutex",
-              "subtitle": "exclusión mutua"
-            }
-          ]
-        },
-        {
-          "name": "card-rachas",
-          "type": "card",
-          "category": "content",
-          "content": "Rachas",
-          "paragraph": "Grep Grid: 3 días · Global: 4 días",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
-          "name": "btn-compartir",
-          "type": "button",
-          "category": "input",
-          "content": "Compartir",
-          "variant": "primary",
-          "icon": "share",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
           ],
-          "annotation": "share nativo del sistema; si no está disponible copia al portapapeles"
+          "annotation": "pattern `grep-grid.cell`, solo lectura. Encontradas: relleno del acento + glifo; reveladas (solo si se rindió): borde punteado del acento + glifo distinto, sin relleno, `aria-label` «{letra}, {encontrada|revelada}» (RF 13, NFR-U04). Las posiciones llegan con el cierre (`result.words[].cells`). Al ganar no hay reveladas",
+          "state_overrides": {
+            "perdió": {
+              "annotation": "las 3 palabras faltantes aparecen reveladas: borde punteado + ○, distintas de las 5 encontradas (CA 10)"
+            }
+          }
         },
         {
-          "name": "toast-copiado",
-          "type": "toast",
-          "category": "feedback",
-          "content": "Copiado",
-          "kind": "success",
-          "visible_only_in_states": [
-            "success"
-          ]
+          "name": "lista-palabras",
+          "type": "list",
+          "category": "content",
+          "content": "// palabras de hoy",
+          "items": [
+            {
+              "title": "DOCKER · ✓ encontrada",
+              "subtitle": "Plataforma para empaquetar y ejecutar aplicaciones en contenedores."
+            },
+            {
+              "title": "KERNEL · ✓ encontrada",
+              "subtitle": "Núcleo del sistema operativo: administra el hardware y los procesos."
+            },
+            {
+              "title": "CACHE · ✓ encontrada",
+              "subtitle": "Almacén temporal que guarda resultados para responder más rápido."
+            },
+            {
+              "title": "MUTEX · ✓ encontrada",
+              "subtitle": "Mecanismo que evita que dos hilos usen un recurso al mismo tiempo."
+            },
+            {
+              "title": "LAMBDA · ✓ encontrada",
+              "subtitle": "Función anónima, definida sin nombre en el lugar donde se usa."
+            },
+            {
+              "title": "COMMIT · ✓ encontrada",
+              "subtitle": "Registro de un conjunto de cambios en el historial de un repositorio."
+            },
+            {
+              "title": "SOCKET · ✓ encontrada",
+              "subtitle": "Extremo de una conexión de red entre dos procesos."
+            },
+            {
+              "title": "PARSER · ✓ encontrada",
+              "subtitle": "Programa que analiza un texto según una gramática formal."
+            }
+          ],
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "pattern `grep-grid.word`; las 8 con definición en el idioma activo (RF 13, CA 19). Las reveladas llevan «○ no la encontraste» en lugar del largo: se distinguen por texto y glifo, no solo por color. La cabecera `//` es `h2`",
+          "state_overrides": {
+            "perdió": {
+              "items": [
+                {
+                  "title": "DOCKER · ✓ encontrada",
+                  "subtitle": "Plataforma para empaquetar y ejecutar aplicaciones en contenedores."
+                },
+                {
+                  "title": "KERNEL · ○ no la encontraste",
+                  "subtitle": "Núcleo del sistema operativo: administra el hardware y los procesos."
+                },
+                {
+                  "title": "CACHE · ✓ encontrada",
+                  "subtitle": "Almacén temporal que guarda resultados para responder más rápido."
+                },
+                {
+                  "title": "MUTEX · ○ no la encontraste",
+                  "subtitle": "Mecanismo que evita que dos hilos usen un recurso al mismo tiempo."
+                },
+                {
+                  "title": "LAMBDA · ○ no la encontraste",
+                  "subtitle": "Función anónima, definida sin nombre en el lugar donde se usa."
+                },
+                {
+                  "title": "COMMIT · ✓ encontrada",
+                  "subtitle": "Registro de un conjunto de cambios en el historial de un repositorio."
+                },
+                {
+                  "title": "SOCKET · ✓ encontrada",
+                  "subtitle": "Extremo de una conexión de red entre dos procesos."
+                },
+                {
+                  "title": "PARSER · ✓ encontrada",
+                  "subtitle": "Programa que analiza un texto según una gramática formal."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "card-rachas",
+          "type": "card",
+          "category": "content",
+          "content": "// rachas",
+          "paragraph": "Grep Grid: 3 días · Global: 4 días · récord Grep Grid: 7",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "rachas que devuelve el cierre (rendirse también suma, CA 10, 17); al reabrir se leen con la racha viva. La stat propia (promedio de palabras y % de 8/8) se muestra en `estadisticas` (FG-10), no acá"
         },
         {
           "name": "link-reportar",
@@ -6224,22 +6369,23 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "O-01 llega con FG-6: hasta entonces no se renderiza. Si ya reportó muestra «Ya reportado» (`already_reported`)"
         },
         {
           "name": "cuenta-regresiva",
           "type": "paragraph",
           "category": "content",
-          "content": "Próximo desafío en 05:42:10",
           "level": "caption",
+          "content": "Próximo desafío en 05:42:10",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "al llegar a 0 recarga el día (Grep Grid vuelve a instrucciones del desafío nuevo)"
         },
         {
           "name": "btn-siguiente",
@@ -6250,8 +6396,10 @@
           "icon": "arrow-right",
           "hidden_in_states": [
             "loading",
-            "error de sistema"
-          ]
+            "error de sistema",
+            "sin juegos pendientes"
+          ],
+          "annotation": "lleva al próximo juego con desafío y sin completar; si no hay ninguno, no se muestra"
         },
         {
           "name": "link-stats",
@@ -6279,7 +6427,7 @@
           "name": "loader",
           "type": "loader",
           "category": "feedback",
-          "content": "Cargando tu resultado de Grep Grid…",
+          "content": "$ cargando tu resultado de grep-grid…",
           "visible_only_in_states": [
             "loading"
           ]
@@ -6288,8 +6436,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
           "kind": "error",
+          "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -6309,31 +6457,39 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · exit 0",
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
           "veredicto",
           "alerta-anulado",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
           "grilla-final",
-          "lista-palabras",
+          {
+            "row": "palabras",
+            "card": true,
+            "title": "// palabras de hoy",
+            "cols": [
+              {
+                "w": 12,
+                "stack": [
+                  "lista-palabras"
+                ]
+              }
+            ]
+          },
           "card-rachas",
-          "btn-compartir",
-          "toast-copiado",
+          "link-stats",
           "link-reportar",
           "cuenta-regresiva",
           "btn-siguiente",
-          "link-stats",
           "link-volver"
         ],
         "desktop": [
-          "veredicto",
           "alerta-anulado",
           "loader",
           "alerta-sistema",
@@ -6344,41 +6500,53 @@
               {
                 "w": 7,
                 "stack": [
-                  "grilla-final"
+                  "veredicto",
+                  "grilla-final",
+                  {
+                    "row": "salida",
+                    "card": true,
+                    "cols": [
+                      {
+                        "w": 6,
+                        "stack": [
+                          "cuenta-regresiva"
+                        ]
+                      },
+                      {
+                        "w": 3,
+                        "stack": [
+                          "btn-siguiente"
+                        ]
+                      },
+                      {
+                        "w": 3,
+                        "stack": [
+                          "link-volver"
+                        ]
+                      }
+                    ]
+                  }
                 ]
               },
               {
                 "w": 5,
                 "stack": [
-                  "lista-palabras",
+                  {
+                    "row": "palabras",
+                    "card": true,
+                    "title": "// palabras de hoy",
+                    "cols": [
+                      {
+                        "w": 12,
+                        "stack": [
+                          "lista-palabras"
+                        ]
+                      }
+                    ]
+                  },
                   "card-rachas",
-                  "btn-compartir",
-                  "toast-copiado",
-                  "link-reportar"
-                ]
-              }
-            ]
-          },
-          {
-            "row": "salida",
-            "cols": [
-              {
-                "w": 4,
-                "stack": [
-                  "cuenta-regresiva"
-                ]
-              },
-              {
-                "w": 4,
-                "stack": [
-                  "btn-siguiente"
-                ]
-              },
-              {
-                "w": 4,
-                "stack": [
                   "link-stats",
-                  "link-volver"
+                  "link-reportar"
                 ]
               }
             ]
@@ -6392,6 +6560,10 @@
         },
         {
           "name": "perdió",
+          "applies": true
+        },
+        {
+          "name": "sin juegos pendientes",
           "applies": true
         },
         {
@@ -6767,36 +6939,57 @@
           "type": "header",
           "category": "layout",
           "content": "¿Rendirte?",
-          "icon": "close"
+          "icon": "close",
+          "annotation": "`h2` del `alertdialog`; el ícono cierra como «Seguir jugando»"
         },
         {
           "name": "texto",
           "type": "paragraph",
           "category": "content",
-          "content": "Vas a cerrar la partida con 3/8. Cuenta para tu racha y te mostramos las palabras que faltan. No se puede deshacer.",
           "level": "body",
-          "annotation": "sugerencia fuera de PRD: a validar (pregunta 6 del product-map)"
-        },
-        {
-          "name": "btn-rendirme",
-          "type": "button",
-          "category": "input",
-          "content": "Sí, rendirme",
-          "variant": "error"
+          "content": "Vas a cerrar la partida con 3/8. Cuenta para tu racha y te mostramos las palabras que faltan. No se puede deshacer.",
+          "annotation": "`N` es el valor real del contador al abrir el modal. Confirmado por REQ-005 (decisión #26 del PRD): rendirse es irreversible",
+          "state_overrides": {
+            "sin palabras": {
+              "content": "Vas a cerrar la partida con 0/8. Cuenta para tu racha igual y te mostramos las 8 palabras. No se puede deshacer.",
+              "annotation": "rendirse con 0/8 está permitido y también completa el día (CA 12)"
+            }
+          }
         },
         {
           "name": "btn-seguir",
           "type": "button",
           "category": "input",
           "content": "Seguir jugando",
-          "variant": "secondary"
+          "variant": "primary",
+          "annotation": "`button` `primary` del DS (avanzar = verde); foco inicial y salida por defecto (Escape). No envía nada",
+          "state_overrides": {
+            "loading": {
+              "variant": "disabled"
+            }
+          }
+        },
+        {
+          "name": "btn-rendirme",
+          "type": "button",
+          "category": "input",
+          "content": "Sí, rendirme",
+          "variant": "error",
+          "annotation": "`button` `outline-tinted` con tinte de error del DS; envía `{ type: give_up }`",
+          "state_overrides": {
+            "loading": {
+              "variant": "disabled",
+              "content": "Cerrando…",
+              "annotation": "la rendición está en vuelo; el modal no se puede cerrar hasta que responda"
+            }
+          }
         }
       ],
       "layouts": {
         "mobile": [
           "texto",
-          "btn-rendirme",
-          "btn-seguir"
+          "btn-seguir",
+          "btn-rendirme"
         ],
         "desktop": [
           {
@@ -6810,8 +7003,23 @@
                 "w": 6,
                 "stack": [
                   "texto",
-                  "btn-rendirme",
-                  "btn-seguir"
+                  {
+                    "row": "acciones",
+                    "cols": [
+                      {
+                        "w": 6,
+                        "stack": [
+                          "btn-seguir"
+                        ]
+                      },
+                      {
+                        "w": 6,
+                        "stack": [
+                          "btn-rendirme"
+                        ]
+                      }
+                    ]
+                  }
                 ]
               },
               {
@@ -6825,6 +7033,14 @@
       "states": [
         {
           "name": "default",
+          "applies": true
+        },
+        {
+          "name": "sin palabras",
+          "applies": true
+        },
+        {
+          "name": "loading",
           "applies": true
         }
       ]
@@ -7222,6 +7438,14 @@
     },
     {
       "src": "grep-grid-instrucciones",
+      "srcState": "día nuevo",
+      "srcBlock": "btn-empezar",
+      "dst": "grep-grid-partida",
+      "trigger": "Empezar",
+      "automatic": false
+    },
+    {
+      "src": "grep-grid-instrucciones",
       "srcState": "default",
       "srcBlock": "link-volver",
       "dst": "home",
@@ -7239,6 +7463,14 @@
     {
       "src": "grep-grid-partida",
       "srcState": "default",
+      "srcBlock": "btn-rendirse",
+      "dst": "o-04-rendirse",
+      "trigger": "Rendirse",
+      "automatic": false
+    },
+    {
+      "src": "grep-grid-partida",
+      "srcState": "default",
       "srcBlock": "link-reportar",
       "dst": "o-01-reportar",
       "trigger": "Reportar un problema",
@@ -7247,10 +7479,24 @@
     {
       "src": "grep-grid-partida",
       "srcState": "default",
-      "srcBlock": "btn-rendirse",
-      "dst": "o-04-rendirse",
-      "trigger": "Rendirse",
-      "automatic": false
+      "srcBlock": "grilla",
+      "dst": "grep-grid-resultado",
+      "trigger": "8/8 encontradas",
+      "automatic": true
+    },
+    {
+      "src": "grep-grid-partida",
+      "srcState": "default",
+      "dst": "grep-grid-resultado",
+      "trigger": "game_finished",
+      "automatic": true
+    },
+    {
+      "src": "grep-grid-partida",
+      "srcState": "default",
+      "dst": "grep-grid-instrucciones",
+      "trigger": "challenge_expired (día nuevo)",
+      "automatic": true
     },
     {
       "src": "grep-grid-resultado",
@@ -7285,28 +7531,11 @@
       "automatic": false
     },
     {
-      "src": "grep-grid-partida",
+      "src": "grep-grid-resultado",
       "srcState": "default",
-      "srcBlock": "grilla",
-      "dst": "grep-grid-resultado",
-      "trigger": "8/8 encontradas",
+      "dst": "grep-grid-instrucciones",
+      "trigger": "cuenta regresiva en 0",
       "automatic": true
-    },
-    {
-      "src": "o-02-anulado",
-      "srcState": "default",
-      "srcBlock": "btn-marcar",
-      "dst": "devdle-resultado",
-      "trigger": "Marcar como completado (→ {juego}-resultado anulado)",
-      "automatic": false
-    },
-    {
-      "src": "o-02-anulado",
-      "srcState": "default",
-      "srcBlock": "btn-cerrar",
-      "dst": "home",
-      "trigger": "Cerrar",
-      "automatic": false
     },
     {
       "src": "o-04-rendirse",
@@ -7322,6 +7551,30 @@
       "srcBlock": "btn-seguir",
       "dst": "grep-grid-partida",
       "trigger": "Seguir jugando",
+      "automatic": false
+    },
+    {
+      "src": "o-04-rendirse",
+      "srcState": "default",
+      "srcBlock": "header",
+      "dst": "grep-grid-partida",
+      "trigger": "cerrar (= Seguir jugando)",
+      "automatic": false
+    },
+    {
+      "src": "o-02-anulado",
+      "srcState": "default",
+      "srcBlock": "btn-marcar",
+      "dst": "devdle-resultado",
+      "trigger": "Marcar como completado (→ {juego}-resultado anulado)",
+      "automatic": false
+    },
+    {
+      "src": "o-02-anulado",
+      "srcState": "default",
+      "srcBlock": "btn-cerrar",
+      "dst": "home",
+      "trigger": "Cerrar",
       "automatic": false
     },
     {

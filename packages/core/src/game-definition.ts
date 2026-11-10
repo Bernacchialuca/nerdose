@@ -15,6 +15,7 @@ export type MoveError = 'invalid_move' | 'not_in_word_list';
 
 export interface MoveContext {
   isValidWord(word: string): boolean;
+  locale: Locale;
 }
 
 export interface GameDefinition<Payload, PublicView, State, Move, Feedback, Result, Stats> {
@@ -22,7 +23,7 @@ export interface GameDefinition<Payload, PublicView, State, Move, Feedback, Resu
   version: number;
   moveSchema: z.ZodType<Move>;
 
-  toPublic(p: Payload, locale: Locale): PublicView;
+  toPublic(p: Payload, locale: Locale, state?: State): PublicView;
   initState(p: Payload, now: Date): State;
   applyMove(
     p: Payload,

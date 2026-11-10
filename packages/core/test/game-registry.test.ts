@@ -4,7 +4,7 @@ import { AppError } from '../src/errors';
 import { GAME_IDS } from '../src/game-definition';
 import type { GameId } from '../src/game-definition';
 import { createGameRegistry } from '../src/game-registry';
-import { makeDefinition } from './fixtures/fake-definition';
+import { makeDefinition, makeLocalizedDefinition } from './fixtures/fake-definition';
 
 function catchError(fn: () => unknown): unknown {
   try {
@@ -69,5 +69,24 @@ describe('createGameRegistry', () => {
     expect(error).toBeInstanceOf(Error);
     expect(error).not.toBeInstanceOf(AppError);
     expect((error as Error).message).toBe('Unknown game id in registry: chess');
+  });
+
+  it('accepts definitions with and without state in toPublic (S-022 TS-22)', () => {
+    const payload = {
+      word: 'DOCKER',
+      definition: { es: 'plataforma de contenedores', en: 'container platform' },
+    };
+    const games = createGameRegistry([
+      makeDefinition('devdle'),
+      { ...makeLocalizedDefinition(), id: 'grep-grid' },
+    ]);
+    expect(games.ids()).toEqual(['devdle', 'grep-grid']);
+    expect(games.get('devdle').toPublic({ word: 'REACT' }, 'es', { attempts: 2 })).toEqual({
+      length: 5,
+    });
+    expect(games.get('grep-grid').toPublic(payload, 'en', { found: true })).toEqual({
+      length: 6,
+      definition: 'container platform',
+    });
   });
 });

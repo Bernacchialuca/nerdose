@@ -4,8 +4,8 @@ title: Abrir el juego de hoy, empezar y retomar
 type: feature
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-03
-stories: []
+last_updated: 2026-11-10
+stories: [S-022, S-023, S-024]
 ---
 
 # Abrir el juego de hoy, empezar y retomar
@@ -13,8 +13,8 @@ stories: []
 **Tipo:** Feature
 **Status:** Draft
 **Creado:** 2026-11-03
-**Última actualización:** 2026-11-03
-**Stories:** —
+**Última actualización:** 2026-11-10
+**Stories:** S-022, S-023, S-024
 
 ## Descripción
 
@@ -37,8 +37,8 @@ sequenceDiagram
     participant DB as nerdose-db
 
     W->>A: GET /api/games/{game_id}/today
-    A->>A: challenge de hoy (cache) → toPublic(payload)
     A->>DB: SELECT plays WHERE player_id AND challenge_id
+    A->>A: challenge de hoy (cache) → toPublic(payload, locale, state)
     A-->>W: 200 GameToday { challenge_status, public_view, play, result }
     alt challenge_status = none
         W->>W: "sin desafío hoy"
@@ -82,18 +82,18 @@ sequenceDiagram
     "date": "string (date)",
     "number": "integer",
     "challenge_status": "published | voided | none",
-    "public_view": "PublicView | null — toPublic(challenges.payload) en el locale; null si none o voided",
+    "public_view": "PublicView | null — toPublic(challenges.payload, locale, state) en el locale; null si none o voided",
     "play": "null | { status, state, score, code_language }",
     "result": "null | Result — result(challenges.payload, plays.state) si la Play terminó"
   }
   ```
 
-`public_view` por juego (sin solución, ADR-006):
+`public_view = toPublic(payload, locale, state)`: la `api` pasa `plays.state` solo si la Play está `in_progress`; si no hay Play o ya terminó, `state` es `undefined`. `public_view` por juego (sin solución, ADR-006):
 
 | game_id | `public_view` |
 |---|---|
 | devdle | `{ length, possible_categories[] }` |
-| grep-grid | `{ grid: string[12][12], words: [{ term_id, word }] ×8 }` |
+| grep-grid | `{ grid: string[12][12], words: [{ term_id, word, definition? }] ×8 }` — `definition` solo en las palabras ya encontradas (`term_id` presentes en `plays.state.found_words`), en el locale resuelto; nunca en las no encontradas ni sin Play |
 | timeline | `{ category, prompt, items: [{ opaque_id, label }] ×5 }` (mezclados) |
 | big-o | `{ code: { js, go, java }, options: big_o_option[8] }` |
 | bug-hunt | `{ spec, code: { js, go, java }, pickable_lines: int[], visible_tests: [{ input, expected }] }` |
@@ -122,6 +122,8 @@ sequenceDiagram
 - **Tabla:** `plays`
 - **Operación:** INSERT … ON CONFLICT (`player_id`, `challenge_id`) DO NOTHING, y después SELECT
 - **Campos:** `player_id`, `challenge_id`, `game_id`, `date`, `state = initState(payload)`, `status = 'in_progress'`, `started_at`
+
+`state` inicial por juego: devdle `{ guesses: [] }`; grep-grid `{ found_words: [], gave_up: false }`; timeline, big-o y bug-hunt `{}`.
 
 **Evento de dominio:** `PlayStarted` (`play_id`, `player_id`, `challenge_id`), solo en los logs.
 
@@ -174,4 +176,5 @@ sequenceDiagram
 
 - `/start` es idempotente: dos pestañas o un doble toque no crean dos Play.
 - La `api` nunca serializa `challenges.payload` al jugador. Antes de terminar, solo `public_view`. Después, `result`.
+- En Grep Grid, al retomar o al cambiar de idioma, las definiciones de las palabras encontradas salen de `public_view.words[].definition`; `plays.state.found_words` guarda solo `{ term_id, cells }` (REQ-005).
 - Si `POST …/move` llega sin una Play creada, la crea igual que `/start` (ver `jugada-y-cierre-de-partida`).

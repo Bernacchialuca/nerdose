@@ -42,3 +42,37 @@ export function makeWordDefinition(): FakeDefinition {
         : { error: 'not_in_word_list' },
   };
 }
+
+export type LocalizedDefinition = GameDefinition<
+  { word: string; definition: { es: string; en: string } },
+  { length: number; definition?: string },
+  { found: boolean },
+  { guess: string },
+  { ok: boolean; definition: string },
+  { won: boolean },
+  { played: number }
+>;
+
+export function makeLocalizedDefinition(): LocalizedDefinition {
+  return {
+    id: 'grep-grid',
+    version: 1,
+    moveSchema: z.object({ guess: z.string() }),
+    toPublic: (p, locale, state) =>
+      state?.found
+        ? { length: p.word.length, definition: p.definition[locale] }
+        : { length: p.word.length },
+    initState: () => ({ found: false }),
+    applyMove: (p, s, m, _now, ctx) => ({
+      state: { found: s.found || m.guess === p.word },
+      feedback: { ok: m.guess === p.word, definition: p.definition[ctx.locale] },
+    }),
+    isFinished: (s) => s.found,
+    result: (_p, s) => ({ won: s.found }),
+    isWin: (r) => r.won,
+    score: (r) => (r.won ? 1 : 0),
+    initialStats: () => ({ played: 0 }),
+    reduceStats: (prev) => ({ played: prev.played + 1 }),
+    historyLabel: (r) => (r.won ? '1/1' : '0/1'),
+  };
+}

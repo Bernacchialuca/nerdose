@@ -111,3 +111,11 @@ Each game has a test that serializes `toPublic(payload)` and every pre-result re
 
 - `applyMove(p, s, m, now, ctx: MoveContext)`: `ctx = { isValidWord(word) }` is built by the `api` from `WordList.has`; games that do not need it ignore it.
 - `GameGenerator` declares `historySpec = { bank, lastUsedField, recentDays }` and `usedBankItems(payload)`; the `generator` builds a generic history `{ bankItems, recentChallenges }`, with no per-game logic.
+
+## Update (REQ-005)
+
+- `MoveContext = { isValidWord(word): boolean; locale: Locale }`: the `api` adds the locale it already resolved for `result`. A game uses it to localize `Feedback` (Grep Grid: `feedback.definition`); `Feedback` never carries `{ es, en }` (ADR-015). Devdle ignores it.
+- `toPublic(p, locale, state?)`: the `api` passes `play.state` only when the Play is `in_progress` (`game.toPublic(challenge.payload, locale, play?.status === 'in_progress' ? play.state : undefined)`); with no Play or a finished Play it passes nothing. With a state, `toPublic` may reveal only what the player already discovered in that Play (Grep Grid: `words[].definition` for the `term_id`s in `found_words`) and never anything about what is still hidden.
+- Both changes are additive: games that do not need them keep compiling and behave the same.
+- A move may be valid and leave the state unchanged (Grep Grid: `not_a_word`, `already_found`): `applyMove` returns the same state with a `feedback`, the `api` answers `200` and the idempotent `UPDATE plays SET state` still runs.
+- The anti-spoiler contract test of a game that uses `state` covers `toPublic` with no state, with the initial state and with intermediate states.
