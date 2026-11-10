@@ -1,5 +1,5 @@
 import { challenges } from '@nerdose/db';
-import { asc, eq } from 'drizzle-orm';
+import { asc } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 
 import { runGenerateToday } from '@/domain/challenge-publishing/fill.service';
@@ -28,12 +28,8 @@ function run(options: { nodeEnv?: 'development' | 'production'; launch?: string 
   );
 }
 
-const devdleRows = () =>
-  t.owner.db
-    .select()
-    .from(challenges)
-    .where(eq(challenges.gameId, 'devdle'))
-    .orderBy(asc(challenges.date));
+const allRows = () =>
+  t.owner.db.select().from(challenges).orderBy(asc(challenges.gameId), asc(challenges.date));
 
 beforeEach(async () => {
   await t.reset();
@@ -45,25 +41,36 @@ describe('generate:today (solo dev)', () => {
   it('genera y aprueba el desafío de hoy, y nada más', async () => {
     const { summary, failed } = await run();
     expect(failed).toBe(false);
-    expect(summary).toEqual({ generated: 1, approved: 1, rejected: 0, missing: 0 });
-    const rows = await devdleRows();
-    expect(rows.map((r) => [r.date, r.status, r.number])).toEqual([['2026-12-01', 'approved', 12]]);
+    expect(summary.approved).toBe(2);
+    expect(summary.missing).toBe(0);
+    expect(summary.generated).toBe(summary.approved + summary.rejected);
+    const rows = await allRows();
+    expect(
+      rows.filter((r) => r.status === 'approved').map((r) => [r.gameId, r.date, r.number]),
+    ).toEqual([
+      ['devdle', '2026-12-01', 12],
+      ['grep-grid', '2026-12-01', 12],
+    ]);
   });
 
   it('es idempotente: si hoy ya está cubierto no genera', async () => {
     await run();
     const { summary } = await run();
     expect(summary).toEqual({ generated: 0, approved: 0, rejected: 0, missing: 0 });
-    expect(await devdleRows()).toHaveLength(1);
+    const rows = await allRows();
+    expect(rows.filter((r) => r.status === 'approved').map((r) => r.gameId)).toEqual([
+      'devdle',
+      'grep-grid',
+    ]);
   });
 
   it('se niega a correr en producción', async () => {
     await expect(run({ nodeEnv: 'production' })).rejects.toThrow(/production/);
-    expect(await devdleRows()).toHaveLength(0);
+    expect(await allRows()).toHaveLength(0);
   });
 
   it('se niega a correr antes de LAUNCH_DATE', async () => {
     await expect(run({ launch: '2026-12-05' })).rejects.toThrow(/LAUNCH_DATE/);
-    expect(await devdleRows()).toHaveLength(0);
+    expect(await allRows()).toHaveLength(0);
   });
 });

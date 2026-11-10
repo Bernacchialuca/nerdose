@@ -32,7 +32,13 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 ## insertTerms / BANK16
 - **Location:** apps/generator/test/helpers/bank.ts
 - **Signature:** `insertTerms(ownerDb, specs: TermSpec[])`; `BANK16: TermSpec[]`
-- **Description:** inserts approved `terms` fixtures (`dataset_version: 'test'`); `BANK16` has 2 terms per category.
+- **Description:** inserts approved `terms` fixtures (`dataset_version: 'test'`); `BANK16` has 2 terms per category. `TermSpec` accepts `lastUsedDevdle` and `lastUsedGrep`.
+
+## devdleOnlyRegistry
+- **Location:** apps/generator/test/helpers/registry.ts
+- **Signature:** `devdleOnlyRegistry: GeneratorRegistry`
+- **Description:** registry with only Devdle, for tests that validate Devdle behavior independently of the other registered games.
+- **Usage:** `registry: devdleOnlyRegistry`
 - **Usage:** `await insertTerms(t.owner.db, BANK16)`
 
 ## Dataset fixtures

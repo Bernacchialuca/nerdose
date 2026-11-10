@@ -6,6 +6,7 @@ export type TermSpec = {
   term: string;
   category: TermCategory;
   lastUsedDevdle?: string | null;
+  lastUsedGrep?: string | null;
   definition?: { es: string; en: string };
   summary?: { es: string; en: string };
   status?: 'approved' | 'rejected';
@@ -48,6 +49,7 @@ export async function insertTerms(owner: Db, specs: readonly TermSpec[]) {
         status: spec.status ?? 'approved',
         rejectionReason: spec.status === 'rejected' ? 'excluded' : null,
         lastUsedDevdle: spec.lastUsedDevdle ?? null,
+        lastUsedGrep: spec.lastUsedGrep ?? null,
         datasetVersion: 'test',
       })),
     )

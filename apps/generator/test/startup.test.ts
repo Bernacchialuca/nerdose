@@ -6,13 +6,13 @@ import { jobRuns, terms } from '@nerdose/db';
 import { asc } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 
-import { generatorRegistry } from '@/games/registry';
 import { createJobTracker } from '@/scheduler/job-tracker';
 import { buildScheduledJobs, runStartup } from '@/startup';
 
 import { BANK16, insertTerms } from './helpers/bank';
 import { setupTestDb } from './helpers/db';
 import { captureLogger } from './helpers/logger';
+import { devdleOnlyRegistry } from './helpers/registry';
 
 const t = setupTestDb();
 
@@ -50,7 +50,7 @@ describe('runStartup', () => {
           GENERATOR_SECRET: 'test-secret-0123456789abcdef0123456789',
           GENERATION_MAX_ATTEMPTS: 20,
         },
-        registry: generatorRegistry,
+        registry: devdleOnlyRegistry,
       },
     };
   };

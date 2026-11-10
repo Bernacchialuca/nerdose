@@ -111,6 +111,9 @@ importers:
       '@nerdose/game-devdle':
         specifier: workspace:*
         version: link:../../packages/games/devdle
+      '@nerdose/game-grep-grid':
+        specifier: workspace:*
+        version: link:../../packages/games/grep-grid
       '@t3-oss/env-core':
         specifier: ^0.13.11
         version: 0.13.11(typescript@6.0.3)(zod@4.6.7)
@@ -157,6 +160,9 @@ importers:
       '@nerdose/game-devdle':
         specifier: workspace:*
         version: link:../../packages/games/devdle
+      '@nerdose/game-grep-grid':
+        specifier: workspace:*
+        version: link:../../packages/games/grep-grid
       '@t3-oss/env-core':
         specifier: ^0.13.11
         version: 0.13.11(typescript@6.0.3)(zod@4.6.7)

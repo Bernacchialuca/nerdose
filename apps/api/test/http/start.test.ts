@@ -149,10 +149,10 @@ describe('POST /api/games/{game_id}/today/start', () => {
   });
 
   it('TS-36 juego sin paquete o inexistente', async () => {
-    await dbs.insertChallenge({ gameId: 'grep-grid', date: '2026-12-01', status: 'published' });
+    await dbs.insertChallenge({ gameId: 'timeline', date: '2026-12-01', status: 'published' });
     const player = await dbs.insertPlayer();
     const { app } = await buildDbApp(dbs);
-    for (const game of ['grep-grid', 'foo']) {
+    for (const game of ['timeline', 'foo']) {
       const res = await post(app, { challenge_number: 8 }, { Cookie: `nd_pid=${player.id}` }, game);
       expect(res.status).toBe(404);
       expect((await res.json()).error.code).toBe('not_found');

@@ -1,7 +1,7 @@
 import type { GameId, HistorySpec, RecentChallenge, VerificationLog } from '@nerdose/core';
 import { challenges, terms } from '@nerdose/db';
 import type { Db } from '@nerdose/db';
-import { and, asc, between, eq, inArray } from 'drizzle-orm';
+import { and, asc, between, eq, inArray, sql } from 'drizzle-orm';
 import type { z } from 'zod';
 
 const ACTIVE_STATUSES = ['approved', 'published', 'voided'] as const;
@@ -108,7 +108,7 @@ export class ChallengePublishingRepository {
     log: VerificationLog,
     options: ApproveOptions,
   ): Promise<'approved' | 'duplicate'> {
-    const { key } = lastUsedColumn(options.lastUsedField);
+    const { key, column } = lastUsedColumn(options.lastUsedField);
     try {
       await this.orm.transaction(async (tx) => {
         await tx
@@ -118,7 +118,8 @@ export class ChallengePublishingRepository {
         if (options.itemIds.length > 0) {
           await tx
             .update(terms)
-            .set({ [key]: options.date })
+            // GREATEST: no retrocede la fecha al rellenar un hueco anterior.
+            .set({ [key]: sql`GREATEST(${column}, ${options.date}::date)` })
             .where(inArray(terms.id, options.itemIds));
         }
       });

@@ -103,8 +103,10 @@ describe('proceso del generator', () => {
       .from(challenges)
       .where(eq(challenges.status, 'approved'))
       .orderBy(asc(challenges.date));
-    expect(rows.every((r) => r.gameId === 'devdle')).toBe(true);
-    expect(rows.map((r) => r.date)).toEqual(expected);
+    for (const gameId of ['devdle', 'grep-grid']) {
+      expect(rows.filter((r) => r.gameId === gameId).map((r) => r.date)).toEqual(expected);
+    }
+    expect(rows).toHaveLength(expected.length * 2);
 
     const raw = running.lines().join('\n');
     expect(raw).not.toContain(SECRET);

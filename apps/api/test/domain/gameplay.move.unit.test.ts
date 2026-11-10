@@ -1,5 +1,6 @@
 import { AppError } from '@nerdose/core';
 import { scoreGuess } from '@nerdose/game-devdle/definition';
+import { grepGrid } from '@nerdose/game-grep-grid/definition';
 import { describe, expect, it, vi } from 'vitest';
 
 import { GameplayService } from '@/domain/gameplay/gameplay.service';
@@ -7,6 +8,7 @@ import type { MoveTx, MoveTxRepos } from '@/domain/gameplay/gameplay.types';
 import { games } from '@/games/registry';
 
 import { PAYLOAD } from '../helpers/db';
+import { GG_PAYLOAD, found, selectWord } from '../helpers/grep-grid';
 
 const NOW = new Date('2026-12-01T10:00:00Z');
 const player = { id: 'player-1' } as never;
@@ -197,5 +199,35 @@ describe('GameplayService.move (unit)', () => {
     expect(res.game_stats).toEqual({ game_id: 'devdle' });
     const events = s.log.info.mock.calls.map((c) => (c[0] as { event: string }).event);
     expect(events).toEqual(['PlayStarted', 'PlayFinished', 'StreaksUpdated']);
+  });
+  it('TS-26 ctx.locale llega a applyMove y feedback.definition sale en ese idioma', async () => {
+    const s = setup({
+      cache: {
+        get: () => ({
+          id: 'c',
+          game_id: 'grep-grid',
+          status: 'published',
+          date: '2026-12-01',
+          payload: GG_PAYLOAD,
+        }),
+      },
+      play: { state: found() },
+    });
+    const spy = vi.spyOn(grepGrid, 'applyMove');
+    try {
+      const res = await s.service.move(
+        'grep-grid',
+        player,
+        { challenge_number: 8, move: selectWord('DOCKER') },
+        'en',
+        s.log as never,
+      );
+      const ctx = spy.mock.calls[0]![4];
+      expect(ctx.locale).toBe('en');
+      expect(typeof ctx.isValidWord).toBe('function');
+      expect(res.feedback).toMatchObject({ definition: 'definition of DOCKER' });
+    } finally {
+      spy.mockRestore();
+    }
   });
 });
