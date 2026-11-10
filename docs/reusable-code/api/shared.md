@@ -26,7 +26,7 @@
 
 ## games
 - **Location:** apps/api/src/games/registry.ts
-- **Signature:** `games = createGameRegistry([devdle])` (see core `game-registry.md`)
+- **Signature:** `games = createGameRegistry([devdle, grepGrid])` (see core `game-registry.md`)
 - **Usage:** register a new game module by adding it to the array
 
 ## Clock / systemClock

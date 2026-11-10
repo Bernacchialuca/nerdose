@@ -58,10 +58,18 @@ export class GameplayService {
     if (!challenge) return { ...empty, challenge_status: 'none' };
     if (challenge.status === 'voided') return { ...empty, challenge_status: 'voided' };
 
-    const public_view = game.toPublic(challenge.payload, locale) as unknown;
-    if (!player) return { ...empty, challenge_status: 'published', public_view };
+    if (!player) {
+      return {
+        ...empty,
+        challenge_status: 'published',
+        public_view: game.toPublic(challenge.payload, locale) as unknown,
+      };
+    }
 
     const row = await repo.findPlay(player.id, challenge.id);
+    // `state` solo con Play en curso: el juego decide qué revela (ADR-006).
+    const state = row?.status === 'in_progress' ? row.state : undefined;
+    const public_view = game.toPublic(challenge.payload, locale, state) as unknown;
     const play = row ? toPlayView(row) : null;
     if (row && (row.status === 'won' || row.status === 'lost')) {
       return {
@@ -139,6 +147,7 @@ export class GameplayService {
         if (!ok) rejectedWord = w.toUpperCase();
         return ok;
       },
+      locale,
     };
 
     // Los eventos se emiten solo si la transacción confirmó.

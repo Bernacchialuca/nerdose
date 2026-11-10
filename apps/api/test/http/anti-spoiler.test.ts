@@ -4,6 +4,20 @@ import { scoreGuess } from '@nerdose/game-devdle/definition';
 
 import { buildDbApp, MUTATION_HEADERS } from '../helpers/app';
 import { CATS, PAYLOAD, useDatabases } from '../helpers/db';
+import {
+  GG_WORDS,
+  cellsOf,
+  defEn,
+  defEs,
+  found,
+  ggGet,
+  ggMove,
+  ggPost,
+  seedGrepGrid,
+  seedGrepGridPlay,
+  selectWord,
+  type GGWord,
+} from '../helpers/grep-grid';
 
 const dbs = useDatabases();
 beforeAll(() => dbs.reset());
@@ -147,5 +161,129 @@ describe('TS-42 anti-spoiler de move (Devdle)', () => {
     });
     expect(res.status).toBe(409);
     assertNoSpoiler(await res.text());
+  });
+});
+
+const GG_FORBIDDEN_KEYS = ['placements', 'direction', 'from', 'to', 'payload'];
+
+function assertNoGrepGridSpoiler(raw: string, hidden: GGWord[]) {
+  for (const w of hidden) {
+    expect(raw).not.toContain(defEs(w));
+    expect(raw).not.toContain(defEn(w));
+    expect(raw).not.toContain(JSON.stringify(cellsOf(w)));
+  }
+  for (const k of GG_FORBIDDEN_KEYS) expect(raw).not.toContain(`"${k}":`);
+}
+
+describe('anti-spoiler de la api (Grep Grid)', () => {
+  const three: GGWord[] = ['DOCKER', 'MERGE', 'REDIS'];
+  const rest = GG_WORDS.filter((w) => !three.includes(w));
+
+  it('TS-42 today y start no revelan definiciones ni posiciones ocultas', async () => {
+    const challenge = await seedGrepGrid(dbs);
+    const fresh = await dbs.insertPlayer();
+    const playing = await dbs.insertPlayer();
+    await seedGrepGridPlay(dbs, challenge.id, playing.id, found(...three));
+    const { app } = await buildDbApp(dbs);
+
+    const bodies: Array<{ raw: string; hidden: GGWord[] }> = [];
+    const push = async (res: Response | Promise<Response>, hidden: GGWord[]) => {
+      const r = await res;
+      expect(r.status).toBe(200);
+      bodies.push({ raw: await r.text(), hidden });
+    };
+    for (const lang of ['?lang=es', '?lang=en']) {
+      await push(ggGet(app, undefined, lang), GG_WORDS);
+      await push(ggGet(app, fresh, lang), GG_WORDS);
+      await push(ggGet(app, playing, lang), rest);
+    }
+    await push(ggPost(app, 'start', { challenge_number: 8 }, fresh), GG_WORDS);
+    // toPublic con el estado inicial recién creado
+    await push(ggGet(app, fresh, '?lang=es'), GG_WORDS);
+    const home = await app.request('/api/today', { headers: { Cookie: `nd_pid=${playing.id}` } });
+    bodies.push({ raw: await home.text(), hidden: rest });
+
+    for (const { raw, hidden } of bodies) assertNoGrepGridSpoiler(raw, hidden);
+    for (const { raw } of bodies.slice(0, 2)) expect(raw).not.toContain('definición de');
+    expect(bodies[0]!.raw).not.toContain('definition of');
+  });
+
+  it('TS-43 las respuestas de move previas al cierre no revelan lo no encontrado', async () => {
+    const challenge = await seedGrepGrid(dbs);
+    const hiddenOf = (...ws: GGWord[]) => GG_WORDS.filter((w) => !ws.includes(w));
+    const c = await dbs.insertPlayer();
+    const d = await dbs.insertPlayer();
+    const finder = await dbs.insertPlayer();
+    await seedGrepGridPlay(dbs, challenge.id, c.id, found(...three));
+    await seedGrepGridPlay(dbs, challenge.id, finder.id, found(...three));
+    await seedGrepGridPlay(
+      dbs,
+      challenge.id,
+      d.id,
+      { ...found('CACHE'), gave_up: true },
+      {
+        status: 'lost',
+        score: 1,
+        result: {},
+        finishedAt: new Date('2026-12-01T09:00:00Z'),
+      },
+    );
+    const { app } = await buildDbApp(dbs);
+
+    const check = async (res: Response, hidden: GGWord[]) => {
+      assertNoGrepGridSpoiler(await res.text(), hidden);
+    };
+    for (const lang of ['?lang=es', '?lang=en']) {
+      // la respuesta que encuentra CACHE puede traer su definición y sus celdas
+      await check(
+        await ggMove(app, selectWord('CACHE'), finder, lang),
+        hiddenOf(...three, 'CACHE'),
+      );
+      await check(
+        await ggMove(
+          app,
+          { type: 'select', from: { row: 3, col: 2 }, to: { row: 3, col: 5 } },
+          c,
+          lang,
+        ),
+        rest,
+      );
+      await check(await ggMove(app, selectWord('DOCKER'), c, lang), rest);
+      await check(
+        await ggMove(
+          app,
+          { type: 'select', from: { row: 3, col: 7 }, to: { row: 3, col: 2 } },
+          c,
+          lang,
+        ),
+        rest,
+      );
+      await check(
+        await ggMove(
+          app,
+          { type: 'select', from: { row: 0, col: 0 }, to: { row: 1, col: 2 } },
+          c,
+          lang,
+        ),
+        rest,
+      );
+      await check(
+        await ggMove(
+          app,
+          { type: 'select', from: { row: 0, col: 0 }, to: { row: 0, col: 12 } },
+          c,
+          lang,
+        ),
+        rest,
+      );
+      await check(await ggMove(app, selectWord('KERNEL'), c, lang, 7), rest);
+      await check(await ggMove(app, selectWord('KERNEL'), d, lang), hiddenOf('CACHE'));
+    }
+    await dbs.owner
+      .sql`UPDATE challenges SET status = 'voided', void_reason = 'wrong_answer', voided_at = now()`;
+    const { app: voidedApp } = await buildDbApp(dbs);
+    const res = await ggMove(voidedApp, selectWord('KERNEL'), c);
+    expect(res.status).toBe(409);
+    await check(res, rest);
   });
 });

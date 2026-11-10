@@ -1,4 +1,5 @@
 import { AppError } from '@nerdose/core';
+import { grepGrid } from '@nerdose/game-grep-grid/definition';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { GameplayRepository, moveTransaction } from '@/domain/gameplay/gameplay.repository';
@@ -12,6 +13,7 @@ import { systemClock } from '@/shared/clock';
 
 import { captureLogger } from '../helpers/logger';
 import { PAYLOAD, useDatabases } from '../helpers/db';
+import { GG_PAYLOAD, found, seedGrepGrid, seedGrepGridPlay } from '../helpers/grep-grid';
 
 const dbs = useDatabases();
 beforeAll(() => dbs.reset());
@@ -138,7 +140,7 @@ describe('GameplayService.start', () => {
     await expect(service.start('devdle', player, 8, log)).rejects.toMatchObject({
       code: 'no_challenge_today',
     });
-    await expect(service.start('grep-grid', player, 7, log)).rejects.toMatchObject({
+    await expect(service.start('timeline', player, 7, log)).rejects.toMatchObject({
       code: 'not_found',
     });
     await expect(service.start('devdle', player, 7, log)).rejects.toBeInstanceOf(AppError);
@@ -263,5 +265,38 @@ describe('GameplayService.getToday', () => {
     expect(res.challenge_status).toBe('published');
     expect(res.public_view).toEqual({ length: 5, possible_categories: expect.any(Array) });
     expect(res.play).toBeNull();
+  });
+});
+
+describe('GameplayService.getToday con state', () => {
+  it('TS-25 pasa state a toPublic solo con Play in_progress', async () => {
+    const challenge = await seedGrepGrid(dbs);
+    const inProgress = await dbs.insertPlayer();
+    const finished = await dbs.insertPlayer();
+    const none = await dbs.insertPlayer();
+    await seedGrepGridPlay(dbs, challenge.id, inProgress.id, found('DOCKER'));
+    await seedGrepGridPlay(dbs, challenge.id, finished.id, found('DOCKER'), {
+      status: 'won',
+      score: 8,
+      result: {},
+      finishedAt: new Date(),
+    });
+    const service = await build();
+    const spy = vi.spyOn(grepGrid, 'toPublic');
+    const findPlay = vi.spyOn(GameplayRepository.prototype, 'findPlay');
+    try {
+      await service.getToday('grep-grid', null, 'es');
+      expect(spy).toHaveBeenLastCalledWith(GG_PAYLOAD, 'es');
+      expect(findPlay).not.toHaveBeenCalled();
+      await service.getToday('grep-grid', none, 'es');
+      expect(spy).toHaveBeenLastCalledWith(GG_PAYLOAD, 'es', undefined);
+      await service.getToday('grep-grid', inProgress, 'es');
+      expect(spy).toHaveBeenLastCalledWith(GG_PAYLOAD, 'es', found('DOCKER'));
+      await service.getToday('grep-grid', finished, 'es');
+      expect(spy).toHaveBeenLastCalledWith(GG_PAYLOAD, 'es', undefined);
+    } finally {
+      spy.mockRestore();
+      findPlay.mockRestore();
+    }
   });
 });

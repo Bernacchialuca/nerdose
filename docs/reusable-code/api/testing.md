@@ -32,3 +32,9 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 - **Location:** apps/api/test/helpers/db.ts
 - **Signature:** `useDatabases(): { owner, api, identity(), reset(), close(), insertPlayer(values?) }`
 - **Usage:** `const dbs = useDatabases(); beforeAll(dbs.reset); afterAll(dbs.close)`
+
+## GG_PAYLOAD / GG_ID / cellsOf / selectWord / found / SEVEN / INITIAL_EXTRA / seedGrepGrid / seedGrepGridPlay
+- **Location:** apps/api/test/helpers/grep-grid.ts
+- **Signature:** `GG_PAYLOAD: GrepGridPayload`; `cellsOf(w)`, `selectWord(w)`, `found(...words): GrepGridState`; `seedGrepGrid(dbs, opts?)`, `seedGrepGridPlay(dbs, challengeId, playerId, state, extra?)`; `ggGet/ggPost/ggMove(app, ..., player?, query?)`
+- **Description:** fixed Grep Grid fixture for 2026-12-01 (challenge number 8), copied from the S-022 package fixtures (which the package does not export); `SEVEN` = all words except `PYTHON`, so the eighth word is always the same
+- **Usage:** `const c = await seedGrepGrid(dbs); await seedGrepGridPlay(dbs, c.id, player.id, found(...SEVEN)); await ggMove(app, selectWord('PYTHON'), player)`
