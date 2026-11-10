@@ -7,8 +7,20 @@ y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
 **MINOR.** Grep Grid jugable (story S-024). Ningún valor definido cambia. Los otros planes de S-024 (`games`, `web`) suman sus ítems a esta misma entrada.
 
+### Agregado
+- `patterns/game-boards.md` 1.2.0: resueltos los «Pendiente» de Grep Grid (tablero escalado a 320px, estados `revelada`/hover/foco/bloqueada de `grep-grid.cell`, textos y anuncio de `grep-grid.hint`, estado revelada de `grep-grid.word`, `button` `outline-tinted` de error) y documentados el contador sin reloj (`grep-grid.counter`) y el modal O-04 (`grep-grid.surrender-dialog`, gap aceptado en REQ-005).
+- `foundations/grid.md`: «Tablero de Grep (654px)» pasa de **Pendiente** a «se escala: celdas `aspect-ratio: 1`, sin scroll horizontal; área táctil < 40px aceptada (S-024)».
+
 ### Código alineado con el spec
+- `@nerdose/game-grep-grid/client` (S-024): `Instructions`, `Game`, `Result`, `share()` y las piezas `grep-grid.board`, `grep-grid.cell`, `grep-grid.hint`, `grep-grid.word`, `CounterCard`, `SURRENDER_BUTTON` y `SurrenderDialog` según `game-boards` 1.2.0.
 - `@nerdose/ui`: tokens `game.grep-grid.selected-bg` (`--color-game-grep-grid-selected-bg`), `game.grep-grid.found-bg` (`--color-game-grep-grid-found-bg`) y `type.numeric.lg` (`--text-numeric-lg`, 26/800, en `TEXT_ROLES`). `found-border`, `hover` y `on` ya existían como `-featured`, `-light` y `-on`.
+
+### Notas para limpiar en otros docs
+- `grep-grid-partida.md` · contador «`role=status` para anunciar el avance»: con el anuncio único por selección (CA-12) el contador no es live region; el avance se anuncia en la región del hint («> DOCKER encontrada · 4/8»).
+- `grep-grid-partida.md` · hint-jugada «`aria-live="polite"`»: la línea visible no es live; una región `sr-only` anuncia solo el resultado de cada selección.
+- `grep-grid-instrucciones.md` · «los pasos son `h3`»: `Card` `step` de `@nerdose/ui` renderiza el kicker como `<p>` (igual que Devdle).
+- `grep-grid-resultado.md` desktop · barra `salida` en la columna 7/12: con `flex-wrap` sin media queries, el slot `footer` va en una fila propia de ancho completo debajo de las dos columnas, para respetar el orden de mobile.
+- `game-boards.md` · `grep-grid.cell` «`<button role="gridcell">`»: `role` no permitido en `<button>` (axe `aria-allowed-role`); pasa a `<div role="gridcell">` con `<button>` adentro.
 
 ## [1.5.1] - 2026-11-09
 

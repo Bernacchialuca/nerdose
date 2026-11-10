@@ -6,7 +6,7 @@ const read = (file: string): unknown =>
   JSON.parse(readFileSync(new URL(`../${file}`, import.meta.url), 'utf8'));
 
 describe('@nerdose/game-grep-grid package manifest', () => {
-  it('declares the package contract (TS-3)', () => {
+  it('declares the package contract (TS-1)', () => {
     const pkg = read('package.json') as {
       name: string;
       private: boolean;
@@ -14,6 +14,7 @@ describe('@nerdose/game-grep-grid package manifest', () => {
       exports: unknown;
       scripts: Record<string, string>;
       dependencies: Record<string, string>;
+      peerDependencies: Record<string, string>;
       devDependencies: Record<string, string>;
     };
     expect(pkg.name).toBe('@nerdose/game-grep-grid');
@@ -21,6 +22,7 @@ describe('@nerdose/game-grep-grid package manifest', () => {
     expect(pkg.type).toBe('module');
     expect(pkg.exports).toEqual({
       './definition': './src/definition/index.ts',
+      './client': './src/client/index.ts',
       './generator': './src/generator/index.ts',
     });
     expect(pkg.scripts.lint).toBe('eslint .');
@@ -30,7 +32,8 @@ describe('@nerdose/game-grep-grid package manifest', () => {
     expect(pkg.dependencies.zod).toBe('^4.6.7');
     expect(pkg.devDependencies['@nerdose/content']).toBe('workspace:*');
     expect(pkg.dependencies.react).toBeUndefined();
-    expect(pkg.dependencies['@nerdose/ui']).toBeUndefined();
+    expect(pkg.dependencies['@nerdose/ui']).toBe('workspace:*');
+    expect(pkg.peerDependencies.react).toBe('^19.3.1');
   });
 
   it('extends the base tsconfig and includes the code folders', () => {

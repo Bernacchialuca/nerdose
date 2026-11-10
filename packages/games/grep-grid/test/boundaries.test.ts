@@ -7,7 +7,10 @@ import { describe, expect, it } from 'vitest';
 const srcDir = fileURLToPath(new URL('../src', import.meta.url));
 
 const isSource = (f: string) =>
-  /\.ts$/.test(f) && !/\.test\.ts$/.test(f) && !f.endsWith('test-fixtures.ts');
+  /\.tsx?$/.test(f) &&
+  !/\.test\.tsx?$/.test(f) &&
+  !f.endsWith('test-fixtures.ts') &&
+  !f.endsWith('test-utils.ts');
 
 const files = readdirSync(srcDir, { recursive: true, encoding: 'utf8' })
   .map((f) => f.replace(/\\/g, '/'))
@@ -41,6 +44,49 @@ describe('game-grep-grid entry boundaries (TS-4)', () => {
         } else {
           const externals = entry === 'shared' ? [] : ['@nerdose/core', 'zod'];
           expect(externals, `${file} -> ${spec}`).toContain(spec);
+        }
+      }
+    }
+  });
+
+  it('client only imports allowed modules and packages (TS-3)', () => {
+    const clientFiles = files.filter((f) => f.file.startsWith('client/'));
+    expect(clientFiles.length).toBeGreaterThan(0);
+    for (const { file, text } of clientFiles) {
+      for (const spec of importsOf(text)) {
+        if (spec.startsWith('.')) {
+          const normalized = resolveRelative(file, spec);
+          const ok =
+            normalized.startsWith('src/client') ||
+            normalized === 'src/shared/geometry' ||
+            normalized === 'src/definition/schemas';
+          expect(ok, `${file} -> ${spec}`).toBe(true);
+        } else {
+          expect(['@nerdose/core', '@nerdose/ui', 'zod', 'react'], `${file} -> ${spec}`).toContain(
+            spec,
+          );
+        }
+      }
+      for (const forbidden of [
+        'window.plausible',
+        '@nerdose/game-',
+        'localStorage',
+        'sessionStorage',
+        'lineCells',
+        'directionOf',
+      ]) {
+        expect(text.includes(forbidden), `${file} contains ${forbidden}`).toBe(false);
+      }
+    }
+  });
+
+  it('no other entry imports the client (TS-4)', () => {
+    for (const { file, text } of files.filter((f) => !f.file.startsWith('client/'))) {
+      for (const spec of importsOf(text)) {
+        if (spec.startsWith('.')) {
+          expect(resolveRelative(file, spec).startsWith('src/client'), `${file} -> ${spec}`).toBe(
+            false,
+          );
         }
       }
     }
