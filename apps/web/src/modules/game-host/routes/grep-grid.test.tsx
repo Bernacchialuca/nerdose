@@ -7,7 +7,9 @@ import { axe } from 'vitest-axe';
 
 import { countOf, errorResponse, h1, recordCalls, setShare } from '@/test/game-route-helpers';
 import {
+  CELLS,
   FOUND_3,
+  FOUND_6,
   GG_ID,
   GIVE_UP,
   SELECT_DOCKER,
@@ -395,6 +397,20 @@ describe('cierre', () => {
     expect(names.some((n) => n.startsWith('·'))).toBe(false);
     expect(within(table).getByLabelText('W, fila 2, columna 1, libre')).toBeInTheDocument();
     expect(within(table).getByLabelText(/^O, fila 6, columna 1, revelada$/)).toBeInTheDocument();
+    // Todas las celdas de OAUTH y REDIS (las no encontradas) que no comparten letra con una
+    // encontrada quedan «revelada».
+    const foundKeys = new Set(FOUND_6.flatMap((w) => CELLS[w]).map((c) => `${c.row},${c.col}`));
+    for (const w of ['OAUTH', 'REDIS'] as const) {
+      const own = CELLS[w].filter((c) => !foundKeys.has(`${c.row},${c.col}`));
+      expect(own.length).toBeGreaterThan(0);
+      for (const { row, col } of own) {
+        expect(
+          within(table).getByLabelText(
+            new RegExp(`^[A-Z], fila ${row + 1}, columna ${col + 1}, revelada$`),
+          ),
+        ).toBeInTheDocument();
+      }
+    }
   });
 
   it('TS-25: rachas y salidas del resultado', async () => {

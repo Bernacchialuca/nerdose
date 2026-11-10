@@ -204,8 +204,14 @@ describe('anti-spoiler de la api (Grep Grid)', () => {
     bodies.push({ raw: await home.text(), hidden: rest });
 
     for (const { raw, hidden } of bodies) assertNoGrepGridSpoiler(raw, hidden);
-    for (const { raw } of bodies.slice(0, 2)) expect(raw).not.toContain('definición de');
-    expect(bodies[0]!.raw).not.toContain('definition of');
+    // Sin palabras encontradas (A sin jugador, B en ambos idiomas, su start y el GET posterior):
+    // ninguna definición, en ningún idioma.
+    const noneFound = bodies.filter(({ hidden }) => hidden === GG_WORDS);
+    expect(noneFound).toHaveLength(6);
+    for (const { raw } of noneFound) {
+      expect(raw).not.toContain('definición de');
+      expect(raw).not.toContain('definition of');
+    }
   });
 
   it('TS-43 las respuestas de move previas al cierre no revelan lo no encontrado', async () => {

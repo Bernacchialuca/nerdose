@@ -92,6 +92,9 @@ describe('fill con Grep Grid y el dataset real', () => {
     expect(after).toHaveLength(14);
     const last = after.at(-1)!;
     expect(last).toMatchObject({ date: '2026-12-15', number: 14 });
+    // Hoy (2026-12-01) nunca se genera, tampoco en la segunda corrida (TS-19).
+    const allAfter = await t.owner.db.select().from(challenges);
+    expect(allAfter.filter((r) => r.date === '2026-12-01')).toHaveLength(0);
     const lastIds = grepIds(last.payload);
     for (const r of rows) {
       expect(grepIds(r.payload).filter((id) => lastIds.includes(id))).toEqual([]);

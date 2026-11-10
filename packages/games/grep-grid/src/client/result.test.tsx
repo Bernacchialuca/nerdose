@@ -8,6 +8,8 @@ import { Result } from './result';
 import { makeT } from './test-utils';
 import type { ResultProps } from './types';
 import {
+  cellsOf,
+  GAVE_UP_5_FOUND,
   PUBLIC_VIEW_0,
   RESULT_GAVE_UP_0,
   RESULT_GAVE_UP_5,
@@ -51,6 +53,22 @@ describe('Result', () => {
       expect(c).toHaveClass('border-dashed');
       expect(c).not.toHaveClass('bg-game-grep-grid');
       expect(c.querySelector('[aria-hidden]')).toHaveTextContent('○');
+    }
+    // Palabra por palabra: cada celda de OAUTH, REDIS y KUBERNETES que no comparte letra con
+    // una encontrada se muestra «revelada».
+    const foundKeys = new Set(
+      GAVE_UP_5_FOUND.flatMap((w) => cellsOf(w)).map((c) => `${c.row},${c.col}`),
+    );
+    for (const w of ['OAUTH', 'REDIS', 'KUBERNETES'] as const) {
+      const own = cellsOf(w).filter((c) => !foundKeys.has(`${c.row},${c.col}`));
+      expect(own.length).toBeGreaterThan(0);
+      for (const { row, col } of own) {
+        const cell = within(table).getByRole('cell', {
+          name: new RegExp(`^[A-Z], fila ${row + 1}, columna ${col + 1}, revelada$`),
+        });
+        expect(cell).toHaveClass('border-dashed');
+        expect(cell.querySelector('[aria-hidden]')).toHaveTextContent('○');
+      }
     }
     const docker = within(table).getByRole('cell', { name: /^D, fila 4, columna 3, encontrada$/ });
     expect(docker.querySelector('[aria-hidden]')).toHaveTextContent('✓');
