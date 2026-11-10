@@ -7,6 +7,8 @@ import { DATE, seed } from '../src/generator/test-fixtures';
 
 const SEEDS = 200;
 const MIN_RATE = 0.95;
+// Genera y verifica 200 grillas sobre el dataset real: bajo carga (turbo en paralelo) pasa los 5 s por defecto.
+const TIMEOUT_MS = 60_000;
 
 describe('grep-grid rejection rate on the real dataset (TS-73)', () => {
   it(`passes verify in at least ${MIN_RATE * 100}% of ${SEEDS} candidates`, () => {
@@ -31,5 +33,5 @@ describe('grep-grid rejection rate on the real dataset (TS-73)', () => {
     }
     console.info(`grep-grid rejection: ${ok}/${SEEDS} ok; reasons: ${reasons.join(',') || 'none'}`);
     expect(ok / SEEDS).toBeGreaterThanOrEqual(MIN_RATE);
-  });
+  }, TIMEOUT_MS);
 });

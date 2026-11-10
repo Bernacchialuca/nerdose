@@ -10,5 +10,7 @@ export default defineConfig({
     fileParallelism: false,
     globalSetup: ['./test/global-setup.ts'],
     hookTimeout: 120_000,
+    // Los tests migran y consultan Postgres real; en paralelo con el resto de la suite superan los 5 s por defecto.
+    testTimeout: 60_000,
   },
 });
