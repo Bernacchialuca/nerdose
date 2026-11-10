@@ -72,6 +72,19 @@ describe('cn with theme roles', () => {
       expect(TEXT_ROLES).toContain(r);
   });
 
+  it('keeps the Grep Grid counter role next to its accent (S-024 TS-7..TS-9)', () => {
+    expect(cn('text-numeric-lg text-game-grep-grid')).toBe('text-numeric-lg text-game-grep-grid');
+    expect(cn('text-numeric-md', 'text-numeric-lg')).toBe('text-numeric-lg');
+    expect(cn('bg-surface-inset', 'bg-game-grep-grid-selected-bg')).toBe(
+      'bg-game-grep-grid-selected-bg',
+    );
+    expect(cn('bg-surface-inset', 'bg-game-grep-grid-found-bg')).toBe(
+      'bg-game-grep-grid-found-bg',
+    );
+    expect(TEXT_ROLES).toContain('numeric-lg');
+    expect(TEXT_ROLES).toHaveLength(37);
+  });
+
   it('resolves role, radius and shadow conflicts (TS-11)', () => {
     expect(cn('text-meta', 'text-mono-body')).toBe('text-mono-body');
     expect(cn('rounded-control', 'rounded-panel')).toBe('rounded-panel');

@@ -92,6 +92,9 @@
   --color-game-grep-grid-muted: #8A5C7A;
   --color-game-grep-grid-light: #F9A8D4;
   --color-game-grep-grid-featured: #5B2147;
+  /* DS (S-024): Grep Grid */
+  --color-game-grep-grid-selected-bg: #2A0F22; /* game.grep-grid.selected-bg (color.pink.950) */
+  --color-game-grep-grid-found-bg: #1F0D19; /* game.grep-grid.found-bg (color.pink.960) */
 
   /* status.* */
   --color-status-success: #3DDC84;
@@ -166,6 +169,9 @@
   --text-numeric-md: 22px;
   --text-numeric-md--line-height: normal;
   --text-numeric-md--font-weight: 700;
+  --text-numeric-lg: 26px; /* type.numeric.lg: contador de partida */
+  --text-numeric-lg--line-height: normal;
+  --text-numeric-lg--font-weight: 800;
   --text-body-lede: 19px;
   --text-body-lede--line-height: 1.55;
   --text-body-lede--font-weight: 400;

@@ -10,6 +10,7 @@ export const TEXT_ROLES = [
   'title-banner',
   'brand-logo',
   'numeric-md',
+  'numeric-lg',
   'body-lede',
   'body',
   'body-sm-tight',

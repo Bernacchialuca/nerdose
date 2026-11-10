@@ -3,6 +3,13 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.6.0] - 2026-11-10
+
+**MINOR.** Grep Grid jugable (story S-024). Ningún valor definido cambia. Los otros planes de S-024 (`games`, `web`) suman sus ítems a esta misma entrada.
+
+### Código alineado con el spec
+- `@nerdose/ui`: tokens `game.grep-grid.selected-bg` (`--color-game-grep-grid-selected-bg`), `game.grep-grid.found-bg` (`--color-game-grep-grid-found-bg`) y `type.numeric.lg` (`--text-numeric-lg`, 26/800, en `TEXT_ROLES`). `found-border`, `hover` y `on` ya existían como `-featured`, `-light` y `-on`.
+
 ## [1.5.1] - 2026-11-09
 
 **PATCH.** Corrección de alineación, sin valores nuevos.

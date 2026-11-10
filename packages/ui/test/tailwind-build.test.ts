@@ -21,6 +21,9 @@ const CANDIDATES = [
   'rounded-control',
   'shadow-next-devdle',
   'bg-game-grep-grid-tint',
+  'bg-game-grep-grid-selected-bg',
+  'bg-game-grep-grid-found-bg',
+  'text-numeric-lg',
   'w-6/13',
   'w-2/7',
   'w-7/12',
@@ -75,5 +78,13 @@ describe('tokens.css compiled by Tailwind (TS-9)', () => {
     expect(flat).toContain('.text-text-separator');
     expect(flat).toMatch(/\.max-w-keyboard \{ max-width: var\(--container-keyboard\)/);
     expect(flat).toContain('.max-w-devdle-aside');
+    expect(flat).toContain(
+      '.bg-game-grep-grid-selected-bg { background-color: var(--color-game-grep-grid-selected-bg)',
+    );
+    expect(flat).toContain(
+      '.bg-game-grep-grid-found-bg { background-color: var(--color-game-grep-grid-found-bg)',
+    );
+    expect(flat).toMatch(/\.text-numeric-lg \{[^}]*font-size: var\(--text-numeric-lg\)/);
+    expect(flat).toContain('--text-numeric-lg--font-weight');
   });
 });
