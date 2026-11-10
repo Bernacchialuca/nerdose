@@ -15,10 +15,6 @@ const noDb = {
   group: ['@nerdose/db', '@nerdose/db/*'],
   message: 'Frontends never import the database package.',
 };
-const noNotify = {
-  group: ['@nerdose/core/notify'],
-  message: 'notify is Node-only.',
-};
 const frontendsOnlyClient = {
   group: ['@nerdose/game-*/definition', '@nerdose/game-*/generator', '@nerdose/polyglot'],
   message: 'Frontends import only ./client.',
@@ -45,11 +41,11 @@ export default [
   { ...reactHooks.configs.flat.recommended, files: REACT_FILES },
   {
     files: ['apps/web/**'],
-    rules: restrict([noDb, noNotify, frontendsOnlyClient, crossApp('web')]),
+    rules: restrict([noDb, frontendsOnlyClient, crossApp('web')]),
   },
   {
     files: ['apps/admin/**'],
-    rules: restrict([noDb, noNotify, frontendsOnlyClient, crossApp('admin')]),
+    rules: restrict([noDb, frontendsOnlyClient, crossApp('admin')]),
   },
   {
     files: ['apps/api/**'],
@@ -82,16 +78,15 @@ export default [
   },
   {
     files: ['packages/core/src/**'],
-    ignores: ['packages/core/src/notify.ts'],
     rules: restrict([
       {
-        group: ['node:*', './notify', '**/notify'],
-        message: 'The core entry is isomorphic: no node:* and no ./notify.',
+        group: ['node:*'],
+        message: 'The core entry is isomorphic: no node:*.',
       },
     ]),
   },
   {
     files: ['packages/ui/**'],
-    rules: restrict([noDb, noNotify]),
+    rules: restrict([noDb]),
   },
 ];

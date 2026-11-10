@@ -68,7 +68,6 @@ describe('ui components', () => {
       "from 'react-i18next'",
       "from 'i18next'",
       "from '@nerdose/db'",
-      "from '@nerdose/core/notify'",
     ];
     const files = readdirSync(srcDir, { recursive: true, encoding: 'utf8' }).filter(isSource);
     expect(files.length).toBeGreaterThan(0);

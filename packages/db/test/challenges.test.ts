@@ -118,7 +118,7 @@ describe('challenges transitions', () => {
 
   it('S015-TS-20: same status is not a transition', async () => {
     const c = await seed('2026-12-25', 'published');
-    const [row] = await generator`UPDATE challenges SET status = 'published', alert_sent_at = now()
+    const [row] = await generator`UPDATE challenges SET status = 'published', alerted_at = now()
       WHERE id = ${c.id} RETURNING status`;
     expect(row!.status).toBe('published');
   });
@@ -165,9 +165,9 @@ describe('challenges payload immutability', () => {
     const approved = await seed('2026-12-31', 'approved');
     await generator`UPDATE challenges SET verification = '{"ok":true}' WHERE id = ${approved.id}`;
     const published = await seed('2027-02-01', 'published');
-    const [row] = await api`UPDATE challenges SET alert_sent_at = now() WHERE id = ${published.id}
-      RETURNING alert_sent_at`;
-    expect(row!.alert_sent_at).toBeInstanceOf(Date);
+    const [row] = await api`UPDATE challenges SET alerted_at = now() WHERE id = ${published.id}
+      RETURNING alerted_at`;
+    expect(row!.alerted_at).toBeInstanceOf(Date);
   });
 
   it('S015-TS-25: rejected has no payload immutability', async () => {

@@ -81,7 +81,7 @@ describe('roles and grants', () => {
     const before = (await read()).map((r) => ({ ...r }));
     await expect(migrateAsOwner(inject('ownerUrl'))).resolves.toBeUndefined();
     const after = (await read()).map((r) => ({ ...r }));
-    expect(before).toHaveLength(3);
+    expect(before).toHaveLength(4);
     expect(after).toEqual(before);
   });
 

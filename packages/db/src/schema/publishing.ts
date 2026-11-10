@@ -29,7 +29,7 @@ export const challenges = pgTable(
     verification: jsonb('verification').notNull().default({}),
     voidReason: text('void_reason'),
     voidedAt: timestamp('voided_at', { withTimezone: true }),
-    alertSentAt: timestamp('alert_sent_at', { withTimezone: true }),
+    alertedAt: timestamp('alerted_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [

@@ -28,9 +28,9 @@ const columns = async (table: string) => {
 };
 
 describe('gameplay and banks structure', () => {
-  it('S015-TS-1: 0002_gameplay_and_banks is registered', async () => {
+  it('S015-TS-1: migrations up to 0003_rename_alerted_at are registered', async () => {
     const [row] = await owner`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`;
-    expect(row!.n).toBe(3);
+    expect(row!.n).toBe(4);
   });
 
   it('S015-TS-2: game_id enum equals GAME_IDS', async () => {
@@ -64,7 +64,7 @@ describe('gameplay and banks structure', () => {
       ['verification', 'jsonb', 'NO', "'{}'::jsonb"],
       ['void_reason', 'text', 'YES', null],
       ['voided_at', 'timestamptz', 'YES', null],
-      ['alert_sent_at', 'timestamptz', 'YES', null],
+      ['alerted_at', 'timestamptz', 'YES', null],
       ['created_at', 'timestamptz', 'NO', 'now()'],
     ]);
   });

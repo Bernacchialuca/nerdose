@@ -66,12 +66,7 @@ describe('role privileges', () => {
       }
       return out.sort();
     };
-    expect(await cols('challenges')).toEqual([
-      'alert_sent_at',
-      'status',
-      'void_reason',
-      'voided_at',
-    ]);
+    expect(await cols('challenges')).toEqual(['alerted_at', 'status', 'void_reason', 'voided_at']);
     expect(await cols('terms')).toEqual(['rejection_reason', 'status']);
   });
 

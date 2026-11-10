@@ -84,6 +84,14 @@ describe('gameplay and banks schema', () => {
     }
   });
 
+  it('ADR-017: migration 0003 renames alert_sent_at to alerted_at and nothing else', () => {
+    const sql = readFileSync(join(MIGRATIONS_FOLDER, '0003_rename_alerted_at.sql'), 'utf8');
+    expect(sql).toContain(
+      'ALTER TABLE "challenges" RENAME COLUMN "alert_sent_at" TO "alerted_at";',
+    );
+    expect(sql).not.toMatch(/\b(DROP|GRANT|REVOKE|CREATE)\b/);
+  });
+
   it('S015-TS-60: game_id and term_category derive from core', () => {
     expect(gameIdEnum.enumValues).toEqual([...GAME_IDS]);
     expect(termCategoryEnum.enumValues).toEqual([...TERM_CATEGORIES]);

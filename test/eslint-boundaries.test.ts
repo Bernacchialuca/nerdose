@@ -48,22 +48,6 @@ describe('frontends (web and admin)', () => {
     );
   });
 
-  it('web does not import notify', async () => {
-    await expectBoundary(
-      "import { createNotify } from '@nerdose/core/notify';\n",
-      'apps/web/src/lib/x.ts',
-      'notify is Node-only.',
-    );
-  });
-
-  it('admin does not import notify', async () => {
-    await expectBoundary(
-      "import { createNotify } from '@nerdose/core/notify';\n",
-      'apps/admin/src/app/x.ts',
-      'notify is Node-only.',
-    );
-  });
-
   it('frontends can import core', async () => {
     await expectNoBoundary(
       "import { createGameRegistry } from '@nerdose/core';\n",
@@ -192,18 +176,10 @@ describe('game entries', () => {
 });
 
 describe('core', () => {
-  it('the isomorphic entry does not import node:* or notify', async () => {
+  it('the isomorphic entry does not import node:*', async () => {
     await expectBoundary(
       "import { createHmac } from 'node:crypto';\n",
       'packages/core/src/index.ts',
-    );
-    await expectBoundary("export * from './notify';\n", 'packages/core/src/index.ts');
-  });
-
-  it('notify.ts can use node:*', async () => {
-    await expectNoBoundary(
-      "import { setTimeout } from 'node:timers/promises';\n",
-      'packages/core/src/notify.ts',
     );
   });
 });
@@ -219,14 +195,6 @@ describe('ui package', () => {
       "import { createDb } from '@nerdose/db/testing';\n",
       'packages/ui/src/x.ts',
       'never import the database package',
-    );
-  });
-
-  it('never imports notify (TS-16)', async () => {
-    await expectBoundary(
-      "import { notify } from '@nerdose/core/notify';\n",
-      'packages/ui/src/x.ts',
-      'notify is Node-only.',
     );
   });
 
