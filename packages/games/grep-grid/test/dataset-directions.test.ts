@@ -37,7 +37,7 @@ describe('grep-grid direction mix on the real dataset', () => {
       console.info(
         `grep-grid directions: ${diagonal}/${placed} diagonal; ${gridsWithoutDiagonal}/${SEEDS} grids without diagonals`,
       );
-      // Con direcciones preferidas repartidas (2 por dirección), ~la mitad van en diagonal (antes: 23 %).
+      // Con una dirección preferida sorteada por palabra, ~la mitad van en diagonal (antes: 23 %).
       expect(diagonal / placed).toBeGreaterThan(0.4);
       // Antes: 29 % de las grillas sin ninguna diagonal.
       expect(gridsWithoutDiagonal / SEEDS).toBeLessThan(0.02);

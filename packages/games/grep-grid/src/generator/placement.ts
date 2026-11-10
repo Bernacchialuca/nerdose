@@ -122,13 +122,11 @@ export function placeWords(
             ? 1
             : 0,
     );
-  // Reparto de direcciones preferidas: cada dirección le toca a 2 de las 8 palabras, en orden
-  // aleatorio. Así la grilla mezcla rectas y diagonales aunque el backtracking tenga que mover
-  // alguna palabra (si no, terminaban ganando las rectas: ~8 % de grillas sin diagonales).
-  const preferred = shuffle(
-    order.map((_, i) => DIRECTIONS[i % DIRECTIONS.length] as Direction),
-    rng,
-  );
+  // Dirección preferida sorteada por palabra (25 % cada una, independiente): la grilla mezcla
+  // rectas y diagonales aunque el backtracking tenga que mover alguna palabra (sin preferencia
+  // terminaban ganando las rectas: ~8 % de grillas sin diagonales), y la cantidad por dirección
+  // varía de una grilla a otra, sin un patrón fijo que el jugador pueda deducir.
+  const preferred = order.map(() => rng.pick(DIRECTIONS));
   const shuffled = order.map(({ word }, i) => orderedCandidates(word, rng, preferred[i]));
 
   const grid = emptyGrid();
