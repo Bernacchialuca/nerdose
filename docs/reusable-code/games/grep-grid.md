@@ -73,8 +73,8 @@ Package `@nerdose/game-grep-grid` (`packages/games/grep-grid`). Entries: `./defi
 
 ### placeWords / fillGrid
 - **Location:** packages/games/grep-grid/src/generator/placement.ts
-- **Description:** Longest-first placement with crossings and backtracking bounded by `MAX_PLACEMENT_STEPS`; filler re-draws bounded by `MAX_FILL_REDRAWS`.
-- **Signature:** `placeWords(words, rng): { grid; placements: (PlacedWord | null)[] }`; `fillGrid(grid, words, rng): string[][]`; `canPlace(grid, word, candidate)`
+- **Description:** Longest-first placement with crossings and backtracking bounded by `MAX_PLACEMENT_STEPS`; filler re-draws bounded by `MAX_FILL_REDRAWS`. Direction mix: each grid deals a preferred direction to every word (2 words per direction, shuffled); `orderedCandidates` tries the preferred direction's positions first, then the rest drawing the direction before the position. Picking uniformly over all positions biased towards straight lines (long words fit in far more straight positions): ~29 % of grids had no diagonal; now ~0.3 %, with ~48 % of words diagonal.
+- **Signature:** `placeWords(words, rng): { grid; placements: (PlacedWord | null)[] }`; `fillGrid(grid, words, rng): string[][]`; `canPlace(grid, word, candidate)`; `orderedCandidates(word, rng, preferred?): Candidate[]`
 
 ### countOccurrences
 - **Location:** packages/games/grep-grid/src/generator/occurrences.ts

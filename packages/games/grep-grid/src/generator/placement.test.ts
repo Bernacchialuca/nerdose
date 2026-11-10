@@ -2,8 +2,17 @@ import type { Rng } from '@nerdose/core';
 import { describe, expect, it } from 'vitest';
 
 import { PAYLOAD } from '../definition/test-fixtures';
+import { seed } from './test-fixtures';
 import { countOccurrences } from './occurrences';
-import { MAX_FILL_REDRAWS, canPlace, fillGrid, type MutableGrid } from './placement';
+import { rngFrom } from '@nerdose/core';
+
+import {
+  MAX_FILL_REDRAWS,
+  canPlace,
+  fillGrid,
+  orderedCandidates,
+  type MutableGrid,
+} from './placement';
 
 const empty = (): MutableGrid =>
   Array.from({ length: 12 }, () => Array<string | null>(12).fill(null));
@@ -27,6 +36,29 @@ describe('canPlace', () => {
     expect(canPlace(grid, 'ABCD', { from: at(0, 10), to: at(0, 13), direction: 'right' })).toBe(
       false,
     );
+  });
+});
+
+describe('orderedCandidates', () => {
+  it('lists every position of the word exactly once', () => {
+    const cands = orderedCandidates('MATHEMATICA', rngFrom(seed(1)));
+    // 11 letras en 12×12: 2 posiciones por línea; 12 líneas por recta, 2×2 por diagonal.
+    expect(cands).toHaveLength(2 * 12 * 2 + 2 * 2 * 2);
+    const keys = cands.map((c) => `${c.direction}:${c.from.row},${c.from.col}`);
+    expect(new Set(keys).size).toBe(cands.length);
+  });
+
+  it('draws the direction first, so long words still try diagonals early', () => {
+    // Con 11 letras las diagonales son solo 8 de 56 posiciones (14 %); sorteando la dirección,
+    // la primera posición probada es diagonal ~la mitad de las veces.
+    let diagonalFirst = 0;
+    const N = 400;
+    for (let n = 0; n < N; n++) {
+      const [first] = orderedCandidates('MATHEMATICA', rngFrom(seed(n)));
+      if (first?.direction === 'down_right' || first?.direction === 'up_right') diagonalFirst++;
+    }
+    expect(diagonalFirst / N).toBeGreaterThan(0.4);
+    expect(diagonalFirst / N).toBeLessThan(0.6);
   });
 });
 

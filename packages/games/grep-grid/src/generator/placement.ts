@@ -31,14 +31,12 @@ function lineOf(word: string, from: Cell, direction: Direction): Cell[] | null {
   }));
 }
 
-function candidatesFor(word: string): Candidate[] {
+function candidatesIn(word: string, direction: Direction): Candidate[] {
   const all: Candidate[] = [];
-  for (const direction of DIRECTIONS) {
-    for (let row = 0; row < GRID_SIZE; row++) {
-      for (let col = 0; col < GRID_SIZE; col++) {
-        const cells = lineOf(word, { row, col }, direction);
-        if (cells) all.push({ from: cells[0] as Cell, to: cells.at(-1) as Cell, direction });
-      }
+  for (let row = 0; row < GRID_SIZE; row++) {
+    for (let col = 0; col < GRID_SIZE; col++) {
+      const cells = lineOf(word, { row, col }, direction);
+      if (cells) all.push({ from: cells[0] as Cell, to: cells.at(-1) as Cell, direction });
     }
   }
   return all;
@@ -50,6 +48,33 @@ function shuffle<T>(items: T[], rng: Rng): T[] {
     [items[i], items[j]] = [items[j] as T, items[i] as T];
   }
   return items;
+}
+
+/**
+ * Orden de prueba de las posiciones de una palabra: primero todas las de su dirección preferida
+ * (mezcladas); después el resto, sorteando en cada intento la dirección (equiprobable entre las
+ * que aún tienen posiciones) y tomando la siguiente posición de esa dirección.
+ *
+ * Sortear sobre todas las posiciones juntas sesgaba a las rectas: una palabra larga entra en
+ * muchas más posiciones rectas que diagonales, y ~29 % de las grillas salían sin ninguna diagonal.
+ */
+export function orderedCandidates(word: string, rng: Rng, preferred?: Direction): Candidate[] {
+  const pools = DIRECTIONS.map((d) => shuffle(candidatesIn(word, d), rng));
+  const out: Candidate[] = [];
+  if (preferred) {
+    const i = DIRECTIONS.indexOf(preferred);
+    out.push(...(pools[i] as Candidate[]));
+    pools.splice(i, 1);
+  }
+  for (let i = pools.length - 1; i >= 0; i--)
+    if ((pools[i] as Candidate[]).length === 0) pools.splice(i, 1);
+  while (pools.length > 0) {
+    const i = rng.int(0, pools.length - 1);
+    const pool = pools[i] as Candidate[];
+    out.push(pool.pop() as Candidate);
+    if (pool.length === 0) pools.splice(i, 1);
+  }
+  return out;
 }
 
 /** Cruces permitidos con la misma letra; la palabra no puede quedar íntegramente sobre celdas ocupadas. */
@@ -97,7 +122,14 @@ export function placeWords(
             ? 1
             : 0,
     );
-  const shuffled = order.map(({ word }) => shuffle(candidatesFor(word), rng));
+  // Reparto de direcciones preferidas: cada dirección le toca a 2 de las 8 palabras, en orden
+  // aleatorio. Así la grilla mezcla rectas y diagonales aunque el backtracking tenga que mover
+  // alguna palabra (si no, terminaban ganando las rectas: ~8 % de grillas sin diagonales).
+  const preferred = shuffle(
+    order.map((_, i) => DIRECTIONS[i % DIRECTIONS.length] as Direction),
+    rng,
+  );
+  const shuffled = order.map(({ word }, i) => orderedCandidates(word, rng, preferred[i]));
 
   const grid = emptyGrid();
   const current: (Candidate | null)[] = order.map(() => null);
