@@ -23,8 +23,31 @@ describe('game-host boundaries', () => {
       'modules/game-host/registry.ts',
     ]);
     const text = readFileSync(withGame[0] as string, 'utf8');
-    expect(text).toMatch(/import\('@nerdose\/game-[a-z-]+\/client'\)/);
+    expect(text).toContain("import('@nerdose/game-devdle/client')");
+    expect(text).toContain("import('@nerdose/game-grep-grid/client')");
     expect(text).not.toContain("from '@nerdose/game-");
+    expect(text).not.toContain("/definition'");
+    expect(text).not.toContain("/generator'");
+  });
+
+  it('TS-46: sin lógica por juego ni lectura de feedback', () => {
+    const allowed = [
+      'modules/game-host/registry.ts',
+      'modules/catalog/games.ts',
+      'i18n/es.ts',
+      'i18n/en.ts',
+    ];
+    // `src/test/` es soporte de tests (fixtures), no código de la app.
+    const withGrepGrid = files
+      .map((f) => f.slice(ROOT.length + 1))
+      .filter((f) => !f.startsWith('test/'))
+      .filter((f) => readFileSync(join(ROOT, f), 'utf8').includes("'grep-grid'"));
+    for (const file of withGrepGrid) expect(allowed, file).toContain(file);
+    for (const file of files) {
+      const text = readFileSync(file, 'utf8');
+      expect(text, file).not.toMatch(/feedback\??\.(found|reason)/);
+      expect(text, file).not.toMatch(/\.reason\s*===/);
+    }
   });
 
   it('TS-5: nadie referencia window.plausible', () => {

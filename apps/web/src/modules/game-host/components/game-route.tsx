@@ -37,6 +37,8 @@ export function GameRoute({ gameId }: { gameId: GameId }) {
   const query = useGameToday(gameId, { enabled: hasClient });
   const startPlay = useStartPlay(gameId);
   const submitMove = useSubmitMove(gameId);
+  // Se reenvía tal cual al `Game`: sin estado ni efecto, misma referencia que la respuesta.
+  const feedback = submitMove.data?.feedback ?? null;
   const [dayChanged, setDayChanged] = useState(false);
   const [voidedDuringPlay, setVoidedDuringPlay] = useState(false);
   const lastMove = useRef<{ number: number; move: unknown } | null>(null);
@@ -185,6 +187,7 @@ export function GameRoute({ gameId }: { gameId: GameId }) {
           <Screens
             gameId={gameId}
             view={view}
+            feedback={feedback}
             locale={locale}
             firstPhaseRef={firstPhaseRef}
             startNotice={

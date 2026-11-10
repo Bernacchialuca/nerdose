@@ -19,6 +19,8 @@ type ClientView = Extract<GameView, { kind: 'instructions' | 'playing' | 'result
 export type GameScreensProps = {
   gameId: GameId;
   view: ClientView;
+  /** Último `MoveResponse.feedback`, reenviado sin interpretar. */
+  feedback: unknown;
   locale: Locale;
   firstPhaseRef: RefObject<boolean>;
   /** Aviso extra de «Empezar» (p. ej. `rate_limited`). */
@@ -37,6 +39,7 @@ export function GameScreens({
   client,
   gameId,
   view,
+  feedback,
   locale,
   firstPhaseRef,
   startNotice,
@@ -117,6 +120,7 @@ export function GameScreens({
           t={t}
           publicView={view.publicView}
           state={view.state}
+          feedback={feedback}
           onMove={onMove}
           pending={movePending}
           moveError={view.moveError}
@@ -140,6 +144,7 @@ export function GameScreens({
         locale={locale}
         t={t}
         result={view.result}
+        publicView={view.publicView}
         gameStats={view.gameStats}
         aside={<ResultAside gameId={gameId} gameStats={view.gameStats} />}
         footer={<ResultExits gameId={gameId} />}

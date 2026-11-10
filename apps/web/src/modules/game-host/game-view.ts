@@ -37,7 +37,13 @@ export type GameView =
       moveFailed: boolean;
       gameStats: GameStatsView | null;
     }
-  | { kind: 'result'; number: number; result: unknown; gameStats: GameStatsView | null };
+  | {
+      kind: 'result';
+      number: number;
+      result: unknown;
+      publicView: unknown;
+      gameStats: GameStatsView | null;
+    };
 
 const INLINE_MOVE_ERRORS = ['not_in_word_list', 'rate_limited', 'invalid_move', 'validation_error'];
 
@@ -108,5 +114,11 @@ export function deriveGameView({
         (!(actionError instanceof ApiError) || actionError.status >= 500),
     };
   }
-  return { kind: 'result', number, result: data.result, gameStats: data.game_stats };
+  return {
+    kind: 'result',
+    number,
+    result: data.result,
+    publicView: data.public_view,
+    gameStats: data.game_stats,
+  };
 }

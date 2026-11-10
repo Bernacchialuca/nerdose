@@ -2,7 +2,7 @@
 
 ## clientRegistry / hasGameClient
 - **Location:** apps/web/src/modules/game-host/registry.ts
-- **Description:** The only place that lists games: `game_id` to a dynamic `import()` of the package `./client`. Partial on purpose (only Devdle).
+- **Description:** The only place that lists games: `game_id` to a dynamic `import()` of the package `./client`. Partial on purpose (Devdle and Grep Grid).
 - **Signature:** `clientRegistry: Partial<Record<GameId, () => Promise<GameClient>>>`; `hasGameClient(id: GameId): boolean`
 - **Usage:** `hasGameClient('timeline') // false`
 
@@ -14,7 +14,7 @@
 
 ## GameClient and props
 - **Location:** apps/web/src/modules/game-host/types.ts
-- **Description:** Structural copy of the `./client` contract of a game package: `GameClient`, `ClientBaseProps`, `InstructionsProps`, `GameProps`, `ResultProps`, `Translate`, `MoveErrorInfo`, `GameStatsView`.
+- **Description:** Structural copy of the `./client` contract of a game package: `GameClient`, `ClientBaseProps`, `InstructionsProps`, `GameProps`, `ResultProps`, `Translate`, `MoveErrorInfo`, `GameStatsView`. `GameProps.feedback` is the last `MoveResponse.feedback` (`null` until the first move; forwarded untouched, never interpreted by `web`) and `ResultProps.publicView` is `GameToday.public_view` for clients that draw the final board.
 
 ## gameTodayKeys / fetchGameToday / useGameToday / useStartPlay / useSubmitMove / withSessionRetry
 - **Location:** apps/web/src/modules/game-host/api/
@@ -24,7 +24,7 @@
 
 ## deriveGameView / toMoveError
 - **Location:** apps/web/src/modules/game-host/game-view.ts
-- **Description:** Pure function that picks the screen (`noClient | loading | loadError | noChallenge | voided | voidedResult | instructions | playing | result`) from the query, session status and ephemeral state. `toMoveError` maps inline move errors (memoized by error identity).
+- **Description:** Pure function that picks the screen (`noClient | loading | loadError | noChallenge | voided | voidedResult | instructions | playing | result`; `result` also carries `publicView`) from the query, session status and ephemeral state. `toMoveError` maps inline move errors (memoized by error identity).
 - **Signature:** `deriveGameView({ hasClient, query, sessionStatus, dayChanged, voidedDuringPlay, actionError }): GameView`
 
 ## GameHostHeader
@@ -50,3 +50,8 @@
 - **Location:** apps/web/src/lib/env.ts, analytics.ts
 - **Description:** Zod-validated `VITE_PLAUSIBLE_*` (script URL required when there is a domain); `initAnalytics()` calls `injectAnalytics` once from `main.tsx`.
 - **Signature:** `parseEnv(raw: Record<string, unknown>): Env`; `initAnalytics(e?: Env): void`
+
+## gameHandlersFor / grepGridHandlers / Grep Grid fixtures / game-route-helpers (tests)
+- **Location:** apps/web/src/test/msw.ts, apps/web/src/test/fixtures/grep-grid-today.ts, apps/web/src/test/game-route-helpers.ts
+- **Description:** `gameHandlersFor(gameId)` builds the MSW `today` / `start` / `move` handlers of one game (`gameHandlers` = Devdle, `grepGridHandlers` = Grep Grid). The Grep Grid fixtures are the API payloads in `snake_case` (grid, words, played states, results, moves, `todayWithGrepGrid`). `game-route-helpers` shares `recordCalls`, `countOf`, `errorResponse`, `settle`, `setShare` and `h1` between the route suites.
+- **Usage:** `server.use(grepGridHandlers.today(grepGridInProgress3), grepGridHandlers.move(ggMoveDocker))`

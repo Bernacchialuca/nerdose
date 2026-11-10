@@ -23,7 +23,15 @@ import {
 } from '@/test/fixtures/game-today';
 import { sessionFixture } from '@/test/fixtures/session';
 import { todayFixture, todayNoSessionFixture } from '@/test/fixtures/today';
-import { apiError, gameHandlers, server } from '@/test/msw';
+import {
+  countOf,
+  errorResponse,
+  h1,
+  recordCalls,
+  setShare,
+  settle,
+} from '@/test/game-route-helpers';
+import { gameHandlers, server } from '@/test/msw';
 import { renderWithProviders } from '@/test/render';
 
 vi.mock('@nerdose/ui', async (importOriginal) => ({
@@ -40,42 +48,7 @@ const COOKIES =
 const VOIDED = 'Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.';
 const NO_CHALLENGE = 'Hoy no hay desafío de Devdle. Es un día neutro: no suma ni corta tu racha.';
 
-type Call = { method: string; path: string; body?: unknown };
-
-/** Registra cada request de la `api` (con body JSON) en el orden en que salen. */
-function recordCalls(): Call[] {
-  const calls: Call[] = [];
-  server.events.on('request:start', ({ request }) => {
-    const url = new URL(request.url);
-    const call: Call = { method: request.method, path: url.pathname + url.search };
-    calls.push(call);
-    if (request.method === 'POST') {
-      void request
-        .clone()
-        .json()
-        .then((body: unknown) => {
-          call.body = body;
-        })
-        .catch(() => undefined);
-    }
-  });
-  return calls;
-}
-
-const countOf = (calls: Call[], method: string, path: string) =>
-  calls.filter((c) => c.method === method && c.path === path).length;
-
-const errorResponse = (code: string, message: string, status: number, headers?: HeadersInit) =>
-  HttpResponse.json(apiError(code, message), { status, headers });
-
-const settle = (ms = 60) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const view = (route = '/devdle') => renderWithProviders({ route });
-const h1 = (name: string | RegExp) => screen.findByRole('heading', { level: 1, name });
-
-function setShare(value: unknown) {
-  Object.defineProperty(navigator, 'share', { value, configurable: true, writable: true });
-}
 
 beforeEach(() => {
   server.use(gameHandlers.today(gameTodayNotStarted));

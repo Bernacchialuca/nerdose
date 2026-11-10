@@ -206,6 +206,9 @@ importers:
       '@nerdose/game-devdle':
         specifier: workspace:*
         version: link:../../packages/games/devdle
+      '@nerdose/game-grep-grid':
+        specifier: workspace:*
+        version: link:../../packages/games/grep-grid
       '@nerdose/ui':
         specifier: workspace:*
         version: link:../../packages/ui
