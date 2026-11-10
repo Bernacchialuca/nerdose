@@ -12,6 +12,7 @@ import { jobRuns } from '@nerdose/db';
 import { BANK16, insertTerms } from '../helpers/bank';
 import { setupTestDb } from '../helpers/db';
 import { captureLogger } from '../helpers/logger';
+import { devdleOnlyRegistry } from '../helpers/registry';
 
 const SECRET = 'test-secret-0123456789abcdef0123456789';
 const NOW = new Date('2026-12-01T12:00:00.000Z');
@@ -45,7 +46,7 @@ function setup(
       LAUNCH_DATE: options.launch ?? '2026-11-20',
       GENERATION_MAX_ATTEMPTS: options.attempts ?? 20,
     },
-    registry: options.registry ?? generatorRegistry,
+    registry: options.registry ?? devdleOnlyRegistry,
     repo: options.wrapRepo ? options.wrapRepo(baseRepo) : baseRepo,
   });
   return { run: () => runJob('fill', body, deps), deps, body, lines: captured.lines };

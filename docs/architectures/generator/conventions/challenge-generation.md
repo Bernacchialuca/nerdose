@@ -96,7 +96,7 @@ import { generator as devdle } from '@nerdose/game-devdle/generator';
 - `challenges.number` is computed with `@nerdose/core` (`date - LAUNCH_DATE + 1`) at insert time. `generator_version` is stored with every challenge.
 - A challenge is never regenerated from its seed: the stored `payload` is the source of truth.
 - Never generate for `today` or past dates. If a day arrives without a challenge the day is neutral.
-- On approval the `last_used_*` of the used bank items are updated in the same transaction.
+- On approval the `last_used_*` of the used bank items are updated in the same transaction with `GREATEST(last_used_*, date)`, so filling an earlier gap never moves a date backwards.
 - If tomorrow's challenge for a game is missing after all attempts: `UPSERT generation_failures` and send the alert once (see `alerts-mail`).
 - The `generator` imports only `./generator` (and `./definition` if needed) of the game packages, and makes no HTTP requests to external services.
 
@@ -111,5 +111,5 @@ import { generator as devdle } from '@nerdose/game-devdle/generator';
 
 ## Update (REQ-005)
 
-- Optional, generic improvement in `ChallengePublishingRepository.approve`: write `last_used = GREATEST(last_used, date)` instead of `last_used = date`, so that filling an earlier gap does not move the date of a bank item backwards. It does not change Devdle's behavior. Adopted or not in S-023.
+- Optional, generic improvement in `ChallengePublishingRepository.approve`: write `last_used = GREATEST(last_used, date)` instead of `last_used = date`, so that filling an earlier gap does not move the date of a bank item backwards. It does not change Devdle's behavior. **Adopted in S-023.**
 - Grep Grid registers as `{ gameId: 'grep-grid', generator, payloadSchema, version: 'grep-grid@1' }`; its `verify` checks are listed in the flow `generacion-diaria`.

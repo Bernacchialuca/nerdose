@@ -5,6 +5,11 @@ import {
   payloadSchema as devdlePayloadSchema,
 } from '@nerdose/game-devdle/definition';
 import { generator as devdleGenerator } from '@nerdose/game-devdle/generator';
+import {
+  definition as grepGridDefinition,
+  payloadSchema as grepGridPayloadSchema,
+} from '@nerdose/game-grep-grid/definition';
+import { generator as grepGridGenerator } from '@nerdose/game-grep-grid/generator';
 import type { z } from 'zod';
 
 export type GeneratorEntry = {
@@ -40,5 +45,11 @@ export const generatorRegistry = createGeneratorRegistry([
     generator: devdleGenerator,
     payloadSchema: devdlePayloadSchema,
     version: `devdle@${devdleDefinition.version}`,
+  },
+  {
+    gameId: 'grep-grid',
+    generator: grepGridGenerator,
+    payloadSchema: grepGridPayloadSchema,
+    version: `grep-grid@${grepGridDefinition.version}`,
   },
 ]);
