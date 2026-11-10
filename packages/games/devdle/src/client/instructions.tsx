@@ -51,7 +51,7 @@ export function Instructions({
         <ol className="grid grid-cols-[repeat(auto-fit,minmax(min(240px,100%),1fr))] gap-4">
           {steps.map((s) => (
             <li key={s.kicker}>
-              <Card variant="step" tone="devdle" kicker={s.kicker}>
+              <Card variant="step" tone="devdle" kicker={s.kicker} className="h-full">
                 {s.body}
               </Card>
             </li>
@@ -59,23 +59,21 @@ export function Instructions({
         </ol>
       </section>
       <p className="font-sans text-caption text-text-muted">{t('instructions.countNotice')}</p>
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <button
-            type="button"
-            aria-disabled={blocked || undefined}
-            onClick={handleStart}
-            className={buttonClass({
-              variant: 'accent',
-              game: 'devdle',
-              size: 'lg',
-              disabled: blocked,
-            })}
-          >
-            {t('instructions.start')} <span aria-hidden="true">→</span>
-          </button>
-          {actions}
-        </div>
+      <div className="flex flex-col items-start gap-3">
+        <button
+          type="button"
+          aria-disabled={blocked || undefined}
+          onClick={handleStart}
+          className={buttonClass({
+            variant: 'accent',
+            game: 'devdle',
+            size: 'lg',
+            disabled: blocked,
+          })}
+        >
+          {t('instructions.start')} <span aria-hidden="true">→</span>
+        </button>
+        {actions}
       </div>
     </div>
   );

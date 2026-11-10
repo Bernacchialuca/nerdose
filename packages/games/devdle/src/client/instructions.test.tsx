@@ -77,13 +77,19 @@ describe('Instructions', () => {
     const h2 = screen.getByRole('heading', { level: 2 });
     expect(meta.compareDocumentPosition(notice) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(notice.compareDocumentPosition(h2) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    const row = screen.getByRole('button', { name: /Empezar/ }).parentElement as HTMLElement;
+    const start = screen.getByRole('button', { name: /Empezar/ });
+    const back = screen.getByRole('link', { name: 'Volver' });
+    const row = start.parentElement as HTMLElement;
     expect(within(row).getByRole('link', { name: 'Volver' })).toBeInTheDocument();
+    // Volver va debajo de Empezar, no al lado.
+    expect(row).toHaveClass('flex-col', 'items-start');
+    expect(start.compareDocumentPosition(back) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // Las tarjetas de pasos ocupan toda la celda: misma altura en la fila.
+    for (const card of screen.getAllByRole('article')) expect(card).toHaveClass('h-full');
     expect(container.firstElementChild).toHaveClass('mx-auto', 'max-w-5xl');
     expect(screen.getByRole('list')).toHaveClass(
       'grid-cols-[repeat(auto-fit,minmax(min(240px,100%),1fr))]',
     );
-    expect(row.parentElement).toHaveClass('flex', 'flex-wrap', 'justify-between');
   });
 
   it('has no axe violations in es and en (TS-49)', async () => {

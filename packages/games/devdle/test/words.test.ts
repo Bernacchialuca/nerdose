@@ -28,6 +28,15 @@ describe('word list building', () => {
     ]);
   });
 
+  it('adds curated extras that the sources miss', () => {
+    expect(buildWordList('cache\n', ['Rust'], ['linux', '# comentario', 'vim', 'Unix'])).toEqual([
+      'CACHE',
+      'LINUX',
+      'RUST',
+      'UNIX',
+    ]);
+  });
+
   it('serializes one word per line with a trailing newline (TS-52)', () => {
     expect(serializeWordList(['CACHE', 'REACT'])).toBe('CACHE\nREACT\n');
   });

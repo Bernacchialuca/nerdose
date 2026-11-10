@@ -60,6 +60,26 @@ describe('runBuildWordlist', () => {
     expect(existsSync(`${outPath}.tmp`)).toBe(false);
   });
 
+  it('merges the extras file when given', async () => {
+    const extrasPath = join(dir, 'extra.txt');
+    await writeFile(extrasPath, '# curados\nLinux\nkubernetes\n');
+    const outPath = join(dir, 'words.txt');
+    await runBuildWordlist({
+      enable: enablePath,
+      outPath,
+      extrasPath,
+      classes: ['Q9143'],
+      contact: 'c',
+      now,
+      fetch: (async () =>
+        new Response(sparql('Q9143'), { status: 200 })) as unknown as typeof fetch,
+      sleep: noopSleep,
+    });
+    const words = (await readFile(outPath, 'utf8')).split('\n');
+    expect(words).toContain('LINUX');
+    expect(words).toContain('KUBERNETES');
+  });
+
   it('downloads ENABLE by URL (TS-56)', async () => {
     const urls: string[] = [];
     const headers: Record<string, string>[] = [];

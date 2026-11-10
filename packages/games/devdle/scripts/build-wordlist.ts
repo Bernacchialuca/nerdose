@@ -17,6 +17,7 @@ try {
   const counts = await runBuildWordlist({
     enable: args.enable,
     outPath,
+    extrasPath: fileURLToPath(new URL('../wordlist/extra.txt', import.meta.url)),
     contact: env.WIKIMEDIA_CONTACT,
     log: console.log,
   });

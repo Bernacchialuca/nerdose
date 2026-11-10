@@ -1,0 +1,12 @@
+# Términos curados que ni ENABLE ni las clases de Wikidata aportan.
+# Una palabra por línea (A-Z, 4-12 letras); se ignoran vacías y las que empiezan con #.
+# build:wordlist los une a words.txt, así no se pierden al regenerar.
+DEBIAN
+EMACS
+GITLAB
+GOLANG
+KUBERNETES
+LINUX
+MYSQL
+REDIS
+UNIX

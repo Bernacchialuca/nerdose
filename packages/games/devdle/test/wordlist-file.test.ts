@@ -22,6 +22,13 @@ describe('committed wordlist/words.txt', () => {
     for (const w of ['REACT', 'CACHE', 'TRACE', 'CRANE', 'MERGE']) expect(set.has(w)).toBe(true);
   });
 
+  it('contains the curated extras (wordlist/extra.txt)', () => {
+    const set = new Set(lines);
+    for (const w of ['LINUX', 'UNIX', 'KUBERNETES', 'REDIS', 'MYSQL', 'DEBIAN']) {
+      expect(set.has(w)).toBe(true);
+    }
+  });
+
   it('resolves the ./wordlist resource (TS-63)', () => {
     const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as {
       exports: Record<string, string>;

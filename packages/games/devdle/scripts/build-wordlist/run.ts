@@ -16,6 +16,8 @@ export class EmptySourceError extends Error {
 export type BuildWordlistOptions = {
   enable: string;
   outPath: string;
+  /** Lista curada (una palabra por línea, `#` = comentario). Opcional. */
+  extrasPath?: string;
   contact: string;
   classes?: readonly string[];
   now?: Date;
@@ -34,6 +36,7 @@ export type BuildWordlistCounts = {
 export async function runBuildWordlist({
   enable,
   outPath,
+  extrasPath,
   contact,
   classes = WORDLIST_CLASSES,
   now = new Date(),
@@ -63,7 +66,8 @@ export async function runBuildWordlist({
   const wikidataWords = new Set(filterWords(labels));
   if (wikidataWords.size === 0) throw new EmptySourceError('Wikidata');
 
-  const words = buildWordList(enableText, labels);
+  const extras = extrasPath ? (await readFile(extrasPath, 'utf8')).split('\n') : [];
+  const words = buildWordList(enableText, labels, extras);
   const enableSet = new Set(enableWords);
   const counts = {
     enable: enableSet.size,
