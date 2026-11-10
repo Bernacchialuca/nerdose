@@ -24,14 +24,14 @@ Documento de alto nivel: qué servicios existen, cómo se comunican, qué base d
 |----------|-----------|-------------------|-------------------|---------------|---------------|
 | `web` | TypeScript, React 19, Vite, React Router, TanStack Query, Tailwind CSS v4, i18next, dnd-kit, Shiki (lazy) | SPA de jugadores: shell, catálogo (home), instrucciones, partida y resultado de cada juego, stats, share, selector de idioma. Nunca tiene la solución antes de terminar | – (UI de Gameplay, Progress e Identity) | – | `api`; Plausible (opcional) |
 | `admin` | TypeScript, React 19, Vite, TanStack Query, Tailwind CSS v4 | SPA del responsable: login, reportes y anulación, próximos 14 días (preview con solución y regenerar), stock de contenido, métricas. Solo en español | – (UI de Quality; lectura de Challenge Publishing y Content Banks) | – | `api` |
-| `api` | Node.js 24 LTS, Hono, Zod, Drizzle ORM, postgres.js, nodemailer | Única interfaz HTTP. Jugador anónimo y preferencias; vista pública y validación de jugadas con el `GameDefinition` de cada juego; cierre de partidas y rachas en la misma transacción; reportes, umbral de alerta y anulación; rutas `/api/admin/*`; publicación `approved → published` al cambiar el día. **Nunca ejecuta código** | Player, Play, PlayerGameStats, PlayerStats, ChallengeReport, RejectedGuess (y escrituras acotadas sobre Challenge) | `nerdose-db` (rol `nerdose_api`) | Servidor SMTP (alertas por mail) |
-| `generator` | Node.js 24 LTS (TS) + Go ≥ 1.25 + JDK 21, croner, pure-rand, nodemailer | Worker siempre activo. Genera, verifica y aprueba desafíos de los próximos 14 días; atiende pedidos de regeneración; carga los bancos desde el dataset versionado (`@nerdose/content`) al arrancar; alerta las fallas de generación. **Único que crea desafíos y escribe los bancos**. No expone interfaz de red y no llama a APIs externas (salvo SMTP) | Challenge, Term, TimelineFact (y las tablas técnicas `generation_requests`, `generation_failures`, `job_runs`) | `nerdose-db` (rol `nerdose_generator`) | Servidor SMTP |
+| `api` | Node.js 24 LTS, Hono, Zod, Drizzle ORM, postgres.js | Única interfaz HTTP. Jugador anónimo y preferencias; vista pública y validación de jugadas con el `GameDefinition` de cada juego; cierre de partidas y rachas en la misma transacción; reportes, umbral de alerta y anulación; rutas `/api/admin/*`; publicación `approved → published` al cambiar el día. **Nunca ejecuta código** | Player, Play, PlayerGameStats, PlayerStats, ChallengeReport, RejectedGuess (y escrituras acotadas sobre Challenge) | `nerdose-db` (rol `nerdose_api`) | — |
+| `generator` | Node.js 24 LTS (TS) + Go ≥ 1.25 + JDK 21, croner, pure-rand | Worker siempre activo. Genera, verifica y aprueba desafíos de los próximos 14 días; atiende pedidos de regeneración; carga los bancos desde el dataset versionado (`@nerdose/content`) al arrancar; registra las fallas de generación (`generation_failures`). **Único que crea desafíos y escribe los bancos**. No expone interfaz de red y no llama a APIs externas | Challenge, Term, TimelineFact (y las tablas técnicas `generation_requests`, `generation_failures`, `job_runs`) | `nerdose-db` (rol `nerdose_generator`) | — |
 
 ### Componentes compartidos (paquetes del monorepo)
 
 | Paquete | Lo usan | Contenido |
 |---|---|---|
-| `core` | api, generator, web | Contrato `GameDefinition`, día UTC y número de desafío (`LAUNCH_DATE`), rachas con días neutros, PRNG (`rngFrom`; el seed HMAC se calcula solo en el `generator`), `notify()` (entrada aparte `@nerdose/core/notify`, solo Node) (mail), códigos de error |
+| `core` | api, generator, web | Contrato `GameDefinition`, día UTC y número de desafío (`LAUNCH_DATE`), rachas con días neutros, PRNG (`rngFrom`; el seed HMAC se calcula solo en el `generator`), códigos de error |
 | `db` | api, generator | Schema Drizzle, migraciones, queries compartidas y vistas `metrics_*` |
 | `games/<game_id>` | `definition` → api · `client` → web y admin · `generator` → generator | Un paquete por juego: `devdle`, `grep-grid`, `timeline`, `big-o`, `bug-hunt` |
 | `polyglot` | generator | Árbol de código, emisores JS/Go/Java y runner multi-lenguaje |
@@ -59,7 +59,7 @@ No hay Redis ni bus de mensajes: las caches y el rate limit viven en la memoria 
   - Login y operaciones del responsable, con `Authorization: Bearer <JWT>`.
 
 - **api → nerdose-db** (SQL vía postgres.js, síncrono)
-  - Lee los desafíos de hoy, escribe jugadores, partidas, agregados, reportes y rechazos de Devdle. Sobre `challenges` solo puede hacer `UPDATE` de `status`, `void_reason`, `voided_at` y `alert_sent_at`.
+  - Lee los desafíos de hoy, escribe jugadores, partidas, agregados, reportes y rechazos de Devdle. Sobre `challenges` solo puede hacer `UPDATE` de `status`, `void_reason`, `voided_at` y `alerted_at`.
 
 - **generator → nerdose-db** (SQL + `LISTEN`, síncrono)
   - Dueño de `challenges`, los bancos y las tablas técnicas.
@@ -72,11 +72,7 @@ No hay Redis ni bus de mensajes: las caches y el rate limit viven en la memoria 
 
 ### Integraciones Externas
 
-- **api → Servidor SMTP** (SMTP vía nodemailer, asíncrono, best-effort)
-  - Mail al responsable cuando un desafío alcanza el umbral de reportes (una vez por desafío).
-
-- **generator → Servidor SMTP** (SMTP vía nodemailer, asíncrono, best-effort)
-  - Mail al responsable si falta el desafío de mañana tras 20 reintentos (una vez por juego y fecha).
+- Ninguna en v1. Las alertas no salen del sistema: el umbral de reportes marca `challenges.alerted_at` (api) y la falla de generación crea una fila en `generation_failures` (generator); el admin las muestra.
 
 - **web → Plausible CE** (HTTPS, asíncrono, **opcional**)
   - Pageviews y eventos `share:<game_id>`. Solo si `VITE_PLAUSIBLE_DOMAIN` tiene valor al compilar; está apagado por defecto.
@@ -95,7 +91,7 @@ El script manda un `User-Agent` descriptivo con un contacto del proyecto, como e
 
 ### Infraestructura
 
-> **Diferido:** hosting, plataforma de despliegue, ambientes, CI/CD, backups, DNS/TLS, almacenamiento de secretos y servidor SMTP se definen en una iteración posterior. Acá solo queda lo que la arquitectura ya exige de la infraestructura.
+> **Diferido:** hosting, plataforma de despliegue, ambientes, CI/CD, backups, DNS/TLS, y almacenamiento de secretos se definen en una iteración posterior. Acá solo queda lo que la arquitectura ya exige de la infraestructura.
 
 **Requisitos que el despliegue tiene que cumplir:**
 - **Mismo origen:** `nerdose.dev` sirve `web` y enruta `/api/*` a la `api`; `admin.nerdose.dev` sirve `admin` y enruta `/api/admin/*` a la misma `api`. Sin CORS. *Qué* se enruta está decidido; *cómo* (proxy, plataforma) queda diferido.
@@ -104,7 +100,7 @@ El script manda un `User-Agent` descriptivo con un contacto del proyecto, como e
 - El `generator` necesita los toolchains **Node 24, Go ≥ 1.25 y JDK 21** en su entorno, y corre siempre (worker long-running).
 - **PostgreSQL 16** con tres roles: dueño del schema (migraciones), `nerdose_api` y `nerdose_generator`.
 - Las migraciones (drizzle-kit, rol dueño del schema) se aplican antes de levantar `api` y `generator`.
-- Salida SMTP de `api` y `generator`. Ningún servicio necesita otra salida a internet.
+- Ningún servicio necesita salida a internet.
 
 **Estructura del repositorio:**
 - Monorepo con pnpm workspaces y Turborepo: `apps/{web,admin,api,generator}` y `packages/{core,db,ui,polyglot,content,games/*}`.
@@ -117,7 +113,7 @@ El script manda un `User-Agent` descriptivo con un contacto del proyecto, como e
 
 **Monitoreo:**
 - `GET /api/health` y `GET /api/admin/health` en la `api`.
-- Salud del contenido: stock de los bancos, próximos 14 días y `job_runs` en el admin; mails de alerta ante fallas de generación.
+- Salud del contenido: stock de los bancos, próximos 14 días y `job_runs` en el admin; fallas de generación y desafíos alertados visibles en el admin.
 - Monitoreo de infraestructura (uptime, recursos): diferido.
 
 **Error Tracking:**
@@ -142,7 +138,7 @@ El script manda un `User-Agent` descriptivo con un contacto del proyecto, como e
 
 **Gestión de Secretos:**
 - Por variables de entorno, validadas al arrancar; nunca en el repo. En el repo solo hay un `.env.example` sin valores. Dónde se guardan en producción y cómo se rotan queda diferido.
-- Secretos: `GENERATOR_SECRET` (**solo** el generator; sin él no se pueden predecir los desafíos), `ADMIN_PASSWORD_HASH` y `ADMIN_JWT_SECRET` (api), `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `ALERT_EMAIL_FROM` y `ALERT_EMAIL_TO` (api y generator), `DATABASE_URL` (uno por rol).
+- Secretos: `GENERATOR_SECRET` (**solo** el generator; sin él no se pueden predecir los desafíos), `ADMIN_PASSWORD_HASH` y `ADMIN_JWT_SECRET` (api) y `DATABASE_URL` (uno por rol).
 - Rotar `ADMIN_JWT_SECRET` invalida todas las sesiones de admin.
 
 ### Rendimiento
@@ -176,7 +172,7 @@ El script manda un `User-Agent` descriptivo con un contacto del proyecto, como e
 - Monorepo (pnpm workspaces + Turborepo) con todos los servicios en un repo.
 - Una sola instancia de `api` y una de `generator`, para ~1.000 jugadores diarios con pico a las 00:00 UTC (NFR-SC01).
 - La publicación del día no depende del `generator`: la hace la `api` con el primer request después de las 00:00 UTC (NFR-A02). Con 14 días aprobados por adelantado, el generator puede estar caído hasta 13 días sin dejar un juego sin desafío (NFR-A03).
-- Alertas solo por mail (SMTP con nodemailer).
+- Alertas solo en el admin (registradas en la base); sin mail ni webhooks.
 
 **Fase Post-MVP:**
 - Escalado horizontal de la `api` (NFR-SC03): el rate limit y las caches pasan a Postgres o Redis, y la publicación single-flight se protege con un advisory lock.

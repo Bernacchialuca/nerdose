@@ -146,7 +146,7 @@ Jobs are exercised through their run function with a real `Db` and fake clock; t
 - Streak and day logic is tested with fake clocks, including neutral days, voids and the day change. `recomputeStats` has a property test with random histories against the incremental result.
 - A test runs the expected operations (and the forbidden ones) with each database role to catch missing or excessive `GRANT`s.
 - No wall-clock sleeps to wait for a condition. Await the observable condition or use `Wait.*` strategies.
-- Tests do not touch the network, SMTP or Wikimedia. `notify()` is replaced by a stub that records calls.
+- Tests do not touch the network or Wikimedia.
 - Test files are co-located or under `test/`, suffixed `.test.ts`; `describe` names the unit and `it` the scenario.
 - Reset mocks and timers between tests (`vi.clearAllMocks()`, `vi.useRealTimers()`).
 - Keep log output quiet with `LOG_LEVEL=silent`.
@@ -157,4 +157,3 @@ Jobs are exercised through their run function with a real `Db` and fake clock; t
 - **orm**: migrations and roles are applied once in `globalSetup`; repositories run against the shared real DB.
 - **logging**: silent logger in tests.
 - **env-config**: tests build a config object instead of reading `.env` files.
-- **alerts-mail**: `notify()` is stubbed; claim and release are verified in the database.

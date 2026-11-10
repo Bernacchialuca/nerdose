@@ -545,8 +545,8 @@ paths:
 
         Si se alcanza el umbral (`REPORT_ALERT_COUNT` = 3, o `REPORT_ALERT_RATIO_MIN_COUNT` = 2 y
         > `REPORT_ALERT_RATIO` = 5% de las Play terminadas, contando solo `wrong_answer`/`ambiguous`) y
-        `challenges.alert_sent_at IS NULL`, se manda un mail al responsable una sola vez (ADR-013).
-        El fallo del mail no cambia la respuesta.
+        `challenges.alerted_at IS NULL`, se marca `alerted_at = now()` en la misma transacción, una sola
+        vez por desafío (ADR-017). No se envía ningún mail: el admin lo muestra en Reportes.
 
         Rate limit: 10 / hora por IP.
       operationId: reportChallenge
@@ -659,7 +659,8 @@ paths:
       tags: [Admin]
       summary: Reportes agrupados por desafío
       description: |
-        F11, C-39. Grupos ordenados por `report_count` desc. El `payload` incluye la solución y ambos idiomas.
+        F11, C-39. Primero los grupos con `alerted_at` (alcanzaron el umbral, ADR-017), después por
+        `report_count` desc. El `payload` incluye la solución y ambos idiomas.
       operationId: listReportGroups
       security:
         - adminBearer: []
@@ -778,7 +779,8 @@ paths:
       description: |
         F11, C-43. Para cada día de `today+1` a `today+days`, el desafío vigente de cada juego
         (`approved`) con `payload` completo y log de verificación, y el pedido de regeneración pendiente
-        si existe. El admin hace polling mientras haya `pending_request`.
+        si existe. Si no hay desafío y el generator registró una falla (`generation_failures`), la incluye
+        en `failure` (ADR-017). El admin hace polling mientras haya `pending_request`.
       operationId: listUpcomingChallenges
       security:
         - adminBearer: []
@@ -1787,9 +1789,14 @@ components:
 
     ReportGroup:
       type: object
-      required: [challenge, report_count, reasons, reports]
+      required: [challenge, alerted_at, report_count, reasons, reports]
       properties:
         challenge: { $ref: '#/components/schemas/AdminChallenge' }
+        alerted_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: Cuándo alcanzó el umbral de reportes (ADR-017). `null` si no lo alcanzó
         report_count: { type: integer, minimum: 1 }
         reasons:
           type: object
@@ -1828,7 +1835,7 @@ components:
           type: array
           items:
             type: object
-            required: [game_id, challenge, pending_request]
+            required: [game_id, challenge, pending_request, failure]
             properties:
               game_id: { $ref: '#/components/schemas/GameId' }
               challenge:
@@ -1848,6 +1855,15 @@ components:
                 properties:
                   request_id: { type: string, format: uuid }
                   status: { type: string, enum: [pending, done, failed] }
+              failure:
+                type: object
+                nullable: true
+                description: Falla de generación registrada para ese juego y fecha (ADR-017). Solo cuando `challenge` es `null`
+                required: [attempts, last_reason, updated_at]
+                properties:
+                  attempts: { type: integer, minimum: 1 }
+                  last_reason: { type: string, nullable: true }
+                  updated_at: { type: string, format: date-time }
 
     BankStock:
       type: object

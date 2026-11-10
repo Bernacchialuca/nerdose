@@ -66,7 +66,7 @@ Al revisarlo aparecieron tres cosas:
 ## Consecuencias
 
 ### Positivas
-- Producción no depende de ninguna API externa para el contenido. El `generator` solo sale por SMTP.
+- Producción no depende de ninguna API externa para el contenido. El `generator` no tiene salida de red fuera de la base.
 - El dataset se puede revisar en git (diffs), es reproducible y hace fáciles los tests y los entornos locales.
 - No hace falta manejar rate limits, reintentos ni cambios de las APIs de Wikimedia en runtime.
 - Desaparecen dos jobs y una tabla (`word_list_additions`).

@@ -67,7 +67,7 @@ for (let attempt = 0; attempt < env.GENERATION_MAX_ATTEMPTS; attempt++) {
   if (log.ok) { await repo.approve(id, log); await banks.touchLastUsed(payload); return id; }
   await repo.reject(id, log);
 }
-await failures.upsert({ gameId, date, attempts, lastReason });          // then alert once (alerts-mail)
+await failures.upsert({ gameId, date, attempts, lastReason });          // the row IS the alert (ADR-017)
 return null;
 ```
 
@@ -97,7 +97,7 @@ import { generator as devdle } from '@nerdose/game-devdle/generator';
 - A challenge is never regenerated from its seed: the stored `payload` is the source of truth.
 - Never generate for `today` or past dates. If a day arrives without a challenge the day is neutral.
 - On approval the `last_used_*` of the used bank items are updated in the same transaction with `GREATEST(last_used_*, date)`, so filling an earlier gap never moves a date backwards.
-- If tomorrow's challenge for a game is missing after all attempts: `UPSERT generation_failures` and send the alert once (see `alerts-mail`).
+- If tomorrow's challenge for a game is missing after all attempts: `UPSERT generation_failures` (one row per game and date, with `attempts` and `last_reason`). That row is the alert: the admin shows it in Próximos desafíos; nothing is sent (ADR-017).
 - The `generator` imports only `./generator` (and `./definition` if needed) of the game packages, and makes no HTTP requests to external services.
 
 ## Integration with other conventions
@@ -105,7 +105,7 @@ import { generator as devdle } from '@nerdose/game-devdle/generator';
 - **scheduler-jobs**: `fill` job body.
 - **generation-queue**: regeneration uses the same pipeline.
 - **code-runner**: `verify` executes code through `@nerdose/polyglot`.
-- **alerts-mail**: generation failure alert.
+- **Alerts (ADR-017)**: the `generation_failures` row is the generation failure alert.
 - **orm**: inserts into `challenges` through the repository with `nerdose_generator`.
 - **testing**: determinism test per game (same input, same payload).
 

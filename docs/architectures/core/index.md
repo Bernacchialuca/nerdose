@@ -15,9 +15,8 @@
 - **[Testing (Vitest + Testcontainers, contenedor compartido)](./conventions/testing.md)** — Unit and integration testing with Vitest; one shared PostgreSQL 16 Testcontainers instance per suite via globalSetup, sequential files, per-file reset, fake clocks for dates and streaks (custom)
 - **[Registro de juegos (GameDefinition)](./conventions/game-registry.md)** — Generic game routes over a registry of GameDefinition implementations, with anti-spoiler guarantees (custom)
 - **[Dia de la plataforma, publicacion y rachas](./conventions/platform-day.md)** — UTC platform day, lazy single-flight publication, late-move detection, streaks with neutral days and transactional Play closing (custom)
-- **[Alertas por mail (notify)](./conventions/alerts-mail.md)** — Single notify() helper from @nerdose/core/notify over nodemailer with best-effort, once-only claim semantics (custom)
 - **[Manejo de errores (catalogo cerrado)](./conventions/error-handling.md)** — Error modeling and canonical { error: { code, message } } shape with a closed code catalog exported by @nerdose/core (custom, auto-incluida)
 
 ---
 
-**Total:** 8 convenciones activas.
+**Total:** 7 convenciones activas.

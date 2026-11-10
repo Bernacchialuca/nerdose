@@ -202,7 +202,7 @@ export const errorHandler: ErrorHandler<AppEnv> = (err, c) => {
 - Responses to players never contain `{ es, en }` objects or `challenges.payload`; text arrives resolved to the request locale (ADR-015, ADR-006).
 - No CORS headers are emitted. Security headers come from `hono/secure-headers`; any relaxation is documented in `overview.md`.
 - No handler may take longer than `30s`. Anything longer is not done in the `api`: it becomes a `generation_requests` row for the `generator`.
-- Handlers never run code (`child_process`, `vm`, `eval`) nor call external services other than the alert mail (ADR-001).
+- Handlers never run code (`child_process`, `vm`, `eval`) nor call external services (ADR-001).
 - Game routes are generic over the registry. No `if (game_id === ...)` or `switch` by game in `apps/api` (ADR-006).
 - Route handlers read `today` from `@nerdose/core` through the platform-day service, never `new Date()` directly.
 - The `app` is built by `buildApp(deps)` so tests can instantiate it with their own dependencies.

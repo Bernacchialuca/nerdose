@@ -115,7 +115,6 @@ export default [
     files: ['apps/web/**', 'apps/admin/**'],
     rules: { 'no-restricted-imports': ['error', { patterns: [
       { group: ['@nerdose/db', '@nerdose/db/*'], message: 'Frontends never import the database package.' },
-      { group: ['@nerdose/core/notify'], message: 'notify is Node-only.' },
       { group: ['@nerdose/game-*/definition', '@nerdose/game-*/generator', '@nerdose/polyglot'], message: 'Frontends import only ./client.' },
       { group: ['../../api/*', '../../generator/*', '../admin/*', '../web/*'], message: 'Apps never import from other apps.' },
     ] }] },
@@ -138,8 +137,7 @@ export default [
   },
   {
     files: ['packages/core/src/**'],
-    ignores: ['packages/core/src/notify.ts'],
-    rules: { 'no-restricted-imports': ['error', { patterns: ['node:*', './notify', '**/notify'] }] },
+    rules: { 'no-restricted-imports': ['error', { patterns: ['node:*'] }] },
   },
   // SPAs: eslint-plugin-react-hooks and jsx-a11y recommended sets
 ];
@@ -189,7 +187,7 @@ The image is the same one Testcontainers uses in tests.
 - `engines.node` is `">=24 <25"` and `packageManager` is pinned in the root `package.json`.
 - Tasks (`build`, `dev`, `lint`, `typecheck`, `test`) are orchestrated by Turborepo; `dev` is `persistent` and uncached.
 - Internal packages are named `@nerdose/<name>` (`@nerdose/game-<game_id>` for games) and use `workspace:*` for internal dependencies.
-- The ADR-003 import boundaries are enforced by ESLint (`no-restricted-imports`) and a violation fails `pnpm lint`: apps never import from other apps; `web` and `admin` never import `@nerdose/db` or `@nerdose/core/notify`; `api` imports only `./definition` of games, frontends only `./client`, `generator` only `./generator` (and `./definition`); `./definition` and `./client` never import `@nerdose/polyglot` or `node:child_process`; `@nerdose/core` entry `.` never imports `node:*` or `./notify`.
+- The ADR-003 import boundaries are enforced by ESLint (`no-restricted-imports`) and a violation fails `pnpm lint`: apps never import from other apps; `web` and `admin` never import `@nerdose/db`; `api` imports only `./definition` of games, frontends only `./client`, `generator` only `./generator` (and `./definition`); `./definition` and `./client` never import `@nerdose/polyglot` or `node:child_process`; `@nerdose/core` never imports `node:*`.
 - No `.js` source files in `apps/` or `packages/` except tool configuration.
 - `.gitignore` excludes `.env`, `.env.local`, `.env.test`, `node_modules`, build output and Turborepo cache. Only `.env.example` files are committed, with empty values and a comment per variable.
 - `compose.yaml` publishes PostgreSQL only on `127.0.0.1` and keeps data in the named volume `nerdose-pgdata`. Rebuilding from scratch is an explicit `docker compose down -v`.

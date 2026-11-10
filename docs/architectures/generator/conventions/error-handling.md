@@ -105,7 +105,6 @@ In the `generator`, job runners catch errors per candidate and per job, log them
 - Never answer `200` with an error body.
 - Each failure has one canonical place where it is thrown. If the same error can arise in N places, extract a helper.
 - Unique-constraint violations are translated by the service layer into the right code (`already_reported`); repositories do not throw `AppError`.
-- A failed alert delivery (`notify()`) is logged and never changes the HTTP response or fails a job run.
 
 ## Integration with other conventions
 

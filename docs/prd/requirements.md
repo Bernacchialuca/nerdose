@@ -37,7 +37,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
 - **Notes:** No se implementa en v1. Al loguearse en un dispositivo con un Player anónimo se fusionan las Play (ante conflicto en el mismo Challenge, queda la más antigua) y se recalculan los agregados.
 
 ### Challenge
-- **Key attributes:** id (uuid, req), game_id (enum game_id, req), date (date UTC, req), number (int, req, ≥ 1), payload (json, req, específico del juego: incluye la solución y los textos `{es, en}`), status (enum: draft/approved/published/rejected/voided, default: draft), generator_version (string, req), seed (string, req), verification (json, req, log de la verificación), void_reason (string, opt, req si status = voided), voided_at (timestamp, opt), alert_sent_at (timestamp, opt), created_at (timestamp, req)
+- **Key attributes:** id (uuid, req), game_id (enum game_id, req), date (date UTC, req), number (int, req, ≥ 1), payload (json, req, específico del juego: incluye la solución y los textos `{es, en}`), status (enum: draft/approved/published/rejected/voided, default: draft), generator_version (string, req), seed (string, req), verification (json, req, log de la verificación), void_reason (string, opt, req si status = voided), voided_at (timestamp, opt), alerted_at (timestamp, opt), created_at (timestamp, req)
 - **Relationships:** has_many Play, has_many ChallengeReport, references Term (devdle: 1; grep-grid: 8), references TimelineFact (timeline: 5)
 - **Notes:**
   - El contenido jugable de un juego para un día, con su solución y su explicación. Hay a lo sumo un Challenge vigente (approved/published/voided) por (game_id, date).
@@ -106,6 +106,11 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
 - **Key attributes:** word (string, req, A–Z), player_id (uuid, req), created_at (timestamp, req)
 - **Relationships:** belongs_to Player
 - **Notes:** PK (word, player_id): cuenta jugadores distintos, no intentos. Se registra cada vez que un intento de Devdle se rechaza por no estar en la lista de palabras válidas. No amplía la lista sola: el admin muestra las palabras más rechazadas, y sumarlas a la lista base es un cambio de código (ver F-15).
+
+### GenerationFailure
+- **Key attributes:** game_id (enum game_id, req), date (date UTC, req), attempts (int, req), last_reason (string, opt), created_at (timestamp, req), updated_at (timestamp, req)
+- **Relationships:** — (referencia lógica al juego y la fecha del Challenge que no se pudo generar)
+- **Notes:** PK (game_id, date). La crea el Sistema cuando un juego no logra el desafío de mañana tras 20 reintentos. Es la alerta: no se envía mail, se muestra en el admin (Próximos desafíos).
 
 ### Ciclos de Vida
 
@@ -496,7 +501,7 @@ para tener un motivo para volver todos los días.
 
 ### F-10: Reporte de problemas y umbral de alerta
 
-**Descripción:** El jugador puede avisar que un desafío está mal, durante la partida o en el resultado. Si se acumulan reportes, se alerta al Responsable. Nunca se despublica automáticamente.
+**Descripción:** El jugador puede avisar que un desafío está mal, durante la partida o en el resultado. Si se acumulan reportes, el desafío queda marcado como alertado y el Responsable lo ve en el admin. Nunca se despublica automáticamente.
 
 **Historia de usuario:**
 Como jugador,
@@ -508,7 +513,7 @@ para que se corrija y no me afecte la racha.
 | ID | Capability | Actor | Entity | Operation | Key Fields | Business Rules |
 |----|-----------|-------|--------|-----------|------------|----------------|
 | C-36 | Reportar un problema | U-01 | ChallengeReport | CREATE | challenge_number (int, req), reason (enum: wrong_answer/ambiguous/wrong_explanation/translation/display_bug/other, req), message (string, opt, max: 1000), code_language (enum: js/go/java, opt) | Disponible durante la partida y en el resultado. El formulario muestra "No incluyas la respuesta si todavía estás jugando". Se guarda con contexto: idioma, lenguaje de código, estado de la partida y user agent. Un reporte por jugador y Challenge (`already_reported`). Solo sobre Challenge `published` o `voided`. Límite: 10 por IP por hora |
-| C-37 | Alertar al alcanzar el umbral | Sistema | Challenge, ChallengeReport | ACTION | alert_sent_at (timestamp) | Se alerta **una sola vez** por Challenge, por mail, cuando hay ≥ 3 reportes `wrong_answer`/`ambiguous` de jugadores distintos, o cuando esos reportes superan el 5% de las Play terminadas con un mínimo de 2. Umbrales configurables. La alerta nunca anula nada |
+| C-37 | Alertar al alcanzar el umbral | Sistema | Challenge, ChallengeReport | ACTION | alerted_at (timestamp) | Se marca **una sola vez** por Challenge (`alerted_at`) cuando hay ≥ 3 reportes `wrong_answer`/`ambiguous` de jugadores distintos, o cuando esos reportes superan el 5% de las Play terminadas con un mínimo de 2. Umbrales configurables. La alerta no envía mail: queda registrada en la base y se ve en la sección Reportes del admin. La alerta nunca anula nada |
 
 **Criterios de Aceptación:**
 - DADO un jugador jugando Devdle #8 en `es`
@@ -519,11 +524,11 @@ para que se corrija y no me afecte la racha.
   ENTONCES recibe `already_reported`.
 - DADO que Big O #8 tiene 2 reportes `wrong_answer` de jugadores distintos y 200 partidas terminadas
   CUANDO llega un tercer reporte `wrong_answer` de otro jugador
-  ENTONCES se envía una alerta por mail con el desafío y la cantidad de reportes
+  ENTONCES el desafío queda marcado como alertado y aparece destacado en la sección Reportes del admin con la cantidad de reportes
   Y un cuarto reporte no genera otra alerta.
 - DADO 50 reportes coordinados contra un desafío
   CUANDO se alcanza el umbral
-  ENTONCES solo se envía la alerta: el desafío sigue `published`.
+  ENTONCES solo queda marcado como alertado: el desafío sigue `published`.
 
 **Prioridad:** Alta
 
@@ -545,7 +550,7 @@ para que un error del generador no castigue a los jugadores.
 | ID | Capability | Actor | Entity | Operation | Key Fields | Business Rules |
 |----|-----------|-------|--------|-----------|------------|----------------|
 | C-38 | Iniciar sesión en el admin | U-02 | — | ACTION | password (string, req) | Contraseña única. Sesión de 8 horas. Credencial inválida, vencida o ausente → 401 y vuelta al login. Límite: 5 intentos por IP cada 15 min |
-| C-39 | Ver reportes agrupados | U-02 | ChallengeReport, Challenge | READ | status (enum: open/resolved/dismissed, opt, default: open) | Agrupados por Challenge y ordenados por cantidad (desc). Para cada uno: el Challenge completo con su solución, en ES y EN, y los motivos, mensajes y contexto |
+| C-39 | Ver reportes agrupados | U-02 | ChallengeReport, Challenge | READ | status (enum: open/resolved/dismissed, opt, default: open) | Agrupados por Challenge y ordenados por cantidad (desc). Los Challenge que alcanzaron el umbral (`alerted_at`) se marcan como alertados: es el aviso al Responsable. Para cada uno: el Challenge completo con su solución, en ES y EN, y los motivos, mensajes y contexto |
 | C-40 | Resolver o descartar un reporte | U-02 | ChallengeReport | UPDATE | status (enum: resolved/dismissed, req) | Solo desde `open`; ambos estados son terminales |
 | C-41 | Anular un desafío | U-02 | Challenge, Play, ChallengeReport, Term, TimelineFact | ACTION | void_reason (string, req), culprit.kind (enum: term/timeline_fact/template/none, req), culprit.id (uuid, opt, req si kind ∈ term/timeline_fact) | Solo un Challenge `published`, y siempre manual. Efectos: deja de aceptar jugadas y muestra "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada"; todas sus Play pasan a `voided` (las terminadas conservan su `result`; las en curso se cierran como completadas); los reportes `open` pasan a `resolved`; si el culpable es un Term o TimelineFact, pasa a `rejected`; se recalculan los agregados de los jugadores afectados (C-35) |
 | C-42 | Marcar un desafío anulado como completado | U-01 | Play | CREATE | challenge_number (int, req) | Solo para el Challenge `voided` de hoy y si el jugador no tenía Play. Crea una Play `voided`: cuenta para las rachas y `total_completed`, no para `played`, `wins` ni `extra` |
@@ -584,7 +589,7 @@ para anticipar problemas sin tener que cargar nada a mano.
 
 | ID | Capability | Actor | Entity | Operation | Key Fields | Business Rules |
 |----|-----------|-------|--------|-----------|------------|----------------|
-| C-43 | Ver los próximos desafíos | U-02 | Challenge | READ | days (int, opt, default: 14) | Por día y por juego: preview real (como la ve el jugador, con la solución superpuesta), en ES y EN, con su log de verificación. Indica los días sin desafío y las regeneraciones pendientes |
+| C-43 | Ver los próximos desafíos | U-02 | Challenge | READ | days (int, opt, default: 14) | Por día y por juego: preview real (como la ve el jugador, con la solución superpuesta), en ES y EN, con su log de verificación. Indica los días sin desafío, las fallas de generación registradas (intentos y motivo del último rechazo) y las regeneraciones pendientes |
 | C-44 | Regenerar un desafío | U-02 | Challenge | ACTION | challenge_id (uuid, req) | Solo un Challenge `approved` con `date` > hoy. El actual sigue `approved` hasta que su reemplazo pasa la verificación; el reemplazo es atómico (el viejo pasa a `rejected`). Si la regeneración falla, queda el actual |
 | C-45 | Ver el stock de contenido | U-02 | Term, TimelineFact, RejectedGuess | READ | — | Por banco: ítems aprobados disponibles, aprobados totales, rechazados (con su motivo), días de stock estimados, si el banco alcanza para ciclar respetando la ventana anti-repetición, y la última carga del dataset (fecha, versión, insertados, actualizados). Además, las 50 palabras más rechazadas en Devdle por cantidad de jugadores distintos. Solo lectura |
 
@@ -653,7 +658,7 @@ para que nerdose funcione todos los días sin que yo intervenga.
 |----|-----------|-------|--------|-----------|------------|----------------|
 | C-47 | Generar y verificar los próximos 14 días | Sistema | Challenge | CREATE | game_id (enum), date (date), number (int), payload (json), seed (string), generator_version (string), verification (json), status (enum: draft/approved/rejected) | Siempre hay Challenge `approved` para los próximos 14 días por juego. Nunca se genera para hoy. El seed depende de `game_id`, `date`, el número de intento y un secreto que no está en el repo. Si falla la verificación, se reintenta con un seed derivado. Un Challenge sin los textos en ES y EN no se aprueba. Lo que pasa la verificación se aprueba sin revisión humana. Se guarda el desafío generado, no solo el seed: el `payload` aprobado es inmutable. Sin LLM: todo por reglas y ejecución |
 | C-48 | Publicar el desafío del día | Sistema | Challenge | UPDATE | status (approved → published) | Al cambiar el día (00:00 UTC) se publican los Challenge `approved` con `date` = hoy. Un `approved` de un día pasado nunca se publica: ese día queda neutro |
-| C-49 | Alertar una falla de generación | Sistema | Challenge | ACTION | game_id, date, attempts (int) | Si tras 20 reintentos un juego no tiene el desafío de mañana, se alerta por mail una sola vez por juego y fecha |
+| C-49 | Alertar una falla de generación | Sistema | GenerationFailure | CREATE | game_id, date, attempts (int), last_reason (string) | Si tras 20 reintentos un juego no tiene el desafío de mañana, se registra una GenerationFailure, una sola por juego y fecha. No se envía mail: la falla se ve en el admin (Próximos desafíos) |
 
 **Criterios de Aceptación:**
 - DADO que hoy es 2026-12-01 y Tech Timeline tiene desafíos aprobados hasta el 2026-12-14
@@ -664,8 +669,8 @@ para que nerdose funcione todos los días sin que yo intervenga.
   ENTONCES se rechaza y se genera otro con el seed del intento siguiente.
 - DADO que Bug Hunt no logró un desafío válido para mañana tras 20 intentos
   CUANDO termina la corrida
-  ENTONCES se envía una alerta por mail
-  Y la corrida siguiente no vuelve a alertar por la misma fecha.
+  ENTONCES se registra la falla de generación de Bug Hunt para mañana y se ve en Próximos desafíos del admin
+  Y la corrida siguiente no registra otra falla por la misma fecha.
 - DADO el Challenge `approved` de Devdle del 2026-12-02
   CUANDO llega el primer request después de las 00:00 UTC del 2026-12-02
   ENTONCES pasa a `published` y es el desafío jugable del día.

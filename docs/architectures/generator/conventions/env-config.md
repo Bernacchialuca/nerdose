@@ -45,12 +45,6 @@ export const env = createEnv({
     TRUST_PROXY_HEADER: z.string().optional(),
     WEB_ORIGIN: z.string().url(),                         // api: origin allowed for player mutations
     ADMIN_ORIGIN: z.string().url(),                       // api: origin allowed for /api/admin/* mutations
-    SMTP_HOST: z.string().optional(),
-    SMTP_PORT: z.coerce.number().int().optional(),
-    SMTP_USER: z.string().optional(),
-    SMTP_PASS: z.string().optional(),
-    ALERT_EMAIL_FROM: z.string().optional(),
-    ALERT_EMAIL_TO: z.string().optional(),
     REPORT_ALERT_COUNT: z.coerce.number().int().default(3),
     REPORT_ALERT_RATIO: z.coerce.number().default(0.05),
     REPORT_ALERT_RATIO_MIN_COUNT: z.coerce.number().int().default(2),
@@ -60,7 +54,7 @@ export const env = createEnv({
 });
 ```
 
-The `generator` declares its own set in `apps/generator/src/config/env.ts`: `DATABASE_URL` (role `nerdose_generator`), `LAUNCH_DATE`, `GENERATOR_SECRET` (min 32; **only** this service), `GENERATION_MAX_ATTEMPTS` (default 20), `SMTP_*`, `ALERT_EMAIL_*`, `LOG_LEVEL`, `SERVICE_NAME`.
+The `generator` declares its own set in `apps/generator/src/config/env.ts`: `DATABASE_URL` (role `nerdose_generator`), `LAUNCH_DATE`, `GENERATOR_SECRET` (min 32; **only** this service), `GENERATION_MAX_ATTEMPTS` (default 20), `LOG_LEVEL`, `SERVICE_NAME`.
 
 ## How to use
 
@@ -73,9 +67,9 @@ const port = env.PORT; // number
 
 Never read `process.env` outside `src/config/env.ts`.
 
-### Optional groups
+### Report alert thresholds
 
-`SMTP_*` and `ALERT_EMAIL_*` are optional: when absent, `notify()` logs the alert at `warn` and the process still starts (ADR-013). Validate them as a group when any is present.
+`REPORT_ALERT_COUNT`, `REPORT_ALERT_RATIO` and `REPORT_ALERT_RATIO_MIN_COUNT` (api only) have defaults and tune when a challenge gets `alerted_at` (ADR-017). There are no mail or webhook variables: alerts never leave the database.
 
 ### Env files
 
@@ -114,5 +108,5 @@ ADMIN_JWT_SECRET=      # required, >= 32 random bytes
 - **auth-jwt**: `ADMIN_PASSWORD_HASH`, `ADMIN_JWT_SECRET` (api).
 - **security**: `TRUST_PROXY_HEADER`, `WEB_ORIGIN`, `ADMIN_ORIGIN` (api).
 - **logging**: `LOG_LEVEL`, `SERVICE_NAME`.
-- **alerts-mail**: `SMTP_*`, `ALERT_EMAIL_*` and the report thresholds.
+- **Report alerts (ADR-017)**: `REPORT_ALERT_*` thresholds (api).
 - **scheduler-jobs** (generator): `GENERATION_MAX_ATTEMPTS`, `GENERATOR_SECRET`.

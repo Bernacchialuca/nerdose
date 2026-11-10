@@ -1,6 +1,8 @@
 # ADR-013: Alertas por mail (SMTP con nodemailer)
 
-**Estado:** Accepted
+**Estado:** Superseded by ADR-017
+
+> Reemplazado el 2026-11-10 por [ADR-017](./ADR-017-alertas-registradas-en-el-admin.md): en v1 las alertas se registran en la base y se ven en el admin; no se envían mails.
 **Fecha:** 2026-11-03
 **Decisores:** Responsable de nerdose
 **Etiquetas:** alertas, notificaciones, mail, operación

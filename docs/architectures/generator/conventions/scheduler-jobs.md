@@ -117,7 +117,7 @@ process.on('SIGTERM', async () => {
 - `fill` only generates for dates in `[today+1, today+14]`. Never for today or past dates.
 - Overlapping runs of the same job inside one process are prevented (`protect: true`) in addition to the advisory lock.
 - On `SIGTERM` the current candidate finishes, no new work starts and the locks are released.
-- The `generator` opens no port and exposes no endpoint. Its only network output is SMTP.
+- The `generator` opens no port and exposes no endpoint. Its only network output is the database.
 - Time comes from an injectable `clock`; jobs never call `new Date()` directly.
 - Use child loggers per job (`{ job }`) and per candidate (`{ game_id, date, attempt }`).
 

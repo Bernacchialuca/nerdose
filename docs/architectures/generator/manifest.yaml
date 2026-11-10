@@ -8,7 +8,6 @@ conventions:
   - logging
   - env-config # custom
   - testing # custom
-  - alerts-mail # custom
   - scheduler-jobs # custom
   - generation-queue # custom
   - challenge-generation # custom

@@ -145,7 +145,7 @@ Decisiones de producto tomadas en el discovery, con su porqué. El registro comp
 - **Monetización** (ads, premium, sponsors).
 - **Notificaciones push o recordatorios por mail.**
 - **Categorías de Timeline "Hitos de Internet" e "Historia general":** diferidas hasta tener una fuente automática fiable.
-- **Alertas por webhook (Discord/Slack) o push:** v1 avisa solo por mail (SMTP con nodemailer).
+- **Alertas por mail, webhook (Discord/Slack) o push:** v1 no envía notificaciones. Las alertas (umbral de reportes y fallas de generación) se registran en la base y se ven en el admin.
 
 ### Restricciones
 

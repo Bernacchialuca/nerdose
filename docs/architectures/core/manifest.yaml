@@ -7,7 +7,6 @@ conventions:
   - testing # custom
   - game-registry # custom
   - platform-day # custom
-  - alerts-mail # custom
   # error-handling se incluye automaticamente (required_by: validation)
 
 modules:
@@ -15,4 +14,3 @@ modules:
   - errors
   - platform-day
   - prng
-  - notify

@@ -39,7 +39,7 @@ Incluye el monorepo (pnpm workspaces + Turborepo, ADR-003), los componentes comp
 
 El mismo origen se emula en local con el proxy de Vite: `web` reenvía `/api/*` a la `api`, y `admin` reenvía `/api/admin/*` a la misma `api`.
 
-**Fuera de alcance de este grupo:** despliegue, hosting, CI/CD, DNS/TLS, gestión de secretos en producción y servidor SMTP. Son decisiones diferidas, sin feature group asignado. Tampoco incluye funcionalidad de negocio.
+**Fuera de alcance de este grupo:** despliegue, hosting, CI/CD, DNS/TLS, y gestión de secretos en producción. Son decisiones diferidas, sin feature group asignado. Tampoco incluye funcionalidad de negocio.
 
 **¿Por qué es importante?:**
 - Todo lo demás se construye sobre esta base.
@@ -221,7 +221,7 @@ El jugador ordena hitos de la historia tech con el dedo o con el teclado, ve las
 **Status:** Pending
 
 **Descripción:**
-La red de seguridad de la publicación automática. Los jugadores reportan un problema durante la partida o en el resultado. Al alcanzar el umbral, el Responsable recibe una alerta por mail. Desde el admin (`admin.nerdose.dev`, con contraseña única y sesión de 8 h) ve los reportes agrupados por desafío, los resuelve o descarta, y puede anular un desafío. Al anularlo se cierran sus partidas, se recalculan los agregados, el ítem culpable pasa a `rejected` y los jugadores pueden marcarlo como completado sin perder la racha.
+La red de seguridad de la publicación automática. Los jugadores reportan un problema durante la partida o en el resultado. Al alcanzar el umbral, el desafío queda marcado como alertado y aparece destacado en el admin (sin mail). Desde el admin (`admin.nerdose.dev`, con contraseña única y sesión de 8 h) ve los reportes agrupados por desafío, los resuelve o descarta, y puede anular un desafío. Al anularlo se cierran sus partidas, se recalculan los agregados, el ítem culpable pasa a `rejected` y los jugadores pueden marcarlo como completado sin perder la racha.
 
 **¿Por qué es importante?:**
 - Sin revisión humana (decisión #16), los reportes son la segunda línea de control de calidad.
@@ -240,15 +240,14 @@ La red de seguridad de la publicación automática. Los jugadores reportan un pr
 
 **Precondiciones:**
 - FG-3 completo (Challenge, Play y agregados). Idealmente FG-4 y FG-5, para cubrir los culpables `term` y `timeline_fact`.
-- Envío de mail de alertas (SMTP) configurado.
 
 **Postcondiciones:**
-- Entidad ChallengeReport persistida; umbral de alerta configurable funcionando.
+- Entidad ChallengeReport persistida; umbral de alerta configurable funcionando, con los desafíos alertados visibles en la sección Reportes.
 - Admin desplegado con login JWT y la sección Reportes.
 - Anulación con recálculo de agregados y rechazo del ítem culpable.
 
 **Valor entregado:**
-El jugador avisa cuando un desafío está mal. El Responsable recibe una alerta, revisa los reportes con la solución a la vista y anula el desafío sin afectar las rachas de nadie.
+El jugador avisa cuando un desafío está mal. El Responsable ve en el admin qué desafíos alcanzaron el umbral, revisa los reportes con la solución a la vista y anula el desafío sin afectar las rachas de nadie.
 
 ---
 
@@ -257,7 +256,7 @@ El jugador avisa cuando un desafío está mal. El Responsable recibe una alerta,
 **Status:** Pending
 
 **Descripción:**
-Visibilidad y control sobre el contenido automático: ver los próximos 14 días de cada juego (preview real con la solución, en ES y EN, con su log de verificación) y regenerar un desafío aprobado; ver el stock de los bancos, la última carga del dataset y las palabras más rechazadas en Devdle; y recibir una alerta si el generator no logra el desafío de mañana.
+Visibilidad y control sobre el contenido automático: ver los próximos 14 días de cada juego (preview real con la solución, en ES y EN, con su log de verificación) y regenerar un desafío aprobado; ver el stock de los bancos, la última carga del dataset y las palabras más rechazadas en Devdle; y ver en el admin las fallas de generación: si el generator no logra el desafío de mañana, queda registrada y se muestra (sin mail).
 
 **¿Por qué es importante?:**
 - Permite detectar problemas *antes* de que se publiquen, sin cargar nada a mano.
@@ -277,7 +276,7 @@ Visibilidad y control sobre el contenido automático: ver los próximos 14 días
 **Postcondiciones:**
 - Secciones Próximos desafíos y Stock en el admin.
 - Pedidos de regeneración atendidos por el generator con reemplazo atómico.
-- Alertas de falla de generación (una por juego y fecha).
+- Fallas de generación registradas (una por juego y fecha) y visibles en Próximos desafíos.
 
 **Valor entregado:**
 El Responsable ve qué se va a publicar en los próximos 14 días, regenera un desafío que no le convence, controla cuánto contenido queda y se entera a tiempo si un juego se queda sin desafío. Ve qué palabras intentan los jugadores y Devdle no acepta, para sumarlas a la lista base si corresponde.
@@ -377,7 +376,7 @@ El jugador consulta todo su progreso, con heatmap e historial. El Responsable ve
 
 ## Notas de Secuenciamiento
 
-**FG-1 (Walking skeleton)** va primero: sin los 4 servicios corriendo y conectados en local no se puede construir nada. El despliegue (hosting, CI/CD, secretos, SMTP) queda diferido y se define cuando se decida lanzar; no bloquea ningún feature group.
+**FG-1 (Walking skeleton)** va primero: sin los 4 servicios corriendo y conectados en local no se puede construir nada. El despliegue (hosting, CI/CD, secretos) queda diferido y se define cuando se decida lanzar; no bloquea ningún feature group.
 
 **FG-2 (Plataforma base)** depende de FG-1 y es prerequisito de todo lo que tiene jugador: sesión, día de la plataforma e i18n.
 

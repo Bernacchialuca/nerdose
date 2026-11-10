@@ -1,12 +1,12 @@
 ---
 created: 2026-11-03
-last_updated: 2026-11-03
+last_updated: 2026-11-10
 status: "Draft"
 ---
 
 # Esquema de Base de Datos — nerdose-db
 
-> Derivado del discovery: [análisis de dominio](../discovery/analisis-dominio.md) · [análisis técnico](../discovery/analisis-tecnico.md). Decisiones: ADR-004 (base única y roles), ADR-005 (cola), ADR-011 (rachas), ADR-014 (métricas), ADR-016 (bancos como dataset).
+> Derivado del discovery: [análisis de dominio](../discovery/analisis-dominio.md) · [análisis técnico](../discovery/analisis-tecnico.md). Decisiones: ADR-004 (base única y roles), ADR-005 (cola), ADR-011 (rachas), ADR-014 (métricas), ADR-016 (bancos como dataset), ADR-017 (alertas en la base).
 
 ## Información General
 
@@ -23,7 +23,7 @@ status: "Draft"
 **Tecnología:** PostgreSQL 16. ORM y migraciones con Drizzle (`@nerdose/db`), driver postgres.js.
 
 **Usada por:**
-- `api` (rol `nerdose_api`): jugadores, partidas, agregados, reportes, rechazos de Devdle; escrituras acotadas sobre `challenges`, `terms` y `timeline_facts`; inserta en `generation_requests`.
+- `api` (rol `nerdose_api`): jugadores, partidas, agregados, reportes, rechazos de Devdle; escrituras acotadas sobre `challenges`, `terms` y `timeline_facts`; inserta en `generation_requests`; lee `generation_failures`.
 - `generator` (rol `nerdose_generator`, dueño del contenido): `challenges`, `terms`, `timeline_facts`, `generation_requests`, `generation_failures` y `job_runs`.
 - Dueño del schema (rol `nerdose_owner`): solo corre las migraciones.
 
@@ -167,7 +167,7 @@ Table challenges {
   verification jsonb [not null, default: `'{}'::jsonb`, note: 'Log de la verificación: { ok, checks[], reason? }']
   void_reason text [null]
   voided_at timestamptz [null]
-  alert_sent_at timestamptz [null, note: 'Alerta por umbral de reportes ya enviada (una sola vez)']
+  alerted_at timestamptz [null, note: 'Alcanzó el umbral de reportes (una sola vez, nunca vuelve a NULL). Es la alerta: el admin lo muestra en Reportes (ADR-017)']
   created_at timestamptz [not null, default: `now()`]
 
   indexes {
@@ -347,8 +347,7 @@ Table generation_failures {
   game_id game_id [not null]
   date date [not null]
   attempts integer [not null]
-  last_reason text [null, note: 'Motivo de rechazo del último intento (va en el mail de alerta)']
-  alert_sent_at timestamptz [null]
+  last_reason text [null, note: 'Motivo de rechazo del último intento (se muestra en el admin)']
   created_at timestamptz [not null, default: `now()`]
   updated_at timestamptz [not null, default: `now()`]
 
@@ -356,7 +355,7 @@ Table generation_failures {
     (game_id, date) [pk]
   }
 
-  Note: 'Fechas para las que un juego no logró desafío tras todos los intentos. Alerta una vez'
+  Note: 'Fechas para las que un juego no logró desafío tras todos los intentos. La fila es la alerta (ADR-017): el admin la muestra en Próximos desafíos'
 }
 
 Table job_runs {
@@ -490,11 +489,11 @@ CREATE ROLE nerdose_generator LOGIN;
 GRANT SELECT, INSERT, UPDATE ON players, plays, player_game_stats, player_stats,
   challenge_reports, rejected_guesses TO nerdose_api;
 GRANT SELECT ON challenges TO nerdose_api;
-GRANT UPDATE (status, void_reason, voided_at, alert_sent_at) ON challenges TO nerdose_api;
+GRANT UPDATE (status, void_reason, voided_at, alerted_at) ON challenges TO nerdose_api;
 GRANT SELECT ON terms, timeline_facts TO nerdose_api;
 GRANT UPDATE (status, rejection_reason) ON terms, timeline_facts TO nerdose_api;
 GRANT SELECT, INSERT ON generation_requests TO nerdose_api;
-GRANT SELECT ON job_runs TO nerdose_api;
+GRANT SELECT ON job_runs, generation_failures TO nerdose_api;
 GRANT SELECT ON metrics_daily_players, metrics_retention,
   metrics_streak_distribution, metrics_challenge_quality TO nerdose_api;
 

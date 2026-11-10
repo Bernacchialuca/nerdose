@@ -18,15 +18,14 @@ stories: [S-022, S-023]
 
 ## Descripción
 
-El job `fill` del `generator` corre cada hora (y al arrancar). Para cada juego y cada fecha entre `today+1` y `today+14` sin desafío vigente, genera candidatos, los verifica y aprueba el primero que pasa. Si mañana queda sin desafío tras todos los intentos, alerta por mail una sola vez. Nunca genera para hoy. Cubre C-17, C-21, C-24, C-28, C-31, C-47 y C-49 (F7, ADR-007).
+El job `fill` del `generator` corre cada hora (y al arrancar). Para cada juego y cada fecha entre `today+1` y `today+14` sin desafío vigente, genera candidatos, los verifica y aprueba el primero que pasa. Si mañana queda sin desafío tras todos los intentos, registra la falla en `generation_failures` (la fila es la alerta y el admin la muestra; ADR-017). Nunca genera para hoy. Cubre C-17, C-21, C-24, C-28, C-31, C-47 y C-49 (F7, ADR-007).
 
 ## Servicios Involucrados
 
 | Servicio | Rol | Tipo de Participación |
 |----------|-----|-----------------------|
-| generator | Scheduler, generación, verificación (polyglot en big-o / bug-hunt) y alerta | Iniciador / Procesador |
+| generator | Scheduler, generación, verificación (polyglot en big-o / bug-hunt) y registro de fallas | Iniciador / Procesador |
 | nerdose-db | `challenges`, `terms`, `timeline_facts`, `generation_failures`, `job_runs` | Procesador |
-| Servidor SMTP | Entrega el mail de falla | Consumidor |
 
 ## Pasos del Flujo
 
@@ -34,7 +33,6 @@ El job `fill` del `generator` corre cada hora (y al arrancar). Para cada juego y
 sequenceDiagram
     participant G as generator
     participant DB as nerdose-db
-    participant M as SMTP
 
     G->>G: croner "10 * * * *" (UTC)
     G->>DB: pg_try_advisory_lock('fill')
@@ -53,8 +51,7 @@ sequenceDiagram
         end
     end
     opt date = today+1 sigue sin desafío
-        G->>DB: UPSERT generation_failures; UPDATE alert_sent_at WHERE NULL RETURNING
-        G->>M: notify() "[nerdose] Sin desafío de {game_id} para {date}"
+        G->>DB: UPSERT generation_failures (attempts, last_reason)
     end
     G->>DB: UPDATE job_runs SET status, finished_at, summary
 ```
@@ -121,20 +118,15 @@ sequenceDiagram
 ### Paso 4: Falla para mañana
 
 **Origen:** generator
-**Destino:** nerdose-db, Servidor SMTP
-**Tipo:** Interno + Evento (best-effort)
+**Destino:** nerdose-db
+**Tipo:** Interno
 
 **Condición:** para `date = today+1`, un juego sigue sin desafío vigente después de todos los intentos.
 
 **Operación de BD:**
 - **Tabla:** `generation_failures` — INSERT (`game_id`, `date`, `attempts`, `last_reason`) ON CONFLICT (`game_id`, `date`) DO UPDATE `attempts`, `last_reason`
-- **Tabla:** `generation_failures` — UPDATE `alert_sent_at = now()` WHERE (`game_id`, `date`) AND `alert_sent_at IS NULL` RETURNING
 
-**Acción:** si devolvió fila, `notify()`:
-- **Asunto:** `[nerdose] Sin desafío de {game_id} para {date}`
-- **Cuerpo:** `attempts`, `last_reason`
-
-Si el envío falla: UPDATE `alert_sent_at = NULL`.
+La fila es la alerta (ADR-017): no se envía nada. El admin la ve en Próximos desafíos (`GET /api/admin/challenges/upcoming`, campo `failure`). Una corrida posterior para la misma fecha actualiza la fila, no crea otra.
 
 **Evento de dominio:** `ChallengeGenerationFailed` (`game_id`, `date`, `attempts`), solo en los logs.
 
@@ -156,7 +148,6 @@ Si el envío falla: UPDATE `alert_sent_at = NULL`.
 | 3 | El código emitido no compila o el runner hace timeout (10 s) | — | `verification.ok = false` | Candidato `rejected`; siguiente `attempt` |
 | 3 | El banco no tiene ítems fuera de la ventana | — | `verification.reason` | Candidatos `rejected`; termina en el paso 4 si es mañana |
 | 3 | Error de BD en un candidato | — | — | Se loguea; sigue con el próximo hueco; `job_runs.status = 'failed'` al final |
-| 4 | Falla SMTP o falta configuración | — | — | `alert_sent_at` vuelve a NULL; log `warn`; se reintenta en la próxima hora |
 
 ## Resultado
 
@@ -165,7 +156,7 @@ Si el envío falla: UPDATE `alert_sent_at = NULL`.
 **Estado final:**
 - Challenges: `approved` para los huecos cubiertos; `rejected` para los candidatos descartados (quedan para auditoría).
 - Bancos: `last_used_*` actualizados.
-- `generation_failures` y un mail, solo si mañana quedó sin desafío.
+- `generation_failures`, solo si mañana quedó sin desafío (visible en el admin).
 - `job_runs`: una fila por corrida.
 
 ## Notas

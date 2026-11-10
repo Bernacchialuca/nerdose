@@ -22,7 +22,7 @@ Vamos a usar **PostgreSQL 16 como única base de datos** (`nerdose-db`): tablas 
 | Rol | Permisos |
 |---|---|
 | Dueño del schema | DDL. Solo corre las migraciones |
-| `nerdose_api` | Lectura y escritura de `players`, `plays`, `player_game_stats`, `player_stats`, `challenge_reports`, `rejected_guesses`. `INSERT` y `SELECT` en `generation_requests`. Sobre `challenges`: `SELECT` y `UPDATE` **solo** de `status`, `void_reason`, `voided_at` y `alert_sent_at`. Sobre `terms` y `timeline_facts`: `SELECT` y `UPDATE (status, rejection_reason)`. `SELECT` de `job_runs` y las vistas `metrics_*` |
+| `nerdose_api` | Lectura y escritura de `players`, `plays`, `player_game_stats`, `player_stats`, `challenge_reports`, `rejected_guesses`. `INSERT` y `SELECT` en `generation_requests`. Sobre `challenges`: `SELECT` y `UPDATE` **solo** de `status`, `void_reason`, `voided_at` y `alerted_at`. Sobre `terms` y `timeline_facts`: `SELECT` y `UPDATE (status, rejection_reason)`. `SELECT` de `job_runs`, `generation_failures` y las vistas `metrics_*` |
 | `nerdose_generator` | Lectura y escritura de `challenges`, `terms`, `timeline_facts`, `generation_requests`, `generation_failures` y `job_runs` |
 
 ## Reglas de Implementación

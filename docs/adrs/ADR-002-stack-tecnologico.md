@@ -41,14 +41,13 @@ Vamos a usar **TypeScript en todo**, con Node.js 24 LTS en el backend.
 - Drizzle ORM + drizzle-kit, con el driver postgres.js.
 - `hono/jwt` (HS256) y `node:crypto` (`scrypt`, `timingSafeEqual`).
 - `hono-rate-limiter` (store en memoria).
-- nodemailer (alertas por mail).
 - pino (logs JSON).
 
 **Worker (`generator`):**
 - Node.js 24 LTS (TS), croner y pure-rand (xoroshiro128+).
 - Toolchains Go ≥ 1.25 y JDK 21 LTS. Java corre en modo *source-file* (`java Main.java`).
 - Diccionario ENABLE (dominio público).
-- nodemailer y pino.
+- pino.
 
 **Testing:** Vitest (unit y contrato) + Playwright (e2e).
 

@@ -30,7 +30,7 @@ El `generator` es un **worker long-running** con un scheduler interno (croner, e
 2. `verify()`.
 3. Si pasa: `approved` y se actualiza `last_used_*` en los bancos. Si no: `rejected` con la `verification`.
 
-Si para `today+1` un juego sigue sin desafío después de todos los intentos, se hace `UPSERT generation_failures` y se manda una alerta por mail una sola vez (ADR-013).
+Si para `today+1` un juego sigue sin desafío después de todos los intentos, se hace `UPSERT generation_failures`: esa fila es la alerta y el admin la muestra en Próximos desafíos (ADR-017).
 
 **Nunca se genera para `today`:** si llega el día sin desafío, el día es neutro.
 
@@ -50,7 +50,7 @@ Si para `today+1` un juego sigue sin desafío después de todos los intentos, se
 - Un candidato MUST pasar a `approved` solo si `verify()` devuelve `ok: true`. El log completo MUST guardarse en `challenges.verification`.
 - El runner MUST usar `execFile` (nunca `exec` con shell), timeout de 10 000 ms, y MUST correr como usuario no root.
 - Los toolchains MUST ser Node 24, Go ≥ 1.25 y JDK 21.
-- El `generator` MUST NOT hacer requests HTTP a servicios externos. Su única salida de red es SMTP (ADR-013).
+- El `generator` MUST NOT hacer requests HTTP a servicios externos. No tiene salida de red fuera de la base (ADR-017).
 - El `generator` MUST cerrar ordenadamente con `SIGTERM`: termina el candidato en curso y libera los locks.
 
 ## Consecuencias
@@ -103,4 +103,4 @@ Si para `today+1` un juego sigue sin desafío después de todos los intentos, se
 
 - `docs/discovery/analisis-tecnico.md` — S4 generator, F7, Arq-6, Arq-8 (F9 y F10 reemplazados por ADR-016)
 - `docs/discovery/analisis-dominio.md` — Invariantes 4, 8–12, 31–33
-- ADR-005 (regeneración), ADR-013 (alertas), ADR-016 (dataset de los bancos)
+- ADR-005 (regeneración), ADR-017 (alertas), ADR-016 (dataset de los bancos)

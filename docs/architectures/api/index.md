@@ -19,7 +19,6 @@
 - **[Logging estructurado (Pino)](../../../.claude/conventions/node/logging.md)** — Structured logging with Pino
 - **[Configuracion de entorno (@t3-oss/env-core)](./conventions/env-config.md)** — Type-safe environment validation at startup with @t3-oss/env-core and Zod; secrets only from the runtime environment, only .env.example committed (custom)
 - **[Testing (Vitest + Testcontainers, contenedor compartido)](./conventions/testing.md)** — Unit and integration testing with Vitest; one shared PostgreSQL 16 Testcontainers instance per suite via globalSetup, sequential files, per-file reset, fake clocks for dates and streaks (custom)
-- **[Alertas por mail (notify)](./conventions/alerts-mail.md)** — Single notify() helper from @nerdose/core over nodemailer with best-effort, once-only claim semantics (custom)
 - **[Registro de juegos (GameDefinition)](./conventions/game-registry.md)** — Generic game routes over a registry of GameDefinition implementations, with anti-spoiler guarantees (custom)
 - **[Identidad del jugador anonimo (cookie nd_pid)](./conventions/player-identity.md)** — Anonymous player identity through the nd_pid cookie, session endpoint, middleware and locale resolution (custom)
 - **[Dia de la plataforma, publicacion y rachas](./conventions/platform-day.md)** — UTC platform day, lazy single-flight publication, late-move detection, streaks with neutral days and transactional Play closing (custom)
@@ -28,4 +27,4 @@
 
 ---
 
-**Total:** 15 convenciones activas.
+**Total:** 14 convenciones activas.

@@ -112,4 +112,4 @@ Voiding a challenge (`published` only) sets `status`, `void_reason`, `voided_at`
 - **memory-cache**: reloads on day change and on void.
 - **orm**: the closing transaction uses `Tx` repositories.
 - **testing**: fake clocks, neutral days, voids and day change; property test for `recomputeStats`.
-- **alerts-mail**: the report threshold alert is claimed inside the report transaction.
+- **Report alerts (ADR-017)**: `challenges.alerted_at` is set once, inside the report transaction.

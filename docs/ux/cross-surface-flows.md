@@ -33,7 +33,7 @@ flows_count: 2
 **Secuencia:**
 
 1. **[web]** El jugador abre el formulario de reporte (overlay), elige el motivo y envía. El reporte queda `open`.
-2. **[admin]** El reporte aparece en `/reports`, agrupado por desafío y ordenado por cantidad. Si se alcanza el umbral, el responsable recibe además un mail de alerta (C-37, fuera de las superficies).
+2. **[admin]** El reporte aparece en `/reports`, agrupado por desafío y ordenado por cantidad. Si se alcanza el umbral, el grupo queda marcado como alertado y se ordena primero (C-37, ADR-017). No hay mail: la alerta solo existe en el admin.
 3. **[admin]** El responsable abre el detalle del desafío (solución en ES y EN, motivos, mensajes), confirma el error y lo anula con motivo y culpable.
 4. **[web]** Al abrir el juego, la home y la pantalla del juego muestran el estado "anulado" con el aviso "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada". Si el jugador no tenía partida, puede tocar "Marcar como completado" (C-42).
 5. **[web]** Si el jugador tenía una partida en curso y hace una jugada, recibe `challenge_voided` y la pantalla pasa al estado anulado.

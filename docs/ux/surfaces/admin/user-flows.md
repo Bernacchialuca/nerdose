@@ -32,7 +32,7 @@ flows_count: 5
 
 **JTBD que resuelve:** Habilitante, no es un JTBD propio: da acceso a los tres de la audiencia. `[fuente: PRD §F-11 C-38, NFR-S07]`
 **Audiencia:** responsable ([research-context](../../audiences/responsable/research-context.md))
-**Trigger:** El responsable abre `admin.nerdose.dev` (típicamente desde el link de una alerta por mail, hipótesis `inferida-PRD`) sin sesión válida, o una petición devuelve `401` por token vencido (8 h).
+**Trigger:** El responsable abre `admin.nerdose.dev` (por una revisión de rutina: no hay alertas por mail, ADR-017) sin sesión válida, o una petición devuelve `401` por token vencido (8 h).
 
 ### Happy path
 
@@ -70,7 +70,7 @@ El responsable está en P-02 con el encabezado de navegación visible y el token
 
 **JTBD que resuelve:** "Cuando me llega una alerta por reportes o reviso los reportes abiertos, quiero ver por desafío la solución, los textos ES/EN y los motivos, y poder anularlo si el error está confirmado, para que un error del generador no afecte las rachas de los jugadores." `[fuente: PRD §F-11 C-39, C-41]`
 **Audiencia:** responsable ([research-context](../../audiences/responsable/research-context.md))
-**Trigger:** Alerta por mail por umbral de reportes (C-49) o revisión de rutina de P-02.
+**Trigger:** Revisión de rutina de P-02; los desafíos que alcanzaron el umbral de reportes (C-37) aparecen marcados como alertados y primero.
 
 ### Happy path
 
@@ -153,7 +153,7 @@ Los reportes tratados quedan `resolved` o `dismissed` y visibles bajo su filtro;
 
 **JTBD que resuelve:** "Cuando quiero anticipar problemas sin cargar nada a mano, quiero mirar los próximos 14 días y regenerar un desafío si hace falta, para detectar un hueco o un desafío dudoso antes de su fecha." `[fuente: PRD §F-12 C-43, C-44]`
 **Audiencia:** responsable ([research-context](../../audiences/responsable/research-context.md))
-**Trigger:** Alerta por mail de falla de generación (C-49) o revisión de rutina; también un reporte previo que hace dudar de un desafío futuro similar (hipótesis).
+**Trigger:** Revisión de rutina de Próximos desafíos, donde se ven las fallas de generación registradas (C-49); también un reporte previo que hace dudar de un desafío futuro similar (hipótesis).
 
 ### Happy path
 

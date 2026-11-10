@@ -15,7 +15,7 @@ status: hipótesis-preliminar
 ## Persona Genérica
 
 - **Rol:** Responsable de la plataforma: la única persona que opera nerdose desde el admin (U-02). No carga ni aprueba contenido. `[fuente: PRD goals-and-context - Usuarios U-02]`
-- **Contexto de uso:** Entra de forma esporádica a `admin.nerdose.dev`, tras una alerta por mail o para una revisión de rutina de reportes, próximos desafíos, stock y métricas. Sesión de 8 horas con una sola contraseña. `[fuente: PRD §F-10 C-37, F-11 C-38]`
+- **Contexto de uso:** Entra de forma esporádica a `admin.nerdose.dev`, para una revisión de rutina de reportes (con los alertados por umbral primero), próximos desafíos, stock y métricas. Sesión de 8 horas con una sola contraseña. `[fuente: PRD §F-10 C-37, F-11 C-38]`
 - **Expertise técnico:** Alto. Es quien desarrolla y opera la plataforma (equipo de una sola persona). `[fuente: PRD goals-and-context - Restricciones: Equipo]`
 - **Frecuencia de uso esperada:** Esporádica. No hay frecuencia relevada; se infiere que la mayoría de los días no necesita intervenir porque el contenido es automático. `[fuente: PRD F-14, historia de usuario]`
 - **Dispositivo principal:** Desktop (único): tablas y previews ES/EN en paralelo. No hay caso de uso mobile relevado. `[fuente: product-overview - Superficie admin]`
@@ -46,7 +46,7 @@ status: hipótesis-preliminar
 ## Hipótesis de Comportamiento
 
 - Abre la sección de reportes esperando ver solo lo abierto, como una cola de pendientes. `[estado: hipótesis | fuerza: inferida-PRD]`
-- Entra al admin principalmente después de recibir la alerta por mail (umbral de reportes o falla de generación), y no por rutina diaria. `[estado: hipótesis | fuerza: inferida-PRD]`
+- Entra al admin por rutina: en v1 no hay alertas por mail, las alertas (umbral de reportes y falla de generación) solo se ven dentro del admin (ADR-017). `[estado: hipótesis | fuerza: inferida-PRD]`
 - Espera un paso de confirmación que muestre las consecuencias antes de anular un desafío. `[estado: hipótesis | fuerza: inferida-benchmark]`
 - Espera elegir un rango de fechas y ver cifras resumen antes del detalle en Métricas. `[estado: hipótesis | fuerza: inferida-benchmark]`
 - Prefiere tablas simples a gráficos para las métricas. `[estado: hipótesis | fuerza: por-analogía]`
@@ -59,7 +59,7 @@ status: hipótesis-preliminar
 
 ## Lo que NO Sabemos
 
-- ¿Con qué frecuencia real entra el responsable y qué lo hace entrar: la alerta por mail, una rutina o la curiosidad por las métricas? Hoy es un supuesto.
+- ¿Con qué frecuencia real entra el responsable y qué lo hace entrar: una rutina o la curiosidad por las métricas? Sin aviso activo, ¿con qué frecuencia mínima tiene que entrar? Hoy es un supuesto.
 - ¿Qué información usa realmente para decidir si un reporte es un error confirmado: la solución, el log de verificación, el contexto del jugador u otra fuente externa?
 - ¿Cuál de los tres JTBD es el más frecuente y cuál el más crítico? No hay orden de prioridad relevado.
 - ¿Qué herramientas usa hoy para operar (base de datos directa, logs, otros paneles) y qué esperaría encontrar en el admin que ya conoce de ellas?

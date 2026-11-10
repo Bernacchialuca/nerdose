@@ -60,7 +60,7 @@ Barra superior fija (encabezado único, sin sidebar), visible en P-02 a P-05:
 - **Métricas** → P-05
 - **Cerrar sesión** (acción) → borra el token y va a P-01
 
-Las etiquetas del encabezado y de los títulos de pantalla son idénticas (uso esporádico, consistencia entre secciones). Reportes lleva un contador de grupos abiertos (hipótesis: apoya la entrada por alerta de mail; a validar).
+Las etiquetas del encabezado y de los títulos de pantalla son idénticas (uso esporádico, consistencia entre secciones). Reportes lleva un contador de grupos abiertos (hipótesis: como no hay alertas por mail, el contador es el aviso; a validar).
 
 ### Navegación secundaria
 
@@ -74,7 +74,7 @@ Dentro de **Próximos** y **Stock**: sin navegación secundaria.
 
 Pantallas: Reportes (P-02); overlays Anular (O-01) y Detalle (O-02).
 
-**Por qué se agrupan:** es el JTBD 1 y el flujo de entrada esperado (alerta por mail). Es la pantalla de aterrizaje de `/`.
+**Por qué se agrupan:** es el JTBD 1 y el flujo de entrada esperado (revisión de rutina; los alertados por umbral van primero). Es la pantalla de aterrizaje de `/`.
 
 ### Agrupación: Anticipación (mirar lo que viene)
 
@@ -126,8 +126,8 @@ flowchart TD
 ## Preguntas Abiertas
 
 1. **¿El responsable necesita saber que hay reportes o fallas sin abrir Reportes (contador en el encabezado, aviso de generación fallida, días sin desafío)?**
-   - Si sí: agregar indicadores globales en el encabezado (reportes abiertos, alerta de huecos en los próximos 14 días) y estado global "alerta activa"; el PRD solo cubre alertas por mail (C-49).
-   - Si no: el encabezado es solo navegación y el contador de Reportes se elimina; la entrada es siempre por mail.
+   - Si sí: agregar indicadores globales en el encabezado (reportes alertados, fallas de generación en los próximos 14 días) y estado global "alerta activa". Con el ADR-017 las alertas solo existen en el admin, así que este es el único aviso.
+   - Si no: el encabezado es solo navegación; las alertas se ven solo dentro de Reportes y Próximos desafíos.
 
 2. **¿Hace falta ver el log de verificación y el detalle de culpables desde Reportes, o alcanza con solución y textos ES/EN?**
    - Si hace falta el log en P-02: O-02 muestra el mismo bloque de log en ambos orígenes y el selector de culpable de O-01 se alimenta desde el desafío (term o hecho ya identificado).
@@ -137,7 +137,7 @@ flowchart TD
    - Si se conserva el borrador (motivo y culpable): agregar estado "sesión vencida con retorno" y volver a la misma ruta tras el login.
    - Si se descarta: el login siempre lleva a P-02; más simple, pero el motivo escrito se pierde (la anulación es irreversible, el riesgo es el reintento, no el dato).
 
-4. **¿Hay uso del admin desde el teléfono ante una alerta de mail?**
+4. **¿Hay uso del admin desde el teléfono (revisión rápida de alertas)?**
    - Si sí: aparece un viewport mobile; como mínimo P-02, O-01 y O-02 necesitarían variante (O-02 pasaría de drawer ancho a pantalla completa y ES/EN a pestañas en lugar de lado a lado). P-03 a P-05 podrían quedar solo desktop.
    - Si no: se mantiene desktop único, sin variantes.
 

@@ -31,14 +31,14 @@ Lo que se descartó como servicio aparte, y dónde vive:
 - **Contenido/bancos** → dentro de `generator`: comparte scheduler y propiedad del contenido, y es su único consumidor. Los bancos salen de un dataset versionado que el `generator` carga al arrancar (ADR-016).
 - **Scheduler externo y cola (Redis/BullMQ)** → scheduler interno del `generator` + Postgres (ver ADR-005 y ADR-007).
 - **Publicador a las 00:00** → lo hace la `api` al cambiar el día (ver ADR-008).
-- **Notificaciones** → helper `notify()` compartido (ver ADR-013).
+- **Alertas** → registros en la base visibles en el admin, sin canal de salida (ver ADR-017).
 - **Sandbox de ejecución en la API** → no existe: la `api` nunca ejecuta código.
 
 ## Reglas de Implementación
 
 - Los servicios MUST ser exactamente `web`, `admin`, `api` y `generator`, en `apps/web`, `apps/admin`, `apps/api` y `apps/generator`.
 - `api` MUST ser la única interfaz HTTP del backend. `generator` MUST NOT abrir ningún puerto ni exponer endpoints.
-- `api` MUST NOT ejecutar código (no `child_process`, `vm`, `eval` ni equivalentes) y MUST NOT llamar a APIs externas, salvo el envío de mail de alertas (ADR-013).
+- `api` MUST NOT ejecutar código (no `child_process`, `vm`, `eval` ni equivalentes) y MUST NOT llamar a APIs externas (ADR-017).
 - `generator` MUST ser el único proceso que hace `INSERT` en `challenges`, `terms` y `timeline_facts`.
 - `web` y `admin` MUST hablar solo con `api` (más Plausible en `web`, si está activo). MUST NOT acceder a la base.
 - MUST NOT agregarse Redis, RabbitMQ, Kafka, BullMQ ni ningún broker en v1.

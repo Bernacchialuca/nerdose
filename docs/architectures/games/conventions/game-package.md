@@ -77,7 +77,7 @@ There is no root `.` export: a consumer must pick an entry.
 | Entry | May import | Must not import |
 |---|---|---|
 | `./definition` | `@nerdose/core` (`.`), `zod`, `shared/` | `@nerdose/polyglot`, `node:*`, React, `./generator`, `./client`, anything that executes code |
-| `./client` | `@nerdose/core` (`.`), `zod`, `react`, `@nerdose/ui`, `shared/`, types from `./definition` | `@nerdose/polyglot`, `node:*`, `@nerdose/core/notify`, `./generator`, runtime code of `./definition` that carries solutions |
+| `./client` | `@nerdose/core` (`.`), `zod`, `react`, `@nerdose/ui`, `shared/`, types from `./definition` | `@nerdose/polyglot`, `node:*`, `./generator`, runtime code of `./definition` that carries solutions |
 | `./generator` | `@nerdose/core` (`.`), `zod`, `@nerdose/polyglot`, `shared/`, `./definition` | `./client`, React |
 
 `shared/` holds only pure, isomorphic code (types, constants, helpers) with no Node or React dependencies.

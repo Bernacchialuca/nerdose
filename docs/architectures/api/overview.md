@@ -1,7 +1,7 @@
 # api — Overview
 
 ## Proposito
-Única interfaz HTTP del backend de nerdose. Sirve a `web` (`/api/*`, jugador anónimo con cookie `nd_pid`) y a `admin` (`/api/admin/*`, JWT del responsable). Identifica al jugador, entrega la vista pública del desafío del día y valida cada jugada con el `GameDefinition` de cada juego, cierra las partidas y actualiza rachas y estadísticas en la misma transacción, recibe reportes, dispara la alerta por mail y anula desafíos, publica `approved → published` al cambiar el día UTC y pide regeneraciones al `generator` por PostgreSQL. **Nunca ejecuta código** ni llama a APIs externas, salvo el SMTP de alertas.
+Única interfaz HTTP del backend de nerdose. Sirve a `web` (`/api/*`, jugador anónimo con cookie `nd_pid`) y a `admin` (`/api/admin/*`, JWT del responsable). Identifica al jugador, entrega la vista pública del desafío del día y valida cada jugada con el `GameDefinition` de cada juego, cierra las partidas y actualiza rachas y estadísticas en la misma transacción, recibe reportes, marca la alerta por umbral (`challenges.alerted_at`, ADR-017) y anula desafíos, publica `approved → published` al cambiar el día UTC y pide regeneraciones al `generator` por PostgreSQL. **Nunca ejecuta código** ni llama a APIs externas, salvo el SMTP de alertas.
 
 ## Tipo de servicio
 api en node (TypeScript, Node.js 24 LTS, Hono + `@hono/node-server`). Vive en `apps/api` del monorepo y usa los paquetes `@nerdose/core`, `@nerdose/db` y `./definition` de cada `@nerdose/game-*`.
@@ -23,7 +23,6 @@ Supuestos tomados al generar esta arquitectura sin interacción con el usuario:
 - **Idioma de las convenciones:** siguen el template del workflow (contenido y encabezados en inglés, `display_name` en español); `overview.md` e `index.md` van en español.
 - **Fechas:** `_base` pide ISO 8601 con hora en los bordes del sistema; las fechas de día (`date`) se serializan como `YYYY-MM-DD` por ADR-015 y los instantes como ISO 8601 UTC con `Z`.
 - **Chequeo de `Origin`:** las rutas de jugador exigen `WEB_ORIGIN` y `/api/admin/*` exige `ADMIN_ORIGIN`; ambas variables son obligatorias en todos los ambientes (ADR-009).
-- **`notify()`** se construye con `createNotify(env, logger)` para que `@nerdose/core` no lea `process.env` (regla de `env-config`).
 - **Módulos:** `admin` agrupa las rutas `/api/admin/*` que no son de `quality` ni `publishing` (login, próximos 14 días, stock, métricas).
 - **Despliegue, CI, hosting, secretos de producción y monitoreo de infraestructura** quedan fuera hasta que se definan.
 
