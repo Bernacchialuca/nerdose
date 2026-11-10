@@ -27,3 +27,12 @@ SOURCE
 STEP
 WALL
 VISION
+
+# Revisión tras el fix de etiquetas `mul` (2026-11-10): videojuegos, motores de juegos y ROMs de nicho.
+CYANOGENMOD
+DREAMS
+FROSTBITE
+LUANTI
+OMNIROM
+STEAMOS
+UNITY

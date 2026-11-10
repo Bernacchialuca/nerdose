@@ -24,6 +24,7 @@ const CLASSES = [
 const FIXTURES = {
   Q9143: 'wikidata/programming_languages.json',
   Q3257930: 'wikidata/git.json',
+  Q388: 'wikidata/inclusions.json',
 };
 
 const NOW = new Date('2026-11-06T22:00:00Z');
@@ -167,5 +168,33 @@ describe('runImport', () => {
     writeFileSync(join(dir, 'exclusions.txt'), '# test\nmercurial\n');
     const { terms } = await runImport(options);
     expect(terms.find((t) => t.term === 'MERCURIAL')?.rejection_reason).toBe('excluded');
+  });
+
+  it('adds the items of the inclusions file with their category', async () => {
+    const { dir, fetch, options } = setup();
+    writeFileSync(
+      join(dir, 'inclusions.txt'),
+      '# curados\nQ388 linux\nQ476543 software_engineering\n',
+    );
+    const { terms } = await runImport(options);
+    expect(terms.find((t) => t.wikidata_id === 'Q388')).toMatchObject({
+      term: 'LINUX',
+      category: 'linux',
+      definition: { es: 'familia de sistemas operativos tipo Unix' },
+      summary: { en: expect.stringContaining('Linux kernel') },
+      status: 'approved',
+    });
+    // La categoría de la inclusión gana sobre la de la clase que también lo trae.
+    expect(terms.find((t) => t.wikidata_id === 'Q476543')?.category).toBe('software_engineering');
+    expect(terms.filter((t) => t.wikidata_id === 'Q476543')).toHaveLength(1);
+    expect(fetch.urls.filter((u) => u.includes('query.wikidata.org'))).toHaveLength(3);
+  });
+
+  it('warns when an included item ends up rejected', async () => {
+    const logs: string[] = [];
+    const { dir, options } = setup({ minSitelinks: 500, minApproved: 0, log: (m) => logs.push(m) });
+    writeFileSync(join(dir, 'inclusions.txt'), 'Q388 linux\n');
+    await runImport(options);
+    expect(logs.some((m) => /Q388.*LINUX.*low_sitelinks/.test(m))).toBe(true);
   });
 });

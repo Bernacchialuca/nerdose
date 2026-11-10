@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { manifestSchema, type DatasetManifest, type TermItem } from '../../src/schema';
 
 import { TERM_CLASSES } from './classes';
+import { parseInclusions } from './inclusions';
 import type { WikimediaClient } from './http';
 import { buildManifest, countByCategory, nextDatasetVersion } from './manifest';
 import {
@@ -14,7 +15,7 @@ import {
   precheck,
   type Candidate,
 } from './rules';
-import { fetchClassCandidates, type TermClass } from './wikidata';
+import { fetchClassCandidates, fetchItemCandidates, type TermClass } from './wikidata';
 import { fetchSummary } from './wikipedia';
 import { writeDataset } from './write';
 
@@ -46,6 +47,7 @@ export type RunImportOptions = {
   client?: WikimediaClient;
   clientFactory?: (datasetVersion: string) => WikimediaClient;
   exclusionsPath?: string;
+  inclusionsPath?: string;
   log?: (message: string) => void;
 };
 
@@ -74,6 +76,7 @@ export async function runImport(options: RunImportOptions): Promise<RunImportRes
     minApproved = MIN_APPROVED_TERMS,
     now = new Date(),
     exclusionsPath = join(dataDir, 'exclusions.txt'),
+    inclusionsPath = join(dataDir, 'inclusions.txt'),
     log = () => {},
   } = options;
 
@@ -87,7 +90,19 @@ export async function runImport(options: RunImportOptions): Promise<RunImportRes
     existsSync(exclusionsPath) ? readFileSync(exclusionsPath, 'utf8') : '',
   );
 
-  const fetched: Candidate[] = [];
+  const inclusions = parseInclusions(
+    existsSync(inclusionsPath) ? readFileSync(inclusionsPath, 'utf8') : '',
+  );
+
+  // Las inclusiones van primero: si una clase también trae el ítem, gana su categoría.
+  const fetched: Candidate[] = await fetchItemCandidates(client, inclusions);
+  if (inclusions.length > 0) {
+    log(`Inclusiones: ${fetched.length} de ${inclusions.length} encontradas en Wikidata`);
+    const found = new Set(fetched.map((c) => c.wikidata_id));
+    for (const { wikidataId } of inclusions) {
+      if (!found.has(wikidataId)) log(`  ⚠ inclusión ${wikidataId}: no existe en Wikidata`);
+    }
+  }
   for (const termClass of classes) {
     const found = await fetchClassCandidates(client, termClass);
     log(`${termClass.wikidataClass} (${termClass.category}): ${found.length} candidatos`);
@@ -107,6 +122,12 @@ export async function runImport(options: RunImportOptions): Promise<RunImportRes
   }
 
   const terms = evaluateTerms(candidates, { minSitelinks, exclusions });
+  const included = new Set(inclusions.map((i) => i.wikidataId));
+  for (const term of terms) {
+    if (included.has(term.wikidata_id) && term.status === 'rejected') {
+      log(`  ⚠ inclusión ${term.wikidata_id} (${term.term}) rechazada: ${term.rejection_reason}`);
+    }
+  }
   const manifest = buildManifest(terms, {
     datasetVersion,
     generatedAt: now.toISOString(),

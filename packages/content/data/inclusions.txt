@@ -1,0 +1,13 @@
+# Lista de inclusión de import:banks.
+# Ítems de Wikidata que ninguna clase de TERM_CLASSES trae y que queremos en el banco.
+# Una entrada por línea: "<wikidata_id> <categoría>". Se ignoran las líneas vacías y lo que sigue a #.
+# Pasan por las mismas reglas que el resto (largo, traducciones, artículos, sitelinks, exclusiones);
+# si alguno queda rechazado, el import lo avisa.
+
+Q388 linux                       # Linux
+Q11368 linux                     # Unix
+Q178570 apis                     # OpenGL (dejó de venir por su clase)
+Q850 databases                   # MySQL
+Q2136322 databases               # Redis
+Q16639197 git                    # GitLab
+Q22661306 software_engineering   # Kubernetes

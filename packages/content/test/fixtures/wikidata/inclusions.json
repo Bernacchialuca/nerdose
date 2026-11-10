@@ -1,0 +1,91 @@
+{
+  "head": {
+    "vars": []
+  },
+  "results": {
+    "bindings": [
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q388"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Linux"
+        },
+        "label_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Linux"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "family of Unix-like operating systems"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "familia de sistemas operativos tipo Unix"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "190"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Linux"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "GNU/Linux"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q476543"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mercurial"
+        },
+        "label_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Mercurial"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "cross-platform, distributed revision-control tool for software developers"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "herramienta de control de revisiones para desarrolladores de software"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "35"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Mercurial"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Mercurial"
+        }
+      }
+    ]
+  }
+}

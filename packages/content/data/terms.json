@@ -16,6 +16,22 @@
     "rejection_reason": "invalid_length"
   },
   {
+    "wikidata_id": "Q73",
+    "term": "IRC",
+    "category": "networking",
+    "definition": {
+      "es": "protocolo de comunicación en tiempo real basado en texto, que permite debates entre dos o más personas",
+      "en": "protocol for real-time Internet chat and messaging"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 80,
+    "status": "rejected",
+    "rejection_reason": "invalid_length"
+  },
+  {
     "wikidata_id": "Q83",
     "term": "MEDIAWIKI",
     "category": "git",
@@ -48,6 +64,22 @@
     "rejection_reason": null
   },
   {
+    "wikidata_id": "Q356",
+    "term": "GOOGLE+",
+    "category": "apis",
+    "definition": {
+      "es": "Red social corporativa",
+      "en": "defunct social networking service"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 66,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q364",
     "term": "GITHUB",
     "category": "git",
@@ -76,6 +108,22 @@
       "en": "Ubuntu is a Linux distribution based on Debian and composed primarily of free and open-source software. Developed by the British company Canonical and a community of contributors under a meritocratic governance model, Ubuntu is released in multiple official editions: Desktop, Server, and Core for IoT and robotic devices."
     },
     "sitelinks": 183,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q388",
+    "term": "LINUX",
+    "category": "linux",
+    "definition": {
+      "es": "sistemas operativos de código abierto tipo Unix que utilizan el núcleo Linux",
+      "en": "family of Unix-like operating systems"
+    },
+    "summary": {
+      "es": "GNU/Linux es una familia de sistemas operativos tipo Unix compuesto por software libre y de código abierto. GNU/Linux surge de las contribuciones de varios proyectos de software, entre los cuales destacan GNU y el núcleo Linux.",
+      "en": "Linux is a family of free and open-source software Unix-like operating systems based on the Linux kernel, which was first released on 17 September 1991 by Linus Torvalds. Some members of the family are typically packaged as a distribution, which includes the kernel alongside supporting system software and libraries developed by third parties—such as GNU, Red Hat, and X.Org—to create a complete operating system; however, not all Linux-based operating systems are considered distros, with Android being an example. Linux was originally designed as a clone of Unix and is distributed under the copyleft GPL license."
+    },
+    "sitelinks": 202,
     "status": "approved",
     "rejection_reason": null
   },
@@ -128,6 +176,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q850",
+    "term": "MYSQL",
+    "category": "databases",
+    "definition": {
+      "es": "Sistema de gestión de bases de datos",
+      "en": "Open-source relational database management system"
+    },
+    "summary": {
+      "es": "MySQL es un sistema de gestión de bases de datos relacional desarrollado bajo licencia dual: licencia pública general/licencia comercial por Oracle Corporation. Está considerada la base de datos de código abierto más popular del mundo y una de las más populares en general, junto a Oracle y Microsoft SQL Server, todas para entornos de desarrollo web.",
+      "en": "MySQL is a free and open-source relational database management system (RDBMS). Its name is a combination of \"My\", the name of co-founder Michael Widenius' daughter My, and \"SQL\", the acronym for Structured Query Language. A relational database organizes data into one or more data tables in which data may be related to each other; these relations help structure the data. SQL is a language that programmers use to create, modify and extract data from the relational database, as well as control user access to the database. In addition to relational databases and SQL, an RDBMS like MySQL works with an operating system to implement a relational database in a computer's storage system, manages users, allows for network access and facilitates testing database integrity and creation of backups."
+    },
+    "sitelinks": 85,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q1575",
     "term": "INTERNET EXPLORER",
     "category": "networking",
@@ -160,6 +224,22 @@
     "rejection_reason": null
   },
   {
+    "wikidata_id": "Q2027",
+    "term": "LINUX MINT",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo GNU/Linux, basado en Ubuntu",
+      "en": "Ubuntu/Debian-based Linux distribution"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 76,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q2053",
     "term": "HTML5",
     "category": "software_engineering",
@@ -190,6 +270,22 @@
     "sitelinks": 58,
     "status": "approved",
     "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q2078",
+    "term": "SVG",
+    "category": "software_engineering",
+    "definition": {
+      "es": "gráficos vectoriales bidimensionales en formato XML",
+      "en": "open standard for two-dimensional vector graphics"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 77,
+    "status": "rejected",
+    "rejection_reason": "invalid_length"
   },
   {
     "wikidata_id": "Q2093",
@@ -507,7 +603,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 7,
+    "sitelinks": 8,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -526,6 +622,22 @@
     "sitelinks": 48,
     "status": "rejected",
     "rejection_reason": "invalid_length"
+  },
+  {
+    "wikidata_id": "Q5289",
+    "term": ".NET FRAMEWORK",
+    "category": "software_engineering",
+    "definition": {
+      "es": "framework de Microsoft que hace un énfasis en la transparencia de redes",
+      "en": "software platform developed by Microsoft"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 70,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q5301",
@@ -652,6 +764,22 @@
       "en": "Hypertext Markup Language (HTML) is the standard markup language for documents designed to be displayed in a web browser. It defines the content and structure of web content. It is often assisted by technologies such as Cascading Style Sheets (CSS) and scripting languages such as JavaScript."
     },
     "sitelinks": 186,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q8815",
+    "term": "ASCII",
+    "category": "software_engineering",
+    "definition": {
+      "es": "código de caracteres basado en el alfabeto latino",
+      "en": "American character encoding standard"
+    },
+    "summary": {
+      "es": "ASCII, pronunciado generalmente, [ásθi] o [ási], es un código de caracteres basado en el alfabeto latino, tal como se usa en inglés moderno. Fue creado en 1963 por el Comité Estadounidense de Estándares como una evolución de los conjuntos de códigos utilizados entonces en telegrafía. Más tarde, en 1967, se incluyeron las minúsculas, y se redefinieron algunos códigos de control para formar el código conocido como US-ASCII.",
+      "en": "ASCII, an acronym for American Standard Code for Information Interchange, is a character encoding standard for representing a particular set of 95 (English-language–focused) printable and 33 control characters – a total of 128 code points. The set of available punctuation had significant impact on the syntax of computer languages and text markup. ASCII hugely influenced the design of character sets used by modern computers; for example, the first 128 code points of Unicode are the same as ASCII."
+    },
+    "sitelinks": 90,
     "status": "approved",
     "rejection_reason": null
   },
@@ -784,6 +912,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q11368",
+    "term": "UNIX",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "family of computer operating systems that derive from the original AT&T Unix from 1969"
+    },
+    "summary": {
+      "es": "Unix fue un sistema operativo portable, multitarea y multiusuario; desarrollado en 1969 por un grupo de empleados de los laboratorios Bell de AT&T.",
+      "en": "Unix is a family of multitasking, multi-user computer operating systems that derive from the original AT&T Unix, the development of which started in 1969 at the Bell Labs research center by Ken Thompson, Dennis Ritchie, and others. Initially intended for use inside the Bell System, AT&T licensed Unix to outside parties in the late 1970s, leading to a variety of both academic and commercial Unix variants from vendors including Berkeley Software Distribution (BSD), Microsoft (Xenix), Sun Microsystems (SunOS/Solaris), HP (HP-UX), and IBM (AIX)."
+    },
+    "sitelinks": 126,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q11983",
     "term": "CRUNCHBANG LINUX",
     "category": "linux",
@@ -843,7 +987,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 42,
+    "sitelinks": 43,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -878,6 +1022,22 @@
     "sitelinks": 32,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q14581",
+    "term": "DARWIN",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "core Unix-like operating system of macOS, iOS, etc."
+    },
+    "summary": {
+      "es": "Darwin es un sistema operativo de código abierto tipo Unix, lanzado por primera vez por Apple Inc. en el año 2000. Está compuesto por código desarrollado por Apple, así como por código derivado de NeXTSTEP, BSD, Mach (XNU) y otros proyectos de software libre.",
+      "en": "Darwin is the core Unix-like operating system of macOS, iOS, watchOS, tvOS, iPadOS, audioOS, visionOS, and bridgeOS. It previously existed as an independent open-source operating system, first released by Apple in 2000. It is composed of code derived from NeXTSTEP, FreeBSD and other BSD operating systems, Mach, and other free software projects' code, as well as code developed by Apple. Darwin's unofficial mascot is Hexley the Platypus."
+    },
+    "sitelinks": 30,
+    "status": "approved",
+    "rejection_reason": null
   },
   {
     "wikidata_id": "Q14646",
@@ -1040,6 +1200,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q16691",
+    "term": "OPENSUSE",
+    "category": "linux",
+    "definition": {
+      "es": "distribución y proyecto libre auspiciado por SUSE Linux GmbH",
+      "en": "Linux distribution"
+    },
+    "summary": {
+      "es": "openSUSE es el nombre de la distribución y el proyecto libre auspiciado por SUSE Linux GmbH, y AMD para el desarrollo y mantenimiento de un sistema operativo basado en GNU/Linux. Después de adquirir SUSE Linux en enero de 2004, Novell decidió lanzar SUSE Linux Professional como un proyecto completamente de código abierto, involucrando a la comunidad en el proceso de desarrollo. La versión inicial fue una versión beta de SUSE Linux 10.0, y se continúa esa denominación para las versiones actuales, con la excepción de la serie openSUSE Leap 42.",
+      "en": "openSUSE is a free and open-source Linux distribution developed by the openSUSE Project. It is offered in two main variations: Tumbleweed, an upstream rolling release distribution, and Leap, a stable release distribution which is sourced from SUSE Linux Enterprise."
+    },
+    "sitelinks": 51,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q19026",
     "term": "LN",
     "category": "linux",
@@ -1180,6 +1356,22 @@
       "en": ""
     },
     "sitelinks": 17,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q27446",
+    "term": "IOS SDK",
+    "category": "software_engineering",
+    "definition": {
+      "es": "kit de desarrollo de software",
+      "en": "iOS Software Development Kit"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 11,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -1408,6 +1600,22 @@
     "rejection_reason": null
   },
   {
+    "wikidata_id": "Q34225",
+    "term": "NETBSD",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo de la familia Unix",
+      "en": "open-source Unix-like operating system"
+    },
+    "summary": {
+      "es": "NetBSD es un sistema operativo de la familia Unix de código abierto y libre, y, a marzo de 2019, disponible para 58 plataformas de hardware. Su diseño y sus características avanzadas lo hacen ideal para multitud de aplicaciones.",
+      "en": "NetBSD is a free and open-source Unix-like operating system based on the Berkeley Software Distribution (BSD). It was the first open-source BSD descendant officially released after 386BSD was forked. It continues to be actively developed and is available for many platforms, including servers, desktops, handheld devices, and embedded systems."
+    },
+    "sitelinks": 48,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q34236",
     "term": "FREEBSD",
     "category": "linux",
@@ -1486,6 +1694,54 @@
     "sitelinks": 69,
     "status": "rejected",
     "rejection_reason": "invalid_length"
+  },
+  {
+    "wikidata_id": "Q39208",
+    "term": "EDUBUNTU",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "Educational Linux distribution"
+    },
+    "summary": {
+      "es": "Edubuntu', anteriormente conocido como Ubuntu Education Edition', es un derivado oficial del Ubuntu diseñado para su uso en aulas dentro de escuelas, hogares y comunidades.",
+      "en": "Edubuntu is an official derivative of the Ubuntu operating system designed for use in classrooms inside schools, homes, and communities."
+    },
+    "sitelinks": 37,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q39238",
+    "term": "LUBUNTU",
+    "category": "linux",
+    "definition": {
+      "es": "distribución liviana del sistema operativo Linux basada en Ubuntu",
+      "en": "lightweight Linux operating system based on Ubuntu"
+    },
+    "summary": {
+      "es": "Lubuntu es una distribución Linux ligera, basada en Ubuntu, que emplea el entorno de escritorio LXQt en lugar del entorno GNOME de Ubuntu. En un principio, Lubuntu se promocionaba como «más ligera, con menos recursos y más eficiente energéticamente», pero que pretende ser «una distribución funcional y modular centrada en no estorbar y dejar que los usuarios utilicen su computadora».",
+      "en": "Lubuntu is a lightweight Linux distribution based on Ubuntu that uses the LXQt desktop environment in place of GNOME. Lubuntu was originally touted as being \"lighter, less resource hungry and more energy-efficient\", but now aims to be \"a functional yet modular distribution focused on getting out of the way and letting users use their computer\"."
+    },
+    "sitelinks": 48,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q39269",
+    "term": "MYTHBUNTU",
+    "category": "linux",
+    "definition": {
+      "es": "conjunto de aplicaciones que intenta convertir el PC en una grabadora de vídeo digital",
+      "en": "media center operating system based on Ubuntu."
+    },
+    "summary": {
+      "es": "",
+      "en": "Mythbuntu is a discontinued media center operating system based on Ubuntu, which integrated the MythTV media center software as its main function, and did not install with all of the programs included with Ubuntu."
+    },
+    "sitelinks": 16,
+    "status": "rejected",
+    "rejection_reason": "missing_article"
   },
   {
     "wikidata_id": "Q39328",
@@ -1872,6 +2128,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q48493",
+    "term": "IOS",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo móvil de Apple Inc.",
+      "en": "mobile operating system by Apple Inc."
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 108,
+    "status": "rejected",
+    "rejection_reason": "invalid_length"
+  },
+  {
     "wikidata_id": "Q48524",
     "term": "CHROMIUM",
     "category": "networking",
@@ -2160,6 +2432,22 @@
     "rejection_reason": "missing_article"
   },
   {
+    "wikidata_id": "Q58436",
+    "term": "SLACKWARE",
+    "category": "linux",
+    "definition": {
+      "es": "Distribución GNU/Linux",
+      "en": "Linux distribution"
+    },
+    "summary": {
+      "es": "Slackware Linux es una distribución Linux orientada a usuarios avanzados. Fue desarrollada por Patrick Volkerding en 1993 basándose en el código fuente de la distribución SLS Linux, y es considerada la distribución más antigua aún en desarrollo.",
+      "en": "Slackware is a Linux distribution created by Patrick Volkerding in 1993. Originally based on Softlanding Linux System (SLS), Slackware has been the basis for many other Linux distributions, most notably the first versions of SUSE Linux distributions, and is the oldest distribution that is still maintained."
+    },
+    "sitelinks": 57,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q59750",
     "term": "BIDIRECTIONAL SEARCH",
     "category": "software_engineering",
@@ -2254,6 +2542,22 @@
     "sitelinks": 28,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q63966",
+    "term": "UNITY",
+    "category": "software_engineering",
+    "definition": {
+      "es": "motor para videojuegos multiplataforma",
+      "en": "cross-platform game engine"
+    },
+    "summary": {
+      "es": "Unity es un motor de videojuego multiplataforma creado por Unity Technologies, anunciado y lanzado por primera vez el 8 de junio de 2005 en la Conferencia Mundial de Desarrolladores de Apple como motor de juegos para Mac OS X. Unity está disponible como plataforma de desarrollo para Microsoft Windows, Mac OS, Linux. La plataforma de desarrollo tiene soporte de compilación con diferentes tipos de plataformas.",
+      "en": "Unity is a cross-platform game engine developed by Unity Technologies, first announced and released in June 2005 at the Apple Worldwide Developers Conference as a Mac OS X game engine. The engine has since been gradually extended to support a variety of desktop, mobile, console, augmented reality, and virtual reality platforms. It is particularly popular for iOS and Android mobile game development, is considered easy to use for beginner developers, and is popular for indie game development."
+    },
+    "sitelinks": 58,
+    "status": "rejected",
+    "rejection_reason": "excluded"
   },
   {
     "wikidata_id": "Q71370",
@@ -2432,6 +2736,22 @@
     "rejection_reason": "missing_article"
   },
   {
+    "wikidata_id": "Q80689",
+    "term": "MICROSOFT ACCESS",
+    "category": "databases",
+    "definition": {
+      "es": "",
+      "en": "database manager part of the Microsoft 365 package"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 64,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q80729",
     "term": "SPLAY TREE",
     "category": "software_engineering",
@@ -2443,7 +2763,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 21,
+    "sitelinks": 22,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -2454,6 +2774,22 @@
     "definition": {
       "es": "",
       "en": "open standard from the medical computer science"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 27,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q81229",
+    "term": "SAILFISH OS",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "mobile phone Linux distribution"
     },
     "summary": {
       "es": "",
@@ -2526,6 +2862,22 @@
     "sitelinks": 14,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q82268",
+    "term": "ECLIPSE",
+    "category": "software_engineering",
+    "definition": {
+      "es": "entorno de desarrollo informatico",
+      "en": "software development environment"
+    },
+    "summary": {
+      "es": "Eclipse es una plataforma de software compuesto por un conjunto de herramientas de programación de código abierto multiplataforma para desarrollar lo que el proyecto llama \"Aplicaciones de Cliente Enriquecido\", opuesto a las aplicaciones \"Cliente-liviano\" basadas en navegadores. Esta plataforma, típicamente ha sido usada para desarrollar entornos de desarrollo integrados, como el IDE de Java llamado Java Development Toolkit (JDT) y el compilador (ECJ) que se entrega como parte de Eclipse.",
+      "en": "Eclipse is an integrated development environment (IDE) used in computer programming. It contains a base workspace and an extensible plug-in system for customizing the environment. It had been the most popular IDE for Java development until 2016, when it was surpassed by IntelliJ IDEA. Eclipse is written mostly in Java and its primary use is for developing Java applications, but it may also be used to develop applications in other programming languages via plug-ins, including Ada, ABAP, C, C++, C#, Clojure, COBOL, D, Erlang, Fortran, Groovy, Haskell, HLASM, JavaScript, Julia, Lasso, Lua, NATURAL, Perl, PHP, PL/I, Prolog, Python, R, Rexx, Ruby, Rust, Scala, and Scheme. It can also be used to develop documents with LaTeX and packages for the software Mathematica. Development environments include the Eclipse Java development tools (JDT) for Java and Scala, Eclipse CDT for C/C++, and Eclipse PDT for PHP, among others."
+    },
+    "sitelinks": 58,
+    "status": "approved",
+    "rejection_reason": null
   },
   {
     "wikidata_id": "Q83303",
@@ -2684,8 +3036,8 @@
       "en": "In computing, Terse RDF Triple Language (Turtle) is a syntax and file format for expressing data in the Resource Description Framework (RDF) data model. Turtle syntax is similar to that of SPARQL, an RDF query language. It is a common data format for storing RDF data, along with N-Triples, JSON-LD and RDF/XML."
     },
     "sitelinks": 10,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q114486",
@@ -2814,6 +3166,22 @@
     "sitelinks": 19,
     "status": "approved",
     "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q124514",
+    "term": "FROSTBITE",
+    "category": "software_engineering",
+    "definition": {
+      "es": "motor de videojuegos",
+      "en": "game engine"
+    },
+    "summary": {
+      "es": "Frostbite es un motor de videojuego desarrollado por DICE, diseñado para uso multiplataforma en Microsoft Windows, consolas de juegos de séptima generación PlayStation 3 y Xbox 360, consolas de juegos de octava generación PlayStation 4, Xbox One y Nintendo Switch y consolas de juegos de novena generación PlayStation 5 y Xbox Series X/S, además de su uso en el ahora desaparecido servicio de streaming en la nube Google Stadia.",
+      "en": "Frostbite is a game engine developed by DICE and used by multiple Electronic Arts studios. It was first released in 2008 for use in Battlefield: Bad Company, and has since expanded to many other first-person shooter video games and a variety of other genres."
+    },
+    "sitelinks": 30,
+    "status": "rejected",
+    "rejection_reason": "excluded"
   },
   {
     "wikidata_id": "Q125176",
@@ -3312,6 +3680,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q145568",
+    "term": "SCUMMVM",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "set of game engine recreations"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 26,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
     "wikidata_id": "Q150474",
     "term": "ONE-TIME PAD",
     "category": "security",
@@ -3648,6 +4032,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q165277",
+    "term": "OPENCV",
+    "category": "software_engineering",
+    "definition": {
+      "es": "librería de visión para computadoras",
+      "en": "computer vision library"
+    },
+    "summary": {
+      "es": "OpenCV es una biblioteca libre de visión artificial originalmente desarrollada por Intel. OpenCV significa Open Computer Vision. Desde que apareció su primera versión alfa en el mes de enero de 1999, se ha utilizado en una gran cantidad de aplicaciones, y hasta 2020 se la sigue mencionando como la biblioteca más popular de visión artificial. Detección de movimiento, reconocimiento de objetos, reconstrucción 3D a partir de imágenes, son sólo algunos ejemplos de aplicaciones de OpenCV.",
+      "en": "OpenCV is a library of programming functions mainly for real-time computer vision. Originally developed by Intel, it was later supported by Willow Garage, then Itseez. The library is cross-platform and licensed as free and open-source software under Apache License 2. Starting in 2011, OpenCV features GPU acceleration for real-time operations."
+    },
+    "sitelinks": 30,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q165372",
     "term": "CLIPS",
     "category": "programming_languages",
@@ -3740,6 +4140,22 @@
       "en": ""
     },
     "sitelinks": 54,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q167784",
+    "term": "GNOME WEB",
+    "category": "networking",
+    "definition": {
+      "es": "navegador web de GNOME",
+      "en": "web browser from GNOME"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 34,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -4064,6 +4480,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q177524",
+    "term": "ARPANET",
+    "category": "networking",
+    "definition": {
+      "es": "agencia de proyectos de investigación avanzada de redes",
+      "en": "early packet switching network (1969–1990)"
+    },
+    "summary": {
+      "es": "ARPANET fue una red de computadoras creada por encargo del Departamento de Defensa de los Estados Unidos (DOD) para utilizarla como medio de comunicación entre las diferentes instituciones académicas y estatales. El primer nodo se creó en la Universidad de California en Los Ángeles (UCLA) y fue la espina dorsal de Internet hasta el 28 de febrero de 1990, tras finalizar la transición al modelo de protocolos TCP/IP iniciada en 1983 y ser desmantelada.",
+      "en": "The Advanced Research Projects Agency Network (ARPANET) was the first wide-area packet-switched network with distributed control and one of the first computer networks to implement the TCP/IP protocol suite. Both technologies became the technical foundation of the Internet. The ARPANET was established by the Advanced Research Projects Agency of the United States Department of Defense."
+    },
+    "sitelinks": 66,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q177827",
     "term": "INTERNET CONTENT ADAPTATION PROTOCOL",
     "category": "networking",
@@ -4235,7 +4667,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 14,
+    "sitelinks": 15,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -4300,8 +4732,24 @@
       "en": "GNAT is a free-software compiler for the Ada programming language which forms part of the GNU Compiler Collection (GCC). It supports all versions of the language, i.e. Ada 2012, Ada 2005, Ada 95 and Ada 83. Originally its name was an acronym that stood for GNU NYU Ada Translator, but that name no longer applies. The front-end and run-time are written in Ada."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
+  },
+  {
+    "wikidata_id": "Q181202",
+    "term": "QUAKE ENGINE",
+    "category": "software_engineering",
+    "definition": {
+      "es": "motor de videojuegos desarrollado por id Software",
+      "en": "game engine developed by id Software"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 24,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q181222",
@@ -4480,6 +4928,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q185576",
+    "term": "ARCH LINUX",
+    "category": "linux",
+    "definition": {
+      "es": "distribución GNU/Linux de lanzamiento continuo",
+      "en": "Linux distribution"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 63,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q186055",
     "term": "GIT",
     "category": "git",
@@ -4510,6 +4974,22 @@
     "sitelinks": 44,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q187560",
+    "term": "SCHEME",
+    "category": "programming_languages",
+    "definition": {
+      "es": "lenguaje de programación",
+      "en": "dialect of the Lisp programming language"
+    },
+    "summary": {
+      "es": "Scheme es un lenguaje de programación funcional y un dialecto de Lisp. Fue desarrollado por Guy L. Steele y Gerald Jay Sussman en la década de los setenta e introducido en el mundo académico a través de una serie de artículos conocidos como los Lambda Papers de Sussman y Steele.",
+      "en": "Scheme is a dialect of the Lisp family of programming languages. Scheme was created during the 1970s at the MIT Computer Science and Artificial Intelligence Laboratory and released by its developers, Guy L. Steele and Gerald Jay Sussman, via a series of memos now known as the Lambda Papers. It was the first dialect of Lisp to choose lexical scope and the first to require implementations to perform tail-call optimization, giving stronger support for functional programming and associated techniques such as recursive algorithms. It was also one of the first programming languages to support first-class continuations. It had a significant influence on the effort that led to the development of Common Lisp."
+    },
+    "sitelinks": 54,
+    "status": "approved",
+    "rejection_reason": null
   },
   {
     "wikidata_id": "Q187906",
@@ -4640,6 +5120,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q188951",
+    "term": "EXTENSIBLE MESSAGING AND PRESENCE PROTOCOL",
+    "category": "networking",
+    "definition": {
+      "es": "protocolo abierto y extensible basado en XML",
+      "en": "communications protocol for message-oriented middleware"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 47,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q189057",
     "term": "MERGE SORT",
     "category": "software_engineering",
@@ -4704,22 +5200,6 @@
     "rejection_reason": "missing_translation"
   },
   {
-    "wikidata_id": "Q189768",
-    "term": "APPLICATION LAYER",
-    "category": "software_engineering",
-    "definition": {
-      "es": "séptimo nivel del modelo OSI",
-      "en": "highest layer of a networked communication model"
-    },
-    "summary": {
-      "es": "",
-      "en": ""
-    },
-    "sitelinks": 48,
-    "status": "rejected",
-    "rejection_reason": "invalid_chars"
-  },
-  {
     "wikidata_id": "Q190478",
     "term": "RUBY ON RAILS",
     "category": "software_engineering",
@@ -4780,6 +5260,22 @@
       "en": "Zentyal is an open source email and groupware solution based on Ubuntu Linux. The latest release took place on February 26, 2024."
     },
     "sitelinks": 10,
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
+  },
+  {
+    "wikidata_id": "Q191317",
+    "term": "ZENWALK",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "Linux distribution"
+    },
+    "summary": {
+      "es": "Zenwalk Linux es una Distribución de Linux basada en Slackware Linux centrada en herramientas de Internet, multimedia, y programación, creada por Jean-Philippe Guillemin.",
+      "en": "Zenwalk GNU/Linux is a desktop-focused Linux distribution founded by Jean-Philippe Guillemin. It is based on Slackware with very few modifications at system level making it 100% compatible with Slackware. It aims to be a modern, multi-purpose Linux distribution by focusing on internet applications, multimedia and programming tools. It comes with many specialized tools and is designed for beginners and advanced users alike, as it offers system configuration via both graphical tools and the command line."
+    },
+    "sitelinks": 25,
     "status": "approved",
     "rejection_reason": null
   },
@@ -4848,22 +5344,6 @@
     "rejection_reason": "invalid_chars"
   },
   {
-    "wikidata_id": "Q192727",
-    "term": "PHYSICAL LAYER",
-    "category": "software_engineering",
-    "definition": {
-      "es": "primer nivel del modelo OSI",
-      "en": "the lowest-level electronic or optical transmission functions of a network"
-    },
-    "summary": {
-      "es": "",
-      "en": ""
-    },
-    "sitelinks": 46,
-    "status": "rejected",
-    "rejection_reason": "invalid_chars"
-  },
-  {
     "wikidata_id": "Q193247",
     "term": "JAKARTA EE",
     "category": "apis",
@@ -4876,22 +5356,6 @@
       "en": ""
     },
     "sitelinks": 39,
-    "status": "rejected",
-    "rejection_reason": "invalid_chars"
-  },
-  {
-    "wikidata_id": "Q194134",
-    "term": "DATA-LINK LAYER",
-    "category": "software_engineering",
-    "definition": {
-      "es": "segundo nivel del modelo OSI",
-      "en": "second layer of the OSI networking model"
-    },
-    "summary": {
-      "es": "",
-      "en": ""
-    },
-    "sitelinks": 47,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -5088,6 +5552,22 @@
     "rejection_reason": null
   },
   {
+    "wikidata_id": "Q201904",
+    "term": "QT",
+    "category": "software_engineering",
+    "definition": {
+      "es": "framework orientado a objetos para la creación de GUI (Interfaz gráfica de usuario)",
+      "en": "object-oriented framework for GUI creation"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 54,
+    "status": "rejected",
+    "rejection_reason": "invalid_length"
+  },
+  {
     "wikidata_id": "Q202044",
     "term": "TOR",
     "category": "networking",
@@ -5280,6 +5760,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q207542",
+    "term": "CENTOS",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "Linux distribution"
+    },
+    "summary": {
+      "es": "CentOS es una distribución Linux descontinuada, que consiste en una bifurcación a nivel binario de la distribución GNU/Linux Red Hat Enterprise Linux RHEL, compilado por voluntarios a partir del código fuente publicado por Red Hat, siendo la principal diferencia con este la eliminación de todas las referencias a las marcas y logos propiedad de Red Hat.",
+      "en": "CentOS is a discontinued Linux distribution that provided a free and open-source community-supported computing platform, functionally compatible with its upstream source, Red Hat Enterprise Linux (RHEL). In January 2014, CentOS announced the official joining with Red Hat while staying independent from RHEL, under a new CentOS governing board."
+    },
+    "sitelinks": 46,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q207580",
     "term": "ROUTING INFORMATION PROTOCOL",
     "category": "networking",
@@ -5344,6 +5840,22 @@
     "rejection_reason": null
   },
   {
+    "wikidata_id": "Q207902",
+    "term": "ADOBE ACROBAT",
+    "category": "software_engineering",
+    "definition": {
+      "es": "familia de aplicaciones informáticas desarrolladas por la corporación Adobe",
+      "en": "set of application software to view, edit and manage files in Portable Document Format (PDF)"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 50,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q207971",
     "term": "TOKEN RING",
     "category": "networking",
@@ -5356,22 +5868,6 @@
       "en": ""
     },
     "sitelinks": 47,
-    "status": "rejected",
-    "rejection_reason": "invalid_chars"
-  },
-  {
-    "wikidata_id": "Q208074",
-    "term": "NETWORK LAYER",
-    "category": "software_engineering",
-    "definition": {
-      "es": "tercer nivel del modelo OSI",
-      "en": "layer 3 of the OSI model for computer communication"
-    },
-    "summary": {
-      "es": "",
-      "en": ""
-    },
-    "sitelinks": 46,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -5404,22 +5900,6 @@
       "en": ""
     },
     "sitelinks": 36,
-    "status": "rejected",
-    "rejection_reason": "invalid_chars"
-  },
-  {
-    "wikidata_id": "Q209372",
-    "term": "TRANSPORT LAYER",
-    "category": "software_engineering",
-    "definition": {
-      "es": "cuarto nivel del modelo OSI",
-      "en": "layer in the OSI and TCP/IP models providing host-to-host communication services for applications"
-    },
-    "summary": {
-      "es": "",
-      "en": ""
-    },
-    "sitelinks": 42,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -5552,6 +6032,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q213136",
+    "term": "LITHTECH",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "game engine developed by Monolith Productions"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 11,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
     "wikidata_id": "Q213259",
     "term": "OPENOFFICE BASIC",
     "category": "programming_languages",
@@ -5600,20 +6096,20 @@
     "rejection_reason": "invalid_chars"
   },
   {
-    "wikidata_id": "Q215121",
-    "term": "PRESENTATION LAYER",
-    "category": "software_engineering",
+    "wikidata_id": "Q214743",
+    "term": "VI",
+    "category": "linux",
     "definition": {
-      "es": "sexto nivel del modelo OSI",
-      "en": "6th layer of the OSI model of telecommunications; the least abstract for which data representation makes much sense"
+      "es": "editor de texto de código abierto",
+      "en": "keyboard-oriented text editor"
     },
     "summary": {
       "es": "",
       "en": ""
     },
-    "sitelinks": 40,
+    "sitelinks": 48,
     "status": "rejected",
-    "rejection_reason": "invalid_chars"
+    "rejection_reason": "invalid_length"
   },
   {
     "wikidata_id": "Q215179",
@@ -5628,6 +6124,22 @@
       "en": ""
     },
     "sitelinks": 39,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q215273",
+    "term": "RED HAT ENTERPRISE LINUX",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "Linux distribution"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 44,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -5678,22 +6190,6 @@
     "sitelinks": 41,
     "status": "rejected",
     "rejection_reason": "missing_translation"
-  },
-  {
-    "wikidata_id": "Q216292",
-    "term": "SESSION LAYER",
-    "category": "software_engineering",
-    "definition": {
-      "es": "quinto nivel del modelo OSI",
-      "en": "part of seven-layer computer networking model"
-    },
-    "summary": {
-      "es": "",
-      "en": ""
-    },
-    "sitelinks": 39,
-    "status": "rejected",
-    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q217323",
@@ -5788,6 +6284,38 @@
       "en": ""
     },
     "sitelinks": 22,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
+    "wikidata_id": "Q218170",
+    "term": "POSTSCRIPT",
+    "category": "programming_languages",
+    "definition": {
+      "es": "lenguaje de programación",
+      "en": "programming language"
+    },
+    "summary": {
+      "es": "PostScript es un lenguaje de descripción de páginas, utilizado en muchas impresoras y también muy común como formato de transporte de archivos gráficos en talleres de impresión profesional.",
+      "en": "PostScript (PS) is a page description language and dynamically typed, stack-based programming language. It is most commonly used in the electronic publishing and desktop publishing realm, but as a Turing complete programming language, it can be used for many other purposes as well. PostScript was created at Adobe Systems by John Warnock, Charles Geschke, Doug Brotz, Ed Taft and Bill Paxton from 1982 to 1984. The most recent version, PostScript 3, was released in 1997."
+    },
+    "sitelinks": 44,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q219363",
+    "term": "NETFLOW",
+    "category": "networking",
+    "definition": {
+      "es": "",
+      "en": "communications protocol"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 12,
     "status": "rejected",
     "rejection_reason": "missing_translation"
   },
@@ -5918,6 +6446,22 @@
     "sitelinks": 40,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q220674",
+    "term": "XMLHTTPREQUEST",
+    "category": "apis",
+    "definition": {
+      "es": "",
+      "en": "Web API in the form of an object, provided by the user agent, whose methods transfer data between a user agent and a web server, often for continually modifying a loaded web page; despite the name, can be used with non-HTTP protocols or non-XML data"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 30,
+    "status": "rejected",
+    "rejection_reason": "invalid_length"
   },
   {
     "wikidata_id": "Q220831",
@@ -6246,6 +6790,22 @@
     "definition": {
       "es": "algoritmo de compresión con pérdida para imágenes",
       "en": ""
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 5,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q229719",
+    "term": "3G-324M",
+    "category": "networking",
+    "definition": {
+      "es": "protocolo de comunicaciones del 3GPP",
+      "en": "protocol"
     },
     "summary": {
       "es": "",
@@ -6672,6 +7232,22 @@
     "rejection_reason": "missing_article"
   },
   {
+    "wikidata_id": "Q252340",
+    "term": "COMMON LISP OBJECT SYSTEM",
+    "category": "software_engineering",
+    "definition": {
+      "es": "lenguaje de programación",
+      "en": "facility for object-oriented programming which is part of ANSI Common Lisp"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 13,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q253363",
     "term": "JAVAHELP",
     "category": "software_engineering",
@@ -6764,6 +7340,22 @@
       "en": "basename is a shell command for extracting the last name of a file path."
     },
     "sitelinks": 19,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q258448",
+    "term": "LAZARUS",
+    "category": "software_engineering",
+    "definition": {
+      "es": "IDE Libre multiplataforma para Free Pascal",
+      "en": "free cross-platform IDE for Free Pascal"
+    },
+    "summary": {
+      "es": "Lazarus es una herramienta de desarrollo rápido de aplicaciones (RAD) basada en el lenguaje de programación Object Pascal, disponible para los sistemas operativos Windows, GNU/Linux y Mac OS X.",
+      "en": "Lazarus is a cross-platform, integrated development environment (IDE) for rapid application development (RAD) using the Free Pascal compiler. Its goal is to provide an easy-to-use development environment for developing with the Object Pascal language, which is as close as possible to Delphi. It is free and open-source software with different parts released under different software licenses."
+    },
+    "sitelinks": 32,
     "status": "approved",
     "rejection_reason": null
   },
@@ -6862,6 +7454,22 @@
     "sitelinks": 29,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q260180",
+    "term": "OPENTYPE",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "font file format"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 29,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
   },
   {
     "wikidata_id": "Q261103",
@@ -7166,6 +7774,22 @@
     "sitelinks": 13,
     "status": "rejected",
     "rejection_reason": "invalid_length"
+  },
+  {
+    "wikidata_id": "Q267956",
+    "term": "ATOM",
+    "category": "software_engineering",
+    "definition": {
+      "es": "lenguaje basado en XML para fuentes web",
+      "en": "Atom Syndication Format (XML)-used for web feeds Atom Publishing Protocol (HTTP)-protocol for creating and updating web resources"
+    },
+    "summary": {
+      "es": "El nombre Atom hace referencia a dos estándares relacionados.El Formato de Redifusión Atom es un fichero en formato XML usado para Redifusión web.\nMientras que el Protocolo de Publicación Atom es un protocolo simple basado en HTTP para crear o actualizar recursos en Web.",
+      "en": "The name Atom applies to a pair of related Web standards. The Atom Syndication Format is an XML language used for web feeds, while the Atom Publishing Protocol is a simple HTTP-based protocol for creating and updating web resources."
+    },
+    "sitelinks": 31,
+    "status": "rejected",
+    "rejection_reason": "duplicate"
   },
   {
     "wikidata_id": "Q268201",
@@ -7742,6 +8366,22 @@
     "sitelinks": 9,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q283302",
+    "term": "GREP",
+    "category": "linux",
+    "definition": {
+      "es": "Utilidad para la línea de comandos en Unix; no confundir con GNU grep, vea Q21282417",
+      "en": "Unix command line utility"
+    },
+    "summary": {
+      "es": "grep es una utilidad de la línea de comandos escrita originalmente para ser usada con el sistema operativo Unix.",
+      "en": "grep is a command-line utility for searching text for lines that match a regular expression. Its name comes from the ed command g/re/p, which has the same effect. grep was originally developed for the Unix operating system, and is commonly available on Unix-like and some other systems such as OS-9. The shell command that runs the utility has the same name: grep."
+    },
+    "sitelinks": 39,
+    "status": "approved",
+    "rejection_reason": null
   },
   {
     "wikidata_id": "Q283438",
@@ -8620,8 +9260,8 @@
       "en": "MBOX is a generic term for a family of related file formats used for holding collections of email messages. It was first implemented in Fifth Edition Unix."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q286005",
@@ -8636,8 +9276,8 @@
       "en": "tomsrtbt is a very small Linux distribution. It is short for \"Tom's floppy which has a root filesystem and is also bootable.\" Its author, Tom Oehser, touts it as \"The most GNU/Linux on one floppy disk\", containing many common Linux command-line tools useful for system recovery It also features drivers for many types of hardware, and network connectivity."
     },
     "sitelinks": 10,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q286024",
@@ -9340,8 +9980,8 @@
       "en": "AMPL is an algebraic modeling language to describe and solve high-complexity problems for large-scale mathematical computing .\nIt was developed by Robert Fourer, David Gay, and Brian Kernighan at Bell Laboratories.\nAMPL supports dozens of solvers, both open source and commercial software, including CBC, CPLEX, FortMP, MOSEK, MINOS, IPOPT, SNOPT, KNITRO, and LGO. Problems are passed to solvers as nl files.\nAMPL is used by more than 100 corporate clients, and by government agencies and academic institutions."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q295299",
@@ -10171,7 +10811,7 @@
       "es": "nginx es un servidor web/Proxy inverso ligero de alto rendimiento y un proxy para protocolos de correo electrónico (IMAP/POP3).",
       "en": "nginx is a web server that can also be used as a reverse proxy, load balancer, mail proxy and HTTP cache. The software was created by Russian developer Igor Sysoev and publicly released in 2004. nginx is free and open-source software, released under the terms of the 2-clause BSD license. A large fraction of web servers use nginx, often as a load balancer."
     },
-    "sitelinks": 43,
+    "sitelinks": 44,
     "status": "approved",
     "rejection_reason": null
   },
@@ -10608,6 +11248,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q307677",
+    "term": "IOS 6",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "sixth major version of iOS"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 31,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q307859",
     "term": "MOVIX",
     "category": "linux",
@@ -10944,6 +11600,22 @@
     "rejection_reason": null
   },
   {
+    "wikidata_id": "Q319417",
+    "term": "SQLITE",
+    "category": "databases",
+    "definition": {
+      "es": "sistema de gestión de bases de datos",
+      "en": "serverless relational database management system (RDBMS)"
+    },
+    "summary": {
+      "es": "SQLite es un sistema de gestión de bases de datos relacional compatible con ACID, contenida en una relativamente pequeña (~275 kiB) biblioteca escrita en C. SQLite es un proyecto de dominio público creado por D. Richard Hipp.",
+      "en": "SQLite is a free and open-source relational database engine written in the C programming language. It is not a standalone application; rather, it is a library that software developers embed in their applications. As such, it belongs to the family of embedded databases. According to its developers, SQLite is the most widely deployed database engine, as it is used by several of the top web browsers, operating systems, mobile phones, and other embedded systems."
+    },
+    "sitelinks": 41,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q321213",
     "term": "REAL-TIME TRANSPORT PROTOCOL",
     "category": "networking",
@@ -10956,6 +11628,22 @@
       "en": ""
     },
     "sitelinks": 38,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q321259",
+    "term": "VIDEO CD",
+    "category": "software_engineering",
+    "definition": {
+      "es": "formato estándar de video en discos compactos",
+      "en": "optical home video format"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 36,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -11163,7 +11851,7 @@
       "es": "Erlang es un lenguaje de programación concurrente y un sistema de ejecución que incluye una máquina virtual (BEAM) y bibliotecas (OTP).",
       "en": "Erlang is a general-purpose, concurrent, functional high-level programming language, and a garbage-collected runtime system. The term Erlang is used interchangeably with Erlang/OTP, or Open Telecom Platform (OTP), which consists of the Erlang runtime system, several ready-to-use components (OTP) mainly written in Erlang, and a set of design principles for Erlang programs."
     },
-    "sitelinks": 41,
+    "sitelinks": 42,
     "status": "approved",
     "rejection_reason": null
   },
@@ -11515,7 +12203,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 24,
+    "sitelinks": 25,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -11548,8 +12236,8 @@
       "en": "\nAdabas, a contraction of \"adaptable database system\", is a database package that was developed by Software AG to run on IBM mainframes. It was launched in 1971 as a non-relational database. As of 2019, Adabas is marketed for use on a wider range of platforms, including Linux, Unix, and Windows."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q348495",
@@ -11678,6 +12366,22 @@
     "sitelinks": 21,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q362684",
+    "term": "TPEG",
+    "category": "networking",
+    "definition": {
+      "es": "",
+      "en": "Transport Protocol Experts Group"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 7,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
   },
   {
     "wikidata_id": "Q363918",
@@ -13008,6 +13712,38 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q404293",
+    "term": "FALKON",
+    "category": "networking",
+    "definition": {
+      "es": "navegador web gratuito y de código abierto desarrollado por KDE",
+      "en": "web browser with built-in AdBlock"
+    },
+    "summary": {
+      "es": "Falkon es un navegador basado en QtWebEngine. Su objetivo es ser un navegador web ligero multiplataforma.",
+      "en": "Falkon is a free and open-source web browser developed by KDE. It is built on the QtWebEngine, which is a wrapper for the Chromium browser core."
+    },
+    "sitelinks": 21,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q404749",
+    "term": "CODEL",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "queue management algorithm for computer network packets"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 5,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
     "wikidata_id": "Q406009",
     "term": "DART",
     "category": "programming_languages",
@@ -13760,6 +14496,22 @@
     "rejection_reason": "invalid_length"
   },
   {
+    "wikidata_id": "Q468841",
+    "term": "KDEVELOP",
+    "category": "software_engineering",
+    "definition": {
+      "es": "entorno de desarrollo integrado",
+      "en": "graphic Integrated Development Environment"
+    },
+    "summary": {
+      "es": "KDevelop es un entorno de desarrollo integrado para sistemas GNU/Linux-Unix, así como para Windows, teniendo también previsto lanzarlo en versión Mac OS, publicado bajo licencia GPL y orientado al uso bajo el entorno gráfico KDE, aunque también funciona con otros entornos, como Gnome.",
+      "en": "KDevelop is a free and open-source integrated development environment (IDE) for Unix-like computer operating systems and Windows. It provides editing, navigation and debugging features for several programming languages, and integration with build automation and version-control systems, using a plugin-based architecture."
+    },
+    "sitelinks": 32,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q470813",
     "term": "PRIM'S ALGORITHM",
     "category": "software_engineering",
@@ -13966,6 +14718,22 @@
     "sitelinks": 37,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q475488",
+    "term": "EPUB",
+    "category": "software_engineering",
+    "definition": {
+      "es": "formato de código abierto para leer textos e imágenes digitales",
+      "en": "e-book file format standard by the International Digital Publishing Forum"
+    },
+    "summary": {
+      "es": "EPUB es un formato de archivo de libro electrónico que utiliza la extensión de archivo \".epub\". El término es un acrónimo de la expresión inglesa electronic publication y a menudo se le denomina ePub. EPUB es compatible con muchos lectores de libros electrónicos y hay software compatible para la mayoría de los teléfonos inteligentes, tabletas y computadoras. EPUB es un estándar técnico publicado por el International Digital Publishing Forum (IDPF). Se convirtió en un estándar oficial del IDPF en septiembre de 2007, sustituyendo al antiguo estándar Open eBook.",
+      "en": "EPUB is an e-book file format that uses the \".epub\" file extension. The term is short for electronic publication and is sometimes stylized as ePUB. EPUB is supported by many e-readers, and compatible software is available for most smartphones, tablets, and computers. EPUB is a technical standard published by the International Digital Publishing Forum (IDPF). It became an official standard of the IDPF in September 2007, superseding the older Open eBook (OEB) standard."
+    },
+    "sitelinks": 44,
+    "status": "approved",
+    "rejection_reason": null
   },
   {
     "wikidata_id": "Q476543",
@@ -14302,6 +15070,22 @@
     "sitelinks": 6,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q491674",
+    "term": "MAXTHON",
+    "category": "networking",
+    "definition": {
+      "es": "navegador web gratuito",
+      "en": "web browser for Microsoft Windows and macOS that is developed in China"
+    },
+    "summary": {
+      "es": "Maxthon es un navegador web desarrollado por la compañía Maxthon Ltd. Las versiones iniciales 1 y 2 están basadas en el motor de renderizado de Internet Explorer, Trident. Está disponible para Windows, macOS, Linux, y como Maxthon Mobile para Android, iOS, y Windows Phone 8. A partir de la versión 6 utiliza el motor de Chromium.",
+      "en": "Maxthon is a freeware web browser, created by Jeff Chen in Singapore. It is available for Windows, macOS, Linux, and as Maxthon Mobile for Android, iOS, and Windows Phone 8. Since version 6, Maxthon is based on Chromium."
+    },
+    "sitelinks": 39,
+    "status": "approved",
+    "rejection_reason": null
   },
   {
     "wikidata_id": "Q492162",
@@ -15888,6 +16672,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q578713",
+    "term": "DEBIAN EDU",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "Debian derivate for educational institutions"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 16,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q579857",
     "term": "FFV1",
     "category": "software_engineering",
@@ -16304,6 +17104,22 @@
     "rejection_reason": null
   },
   {
+    "wikidata_id": "Q591485",
+    "term": "PANGO",
+    "category": "software_engineering",
+    "definition": {
+      "es": "biblioteca de representación de texto",
+      "en": "library for text rendering"
+    },
+    "summary": {
+      "es": "Pango es una biblioteca de código abierto para el diseño y dibujo de texto internacional como parte del conjunto GTK+ y por lo tanto del entorno gráfico GNOME para sistemas operativos GNU/Linux. El nombre pango procede del griego pan: todo más la palabra del japonés go: idioma.",
+      "en": "Pango is a text layout engine library which works with the HarfBuzz shaping engine for displaying multi-language text."
+    },
+    "sitelinks": 23,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q591518",
     "term": "ELKI",
     "category": "software_engineering",
@@ -16332,8 +17148,8 @@
       "en": "The XML Process Definition Language (XPDL) is a format standardized by the Workflow Management Coalition (WfMC) to interchange business process definitions between different workflow products, i.e. between different modeling tools and management suites.\nXPDL defines an XML schema for specifying the declarative part of workflow / business process."
     },
     "sitelinks": 10,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q592472",
@@ -16464,6 +17280,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q595374",
+    "term": "NETFRONT",
+    "category": "networking",
+    "definition": {
+      "es": "",
+      "en": "a web browser"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 13,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
     "wikidata_id": "Q595574",
     "term": "ETHERCHANNEL",
     "category": "networking",
@@ -16510,6 +17342,22 @@
     "sitelinks": 8,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q596391",
+    "term": "APK",
+    "category": "software_engineering",
+    "definition": {
+      "es": "formato de aplicaciones bajo el sistema operativo de Google Inc",
+      "en": "file format used for software on Google's Android operating system"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 34,
+    "status": "rejected",
+    "rejection_reason": "invalid_length"
   },
   {
     "wikidata_id": "Q596572",
@@ -17008,6 +17856,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q608276",
+    "term": "UNREAL ENGINE",
+    "category": "software_engineering",
+    "definition": {
+      "es": "motor de videojuego",
+      "en": "video game engine series developed by Epic Games"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 57,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q608329",
     "term": "VP5",
     "category": "software_engineering",
@@ -17228,6 +18092,22 @@
       "en": ""
     },
     "sitelinks": 9,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q613361",
+    "term": "WINDOWS FORMS",
+    "category": "software_engineering",
+    "definition": {
+      "es": "biblioteca de software de interfaz gráfica de usuario",
+      "en": "graphical user interface software library"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 21,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -17612,8 +18492,8 @@
       "en": "Vocaloid is a singing vocal synthesizer and the first engine released in the Vocaloid series. It was succeeded by Vocaloid 2. This version was made to be able to sing both English and Japanese."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q620464",
@@ -18512,6 +19392,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q644307",
+    "term": "CONSTANT FALSE ALARM RATE",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "criterion for filtering out radar noise"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 6,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q644560",
     "term": "INTERNET EXPLORER 5",
     "category": "networking",
@@ -18846,6 +19742,22 @@
     "sitelinks": 15,
     "status": "approved",
     "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q653468",
+    "term": "CLUTTER",
+    "category": "software_engineering",
+    "definition": {
+      "es": "Biblioteca de objetos gráficos para sistemas con aceleración por hardware",
+      "en": "free software library for creating hardware-accelerated user interfaces"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 11,
+    "status": "rejected",
+    "rejection_reason": "missing_article"
   },
   {
     "wikidata_id": "Q653622",
@@ -19292,8 +20204,8 @@
       "en": "Unlambda is a minimal, \"nearly pure\" functional programming language invented by David Madore. It is based on combinatory logic, an expression system without the lambda operator or free variables. It relies mainly on two built-in functions and an apply operator. These alone make it Turing-complete, but there are also some input/output (I/O) functions to enable interacting with the user, some shortcut functions, and a lazy evaluation function. Variables are unsupported."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q670204",
@@ -19388,6 +20300,22 @@
       "en": ""
     },
     "sitelinks": 6,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
+    "wikidata_id": "Q675841",
+    "term": "XKMS",
+    "category": "networking",
+    "definition": {
+      "es": "",
+      "en": "Cryptographic protocol"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 5,
     "status": "rejected",
     "rejection_reason": "missing_translation"
   },
@@ -19806,6 +20734,22 @@
     "sitelinks": 10,
     "status": "rejected",
     "rejection_reason": "missing_article"
+  },
+  {
+    "wikidata_id": "Q709099",
+    "term": "STRINGS",
+    "category": "linux",
+    "definition": {
+      "es": "",
+      "en": "standard UNIX utility"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 17,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
   },
   {
     "wikidata_id": "Q709113",
@@ -20384,6 +21328,38 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q731128",
+    "term": "X.500",
+    "category": "networking",
+    "definition": {
+      "es": "",
+      "en": "series of computer networking standards covering electronic directory services"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 20,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q731132",
+    "term": "ALPHABETUM KALDEORUM",
+    "category": "security",
+    "definition": {
+      "es": "",
+      "en": ""
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 6,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q731135",
     "term": "MICROSOFT MANAGEMENT CONSOLE",
     "category": "software_engineering",
@@ -20412,6 +21388,22 @@
       "en": "FreeOTFE is a discontinued open source computer program for on-the-fly disk encryption (OTFE). On Microsoft Windows, and Windows Mobile, it can create a virtual drive within a file or partition, to which anything written is automatically encrypted before being stored on a computer's hard or USB drive. It is similar in function to other disk encryption programs including TrueCrypt and Microsoft's BitLocker."
     },
     "sitelinks": 16,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q732089",
+    "term": "EIFFEL",
+    "category": "programming_languages",
+    "definition": {
+      "es": "lenguaje de programación",
+      "en": "programming language"
+    },
+    "summary": {
+      "es": "Eiffel es un lenguaje de programación orientado a objetos que sigue el estándar ISO diseñado por Bertrand Meyer y Software Eiffel. El diseño del lenguaje esta estrechamente relacionado con el método de programación Eiffel. Ambos se basan en una serie de principios incluyendo: el diseño por contrato, la separación de comandos y consultas, el principio de acceso uniforme, el principio de elección única, el principio abierto-cerrado y la separación operación-operando.",
+      "en": "Eiffel is an object-oriented programming language designed by Bertrand Meyer and Eiffel Software. Meyer conceived the language in 1985 with the goal of increasing the reliability of commercial software development. The first version was released in 1986. In 2005, the International Organization for Standardization (ISO) released a technical standard for Eiffel."
+    },
+    "sitelinks": 40,
     "status": "approved",
     "rejection_reason": null
   },
@@ -20446,6 +21438,22 @@
     "sitelinks": 8,
     "status": "rejected",
     "rejection_reason": "missing_translation"
+  },
+  {
+    "wikidata_id": "Q734038",
+    "term": "K-MELEON",
+    "category": "networking",
+    "definition": {
+      "es": "",
+      "en": "web browser"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 27,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q734787",
@@ -20784,6 +21792,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q742758",
+    "term": "GOLDWASSER–MICALI CRYPTOSYSTEM",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "asymmetric key encryption algorithm"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 8,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q742790",
     "term": "CLIENT-TO-CLIENT PROTOCOL",
     "category": "networking",
@@ -20988,8 +22012,8 @@
       "en": "OpenRaster is a file format proposed for the common exchange of layered images between raster graphics editors. It is meant as a replacement for later versions of the Adobe PSD format. OpenRaster is still in development and so far is supported by a few programs. The default file extension for OpenRaster files is \".ora\"."
     },
     "sitelinks": 10,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q749179",
@@ -21516,8 +22540,8 @@
       "en": "muLinux was an Italian, English-language lightweight Linux distribution maintained by mathematics and physics professor Michele Andreoli, meant to allow very old and obsolete computers to be used as basic intranet/Internet servers or text-based workstations with a UNIX-like operating system. It was also designed for quickly turning any 80386 or later computer into a temporary, powerful Linux machine, along with system repair, education, forensic analysis and what the developer called proselytizing. In 2004 reviewer Paul Zimmer wrote, \"Although there are several other single-floppy Linux distributions, none can match muLinux's extensive and unique combination of useful features.\" The last version update was in 2004, when further development of this \"linux-on-a-floppy\" distribution ended."
     },
     "sitelinks": 10,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q770573",
@@ -23083,7 +24107,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 32,
+    "sitelinks": 33,
     "status": "rejected",
     "rejection_reason": "missing_translation"
   },
@@ -23163,7 +24187,7 @@
       "es": "Un wikitexto es un texto elaborado mediante un lenguaje de marcado especial para la creación de páginas wikis, en servidores que tengan instalado algún software para wikis",
       "en": "A wiki is a form of hypertext publication on the internet which is collaboratively edited and managed by its audience directly through a web browser. A typical wiki contains multiple pages that can either be edited by the public or any organization. The name derives from the first user-editable website called WikiWikiWeb – wiki being a Hawaiian word meaning 'quick'."
     },
-    "sitelinks": 43,
+    "sitelinks": 44,
     "status": "approved",
     "rejection_reason": null
   },
@@ -24160,6 +25184,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q847465",
+    "term": "FFMPEG",
+    "category": "software_engineering",
+    "definition": {
+      "es": "entorno de trabajo multimedia",
+      "en": "multimedia framework"
+    },
+    "summary": {
+      "es": "FFmpeg es una colección de software libre que puede grabar, convertir (transcodificar) y hacer streaming de audio y vídeo. Incluye libavcodec, una biblioteca de códecs. FFmpeg está desarrollado en GNU/Linux, pero puede ser compilado en la mayoría de los sistemas operativos, incluyendo Windows. El proyecto comenzó por Gerard Lantau, un seudónimo de Fabrice Bellard, y ahora es mantenido por Michael Niedermayer. Es destacable que la mayoría de los desarrolladores de FFmpeg lo sean también del proyecto MPlayer, y que FFmpeg esté hospedado en el servidor del proyecto MPlayer.",
+      "en": "FFmpeg is a free and open-source software project consisting of a suite of libraries and programs for handling video, audio, and other multimedia files and streams. At its core is the command-line ffmpeg tool itself, designed for processing video and audio files. It is widely used for format transcoding, basic editing, video scaling, video post-production effects, and standards compliance."
+    },
+    "sitelinks": 30,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q847593",
     "term": "HP-UX",
     "category": "linux",
@@ -24220,6 +25260,22 @@
       "en": ""
     },
     "sitelinks": 19,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q848317",
+    "term": "NULLSOFT SCRIPTABLE INSTALL SYSTEM",
+    "category": "software_engineering",
+    "definition": {
+      "es": "sistema de instalación por intérprete de comandos para Windows",
+      "en": "script-driven installation system for Microsoft Windows"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 22,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -24368,6 +25424,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q851402",
+    "term": "TORQUE GAME ENGINE",
+    "category": "software_engineering",
+    "definition": {
+      "es": "motor de videojuegos 3D",
+      "en": "game engine developed by GarageGames"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 7,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q851655",
     "term": "DASH7",
     "category": "networking",
@@ -24512,6 +25584,22 @@
     "rejection_reason": "invalid_length"
   },
   {
+    "wikidata_id": "Q855981",
+    "term": "CYANOGENMOD",
+    "category": "linux",
+    "definition": {
+      "es": "firmware no oficial basado en el sistema operativo Android",
+      "en": "mobile operating system based on Android"
+    },
+    "summary": {
+      "es": "CyanogenMod, comúnmente abreviado y conocido como CM, es un sistema operativo descontinuado de código abierto desarrollado por Cyanogen para teléfonos móviles y tabletas, basado principalmente en el popular sistema operativo Android que fue desarrollado como software libre y de código abierto y basado en las versiones oficiales de Android desarrolladas por Google, donde se le agrega código propio y de terceros. Su modelo de desarrollo es rolling release. Sus servicios dejaron de estar operativos a partir del 31 de diciembre de 2016, siendo descontinuado y sustituido en su lugar por el proyecto abierto denominado: LineageOS.",
+      "en": "CyanogenMod is a discontinued open-source operating system for mobile devices, based on the Android mobile platform. Developed between 2009 and 2016, it is free and open-source software based on the official releases of Android by Google, with added original and third-party code, and based on a rolling release development model. Although only a subset of total CyanogenMod users elected to report their use of the firmware, on 23 March 2015, some reports indicated that over 50 million people ran CyanogenMod on their phones. It was also frequently used as a starting point by developers of other ROMs."
+    },
+    "sitelinks": 37,
+    "status": "rejected",
+    "rejection_reason": "excluded"
+  },
+  {
     "wikidata_id": "Q856069",
     "term": "CCMP",
     "category": "networking",
@@ -24650,6 +25738,22 @@
     "summary": {
       "es": "Swing es una biblioteca gráfica para Java. Incluye widgets para interfaz gráfica de usuario tales como cajas de texto, botones, listas desplegables y tablas.",
       "en": "Swing is a GUI widget toolkit for Java. It is part of Oracle's Java Foundation Classes (JFC) – an API for providing a graphical user interface (GUI) for Java programs."
+    },
+    "sitelinks": 29,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q859938",
+    "term": "WEBSOCKET",
+    "category": "apis",
+    "definition": {
+      "es": "web socket",
+      "en": "computer network protocol"
+    },
+    "summary": {
+      "es": "WebSocket es una tecnología que proporciona un canal de comunicación bidireccional y full-duplex sobre un único socket TCP. Está diseñada para ser implementada en navegadores y servidores web, pero puede utilizarse por cualquier aplicación cliente/servidor. La API de WebSocket está siendo normalizada por el W3C, mientras que el protocolo WebSocket ya fue normalizado por la IETF como el RFC 6455. Debido a que las conexiones TCP comunes sobre puertos diferentes al 80 son habitualmente bloqueadas por los administradores de redes, el uso de esta tecnología proporcionaría una solución a este tipo de limitaciones proveyendo una funcionalidad similar a la apertura de varias conexiones en distintos puertos, pero multiplexando diferentes servicios WebSocket sobre un único puerto TCP.",
+      "en": "WebSocket is a computer communications protocol, providing a bidirectional communication channel over a single Transmission Control Protocol (TCP) connection. The protocol was standardized by the IETF as RFC 6455 in 2011. The current specification allowing web applications to use this protocol is known as WebSockets. It is a living standard maintained by the WHATWG and a successor to The WebSocket API from the W3C."
     },
     "sitelinks": 29,
     "status": "approved",
@@ -24864,6 +25968,22 @@
     "rejection_reason": null
   },
   {
+    "wikidata_id": "Q864915",
+    "term": "CLANG",
+    "category": "software_engineering",
+    "definition": {
+      "es": "software",
+      "en": "compiler front-end"
+    },
+    "summary": {
+      "es": "Clang es un front end de compilador para los lenguajes de programación C, C++, Objective-C y Objective-C++. Usa LLVM como su back-end y ha sido parte del ciclo de lanzamiento de LLVM desde la versión 2.6.",
+      "en": "Clang is a compiler front end for the programming languages C, C++, Objective-C, and Objective-C++ and the software frameworks OpenMP, OpenCL, RenderScript, CUDA, SYCL, and HIP. It acts as a drop-in replacement for the GNU Compiler Collection (GCC), supporting most of its compiling flags and unofficial language extensions. It includes a static analyzer and several code analysis tools."
+    },
+    "sitelinks": 26,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q865500",
     "term": "WINDOWS INTERNET EXPLORER 7",
     "category": "networking",
@@ -25040,6 +26160,22 @@
     "rejection_reason": "missing_translation"
   },
   {
+    "wikidata_id": "Q870033",
+    "term": "CRYENGINE",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "game engine developed by Crytek"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 27,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
     "wikidata_id": "Q871861",
     "term": "BITLOCKER",
     "category": "security",
@@ -25120,6 +26256,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q885584",
+    "term": "BLUEJ",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "integrated development environment for the Java programming language"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 13,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
     "wikidata_id": "Q885586",
     "term": "BLUESPICE",
     "category": "git",
@@ -25132,8 +26284,8 @@
       "en": "BlueSpice is free wiki software based on the MediaWiki engine and licensed with the GNU General Public License. It is especially developed for businesses as an enterprise wiki distribution for MediaWiki and used in over 150 countries."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q886077",
@@ -25440,6 +26592,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q901340",
+    "term": "STANDARD WIDGET TOOLKIT",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "graphical widget toolkit for use with the Java platform"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 18,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q901455",
     "term": "127 FILM",
     "category": "software_engineering",
@@ -25502,6 +26670,22 @@
     "sitelinks": 31,
     "status": "approved",
     "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q902783",
+    "term": "DISCRETE ELEMENT METHOD",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "numerical method"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 11,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q903056",
@@ -25758,6 +26942,22 @@
     "sitelinks": 24,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q907880",
+    "term": "EULER",
+    "category": "programming_languages",
+    "definition": {
+      "es": "lenguaje de programación",
+      "en": "extension and generalization of ALGOL 60"
+    },
+    "summary": {
+      "es": "Euler es un lenguaje de programación creado por Niklaus Wirth y Helmut Weber, concebido como una extensión y generalización de ALGOL 60. La meta de sus diseñadores era crear un lenguaje:más simple y sencillo que ALGOL 60\nque fuese útil y al mismo tiempo eficiente\nque pudiese ser definido rigurosamente con herramientas formales",
+      "en": "Euler is a programming language created by Niklaus Wirth and Helmut Weber, conceived as an extension and generalization of ALGOL 60. The designers' goals were to create a language that is:Simpler, yet more flexible, than ALGOL 60\nUseful and processed with reasonable efficiency\nDefinable with rigorous formality"
+    },
+    "sitelinks": 9,
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q907966",
@@ -26126,6 +27326,22 @@
     "sitelinks": 9,
     "status": "rejected",
     "rejection_reason": "low_sitelinks"
+  },
+  {
+    "wikidata_id": "Q917895",
+    "term": "KWALLET",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "KDE backend framework for password storage"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 12,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
   },
   {
     "wikidata_id": "Q918221",
@@ -27584,6 +28800,22 @@
     "rejection_reason": "invalid_length"
   },
   {
+    "wikidata_id": "Q962763",
+    "term": "DIRECTSHOW",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "Microsoft API"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 15,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
     "wikidata_id": "Q965064",
     "term": "PICTURE TRANSFER PROTOCOL",
     "category": "networking",
@@ -28028,8 +29260,8 @@
       "en": "DirectFB, now continued as DirectFB2, is a software library with a small memory footprint that provides graphics acceleration, input device handling and abstraction layer, and integrated windowing system with support for translucent windows and multiple display layers on top of the Linux framebuffer without requiring any kernel modifications. DirectFB is free and open-source software subject to the terms of the GNU Lesser General Public License (LGPL)."
     },
     "sitelinks": 10,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q979630",
@@ -28331,7 +29563,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 9,
+    "sitelinks": 10,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -28366,22 +29598,6 @@
     "sitelinks": 14,
     "status": "approved",
     "rejection_reason": null
-  },
-  {
-    "wikidata_id": "Q1004415",
-    "term": "RUN-TIME SYSTEM",
-    "category": "software_engineering",
-    "definition": {
-      "es": "software que provee servicios para un programa en ejecución pero no es considerado en sí mismo como parte del sistema operativo",
-      "en": "system that provides behavior needed by running code; primarily implements portions of an execution model"
-    },
-    "summary": {
-      "es": "",
-      "en": ""
-    },
-    "sitelinks": 21,
-    "status": "rejected",
-    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q1006891",
@@ -28462,6 +29678,22 @@
     "sitelinks": 9,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q1017060",
+    "term": "FONTCONFIG",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "free software library to provide configuration, enumeration and substitution of fonts"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 11,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
   },
   {
     "wikidata_id": "Q1017110",
@@ -28731,7 +29963,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 14,
+    "sitelinks": 15,
     "status": "rejected",
     "rejection_reason": "missing_translation"
   },
@@ -28891,7 +30123,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 14,
+    "sitelinks": 15,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -28960,6 +30192,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q1036510",
+    "term": "BIOJAVA",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "bioinformatics software"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 8,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
     "wikidata_id": "Q1040891",
     "term": "EMBEDDED GLIBC",
     "category": "software_engineering",
@@ -29020,8 +30268,8 @@
       "en": "Mesa is a programming language developed in the mid 1970s at the Xerox Palo Alto Research Center in Palo Alto, California, United States. The language name was a pun based upon the programming language catchphrases of the time, because Mesa is a \"high level\" programming language."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q1042941",
@@ -29328,6 +30576,22 @@
     "rejection_reason": "missing_translation"
   },
   {
+    "wikidata_id": "Q1049202",
+    "term": "GW-BASIC",
+    "category": "programming_languages",
+    "definition": {
+      "es": "lenguaje de programación",
+      "en": "dialect of the BASIC programming language"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 23,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q1049355",
     "term": "ZILLIONS OF GAMES",
     "category": "software_engineering",
@@ -29382,6 +30646,22 @@
     "definition": {
       "es": "",
       "en": "message-oriented transport layer protocol"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 22,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q1050182",
+    "term": "SRWARE IRON",
+    "category": "networking",
+    "definition": {
+      "es": "navegador web basado en Chromium desarrollado por SRWare",
+      "en": "web browser based on Chromium"
     },
     "summary": {
       "es": "",
@@ -29840,6 +31120,22 @@
     "rejection_reason": null
   },
   {
+    "wikidata_id": "Q1052790",
+    "term": "OPENSSL",
+    "category": "security",
+    "definition": {
+      "es": "Herramienta para criptografía",
+      "en": "open-source implementation of the SSL and TLS protocols"
+    },
+    "summary": {
+      "es": "OpenSSL es un proyecto de software libre basado en SSLeay, desarrollado por Eric Young y Tim Hudson.",
+      "en": "OpenSSL is a software library for applications that provide secure communications over computer networks against eavesdropping, and identify the party at the other end. It is widely used by Internet servers, including the majority of HTTPS websites."
+    },
+    "sitelinks": 37,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q1053074",
     "term": "CELLO",
     "category": "networking",
@@ -29852,8 +31148,8 @@
       "en": "Cello is an early, discontinued graphical web browser for Windows 3.1; it was developed by Thomas R. Bruce of the Legal Information Institute at Cornell Law School. It was released as shareware in 1993. While other browsers ran on various Unix machines, Cello was the first web browser for Microsoft Windows, using the winsock system to access the Internet. In addition to the basic Windows, Cello worked on Windows NT 3.5 and with small modifications on OS/2."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q1053352",
@@ -29904,6 +31200,22 @@
     "rejection_reason": null
   },
   {
+    "wikidata_id": "Q1054220",
+    "term": "ID3",
+    "category": "software_engineering",
+    "definition": {
+      "es": "contenedores de metadatos",
+      "en": "metadata container"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 20,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q1054365",
     "term": "INTERCAL",
     "category": "programming_languages",
@@ -29949,7 +31261,7 @@
     },
     "sitelinks": 10,
     "status": "rejected",
-    "rejection_reason": "excluded"
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q1055099",
@@ -30124,6 +31436,22 @@
       "en": ""
     },
     "sitelinks": 9,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q1060083",
+    "term": "FIREFOX PORTABLE",
+    "category": "networking",
+    "definition": {
+      "es": "",
+      "en": "portable version of Mozilla Firefox browser"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 12,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -31104,22 +32432,6 @@
     "rejection_reason": "invalid_chars"
   },
   {
-    "wikidata_id": "Q1079392",
-    "term": "NEUSIS CONSTRUCTION",
-    "category": "software_engineering",
-    "definition": {
-      "es": "",
-      "en": "geometric construction used in Ancient Greek mathematics"
-    },
-    "summary": {
-      "es": "",
-      "en": ""
-    },
-    "sitelinks": 21,
-    "status": "rejected",
-    "rejection_reason": "invalid_chars"
-  },
-  {
     "wikidata_id": "Q1082955",
     "term": "BEAD SORT",
     "category": "software_engineering",
@@ -31388,8 +32700,8 @@
       "en": "PicoBSD is a discontinued single-floppy disk version of FreeBSD, one of the BSD operating system descendants. In its different variations, PicoBSD allows one to have secure dial-up Internet access, a small diskless router, or a dial-in server, all on one standard 1.44 MB floppy disc. It runs on a minimum 386SX CPU with 8 MB of RAM."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q1095608",
@@ -31404,8 +32716,8 @@
       "en": "Clarion is a commercial, proprietary, fourth-generation programming language (4GL), multi-paradigm, programming language and integrated development environment (IDE) from SoftVelocity used to program database applications. It is compatible with indexed sequential access method (ISAM), Structured Query Language (SQL), and ActiveX Data Objects (ADO) data access methods, reads and writes several flat file desktop database formats including ASCII, comma-separated values (CSV), DOS (binary), FoxPro, Clipper, dBase, and some relational databases via ODBC, Microsoft SQL Server, Sybase SQL Anywhere, and Oracle Database through the use of accelerated native database drivers, and XML, Clarion can be used to output to HTML, XML, plain text, and Portable Document Format (PDF), among others."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q1096034",
@@ -31968,6 +33280,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q1122464",
+    "term": "GEANY",
+    "category": "software_engineering",
+    "definition": {
+      "es": "Entorno de desarrollo integrado",
+      "en": "text editor and integrated development environment (IDE)"
+    },
+    "summary": {
+      "es": "Geany (IPA:ʒeːniː) es un editor de texto pequeño y ligero de interfaz gráfica de usuario (GUI) basado en Scintilla y bibliotecas gráficas GTK, Incluye características básica de IDE. Está diseñado para tener tiempos de carga reducidos, con poca dependencia en paquetes o bibliotecas externas en Linux. Entre la lista de lenguajes de programación y lenguajes de marcado soportados por Geany se encuentran C, C++, C#, Java, JavaScript, PHP, HTML, LaTeX,, CSS, Python, Perl, Ruby, Pascal, Haskell, Erlang, Vala y muchos otros.",
+      "en": "Geany is a free and open-source lightweight GUI text editor using Scintilla and GTK, including basic IDE features. It is designed to have short load times, with limited dependency on separate packages or external libraries on Linux. It has been ported to a wide range of operating systems, such as BSD, Linux, macOS, Solaris and Windows. The Windows port lacks an embedded terminal window."
+    },
+    "sitelinks": 29,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q1123036",
     "term": "SCHEDULING",
     "category": "software_engineering",
@@ -32430,6 +33758,22 @@
     "sitelinks": 22,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q1135839",
+    "term": "GHOSTSCRIPT",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "interpreter for the PostScript language"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 23,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
   },
   {
     "wikidata_id": "Q1136408",
@@ -33488,22 +34832,6 @@
     "rejection_reason": "invalid_chars"
   },
   {
-    "wikidata_id": "Q1152135",
-    "term": "UNSUPERVISED LEARNING",
-    "category": "software_engineering",
-    "definition": {
-      "es": "técnica de aprendizaje automático",
-      "en": "machine learning technique"
-    },
-    "summary": {
-      "es": "",
-      "en": ""
-    },
-    "sitelinks": 39,
-    "status": "rejected",
-    "rejection_reason": "invalid_chars"
-  },
-  {
     "wikidata_id": "Q1152232",
     "term": "DD-WRT",
     "category": "linux",
@@ -34107,7 +35435,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 9,
+    "sitelinks": 10,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -34315,7 +35643,7 @@
       "es": "MIUI es una capa de personalización de Android para teléfonos inteligentes actualmente descontinuado desarrollado por Xiaomi. Se destacaba porque tenía una versión global, la cual se caracterizaba por no tener idioma multilenguaje, cosa que la primera sí tiene.",
       "en": "MIUI is a deprecated mobile operating system developed and used by Xiaomi for its smartphones and mobile devices from 2010 to early 2024, prior to the launch of its successor Xiaomi HyperOS. MIUI was based on the Android Open Source Project. Xiaomi produced versions for Xiaomi-branded smartphones and its own Poco, MIUI Pad, MIUI Watch, and MIUI TV (PatchWall)."
     },
-    "sitelinks": 40,
+    "sitelinks": 41,
     "status": "approved",
     "rejection_reason": null
   },
@@ -34459,7 +35787,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 16,
+    "sitelinks": 17,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -35104,6 +36432,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q1206328",
+    "term": "RESOURCE HACKER",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "tool for editing resources in Windows executables"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 10,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q1206610",
     "term": "DEVIL",
     "category": "software_engineering",
@@ -35147,7 +36491,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 6,
+    "sitelinks": 7,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -35632,6 +36976,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q1243769",
+    "term": "QUICKTIME",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "extensible multimedia framework developed by Apple Inc."
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 36,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
     "wikidata_id": "Q1244243",
     "term": "VIRTUAL ROUTER REDUNDANCY PROTOCOL",
     "category": "networking",
@@ -35774,6 +37134,22 @@
     "sitelinks": 15,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q1253530",
+    "term": "DOXYGEN",
+    "category": "software_engineering",
+    "definition": {
+      "es": "generador de documentación",
+      "en": "free software for generating software documentation from source code"
+    },
+    "summary": {
+      "es": "Doxygen es un generador de documentación para C++, C, Java, Objective-C, Python, Fortran, IDL, VHDL y en cierta medida para PHP, C# y D. Dado que es fácilmente adaptable funciona en la mayoría de sistemas Unix, así como en Windows y Mac OS X. La mayor parte del código de Doxygen está escrita por Dimitri van Heesch.",
+      "en": "Doxygen is a documentation generator that works with many programming languages. It extracts information from specially-formatted source code comments and saves the information in one of various supported formats."
+    },
+    "sitelinks": 23,
+    "status": "approved",
+    "rejection_reason": null
   },
   {
     "wikidata_id": "Q1254095",
@@ -37248,6 +38624,22 @@
     "rejection_reason": "missing_translation"
   },
   {
+    "wikidata_id": "Q1326617",
+    "term": "FREETYPE",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "software development library to render text onto bitmaps, and other font-related operations"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 19,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
     "wikidata_id": "Q1326659",
     "term": "VIRTUAL HARD DISK",
     "category": "software_engineering",
@@ -37468,8 +38860,8 @@
       "en": "Alice is an object-based educational programming language with an integrated development environment (IDE). Alice uses a drag and drop environment to create computer animations using 3D models. The software was developed first at University of Virginia in 1994, then Carnegie Mellon, by a research group led by Randy Pausch."
     },
     "sitelinks": 10,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q1336937",
@@ -37884,8 +39276,8 @@
       "en": "NetCDF is a set of software libraries and self-describing, machine-independent data formats that support the creation, access, and sharing of array-oriented scientific data. The project homepage is hosted by the Unidata program at the University Corporation for Atmospheric Research (UCAR). They are also the chief source of netCDF software, standards development, updates, etc. The format is an open standard. NetCDF Classic and 64-bit Offset Format are an international standard of the Open Geospatial Consortium."
     },
     "sitelinks": 10,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q1361971",
@@ -38139,7 +39531,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 13,
+    "sitelinks": 14,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -38190,6 +39582,22 @@
     "sitelinks": 8,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q1371367",
+    "term": "GRIME",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "game engine developed by LucasArts"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 11,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
   },
   {
     "wikidata_id": "Q1372248",
@@ -38686,6 +40094,22 @@
     "sitelinks": 11,
     "status": "rejected",
     "rejection_reason": "missing_translation"
+  },
+  {
+    "wikidata_id": "Q1401466",
+    "term": "PURE DATA",
+    "category": "programming_languages",
+    "definition": {
+      "es": "lenguaje de programación",
+      "en": "visual audio programming language"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 20,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q1405025",
@@ -40016,6 +41440,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q1457000",
+    "term": "METAFONT",
+    "category": "programming_languages",
+    "definition": {
+      "es": "lenguaje de programación",
+      "en": "description language used to define rastertype fonts"
+    },
+    "summary": {
+      "es": "METAFONT es un lenguaje de programación usado para definir fuentes vectoriales. Es también el nombre de un intérprete que ejecuta código METAFONT, convirtiendo las fuentes vectoriales en fuentes de mapas de bits que pueden ser incluidas en documentos de PostScript.",
+      "en": "Metafont is a description language used to define raster fonts. It is also the name of the interpreter that executes Metafont code, generating the bitmap fonts that can be embedded into e.g. PostScript. Metafont was devised by Donald Knuth as a companion to his TeX typesetting system."
+    },
+    "sitelinks": 20,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q1459157",
     "term": "RFB PROTOCOL",
     "category": "networking",
@@ -40046,6 +41486,22 @@
     "sitelinks": 5,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q1461054",
+    "term": "OPENJDK",
+    "category": "programming_languages",
+    "definition": {
+      "es": "implementación libre del entorno de desarrollo de Java",
+      "en": "Java development kit"
+    },
+    "summary": {
+      "es": "OpenJDK es la versión libre de la plataforma de desarrollo Java bajo concepto de lenguaje orientado a objetos. Es el resultado de esfuerzos constantemente realizados por la empresa denominada Sun Microsystems en el año 2006 cuatro años antes de ser adquirida por Oracle_Corporation formalmente el 27 de enero de 2010. Esta implementación se encuentra catalogada dentro de la licencia GPL de GNU con una excepción de enlaces, por lo que algunos de los componentes de los folders de clases y sitios web de Java se excluyen de los términos de la licencia para poder ser considerados dentro de la versión estipulada como GNU.",
+      "en": "OpenJDK is an implementation of the Java Platform, Standard Edition. It is the result of an effort Sun Microsystems began in 2006, four years before the company was acquired by Oracle Corporation. OpenJDK is free and open-source software released under the GNU General Public License (GPL) version 2 with a GPL linking exception, preventing components that linked to the Java Class Library becoming subject to the terms of the GPL license. OpenJDK is the official reference implementation of Java SE since version 7, and is the most popular JDK distribution."
+    },
+    "sitelinks": 22,
+    "status": "approved",
+    "rejection_reason": null
   },
   {
     "wikidata_id": "Q1461865",
@@ -41612,8 +43068,8 @@
       "en": "Guadalinex was an Ubuntu-based operating system promoted by the government of Andalusia (Spain). It is used in schools, public libraries, centers for elderly people and Guadalinfo centers."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q1557101",
@@ -41662,6 +43118,22 @@
     "sitelinks": 10,
     "status": "rejected",
     "rejection_reason": "invalid_length"
+  },
+  {
+    "wikidata_id": "Q1558324",
+    "term": "SCANNER ACCESS NOW EASY",
+    "category": "software_engineering",
+    "definition": {
+      "es": "Software libre para escaneo de imágenes",
+      "en": "free software project"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 17,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q1561270",
@@ -42028,8 +43500,8 @@
       "en": "Algodoo is a physics-based 2D freeware sandbox from Algoryx Simulation AB as the successor to the popular physics application Phun. It was released on 31 August 2009 and is presented as a learning tool, an open-ended computer game, an animation tool, and an engineering tool."
     },
     "sitelinks": 10,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q1584046",
@@ -43532,8 +45004,8 @@
       "en": "PHPDoc is an adaptation of the Javadoc format for the PHP programming language. It is still an informal standard for commenting PHP code, but in the process of being formalized. It allows external document generators like phpDocumentor, which is the de facto standard implementation, to generate documentation, and it helps some IDEs such as Zend Studio, NetBeans, JetBrains PhpStorm, ActiveState Komodo Edit and IDE, PHPEdit and Aptana Studio to interpret variable types and other ambiguities in the loosely typed language and to provide improved code completion, type hinting and debugging."
     },
     "sitelinks": 10,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q1727373",
@@ -44460,8 +45932,8 @@
       "en": "Nyquist is a programming language for sound synthesis based on the Lisp programming language. It is an extension of the XLISP dialect of Lisp, and is named after Harry Nyquist."
     },
     "sitelinks": 10,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q1788758",
@@ -45099,7 +46571,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 8,
+    "sitelinks": 7,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -45134,6 +46606,22 @@
     "sitelinks": 27,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q1857280",
+    "term": "PHONON",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "KDE multimedia framework"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 14,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
   },
   {
     "wikidata_id": "Q1859276",
@@ -45723,7 +47211,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 13,
+    "sitelinks": 14,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -45840,6 +47328,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q1932013",
+    "term": "MD5SUM",
+    "category": "linux",
+    "definition": {
+      "es": "aplicación informática de seguridad",
+      "en": "program to calculate and verify MD5 hashes"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 12,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q1932268",
     "term": "TECHNISCOPE",
     "category": "software_engineering",
@@ -45853,7 +47357,7 @@
     },
     "sitelinks": 11,
     "status": "rejected",
-    "rejection_reason": "excluded"
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q1934809",
@@ -46763,7 +48267,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 11,
+    "sitelinks": 12,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -48032,6 +49536,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q2136322",
+    "term": "REDIS",
+    "category": "databases",
+    "definition": {
+      "es": "software de gestión de bases de datos NoSQL",
+      "en": "NoSQL database management software"
+    },
+    "summary": {
+      "es": "\n\nRedis es un motor de base de datos en memoria, basado en el almacenamiento en tablas de hashes (clave/valor) pero que opcionalmente puede ser usada como una base de datos durable o persistente. Está escrito en ANSI C por Salvatore Sanfilippo, quien es patrocinado por Redis Labs. Es distribuido bajo un modelo de licencias dual: RSALv2 y SSPLv1.",
+      "en": "Redis is an in-memory key–value database, used as a distributed cache and message broker, with optional durability. Because it holds all data in memory and because of its design, Redis offers low-latency reads and writes, making it particularly suitable for use cases that require a cache."
+    },
+    "sitelinks": 27,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q2140717",
     "term": "ZELLER'S CONGRUENCE",
     "category": "software_engineering",
@@ -48460,8 +49980,8 @@
       "en": "In computer vision, speeded up robust features (SURF) is a local feature detector and descriptor, with patented applications. It can be used for tasks such as object recognition, image registration, classification, or 3D reconstruction. It is partly inspired by the scale-invariant feature transform (SIFT) descriptor. The standard version of SURF is several times faster than SIFT and claimed by its authors to be more robust against different image transformations than SIFT."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q2208385",
@@ -49920,22 +51440,6 @@
     "rejection_reason": "low_sitelinks"
   },
   {
-    "wikidata_id": "Q2415400",
-    "term": "MANAGED CODE",
-    "category": "software_engineering",
-    "definition": {
-      "es": "",
-      "en": "Code whose execution is managed by a runtime"
-    },
-    "summary": {
-      "es": "",
-      "en": ""
-    },
-    "sitelinks": 13,
-    "status": "rejected",
-    "rejection_reason": "invalid_chars"
-  },
-  {
     "wikidata_id": "Q2415512",
     "term": "TACACS+",
     "category": "networking",
@@ -50896,6 +52400,22 @@
     "rejection_reason": "missing_translation"
   },
   {
+    "wikidata_id": "Q2548229",
+    "term": "SYMPHONY OS",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "Linux distribution"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 9,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q2549576",
     "term": "WARNOCK ALGORITHM",
     "category": "software_engineering",
@@ -51180,8 +52700,8 @@
       "en": "Smoothwall is a Linux distribution designed to be used as an open source firewall. Smoothwall is configured via a web-based GUI and requires little or no knowledge of Linux to install or use."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q2567662",
@@ -51776,6 +53296,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q2633416",
+    "term": "BLOGROLL",
+    "category": "software_engineering",
+    "definition": {
+      "es": "patrón de diseño",
+      "en": "software design pattern"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 6,
+    "status": "rejected",
+    "rejection_reason": "missing_article"
+  },
+  {
     "wikidata_id": "Q2635182",
     "term": "CHERRYPY",
     "category": "software_engineering",
@@ -51968,6 +53504,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q2661480",
+    "term": "BSON",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "binary data interchange format"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 15,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
     "wikidata_id": "Q2662711",
     "term": "LENSTRA ELLIPTIC CURVE FACTORIZATION",
     "category": "software_engineering",
@@ -52012,6 +53564,22 @@
       "en": ""
     },
     "sitelinks": 9,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q2666693",
+    "term": "RESEARCH UNIX",
+    "category": "linux",
+    "definition": {
+      "es": "",
+      "en": "The original Unix operating system from Bell Labs, developed by Ken Thompson and Dennis Ritchie"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 14,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -52220,8 +53788,8 @@
       "en": "Korora was a remix of the Fedora Linux distribution. Originally Kororaa was a binary installation method for Gentoo Linux which aimed for easy installation of a Gentoo system by using install scripts instead of manual configuration. The name derives from the Māori word kororā – the little penguin."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q2707447",
@@ -53120,6 +54688,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q2859761",
+    "term": "JUNCTION TREE ALGORITHM",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "method used in machine learning to extract marginalization in general graphs"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 5,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q2859802",
     "term": "TERNARY SEARCH TREE",
     "category": "software_engineering",
@@ -53180,22 +54764,6 @@
       "en": ""
     },
     "sitelinks": 5,
-    "status": "rejected",
-    "rejection_reason": "invalid_chars"
-  },
-  {
-    "wikidata_id": "Q2891044",
-    "term": "LINK LAYER",
-    "category": "software_engineering",
-    "definition": {
-      "es": "primer nivel del modelo TCP/IP",
-      "en": "lowest abstraction layer in the Internet Protocol Suite"
-    },
-    "summary": {
-      "es": "",
-      "en": ""
-    },
-    "sitelinks": 14,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -53276,22 +54844,6 @@
       "en": ""
     },
     "sitelinks": 9,
-    "status": "rejected",
-    "rejection_reason": "invalid_chars"
-  },
-  {
-    "wikidata_id": "Q2910948",
-    "term": "INTERNET LAYER",
-    "category": "software_engineering",
-    "definition": {
-      "es": "segundo nivel del modelo TCP/IP",
-      "en": "group of internetworking methods in the TCP/IP suite"
-    },
-    "summary": {
-      "es": "",
-      "en": ""
-    },
-    "sitelinks": 12,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -53664,6 +55216,38 @@
     "rejection_reason": "missing_translation"
   },
   {
+    "wikidata_id": "Q3045088",
+    "term": "GDK",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "software library"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 9,
+    "status": "rejected",
+    "rejection_reason": "invalid_length"
+  },
+  {
+    "wikidata_id": "Q3045918",
+    "term": "EGL",
+    "category": "apis",
+    "definition": {
+      "es": "",
+      "en": "interface between Khronos rendering APIs and window system"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 11,
+    "status": "rejected",
+    "rejection_reason": "invalid_length"
+  },
+  {
     "wikidata_id": "Q3046267",
     "term": "ENHANCED VARIABLE RATE CODEC",
     "category": "software_engineering",
@@ -53820,8 +55404,8 @@
       "en": "LiveCode is a cross-platform rapid application development runtime system inspired by HyperCard. It features the LiveCode Script programming language which belongs to the family of xTalk scripting languages like HyperCard's HyperTalk."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q3072028",
@@ -54605,7 +56189,7 @@
     },
     "sitelinks": 10,
     "status": "rejected",
-    "rejection_reason": "excluded"
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q3246349",
@@ -54816,6 +56400,22 @@
     "rejection_reason": "missing_translation"
   },
   {
+    "wikidata_id": "Q3277979",
+    "term": "OPENMUSIC",
+    "category": "programming_languages",
+    "definition": {
+      "es": "",
+      "en": "visual programming environment for musical composition"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 6,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
     "wikidata_id": "Q3278015",
     "term": "LINE SEARCH",
     "category": "software_engineering",
@@ -54862,6 +56462,22 @@
     "sitelinks": 7,
     "status": "rejected",
     "rejection_reason": "missing_translation"
+  },
+  {
+    "wikidata_id": "Q3285992",
+    "term": "MANJARO",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "Linux distribution based on Arch Linux with rolling releases"
+    },
+    "summary": {
+      "es": "Manjaro Linux, o Manjaro, es una distribución Linux, con Xfce, KDE o GNOME Shell como interfaz de usuario por defecto; además dispone de más interfaces que son soportadas por la comunidad. Se trata básicamente de un sistema operativo libre para computadores personales y enfocado en la facilidad de uso. Está basado en Arch Linux y usa un modelo de desarrollo denominado rolling release.",
+      "en": "Manjaro is a free and open-source Linux distribution based on the Arch Linux operating system with a focus on user-friendliness, accessibility, and improved software testing and stability compared to its upstream sources. It uses a rolling release update model with Pacman-derived package managers. Manjaro is developed mainly in Austria, France and Germany."
+    },
+    "sitelinks": 45,
+    "status": "approved",
+    "rejection_reason": null
   },
   {
     "wikidata_id": "Q3286523",
@@ -56540,8 +58156,8 @@
       "en": "Argus is a programming language created at MIT by Barbara Liskov between 1982 and 1988, in collaboration with Maurice Herlihy, Paul Johnson, Robert Scheifler, and William Weihl. It is an extension of the CLU language, and utilizes most of the same syntax and semantics. Argus was designed to support the creation of distributed programs, by encapsulating related procedures within objects called guardians, and by supporting atomic operations called actions."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q3630063",
@@ -56880,6 +58496,22 @@
     "rejection_reason": "low_sitelinks"
   },
   {
+    "wikidata_id": "Q3896010",
+    "term": "SPARKYLINUX",
+    "category": "linux",
+    "definition": {
+      "es": "Sistema Operativo",
+      "en": "Linux distribution"
+    },
+    "summary": {
+      "es": "SparkyLinux es una distribución de GNU / Linux creada a partir del sistema operativo Debian. El proyecto ofrece un sistema operativo listo para usar con un conjunto de varios escritorios ligeros personalizados para elegir.",
+      "en": "SparkyLinux is a desktop-oriented operating system based on the Debian operating system.\nThe project offers a ready-to-use operating system with various desktops to choose from. SparkyLinux is released 3-4 times per year to provide the latest versions of all applications."
+    },
+    "sitelinks": 19,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q3904937",
     "term": "PIKACHU VIRUS",
     "category": "security",
@@ -56926,6 +58558,22 @@
     "sitelinks": 15,
     "status": "approved",
     "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q3919641",
+    "term": "IOS 5",
+    "category": "linux",
+    "definition": {
+      "es": "versión del sistema operativo móvil iOS desarrollada por Apple Inc.",
+      "en": "fifth major version of iOS"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 27,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q3927837",
@@ -57248,6 +58896,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q4036655",
+    "term": "CREATION ENGINE",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "game engine developed by Bethesda Games Studios"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 15,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q4036847",
     "term": "DNS-BASED AUTHENTICATION OF NAMED ENTITIES",
     "category": "networking",
@@ -57358,6 +59022,22 @@
     "sitelinks": 6,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q4039455",
+    "term": "GLACIER",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "game engine developed by IO Interactive"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 7,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
   },
   {
     "wikidata_id": "Q4040281",
@@ -57707,7 +59387,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 14,
+    "sitelinks": 15,
     "status": "rejected",
     "rejection_reason": "missing_translation"
   },
@@ -58139,7 +59819,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 11,
+    "sitelinks": 12,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -58270,6 +59950,22 @@
     "sitelinks": 5,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q4119352",
+    "term": "HARFBUZZ",
+    "category": "software_engineering",
+    "definition": {
+      "es": "biblioteca de conformación tipográfica de código abierto",
+      "en": "open source text shaping library"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 15,
+    "status": "rejected",
+    "rejection_reason": "missing_article"
   },
   {
     "wikidata_id": "Q4140561",
@@ -58411,7 +60107,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 5,
+    "sitelinks": 6,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -58588,6 +60284,22 @@
       "en": "UserLinux was a project to create an operating system based on Debian, and targeted at business customers. The goal was to provide businesses with a freely available, high quality operating system accompanied by certifications, service, and support options."
     },
     "sitelinks": 5,
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
+  },
+  {
+    "wikidata_id": "Q4391326",
+    "term": "WEBCL",
+    "category": "apis",
+    "definition": {
+      "es": "lenguaje de programación",
+      "en": "JavaScript bindings for OpenCL"
+    },
+    "summary": {
+      "es": "WebCL es una tecnología HTML5 experimental que permite la integración de OpenCL en código JavaScript, con el objetivo de habilitar programación paralela heterogénea dentro del navegador web. Esto permite aprovechar la capacidad de procesamiento de CPU y GPU multinúcleo directamente desde aplicaciones web.",
+      "en": "WebCL is a JavaScript binding to OpenCL for heterogeneous parallel computing within any compatible web browser without the use of plug-ins, first announced in March 2011. It is developed on similar grounds as OpenCL and is considered as a browser version of the latter. Primarily, WebCL allows web applications to actualize speed with multi-core CPUs and GPUs. With the growing popularity of applications that need parallel processing like image editing, augmented reality applications and sophisticated gaming, it has become more important to improve the computational speed. With these background reasons, a non-profit Khronos Group designed and developed WebCL, which is a Javascript binding to OpenCL with a portable kernel programming, enabling parallel computing on web browsers, across a wide range of devices. In short, WebCL consists of two parts, one being Kernel programming, which runs on the processors (devices) and the other being JavaScript, which binds the web application to OpenCL. The completed and ratified specification for WebCL 1.0 was released on March 19, 2014."
+    },
+    "sitelinks": 9,
     "status": "rejected",
     "rejection_reason": "low_sitelinks"
   },
@@ -59307,7 +61019,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 5,
+    "sitelinks": 6,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -59931,7 +61643,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 8,
+    "sitelinks": 9,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -60460,8 +62172,8 @@
       "en": "Daala is a video coding format that was under development by the Xiph.Org Foundation, under the lead of Timothy B. Terriberry and mainly sponsored by the Mozilla Corporation. Like Theora and Opus, Daala is available free of any royalties and its reference implementation is being developed as free and open-source software. The name is taken from the fictional character of Admiral Natasi Daala from the Star Wars universe."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q5212665",
@@ -60678,6 +62390,22 @@
     "definition": {
       "es": "",
       "en": "C language extensions for embedded systems"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 5,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q5396965",
+    "term": "ESCAPE ANALYSIS",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "Determination of the dynamic scope of pointers"
     },
     "summary": {
       "es": "",
@@ -62864,6 +64592,22 @@
     "rejection_reason": "missing_article"
   },
   {
+    "wikidata_id": "Q7269652",
+    "term": "QUBES OS",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "Linux distribution"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 23,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q7277472",
     "term": "RPG MAKER 2003",
     "category": "software_engineering",
@@ -63264,6 +65008,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q7455927",
+    "term": "SERVO",
+    "category": "software_engineering",
+    "definition": {
+      "es": "motor de renderizado web desarrollado por Mozilla",
+      "en": "experimental layout engine started by Mozilla"
+    },
+    "summary": {
+      "es": "Servo será el nuevo motor de renderizado libre escrito en Rust que sucederá a Gecko. Actualmente su desarrollo es gestionado por la Fundación Mozilla y la Corporación Mozilla bajo el apoyo de Samsung.",
+      "en": "Servo is an experimental browser engine designed to take advantage of the memory safety properties and concurrency features of the Rust programming language. It seeks to create a highly parallel environment, in which rendering, layout, HTML parsing, image decoding, and other engine components are handled by fine-grained, isolated tasks. It also makes use of GPU acceleration to render web pages quickly and smoothly."
+    },
+    "sitelinks": 20,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q7475416",
     "term": "SPEEDCODING",
     "category": "programming_languages",
@@ -63584,6 +65344,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q7715973",
+    "term": "DEBIAN",
+    "category": "linux",
+    "definition": {
+      "es": "distribución Linux",
+      "en": "free operating system"
+    },
+    "summary": {
+      "es": "Debian GNU/Linux es una distribución Linux de software libre, desarrollada por miles de voluntarios de todo el mundo, que colaboran a través de Internet.",
+      "en": "Debian is a free, general-purpose operating system developed by the Debian Project, a worldwide volunteer association founded by Ian Murdock on August 16, 1993. It is the second-oldest Linux distribution still being developed and forms the base of many others."
+    },
+    "sitelinks": 108,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q7737455",
     "term": "THE GRAIN OF WHEAT",
     "category": "software_engineering",
@@ -63760,6 +65536,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q7887068",
+    "term": "ENCAPSULATING SECURITY PAYLOAD",
+    "category": "networking",
+    "definition": {
+      "es": "",
+      "en": "Internet protocol"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 5,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q7912762",
     "term": "VALUE OBJECT",
     "category": "software_engineering",
@@ -63915,7 +65707,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 6,
+    "sitelinks": 5,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -64220,6 +66012,22 @@
       "en": ""
     },
     "sitelinks": 5,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q10513863",
+    "term": "SUSE LINUX",
+    "category": "linux",
+    "definition": {
+      "es": "distribución del sistema operativo Linux",
+      "en": "operating system"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 36,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -64592,6 +66400,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q12483555",
+    "term": "GARUDA OS",
+    "category": "linux",
+    "definition": {
+      "es": "",
+      "en": "Linux distribution"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 19,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q12562646",
     "term": "BERKELEY SOCKETS",
     "category": "apis",
@@ -64622,6 +66446,22 @@
     "sitelinks": 16,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q12975625",
+    "term": "EZHIL",
+    "category": "programming_languages",
+    "definition": {
+      "es": "lenguaje de programación",
+      "en": "programming language in Tamil"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 5,
+    "status": "rejected",
+    "rejection_reason": "missing_article"
   },
   {
     "wikidata_id": "Q13156650",
@@ -64732,8 +66572,8 @@
       "en": "MonoGame is a free and open source software framework for developing video games in C#. It began as a way to bring existing XNA-based Windows and Windows Phone games to platforms Microsoft did not officially support, and is now also used to build new games from scratch. It is a code-first framework: it provides libraries for graphics, audio, input and content management but no built-in editor, so developers choose their own tools. It supports desktop platforms, mobile platforms and, for developers authorized by the platform holders, the PlayStation 4, PlayStation 5, Xbox One, Xbox Series X/S, Nintendo Switch and Nintendo Switch 2. It implements the Microsoft XNA 4 application programming interface (API). Games built with MonoGame include Bastion, Celeste, Barotrauma, Fez, and Stardew Valley."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q13231451",
@@ -64764,6 +66604,22 @@
       "en": ""
     },
     "sitelinks": 15,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q13233410",
+    "term": "ANDROID STUDIO",
+    "category": "software_engineering",
+    "definition": {
+      "es": "entorno de desarrollo integrado para la plataforma Android",
+      "en": "integrated development environment for the Android platform"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 42,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -64816,6 +66672,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q13414952",
+    "term": "SHA-1",
+    "category": "software_engineering",
+    "definition": {
+      "es": "función criptográfica hash",
+      "en": "individual cryptographic hash function with output size of 160 bits"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 31,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q13422835",
     "term": "ANTERGOS",
     "category": "linux",
@@ -64854,6 +66726,38 @@
     "definition": {
       "es": "décima versión principal de OS X para ordenadores, portátiles y servidores Mac",
       "en": "tenth major release of OS X"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 26,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q13426339",
+    "term": "IOS 7",
+    "category": "linux",
+    "definition": {
+      "es": "versión del sistema operativo móvil iOS desarrollada por Apple Inc.",
+      "en": "seventh major version of iOS"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 33,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q13471026",
+    "term": "IOS 4",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "fourth major version of iOS"
     },
     "summary": {
       "es": "",
@@ -65019,7 +66923,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 6,
+    "sitelinks": 7,
     "status": "rejected",
     "rejection_reason": "missing_translation"
   },
@@ -65036,8 +66940,8 @@
       "en": "The Xojo programming environment and programming language is developed and commercially marketed by Xojo, Inc. of Austin, Texas for software development targeting macOS, Microsoft Windows, Linux, iOS, Android, the Web and Raspberry Pi. Xojo uses a proprietary object-oriented language."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q14468709",
@@ -65093,7 +66997,7 @@
     "category": "networking",
     "definition": {
       "es": "motor de búsqueda web",
-      "en": "European search engine"
+      "en": "web search engine"
     },
     "summary": {
       "es": "Qwant es un motor de búsqueda web creado en Francia por el especialista en seguridad Éric Leandri, el inversor Jean Manuel Rozan y el experto en motores de búsqueda Patrick Constant en 2011. Fundada el 16 de febrero de 2013, la empresa lanzó la versión definitiva de su buscador el 4 de julio de 2013. Emmanuel Macron, el presidente de Francia, declaró que Qwant es “el Google francés.\"",
@@ -65132,6 +67036,38 @@
       "en": ""
     },
     "sitelinks": 26,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q14944085",
+    "term": "STEAMOS",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo basado en Linux",
+      "en": "gaming Linux distribution"
+    },
+    "summary": {
+      "es": "SteamOS  es una distribución derivada de Arch Linux, basada en Linux y desarrollada por Valve como sistema operativo principal de la línea de videoconsolas Steam Machines, Steam Deck y Steam Frame.",
+      "en": "SteamOS is a gaming-focused operating system released by Valve that incorporates the company's video game storefront, Steam. Based on Arch Linux and built specifically to support Steam, it is the default Linux distribution for Valve's line of gaming hardware, including the Steam Deck, Steam Machine, and Steam Frame. Beginning in 2025, Valve expanded official support to include third-party devices designated as \"SteamOS Compatible\", such as handhelds like the Asus ROG Ally and Lenovo Legion Go. It can also be installed on personal computers without official support from Valve. The core operating system is free and open-source software, while the Steam client remains proprietary."
+    },
+    "sitelinks": 34,
+    "status": "rejected",
+    "rejection_reason": "excluded"
+  },
+  {
+    "wikidata_id": "Q14947635",
+    "term": "TELLTALE TOOL",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "game engine developed by Telltale Games"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 8,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -65180,8 +67116,24 @@
       "en": "Mantle was a low-overhead rendering API targeted at 3D video games. AMD originally developed Mantle in cooperation with DICE, starting in 2013. Mantle was designed as an alternative to Direct3D and OpenGL, primarily for use on personal computers. In 2015, Mantle's public development was suspended and in 2019 completely discontinued, as DirectX 12 and the Mantle-derived Vulkan rose in popularity."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
+  },
+  {
+    "wikidata_id": "Q15089879",
+    "term": "FIRE OS",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "Android-based mobile operating system produced by Amazon"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 25,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q15122248",
@@ -65344,6 +67296,22 @@
     "rejection_reason": "missing_translation"
   },
   {
+    "wikidata_id": "Q15474162",
+    "term": "OMNIROM",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo móvil de código abierto basado en Android",
+      "en": "mobile phone Linux distribution"
+    },
+    "summary": {
+      "es": "OmniROM es un sistema operativo de código abierto para teléfonos inteligentes y tabletas, basado en la plataforma móvil Android.",
+      "en": "OmniROM was an open-source operating system for smartphones and tablet computers, based on the Android mobile platform. It involves a number of prominent developers from other projects."
+    },
+    "sitelinks": 13,
+    "status": "rejected",
+    "rejection_reason": "excluded"
+  },
+  {
     "wikidata_id": "Q15624241",
     "term": "LZ4",
     "category": "software_engineering",
@@ -65371,7 +67339,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 19,
+    "sitelinks": 20,
     "status": "rejected",
     "rejection_reason": "missing_translation"
   },
@@ -65649,7 +67617,7 @@
   },
   {
     "wikidata_id": "Q15989676",
-    "term": "TOX",
+    "term": "TOXCHAT",
     "category": "software_engineering",
     "definition": {
       "es": "",
@@ -65661,7 +67629,7 @@
     },
     "sitelinks": 19,
     "status": "rejected",
-    "rejection_reason": "invalid_length"
+    "rejection_reason": "missing_translation"
   },
   {
     "wikidata_id": "Q16002307",
@@ -65712,6 +67680,22 @@
     "rejection_reason": "missing_translation"
   },
   {
+    "wikidata_id": "Q16268974",
+    "term": "AOKP",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "mobile operating system"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 9,
+    "status": "rejected",
+    "rejection_reason": "missing_article"
+  },
+  {
     "wikidata_id": "Q16321264",
     "term": "LIBGDX",
     "category": "software_engineering",
@@ -65744,6 +67728,22 @@
     "rejection_reason": null
   },
   {
+    "wikidata_id": "Q16509734",
+    "term": "PHABRICATOR",
+    "category": "software_engineering",
+    "definition": {
+      "es": "suite de herramientas web colaborativas para desarrolllo de software",
+      "en": "unmaintained suite of web-based software development collaboration tools"
+    },
+    "summary": {
+      "es": "Phabricator es una suite de herramientas de aplicaciones web para colaboración de desarrollo de software, incluida la herramienta de revisión de código Differential, el repositorio de código Diffusion, la herramienta de monitoreo de cambios Herald, el gestor de errores, Maniphest y la wiki Phriction. Phabricator integra Git, Subversion y Mercurial. Está disponible como un software libre bajo la versión 2 de la licencia Apache.",
+      "en": "Phabricator is a free and open source suite of web-based development collaboration tools."
+    },
+    "sitelinks": 31,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q16529632",
     "term": "AUTOMATIC VECTORIZATION",
     "category": "software_engineering",
@@ -65755,7 +67755,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 5,
+    "sitelinks": 6,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -65806,6 +67806,22 @@
     "sitelinks": 5,
     "status": "rejected",
     "rejection_reason": "missing_translation"
+  },
+  {
+    "wikidata_id": "Q16639197",
+    "term": "GITLAB",
+    "category": "git",
+    "definition": {
+      "es": "Software de control de versiones",
+      "en": "online git source code repository host"
+    },
+    "summary": {
+      "es": "Gitlab Inc. es una compañía de núcleo abierto y es la principal proveedora del software GitLab, un servicio web de forja, control de versiones y DevOps basado en Git. Además de gestor de repositorios, el servicio ofrece también alojamiento de wikis y un sistema de seguimiento de errores, todo ello publicado bajo una licencia de código abierto, principalmente.",
+      "en": "GitLab is a software forge primarily developed by GitLab Inc. It is available as either a free software \"Community\" edition or a proprietary software \"Enterprise\" edition."
+    },
+    "sitelinks": 30,
+    "status": "approved",
+    "rejection_reason": null
   },
   {
     "wikidata_id": "Q16655648",
@@ -65984,6 +68000,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q16927834",
+    "term": "IPHONE OS 2",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "second major release of iOS by Apple Inc."
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 24,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q16928072",
     "term": "GRAALVM",
     "category": "programming_languages",
@@ -66030,6 +68062,22 @@
     "sitelinks": 5,
     "status": "rejected",
     "rejection_reason": "missing_article"
+  },
+  {
+    "wikidata_id": "Q16969690",
+    "term": "IPHONE OS 3",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "third version of iPhone OS by Apple Inc."
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 25,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q16972633",
@@ -66110,6 +68158,22 @@
     "sitelinks": 5,
     "status": "rejected",
     "rejection_reason": "missing_translation"
+  },
+  {
+    "wikidata_id": "Q17008878",
+    "term": "CONFLICT DRIVEN CLAUSE LEARNING",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "SAT solving algorithm"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 5,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q17012109",
@@ -66204,8 +68268,8 @@
       "en": "BIBFRAME is a data model for bibliographic description. BIBFRAME was designed to replace the MARC standards, and to use linked data principles to make bibliographic data more useful both within and outside the library community."
     },
     "sitelinks": 10,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q17051048",
@@ -66236,6 +68300,22 @@
       "en": ""
     },
     "sitelinks": 6,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q17058718",
+    "term": "IPHONE OS 1",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo",
+      "en": "first major version of the mobile operating system by Apple"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 26,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -66427,7 +68507,7 @@
       "es": "Torch es una biblioteca de código abierto para aprendizaje automático, un marco de computación científica, y un lenguaje de script basado en el lenguaje de programación Lua. Proporciona una amplia gama de algoritmos de aprendizaje profundo, y usa el lenguaje de script LuaJIT, sobre una implementación en C.",
       "en": "Torch is an open-source machine learning library, \na scientific computing framework, and a scripting language based on Lua. It provides LuaJIT interfaces to deep learning algorithms implemented in C. It was created by the Idiap Research Institute. Torch development moved in 2017 to PyTorch, a port of the library to Python."
     },
-    "sitelinks": 9,
+    "sitelinks": 10,
     "status": "rejected",
     "rejection_reason": "low_sitelinks"
   },
@@ -66524,8 +68604,8 @@
       "en": "OpenNN is a software library written in the C++ programming language which implements neural networks, a main area of deep learning research. The library is open-source, licensed under the GNU Lesser General Public License."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q17107792",
@@ -66702,6 +68782,22 @@
     "sitelinks": 18,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q17352119",
+    "term": "COLOROS",
+    "category": "linux",
+    "definition": {
+      "es": "",
+      "en": "mobile operating system based on Android"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 20,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
   },
   {
     "wikidata_id": "Q17512395",
@@ -67022,6 +69118,22 @@
     "sitelinks": 13,
     "status": "approved",
     "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q18206387",
+    "term": "ECLIPSE DEEPLEARNING4J",
+    "category": "software_engineering",
+    "definition": {
+      "es": "biblioteca de aprendizaje profundo de código abierto",
+      "en": "open source deep learning library"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 12,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q18207148",
@@ -67664,6 +69776,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q19668903",
+    "term": "EDGEHTML",
+    "category": "software_engineering",
+    "definition": {
+      "es": "motor de renderizado de Microsoft Edge",
+      "en": "browser engine by Microsoft first released in 2014"
+    },
+    "summary": {
+      "es": "EdgeHTML fue un motor de renderizado desarrollado por Microsoft y utilizado en el navegador Microsoft Edge en la edición legacy. Es una bifurcación de Trident en el que se ha eliminado todo el código de viejas versiones de Internet Explorer y reemplazando la mayoría de su código fuente con los estándares web y la interoperabilidad con otros navegadores modernos en mente. El motor de renderizado fue lanzado por primera vez como una opción de prueba que se podía probar entre Internet Explorer 11 como parte de Windows 10 Technical Preview build 9879.",
+      "en": "EdgeHTML is a proprietary browser engine from Microsoft that was used in Microsoft Edge Legacy, which debuted in 2015 as part of Windows 10."
+    },
+    "sitelinks": 13,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q19686539",
     "term": "LORAWAN",
     "category": "networking",
@@ -67760,6 +69888,22 @@
     "rejection_reason": null
   },
   {
+    "wikidata_id": "Q19911889",
+    "term": "VERACRYPT",
+    "category": "security",
+    "definition": {
+      "es": "",
+      "en": "encryption utility, open-source software"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 17,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
     "wikidata_id": "Q19984009",
     "term": "LOGJAM",
     "category": "security",
@@ -67854,6 +69998,22 @@
     "sitelinks": 20,
     "status": "rejected",
     "rejection_reason": "invalid_length"
+  },
+  {
+    "wikidata_id": "Q20127748",
+    "term": "BLAZEGRAPH",
+    "category": "databases",
+    "definition": {
+      "es": "",
+      "en": "Blazegraph High Performance Graph Database"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 5,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
   },
   {
     "wikidata_id": "Q20155677",
@@ -68256,6 +70416,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q21600523",
+    "term": "UNIVERSAL WINDOWS PLATFORM",
+    "category": "apis",
+    "definition": {
+      "es": "plataforma universal de aplicaciones creada y desarrollada por Microsoft para Microsoft Windows",
+      "en": "universal application platform created and developed by Microsoft for Microsoft Windows"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 17,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q21614124",
     "term": "ELECTRON",
     "category": "software_engineering",
@@ -68270,6 +70446,22 @@
     "sitelinks": 21,
     "status": "rejected",
     "rejection_reason": "missing_translation"
+  },
+  {
+    "wikidata_id": "Q21622213",
+    "term": ".NET",
+    "category": "software_engineering",
+    "definition": {
+      "es": "plataforma de software libre y de código abierto desarrollada por Microsoft",
+      "en": "Free and open source cross-platform software platform developed by Microsoft"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 25,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q21655497",
@@ -68366,6 +70558,22 @@
     "sitelinks": 23,
     "status": "approved",
     "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q22000976",
+    "term": "DREAMS",
+    "category": "software_engineering",
+    "definition": {
+      "es": "videojuego de Media Molecule de 2020",
+      "en": "2020 sandbox game creation system developed by Media Molecule"
+    },
+    "summary": {
+      "es": "Dreams es un videojuego de construcción y gestión sandbox desarrollado por Media Molecule y publicado por Sony Interactive Entertainment en exclusiva para la consola PlayStation 4. El juego se centra en \"jugar, crear y compartir\", y permite a los jugadores crear contenidos de juego que estarán disponibles para los demás usuarios. El 16 de abril de 2019 fue lanzada la versión de acceso anticipado. El lanzamiento completo del juego se produjo el 14 de febrero de 2020.",
+      "en": "Dreams is a 2020 game creation system video game developed by Media Molecule and published by Sony Interactive Entertainment for the PlayStation 4. Players can create and play user-generated content in the forms of games, audiovisual experiences and game assets, which can be shared or remixed to be used in other players' creations."
+    },
+    "sitelinks": 15,
+    "status": "rejected",
+    "rejection_reason": "excluded"
   },
   {
     "wikidata_id": "Q22013701",
@@ -68512,6 +70720,22 @@
     "rejection_reason": "invalid_length"
   },
   {
+    "wikidata_id": "Q22661306",
+    "term": "KUBERNETES",
+    "category": "software_engineering",
+    "definition": {
+      "es": "software para orquestar contenedores en un clúster.",
+      "en": "software to manage containers on a server-cluster"
+    },
+    "summary": {
+      "es": "Kubernetes es una plataforma de código abierto para la orquestación de contenedores. Permite desplegar y automatizar la gestión de sistemas distribuidos de manera que sean capaces de escalar y auto-repararse. Fue originalmente diseñado por Google y donado a la Cloud Native Computing Foundation. Soporta diferentes entornos para la ejecución de contenedores, incluido Docker.",
+      "en": "Kubernetes, also known as K8s, is an open-source container orchestration system for automating software deployment, scaling, and management. Originally designed by Google, the project is now maintained by a worldwide community of contributors, and the trademark is held by the Cloud Native Computing Foundation."
+    },
+    "sitelinks": 44,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q22661317",
     "term": "REQUESTS",
     "category": "software_engineering",
@@ -68636,8 +70860,8 @@
       "en": "Naenara is a North Korean intranet web browser software developed by the Korea Computer Center for use of the national Kwangmyong intranet."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q22907457",
@@ -68699,7 +70923,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 5,
+    "sitelinks": 6,
     "status": "rejected",
     "rejection_reason": "missing_translation"
   },
@@ -69088,6 +71312,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q24284216",
+    "term": "GOOGLE DAYDREAM",
+    "category": "apis",
+    "definition": {
+      "es": "",
+      "en": "Discontinued virtual reality platform by Google"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 19,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q24382606",
     "term": "GULP.JS",
     "category": "software_engineering",
@@ -69148,6 +71388,22 @@
       "en": ""
     },
     "sitelinks": 42,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q24589743",
+    "term": "OTTER BROWSER",
+    "category": "networking",
+    "definition": {
+      "es": "",
+      "en": "web browser"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 9,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -69307,7 +71563,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 12,
+    "sitelinks": 13,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -69323,7 +71579,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 5,
+    "sitelinks": 6,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -69488,6 +71744,22 @@
     "rejection_reason": "missing_translation"
   },
   {
+    "wikidata_id": "Q25538294",
+    "term": "USB 2.0",
+    "category": "networking",
+    "definition": {
+      "es": "segunda versión del estándar USB para la conectividad de dispositivos informáticos",
+      "en": "second major version of the Universal Serial Bus standard for computer connectivity"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 6,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q25894883",
     "term": "MONOREPO",
     "category": "software_engineering",
@@ -69516,6 +71788,22 @@
       "en": ""
     },
     "sitelinks": 6,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q26046105",
+    "term": "AV1",
+    "category": "software_engineering",
+    "definition": {
+      "es": "formato de vídeo",
+      "en": "open and royalty-free video coding format developed by the Alliance for Open Media"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 20,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -69808,6 +72096,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q28059734",
+    "term": "LINEAGEOS",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo derivado de CyanogenMod",
+      "en": "mobile operating system based on Android"
+    },
+    "summary": {
+      "es": "LineageOS es un fork de Android de código abierto para teléfonos inteligentes y tabletas, siendo originariamente una herencia directa de CyanogenMod. De la misma forma que CM, se basa en los lanzamientos de Google para la plataforma de Android, incluyendo código adicional. LineageOS fue creado después de que Cyanogen Inc. cortara todos los lazos con su cofundador Steve Kondik, de tal forma que fue oficialmente lanzado el 24 de diciembre de 2016. El código fuente inicialmente estaba disponible en GitHub. Como ocurre con todas las versiones de Android, las versiones del sistema operativo son específicas para cada modelo. Desde su lanzamiento, las compilaciones de desarrollo de LineageOS están disponibles para 109 modelos de teléfonos con más de 1.7 millones de instalaciones activas, habiendo duplicado su base de usuarios en los meses de febrero a marzo de 2017.",
+      "en": "LineageOS is an open source Android (AOSP)-based operating system for smartphones, tablets, and set-top boxes. It is community-developed and serves as the successor to CyanogenMod, from which it was forked in December 2016. As of 2025, there are about 4.5 million devices running LineageOS."
+    },
+    "sitelinks": 39,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q28127049",
     "term": "NATIVESCRIPT",
     "category": "software_engineering",
@@ -70059,9 +72363,25 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 5,
+    "sitelinks": 6,
     "status": "rejected",
     "rejection_reason": "missing_translation"
+  },
+  {
+    "wikidata_id": "Q28456260",
+    "term": "PICO-8",
+    "category": "software_engineering",
+    "definition": {
+      "es": "maquina virtual que imita una consola de videojuegos",
+      "en": "fantasy console"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 12,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q28457708",
@@ -70700,8 +73020,8 @@
       "en": "Segregated Witness (SegWit), formally known as Segregated Witness (Consensus layer), is an implemented soft fork change in the transaction format of bitcoin."
     },
     "sitelinks": 10,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q30504331",
@@ -70766,6 +73086,22 @@
     "sitelinks": 8,
     "status": "rejected",
     "rejection_reason": "missing_translation"
+  },
+  {
+    "wikidata_id": "Q30892050",
+    "term": "RE ENGINE",
+    "category": "software_engineering",
+    "definition": {
+      "es": "motor de videojuego de Capcom",
+      "en": "video game engine by Capcom"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 14,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q30894456",
@@ -70992,6 +73328,22 @@
     "rejection_reason": "low_sitelinks"
   },
   {
+    "wikidata_id": "Q39601771",
+    "term": "FACE ID",
+    "category": "software_engineering",
+    "definition": {
+      "es": "sistema de reconocimiento facial desarrollado por Apple Inc.",
+      "en": "facial recognition system developed by Apple Inc."
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 33,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q40463886",
     "term": "ACTIVITYPUB",
     "category": "networking",
@@ -71131,7 +73483,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 6,
+    "sitelinks": 5,
     "status": "rejected",
     "rejection_reason": "missing_translation"
   },
@@ -71210,6 +73562,22 @@
     "summary": {
       "es": "Meltdown es un agujero de seguridad en el hardware que afecta a los procesadores Intel x86, a los procesadores IBM POWER, y también a algunos procesadores basados en la arquitectura ARM, y que permite que un proceso malicioso pueda leer de cualquier lugar de la memoria virtual, aún sin contar con autorización para hacerlo.",
       "en": "Meltdown is one of the two original speculative execution CPU vulnerabilities. Meltdown affects Intel x86 microprocessors, IBM Power microprocessors, and some ARM-based microprocessors. It allows a rogue process to read all memory, even when it is not authorized to do so."
+    },
+    "sitelinks": 23,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q47037422",
+    "term": "SPECTRE",
+    "category": "security",
+    "definition": {
+      "es": "vulnerabilidad informática que afecta a los microprocesadores modernos que utilizan predicción de saltos",
+      "en": "security vulnerability in microprocessors performing branch prediction"
+    },
+    "summary": {
+      "es": "Spectre es una vulnerabilidad que afecta a los microprocesadores modernos que utilizan predicción de saltos. En la mayoría de los procesadores, la ejecución especulativa que surge de un fallo de la predicción puede dejar efectos observables colaterales que pueden revelar información privada a un atacante. Por ejemplo, si el patrón de accesos a la memoria realizados por la mencionada ejecución especulativa depende de datos privados, el estado resultante de la caché de datos constituye un canal lateral mediante el cual un atacante puede ser capaz de obtener información acerca de los datos privados empleando un ataque sincronizado.",
+      "en": "Spectre is a class of speculative execution CPU vulnerabilities that involve side-channel attacks, first discovered in 2017. There are multiple variants that affect modern microprocessors capable of performing branch prediction and other forms of speculative execution. On most processors, the speculative execution resulting from a branch misprediction may leave observable side effects that may reveal private data to attackers. For example, if the pattern of memory accesses performed by such speculative execution depends on private data, the resulting state of the data cache constitutes a side-channel through which an attacker may be able to extract information about the private data using a timing attack."
     },
     "sitelinks": 23,
     "status": "approved",
@@ -71936,6 +74304,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q56290204",
+    "term": "4MLINUX",
+    "category": "linux",
+    "definition": {
+      "es": "",
+      "en": "Linux distribution"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 6,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q56296845",
     "term": "UNIT OF WORK",
     "category": "software_engineering",
@@ -72240,6 +74624,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q61497975",
+    "term": "IOS 13",
+    "category": "linux",
+    "definition": {
+      "es": "versión del sistema operativo móvil iOS desarrollada por Apple Inc.",
+      "en": "thirteenth major release of iOS, the mobile operating system by Apple Inc."
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 31,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q61632937",
     "term": "V",
     "category": "programming_languages",
@@ -72316,8 +74716,8 @@
       "en": "bridgeOS is an embedded operating system created and developed by Apple for use exclusively with its hardware. bridgeOS runs on the T series Apple silicon processors and operates devices such as the OLED touchscreen strip called the \"Touch Bar\", Touch ID fingerprint sensor, disk encryption, and cooling fans."
     },
     "sitelinks": 10,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q62617958",
@@ -72350,6 +74750,22 @@
     "sitelinks": 5,
     "status": "rejected",
     "rejection_reason": "missing_translation"
+  },
+  {
+    "wikidata_id": "Q63986220",
+    "term": "HARMONYOS",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo desarrollado por Huawei",
+      "en": "operating system developed by Huawei"
+    },
+    "summary": {
+      "es": "HarmonyOS (HMOS), conocido en China como \"HongMengOS\" (en chino, 鸿蒙OS; pinyin, Hóngméng OS), es un sistema operativo distribuido desarrollado por Huawei para colaborar e interconectar múltiples dispositivos inteligentes en el sistema del Internet de las cosas (IoT). HarmonyOS se utiliza en dispositivos móviles con pantalla táctil, como relojes inteligentes, teléfonos inteligentes, automóviles, televisores inteligentes, tabletas, pulseras inteligentes y otros dentro del sistema del Internet de las cosas (IoT).",
+      "en": "HarmonyOS (HMOS) is a distributed operating system developed by Huawei for smartphones, tablets, smart TVs, smart watches, personal computers and other smart devices. It has a microkernel design with a single framework: the operating system selects suitable kernels from the abstraction layer in the case of devices that use diverse resources. The latest stable version, HarmonyOS 7, is released in September 2026."
+    },
+    "sitelinks": 41,
+    "status": "approved",
+    "rejection_reason": null
   },
   {
     "wikidata_id": "Q64024537",
@@ -72396,6 +74812,22 @@
       "en": ""
     },
     "sitelinks": 18,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q65041106",
+    "term": "OPERA GX",
+    "category": "networking",
+    "definition": {
+      "es": "navegador web",
+      "en": "web browser marketed toward gamers"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 15,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -72624,6 +75056,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q67907497",
+    "term": "ENDEAVOUROS",
+    "category": "linux",
+    "definition": {
+      "es": "Distribucion Linux basado en Arch Linux",
+      "en": "Arch Linux-based Linux distribution"
+    },
+    "summary": {
+      "es": "EndeavourOS es una distribución GNU/Linux, con KDE Plasma como interfaz de usuario por defecto. Se trata de un sistema operativo libre para computadores personales y enfocado en la facilidad de uso. Está basado en Arch Linux y usa un modelo de desarrollo denominado de liberación continua. El objetivo de EndeavourOS es ser lo más parecido a la distribución Arch Linux como sea razonablemente posible y ofrecer una experiencia amigable, haciendo que sea fácil de instalar.",
+      "en": "EndeavourOS is a free and open-source Arch-based Linux distribution. EndeavourOS began as a successor to Antergos, a discontinued distribution also based on Arch Linux. It uses the same rolling release schedule as Arch Linux, but periodically releases updated installation media. As of March 16, 2026, the most recent release is \"EndeavourOS Titan.\""
+    },
+    "sitelinks": 24,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q70490607",
     "term": "QISKIT",
     "category": "software_engineering",
@@ -72736,6 +75184,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q81388644",
+    "term": "POP!_OS",
+    "category": "linux",
+    "definition": {
+      "es": "distribución de Linux",
+      "en": "Linux distribution"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 24,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q83375918",
     "term": "RENSENWARE",
     "category": "security",
@@ -72832,6 +75296,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q85764357",
+    "term": "GRAPHENEOS",
+    "category": "linux",
+    "definition": {
+      "es": "sistema operativo móvil centrado en la privacidad y la seguridad",
+      "en": "security and privacy-focused, Android-based mobile operating system"
+    },
+    "summary": {
+      "es": "GrapheneOS es un sistema operativo móvil de código abierto basado en Android desarrollado como un proyecto sin fines de lucro que se enfoca en la privacidad y seguridad. GrapheneOS realiza mejoras sustanciales tanto en la privacidad como en la seguridad a través de muchas características cuidadosamente diseñadas para funcionar contra adversarios reales.Originalmente era conocido como Android Hardening hasta marzo de 2019.",
+      "en": "GrapheneOS is an open-source mobile operating system focused on security and privacy, available for Google Pixel and future Motorola devices, including smartphones, tablets, and foldables. It is built on the Android Open Source Project (AOSP) and was first released in 2016."
+    },
+    "sitelinks": 32,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q85790839",
     "term": "OPENVINO",
     "category": "software_engineering",
@@ -72878,6 +75358,22 @@
     "sitelinks": 13,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q89114416",
+    "term": "LUANTI",
+    "category": "software_engineering",
+    "definition": {
+      "es": "motor de videojuegos voxel de código abierto",
+      "en": "opensource voxel game engine"
+    },
+    "summary": {
+      "es": "Luanti es un motor de videojuego libre basado en vóxeles para Windows, Mac OS, GNU/Linux, FreeBSD, OpenBSD, DragonFly BSD y Android. Originalmente Luanti fue creado en 2010 por Perttu Ahola para explorar las mecánicas de Minecraft. Con el tiempo, Luanti evolucionó hasta convertirse en un motor de videojuego, con creciente comunidad de desarrolladores.",
+      "en": "Luanti is a community-driven, free and open-source voxel game engine, available on various platforms. Originally, Minetest was a voxel game created in October 2010 by Perttu Ahola to explore the mechanics of Minecraft. Over time, Luanti evolved from the original Minetest game into a general game engine as developers integrated new features."
+    },
+    "sitelinks": 27,
+    "status": "rejected",
+    "rejection_reason": "excluded"
   },
   {
     "wikidata_id": "Q89532510",
@@ -72928,6 +75424,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q94277753",
+    "term": "UNREAL ENGINE 5",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "video game engine"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 15,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q94638515",
     "term": "GEMINI",
     "category": "networking",
@@ -72942,6 +75454,22 @@
     "sitelinks": 16,
     "status": "approved",
     "rejection_reason": null
+  },
+  {
+    "wikidata_id": "Q96231126",
+    "term": "IOS 14",
+    "category": "linux",
+    "definition": {
+      "es": "versión del sistema operativo móvil iOS desarrollada por Apple Inc.",
+      "en": "Apple mobile operating system"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 30,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q96375631",
@@ -73136,6 +75664,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q98855048",
+    "term": "LOTTIE",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "open vector animation file format based on JSON"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 5,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
     "wikidata_id": "Q98940045",
     "term": "S&BOX",
     "category": "software_engineering",
@@ -73150,6 +75694,22 @@
     "sitelinks": 7,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q99615161",
+    "term": "MOBIAN",
+    "category": "linux",
+    "definition": {
+      "es": "",
+      "en": "mobile Linux distribution"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 6,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
   },
   {
     "wikidata_id": "Q101119404",
@@ -73296,6 +75856,22 @@
     "rejection_reason": "missing_translation"
   },
   {
+    "wikidata_id": "Q105623664",
+    "term": "LIBREWOLF",
+    "category": "networking",
+    "definition": {
+      "es": "Navegador de Internet de código abierto",
+      "en": "web browser based on Firefox"
+    },
+    "summary": {
+      "es": "LibreWolf es un navegador web de código abierto y fork de Firefox con un enfoque en la privacidad y la seguridad.",
+      "en": "LibreWolf is a free and open-source fork of Firefox, with an emphasis on privacy and security. It is licensed under the MPL 2.0."
+    },
+    "sitelinks": 18,
+    "status": "approved",
+    "rejection_reason": null
+  },
+  {
     "wikidata_id": "Q105721245",
     "term": "AZURE LINUX",
     "category": "linux",
@@ -73355,7 +75931,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 15,
+    "sitelinks": 16,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -73500,6 +76076,22 @@
       "en": ""
     },
     "sitelinks": 5,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q107139673",
+    "term": "IOS 15",
+    "category": "linux",
+    "definition": {
+      "es": "versión del sistema operativo móvil iOS desarollada por Apple Inc.",
+      "en": "fifteenth version of iOS, Apple's mobile operating system for iPhone and iPod"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 28,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -73820,8 +76412,8 @@
       "en": "Polygon is a blockchain platform which aims to create a multi-chain blockchain system compatible with Ethereum. As with Ethereum, it uses a proof-of-stake consensus mechanism for processing transactions on-chain. Polygon's native token is POL, an ERC-20 token which allows for compatibility with other Ethereum cryptocurrencies. It is operated by Polygon Labs."
     },
     "sitelinks": 11,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "low_sitelinks"
   },
   {
     "wikidata_id": "Q111590996",
@@ -73918,6 +76510,22 @@
     "sitelinks": 6,
     "status": "rejected",
     "rejection_reason": "missing_article"
+  },
+  {
+    "wikidata_id": "Q112252770",
+    "term": "IOS 16",
+    "category": "linux",
+    "definition": {
+      "es": "versión del sistema operativo móvil iOS desarollada por Apple Inc.",
+      "en": "sixteenth major release of iOS, a mobile operating system developed by Apple Inc."
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 30,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q112257668",
@@ -74240,6 +76848,22 @@
     "rejection_reason": null
   },
   {
+    "wikidata_id": "Q118174932",
+    "term": "IOS 17",
+    "category": "linux",
+    "definition": {
+      "es": "versión del sistema operativo móvil iOS desarollada por Apple Inc.",
+      "en": "seventeenth major release of iOS, a mobile operating system developed by Apple Inc."
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 29,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q118875186",
     "term": "CHIMERA LINUX",
     "category": "linux",
@@ -74443,7 +77067,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 20,
+    "sitelinks": 21,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -74640,6 +77264,38 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q126392721",
+    "term": "IOS 18",
+    "category": "linux",
+    "definition": {
+      "es": "versión del sistema operativo móvil iOS desarollada por Apple Inc.",
+      "en": "18th major release of iOS, a mobile operating system developed by Apple Inc."
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 29,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q126486559",
+    "term": "MACOS SEQUOIA",
+    "category": "linux",
+    "definition": {
+      "es": "vigésima primera versión principal del sistema operativo macOS",
+      "en": "21st major version of the macOS operating system"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 19,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q126488241",
     "term": "IPADOS 18",
     "category": "linux",
@@ -74686,6 +77342,38 @@
     "sitelinks": 12,
     "status": "rejected",
     "rejection_reason": "missing_article"
+  },
+  {
+    "wikidata_id": "Q130541359",
+    "term": "ZEN",
+    "category": "networking",
+    "definition": {
+      "es": "navegador web libre y de código abierto basado en Firefox",
+      "en": "web browser based on Mozilla Firefox"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 14,
+    "status": "rejected",
+    "rejection_reason": "invalid_length"
+  },
+  {
+    "wikidata_id": "Q130900233",
+    "term": "KATANA ENGINE",
+    "category": "software_engineering",
+    "definition": {
+      "es": "",
+      "en": "video game engine by Koei Tecmo"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 5,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q131105150",
@@ -74800,6 +77488,22 @@
     "rejection_reason": "invalid_chars"
   },
   {
+    "wikidata_id": "Q133867455",
+    "term": "A2A",
+    "category": "networking",
+    "definition": {
+      "es": "",
+      "en": "open protocol for communication between AI agents"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 6,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
     "wikidata_id": "Q134409268",
     "term": "ANDUINOS",
     "category": "linux",
@@ -74814,6 +77518,22 @@
     "sitelinks": 5,
     "status": "rejected",
     "rejection_reason": "missing_translation"
+  },
+  {
+    "wikidata_id": "Q134778562",
+    "term": "MACOS TAHOE",
+    "category": "linux",
+    "definition": {
+      "es": "",
+      "en": "22nd major version of the macOS operating system"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 23,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
   },
   {
     "wikidata_id": "Q134778565",
@@ -74869,13 +77589,29 @@
     "category": "linux",
     "definition": {
       "es": "Distribución GNU/Linux en desarrollo",
-      "en": "Work in progress Linux distribution with KDE Plasma"
+      "en": "work in progress Linux distribution with KDE Plasma"
     },
     "summary": {
       "es": "",
       "en": ""
     },
     "sitelinks": 5,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q136549314",
+    "term": "CHATGPT ATLAS",
+    "category": "networking",
+    "definition": {
+      "es": "navegador web desarrollado por OpenAI",
+      "en": "web browser developed by OpenAI"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 18,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -74924,6 +77660,22 @@
       "en": ""
     },
     "sitelinks": 5,
+    "status": "rejected",
+    "rejection_reason": "invalid_chars"
+  },
+  {
+    "wikidata_id": "Q139601515",
+    "term": "MACOS GOLDEN GATE",
+    "category": "linux",
+    "definition": {
+      "es": "vigésimo tercera versión principal del sistema operativo macOS",
+      "en": "23rd major version of the macOS operating system"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 13,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -74992,6 +77744,22 @@
     "rejection_reason": "missing_translation"
   },
   {
+    "wikidata_id": "Q141070121",
+    "term": "OMARCHY",
+    "category": "linux",
+    "definition": {
+      "es": "",
+      "en": "Arch Linux based Linux distribution by David Heinemeier Hansson"
+    },
+    "summary": {
+      "es": "",
+      "en": ""
+    },
+    "sitelinks": 7,
+    "status": "rejected",
+    "rejection_reason": "missing_translation"
+  },
+  {
     "wikidata_id": "Q141724007",
     "term": "2026 FRENCH SUPERMARKET REFRIGERATOR HACK",
     "category": "security",
@@ -75003,7 +77771,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 5,
+    "sitelinks": 7,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -75019,7 +77787,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 29,
+    "sitelinks": 30,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   },
@@ -75035,7 +77803,7 @@
       "es": "",
       "en": ""
     },
-    "sitelinks": 11,
+    "sitelinks": 12,
     "status": "rejected",
     "rejection_reason": "invalid_chars"
   }

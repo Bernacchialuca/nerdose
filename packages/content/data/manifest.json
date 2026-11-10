@@ -1,58 +1,58 @@
 {
-  "dataset_version": "2026.11.07",
-  "generated_at": "2026-11-07T01:03:21.826Z",
-  "min_sitelinks": 10,
+  "dataset_version": "2026.11.10",
+  "generated_at": "2026-11-10T18:08:07.682Z",
+  "min_sitelinks": 12,
   "counts": {
     "terms": {
-      "approved": 505,
-      "rejected": 4185,
+      "approved": 515,
+      "rejected": 4348,
       "by_category": {
         "programming_languages": {
-          "approved": 131,
-          "rejected": 426
+          "approved": 127,
+          "rejected": 440
         },
         "git": {
           "approved": 9,
-          "rejected": 29
+          "rejected": 30
         },
         "databases": {
-          "approved": 7,
-          "rejected": 82
+          "approved": 9,
+          "rejected": 85
         },
         "networking": {
           "approved": 57,
-          "rejected": 615
+          "rejected": 638
         },
         "linux": {
-          "approved": 113,
-          "rejected": 413
+          "approved": 123,
+          "rejected": 462
         },
         "apis": {
           "approved": 9,
-          "rejected": 140
+          "rejected": 147
         },
         "security": {
-          "approved": 22,
-          "rejected": 244
+          "approved": 24,
+          "rejected": 246
         },
         "software_engineering": {
           "approved": 157,
-          "rejected": 2236
+          "rejected": 2300
         }
       },
       "by_reason": {
-        "invalid_chars": 2836,
-        "invalid_length": 187,
-        "missing_translation": 869,
-        "missing_article": 152,
-        "low_sitelinks": 123,
-        "excluded": 16,
-        "duplicate": 2
+        "invalid_chars": 2905,
+        "invalid_length": 196,
+        "missing_translation": 899,
+        "missing_article": 158,
+        "low_sitelinks": 167,
+        "excluded": 20,
+        "duplicate": 3
       }
     }
   },
   "parameters": {
-    "min_sitelinks": 10,
+    "min_sitelinks": 12,
     "min_approved_terms": 500,
     "term_length": {
       "min": 4,
