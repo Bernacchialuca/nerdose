@@ -78,9 +78,7 @@ describe('cn with theme roles', () => {
     expect(cn('bg-surface-inset', 'bg-game-grep-grid-selected-bg')).toBe(
       'bg-game-grep-grid-selected-bg',
     );
-    expect(cn('bg-surface-inset', 'bg-game-grep-grid-found-bg')).toBe(
-      'bg-game-grep-grid-found-bg',
-    );
+    expect(cn('bg-surface-inset', 'bg-game-grep-grid-found-bg')).toBe('bg-game-grep-grid-found-bg');
     expect(TEXT_ROLES).toContain('numeric-lg');
     expect(TEXT_ROLES).toHaveLength(37);
   });
