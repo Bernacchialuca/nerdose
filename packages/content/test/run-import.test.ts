@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-import { loadDataset, serializeItems } from '../src';
+import { loadDataset, serializeItems, DatasetError } from '../src';
 import { createWikimediaClient } from '../scripts/import-banks/http';
 import { highestMinSitelinks, parseExclusions } from '../scripts/import-banks/rules';
 import {
@@ -14,7 +14,7 @@ import {
   type RunImportOptions,
 } from '../scripts/import-banks/run';
 
-import { MANIFEST_OK, fixtureFetch, type FakeFetch } from './helpers';
+import { F_OK, MANIFEST_OK, fixtureFetch, type FakeFetch } from './helpers';
 
 const CLASSES = [
   { wikidataClass: 'Q9143', category: 'programming_languages' },
@@ -85,8 +85,47 @@ describe('runImport', () => {
     expect(Object.keys(manifest.counts.terms.by_category)).toHaveLength(8);
     expect(Object.keys(manifest.counts.terms.by_reason)).toHaveLength(7);
     expect(read(dir, 'manifest.json')).toBe(JSON.stringify(manifest, null, 2) + '\n');
-    expect(readdirSync(dir).sort()).toEqual(['manifest.json', 'terms.json']);
+    expect(readdirSync(dir).sort()).toEqual(['manifest.json', 'terms.json', 'timeline_facts.json']);
     expect(loadDataset(dir).terms).toHaveLength(7);
+  });
+
+  it('writes an empty fact bank in an empty directory (TS-18)', async () => {
+    const { dir, options } = setup();
+    const { manifest } = await runImport(options);
+    expect(read(dir, 'timeline_facts.json')).toBe('[]\n');
+    expect(manifest.counts.timeline_facts.approved).toBe(0);
+    expect(loadDataset(dir).timelineFacts).toEqual([]);
+  });
+
+  it('keeps existing facts and timeline parameters (TS-19)', async () => {
+    const { dir, options } = setup();
+    writeFileSync(join(dir, 'timeline_facts.json'), serializeItems([F_OK]));
+    const previous = {
+      ...MANIFEST_OK,
+      parameters: {
+        ...MANIFEST_OK.parameters,
+        timeline: { ...MANIFEST_OK.parameters.timeline, min_sitelinks: 30 },
+      },
+    };
+    writeFileSync(join(dir, 'manifest.json'), JSON.stringify(previous));
+    const { manifest } = await runImport(options);
+    expect(read(dir, 'timeline_facts.json')).toBe(serializeItems([F_OK]));
+    expect(manifest.counts.timeline_facts.approved).toBe(1);
+    expect(manifest.counts.timeline_facts.by_category.programming_languages.approved).toBe(1);
+    expect(manifest.parameters.timeline).toEqual(previous.parameters.timeline);
+    expect(manifest.dataset_version).toBe('2026.11.06-2');
+  });
+
+  it('fails on an invalid previous fact bank before any request (TS-20)', async () => {
+    const { dir, fetch, options } = setup();
+    writeFileSync(join(dir, 'timeline_facts.json'), '[{');
+    writeFileSync(join(dir, 'terms.json'), 'previous terms');
+    const error = await runImport(options).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(DatasetError);
+    expect(error).toMatchObject({ file: 'timeline_facts.json' });
+    expect(read(dir, 'terms.json')).toBe('previous terms');
+    expect(readdirSync(dir).filter((f) => f.endsWith('.tmp'))).toEqual([]);
+    expect(fetch.urls).toEqual([]);
   });
 
   it('fails below the minimum without touching files (TS-35)', async () => {

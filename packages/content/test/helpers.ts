@@ -2,7 +2,7 @@ import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import type { DatasetManifest, TermItem } from '../src';
+import type { DatasetManifest, TermItem, TimelineFactItem } from '../src';
 
 export const T_OK: TermItem = {
   wikidata_id: 'Q28865',
@@ -11,6 +11,18 @@ export const T_OK: TermItem = {
   definition: { es: 'lenguaje de programación', en: 'general-purpose programming language' },
   summary: { es: 'Python es un lenguaje de alto nivel…', en: 'Python is a high-level…' },
   sitelinks: 120,
+  status: 'approved',
+  rejection_reason: null,
+};
+
+export const F_OK: TimelineFactItem = {
+  wikidata_id: 'Q251',
+  label: 'Java',
+  category: 'programming_languages',
+  event_date: '1995-05-23',
+  date_precision: 'day',
+  note: { es: 'Java es un lenguaje de programación…', en: 'Java is a high-level…' },
+  sitelinks: 150,
   status: 'approved',
   rejection_reason: null,
 };
@@ -43,6 +55,28 @@ export const MANIFEST_OK: DatasetManifest = {
         duplicate: 0,
       },
     },
+    timeline_facts: {
+      approved: 0,
+      rejected: 0,
+      by_category: {
+        programming_languages: { approved: 0, rejected: 0 },
+        frameworks: { approved: 0, rejected: 0 },
+        companies: { approved: 0, rejected: 0 },
+        operating_systems: { approved: 0, rejected: 0 },
+        hardware: { approved: 0, rejected: 0 },
+        video_games: { approved: 0, rejected: 0 },
+      },
+      by_reason: {
+        disputed_date: 0,
+        imprecise_date: 0,
+        missing_article: 0,
+        low_sitelinks: 0,
+        missing_note: 0,
+        note_year_mismatch: 0,
+        excluded: 0,
+        duplicate: 0,
+      },
+    },
   },
   parameters: {
     min_sitelinks: 20,
@@ -50,6 +84,15 @@ export const MANIFEST_OK: DatasetManifest = {
     term_length: { min: 4, max: 12 },
     languages: ['es', 'en'],
     classes: [{ wikidata_class: 'Q9143', category: 'programming_languages' }],
+    timeline: {
+      min_sitelinks: 10,
+      min_approved_per_category: 100,
+      min_categories: 3,
+      categories_v1: ['programming_languages'],
+      classes: [
+        { wikidata_class: 'Q9143', category: 'programming_languages', date_property: 'P571' },
+      ],
+    },
   },
 };
 

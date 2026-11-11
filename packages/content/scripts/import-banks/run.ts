@@ -1,7 +1,14 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { manifestSchema, type DatasetManifest, type TermItem } from '../../src/schema';
+import { DatasetError } from '../../src';
+import {
+  manifestSchema,
+  timelineFactsFileSchema,
+  type DatasetManifest,
+  type TermItem,
+  type TimelineFactItem,
+} from '../../src/schema';
 
 import { TERM_CLASSES } from './classes';
 import { parseInclusions } from './inclusions';
@@ -54,6 +61,7 @@ export type RunImportOptions = {
 export type RunImportResult = {
   manifest: DatasetManifest;
   terms: TermItem[];
+  timelineFacts: TimelineFactItem[];
   candidates: Candidate[];
   suggestedMinSitelinks: number | null;
 };
@@ -69,6 +77,26 @@ function readPreviousManifest(dataDir: string): DatasetManifest | undefined {
   }
 }
 
+function readPreviousTimelineFacts(dataDir: string): TimelineFactItem[] {
+  const file = 'timeline_facts.json';
+  let raw: string;
+  try {
+    raw = readFileSync(join(dataDir, file), 'utf8');
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return [];
+    throw new DatasetError(file, `No se pudo leer ${file}: ${(error as Error).message}`);
+  }
+  let json: unknown;
+  try {
+    json = JSON.parse(raw);
+  } catch (error) {
+    throw new DatasetError(file, `${file} no es JSON válido: ${(error as Error).message}`);
+  }
+  const parsed = timelineFactsFileSchema.safeParse(json);
+  if (!parsed.success) throw new DatasetError(file, `${file} inválido: ${parsed.error.message}`);
+  return parsed.data;
+}
+
 export async function runImport(options: RunImportOptions): Promise<RunImportResult> {
   const {
     dataDir,
@@ -80,6 +108,7 @@ export async function runImport(options: RunImportOptions): Promise<RunImportRes
     log = () => {},
   } = options;
 
+  const timelineFacts = readPreviousTimelineFacts(dataDir);
   const previous = readPreviousManifest(dataDir);
   const datasetVersion = nextDatasetVersion(now, previous?.dataset_version);
   const minSitelinks = options.minSitelinks ?? previous?.min_sitelinks ?? DEFAULT_MIN_SITELINKS;
@@ -134,6 +163,8 @@ export async function runImport(options: RunImportOptions): Promise<RunImportRes
     minSitelinks,
     minApproved,
     classes,
+    timelineFacts,
+    timeline: previous?.parameters.timeline,
   });
   const suggestedMinSitelinks = highestMinSitelinks(candidates, { exclusions, minApproved });
 
@@ -145,6 +176,6 @@ export async function runImport(options: RunImportOptions): Promise<RunImportRes
     );
   }
 
-  writeDataset(dataDir, { terms, manifest });
-  return { manifest, terms, candidates, suggestedMinSitelinks };
+  writeDataset(dataDir, { terms, timelineFacts, manifest });
+  return { manifest, terms, timelineFacts, candidates, suggestedMinSitelinks };
 }

@@ -49,6 +49,46 @@
         "excluded": 0,
         "duplicate": 0
       }
+    },
+    "timeline_facts": {
+      "approved": 1,
+      "rejected": 0,
+      "by_category": {
+        "programming_languages": {
+          "approved": 1,
+          "rejected": 0
+        },
+        "frameworks": {
+          "approved": 0,
+          "rejected": 0
+        },
+        "companies": {
+          "approved": 0,
+          "rejected": 0
+        },
+        "operating_systems": {
+          "approved": 0,
+          "rejected": 0
+        },
+        "hardware": {
+          "approved": 0,
+          "rejected": 0
+        },
+        "video_games": {
+          "approved": 0,
+          "rejected": 0
+        }
+      },
+      "by_reason": {
+        "disputed_date": 0,
+        "imprecise_date": 0,
+        "missing_article": 0,
+        "low_sitelinks": 0,
+        "missing_note": 0,
+        "note_year_mismatch": 0,
+        "excluded": 0,
+        "duplicate": 0
+      }
     }
   },
   "parameters": {
@@ -64,6 +104,19 @@
         "wikidata_class": "Q9143",
         "category": "programming_languages"
       }
-    ]
+    ],
+    "timeline": {
+      "min_sitelinks": 10,
+      "min_approved_per_category": 100,
+      "min_categories": 3,
+      "categories_v1": ["programming_languages"],
+      "classes": [
+        {
+          "wikidata_class": "Q9143",
+          "category": "programming_languages",
+          "date_property": "P571"
+        }
+      ]
+    }
   }
 }

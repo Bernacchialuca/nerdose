@@ -3,7 +3,7 @@
 ## runImport / InsufficientApprovedError
 - **Location:** packages/content/scripts/import-banks/run.ts
 - **Description:** Queries every class, merges by `wikidata_id`, requests `page/summary` (es, en) only for candidates passing the cheap rules, evaluates, builds the manifest and writes `terms.json` and `manifest.json` atomically. Throws `InsufficientApprovedError` (`approved`, `minimum`, `byCategory`) before touching disk when approved terms are below `minApproved`. Default `minSitelinks`: previous manifest, else `DEFAULT_MIN_SITELINKS` (10).
-- **Signature:** `runImport(options: { dataDir; classes?; minSitelinks?; minApproved?; now?; client?; clientFactory?(datasetVersion); exclusionsPath?; log? }): Promise<{ manifest; terms; suggestedMinSitelinks: number | null }>`
+- **Signature:** `runImport(options: { dataDir; classes?; minSitelinks?; minApproved?; now?; client?; clientFactory?(datasetVersion); exclusionsPath?; log? }): Promise<{ manifest; terms; timelineFacts; candidates; suggestedMinSitelinks: number | null }>`
 - **Usage:** `pnpm --filter @nerdose/content import:banks [--min-sitelinks N] [--cache-dir <dir>]`
 
 ## evaluateTerms and rules
@@ -24,3 +24,9 @@
 ## Wikidata and Wikipedia access
 - **Location:** packages/content/scripts/import-banks/{classes,wikidata,wikipedia}.ts
 - **Description:** `TERM_CLASSES` maps verified Wikidata classes to the eight `TermCategory` values (first class wins when an item appears in several). `buildClassQuery`/`parseClassResults`/`fetchClassCandidates` handle SPARQL; `summaryUrl`/`parseSummary`/`fetchSummary` handle `page/summary` (404, disambiguation or empty extract give `null`).
+
+## buildManifest / countTimelineFacts / DEFAULT_TIMELINE_PARAMETERS / writeDataset
+- **Location:** `packages/content/scripts/import-banks/manifest.ts`, `write.ts`
+- **Description:** Bridge until the facts importer exists: `runImport` re-reads the existing `timeline_facts.json` (invalid file throws `DatasetError` before any request) and the previous `parameters.timeline`, and writes them back unchanged. `writeDataset` validates the three files with Zod, then writes `.tmp` files and renames them.
+- **Signature:** `buildManifest(terms, { datasetVersion, generatedAt, minSitelinks, minApproved, classes, timelineFacts?, timeline? }): DatasetManifest`; `countTimelineFacts(facts): DatasetManifest['counts']['timeline_facts']`; `writeDataset(dataDir, { terms, timelineFacts, manifest }): void`
+- **Usage:** `writeDataset(dir, { terms, timelineFacts, manifest: buildManifest(terms, opts) })`
