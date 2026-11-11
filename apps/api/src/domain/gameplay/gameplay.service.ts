@@ -10,12 +10,19 @@ import type { Play, Player } from '@nerdose/db';
 import type { Logger } from 'pino';
 
 import type { ProgressService } from '@/domain/progress/progress.service';
+import type { QualityRepository } from '@/domain/quality/quality.repository';
 import type { TodayCache } from '@/infra/cache/today-cache';
 import type { WordList } from '@/infra/cache/word-list';
 import type { Clock } from '@/shared/clock';
 
 import type { GameplayRepository } from './gameplay.repository';
-import type { GameToday, MoveResponse, MoveTx, PlayView } from './gameplay.types';
+import type {
+  AcknowledgeVoidResponse,
+  GameToday,
+  MoveResponse,
+  MoveTx,
+  PlayView,
+} from './gameplay.types';
 
 const toPlayView = (p: Play): PlayView => ({
   status: p.status,
@@ -30,7 +37,8 @@ export class GameplayService {
       games: GameRegistry;
       cache: Pick<TodayCache, 'find' | 'get'>;
       repo: Pick<GameplayRepository, 'findPlay' | 'insertPlayIfAbsent'>;
-      progress: Pick<ProgressService, 'gameStatsView' | 'applyResult'>;
+      reports: Pick<QualityRepository, 'hasReported'>;
+      progress: Pick<ProgressService, 'gameStatsView' | 'applyResult' | 'todayStreaks'>;
       runInTx: MoveTx;
       wordList: Pick<WordList, 'has'>;
       rejected: Pick<GameplayRepository, 'insertRejectedGuess'>;
@@ -40,7 +48,7 @@ export class GameplayService {
   ) {}
 
   async getToday(gameId: string, player: Player | null, locale: Locale): Promise<GameToday> {
-    const { games, cache, repo, progress, clock, launchDate } = this.deps;
+    const { games, cache, repo, reports, progress, clock, launchDate } = this.deps;
     const game = games.get(gameId);
     const date = today(clock.now());
     const number = challengeNumber(date, launchDate);
@@ -52,11 +60,28 @@ export class GameplayService {
       play: null,
       result: null,
       game_stats: null,
+      reported: false,
     };
 
     const challenge = number === null ? undefined : cache.find(game.id);
     if (!challenge) return { ...empty, challenge_status: 'none' };
-    if (challenge.status === 'voided') return { ...empty, challenge_status: 'voided' };
+
+    if (challenge.status === 'voided') {
+      if (!player) return { ...empty, challenge_status: 'voided' };
+      const [row, reported] = await Promise.all([
+        repo.findPlay(player.id, challenge.id),
+        reports.hasReported(player.id, challenge.id),
+      ]);
+      if (!row) return { ...empty, challenge_status: 'voided', reported };
+      // ADR-006: con `voided` nunca salen `public_view` ni `result`.
+      return {
+        ...empty,
+        challenge_status: 'voided',
+        play: toPlayView(row),
+        game_stats: await progress.gameStatsView(player.id, game, date),
+        reported,
+      };
+    }
 
     if (!player) {
       return {
@@ -66,7 +91,10 @@ export class GameplayService {
       };
     }
 
-    const row = await repo.findPlay(player.id, challenge.id);
+    const [row, reported] = await Promise.all([
+      repo.findPlay(player.id, challenge.id),
+      reports.hasReported(player.id, challenge.id),
+    ]);
     // `state` solo con Play en curso: el juego decide qué revela (ADR-006).
     const state = row?.status === 'in_progress' ? row.state : undefined;
     const public_view = game.toPublic(challenge.payload, locale, state) as unknown;
@@ -79,9 +107,10 @@ export class GameplayService {
         play,
         result: game.result(challenge.payload, row.state, locale) as unknown,
         game_stats: await progress.gameStatsView(player.id, game, date),
+        reported,
       };
     }
-    return { ...empty, challenge_status: 'published', public_view, play };
+    return { ...empty, challenge_status: 'published', public_view, play, reported };
   }
 
   async start(
@@ -90,7 +119,7 @@ export class GameplayService {
     challengeNum: number,
     log: Logger,
   ): Promise<{ play: PlayView }> {
-    const { games, cache, repo, clock, launchDate } = this.deps;
+    const { games, cache, runInTx, clock, launchDate } = this.deps;
     const game = games.get(gameId);
     const now = clock.now();
     if (challengeNum !== challengeNumber(today(now), launchDate)) {
@@ -99,25 +128,33 @@ export class GameplayService {
     const challenge = cache.get(game.id);
     if (challenge.status === 'voided') throw new AppError('challenge_voided');
 
-    const { inserted } = await repo.insertPlayIfAbsent({
-      playerId: player.id,
-      challengeId: challenge.id,
-      gameId: game.id,
-      date: challenge.date,
-      state: game.initState(challenge.payload, now) as unknown,
+    const events: Array<() => void> = [];
+    const play = await runInTx(async ({ plays }) => {
+      const locked = await plays.lockChallenge(challenge.id);
+      if (locked?.status === 'voided') throw new AppError('challenge_voided');
+      const { inserted } = await plays.insertPlayIfAbsent({
+        playerId: player.id,
+        challengeId: challenge.id,
+        gameId: game.id,
+        date: challenge.date,
+        state: game.initState(challenge.payload, now) as unknown,
+      });
+      if (inserted) {
+        events.push(() =>
+          log.info(
+            {
+              event: 'PlayStarted',
+              play_id: inserted.id,
+              player_id: player.id,
+              challenge_id: challenge.id,
+            },
+            'Play started',
+          ),
+        );
+      }
+      return inserted ?? (await plays.findPlay(player.id, challenge.id));
     });
-    if (inserted) {
-      log.info(
-        {
-          event: 'PlayStarted',
-          play_id: inserted.id,
-          player_id: player.id,
-          challenge_id: challenge.id,
-        },
-        'Play started',
-      );
-    }
-    const play = inserted ?? (await repo.findPlay(player.id, challenge.id));
+    for (const emit of events) emit();
     return { play: toPlayView(play!) };
   }
 
@@ -155,6 +192,9 @@ export class GameplayService {
     let response: MoveResponse;
     try {
       response = await runInTx(async ({ plays, progress: pRepo }) => {
+        // El estado real del challenge manda sobre la cache (anulación concurrente).
+        const locked = await plays.lockChallenge(challenge.id);
+        if (locked?.status === 'voided') throw new AppError('challenge_voided');
         const { inserted } = await plays.insertPlayIfAbsent({
           playerId: player.id,
           challengeId: challenge.id,
@@ -176,6 +216,7 @@ export class GameplayService {
             ),
           );
         }
+        if (play.status === 'voided') throw new AppError('challenge_voided');
         if (play.status !== 'in_progress') throw new AppError('game_finished');
 
         const r = game.applyMove(challenge.payload, play.state, parsed.data, now, ctx);
@@ -264,5 +305,82 @@ export class GameplayService {
     }
     for (const emit of events) emit();
     return response;
+  }
+
+  /** "Marcar como completado": Play `voided` + rachas, idempotente. */
+  async acknowledgeVoid(
+    gameId: string,
+    player: Player,
+    challengeNum: number,
+    log: Logger,
+  ): Promise<AcknowledgeVoidResponse> {
+    const { games, cache, progress, runInTx, clock, launchDate } = this.deps;
+    const game = games.get(gameId);
+    const now = clock.now();
+    const day = today(now);
+    if (challengeNum !== challengeNumber(day, launchDate)) throw new AppError('challenge_expired');
+    const challenge = cache.get(game.id);
+
+    const events: Array<() => void> = [];
+    const streaks = await runInTx(async ({ plays, progress: pRepo }) => {
+      const locked = await plays.lockChallenge(challenge.id);
+      if (locked?.status !== 'voided') throw new AppError('not_voided');
+      const { inserted } = await plays.insertVoidedPlayIfAbsent({
+        playerId: player.id,
+        challengeId: challenge.id,
+        gameId: game.id,
+        date: challenge.date,
+        finishedAt: now,
+      });
+      if (!inserted) return null;
+      const applied = await progress.applyResult(pRepo, {
+        playerId: player.id,
+        game,
+        date: challenge.date,
+        outcome: { status: 'voided' },
+      });
+      events.push(
+        () =>
+          log.info(
+            {
+              event: 'PlayVoidAcknowledged',
+              play_id: inserted.id,
+              player_id: player.id,
+              challenge_id: challenge.id,
+              game_id: game.id,
+            },
+            'Play void acknowledged',
+          ),
+        () =>
+          log.info(
+            {
+              event: 'StreaksUpdated',
+              player_id: player.id,
+              game_id: game.id,
+              current_streak: applied.streaks.game.current,
+              max_streak: applied.streaks.game.max,
+              global_streak: applied.streaks.global.current,
+              max_global_streak: applied.streaks.global.max,
+            },
+            'Streaks updated',
+          ),
+      );
+      return applied.streaks;
+    });
+    for (const emit of events) emit();
+    if (streaks) return { play: { status: 'voided' }, streaks };
+
+    // Ya tenía Play: rachas vivas, sin escribir.
+    const [gs, live] = await Promise.all([
+      progress.gameStatsView(player.id, game, day),
+      progress.todayStreaks(player.id, day),
+    ]);
+    return {
+      play: { status: 'voided' },
+      streaks: {
+        game: { current: gs.current_streak, max: gs.max_streak },
+        global: live.global,
+      },
+    };
   }
 }

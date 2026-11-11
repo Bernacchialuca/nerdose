@@ -53,6 +53,7 @@ describe('Grep Grid: abrir y empezar', () => {
       play: null,
       result: null,
       game_stats: null,
+      reported: false,
     });
   });
 
@@ -584,6 +585,7 @@ describe('Grep Grid: publicación', () => {
       play: null,
       result: null,
       game_stats: null,
+      reported: false,
     });
     const start = await ggPost(app, 'start', { challenge_number: 8 }, player);
     expect(start.status).toBe(404);

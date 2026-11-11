@@ -5,6 +5,7 @@ import type { Logger } from 'pino';
 import type { ApiEnv } from '@/config/env';
 import type { GameplayService } from '@/domain/gameplay/gameplay.service';
 import type { IdentityService } from '@/domain/identity/identity.service';
+import type { QualityService } from '@/domain/quality/quality.service';
 import type { PublishingService } from '@/domain/publishing/publishing.service';
 import type { Health } from '@/infra/database/health';
 
@@ -14,7 +15,8 @@ export type AppDeps = {
   config: Pick<ApiEnv, 'WEB_ORIGIN' | 'ADMIN_ORIGIN' | 'TRUST_PROXY_HEADER' | 'LAUNCH_DATE'>;
   identity: IdentityService;
   publishing: Pick<PublishingService, 'getToday' | 'ensureToday'>;
-  gameplay: Pick<GameplayService, 'getToday' | 'start' | 'move'>;
+  gameplay: Pick<GameplayService, 'getToday' | 'start' | 'move' | 'acknowledgeVoid'>;
+  quality: Pick<QualityService, 'report'>;
 };
 
 export type AppEnv = {

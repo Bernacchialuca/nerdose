@@ -1,5 +1,5 @@
 import type { GameId } from '@nerdose/core';
-import { plays, rejectedGuesses } from '@nerdose/db';
+import { challenges, plays, rejectedGuesses } from '@nerdose/db';
 import type { Db, Play, Tx } from '@nerdose/db';
 import { and, eq } from 'drizzle-orm';
 
@@ -83,6 +83,32 @@ export class GameplayRepository {
       .where(eq(plays.id, playId))
       .returning();
     return row!;
+  }
+
+  /** SELECT … FOR SHARE del challenge: lee el estado real y serializa contra la anulación. */
+  async lockChallenge(challengeId: string): Promise<{ id: string; status: string } | null> {
+    const [row] = await this.db
+      .select({ id: challenges.id, status: challenges.status })
+      .from(challenges)
+      .where(eq(challenges.id, challengeId))
+      .for('share');
+    return row ?? null;
+  }
+
+  /** Play `voided` sin jugada previa: `inserted` es null si ya existía. */
+  async insertVoidedPlayIfAbsent(values: {
+    playerId: string;
+    challengeId: string;
+    gameId: GameId;
+    date: string;
+    finishedAt: Date;
+  }): Promise<{ inserted: Play | null }> {
+    const [row] = await this.db
+      .insert(plays)
+      .values({ ...values, state: {}, status: 'voided' })
+      .onConflictDoNothing({ target: [plays.playerId, plays.challengeId] })
+      .returning();
+    return { inserted: row ?? null };
   }
 
   async insertRejectedGuess(word: string, playerId: string): Promise<void> {

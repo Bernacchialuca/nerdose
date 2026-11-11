@@ -3,6 +3,7 @@ import type { Hono } from 'hono';
 import { gameplayRoutes } from '@/domain/gameplay/gameplay.routes';
 import { identityRoutes } from '@/domain/identity/identity.routes';
 import { publishingRoutes } from '@/domain/publishing/publishing.routes';
+import { qualityRoutes } from '@/domain/quality/quality.routes';
 import { ensureToday } from '@/http/middleware/ensure-today';
 import type { AppDeps, AppEnv } from '@/http/types';
 
@@ -18,4 +19,5 @@ export function registerRoutes(app: Hono<AppEnv>, deps: AppDeps) {
   app.use('/api/games/*', publishDay);
   app.route('/api', publishingRoutes(deps));
   app.route('/api', gameplayRoutes(deps));
+  app.route('/api', qualityRoutes(deps));
 }

@@ -24,6 +24,9 @@ describe('.env.example', () => {
       'WEB_ORIGIN',
       'ADMIN_ORIGIN',
       'TRUST_PROXY_HEADER',
+      'REPORT_ALERT_COUNT',
+      'REPORT_ALERT_RATIO',
+      'REPORT_ALERT_RATIO_MIN_COUNT',
     ]);
   });
 });

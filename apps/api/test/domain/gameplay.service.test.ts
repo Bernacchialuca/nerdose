@@ -4,6 +4,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 
 import { GameplayRepository, moveTransaction } from '@/domain/gameplay/gameplay.repository';
 import { GameplayService } from '@/domain/gameplay/gameplay.service';
+import { QualityRepository } from '@/domain/quality/quality.repository';
 import { ProgressRepository } from '@/domain/progress/progress.repository';
 import { ProgressService } from '@/domain/progress/progress.service';
 import { PublishingRepository } from '@/domain/publishing/publishing.repository';
@@ -35,6 +36,7 @@ async function build() {
     games,
     cache,
     repo: new GameplayRepository(dbs.api.db),
+    reports: new QualityRepository(dbs.api.db),
     progress: new ProgressService({ repo: new ProgressRepository(dbs.api.db) }),
     runInTx: moveTransaction(dbs.api.db),
     wordList: { has: () => true },
@@ -148,7 +150,7 @@ describe('GameplayService.start', () => {
 });
 
 describe('GameplayService.getToday', () => {
-  it('TS-14 anulado: sin consultar plays', async () => {
+  it('TS-14 anulado sin Play', async () => {
     await publish({
       status: 'voided',
       voidReason: 'wrong_answer',
@@ -165,6 +167,7 @@ describe('GameplayService.getToday', () => {
       play: null,
       result: null,
       game_stats: null,
+      reported: false,
     });
   });
 
@@ -254,6 +257,7 @@ describe('GameplayService.getToday', () => {
       games,
       cache,
       repo: boom,
+      reports: boom,
       progress: boom,
       runInTx: boom,
       wordList: boom,

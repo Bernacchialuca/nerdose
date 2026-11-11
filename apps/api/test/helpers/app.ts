@@ -9,6 +9,9 @@ import { GameplayRepository, moveTransaction } from '@/domain/gameplay/gameplay.
 import { GameplayService } from '@/domain/gameplay/gameplay.service';
 import type { MoveTxRepos } from '@/domain/gameplay/gameplay.types';
 import type { IdentityService } from '@/domain/identity/identity.service';
+import { QualityRepository } from '@/domain/quality/quality.repository';
+import { QualityService } from '@/domain/quality/quality.service';
+import type { AlertThresholds } from '@/domain/quality/quality.types';
 import { ProgressRepository } from '@/domain/progress/progress.repository';
 import { ProgressService } from '@/domain/progress/progress.service';
 import {
@@ -33,6 +36,8 @@ export const TEST_CONFIG = {
   TRUST_PROXY_HEADER: 'x-forwarded-for',
   LAUNCH_DATE: '2026-11-24',
 };
+
+export const DEFAULT_THRESHOLDS: AlertThresholds = { count: 3, ratio: 0.05, ratioMinCount: 2 };
 
 export const MUTATION_HEADERS = {
   Origin: 'http://localhost:5173',
@@ -90,10 +95,14 @@ export function buildMemoryServices(opts: { clock?: Clock; logger: Logger }) {
     games,
     cache,
     repo: gameplayRepo,
+    reports: { hasReported: async () => false },
     progress,
     runInTx: async (fn) =>
       fn({
         plays: {
+          lockChallenge: async () => null,
+          findPlay: async () => null,
+          insertVoidedPlayIfAbsent: async () => ({ inserted: null }),
           insertPlayIfAbsent: async () => ({ inserted: null }),
           lockPlay: async () => null,
           updateState: async () => {
@@ -120,7 +129,12 @@ export function buildMemoryServices(opts: { clock?: Clock; logger: Logger }) {
     clock,
     launchDate: TEST_CONFIG.LAUNCH_DATE,
   });
-  return { publishing, gameplay, cache, progress };
+  const quality = {
+    report: async (): Promise<{ report_id: string }> => {
+      throw new Error('sin base en este test');
+    },
+  };
+  return { publishing, gameplay, cache, progress, quality };
 }
 
 export async function tempWordList(words: string[] = ['CACHE', 'REACT']) {
@@ -145,6 +159,7 @@ export async function buildDbServices(
     progressRepo?: ConstructorParameters<typeof ProgressService>[0]['repo'];
     /** Envuelve los repos de la transacción (p. ej. para forzar una falla en el cierre). */
     wrapTxRepos?: (r: MoveTxRepos) => MoveTxRepos;
+    thresholds?: AlertThresholds;
   },
 ) {
   const clock = opts.clock ?? systemClock;
@@ -173,6 +188,7 @@ export async function buildDbServices(
     games,
     cache,
     repo: gameplayRepo,
+    reports: new QualityRepository(dbs.api.db),
     progress,
     runInTx: wrap ? (fn) => baseTx((r) => fn(wrap(r))) : baseTx,
     wordList,
@@ -180,7 +196,14 @@ export async function buildDbServices(
     clock,
     launchDate: TEST_CONFIG.LAUNCH_DATE,
   });
-  return { identity: dbs.identity(), publishing, gameplay, progress, cache, wordList };
+  const db = dbs.api.db;
+  const quality = new QualityService({
+    games,
+    runInTx: (fn) => db.transaction((tx) => fn(new QualityRepository(tx))),
+    clock,
+    thresholds: opts.thresholds ?? DEFAULT_THRESHOLDS,
+  });
+  return { identity: dbs.identity(), publishing, gameplay, quality, progress, cache, wordList };
 }
 
 export function buildTestApp(
@@ -196,6 +219,7 @@ export function buildTestApp(
     config: overrides.config ?? TEST_CONFIG,
     publishing: overrides.publishing ?? memory.publishing,
     gameplay: overrides.gameplay ?? memory.gameplay,
+    quality: overrides.quality ?? memory.quality,
   });
   return { app, lines: captured.lines };
 }
@@ -214,6 +238,7 @@ export async function buildDbApp(
     config: TEST_CONFIG,
     publishing: services.publishing,
     gameplay: services.gameplay,
+    quality: services.quality,
   });
   return { app, lines: captured.lines, ...services };
 }

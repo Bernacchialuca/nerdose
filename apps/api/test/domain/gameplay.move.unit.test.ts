@@ -22,9 +22,11 @@ function setup(
     runInTx?: (repos: MoveTxRepos) => MoveTx;
     insertRejected?: () => Promise<void>;
     inserted?: boolean;
+    challengeStatus?: string;
   } = {},
 ) {
   const calls = {
+    lockChallenge: vi.fn(async () => ({ id: 'c1', status: opts.challengeStatus ?? 'published' })),
     updateState: vi.fn(async (_id: string, state: unknown) => ({
       status: 'in_progress',
       state,
@@ -42,6 +44,9 @@ function setup(
   };
   const repos = {
     plays: {
+      lockChallenge: calls.lockChallenge,
+      findPlay: async () => null,
+      insertVoidedPlayIfAbsent: async () => ({ inserted: null }),
       insertPlayIfAbsent: async () => ({
         inserted: opts.inserted ? ({ id: 'play-1' } as never) : null,
       }),
@@ -76,6 +81,7 @@ function setup(
       }),
     }) as never,
     repo: {} as never,
+    reports: {} as never,
     progress: { gameStatsView: vi.fn(), applyResult: calls.applyResult } as never,
     runInTx,
     wordList: { has: opts.has ?? ((w: string) => w === 'REACT' || w === 'CACHE') },
@@ -229,5 +235,21 @@ describe('GameplayService.move (unit)', () => {
     } finally {
       spy.mockRestore();
     }
+  });
+
+  it('challenge voided en la base: challenge_voided sin crear Play', async () => {
+    const s = setup({ challengeStatus: 'voided' });
+    await expect(s.run('devdle', 8, { guess: 'REACT' })).rejects.toMatchObject({
+      code: 'challenge_voided',
+    });
+    expect(s.calls.lockChallenge).toHaveBeenCalledOnce();
+  });
+
+  it('Play voided: challenge_voided y no game_finished', async () => {
+    const s = setup({ play: { status: 'voided' } });
+    await expect(s.run('devdle', 8, { guess: 'REACT' })).rejects.toMatchObject({
+      code: 'challenge_voided',
+    });
+    expect(s.calls.updateState).not.toHaveBeenCalled();
   });
 });

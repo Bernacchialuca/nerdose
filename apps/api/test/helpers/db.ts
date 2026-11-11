@@ -1,6 +1,14 @@
 import { randomUUID } from 'node:crypto';
 
-import { challenges, plays, playerGameStats, playerStats, players, terms } from '@nerdose/db';
+import {
+  challengeReports,
+  challenges,
+  plays,
+  playerGameStats,
+  playerStats,
+  players,
+  terms,
+} from '@nerdose/db';
 import { createDb } from '@nerdose/db';
 import { truncateAll } from '@nerdose/db/testing';
 import { inject } from 'vitest';
@@ -87,6 +95,21 @@ export function useDatabases() {
     },
     insertPlayerStats: async (values: typeof playerStats.$inferInsert) => {
       const [row] = await owner.db.insert(playerStats).values(values).returning();
+      return row!;
+    },
+    insertReport: async (
+      values: Pick<typeof challengeReports.$inferInsert, 'challengeId' | 'playerId'> &
+        Partial<typeof challengeReports.$inferInsert>,
+    ) => {
+      const [row] = await owner.db
+        .insert(challengeReports)
+        .values({
+          reason: 'wrong_answer',
+          locale: 'es',
+          context: { code_language: null, play_status: null, play_state: null, user_agent: null },
+          ...values,
+        })
+        .returning();
       return row!;
     },
     insertTerm: async (values: Partial<typeof terms.$inferInsert> & { term: string }) => {

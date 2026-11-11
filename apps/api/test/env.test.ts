@@ -46,6 +46,9 @@ describe('loadEnv', () => {
       PORT: 3000,
       LOG_LEVEL: 'info',
       SERVICE_NAME: 'api',
+      REPORT_ALERT_COUNT: 3,
+      REPORT_ALERT_RATIO: 0.05,
+      REPORT_ALERT_RATIO_MIN_COUNT: 2,
       ...VALID,
     });
   });
@@ -110,6 +113,25 @@ describe('loadEnv', () => {
         TRUST_PROXY_HEADER: 'X-Forwarded-For',
       });
       expect(loadEnv(VALID).TRUST_PROXY_HEADER).toBeUndefined();
+    });
+
+    // TS-46
+    it('umbrales de reporte: defaults, coerción y validación', () => {
+      expect(loadEnv(VALID)).toMatchObject({
+        REPORT_ALERT_COUNT: 3,
+        REPORT_ALERT_RATIO: 0.05,
+        REPORT_ALERT_RATIO_MIN_COUNT: 2,
+      });
+      expect(loadEnv({ ...VALID, REPORT_ALERT_COUNT: '5' }).REPORT_ALERT_COUNT).toBe(5);
+      const bad: Array<[string, string]> = [
+        ['REPORT_ALERT_COUNT', '0'],
+        ['REPORT_ALERT_RATIO', '1'],
+        ['REPORT_ALERT_RATIO', '0'],
+        ['REPORT_ALERT_RATIO_MIN_COUNT', '1.5'],
+      ];
+      for (const [name, value] of bad) {
+        expect(() => loadEnv({ ...VALID, [name]: value })).toThrow(name);
+      }
     });
   });
 });

@@ -415,3 +415,41 @@ describe('anti-spoiler de la api (Timeline)', () => {
     expect(finished[0]).toMatchObject({ challenge_id: challenge.id, game_id: 'timeline' });
   });
 });
+
+describe('anti-spoiler: anulación y reportes (S-031)', () => {
+  it('today voided sin Play, report y acknowledge-void no filtran la solución', async () => {
+    await dbs.insertChallenge({
+      gameId: 'devdle',
+      date: '2026-12-01',
+      number: 8,
+      payload: PAYLOAD,
+      status: 'voided',
+      voidReason: 'x',
+      voidedAt: new Date('2026-12-01T09:00:00Z'),
+    });
+    const player = await dbs.insertPlayer();
+    const { app } = await buildDbApp(dbs);
+    const h = { ...MUTATION_HEADERS, Cookie: `nd_pid=${player.id}` };
+
+    const bodies = [
+      await (await app.request('/api/games/devdle/today')).text(),
+      await (await app.request('/api/games/devdle/today', { headers: h })).text(),
+    ];
+    const report = await app.request('/api/games/devdle/today/report', {
+      method: 'POST',
+      headers: h,
+      body: JSON.stringify({ challenge_number: 8, reason: 'wrong_answer' }),
+    });
+    expect(report.status).toBe(201);
+    bodies.push(await report.text());
+    const ack = await app.request('/api/games/devdle/today/acknowledge-void', {
+      method: 'POST',
+      headers: h,
+      body: JSON.stringify({ challenge_number: 8 }),
+    });
+    expect(ack.status).toBe(200);
+    bodies.push(await ack.text());
+    bodies.push(await (await app.request('/api/games/devdle/today', { headers: h })).text());
+    for (const raw of bodies) assertNoSpoiler(raw);
+  });
+});

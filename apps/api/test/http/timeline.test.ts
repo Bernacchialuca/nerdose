@@ -68,6 +68,7 @@ describe('Timeline: abrir y empezar', () => {
       play: null,
       result: null,
       game_stats: null,
+      reported: false,
     });
   });
 
@@ -86,6 +87,7 @@ describe('Timeline: abrir y empezar', () => {
       play: null,
       result: null,
       game_stats: null,
+      reported: false,
     });
     expect(Object.keys(json.public_view)).toEqual(['prompt', 'items']);
     for (const i of json.public_view.items) {
@@ -618,6 +620,7 @@ describe('Timeline: publicación', () => {
       play: null,
       result: null,
       game_stats: null,
+      reported: false,
     });
     const start = await tlPost(app, 'start', { challenge_number: 8 }, player);
     expect(start.status).toBe(404);
