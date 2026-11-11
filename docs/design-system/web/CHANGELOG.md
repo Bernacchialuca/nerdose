@@ -3,6 +3,25 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.7.0] - 2026-11-10
+
+**MINOR.** Tech Timeline jugable (story S-029). Ningún valor definido cambia. Los otros planes de S-029 (`ui`, `web`) suman sus ítems a esta misma entrada.
+
+### Agregado
+- `patterns/game-boards.md` 1.3.0: resueltos los «Pendiente» de Timeline (estados de juego de `timeline.row`: default, foco, tomada, destino y bloqueada; medidas a 320px; teclado y botones ↑ ↓; columna de fecha de `timeline.rail`) y documentado `timeline.hint` con sus anuncios ES/EN.
+- `foundations/grid.md`: fila «Timeline — partida» (`7 1 520px` + `5 1 320px`, gap 24) y breakpoint efectivo de 928px también para la partida.
+
+### Código alineado con el spec
+- `@nerdose/game-timeline/client` (S-029): `Instructions`, `Game`, `Result`, `share()` y las piezas `timeline.row` (jugando y resultado), `timeline.rail`, `timeline.hint` y el puntaje `score` compuesto localmente. Los tokens `status.success.row-bg`, `status.misplaced.*`, `type.display.score`, `type.numeric.year` y `type.game.item` los aporta `@nerdose/ui` (ver «Requisitos a `@nerdose/ui`» del Story Plan de S-029).
+- `@nerdose/ui` (S-029): tokens `status.success.row-bg` (`--color-status-success-row-bg`), `status.misplaced.bg` (`--color-status-misplaced-bg`), `status.misplaced.border` (`--color-status-misplaced-border`), `type.display.score` (`--text-display-score`, 56/800/1/-2), `type.numeric.year` (`--text-numeric-year`, 18/800) y `type.game.item` (`--text-game-item`, 16/700), los tres roles en `TEXT_ROLES`. `#5C4419` se declara como token propio aunque coincide con `game.bug-hunt.featured` y `streak.border-hover`: distinto significado.
+
+### Notas para limpiar en otros docs
+- `timeline-resultado.md` · ejemplos de fecha abreviados («jun 2014»): el código usa el formato largo de `formatEventDate` («junio de 2014»).
+- `timeline-instrucciones.md` · `btn-empezar` `primary`: el código usa `accent` del juego, como Devdle y Grep Grid.
+- `timeline-partida.md` · hint `aria-live` en la línea visible: la línea es silenciosa y una región `sr-only` anuncia; los arrastres los anuncia dnd-kit.
+- `game-boards.md` · `timeline.rail` con columna de 64px: la fecha va sobre el nombre.
+- `streak-number` `score` no está implementado en `@nerdose/ui`: el client lo compone localmente.
+
 ## [1.6.0] - 2026-11-10
 
 **MINOR.** Grep Grid jugable (story S-024). Ningún valor definido cambia. Los otros planes de S-024 (`games`, `web`) suman sus ítems a esta misma entrada.

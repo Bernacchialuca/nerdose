@@ -35,6 +35,7 @@ Describe cómo se acomoda el layout de `web` según el ancho. **El prototipo `do
 | Bug Hunt — código + aside (resultado) | `1 1 560px` + `1 1 380px` | 24px | L709 |
 | Big O — código + explicación | `1 1 560px` + `1 1 380px` | 24px | L881-905 |
 | Timeline — tu orden + orden correcto | `1 1 320px` + `2 1 520px` | 24px | L1009-1024 |
+| Timeline — partida (lista + ayuda/confirmar) | `7 1 520px` + `5 1 320px` | 24px | S-029 |
 | Grep — tablero + aside | `999 1 620px` + `1 1 340px` | 28px | L1114-1126 |
 
 Con `flex-grow: 999` (Devdle, Grep) el tablero se queda con casi todo el espacio sobrante y el aside apenas crece.
@@ -67,7 +68,7 @@ No son tokens de media query: son los anchos de **viewport** (contenido + 64px d
 
 | Bloque | Una columna por debajo de | Notas |
 |---|---|---|
-| Timeline | 928px | 320 + 24 + 520 |
+| Timeline (resultado y partida) | 928px | 320 + 24 + 520 (en la partida la lista de 520 va primero) |
 | Home — progreso | 964px | 560 + 20 + 320 |
 | Devdle | 964px | 560 + 40 + 300; el aside cae abajo, centrado |
 | Stats — racha + stats | 924px | 280 + 20 + 560 |

@@ -1,6 +1,6 @@
 # Reusable Code - games / Timeline
 
-Package `@nerdose/game-timeline` (`packages/games/timeline`). Entries: `./definition`, `./client` (stub until S-029), `./generator`.
+Package `@nerdose/game-timeline` (`packages/games/timeline`). Entries: `./definition`, `./client`, `./generator`.
 
 ## Shared
 
@@ -40,9 +40,73 @@ Package `@nerdose/game-timeline` (`packages/games/timeline`). Entries: `./defini
 
 ## Client
 
-### Stub
-- **Location:** packages/games/timeline/src/client/index.ts
-- **Description:** `export {};` until S-029 implements Instructions, Game, Result, share and i18n.
+Entry `./client` (React 19, dnd-kit). Same props contract as Devdle and Grep Grid; never imports `../definition/index` (only the schemas).
+
+### Instructions
+- **Location:** packages/games/timeline/src/client/instructions.tsx
+- **Description:** Instructions screen: `h1` in the game accent, meta, three `Card` `step`s, count notice and a "Start" button that calls `onStart` once per attempt (re-armed when `starting` returns to `false`). Slots `notices` and `actions`; the rules section has `id={HELP_TARGET_ID}`.
+- **Signature:** `Instructions(props: InstructionsProps)`
+
+### Game
+- **Location:** packages/games/timeline/src/client/game.tsx
+- **Description:** Playing screen: prompt `h1`, "// tu orden" panel with five sortable rows (dnd-kit: handle-only drag with mouse/touch, keyboard sensor, up/down buttons), silent hint line plus polite live region, help text (`#game-help`) and "Confirm order" (`moveSchema.parse` then `onMove`, once per submit). Local order survives a language change (same id set) and restarts when the id set changes; `pending`/`locked` block rows; `moveError` is handled by identity.
+- **Signature:** `Game(props: GameProps)`
+
+### Result
+- **Location:** packages/games/timeline/src/client/result.tsx
+- **Description:** Result screen: comment with the translated category, verdict `h1` (5/5 perfect, N of 5, none), score, "your order" with check/cross per position and "correct order" rail with dates by precision and notes. Slots `notices`, `aside`, `footer`.
+- **Signature:** `Result(props: ResultProps)`
+
+### share
+- **Location:** packages/games/timeline/src/client/share.ts
+- **Description:** Spoiler-free text `⏳ Tech Timeline #N` / `🟩🟥🟥🟩🟩 3/5` / `nerdose.dev`, identical in es/en; parses with `resultSchema`.
+- **Signature:** `share(result: unknown, number: number): string`
+
+### i18n / HELP_TARGET_ID / types
+- **Location:** packages/games/timeline/src/client/i18n/index.ts, help-target.ts, types.ts, parse.ts
+- **Description:** `i18n = { namespace: 'timeline', resources: { es, en } }`; `HELP_TARGET_ID = 'game-help'`; contract types (`GameProps`, `InstructionsProps`, `ResultProps`, `ClientBaseProps`, `MoveErrorInfo`, `GameStatsView`, `Translate`); `parsePublicView`, `parseState`, `parseFeedback`, `parseResult`.
+
+### initialOrder / reorder / moveBy / sameIdSet
+- **Location:** packages/games/timeline/src/client/order.ts
+- **Description:** Pure ordering used by drag, keyboard and the buttons. `reorder` is `arrayMove`; `moveBy(order, id, -1 | 1)` returns the same array at the extremes; `sameIdSet` compares ids ignoring order.
+- **Signature:** `initialOrder(view): string[]`; `reorder(order, from, to): string[]`; `moveBy(order, id, delta): string[]`; `sameIdSet(a, b): boolean`
+- **Usage:** `moveBy(order, 'k1v3s8', -1)`
+
+### positionMarks / squares
+- **Location:** packages/games/timeline/src/client/marks.ts
+- **Description:** Per submitted position: `{ opaque_id, label, position, correct, correctPosition }`; `squares` renders the 🟩/🟥 string used by `share`.
+- **Signature:** `positionMarks(result: TimelineResult): PositionMark[]`; `squares(result): string`
+
+### makeAnnouncements / makeScreenReaderInstructions
+- **Location:** packages/games/timeline/src/client/announcements.ts
+- **Description:** dnd-kit `Announcements` (start, over, end, cancel; 1-based position of 5, original position when there is no target) and `screenReaderInstructions`, translated through the game `t`.
+- **Signature:** `makeAnnouncements(t, labelOf, positionOf): Announcements`; `makeScreenReaderInstructions(t): ScreenReaderInstructions`
+
+### useTimelineSensors / MousePointerSensor
+- **Location:** packages/games/timeline/src/client/sensors.ts
+- **Description:** Mouse/pen-only `PointerSensor` (distance 4), `TouchSensor` (delay 150, tolerance 5) and `KeyboardSensor` with `sortableKeyboardCoordinates`, so a touch is handled only by `TouchSensor`.
+- **Signature:** `useTimelineSensors(): SensorDescriptor<SensorOptions>[]`
+
+### SortableRow / useRowSortable
+- **Location:** packages/games/timeline/src/client/sortable-row.tsx, use-row-sortable.ts
+- **Description:** `timeline.row` while playing: handle (only drag activator, `touch-none`), position, name and up/down buttons. `useRowSortable` wraps `useSortable` with no layout transition and the transform as `style`.
+- **Signature:** `SortableRow({ id, label, index, blocked, t, onMove })`; `useRowSortable(id, disabled, roleDescription)`
+
+### ConsoleHint / SectionPanel
+- **Location:** packages/games/timeline/src/client/console-hint.tsx, section-panel.tsx
+- **Description:** Copies of the Grep Grid pieces. `ConsoleHint` is a silent visible line plus a polite region with one keyed node per announcement; `SectionPanel` is a panel with a real `h2` `//` header and an optional `className`.
+
+### Score / Rail / YourOrder
+- **Location:** packages/games/timeline/src/client/score.tsx, rail.tsx, your-order.tsx
+- **Description:** Result pieces: `Score` (`streak-number` `score`, composed locally), `Rail` (`timeline.rail`, date above the name via `formatEventDate`), `YourOrder` (rows with solid green or dashed amber border, badge and `sr-only` sentence).
+
+### makeT
+- **Location:** packages/games/timeline/src/client/test-utils.ts
+- **Description:** Test-only translator: resolves dotted keys, interpolates `{{var}}`, throws on a missing key.
+
+### Test fixtures
+- **Location:** packages/games/timeline/src/client/test-fixtures.ts
+- **Description:** Test-only: `PUBLIC_VIEW_ES`, `PUBLIC_VIEW_EN`, `PUBLIC_VIEW_OTHER`, `STATE_EMPTY`, `INITIAL_ORDER`, `RESULT_3_ES`, `RESULT_3_EN`, `RESULT_5_ES`, `RESULT_0_ES`.
 
 ## Generator
 

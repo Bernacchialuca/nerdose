@@ -1,6 +1,6 @@
 # Reusable Code Index - games
 
-Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition`, `./client` and `./generator`, and `@nerdose/game-timeline` (`packages/games/timeline`), entries `./definition`, `./generator` and `./client` (stub until S-029). The build script lives in `scripts/` and is never importable from `src/` or other packages.
+Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition`, `./client` and `./generator`, and `@nerdose/game-timeline` (`packages/games/timeline`), entries `./definition`, `./generator` and `./client`. The build script lives in `scripts/` and is never importable from `src/` or other packages.
 
 ## Devdle definition (6 items) - see devdle.md
 - **devdle / definition** (packages/games/devdle/src/definition/index.ts) - `GameDefinition` of Devdle (`id: 'devdle'`, `version: 1`); `definition` is an alias
@@ -80,6 +80,21 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **payloadSchema / moveSchema / stateSchema / publicViewSchema / feedbackSchema / resultSchema / statsSchema** (packages/games/timeline/src/definition/schemas.ts) - Zod schemas, snake_case as in `api.yaml`
 - **ITEMS_COUNT / OPAQUE_ID_PATTERN** (packages/games/timeline/src/definition/schemas.ts) - 5 and `/^[a-z0-9]{6}$/`
 - **TimelinePayload / TimelineItem / TimelineMove / TimelineState / TimelinePublicView / TimelineFeedback / TimelineResult / TimelineStats** (packages/games/timeline/src/definition/schemas.ts) - Types inferred from the schemas
+
+## Timeline client (13 items) - see timeline.md
+- **Instructions** (packages/games/timeline/src/client/instructions.tsx) - Instructions screen with a once-per-attempt "Start"
+- **Game** (packages/games/timeline/src/client/game.tsx) - Playing screen with the dnd-kit sortable list, hint and confirmation
+- **Result** (packages/games/timeline/src/client/result.tsx) - Verdict, score, "your order" and "correct order" rail
+- **share** (packages/games/timeline/src/client/share.ts) - Spoiler-free share text
+- **i18n / HELP_TARGET_ID / parse* / contract types** (packages/games/timeline/src/client/i18n/index.ts, help-target.ts, parse.ts, types.ts) - Namespace `timeline`, help anchor, schema parsers and props types
+- **initialOrder / reorder / moveBy / sameIdSet** (packages/games/timeline/src/client/order.ts) - Pure ordering shared by drag, keyboard and buttons
+- **positionMarks / squares** (packages/games/timeline/src/client/marks.ts) - Per-position hit marks and share squares
+- **makeAnnouncements / makeScreenReaderInstructions** (packages/games/timeline/src/client/announcements.ts) - Translated dnd-kit announcements
+- **useTimelineSensors / MousePointerSensor** (packages/games/timeline/src/client/sensors.ts) - Mouse, touch and keyboard sensors
+- **SortableRow / useRowSortable** (packages/games/timeline/src/client/sortable-row.tsx, use-row-sortable.ts) - Playing row with handle and up/down buttons
+- **ConsoleHint / SectionPanel** (packages/games/timeline/src/client/console-hint.tsx, section-panel.tsx) - Silent hint line with live region; panel with `h2` header
+- **Score / Rail / YourOrder** (packages/games/timeline/src/client/score.tsx, rail.tsx, your-order.tsx) - Result pieces
+- **makeT / test fixtures** (packages/games/timeline/src/client/test-utils.ts, test-fixtures.ts) - Test-only helpers
 
 ## Timeline generator (6 items) - see timeline.md
 - **generator / TimelineFact** (packages/games/timeline/src/generator/index.ts) - `GameGenerator<TimelinePayload, TimelineFact>`; `TimelineFact` is the `bankItems` contract for S-028

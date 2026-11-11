@@ -2,6 +2,7 @@
 export const TEXT_ROLES = [
   'display-streak-compact',
   'display-hero',
+  'display-score',
   'title-page',
   'title-section-lg',
   'title-section',
@@ -11,6 +12,7 @@ export const TEXT_ROLES = [
   'brand-logo',
   'numeric-md',
   'numeric-lg',
+  'numeric-year',
   'body-lede',
   'body',
   'body-sm-tight',
@@ -34,6 +36,7 @@ export const TEXT_ROLES = [
   'game-tile-sm',
   'game-key',
   'game-key-small',
+  'game-item',
   'body-sm',
   'body-sm-legend',
   'code-share',

@@ -80,7 +80,27 @@ describe('cn with theme roles', () => {
     );
     expect(cn('bg-surface-inset', 'bg-game-grep-grid-found-bg')).toBe('bg-game-grep-grid-found-bg');
     expect(TEXT_ROLES).toContain('numeric-lg');
-    expect(TEXT_ROLES).toHaveLength(37);
+  });
+
+  it('keeps the Tech Timeline roles next to their colors (S-029 TS-8..TS-10)', () => {
+    expect(cn('text-display-score text-game-timeline')).toBe(
+      'text-display-score text-game-timeline',
+    );
+    expect(cn('text-numeric-year text-game-timeline')).toBe('text-numeric-year text-game-timeline');
+    expect(cn('text-game-item text-text')).toBe('text-game-item text-text');
+    expect(cn('text-numeric-lg', 'text-numeric-year')).toBe('text-numeric-year');
+    expect(cn('text-game-tile-sm', 'text-game-item')).toBe('text-game-item');
+    expect(cn('bg-surface', 'bg-status-misplaced-bg')).toBe('bg-status-misplaced-bg');
+    expect(cn('border-status-success-border', 'border-status-misplaced-border')).toBe(
+      'border-status-misplaced-border',
+    );
+    expect(cn('border-dashed border-status-misplaced-border bg-status-misplaced-bg')).toBe(
+      'border-dashed border-status-misplaced-border bg-status-misplaced-bg',
+    );
+    expect(TEXT_ROLES).toEqual(
+      expect.arrayContaining(['display-score', 'numeric-year', 'game-item']),
+    );
+    expect(TEXT_ROLES).toHaveLength(40);
   });
 
   it('resolves role, radius and shadow conflicts (TS-11)', () => {

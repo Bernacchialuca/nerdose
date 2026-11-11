@@ -13,6 +13,9 @@ function sources(dir: string): string[] {
   });
 }
 
+// Partido a propósito: la guarda de game-host prohíbe esa cadena literal en todo `src/`.
+const DND_SCOPE = '@dnd' + '-kit/';
+
 describe('catalog boundaries', () => {
   it('TS-50: la home no importa client de juegos ni registries', () => {
     const files = [...sources(join(ROOT, 'modules', 'catalog')), ...sources(join(ROOT, 'app'))];
@@ -34,9 +37,12 @@ describe('catalog boundaries', () => {
     expect(names.filter((n) => n.startsWith('@nerdose/game-'))).toEqual([
       '@nerdose/game-devdle',
       '@nerdose/game-grep-grid',
+      '@nerdose/game-timeline',
     ]);
     expect(pkg.dependencies?.['@nerdose/game-devdle']).toBe('workspace:*');
     expect(pkg.dependencies?.['@nerdose/game-grep-grid']).toBe('workspace:*');
+    expect(pkg.dependencies?.['@nerdose/game-timeline']).toBe('workspace:*');
+    expect(names.filter((n) => n.startsWith(DND_SCOPE))).toEqual([]);
     expect(pkg.dependencies?.zod).toBe('^4.6.7');
   });
 });

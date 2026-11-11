@@ -37,6 +37,12 @@ const CANDIDATES = [
   'text-text-separator',
   'max-w-keyboard',
   'max-w-devdle-aside',
+  'bg-status-success-row-bg',
+  'bg-status-misplaced-bg',
+  'border-status-misplaced-border',
+  'text-display-score',
+  'text-numeric-year',
+  'text-game-item',
 ];
 
 describe('tokens.css compiled by Tailwind (TS-9)', () => {
@@ -86,5 +92,19 @@ describe('tokens.css compiled by Tailwind (TS-9)', () => {
     );
     expect(flat).toMatch(/\.text-numeric-lg \{[^}]*font-size: var\(--text-numeric-lg\)/);
     expect(flat).toContain('--text-numeric-lg--font-weight');
+    expect(flat).toContain(
+      '.bg-status-success-row-bg { background-color: var(--color-status-success-row-bg)',
+    );
+    expect(flat).toContain(
+      '.bg-status-misplaced-bg { background-color: var(--color-status-misplaced-bg)',
+    );
+    expect(flat).toContain(
+      '.border-status-misplaced-border { border-color: var(--color-status-misplaced-border)',
+    );
+    expect(flat).toMatch(/\.text-display-score \{[^}]*font-size: var\(--text-display-score\)/);
+    expect(flat).toMatch(/\.text-numeric-year \{[^}]*font-size: var\(--text-numeric-year\)/);
+    expect(flat).toMatch(/\.text-game-item \{[^}]*font-size: var\(--text-game-item\)/);
+    expect(flat).toContain('--text-display-score--letter-spacing');
+    expect(flat).toContain('--text-display-score--line-height');
   });
 });

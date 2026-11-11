@@ -530,16 +530,14 @@ describe('estados sin client', () => {
 
   it('TS-30: un juego válido sin client no llama a la api', async () => {
     const calls = recordCalls();
-    view('/timeline');
-    expect(await h1('Tech Timeline')).toBeInTheDocument();
+    view('/big-o');
+    expect(await h1('Big O')).toBeInTheDocument();
     expect(
-      screen.getByText(
-        'Hoy no hay desafío de Tech Timeline. Es un día neutro: no suma ni corta tu racha.',
-      ),
+      screen.getByText('Hoy no hay desafío de Big O. Es un día neutro: no suma ni corta tu racha.'),
     ).toBeInTheDocument();
-    expect(calls.filter((c) => c.path.startsWith('/api/games/timeline'))).toEqual([]);
+    expect(calls.filter((c) => c.path.startsWith('/api/games/big-o'))).toEqual([]);
     const nav = within(screen.getByRole('banner')).getByRole('navigation', { name: 'Ruta' });
-    expect(within(nav).getByText('timeline')).toBeInTheDocument();
+    expect(within(nav).getByText('big-o')).toBeInTheDocument();
   });
 
   it('TS-32: anulado sin Play no abre ningún diálogo', async () => {
@@ -951,8 +949,8 @@ describe('axe', () => {
   });
 
   it('TS-53: juego sin client y partida anulada', async () => {
-    const a = view('/timeline');
-    await h1('Tech Timeline');
+    const a = view('/big-o');
+    await h1('Big O');
     expect(await axe(a.container)).toHaveNoViolations();
     a.unmount();
     server.use(gameHandlers.today(gameTodayInProgress));

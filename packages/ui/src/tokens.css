@@ -121,6 +121,10 @@
   --color-status-absent-bg: #1A2028;   /* status.absent.bg */
   --color-status-absent-text: #8D99A6; /* status.absent.text */
   --color-text-separator: #2A323C;     /* text.separator */
+  /* DS 1.7.0 (S-029): Tech Timeline */
+  --color-status-success-row-bg: #0E1A13;  /* status.success.row-bg (color.green.955): fila correcta */
+  --color-status-misplaced-bg: #17130B;    /* status.misplaced.bg (color.amber.955): fila mal ubicada */
+  --color-status-misplaced-border: #5C4419; /* status.misplaced.border (color.amber.800): borde punteado */
 
   /* streak.*: la racha siempre es ámbar */
   --color-streak: #FFB547;
@@ -251,6 +255,17 @@
   --text-code-share: 14px;
   --text-code-share--line-height: 1.7;
   --text-code-share--font-weight: 400;
+  /* DS 1.7.0 (S-029): Tech Timeline */
+  --text-display-score: 56px;              /* type.display.score: puntaje «3/5» */
+  --text-display-score--line-height: 1;
+  --text-display-score--letter-spacing: -2px;
+  --text-display-score--font-weight: 800;
+  --text-numeric-year: 18px;               /* type.numeric.year: fecha del riel */
+  --text-numeric-year--line-height: normal;
+  --text-numeric-year--font-weight: 800;
+  --text-game-item: 16px;                  /* type.game.item: nombre del hito */
+  --text-game-item--line-height: normal;
+  --text-game-item--font-weight: 700;
 
   --radius-cell-xs: 4px;
   --radius-cell-sm: 5px;

@@ -157,13 +157,55 @@ describe('tokens.css', () => {
     expect(tokensRaw.split('--text-numeric-lg:')).toHaveLength(2);
   });
 
-  it('declares the 37 typographic roles with their companions (TS-6)', () => {
+  it('declares the Tech Timeline status colors and type roles (S-029 TS-1..TS-5)', () => {
+    expect(declarations['--color-status-success-row-bg']).toBe('#0E1A13');
+    expect(declarations['--color-status-misplaced-bg']).toBe('#17130B');
+    expect(declarations['--color-status-misplaced-border']).toBe('#5C4419');
+    expect(declarations['--text-display-score']).toBe('56px');
+    expect(declarations['--text-display-score--line-height']).toBe('1');
+    expect(declarations['--text-display-score--letter-spacing']).toBe('-2px');
+    expect(declarations['--text-display-score--font-weight']).toBe('800');
+    expect(declarations['--text-numeric-year']).toBe('18px');
+    expect(declarations['--text-numeric-year--line-height']).toBe('normal');
+    expect(declarations['--text-numeric-year--font-weight']).toBe('800');
+    expect(declarations['--text-game-item']).toBe('16px');
+    expect(declarations['--text-game-item--line-height']).toBe('normal');
+    expect(declarations['--text-game-item--font-weight']).toBe('700');
+    expect(declarations['--text-numeric-year--letter-spacing']).toBeUndefined();
+    expect(declarations['--text-game-item--letter-spacing']).toBeUndefined();
+    expectTokens(EXISTING);
+    expectTokens({
+      '--color-status-success-bg': '#0C1A12',
+      '--color-status-success-border': '#1E4A30',
+      '--color-status-pending-badge': '#2A1F0B',
+      '--color-game-bug-hunt-featured': '#5C4419',
+      '--color-streak-border-hover': '#5C4419',
+      '--color-game-timeline': '#C39BFF',
+      '--color-game-timeline-rail': '#3C2E60',
+      '--text-numeric-lg': '26px',
+      '--text-numeric-lg--font-weight': '800',
+      '--text-game-tile-sm': '16px',
+      '--text-game-tile-sm--font-weight': '800',
+    });
+    for (const name of [
+      '--color-status-success-row-bg',
+      '--color-status-misplaced-bg',
+      '--color-status-misplaced-border',
+      '--text-display-score',
+      '--text-numeric-year',
+      '--text-game-item',
+    ]) {
+      expect(tokensRaw.split(`${name}:`), name).toHaveLength(2);
+    }
+  });
+
+  it('declares the 40 typographic roles with their companions (TS-6)', () => {
     const roles = Object.keys(declarations)
       .filter(
         (n) => n.startsWith('--text-') && !n.includes('--', 2) && !/^--text-[a-z-]+--/.test(n),
       )
       .map((n) => n.slice('--text-'.length));
-    expect(roles).toHaveLength(37);
+    expect(roles).toHaveLength(40);
     for (const role of roles) {
       expect(declarations[`--text-${role}--line-height`], role).toBeDefined();
       if (role !== 'button-lg' && role !== 'button-md') {

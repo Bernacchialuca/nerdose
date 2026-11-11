@@ -8,6 +8,7 @@ import type { GameId } from '@nerdose/core';
 import { gameTodayNotStarted } from './fixtures/game-today';
 import { grepGridNotStarted } from './fixtures/grep-grid-today';
 import { sessionFixture } from './fixtures/session';
+import { timelineNotStarted } from './fixtures/timeline-today';
 import { todayFixture } from './fixtures/today';
 
 export const defaultHandlers = [
@@ -15,6 +16,7 @@ export const defaultHandlers = [
   http.get('/api/today', () => HttpResponse.json(todayFixture)),
   http.get('/api/games/devdle/today', () => HttpResponse.json(gameTodayNotStarted)),
   http.get('/api/games/grep-grid/today', () => HttpResponse.json(grepGridNotStarted)),
+  http.get('/api/games/timeline/today', () => HttpResponse.json(timelineNotStarted)),
   http.patch('/api/me/preferences', async ({ request }) =>
     HttpResponse.json({
       locale: ((await request.json()) as { locale: Locale }).locale,
@@ -35,6 +37,7 @@ export const gameHandlersFor = (gameId: GameId) => ({
 
 export const gameHandlers = gameHandlersFor('devdle');
 export const grepGridHandlers = gameHandlersFor('grep-grid');
+export const timelineHandlers = gameHandlersFor('timeline');
 
 export const apiError = (code: string, message: string) => ({ error: { code, message } });
 
