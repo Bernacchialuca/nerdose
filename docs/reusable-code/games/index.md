@@ -1,6 +1,6 @@
 # Reusable Code Index - games
 
-Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, and `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition`, `./client` and `./generator`. The build script lives in `scripts/` and is never importable from `src/` or other packages.
+Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition`, `./client` and `./generator`, and `@nerdose/game-timeline` (`packages/games/timeline`), entries `./definition`, `./generator` and `./client` (stub until S-029). The build script lives in `scripts/` and is never importable from `src/` or other packages.
 
 ## Devdle definition (6 items) - see devdle.md
 - **devdle / definition** (packages/games/devdle/src/definition/index.ts) - `GameDefinition` of Devdle (`id: 'devdle'`, `version: 1`); `definition` is an alias
@@ -69,3 +69,22 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **countOccurrences** (packages/games/grep-grid/src/generator/occurrences.ts) - Occurrences of a word in the 4 forward directions
 - **addDays / isValidDate** (packages/games/grep-grid/src/generator/dates.ts) - Copy of the Devdle helpers (cross-game imports are forbidden)
 - **BANK / BANK_FIXTURE / DATE / seed / mk / history** (packages/games/grep-grid/src/generator/test-fixtures.ts) - Test-only fixtures
+
+## Timeline shared (3 items) - see timeline.md
+- **distinguishable / allDistinguishable / indistinguishablePairs / compareChronological / DatedFact** (packages/games/timeline/src/shared/dates.ts) - Date distinguishability by precision and chronological ordering
+- **PROMPTS** (packages/games/timeline/src/shared/prompts.ts) - Fixed `{ es, en }` prompt per category
+- **formatEventDate** (packages/games/timeline/src/shared/format-date.ts) - UTC date formatting by precision
+
+## Timeline definition (4 items) - see timeline.md
+- **timeline / definition** (packages/games/timeline/src/definition/index.ts) - `GameDefinition` of Timeline (`id: 'timeline'`, `version: 1`); `definition` is an alias
+- **payloadSchema / moveSchema / stateSchema / publicViewSchema / feedbackSchema / resultSchema / statsSchema** (packages/games/timeline/src/definition/schemas.ts) - Zod schemas, snake_case as in `api.yaml`
+- **ITEMS_COUNT / OPAQUE_ID_PATTERN** (packages/games/timeline/src/definition/schemas.ts) - 5 and `/^[a-z0-9]{6}$/`
+- **TimelinePayload / TimelineItem / TimelineMove / TimelineState / TimelinePublicView / TimelineFeedback / TimelineResult / TimelineStats** (packages/games/timeline/src/definition/schemas.ts) - Types inferred from the schemas
+
+## Timeline generator (6 items) - see timeline.md
+- **generator / TimelineFact** (packages/games/timeline/src/generator/index.ts) - `GameGenerator<TimelinePayload, TimelineFact>`; `TimelineFact` is the `bankItems` contract for S-028
+- **verifyPayload** (packages/games/timeline/src/generator/verify.ts) - Nine ordered checks returning a `VerificationLog`
+- **eligibleFacts / sortById / isReusable / REUSE_WINDOW_DAYS** (packages/games/timeline/src/generator/eligibility.ts) - 90-day window and recent-challenge exclusion
+- **chooseCategory / chooseFacts** (packages/games/timeline/src/generator/choose.ts) - Category and greedy distinguishable selection
+- **shuffle / drawOpaqueIds / drawInitialOrder / sameOrder / OPAQUE_ID_ALPHABET / MAX_REDRAWS** (packages/games/timeline/src/generator/opaque.ts) - Seed-driven shuffle and opaque ids
+- **addDays / isValidDate** (packages/games/timeline/src/generator/days.ts) - Clock-free `YYYY-MM-DD` arithmetic in UTC

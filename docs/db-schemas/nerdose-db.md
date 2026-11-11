@@ -228,7 +228,7 @@ Table player_game_stats {
   played integer [not null, default: 0, note: 'Excluye plays voided']
   wins integer [not null, default: 0, note: 'Excluye plays voided']
   last_completed_date date [null]
-  extra jsonb [not null, default: `'{}'::jsonb`, note: 'Stats propias del juego (reduceStats). Excluye voided. Devdle: { guesses: { "1": n, …, "6": n }, losses: n }. Grep Grid: { words_found: { "0": n, …, "8": n } } (partidas por cantidad de palabras encontradas)']
+  extra jsonb [not null, default: `'{}'::jsonb`, note: 'Stats propias del juego (reduceStats). Excluye voided. Devdle: { guesses: { "1": n, …, "6": n }, losses: n }. Grep Grid: { words_found: { "0": n, …, "8": n } } (partidas por cantidad de palabras encontradas). Timeline: { by_category: { <category>: { played, correct } } }']
 
   indexes {
     (player_id, game_id) [pk]
@@ -301,6 +301,7 @@ Table terms {
   Note: 'Banco de términos (Devdle, Grep Grid). Se carga desde @nerdose/content con sync_banks'
 }
 
+// Creada por la migración 0004_timeline_facts (REQ-006). rejection_reason: disputed_date, imprecise_date, missing_article, low_sitelinks, missing_note, note_year_mismatch, excluded, duplicate
 Table timeline_facts {
   id uuid [pk, default: `gen_random_uuid()`]
   label text [not null]

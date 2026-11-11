@@ -200,3 +200,5 @@ En Grep Grid, `isFinished(state) = state.gave_up || state.found_words.length ===
 - Si `last_completed_date == D` (no debería pasar por la unicidad de Play), la racha no cambia.
 - En Bug Hunt la `api` traduce `line` al nodo con `line_of[language]` y lo compara con `bug_node_id`. Ninguno de los dos sale al cliente antes del resultado.
 - La lista válida de Devdle está en memoria (ADR-012). `rejected_guesses` solo se usa para el ranking del admin.
+
+> Actualizado por REQ-006 (stories S-025 a S-029): ver el diseño técnico del request para los cambios de Timeline.

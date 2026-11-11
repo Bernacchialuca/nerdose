@@ -4605,27 +4605,8 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose / Tech Timeline · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose / Tech Timeline     ./juegos   ./stats   ./about     #8     ES | EN"
-            }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
+          "content": "> nerdose / tech-timeline · desafío del 30/10 · [?] [stats] [Compartir] ES|EN · 🔥 4",
+          "annotation": "`game-header` variant `playing` (REQ-006, como Devdle y Grep Grid): `tech-timeline` en el acento del juego (`#C39BFF`) y «desafío del dd/mm» (se oculta si el servidor no lo informa). «Cómo se juega» → reglas de esta pantalla · «Estadísticas» → estadisticas · Compartir deshabilitado («disponible al terminar la partida») · ES|EN inline · racha global. Sin nav global ni `nav-movil`: en mobile las acciones envuelven a su propia fila"
         },
         {
           "name": "titulo",
@@ -4646,31 +4627,44 @@
           ]
         },
         {
+          "name": "aviso-dia-nuevo",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "info",
+          "icon": "info",
+          "content": "Empezó el desafío #9. La partida de ayer quedó sin confirmar y no cuenta para tu racha.",
+          "visible_only_in_states": [
+            "día nuevo"
+          ],
+          "annotation": "llega desde `timeline-partida` por `challenge_expired` (CA 13) o al detectar el cambio de día; se descarta al tocar «Empezar» o al salir. `banner` info del DS"
+        },
+        {
           "name": "alerta-sin-desafio",
           "type": "alert",
           "category": "feedback",
-          "content": "Hoy no hay desafío de Tech Timeline. Es un día neutro: no suma ni corta tu racha.",
           "kind": "info",
+          "content": "Hoy no hay desafío de Tech Timeline. Es un día neutro: no suma ni corta tu racha.",
           "visible_only_in_states": [
             "sin desafío hoy"
-          ]
+          ],
+          "annotation": "también el día del despliegue: Tech Timeline se juega desde el día siguiente (CA 15)"
         },
         {
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "kind": "warning",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "visible_only_in_states": [
             "anulado"
           ],
-          "annotation": "el modal O-02 se abre solo al entrar en este estado"
+          "annotation": "el modal O-02 se abre solo al entrar en este estado; también si «Empezar» responde `challenge_voided` (CA 14)"
         },
         {
           "name": "reglas-titulo",
           "type": "heading",
           "category": "content",
-          "content": "Cómo se juega",
+          "content": "// cómo se juega",
           "level": "h2",
           "hidden_in_states": [
             "sin desafío hoy",
@@ -4684,52 +4678,56 @@
           "type": "card",
           "category": "content",
           "content": "1 · Mirá los 5 hitos",
-          "paragraph": "Cada uno es un hecho de la historia de la tecnología, sin fecha.",
+          "paragraph": "Son hechos de una misma categoría de la historia de la tecnología (lenguajes, frameworks, empresas…), mezclados y sin fecha.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "`card` variant `step`. La categoría y la consigna aparecen recién en la partida; los nombres de los hitos no se traducen"
         },
         {
           "name": "paso-2",
           "type": "card",
           "category": "content",
           "content": "2 · Ordenalos",
-          "paragraph": "Del más antiguo al más reciente. Arrastrá, o usá las flechas de subir y bajar de cada fila.",
+          "paragraph": "Del más antiguo al más reciente. Arrastrá cada fila desde su asa ⠿, usá los botones ↑ ↓, o con el teclado: Espacio para tomar un hito, flechas para moverlo, Espacio para soltarlo y Escape para cancelar.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "las tres formas son equivalentes (RF 3); el asa deja hacer scroll con el resto de la fila en el teléfono (CA 11)"
         },
         {
           "name": "paso-3",
           "type": "card",
           "category": "content",
           "content": "3 · Confirmá",
-          "paragraph": "Tenés un solo intento: cuando estés listo, confirmá el orden.",
+          "paragraph": "Tenés un solo intento. Cuando el orden te convenza, tocá «Confirmar orden»: vas a ver las fechas, una nota de cada hito y cuántas posiciones acertaste.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "sin reintento (RF 4); victoria solo con 5/5, pero cualquier resultado suma a la racha (RF 6)"
         },
         {
           "name": "aviso-conteo",
-          "type": "alert",
-          "category": "feedback",
-          "content": "La partida no cuenta hasta que la completes.",
-          "kind": "info",
+          "type": "paragraph",
+          "category": "content",
+          "level": "caption",
+          "content": "La partida no cuenta hasta que confirmes. Si salís antes, al volver los hitos arrancan otra vez mezclados.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "el orden en construcción no se guarda (CA 12)"
         },
         {
           "name": "btn-empezar",
@@ -4744,10 +4742,11 @@
             "loading",
             "error de sistema"
           ],
+          "annotation": "crea la Play (idempotente, CA 2)",
           "state_overrides": {
             "sin sesión": {
               "variant": "disabled",
-              "annotation": "deshabilitado mientras no hay sesión (O-03)"
+              "annotation": "deshabilitado mientras no hay sesión (O-03, `no_session`); no se crea ninguna Play"
             }
           }
         },
@@ -4755,11 +4754,13 @@
           "name": "banner-cookies",
           "type": "alert",
           "category": "feedback",
-          "content": "Activá las cookies para poder jugar",
           "kind": "warning",
+          "icon": "warning",
+          "content": "Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».",
           "visible_only_in_states": [
             "sin sesión"
-          ]
+          ],
+          "annotation": "banner `warning` del shell (O-03); también si «Empezar» responde `no_session` (CA 16)"
         },
         {
           "name": "link-volver",
@@ -4772,7 +4773,7 @@
           "name": "loader",
           "type": "loader",
           "category": "feedback",
-          "content": "Cargando Tech Timeline…",
+          "content": "$ cargando tech-timeline…",
           "visible_only_in_states": [
             "loading"
           ]
@@ -4781,8 +4782,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos cargar el desafío de Tech Timeline. Revisá tu conexión e intentá de nuevo.",
           "kind": "error",
+          "content": "No pudimos cargar el desafío de Tech Timeline. Revisá tu conexión e intentá de nuevo.",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -4795,34 +4796,40 @@
           "variant": "secondary",
           "icon": "refresh",
           "visible_only_in_states": [
-            "error de sistema"
-          ]
+            "error de sistema",
+            "sin sesión"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "annotation": "recrea la sesión y reintenta «Empezar»"
+            }
+          }
         },
         {
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · exit 0",
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
           "banner-cookies",
           "titulo",
           "meta",
+          "aviso-dia-nuevo",
           "alerta-sin-desafio",
           "alerta-anulado",
           "loader",
           "alerta-sistema",
-          "btn-reintentar",
           "reglas-titulo",
           "paso-1",
           "paso-2",
           "paso-3",
           "aviso-conteo",
           "btn-empezar",
+          "btn-reintentar",
           "link-volver"
         ],
         "desktop": [
@@ -4839,11 +4846,11 @@
                 "stack": [
                   "titulo",
                   "meta",
+                  "aviso-dia-nuevo",
                   "alerta-sin-desafio",
                   "alerta-anulado",
                   "loader",
                   "alerta-sistema",
-                  "btn-reintentar",
                   "reglas-titulo",
                   {
                     "row": "pasos",
@@ -4875,7 +4882,8 @@
                       {
                         "w": 6,
                         "stack": [
-                          "btn-empezar"
+                          "btn-empezar",
+                          "btn-reintentar"
                         ]
                       },
                       {
@@ -4899,6 +4907,10 @@
       "states": [
         {
           "name": "default",
+          "applies": true
+        },
+        {
+          "name": "día nuevo",
           "applies": true
         },
         {
@@ -4934,81 +4946,158 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose / Tech Timeline · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose / Tech Timeline     ./juegos   ./stats   ./about     #8     ES | EN"
-            }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
-        },
-        {
-          "name": "titulo",
-          "type": "heading",
-          "category": "content",
-          "content": "Tech Timeline",
-          "level": "h1",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
+          "content": "> nerdose / tech-timeline · desafío del 30/10 · lenguajes de programación · [?] [stats] [Compartir] ES|EN · 🔥 4",
+          "annotation": "`game-header` variant `playing` (REQ-006): el metadato suma la categoría del día. «Cómo se juega» → ayuda-mover de esta pantalla · «Estadísticas» → estadisticas · Compartir deshabilitado («disponible al terminar la partida») · ES|EN cambia consigna y categoría sin perder el orden armado (CA 36) · racha global. Sin nav global ni `nav-movil`"
         },
         {
           "name": "consigna",
           "type": "paragraph",
           "category": "content",
-          "content": "Ordená del más antiguo al más reciente. Categoría: lenguajes de programación.",
-          "level": "body",
+          "level": "caption",
+          "content": "// consigna: del más antiguo al más reciente · un solo intento",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ]
         },
         {
-          "name": "lista-hitos",
-          "type": "list",
+          "name": "titulo",
+          "type": "heading",
           "category": "content",
+          "level": "h1",
+          "content": "Ordená estos lenguajes del más antiguo al más reciente",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
+          "annotation": "`prompt` del desafío en el idioma activo; el nombre del juego queda en el breadcrumb"
+        },
+        {
+          "name": "alerta-anulado",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "warning",
+          "icon": "warning",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "visible_only_in_states": [
+            "anulado"
+          ],
+          "annotation": "si «Confirmar orden» responde `challenge_voided` (CA 14)"
+        },
+        {
+          "name": "banner-cookies",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "warning",
+          "icon": "warning",
+          "content": "Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».",
+          "visible_only_in_states": [
+            "sin sesión"
+          ],
+          "annotation": "O-03 (`no_session`, CA 16); el orden armado se conserva para reintentar"
+        },
+        {
+          "name": "lista-hitos",
+          "type": "list",
+          "category": "content",
+          "content": "// tu orden",
           "items": [
             {
-              "title": "Lanzamiento de Java",
-              "subtitle": "arrastrá o usá ↑ ↓"
+              "title": "⠿  1 · Go",
+              "subtitle": "↑ ↓"
             },
             {
-              "title": "Primer commit de Git",
-              "subtitle": "arrastrá o usá ↑ ↓"
+              "title": "⠿  2 · Python",
+              "subtitle": "↑ ↓"
             },
             {
-              "title": "Rust 1.0 estable",
-              "subtitle": "arrastrá o usá ↑ ↓"
+              "title": "⠿  3 · Rust",
+              "subtitle": "↑ ↓"
             },
             {
-              "title": "Lanzamiento de Python 1.0",
-              "subtitle": "arrastrá o usá ↑ ↓"
+              "title": "⠿  4 · C",
+              "subtitle": "↑ ↓"
             },
             {
-              "title": "Anuncio de Go",
-              "subtitle": "arrastrá o usá ↑ ↓"
+              "title": "⠿  5 · Java",
+              "subtitle": "↑ ↓"
             }
           ],
-          "annotation": "reordenar con arrastre (touch), teclado y flechas subir/bajar por fila (NFR-U03)"
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "pattern `timeline.row` en `panel` «// tu orden»: asa ⠿ (arrastre, `touch-action: none` solo en el asa, CA 11) · posición · nombre · ↑ ↓ (↑ deshabilitado en la 1.ª, ↓ en la 5.ª). Sin fecha, nota ni badge (RF 2). A 320 px el nombre envuelve, sin scroll horizontal",
+          "state_overrides": {
+            "moviendo": {
+              "items": [
+                {
+                  "title": "⠿  1 · Python",
+                  "subtitle": "↑ ↓"
+                },
+                {
+                  "title": "⠿  2 · Rust",
+                  "subtitle": "↑ ↓"
+                },
+                {
+                  "title": "⠿  3 · Go",
+                  "subtitle": "↑ ↓  · tomado"
+                },
+                {
+                  "title": "⠿  4 · C",
+                  "subtitle": "↑ ↓"
+                },
+                {
+                  "title": "⠿  5 · Java",
+                  "subtitle": "↑ ↓"
+                }
+              ],
+              "annotation": "la fila tomada (arrastre o Espacio) lleva borde 2px del acento violeta y el destino un hueco punteado; sin animación con `prefers-reduced-motion`. Escape la devuelve a su lugar (CA 10)"
+            },
+            "confirmando": {
+              "annotation": "bloqueada mientras se confirma: asas y ↑ ↓ deshabilitados"
+            },
+            "anulado": {
+              "annotation": "bloqueada: no acepta arrastre, teclado ni ↑ ↓"
+            }
+          }
+        },
+        {
+          "name": "hint-jugada",
+          "type": "paragraph",
+          "category": "feedback",
+          "level": "caption",
+          "content": "> moviste Go a la posición 3 de 5",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "línea de aviso del juego, siempre montada (`min-height`), espejo de la región `aria-live` polite; vacía al entrar. Sin rojo ni shake",
+          "state_overrides": {
+            "moviendo": {
+              "content": "> Go, posición 3 de 5"
+            },
+            "error de validación": {
+              "content": "> no pudimos registrar ese orden. Revisalo y confirmá de nuevo",
+              "annotation": "`422 invalid_move`; la partida sigue en curso y el orden armado se mantiene (CA 6, 7)"
+            },
+            "límite de jugadas": {
+              "content": "> vas muy rápido. Esperá unos segundos y probá de nuevo",
+              "annotation": "HTTP 429 genérico; la confirmación no se procesa (CA 17)"
+            }
+          }
+        },
+        {
+          "name": "ayuda-mover",
+          "type": "paragraph",
+          "category": "content",
+          "level": "caption",
+          "content": "Arrastrá cada fila desde su asa ⠿ o usá ↑ ↓. Con teclado: Espacio para tomar un hito, flechas para moverlo, Espacio para soltarlo y Escape para devolverlo a su lugar.",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "btn-confirmar",
@@ -5019,8 +5108,17 @@
           "icon": "check",
           "hidden_in_states": [
             "loading",
-            "error de sistema"
-          ]
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "`button` `accent` del juego (`#C39BFF`), `lg`; siempre habilitado, sin diálogo de confirmación",
+          "state_overrides": {
+            "confirmando": {
+              "content": "Confirmando…",
+              "variant": "disabled",
+              "annotation": "`aria-disabled` mientras viaja la jugada; un segundo toque no envía otra"
+            }
+          }
         },
         {
           "name": "link-reportar",
@@ -5028,17 +5126,17 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "no se renderiza hasta FG-6"
         },
         {
           "name": "loader",
           "type": "loader",
           "category": "feedback",
-          "content": "Cargando tu partida de Tech Timeline…",
+          "content": "$ cargando tu partida de tech-timeline…",
           "visible_only_in_states": [
             "loading"
           ]
@@ -5047,11 +5145,12 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.",
           "kind": "error",
+          "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo.",
           "visible_only_in_states": [
             "error de sistema"
-          ]
+          ],
+          "annotation": "también cubre una confirmación que falla por red o 500: el orden armado se mantiene"
         },
         {
           "name": "btn-reintentar",
@@ -5061,47 +5160,60 @@
           "variant": "secondary",
           "icon": "refresh",
           "visible_only_in_states": [
-            "error de sistema"
-          ]
+            "error de sistema",
+            "sin sesión"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "annotation": "recrea la sesión y reenvía la confirmación con el mismo orden"
+            }
+          }
         },
         {
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · exit 0",
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
+          "banner-cookies",
+          "consigna",
           "titulo",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
-          "consigna",
+          "alerta-anulado",
           "lista-hitos",
+          "hint-jugada",
+          "ayuda-mover",
           "btn-confirmar",
           "link-reportar"
         ],
         "desktop": [
+          "banner-cookies",
+          "consigna",
           "titulo",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
+          "alerta-anulado",
           {
             "row": "juego",
             "cols": [
               {
                 "w": 7,
                 "stack": [
-                  "consigna",
-                  "lista-hitos"
+                  "lista-hitos",
+                  "hint-jugada"
                 ]
               },
               {
                 "w": 5,
                 "stack": [
+                  "ayuda-mover",
                   "btn-confirmar",
                   "link-reportar"
                 ]
@@ -5113,6 +5225,30 @@
       "states": [
         {
           "name": "default",
+          "applies": true
+        },
+        {
+          "name": "moviendo",
+          "applies": true
+        },
+        {
+          "name": "confirmando",
+          "applies": true
+        },
+        {
+          "name": "error de validación",
+          "applies": true
+        },
+        {
+          "name": "límite de jugadas",
+          "applies": true
+        },
+        {
+          "name": "anulado",
+          "applies": true
+        },
+        {
+          "name": "sin sesión",
           "applies": true
         },
         {
@@ -5136,56 +5272,84 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose / Tech Timeline · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose / Tech Timeline     ./juegos   ./stats   ./about     #8     ES | EN"
+          "content": "> nerdose / tech-timeline · desafío del 30/10 · lenguajes de programación · [stats] [Compartir] ES|EN · 🔥 4",
+          "annotation": "`game-header` variant `finished` (REQ-006): Compartir activo con el acento del juego, único botón de compartir. Texto: «⏳ Tech Timeline #8» / «🟩🟥🟥🟩🟩 3/5» / «nerdose.dev», nunca nombres, fechas ni orden (CA 3, RF 9) · «Estadísticas» → estadisticas · ES|EN cambia notas, fechas, consigna y categoría · racha global actualizada. Sin «Cómo se juega» ni `nav-movil`",
+          "state_overrides": {
+            "success": {
+              "content": "> nerdose / tech-timeline · desafío del 30/10 · lenguajes de programación · [stats] [✓ Copiado] ES|EN · 🔥 4",
+              "annotation": "✓ Copiado: pegalo donde quieras. — confirmación en el mismo botón Compartir (`role=status`) durante unos segundos; vuelve a «Compartir»"
+            },
+            "anulado": {
+              "content": "> nerdose / tech-timeline · desafío del 30/10 · lenguajes de programación · [stats] ES|EN · 🔥 4",
+              "annotation": "`game-header` variant `finished`: Compartir no se muestra en este estado"
+            },
+            "loading": {
+              "content": "> nerdose / tech-timeline · desafío del 30/10 · lenguajes de programación · [stats] ES|EN · 🔥 4",
+              "annotation": "`game-header` variant `finished`: Compartir no se muestra en este estado"
+            },
+            "error de sistema": {
+              "content": "> nerdose / tech-timeline · desafío del 30/10 · lenguajes de programación · [stats] ES|EN · 🔥 4",
+              "annotation": "`game-header` variant `finished`: Compartir no se muestra en este estado"
             }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
+          }
         },
         {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
-        },
-        {
-          "name": "puntaje",
+          "name": "consigna",
           "type": "paragraph",
           "category": "content",
-          "content": "Acertaste 3/5 posiciones",
-          "level": "body",
+          "level": "caption",
+          "content": "// consigna: del más antiguo al más reciente · lenguajes de programación",
           "hidden_in_states": [
             "loading",
-            "error de sistema",
-            "anulado"
+            "error de sistema"
           ]
         },
         {
           "name": "veredicto",
           "type": "heading",
           "category": "content",
-          "content": "Orden correcto: 5/5",
           "level": "h1",
+          "content": "Orden perfecto",
+          "icon": "check",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
+          "annotation": "victoria solo con 5/5 (RF 6); el veredicto se dice con texto, no solo con color (NFR-U04)",
           "state_overrides": {
             "perdió": {
-              "content": "Acertaste 3/5 posiciones"
+              "content": "3 de 5 en su lugar",
+              "icon": null,
+              "annotation": "sin drama ni rojo: la partida perdida también suma a la racha (RF 6)"
+            },
+            "cero aciertos": {
+              "content": "Ninguno en su lugar esta vez",
+              "icon": null
             },
             "anulado": {
-              "content": "Desafío anulado"
+              "content": "Desafío anulado",
+              "icon": null
+            }
+          }
+        },
+        {
+          "name": "puntaje",
+          "type": "paragraph",
+          "category": "content",
+          "level": "body",
+          "content": "5/5 · posiciones correctas",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "`streak-number` variant `score` (Mono 800 56 en el acento violeta); no es una racha: no usa ámbar",
+          "state_overrides": {
+            "perdió": {
+              "content": "3/5 · posiciones correctas"
+            },
+            "cero aciertos": {
+              "content": "0/5 · posiciones correctas"
             }
           }
         },
@@ -5193,143 +5357,145 @@
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "kind": "warning",
+          "icon": "warning",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "visible_only_in_states": [
             "anulado"
-          ]
+          ],
+          "annotation": "la anulación llega con FG-6"
         },
         {
           "name": "lista-tu-orden",
           "type": "list",
           "category": "content",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
+          "content": "// tu orden",
           "items": [
             {
-              "title": "✓ 1 · Primer commit de Git",
-              "subtitle": "tu posición era correcta"
+              "title": "1 · C",
+              "subtitle": "✓ bien"
             },
             {
-              "title": "✗ 2 · Lanzamiento de Java",
-              "subtitle": "debía ir en la posición 3"
+              "title": "2 · Python",
+              "subtitle": "✓ bien"
             },
             {
-              "title": "✓ 3 · Anuncio de Go",
-              "subtitle": "tu posición era correcta"
+              "title": "3 · Java",
+              "subtitle": "✓ bien"
             },
             {
-              "title": "✓ 4 · Lanzamiento de Python 1.0",
-              "subtitle": "tu posición era correcta"
+              "title": "4 · Go",
+              "subtitle": "✓ bien"
             },
             {
-              "title": "✗ 5 · Rust 1.0 estable",
-              "subtitle": "debía ir en la posición 2"
+              "title": "5 · Rust",
+              "subtitle": "✓ bien"
             }
-          ]
-        },
-        {
-          "name": "lista-correcto",
-          "type": "list",
-          "category": "content",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
           ],
-          "items": [
-            {
-              "title": "1991 · Lanzamiento de Python 1.0",
-              "subtitle": "nota breve del hito"
-            },
-            {
-              "title": "1995 · Lanzamiento de Java",
-              "subtitle": "nota breve del hito"
-            },
-            {
-              "title": "2005 · Primer commit de Git",
-              "subtitle": "nota breve del hito"
-            },
-            {
-              "title": "2009 · Anuncio de Go",
-              "subtitle": "nota breve del hito"
-            },
-            {
-              "title": "2015 · Rust 1.0 estable",
-              "subtitle": "nota breve del hito"
-            }
-          ]
-        },
-        {
-          "name": "card-rachas",
-          "type": "card",
-          "category": "content",
-          "content": "Rachas",
-          "paragraph": "Tech Timeline: 3 días · Global: 4 días",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
-          "name": "btn-compartir",
-          "type": "button",
-          "category": "input",
-          "content": "Compartir",
-          "variant": "primary",
-          "icon": "share",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
           ],
-          "annotation": "share nativo del sistema; si no está disponible copia al portapapeles"
+          "annotation": "pattern `timeline.row` en `panel`: correcta = verde oscuro, borde sólido, chip «✓ bien»; mal ubicada = ámbar oscuro, borde punteado, chip «✗ va en N°». Nunca rojo (NFR-U04)",
+          "state_overrides": {
+            "perdió": {
+              "items": [
+                {
+                  "title": "1 · C",
+                  "subtitle": "✓ bien"
+                },
+                {
+                  "title": "2 · Java",
+                  "subtitle": "✗ va en 3°"
+                },
+                {
+                  "title": "3 · Python",
+                  "subtitle": "✗ va en 2°"
+                },
+                {
+                  "title": "4 · Go",
+                  "subtitle": "✓ bien"
+                },
+                {
+                  "title": "5 · Rust",
+                  "subtitle": "✓ bien"
+                }
+              ],
+              "annotation": "acierto por posición con ícono + texto + borde (CA 3)"
+            },
+            "cero aciertos": {
+              "items": [
+                {
+                  "title": "1 · Rust",
+                  "subtitle": "✗ va en 5°"
+                },
+                {
+                  "title": "2 · C",
+                  "subtitle": "✗ va en 1°"
+                },
+                {
+                  "title": "3 · Go",
+                  "subtitle": "✗ va en 4°"
+                },
+                {
+                  "title": "4 · Python",
+                  "subtitle": "✗ va en 2°"
+                },
+                {
+                  "title": "5 · Java",
+                  "subtitle": "✗ va en 3°"
+                }
+              ],
+              "annotation": "las 5 filas mal ubicadas; la partida cuenta para la racha (CA 5)"
+            }
+          }
         },
         {
-          "name": "toast-copiado",
-          "type": "toast",
-          "category": "feedback",
-          "content": "Copiado",
-          "kind": "success",
-          "visible_only_in_states": [
-            "success"
-          ]
-        },
-        {
-          "name": "link-reportar",
-          "type": "link",
-          "category": "navigation",
-          "content": "Reportar un problema",
-          "icon": "warning",
-          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
-          "name": "cuenta-regresiva",
-          "type": "paragraph",
+          "name": "lista-correcto",
+          "type": "list",
           "category": "content",
-          "content": "Próximo desafío en 05:42:10",
-          "level": "caption",
+          "content": "// orden correcto",
+          "items": [
+            {
+              "title": "1972 · C",
+              "subtitle": "Dennis Ritchie lo crea en Bell Labs para reescribir Unix."
+            },
+            {
+              "title": "feb 1991 · Python",
+              "subtitle": "Guido van Rossum publica la versión 0.9.0 en alt.sources."
+            },
+            {
+              "title": "23 may 1995 · Java",
+              "subtitle": "Sun Microsystems lo presenta con la promesa «write once, run anywhere»."
+            },
+            {
+              "title": "10 nov 2009 · Go",
+              "subtitle": "Google lo anuncia como lenguaje de código abierto para sistemas concurrentes."
+            },
+            {
+              "title": "15 may 2015 · Rust",
+              "subtitle": "Sale la versión 1.0 estable, con garantías de memoria sin recolector."
+            }
+          ],
           "hidden_in_states": [
             "loading",
-            "error de sistema"
-          ]
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "pattern `timeline.rail` en `panel`: fecha (Mono 800 18 violeta) según su precisión — año, mes y año, o día — en el idioma activo, sin inventar mes ni día (RF 8, CA 9); nota de Wikipedia/Wikidata, nunca generada"
         },
         {
-          "name": "btn-siguiente",
-          "type": "button",
-          "category": "input",
-          "content": "Siguiente juego",
-          "variant": "secondary",
-          "icon": "arrow-right",
+          "name": "card-rachas",
+          "type": "card",
+          "category": "content",
+          "content": "// rachas",
+          "paragraph": "Tech Timeline: 4 días · Global: 6 días · récord Tech Timeline: 9",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "rachas que devuelve el cierre; 0/5 también suma (CA 5). La stat propia va en estadisticas (FG-10)"
         },
         {
           "name": "link-stats",
@@ -5343,6 +5509,44 @@
           ]
         },
         {
+          "name": "link-reportar",
+          "type": "link",
+          "category": "navigation",
+          "content": "Reportar un problema",
+          "icon": "warning",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "no se renderiza hasta FG-6"
+        },
+        {
+          "name": "cuenta-regresiva",
+          "type": "paragraph",
+          "category": "content",
+          "level": "caption",
+          "content": "racha de Timeline: 4 días · próximo desafío en 08:12:45",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "barra de cierre `banner` `neutral` (racha en ámbar); al llegar a 0 recarga el día"
+        },
+        {
+          "name": "btn-siguiente",
+          "type": "button",
+          "category": "input",
+          "content": "Siguiente juego",
+          "variant": "secondary",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "sin juegos pendientes"
+          ],
+          "annotation": "solo si queda un juego con desafío sin completar"
+        },
+        {
           "name": "link-volver",
           "type": "link",
           "category": "navigation",
@@ -5351,13 +5555,14 @@
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "`outline-tinted` con el borde del juego (`#3C2E60`)"
         },
         {
           "name": "loader",
           "type": "loader",
           "category": "feedback",
-          "content": "Cargando tu resultado de Tech Timeline…",
+          "content": "$ cargando tu resultado de tech-timeline…",
           "visible_only_in_states": [
             "loading"
           ]
@@ -5366,8 +5571,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
           "kind": "error",
+          "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -5387,78 +5592,106 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · exit 0",
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
+          "consigna",
           "veredicto",
+          "puntaje",
           "alerta-anulado",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
-          "puntaje",
           "lista-tu-orden",
           "lista-correcto",
           "card-rachas",
-          "btn-compartir",
-          "toast-copiado",
+          "link-stats",
           "link-reportar",
           "cuenta-regresiva",
           "btn-siguiente",
-          "link-stats",
           "link-volver"
         ],
         "desktop": [
-          "veredicto",
           "alerta-anulado",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
           {
-            "row": "resultado",
+            "row": "titulo",
             "cols": [
               {
-                "w": 7,
+                "w": 8,
                 "stack": [
-                  "puntaje",
-                  "lista-tu-orden"
+                  "consigna",
+                  "veredicto"
                 ]
               },
               {
-                "w": 5,
+                "w": 4,
                 "stack": [
-                  "lista-correcto",
-                  "card-rachas",
-                  "btn-compartir",
-                  "toast-copiado",
-                  "link-reportar"
+                  "puntaje"
                 ]
               }
             ]
           },
           {
-            "row": "salida",
+            "row": "resultado",
             "cols": [
               {
                 "w": 4,
                 "stack": [
-                  "cuenta-regresiva"
+                  "lista-tu-orden"
                 ]
               },
               {
-                "w": 4,
+                "w": 8,
                 "stack": [
-                  "btn-siguiente"
+                  "lista-correcto"
                 ]
-              },
+              }
+            ]
+          },
+          {
+            "row": "cierre",
+            "cols": [
               {
                 "w": 4,
                 "stack": [
-                  "link-stats",
-                  "link-volver"
+                  "card-rachas",
+                  "link-stats"
+                ]
+              },
+              {
+                "w": 8,
+                "stack": [
+                  {
+                    "row": "salida",
+                    "card": true,
+                    "cols": [
+                      {
+                        "w": 6,
+                        "stack": [
+                          "cuenta-regresiva"
+                        ]
+                      },
+                      {
+                        "w": 3,
+                        "stack": [
+                          "btn-siguiente"
+                        ]
+                      },
+                      {
+                        "w": 3,
+                        "stack": [
+                          "link-volver"
+                        ]
+                      }
+                    ]
+                  },
+                  "link-reportar"
                 ]
               }
             ]
@@ -5472,6 +5705,14 @@
         },
         {
           "name": "perdió",
+          "applies": true
+        },
+        {
+          "name": "cero aciertos",
+          "applies": true
+        },
+        {
+          "name": "sin juegos pendientes",
           "applies": true
         },
         {
@@ -7366,6 +7607,14 @@
     },
     {
       "src": "timeline-instrucciones",
+      "srcState": "día nuevo",
+      "srcBlock": "btn-empezar",
+      "dst": "timeline-partida",
+      "trigger": "Empezar",
+      "automatic": false
+    },
+    {
+      "src": "timeline-instrucciones",
       "srcState": "default",
       "srcBlock": "link-volver",
       "dst": "home",
@@ -7383,6 +7632,14 @@
     {
       "src": "timeline-partida",
       "srcState": "default",
+      "srcBlock": "btn-confirmar",
+      "dst": "timeline-resultado",
+      "trigger": "Confirmar orden",
+      "automatic": false
+    },
+    {
+      "src": "timeline-partida",
+      "srcState": "default",
       "srcBlock": "link-reportar",
       "dst": "o-01-reportar",
       "trigger": "Reportar un problema",
@@ -7391,10 +7648,16 @@
     {
       "src": "timeline-partida",
       "srcState": "default",
-      "srcBlock": "btn-confirmar",
       "dst": "timeline-resultado",
-      "trigger": "fin de partida",
-      "automatic": false
+      "trigger": "game_finished",
+      "automatic": true
+    },
+    {
+      "src": "timeline-partida",
+      "srcState": "default",
+      "dst": "timeline-instrucciones",
+      "trigger": "challenge_expired (día nuevo)",
+      "automatic": true
     },
     {
       "src": "timeline-resultado",
@@ -7427,6 +7690,13 @@
       "dst": "grep-grid-instrucciones",
       "trigger": "Siguiente juego",
       "automatic": false
+    },
+    {
+      "src": "timeline-resultado",
+      "srcState": "default",
+      "dst": "timeline-instrucciones",
+      "trigger": "cuenta regresiva en 0",
+      "automatic": true
     },
     {
       "src": "grep-grid-instrucciones",
