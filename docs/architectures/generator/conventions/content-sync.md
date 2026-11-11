@@ -15,6 +15,11 @@ The content banks (`terms`, `timeline_facts`) come from a dataset versioned in t
 ## Update (REQ-004)
 
 - Only `terms` is loaded until FG-5; `timeline_facts.json` missing is an empty list.
+
+## Update (REQ-006)
+
+- `timeline_facts.json` is now required (end of "optional until FG-5"). `sync_banks` loads `terms` and then `timeline_facts` in the **same transaction**, with the same modes (`approved`, `to_rejected`, `insert_rejected`) and `ON CONFLICT (wikidata_id) DO UPDATE ... WHERE status <> 'rejected'`; it never writes `last_used`.
+- `summary` keeps the ADR-016 totals (`dataset_version, inserted, updated, unchanged, kept_rejected, skipped`) and adds `by_bank: { terms, timeline_facts }`. The `term` uniqueness rule does not apply to facts. `sameContent` for facts compares `label`, `category`, `event_date`, `date_precision`, `note` and `sitelinks`.
 - A new `rejected` item whose `term` does not match `^[A-Z]{4,12}$` or already exists is not inserted and counts in `summary.skipped`. If the `wikidata_id` is already in the database, the `approved -> rejected` rule still applies.
 - Exclusion list: `packages/content/data/exclusions.txt`.
 

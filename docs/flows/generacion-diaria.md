@@ -164,3 +164,5 @@ La fila es la alerta (ADR-017): no se envía nada. El admin la ve en Próximos d
 - Nunca se genera para `today`: si llega el día sin desafío, el juego muestra "sin desafío hoy" y el día es neutro (ADR-007).
 - Con 14 días de margen, el `generator` puede estar caído hasta 13 días sin dejar un juego sin desafío (NFR-A03).
 - El `payload` y el `seed` quedan inmutables desde `approved` (trigger `challenges_payload_immutable`).
+
+> Actualizado por REQ-006 (stories S-025 a S-029): ver el diseño técnico del request para los cambios de Timeline.

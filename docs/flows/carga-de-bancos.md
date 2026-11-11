@@ -141,3 +141,5 @@ sequenceDiagram
 - Los bancos se reutilizan cuando vence su ventana anti-repetición (365 días Devdle, 30 Grep Grid, 90 Timeline). Con los mínimos del paso 2, no se agotan.
 - La lista base de Devdle (`packages/games/devdle/wordlist/words.txt`) se genera con otro script offline (`build:wordlist`) y no pasa por la base.
 - Los textos de Wikipedia son CC BY-SA: `packages/content/LICENSE-DATA.md` y la página "Acerca de" llevan la atribución.
+
+> Actualizado por REQ-006 (stories S-025 a S-029): ver el diseño técnico del request para los cambios de Timeline.

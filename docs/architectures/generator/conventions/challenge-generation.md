@@ -113,3 +113,8 @@ import { generator as devdle } from '@nerdose/game-devdle/generator';
 
 - Optional, generic improvement in `ChallengePublishingRepository.approve`: write `last_used = GREATEST(last_used, date)` instead of `last_used = date`, so that filling an earlier gap does not move the date of a bank item backwards. It does not change Devdle's behavior. **Adopted in S-023.**
 - Grep Grid registers as `{ gameId: 'grep-grid', generator, payloadSchema, version: 'grep-grid@1' }`; its `verify` checks are listed in the flow `generacion-diaria`.
+
+## Update (REQ-006)
+
+- `ChallengePublishingRepository` is multi-bank: a `BANKS` map (`terms`, `timeline_facts`) replaces `LAST_USED_COLUMNS`. `bankItems(spec)` selects the `approved` items of the spec's bank, and `approve` receives `ApproveOptions.bank` and updates `last_used = GREATEST(last_used, D)` only in that bank's table. Approving a Timeline challenge never touches `terms`.
+- Timeline: `historySpec = { bank: 'timeline_facts', lastUsedField: 'last_used', recentDays: 90 }`, `version: 'timeline@1'`.

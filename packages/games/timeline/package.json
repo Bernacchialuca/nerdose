@@ -1,0 +1,23 @@
+{
+  "name": "@nerdose/game-timeline",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./definition": "./src/definition/index.ts",
+    "./client": "./src/client/index.ts",
+    "./generator": "./src/generator/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@nerdose/core": "workspace:*",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@nerdose/content": "workspace:*"
+  }
+}

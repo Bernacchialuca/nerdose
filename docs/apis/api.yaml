@@ -1361,13 +1361,25 @@ components:
 
     EmptyState:
       type: object
-      description: Timeline, Big O y Bug Hunt (una sola confirmación) no tienen estado intermedio
+      description: Big O y Bug Hunt (una sola confirmación) no tienen estado intermedio
       additionalProperties: false
+
+    TimelineState:
+      type: object
+      description: Vacío mientras la Play está in_progress; guarda el orden confirmado al cerrar
+      additionalProperties: false
+      properties:
+        order:
+          type: array
+          minItems: 5
+          maxItems: 5
+          items: { type: string }
 
     PlayState:
       oneOf:
         - $ref: '#/components/schemas/DevdleState'
         - $ref: '#/components/schemas/GrepGridState'
+        - $ref: '#/components/schemas/TimelineState'
         - $ref: '#/components/schemas/EmptyState'
 
     PlayView:
@@ -1702,7 +1714,7 @@ components:
             devdle = distribución de intentos (1–6 y derrotas);
             grep-grid = `{ words_found: { "0": n, …, "8": n } }` (partidas por cantidad de palabras encontradas;
             de ahí salen el promedio de palabras y el % de 8/8);
-            timeline = promedio de posiciones por categoría; big-o = aciertos por `recipe_category`;
+            timeline = `{ by_category: { <category>: { played, correct } } }` (promedio de posiciones correctas = `correct / played`); big-o = aciertos por `recipe_category`;
             bug-hunt = aciertos por `code_language` y por `bug_type`.
 
     MyStats:

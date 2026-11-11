@@ -22,3 +22,7 @@ Library en node (TypeScript estricto, Node.js 24 LTS). Vive en `packages/core` y
 
 **Manifest:** [manifest.yaml](./manifest.yaml)
 **Indice de arquitectura:** [index.md](./index.md)
+
+## Update (REQ-006)
+
+- `TIMELINE_CATEGORIES`, `TimelineCategory`, `DATE_PRECISIONS` and `DatePrecision` live in `core/src/enums.ts` (like `TERM_CATEGORIES`); `@nerdose/content` re-exports them. The `timeline` game package imports them from `core`, so it does not depend on `content` at runtime.
