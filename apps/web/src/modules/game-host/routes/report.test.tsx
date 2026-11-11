@@ -521,3 +521,51 @@ describe('accesibilidad e inglés', () => {
     expect(screen.getByRole('button', { name: /Send report/ })).toBeInTheDocument();
   });
 });
+
+describe('O-01 · sheet, descripción y fondo inerte (S-034/ui)', () => {
+  it('TS-15: desde la partida usa sheet y se describe por el aviso', async () => {
+    const user = userEvent.setup();
+    view();
+    const d = await openDialog(user);
+    expect(d).toHaveClass('rounded-t-panel', 'sm:rounded-panel');
+    expect(d).toHaveAccessibleDescription(SPOILER);
+    expect(screen.getByRole('combobox', { name: /Elegí un motivo/ })).toHaveFocus();
+  });
+
+  it('TS-16: desde el resultado es sheet sin descripción', async () => {
+    const user = userEvent.setup();
+    server.use(gameHandlers.today(gameTodayWon));
+    view();
+    const d = await openDialog(user);
+    expect(d).toHaveClass('rounded-t-panel');
+    expect(d).not.toHaveAttribute('aria-describedby');
+    expect(screen.queryByText(SPOILER)).toBeNull();
+  });
+
+  it('TS-17: el fondo queda inerte y el foco vuelve al link', async () => {
+    const user = userEvent.setup();
+    view();
+    await openDialog(user);
+    expect(document.querySelector('header')?.closest('[inert]')).not.toBeNull();
+    expect(
+      screen.getByRole('button', { name: LINK, hidden: true }).closest('[inert]'),
+    ).not.toBeNull();
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.querySelector('[inert]')).toBeNull();
+    expect(link()).toHaveFocus();
+  });
+
+  it('TS-19: descripción en inglés', async () => {
+    const user = userEvent.setup();
+    await i18n.changeLanguage('en');
+    server.use(
+      http.post('/api/session', () => HttpResponse.json({ ...sessionFixture, locale: 'en' })),
+      http.get('/api/games/devdle/today', () => HttpResponse.json(gameTodayInProgress)),
+    );
+    view();
+    await user.click(await screen.findByRole('button', { name: 'Report a problem' }));
+    const d = await screen.findByRole('dialog', { name: 'Report a problem' });
+    expect(d).toHaveAccessibleDescription("Don't include the answer if you're still playing.");
+  });
+});

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -39,6 +39,7 @@ export type ReportDialogProps = {
 export function ReportDialog({ gameId, number, from, onClose }: ReportDialogProps) {
   const { t } = useTranslation();
   const report = useReport(gameId);
+  const spoilerId = useId();
   const selectRef = useRef<HTMLSelectElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const [phase, setPhase] = useState<Phase>('form');
@@ -92,20 +93,23 @@ export function ReportDialog({ gameId, number, from, onClose }: ReportDialogProp
 
   return (
     <Dialog
-      variant="modal"
+      variant="sheet"
       title={t('gameHost.report.title')}
       closeLabel={t('gameHost.report.close')}
       onClose={close}
       closeDisabled={pending}
       initialFocusRef={selectRef}
+      describedBy={from === 'game' ? spoilerId : undefined}
     >
       <p className="font-mono text-label-comment text-text-dim">
         {t('gameHost.report.challenge', { game: t(`games.${gameId}.name`), number })}
       </p>
       {from === 'game' ? (
-        <Banner variant="warning" announce={false}>
-          {t('gameHost.report.spoiler')}
-        </Banner>
+        <div id={spoilerId}>
+          <Banner variant="warning" announce={false}>
+            {t('gameHost.report.spoiler')}
+          </Banner>
+        </div>
       ) : null}
       <form className="flex flex-col gap-5" onSubmit={submit} noValidate>
         {phase === 'form' ? (

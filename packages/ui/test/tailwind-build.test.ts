@@ -43,6 +43,16 @@ const CANDIDATES = [
   'text-display-score',
   'text-numeric-year',
   'text-game-item',
+  'rounded-t-panel',
+  'sm:rounded-panel',
+  'sm:max-w-xl',
+  'sm:items-center',
+  'items-end',
+  'border-b-0',
+  'sm:border-b',
+  'pt-12',
+  'sm:pt-0',
+  'sm:px-4',
 ];
 
 describe('tokens.css compiled by Tailwind (TS-9)', () => {
@@ -106,5 +116,11 @@ describe('tokens.css compiled by Tailwind (TS-9)', () => {
     expect(flat).toMatch(/\.text-game-item \{[^}]*font-size: var\(--text-game-item\)/);
     expect(flat).toContain('--text-display-score--letter-spacing');
     expect(flat).toContain('--text-display-score--line-height');
+    expect(flat).toMatch(
+      /\.rounded-t-panel \{[^}]*border-top-left-radius: var\(--radius-panel\)[^}]*border-top-right-radius: var\(--radius-panel\)/,
+    );
+    for (const cls of ['sm\\\\:rounded-panel', 'sm\\\\:max-w-xl', 'sm\\\\:items-center']) {
+      expect(flat).toMatch(new RegExp(`@media \\(width >= 40rem\\) \\{[^@]*\\.${cls} \\{`));
+    }
   });
 });

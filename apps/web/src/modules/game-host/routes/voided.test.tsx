@@ -262,3 +262,28 @@ describe('O-02 · accesibilidad e inglés', () => {
     expect(within(d).getByRole('button', { name: /Mark as completed/ })).toBeInTheDocument();
   });
 });
+
+describe('O-02 · modal descrito por su texto (S-034/ui)', () => {
+  it('TS-18: sigue modal, se describe por el texto y el fondo queda inerte', async () => {
+    server.use(gameHandlers.today({ ...gameTodayVoided, reported: false }));
+    view();
+    const d = await notice();
+    expect(d).toHaveClass('rounded-panel');
+    expect(d).not.toHaveClass('rounded-t-panel');
+    expect(d).toHaveAccessibleDescription(VOIDED);
+    expect((await h1('Devdle')).closest('[inert]')).not.toBeNull();
+  });
+
+  it('TS-19: descripción en inglés', async () => {
+    await i18n.changeLanguage('en');
+    server.use(
+      http.post('/api/session', () => HttpResponse.json({ ...sessionFixture, locale: 'en' })),
+      http.get('/api/games/devdle/today', () => HttpResponse.json(gameTodayVoided)),
+    );
+    view();
+    const d = await screen.findByRole('alertdialog', { name: 'Challenge voided' });
+    expect(d).toHaveAccessibleDescription(
+      'This challenge had an error and was voided. Your streak is not affected.',
+    );
+  });
+});

@@ -63,10 +63,10 @@
 
 ## ReportDialog / ReportLink
 - **Location:** apps/web/src/modules/game-host/components/report-dialog.tsx, report-link.tsx
-- **Description:** O-01 inside `Dialog` from `@nerdose/ui` (select + textarea with counter, success / already-reported phases, system and rate-limit alerts). `GameRoute` mounts it outside the view `switch` with a snapshot of the challenge number. `ReportLink` is the trigger; `reported` makes it `aria-disabled`.
+- **Description:** O-01 inside `Dialog variant="sheet"` from `@nerdose/ui` (described by the spoiler notice via `describedBy` when `from === 'game'`; select + textarea with counter, success / already-reported phases, system and rate-limit alerts). `GameRoute` mounts it outside the view `switch` with a snapshot of the challenge number. `ReportLink` is the trigger; `reported` makes it `aria-disabled`.
 - **Signature:** `ReportDialog({ gameId, number, from: 'game' | 'result', onClose(reported) })`; `ReportLink({ reported, onOpen })`
 
 ## VoidedNoticeDialog
 - **Location:** apps/web/src/modules/game-host/components/voided-notice-dialog.tsx
-- **Description:** O-02 `alertdialog`; `challenge_expired` calls `onExpired`, `not_voided` / `no_challenge_today` call `onStale`, any other error shows an inline alert.
+- **Description:** O-02 `alertdialog` (`variant="modal"`, described by its text via `describedBy`); `challenge_expired` calls `onExpired`, `not_voided` / `no_challenge_today` call `onStale`, any other error shows an inline alert.
 - **Signature:** `VoidedNoticeDialog({ gameId, number, onClose, onExpired, onStale })`

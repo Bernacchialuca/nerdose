@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { GameId } from '@nerdose/core';
@@ -27,6 +27,7 @@ export function VoidedNoticeDialog({
   onStale,
 }: VoidedNoticeDialogProps) {
   const { t } = useTranslation();
+  const textId = useId();
   const acknowledge = useAcknowledgeVoid(gameId);
   const [failed, setFailed] = useState(false);
   const pending = acknowledge.isPending;
@@ -56,8 +57,11 @@ export function VoidedNoticeDialog({
       closeLabel={t('gameHost.voided.close')}
       closeDisabled={pending}
       onClose={onClose}
+      describedBy={textId}
     >
-      <p className="font-sans text-body text-text-body">{t('gameHost.notice.voided')}</p>
+      <p id={textId} className="font-sans text-body text-text-body">
+        {t('gameHost.notice.voided')}
+      </p>
       <p className="font-sans text-caption text-text-muted">{t('gameHost.voided.streakNote')}</p>
       {failed ? <Alert>{t('gameHost.voided.error')}</Alert> : null}
       <div className="flex flex-row-reverse flex-wrap gap-3">
