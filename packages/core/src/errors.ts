@@ -17,6 +17,7 @@ export const ERROR_CATALOG = {
   invalid_move: { status: 422 },
   not_in_word_list: { status: 422 },
   invalid_report: { status: 422 },
+  invalid_culprit: { status: 422 },
   validation_error: { status: 422 },
   rate_limited: { status: 429 },
   internal_error: { status: 500 },

@@ -49,3 +49,13 @@
 - **Location:** packages/db/src/schema/jobs.ts
 - **Signature:** `jobRuns = pgTable('job_runs', ...)`; `summary` is `jsonb`
 - **Usage:** `insert(jobRuns).values({ job: 'fill' }).returning()` (generator); `nerdose_api` only reads
+
+## challengeReports / ChallengeReport / NewChallengeReport
+- **Location:** packages/db/src/schema/quality.ts
+- **Signature:** `challengeReports = pgTable('challenge_reports', ...)`; one report per `(playerId, challengeId)` (`uq_reports_player_challenge`, arbiter of `ON CONFLICT DO NOTHING`); `status` defaults to `open` and `resolved`/`dismissed` are terminal (trigger); `message` is at most 1000 characters; only `nerdose_api` has `SELECT, INSERT, UPDATE`; `context` is untyped `jsonb`
+- **Usage:** `insert(challengeReports).values({ challengeId, playerId, reason, locale, context }).onConflictDoNothing({ target: [challengeReports.playerId, challengeReports.challengeId] })`
+
+## reportReasonEnum / reportStatusEnum
+- **Location:** packages/db/src/schema/enums.ts
+- **Signature:** PostgreSQL enums `report_reason` and `report_status`, built from `REPORT_REASONS` and `REPORT_STATUSES` of `@nerdose/core`
+- **Usage:** `reportReasonEnum('reason').notNull()`

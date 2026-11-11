@@ -25,7 +25,7 @@ Package `@nerdose/game-timeline` (`packages/games/timeline`). Entries: `./defini
 
 ### timeline / definition
 - **Location:** packages/games/timeline/src/definition/index.ts
-- **Description:** `GameDefinition` of Timeline. The state stays `{}` until the single move confirms the order (`{ order }`); `applyMove` revalidates the permutation and returns `feedback: null`. `score` counts positions equal to `correct_order`; `reduceStats` accumulates per milestone: each of the 5 items adds `played` to its fact's category and `correct` when it ended in its position (`by_category[c].{played, correct}`); `toPublic` exposes `{ prompt, items: [{ opaque_id, label, category }] }`; `historyLabel` is `N/5`.
+- **Description:** `GameDefinition` of Timeline. The state stays `{}` until the single move confirms the order (`{ order }`); `applyMove` revalidates the permutation and returns `feedback: null`. `score` counts positions equal to `correct_order`; `reduceStats` accumulates per milestone: each of the 5 items adds `played` to its fact's category and `correct` when it ended in its position (`by_category[c].{played, correct}`); `toPublic` exposes `{ prompt, items: [{ opaque_id, label, category }] }`; `historyLabel` is `N/5`. `culprits(p)` returns the 5 `items` as `timeline_fact` culprits (`fact_id`, `label`; never `opaque_id`) in `items` order; admin-only, matches `generator.usedBankItems` (checked in `src/generator/culprits.test.ts`).
 - **Signature:** `GameDefinition<TimelinePayload, TimelinePublicView, TimelineState, TimelineMove, TimelineFeedback, TimelineResult, TimelineStats>`
 - **Usage:** `createGameRegistry([devdle, grepGrid, timeline])`
 

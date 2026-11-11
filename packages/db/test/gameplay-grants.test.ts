@@ -28,7 +28,13 @@ const PRIVS = [
   'REFERENCES',
   'TRIGGER',
 ] as const;
-const PLAYER_TABLES = ['plays', 'player_game_stats', 'player_stats', 'rejected_guesses'];
+const PLAYER_TABLES = [
+  'plays',
+  'player_game_stats',
+  'player_stats',
+  'rejected_guesses',
+  'challenge_reports',
+];
 const CONTENT_TABLES = ['challenges', 'terms', 'timeline_facts', 'job_runs'];
 
 const matrix: [string, string, string[]][] = [

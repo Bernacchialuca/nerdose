@@ -3,7 +3,7 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import { AppError, ERROR_CATALOG, type ErrorCode } from '../src/errors';
 
 describe('ERROR_CATALOG', () => {
-  it('is the closed catalog of 21 codes (TS-3)', () => {
+  it('is the closed catalog of 22 codes (TS-3)', () => {
     expect(ERROR_CATALOG).toEqual({
       no_session: { status: 401 },
       unauthorized: { status: 401 },
@@ -23,11 +23,14 @@ describe('ERROR_CATALOG', () => {
       invalid_move: { status: 422 },
       not_in_word_list: { status: 422 },
       invalid_report: { status: 422 },
+      invalid_culprit: { status: 422 },
       validation_error: { status: 422 },
       rate_limited: { status: 429 },
       internal_error: { status: 500 },
     });
-    expect(Object.keys(ERROR_CATALOG)).toHaveLength(21);
+    expect(Object.keys(ERROR_CATALOG)).toHaveLength(22);
+    const keys = Object.keys(ERROR_CATALOG);
+    expect(keys.indexOf('invalid_culprit')).toBe(keys.indexOf('invalid_report') + 1);
   });
 });
 
@@ -46,6 +49,18 @@ describe('AppError', () => {
     const error = new AppError(code);
     expect(error.status).toBe(ERROR_CATALOG[code].status);
     expect(error.code).toBe(code);
+  });
+
+  it('maps invalid_culprit to 422 (TS-37)', () => {
+    const error = new AppError('invalid_culprit');
+    expect(error.status).toBe(422);
+    expect(error.code).toBe('invalid_culprit');
+    expect(error.message).toBe('invalid_culprit');
+    expect(error.name).toBe('AppError');
+  });
+
+  it('includes invalid_culprit in ErrorCode (TS-38)', () => {
+    expectTypeOf<'invalid_culprit'>().toExtend<ErrorCode>();
   });
 
   it('accepts a custom message (TS-6)', () => {

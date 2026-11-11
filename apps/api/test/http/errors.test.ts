@@ -72,7 +72,7 @@ describe('errorHandler', () => {
 describe('errorMessage', () => {
   it('cubre todo el catálogo', () => {
     const codes = Object.keys(ERROR_CATALOG) as Array<keyof typeof ERROR_CATALOG>;
-    expect(codes).toHaveLength(21);
+    expect(codes).toHaveLength(22);
     for (const code of codes) expect(errorMessage(code, 'es')).not.toBe('');
     expect(errorMessage('not_found', 'es')).toBe('Recurso no encontrado.');
     expect(errorMessage('internal_error', 'es')).toBe('Error interno del servidor.');

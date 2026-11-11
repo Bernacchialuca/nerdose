@@ -3,7 +3,11 @@ import type { z } from 'zod';
 
 import type { ErrorCode } from '../src/errors';
 import { GAME_IDS } from '../src/game-definition';
+import { createGameRegistry } from '../src/game-registry';
+import type { AnyGameDefinition } from '../src/game-registry';
 import type {
+  Culprit,
+  CulpritKind,
   GameDefinition,
   GameId,
   Locale,
@@ -62,10 +66,53 @@ describe('game contract', () => {
     delete rest.historyLabel;
     // @ts-expect-error historyLabel is missing
     const missing: Def = rest;
+    const noCulprits = { ...makeDefinition('devdle'), culprits: undefined };
+    delete noCulprits.culprits;
+    // @ts-expect-error culprits is missing
+    const missingCulprits: Def = noCulprits;
+    expect(missingCulprits).toBeDefined();
     // @ts-expect-error 'chess' is not a GameId
     const unknownId: Pick<Def, 'id'> = { id: 'chess' };
     expect(missing).toBeDefined();
     expect(unknownId).toBeDefined();
+  });
+});
+
+describe('culprits', () => {
+  it('declares Culprit and CulpritKind (TS-29)', () => {
+    expectTypeOf<CulpritKind>().toEqualTypeOf<'term' | 'timeline_fact'>();
+    expectTypeOf<keyof Culprit>().toEqualTypeOf<'kind' | 'id' | 'label'>();
+    expectTypeOf<Culprit['id']>().toEqualTypeOf<string>();
+    expectTypeOf<Culprit['label']>().toEqualTypeOf<string>();
+  });
+
+  it('has the member signature (TS-30)', () => {
+    expectTypeOf<FakeDefinition['culprits']>().parameters.toEqualTypeOf<[{ word: string }]>();
+    expectTypeOf<FakeDefinition['culprits']>().returns.toEqualTypeOf<Culprit[]>();
+  });
+
+  it('rejects a kind outside the contract (TS-32)', () => {
+    // @ts-expect-error 'template' is not a CulpritKind
+    const c: Culprit = { kind: 'template', id: 'x', label: 'y' };
+    expect(c).toBeDefined();
+  });
+
+  it('returns [] for a game without bank items (TS-33)', () => {
+    expect(makeDefinition('big-o').culprits({ word: 'REACT' })).toEqual([]);
+  });
+
+  it('returns the bank item (TS-34)', () => {
+    const expected = [
+      { kind: 'term', id: '00000000-0000-4000-8000-000000000001', label: 'DOCKER' },
+    ];
+    const p = {
+      word: 'DOCKER',
+      definition: { es: 'plataforma de contenedores', en: 'container platform' },
+    };
+    expect(makeLocalizedDefinition().culprits(p)).toEqual(expected);
+    const registry = createGameRegistry([makeLocalizedDefinition()]);
+    expect(registry.get('grep-grid').culprits(p)).toEqual(expected);
+    expectTypeOf<ReturnType<AnyGameDefinition['culprits']>>().toEqualTypeOf<Culprit[]>();
   });
 });
 

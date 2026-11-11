@@ -29,3 +29,15 @@
 - **Description:** Fixed-order list of date precisions of a timeline fact; aligned with PG enum `date_precision` and `DatePrecision` in `api.yaml`. `@nerdose/content` re-exports it; the `timeline` game package imports it from `core`.
 - **Signature:** `DATE_PRECISIONS = ['year','month','day'] as const`; `type DatePrecision = (typeof DATE_PRECISIONS)[number]`
 - **Usage:** `pgEnum('date_precision', DATE_PRECISIONS)`
+
+## REPORT_REASONS / ReportReason
+- **Location:** packages/core/src/enums.ts
+- **Description:** Report reasons; aligned with the PG enum `report_reason`.
+- **Signature:** `REPORT_REASONS = ['wrong_answer','ambiguous','wrong_explanation','translation','display_bug','other'] as const`
+- **Usage:** `z.enum(REPORT_REASONS)`
+
+## REPORT_STATUSES / ReportStatus
+- **Location:** packages/core/src/enums.ts
+- **Description:** Report statuses; aligned with the PG enum `report_status`.
+- **Signature:** `REPORT_STATUSES = ['open','resolved','dismissed'] as const`
+- **Usage:** `pgEnum('report_status', REPORT_STATUSES)`

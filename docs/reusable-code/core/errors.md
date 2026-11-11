@@ -2,7 +2,7 @@
 
 ## ERROR_CATALOG
 - **Location:** packages/core/src/errors.ts
-- **Description:** Closed catalog (`as const`) of 21 codes and HTTP statuses. `ErrorCode = keyof typeof ERROR_CATALOG`. Adding a code also requires ADR-015 and `docs/apis/api.yaml`.
+- **Description:** Closed catalog (`as const`) of 22 codes and HTTP statuses. `ErrorCode = keyof typeof ERROR_CATALOG`. Adding a code also requires ADR-015 and `docs/apis/api.yaml`.
 
 ## AppError
 - **Location:** packages/core/src/errors.ts

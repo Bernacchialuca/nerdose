@@ -4,4 +4,5 @@ export * from './publishing';
 export * from './gameplay';
 export * from './progress';
 export * from './banks';
+export * from './quality';
 export * from './jobs';

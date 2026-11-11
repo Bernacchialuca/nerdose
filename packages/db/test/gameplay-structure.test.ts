@@ -28,9 +28,9 @@ const columns = async (table: string) => {
 };
 
 describe('gameplay and banks structure', () => {
-  it('S015-TS-1: migrations up to 0005_timeline_categories_databases_software_tools are registered', async () => {
+  it('S015-TS-1: migrations up to 0006_challenge_reports are registered', async () => {
     const [row] = await owner`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`;
-    expect(row!.n).toBe(6);
+    expect(row!.n).toBe(7);
   });
 
   it('S015-TS-2: game_id enum equals GAME_IDS', async () => {
@@ -186,6 +186,8 @@ describe('gameplay and banks structure', () => {
       ORDER BY 1, 2`;
     expect(rows.map((r) => [r.t, r.ref, r.confdeltype])).toEqual(
       [
+        ['challenge_reports', 'challenges', 'r'],
+        ['challenge_reports', 'players', 'r'],
         ['plays', 'challenges', 'r'],
         ['plays', 'players', 'r'],
         ['player_game_stats', 'players', 'r'],
@@ -195,11 +197,12 @@ describe('gameplay and banks structure', () => {
     );
   });
 
-  it('S015-TS-12: exactly the 16 check constraints', async () => {
+  it('S015-TS-12: exactly the 17 check constraints', async () => {
     const rows = await owner`SELECT conname FROM pg_constraint
       WHERE contype = 'c' AND connamespace = 'public'::regnamespace ORDER BY conname`;
     expect(rows.map((r) => r.conname)).toEqual(
       [
+        'ck_reports_message_length',
         'ck_challenges_number_positive',
         'ck_challenges_voided_reason',
         'ck_plays_result_when_finished',
@@ -226,6 +229,7 @@ describe('gameplay and banks structure', () => {
     expect(rows.map((r) => [r.tgname, r.t])).toEqual([
       ['bank_items_rejected_terminal', 'terms'],
       ['bank_items_rejected_terminal', 'timeline_facts'],
+      ['challenge_reports_status_terminal', 'challenge_reports'],
       ['challenges_payload_immutable', 'challenges'],
       ['challenges_status_transition', 'challenges'],
       ['set_updated_at', 'terms'],

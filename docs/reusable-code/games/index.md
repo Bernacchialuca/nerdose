@@ -3,7 +3,7 @@
 Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition`, `./client` and `./generator`, and `@nerdose/game-timeline` (`packages/games/timeline`), entries `./definition`, `./generator` and `./client`. The build script lives in `scripts/` and is never importable from `src/` or other packages.
 
 ## Devdle definition (6 items) - see devdle.md
-- **devdle / definition** (packages/games/devdle/src/definition/index.ts) - `GameDefinition` of Devdle (`id: 'devdle'`, `version: 1`); `definition` is an alias
+- **devdle / definition** (packages/games/devdle/src/definition/index.ts) - `GameDefinition` of Devdle (`id: 'devdle'`, `version: 1`); `definition` is an alias; implements `culprits(p)` (1 `term`, kind/id/label; test in `src/generator/culprits.test.ts`)
 - **scoreGuess** (packages/games/devdle/src/definition/feedback.ts) - Pure per-letter feedback with repeated-letter handling (`correct` first, then left-to-right `present`)
 - **payloadSchema / moveSchema / guessSchema / stateSchema / publicViewSchema / resultSchema / statsSchema / letterMarkSchema** (packages/games/devdle/src/definition/schemas.ts) - Zod schemas, snake_case as in `api.yaml`
 - **WORD_PATTERN / MAX_GUESSES** (packages/games/devdle/src/definition/schemas.ts) - `/^[A-Z]{4,12}$/` and 6
@@ -39,7 +39,7 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **GRID_SIZE / DIRECTIONS / DIRECTION_STEPS / Cell / Direction / inGrid / sameCell / directionOf / lineCells** (packages/games/grep-grid/src/shared/geometry.ts) - Pure geometry of the 12x12 grid and the 4 forward directions; `lineCells` returns `null` for invalid lines
 
 ## Grep Grid definition (5 items) - see grep-grid.md
-- **grepGrid / definition** (packages/games/grep-grid/src/definition/index.ts) - `GameDefinition` of Grep Grid (`id: 'grep-grid'`, `version: 1`); `definition` is an alias
+- **grepGrid / definition** (packages/games/grep-grid/src/definition/index.ts) - `GameDefinition` of Grep Grid (`id: 'grep-grid'`, `version: 1`); `definition` is an alias; implements `culprits(p)` (8 `term` in `words` order; test in `src/generator/culprits.test.ts`)
 - **payloadSchema / moveSchema / stateSchema / publicViewSchema / feedbackSchema / feedbackFoundSchema / feedbackNotFoundSchema / resultSchema / statsSchema / cellSchema** (packages/games/grep-grid/src/definition/schemas.ts) - Zod schemas, snake_case as in `api.yaml`
 - **WORD_PATTERN / WORDS_COUNT** (packages/games/grep-grid/src/definition/schemas.ts) - `/^[A-Z]{4,12}$/` and 8
 - **GrepGridPayload / GrepGridWord / GrepGridPlacement / GrepGridMove / GrepGridState / GrepGridPublicView / GrepGridFeedback / GrepGridResult / GrepGridStats** (packages/games/grep-grid/src/definition/schemas.ts) - Types inferred from the schemas
@@ -75,7 +75,7 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **formatEventDate** (packages/games/timeline/src/shared/format-date.ts) - UTC date formatting by precision
 
 ## Timeline definition (4 items) - see timeline.md
-- **timeline / definition** (packages/games/timeline/src/definition/index.ts) - `GameDefinition` of Timeline (`id: 'timeline'`, `version: 1`); `definition` is an alias
+- **timeline / definition** (packages/games/timeline/src/definition/index.ts) - `GameDefinition` of Timeline (`id: 'timeline'`, `version: 1`); `definition` is an alias; implements `culprits(p)` (5 `timeline_fact` by `fact_id` in `items` order; test in `src/generator/culprits.test.ts`)
 - **payloadSchema / moveSchema / stateSchema / publicViewSchema / feedbackSchema / resultSchema / statsSchema** (packages/games/timeline/src/definition/schemas.ts) - Zod schemas, snake_case as in `api.yaml`
 - **ITEMS_COUNT / OPAQUE_ID_PATTERN** (packages/games/timeline/src/definition/schemas.ts) - 5 and `/^[a-z0-9]{6}$/`
 - **TimelinePayload / TimelineItem / TimelineMove / TimelineState / TimelinePublicView / TimelineFeedback / TimelineResult / TimelineStats** (packages/games/timeline/src/definition/schemas.ts) - Types inferred from the schemas

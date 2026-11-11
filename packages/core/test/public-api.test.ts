@@ -5,6 +5,14 @@ import type {
   AnyGameGenerator,
   BankName,
   CodeLanguage,
+  CompletedPlay,
+  CompletedPlayStatus,
+  Culprit,
+  CulpritKind,
+  RebuiltGameStats,
+  ReplayedStreak,
+  ReportReason,
+  ReportStatus,
   ErrorCode,
   GameDefinition,
   GameGenerator,
@@ -33,6 +41,8 @@ describe('public API of the "." entry', () => {
       'ERROR_CATALOG',
       'GAME_IDS',
       'LOCALES',
+      'REPORT_REASONS',
+      'REPORT_STATUSES',
       'TERM_CATEGORIES',
       'TIMELINE_CATEGORIES',
       'challengeNumber',
@@ -41,6 +51,8 @@ describe('public API of the "." entry', () => {
       'liveStreak',
       'nextResetAt',
       'nextStreak',
+      'rebuildGameStats',
+      'replayStreak',
       'rngFrom',
       'secondsToReset',
       'today',
@@ -73,6 +85,17 @@ describe('public API of the "." entry', () => {
     expectTypeOf<Rng>().not.toBeNever();
     expectTypeOf(core.nextStreak).toEqualTypeOf<(input: StreakInput, day: string) => number>();
     expectTypeOf(core.liveStreak).toEqualTypeOf<(input: StreakInput, today: string) => number>();
+    expectTypeOf<Culprit>().not.toBeNever();
+    expectTypeOf<CulpritKind>().not.toBeNever();
+    expectTypeOf<ReplayedStreak>().not.toBeNever();
+    expectTypeOf<CompletedPlay<1>>().not.toBeNever();
+    expectTypeOf<CompletedPlayStatus>().not.toBeNever();
+    expectTypeOf<RebuiltGameStats<1>>().not.toBeNever();
+    expectTypeOf<ReportReason>().not.toBeNever();
+    expectTypeOf<ReportStatus>().not.toBeNever();
+    expectTypeOf(core.replayStreak).toEqualTypeOf<
+      (completedDays: readonly string[], activeDays: readonly string[]) => ReplayedStreak
+    >();
     expectTypeOf(core.rngFrom).toEqualTypeOf<(seed: Uint8Array) => Rng>();
   });
 });

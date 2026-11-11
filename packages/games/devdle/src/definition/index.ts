@@ -81,6 +81,7 @@ export const devdle: GameDefinition<
   },
 
   historyLabel: (r) => (r.win ? `✓ ${r.score}/${MAX_GUESSES}` : `✗ X/${MAX_GUESSES}`),
+  culprits: (p) => [{ kind: 'term', id: p.term_id, label: p.word }],
 };
 
 export { devdle as definition };

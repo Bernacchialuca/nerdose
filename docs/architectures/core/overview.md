@@ -26,3 +26,10 @@ Library en node (TypeScript estricto, Node.js 24 LTS). Vive en `packages/core` y
 ## Update (REQ-006)
 
 - `TIMELINE_CATEGORIES`, `TimelineCategory`, `DATE_PRECISIONS` and `DatePrecision` live in `core/src/enums.ts` (like `TERM_CATEGORIES`); `@nerdose/content` re-exports them. The `timeline` game package imports them from `core`, so it does not depend on `content` at runtime.
+
+## Update (REQ-007)
+
+- `replayStreak` and `rebuildGameStats` (`core/src/streaks.ts`): pure recompute of ADR-011, the base of `recomputeStats` in the `api`.
+- `GameDefinition.culprits(p): Culprit[]` (types `Culprit` and `CulpritKind` in `game-definition.ts`).
+- `invalid_culprit` (422) in `ERROR_CATALOG`.
+- `REPORT_REASONS` and `REPORT_STATUSES` in `enums.ts`.
