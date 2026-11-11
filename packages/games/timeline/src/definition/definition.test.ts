@@ -18,11 +18,11 @@ import {
 } from './test-fixtures';
 
 const PUBLIC_ITEMS = [
-  { opaque_id: 'g2n5w3', label: 'Go' },
-  { opaque_id: 'k1v3s8', label: 'Kubernetes' },
-  { opaque_id: 'p7k2m9', label: 'Python' },
-  { opaque_id: 'd9r6t0', label: 'Docker' },
-  { opaque_id: 'j4x8q1', label: 'Java' },
+  { opaque_id: 'g2n5w3', label: 'Go', category: 'programming_languages' },
+  { opaque_id: 'k1v3s8', label: 'Kubernetes', category: 'software_tools' },
+  { opaque_id: 'p7k2m9', label: 'Python', category: 'programming_languages' },
+  { opaque_id: 'd9r6t0', label: 'Docker', category: 'software_tools' },
+  { opaque_id: 'j4x8q1', label: 'Java', category: 'programming_languages' },
 ];
 
 describe('timeline definition', () => {
@@ -35,16 +35,14 @@ describe('timeline definition', () => {
 
   it('toPublic in es (TS-19)', () => {
     expect(timeline.toPublic(PAYLOAD, 'es')).toEqual({
-      category: 'programming_languages',
-      prompt: 'Ordená estos lenguajes del más antiguo al más reciente',
+      prompt: 'Ordená estos hitos del más antiguo al más reciente',
       items: PUBLIC_ITEMS,
     });
   });
 
   it('toPublic in en ignores state (TS-20)', () => {
     const expected = {
-      category: 'programming_languages',
-      prompt: 'Order these languages from oldest to newest',
+      prompt: 'Order these milestones from oldest to newest',
       items: PUBLIC_ITEMS,
     };
     expect(timeline.toPublic(PAYLOAD, 'en')).toEqual(expected);
@@ -103,7 +101,6 @@ describe('timeline definition', () => {
     expect(r).toEqual({
       win: false,
       score: 3,
-      category: 'programming_languages',
       correct_order: CORRECT,
       submitted_order: SWAP,
       items: CHRONO_ITEMS('es'),
@@ -111,6 +108,7 @@ describe('timeline definition', () => {
     expect(r.items[4]).toEqual({
       opaque_id: 'k1v3s8',
       label: 'Kubernetes',
+      category: 'software_tools',
       event_date: '2014-06-01',
       date_precision: 'month',
       note: 'nota de Kubernetes',
@@ -166,7 +164,6 @@ describe('timeline definition', () => {
       score: 0,
       submitted_order: [],
       correct_order: CORRECT,
-      category: 'programming_languages',
       items: CHRONO_ITEMS('es'),
     });
   });
@@ -175,33 +172,50 @@ describe('timeline definition', () => {
     expect(timeline.initialStats()).toEqual({ by_category: {} });
   });
 
-  it('reduceStats creates the category (TS-35)', () => {
+  it('reduceStats counts per milestone, in the category of each fact (TS-35)', () => {
     const prev = { by_category: {} };
+    // SWAP: Python, Docker y Kubernetes en su lugar; Java y Go intercambiados.
     const next = timeline.reduceStats(prev, timeline.result(PAYLOAD, { order: SWAP }, 'es'));
-    expect(next).toEqual({ by_category: { programming_languages: { played: 1, correct: 3 } } });
+    expect(next).toEqual({
+      by_category: {
+        programming_languages: { played: 3, correct: 1 },
+        software_tools: { played: 2, correct: 2 },
+      },
+    });
     expect(prev).toEqual({ by_category: {} });
   });
 
   it('reduceStats accumulates without touching other categories (TS-36)', () => {
     const prev = {
       by_category: {
-        programming_languages: { played: 2, correct: 7 },
-        companies: { played: 1, correct: 5 },
+        programming_languages: { played: 6, correct: 4 },
+        companies: { played: 5, correct: 5 },
       },
     };
     const a = timeline.reduceStats(prev, timeline.result(PAYLOAD, { order: CORRECT }, 'es'));
     expect(a).toEqual({
       by_category: {
-        programming_languages: { played: 3, correct: 12 },
-        companies: { played: 1, correct: 5 },
+        programming_languages: { played: 9, correct: 7 },
+        companies: { played: 5, correct: 5 },
+        software_tools: { played: 2, correct: 2 },
       },
     });
     expect(timeline.reduceStats(a, timeline.result(PAYLOAD, { order: ROTATED }, 'es'))).toEqual({
       by_category: {
-        programming_languages: { played: 4, correct: 12 },
-        companies: { played: 1, correct: 5 },
+        programming_languages: { played: 12, correct: 7 },
+        companies: { played: 5, correct: 5 },
+        software_tools: { played: 4, correct: 2 },
       },
     });
+  });
+
+  it('reduceStats sums 5 played per play and correct equal to the score', () => {
+    for (const order of [SWAP, CORRECT, REVERSED, ROTATED]) {
+      const r = timeline.result(PAYLOAD, { order }, 'es');
+      const stats = Object.values(timeline.reduceStats({ by_category: {} }, r).by_category);
+      expect(stats.reduce((n, c) => n + (c?.played ?? 0), 0)).toBe(5);
+      expect(stats.reduce((n, c) => n + (c?.correct ?? 0), 0)).toBe(r.score);
+    }
   });
 
   it('outputs satisfy their schemas (TS-17)', () => {

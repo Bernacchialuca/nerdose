@@ -1,31 +1,37 @@
+import type { TimelineCategory } from '@nerdose/core';
+
 import type { TimelinePublicView, TimelineResult } from '../definition/schemas';
 
-const item = (opaque_id: string, label: string) => ({ opaque_id, label });
+const PL: TimelineCategory = 'programming_languages';
+const ST: TimelineCategory = 'software_tools';
+const item = (opaque_id: string, label: string, category: TimelineCategory) => ({
+  opaque_id,
+  label,
+  category,
+});
 
 export const PUBLIC_VIEW_ES: TimelinePublicView = {
-  category: 'programming_languages',
-  prompt: 'Ordená estos lenguajes del más antiguo al más reciente',
+  prompt: 'Ordená estos hitos del más antiguo al más reciente',
   items: [
-    item('g2n5w3', 'Go'),
-    item('k1v3s8', 'Kubernetes'),
-    item('p7k2m9', 'Python'),
-    item('d9r6t0', 'Docker'),
-    item('j4x8q1', 'Java'),
+    item('g2n5w3', 'Go', PL),
+    item('k1v3s8', 'Kubernetes', ST),
+    item('p7k2m9', 'Python', PL),
+    item('d9r6t0', 'Docker', ST),
+    item('j4x8q1', 'Java', PL),
   ],
 };
 export const PUBLIC_VIEW_EN: TimelinePublicView = {
   ...PUBLIC_VIEW_ES,
-  prompt: 'Order these languages from oldest to newest',
+  prompt: 'Order these milestones from oldest to newest',
 };
 export const PUBLIC_VIEW_OTHER: TimelinePublicView = {
-  category: 'frameworks',
-  prompt: 'Ordená estos frameworks del más antiguo al más reciente',
+  prompt: 'Ordená estos hitos del más antiguo al más reciente',
   items: [
-    item('a1a1a1', 'React'),
-    item('b2b2b2', 'Vue'),
-    item('c3c3c3', 'Angular'),
-    item('d4d4d4', 'Svelte'),
-    item('e5e5e5', 'Ember'),
+    item('a1a1a1', 'React', 'frameworks'),
+    item('b2b2b2', 'Vue', 'frameworks'),
+    item('c3c3c3', 'Angular', 'frameworks'),
+    item('d4d4d4', 'Svelte', 'frameworks'),
+    item('e5e5e5', 'Ember', 'frameworks'),
   ],
 };
 export const STATE_EMPTY = {};
@@ -38,11 +44,41 @@ const ROTATED = ['j4x8q1', 'g2n5w3', 'd9r6t0', 'k1v3s8', 'p7k2m9'];
 const chrono = (locale: 'es' | 'en'): TimelineResult['items'] => {
   const note = (label: string) => (locale === 'es' ? `nota de ${label}` : `note on ${label}`);
   return [
-    { opaque_id: 'p7k2m9', label: 'Python', event_date: '1991-02-20', date_precision: 'day' },
-    { opaque_id: 'j4x8q1', label: 'Java', event_date: '1995-05-23', date_precision: 'day' },
-    { opaque_id: 'g2n5w3', label: 'Go', event_date: '2009-01-01', date_precision: 'year' },
-    { opaque_id: 'd9r6t0', label: 'Docker', event_date: '2013-03-20', date_precision: 'day' },
-    { opaque_id: 'k1v3s8', label: 'Kubernetes', event_date: '2014-06-01', date_precision: 'month' },
+    {
+      opaque_id: 'p7k2m9',
+      label: 'Python',
+      category: PL,
+      event_date: '1991-02-20',
+      date_precision: 'day',
+    },
+    {
+      opaque_id: 'j4x8q1',
+      label: 'Java',
+      category: PL,
+      event_date: '1995-05-23',
+      date_precision: 'day',
+    },
+    {
+      opaque_id: 'g2n5w3',
+      label: 'Go',
+      category: PL,
+      event_date: '2009-01-01',
+      date_precision: 'year',
+    },
+    {
+      opaque_id: 'd9r6t0',
+      label: 'Docker',
+      category: ST,
+      event_date: '2013-03-20',
+      date_precision: 'day',
+    },
+    {
+      opaque_id: 'k1v3s8',
+      label: 'Kubernetes',
+      category: ST,
+      event_date: '2014-06-01',
+      date_precision: 'month',
+    },
   ].map((i) => ({
     ...i,
     date_precision: i.date_precision as 'day' | 'year' | 'month',
@@ -55,7 +91,6 @@ const result = (locale: 'es' | 'en', submitted: string[]): TimelineResult => {
   return {
     win: score === 5,
     score,
-    category: 'programming_languages',
     correct_order: CORRECT,
     submitted_order: submitted,
     items: chrono(locale),

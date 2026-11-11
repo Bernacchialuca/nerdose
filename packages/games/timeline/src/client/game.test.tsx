@@ -63,12 +63,24 @@ afterEach(() => {
 });
 
 describe('Game structure', () => {
+  it('tags each row with the category of its milestone, without dates', () => {
+    render(<Game {...base()} />);
+    const rows = within(screen.getByRole('list')).getAllByRole('listitem');
+    const tags = ['programming_languages', 'software_tools', 'programming_languages'];
+    tags.push('software_tools', 'programming_languages');
+    rows.forEach((row, i) => {
+      expect(row.querySelector('[data-category]')).toHaveAttribute('data-category', tags[i]);
+    });
+    expect(within(rows[0] as HTMLElement).getByText('// lenguajes de programación')).toBeVisible();
+    expect(within(rows[1] as HTMLElement).getByText('// software y herramientas')).toBeVisible();
+  });
+
   it('shows the prompt, the shuffled list and no spoilers (TS-18)', () => {
     const { container } = render(<Game {...base()} />);
     expect(
       screen.getByRole('heading', {
         level: 1,
-        name: 'Ordená estos lenguajes del más antiguo al más reciente',
+        name: 'Ordená estos hitos del más antiguo al más reciente',
       }),
     ).toBeInTheDocument();
     expect(
@@ -323,7 +335,7 @@ describe('Game local order lifecycle', () => {
     expect(
       screen.getByRole('heading', {
         level: 1,
-        name: 'Order these languages from oldest to newest',
+        name: 'Order these milestones from oldest to newest',
       }),
     ).toBeInTheDocument();
     expect(names()).toEqual(ORDER_KUBERNETES_FIRST);
@@ -368,7 +380,9 @@ describe('Game layout and styles', () => {
     const { container } = render(<Game {...base()} />);
     expect(screen.getByRole('list')).toHaveClass('@container');
     const row = container.querySelector('[data-row-id="g2n5w3"]') as HTMLElement;
-    expect(within(row).getByText('Go')).toHaveClass('min-w-0', 'grow', 'break-words');
+    const name = within(row).getByText('Go');
+    expect(name).toHaveClass('break-words');
+    expect(name.parentElement).toHaveClass('min-w-0', 'grow');
     const group = within(row).getByRole('button', { name: 'Bajar Go' }).parentElement;
     expect(group).toHaveClass('flex-col', '@xs:flex-row');
     for (const b of within(row).getAllByRole('button')) expect(b).toHaveClass('size-11');

@@ -96,7 +96,7 @@ describe('Timeline: concurrencia', () => {
     expect(
       (gs!.extra as { by_category: Record<string, { played: number }> }).by_category
         .programming_languages!.played,
-    ).toBe(1);
+    ).toBe(3);
     expect((await sql`SELECT total_completed FROM player_stats`)[0]!.total_completed).toBe(1);
     expect(lines().filter((l) => l.event === 'PlayFinished')).toHaveLength(1);
   });

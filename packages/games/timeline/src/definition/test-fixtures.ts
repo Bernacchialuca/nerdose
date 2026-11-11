@@ -1,6 +1,8 @@
 import type { MoveContext } from '@nerdose/core';
 
-import { PROMPTS } from '../shared/prompts';
+import type { TimelineCategory } from '@nerdose/core';
+
+import { PROMPT } from '../shared/prompts';
 import type { TimelineMove, TimelinePayload, TimelineState } from './schemas';
 
 export const ID = {
@@ -22,22 +24,25 @@ export const OID = {
 const item = (
   w: keyof typeof ID,
   label: string,
+  category: TimelineCategory,
   event_date: string,
   date_precision: 'year' | 'month' | 'day',
 ) => ({
   fact_id: ID[w],
   opaque_id: OID[w],
   label,
+  category,
   event_date,
   date_precision,
   note: { es: `nota de ${label}`, en: `note on ${label}` },
 });
 
-const PYTHON = item('PYTHON', 'Python', '1991-02-20', 'day');
-const JAVA = item('JAVA', 'Java', '1995-05-23', 'day');
-const GO = item('GO', 'Go', '2009-01-01', 'year');
-const DOCKER = item('DOCKER', 'Docker', '2013-03-20', 'day');
-const KUBERNETES = item('KUBERNETES', 'Kubernetes', '2014-06-01', 'month');
+// Desafío mixto: tres lenguajes y dos herramientas.
+const PYTHON = item('PYTHON', 'Python', 'programming_languages', '1991-02-20', 'day');
+const JAVA = item('JAVA', 'Java', 'programming_languages', '1995-05-23', 'day');
+const GO = item('GO', 'Go', 'programming_languages', '2009-01-01', 'year');
+const DOCKER = item('DOCKER', 'Docker', 'software_tools', '2013-03-20', 'day');
+const KUBERNETES = item('KUBERNETES', 'Kubernetes', 'software_tools', '2014-06-01', 'month');
 
 export const CORRECT = [OID.PYTHON, OID.JAVA, OID.GO, OID.DOCKER, OID.KUBERNETES];
 export const SWAP = [OID.PYTHON, OID.GO, OID.JAVA, OID.DOCKER, OID.KUBERNETES];
@@ -46,8 +51,7 @@ export const ROTATED = [OID.JAVA, OID.GO, OID.DOCKER, OID.KUBERNETES, OID.PYTHON
 
 export const PAYLOAD: TimelinePayload = {
   date: '2026-12-02',
-  category: 'programming_languages',
-  prompt: { ...PROMPTS.programming_languages },
+  prompt: { ...PROMPT },
   items: [GO, KUBERNETES, PYTHON, DOCKER, JAVA],
   correct_order: CORRECT,
 };
@@ -62,6 +66,7 @@ export const CHRONO_ITEMS = (locale: 'es' | 'en') =>
   [PYTHON, JAVA, GO, DOCKER, KUBERNETES].map((i) => ({
     opaque_id: i.opaque_id,
     label: i.label,
+    category: i.category,
     event_date: i.event_date,
     date_precision: i.date_precision,
     note: i.note[locale],

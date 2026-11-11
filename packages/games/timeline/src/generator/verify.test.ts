@@ -16,7 +16,7 @@ const verify = (p: TimelinePayload, h = H) => generator.verify(p, h);
 const NAMES = [
   'items_count',
   'facts_in_bank',
-  'same_category',
+  'item_category',
   'texts_bilingual',
   'distinguishable',
   'correct_order_consistent',
@@ -48,19 +48,20 @@ describe('verifyPayload', () => {
     }
   });
 
-  it('same_category (TS-59)', () => {
-    expect(
-      verify(
-        mutate((p) => {
-          p.category = 'frameworks';
-          p.prompt = { es: 'Ordená estos frameworks', en: 'Order these frameworks' };
-        }),
-      ).reason,
-    ).toBe('same_category');
+  it('item_category: each item carries the category of its fact (TS-59)', () => {
+    expect(verify(mutate((p) => (p.items[0].category = 'internet'))).reason).toBe('item_category');
+    expect(verify(mutate((p) => (p.items[0].category = 'frameworks'))).reason).toBe(
+      'item_category',
+    );
     const bank = BANK_FIXTURE.map((f) =>
       f.id === ID.DOCKER ? { ...f, category: 'companies' as const } : f,
     );
-    expect(verify(PAYLOAD, history(bank)).reason).toBe('same_category');
+    expect(verify(PAYLOAD, history(bank)).reason).toBe('item_category');
+  });
+
+  it('accepts a payload that mixes categories (TS-59b)', () => {
+    expect(new Set(PAYLOAD.items.map((i) => i.category)).size).toBeGreaterThan(1);
+    expect(verify(PAYLOAD).ok).toBe(true);
   });
 
   it('texts_bilingual (TS-60)', () => {

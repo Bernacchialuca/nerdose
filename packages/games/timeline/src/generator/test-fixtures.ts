@@ -32,7 +32,7 @@ export const mk = (
 export const BANK_FIXTURE: TimelineFact[] = PAYLOAD.items.map((i) => ({
   id: i.fact_id,
   label: i.label,
-  category: 'programming_languages',
+  category: i.category,
   event_date: i.event_date,
   date_precision: i.date_precision,
   note: i.note,

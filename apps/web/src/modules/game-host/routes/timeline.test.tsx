@@ -39,8 +39,8 @@ const TODAY = '/api/games/timeline/today?lang=es';
 const MOVE = '/api/games/timeline/today/move?lang=es';
 const SHARE_3 = '⏳ Tech Timeline #128\n🟩🟥🟥🟩🟩 3/5\nnerdose.dev';
 const SHARE_5 = '⏳ Tech Timeline #128\n🟩🟩🟩🟩🟩 5/5\nnerdose.dev';
-const PROMPT_ES = 'Ordená estos lenguajes del más antiguo al más reciente';
-const PROMPT_EN = 'Order these languages from oldest to newest';
+const PROMPT_ES = 'Ordená estos hitos del más antiguo al más reciente';
+const PROMPT_EN = 'Order these milestones from oldest to newest';
 const VOIDED = 'Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.';
 const COOKIES =
   'Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».';
@@ -296,9 +296,7 @@ describe('confirmación y resultado', () => {
     view();
     const heading = await h1('3 de 5 en su lugar');
     expect(heading).not.toHaveTextContent('✓');
-    expect(
-      screen.getByText('// consigna: del más antiguo al más reciente · lenguajes de programación'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('// consigna: del más antiguo al más reciente')).toBeInTheDocument();
     expect(screen.getAllByText('3/5').length).toBeGreaterThan(0);
     expect(screen.getByText(/posiciones/)).toHaveTextContent(/posiciones\s*correctas/);
     const yours = screen.getByRole('heading', { level: 2, name: 'tu orden' }).closest('section');
@@ -744,9 +742,7 @@ describe('idioma y retomar', () => {
     );
     await user.click(lang('EN'));
     expect(await h1('3 of 5 in place')).toBeInTheDocument();
-    expect(
-      screen.getByText('// task: from oldest to newest · programming languages'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('// task: from oldest to newest')).toBeInTheDocument();
     expect(screen.getByText(/February 20, 1991/)).toBeInTheDocument();
     expect(screen.getByText('2009')).toBeInTheDocument();
     expect(screen.getByText(/June 2014/)).toBeInTheDocument();

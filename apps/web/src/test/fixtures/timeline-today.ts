@@ -21,6 +21,15 @@ export const TL_LABEL: Record<string, string> = {
   k1v3s8: 'Kubernetes',
 };
 
+// Desafío mixto: cada hito lleva la categoría de su hecho.
+export const TL_CATEGORY: Record<string, string> = {
+  p7k2m9: 'programming_languages',
+  j4x8q1: 'programming_languages',
+  g2n5w3: 'programming_languages',
+  d9r6t0: 'software_tools',
+  k1v3s8: 'software_tools',
+};
+
 export const TL_INITIAL = ['g2n5w3', 'k1v3s8', 'p7k2m9', 'd9r6t0', 'j4x8q1'];
 export const TL_CORRECT = ['p7k2m9', 'j4x8q1', 'g2n5w3', 'd9r6t0', 'k1v3s8'];
 export const TL_SWAP = ['p7k2m9', 'g2n5w3', 'j4x8q1', 'd9r6t0', 'k1v3s8'];
@@ -37,6 +46,7 @@ export const TL_ITEMS = (lang: Lang = 'es') => {
   ) => ({
     opaque_id,
     label: TL_LABEL[opaque_id] as string,
+    category: TL_CATEGORY[opaque_id] as string,
     event_date,
     date_precision,
     note: note(TL_LABEL[opaque_id] as string),
@@ -51,12 +61,15 @@ export const TL_ITEMS = (lang: Lang = 'es') => {
 };
 
 export const tlPublicView = (lang: Lang = 'es') => ({
-  category: 'programming_languages',
   prompt:
     lang === 'es'
-      ? 'Ordená estos lenguajes del más antiguo al más reciente'
-      : 'Order these languages from oldest to newest',
-  items: TL_INITIAL.map((id) => ({ opaque_id: id, label: TL_LABEL[id] as string })),
+      ? 'Ordená estos hitos del más antiguo al más reciente'
+      : 'Order these milestones from oldest to newest',
+  items: TL_INITIAL.map((id) => ({
+    opaque_id: id,
+    label: TL_LABEL[id] as string,
+    category: TL_CATEGORY[id] as string,
+  })),
 });
 
 export const tlResult = (submitted: string[], lang: Lang = 'es') => {
@@ -64,7 +77,6 @@ export const tlResult = (submitted: string[], lang: Lang = 'es') => {
   return {
     win: score === 5,
     score,
-    category: 'programming_languages',
     correct_order: TL_CORRECT,
     submitted_order: submitted,
     items: TL_ITEMS(lang),
@@ -78,7 +90,12 @@ export const TL_STATS = {
   played: 5,
   wins: 2,
   win_rate: 0.4,
-  extra: { by_category: { programming_languages: { played: 5, correct: 17 } } },
+  extra: {
+    by_category: {
+      programming_languages: { played: 15, correct: 10 },
+      software_tools: { played: 10, correct: 7 },
+    },
+  },
 };
 
 export const STREAKS = { game: { current: 3, max: 4 }, global: { current: 6, max: 12 } };

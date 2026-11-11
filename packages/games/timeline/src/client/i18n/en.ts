@@ -11,13 +11,15 @@ export const en: Shape<typeof es> = {
     operating_systems: 'operating systems',
     hardware: 'hardware',
     video_games: 'video games',
+    databases: 'databases',
+    software_tools: 'software and tools',
   },
   instructions: {
     meta: 'Challenge #{{number}} · ~1 min · one game per day',
     rulesTitle: 'how to play',
     step1: {
       kicker: '1 · Look at the 5 milestones',
-      body: 'They are facts from one category of tech history (languages, frameworks, companies…), shuffled and without dates.',
+      body: 'They are facts from tech history across different categories (languages, frameworks, companies…), shuffled and without dates.',
     },
     step2: {
       kicker: '2 · Put them in order',
@@ -60,7 +62,7 @@ export const en: Shape<typeof es> = {
     message: '> {{message}}',
   },
   result: {
-    comment: 'task: from oldest to newest · {{category}}',
+    comment: 'task: from oldest to newest',
     won: 'Perfect order',
     partial: '{{score}} of {{total}} in place',
     zero: 'None in place this time',

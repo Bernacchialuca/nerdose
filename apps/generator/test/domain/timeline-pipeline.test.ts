@@ -75,7 +75,7 @@ describe('generateForDate con timeline', () => {
     expect(verification.checks.map((c) => c.name)).toEqual([
       'items_count',
       'facts_in_bank',
-      'same_category',
+      'item_category',
       'texts_bilingual',
       'distinguishable',
       'correct_order_consistent',
@@ -85,10 +85,13 @@ describe('generateForDate con timeline', () => {
     ]);
     const payload = parse(row!.payload);
     expect(payload.date).toBe('2026-12-02');
-    expect(payload.category).toBe('programming_languages');
+    expect(payload).not.toHaveProperty('category');
+    expect(payload.items.every((i) => i.category === 'programming_languages')).toBe(true);
     expect(payload.items.map((i) => i.fact_id).sort()).toEqual(CHRONO5.map((f) => f.id).sort());
-    expect(payload.prompt.es.length).toBeGreaterThan(0);
-    expect(payload.prompt.en.length).toBeGreaterThan(0);
+    expect(payload.prompt).toEqual({
+      es: 'Ordená estos hitos del más antiguo al más reciente',
+      en: 'Order these milestones from oldest to newest',
+    });
     expect(order(row!.payload)).toEqual(['Python', 'Java', 'Go', 'Docker', 'Kubernetes']);
     expect(payload.items.map((i) => i.opaque_id)).not.toEqual(payload.correct_order);
 
@@ -209,10 +212,10 @@ describe('generateForDate con timeline', () => {
     (await allFacts()).forEach((f) => expect(f.lastUsed).toBeNull());
   });
 
-  it('TS-22 sin una categoría con 5 hechos propaga RangeError', async () => {
+  it('TS-22 con menos de 5 hechos en el banco propaga RangeError', async () => {
     await insertFacts(t.owner.db, CHRONO5.slice(0, 4));
     await expect(generateForDate({ entry, date: '2026-12-02' }, setup().deps)).rejects.toThrow(
-      /no category has 5 facts/,
+      /the bank has fewer than 5 facts/,
     );
     expect(await rowsFor('2026-12-02')).toHaveLength(0);
   });

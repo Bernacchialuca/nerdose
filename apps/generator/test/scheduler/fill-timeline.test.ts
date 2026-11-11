@@ -77,7 +77,7 @@ describe('fill con Timeline y el dataset real', () => {
       for (const item of p.items) {
         const fact = byId.get(item.fact_id)!;
         expect(fact).toBeDefined();
-        expect(fact.category).toBe(p.category);
+        expect(fact.category).toBe(item.category);
         expect(fact.label).toBe(item.label);
         expect(fact.eventDate).toBe(item.event_date);
         expect(fact.datePrecision).toBe(item.date_precision);

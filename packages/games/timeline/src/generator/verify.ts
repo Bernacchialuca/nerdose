@@ -39,13 +39,17 @@ export function verifyPayload(
     })
     .map((i) => String(i?.label));
 
+  // Cada item lleva la categoría de su hecho (el desafío mezcla categorías).
   const categoryProblems: string[] = [];
-  if (!(TIMELINE_CATEGORIES as readonly string[]).includes(p.category)) {
-    categoryProblems.push(`unknown category ${String(p.category)}`);
-  }
   for (const i of items) {
+    if (!(TIMELINE_CATEGORIES as readonly string[]).includes(i?.category)) {
+      categoryProblems.push(`${String(i?.label)}: unknown category ${String(i?.category)}`);
+      continue;
+    }
     const f = bank.get(i?.fact_id);
-    if (f && f.category !== p.category) categoryProblems.push(`${i.label}: ${f.category}`);
+    if (f && f.category !== i.category) {
+      categoryProblems.push(`${i.label}: ${i.category} != ${f.category}`);
+    }
   }
 
   const missingText: string[] = [];
@@ -103,7 +107,7 @@ export function verifyPayload(
       'facts_in_bank',
       notInBank.length ? `not in bank or altered: ${notInBank.join(', ')}` : null,
     ),
-    check('same_category', categoryProblems.length ? categoryProblems.join('; ') : null),
+    check('item_category', categoryProblems.length ? categoryProblems.join('; ') : null),
     check(
       'texts_bilingual',
       missingText.length ? `missing es/en for ${missingText.join(', ')}` : null,

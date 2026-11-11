@@ -58,6 +58,7 @@ export function Game({
   const submittedRef = useRef(false);
 
   const labels = new Map(view.items.map((i) => [i.opaque_id, i.label]));
+  const categories = new Map(view.items.map((i) => [i.opaque_id, i.category]));
   const labelOf = (id: string) => labels.get(id) ?? id;
   const blocked = pending || locked;
 
@@ -183,6 +184,7 @@ export function Game({
                       key={id}
                       id={id}
                       label={labelOf(id)}
+                      category={categories.get(id)}
                       index={index}
                       blocked={blocked}
                       t={t}

@@ -22,6 +22,7 @@ import {
   tlMove,
   tlPost,
   tlResult,
+  tlStats,
 } from '../helpers/timeline';
 
 const dbs = useDatabases();
@@ -37,7 +38,6 @@ afterAll(() => dbs.close());
 const sql = dbs.owner.sql;
 const cookie = (id: string) => ({ Cookie: `nd_pid=${id}` });
 const err = (code: string, message: string) => ({ error: { code, message } });
-const TL_STATS_KEY = 'programming_languages';
 
 const TS_PLAYS = () => sql`SELECT * FROM plays`;
 
@@ -87,9 +87,9 @@ describe('Timeline: abrir y empezar', () => {
       result: null,
       game_stats: null,
     });
-    expect(Object.keys(json.public_view)).toEqual(['category', 'prompt', 'items']);
+    expect(Object.keys(json.public_view)).toEqual(['prompt', 'items']);
     for (const i of json.public_view.items) {
-      expect(Object.keys(i)).toEqual(['opaque_id', 'label']);
+      expect(Object.keys(i)).toEqual(['opaque_id', 'label', 'category']);
     }
   });
 
@@ -124,9 +124,7 @@ describe('Timeline: abrir y empezar', () => {
 });
 
 describe('Timeline: confirmar', () => {
-  const stats = (correct: number, played = 1) => ({
-    by_category: { [TL_STATS_KEY]: { played, correct } },
-  });
+  const stats = tlStats;
 
   it('TS-9 confirmar 3/5 (es)', async () => {
     const { player } = await setupPlay();
@@ -145,7 +143,7 @@ describe('Timeline: confirmar', () => {
         played: 1,
         wins: 0,
         win_rate: 0,
-        extra: stats(3),
+        extra: stats(SWAP),
       },
     });
     const [p] = await TS_PLAYS();
@@ -159,7 +157,7 @@ describe('Timeline: confirmar', () => {
     expect(new Date(p!.finished_at as string).toISOString()).toBe('2026-12-01T10:00:00.000Z');
     const [gs] = await sql`SELECT * FROM player_game_stats WHERE game_id = 'timeline'`;
     expect(gs).toMatchObject({ current_streak: 1, max_streak: 1, played: 1, wins: 0 });
-    expect(gs!.extra).toEqual(stats(3));
+    expect(gs!.extra).toEqual(stats(SWAP));
     const [ps] = await sql`SELECT * FROM player_stats`;
     expect(ps).toMatchObject({
       global_streak: 1,
@@ -183,7 +181,7 @@ describe('Timeline: confirmar', () => {
     const json = await res.json();
     expect(json.play).toEqual({ status: 'lost', state: { order: REVERSED }, score: 1 });
     expect(json.result).toMatchObject({ score: 1, win: false, submitted_order: REVERSED });
-    expect(json.game_stats.extra).toEqual(stats(1));
+    expect(json.game_stats.extra).toEqual(stats(REVERSED));
   });
 
   it('TS-11 confirmar 0/5 cuenta para la racha', async () => {
@@ -195,7 +193,7 @@ describe('Timeline: confirmar', () => {
     expect(json.play).toEqual({ status: 'lost', state: { order: ROTATED }, score: 0 });
     expect(json.result).toMatchObject({ score: 0, win: false });
     expect(json.streaks.game.current).toBe(1);
-    expect(json.game_stats.extra).toEqual(stats(0));
+    expect(json.game_stats.extra).toEqual(stats(ROTATED));
     expect((await sql`SELECT total_completed FROM player_stats`)[0]!.total_completed).toBe(1);
   });
 
@@ -217,7 +215,7 @@ describe('Timeline: confirmar', () => {
         played: 1,
         wins: 1,
         win_rate: 1,
-        extra: stats(5),
+        extra: stats(CORRECT),
       },
     });
     expect(json.result.win).toBe(true);
@@ -229,7 +227,7 @@ describe('Timeline: confirmar', () => {
     expect(lines().filter((l) => l.event === 'PlayFinished')).toHaveLength(1);
   });
 
-  it('TS-13 confirmar continúa la racha y acumula by_category', async () => {
+  it('TS-13 confirmar continúa la racha y acumula by_category por hito', async () => {
     await seedTimeline(dbs, { date: '2026-11-30', number: 7 });
     const { challenge, player } = await setup();
     await dbs.insertGameStats({
@@ -242,8 +240,8 @@ describe('Timeline: confirmar', () => {
       lastCompletedDate: '2026-11-30',
       extra: {
         by_category: {
-          programming_languages: { played: 2, correct: 7 },
-          companies: { played: 2, correct: 6 },
+          programming_languages: { played: 10, correct: 7 },
+          companies: { played: 10, correct: 6 },
         },
       },
     });
@@ -266,9 +264,11 @@ describe('Timeline: confirmar', () => {
       wins: 1,
       win_rate: 0.2,
       extra: {
+        // SWAP: Python, Docker y Kubernetes en su lugar; Java y Go intercambiados.
         by_category: {
-          programming_languages: { played: 3, correct: 10 },
-          companies: { played: 2, correct: 6 },
+          programming_languages: { played: 13, correct: 8 },
+          companies: { played: 10, correct: 6 },
+          software_tools: { played: 2, correct: 2 },
         },
       },
     });

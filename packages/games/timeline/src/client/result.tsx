@@ -23,7 +23,7 @@ export function Result({ locale, t, notices, result, aside, footer }: ResultProp
       <div className="flex flex-wrap items-end justify-between gap-6">
         <div className="flex min-w-0 grow-2 basis-130 flex-col gap-2">
           <p className="font-mono text-label-comment text-text-dim">
-            {`// ${t('result.comment', { category: t(`categories.${r.category}`) })}`}
+            {`// ${t('result.comment')}`}
           </p>
           <h1 className="font-mono text-title-game text-text">
             {r.win ? (
@@ -45,7 +45,7 @@ export function Result({ locale, t, notices, result, aside, footer }: ResultProp
         </div>
         <div className="min-w-0 grow-2 basis-130">
           <SectionPanel title={t('result.correctOrder')}>
-            <Rail items={r.items} locale={locale} />
+            <Rail items={r.items} locale={locale} t={t} />
           </SectionPanel>
         </div>
       </div>

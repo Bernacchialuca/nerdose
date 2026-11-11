@@ -18,7 +18,8 @@ describe('payloadSchema', () => {
     ['unknown precision', (p) => (p.items[0].date_precision = 'week')],
     ['partial note', (p) => (p.items[0].note = { es: 'x' })],
     ['string prompt', (p) => (p.prompt = 'x')],
-    ['unknown category', (p) => (p.category = 'internet')],
+    ['unknown item category', (p) => (p.items[0].category = 'internet')],
+    ['item without category', (p) => delete p.items[0].category],
     ['bad date', (p) => (p.date = '2026/12/02')],
     ['bad event_date', (p) => (p.items[0].event_date = '2009')],
   ];

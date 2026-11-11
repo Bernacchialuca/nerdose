@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import { payloadSchema, type TimelinePayload } from '../definition';
 import { PAYLOAD } from '../definition/test-fixtures';
-import { PROMPTS } from '../shared/prompts';
+import { PROMPT } from '../shared/prompts';
 import { generator } from './index';
-import { BANK, BANK_TIGHT, BID, DATE, ID, history, mk, seed } from './test-fixtures';
+import { BANK, BANK_TIGHT, BID, DATE, ID, history, seed } from './test-fixtures';
 
 const gen = (n: number, date = DATE, bank = BANK): TimelinePayload =>
   generator.generate({ date, seed: seed(n), history: history(bank) });
@@ -31,7 +31,6 @@ describe('generator.generate', () => {
     for (const n of range(50)) {
       const p = gen(n);
       for (const nn of ['02', '05', '08']) expect(factIds(p)).not.toContain(BID(nn));
-      expect(p.category).toBe('programming_languages');
     }
   });
 
@@ -54,12 +53,14 @@ describe('generator.generate', () => {
   it('builds a consistent payload (TS-46)', () => {
     const p = gen(1);
     expect(p.date).toBe(DATE);
-    expect(p.prompt).toEqual(PROMPTS.programming_languages);
+    expect(p.prompt).toEqual(PROMPT);
+    expect(p).not.toHaveProperty('category');
     expect(p.items).toHaveLength(5);
     for (const i of p.items) {
       const f = BANK.find((b) => b.id === i.fact_id)!;
-      expect([i.label, i.event_date, i.date_precision, i.note]).toEqual([
+      expect([i.label, i.category, i.event_date, i.date_precision, i.note]).toEqual([
         f.label,
+        f.category,
         f.event_date,
         f.date_precision,
         f.note,
@@ -119,32 +120,32 @@ describe('generator.generate', () => {
     expect(detail).toContain('Node.js');
   });
 
-  it('with no eligible category it picks anyway and verify rejects (TS-53)', () => {
-    const bank = BANK.map((f) =>
-      f.category === 'programming_languages' ? { ...f, last_used: '2026-12-01' } : f,
-    );
+  it('with fewer than 5 eligible facts it picks anyway and verify rejects (TS-53)', () => {
+    const bank = BANK.map((f) => (f.id === BID('21') ? f : { ...f, last_used: '2026-12-01' }));
     const p = gen(1, DATE, bank);
-    expect(p.category).toBe('programming_languages');
+    expect(factIds(p)).toContain(BID('21'));
     expect(generator.verify(p, history(bank))).toMatchObject({ ok: false, reason: 'not_used_90' });
   });
 
-  it('throws when no category has 5 facts (TS-54)', () => {
+  it('throws when the bank has fewer than 5 facts (TS-54)', () => {
     const bank = BANK.filter((f) => f.category === 'frameworks');
+    expect(bank).toHaveLength(4);
     expect(() => gen(1, DATE, bank)).toThrow(
-      new RangeError('timeline generate: no category has 5 facts'),
+      new RangeError('timeline generate: the bank has fewer than 5 facts'),
     );
   });
 
-  it('picks the category from the rng among those with 5 eligible (TS-55)', () => {
-    const extra = [
-      mk(BID('31'), 'Apple', 'companies', '1976-04-01', 'day'),
-      mk(BID('32'), 'Microsoft', 'companies', '1975-04-04', 'day'),
-      mk(BID('33'), 'Google', 'companies', '1998-09-04', 'day'),
-      mk(BID('34'), 'Facebook', 'companies', '2004-02-04', 'day'),
-      mk(BID('35'), 'Tesla', 'companies', '2003-07-01', 'day'),
-    ];
-    const cats = new Set(range(50).map((n) => gen(n, DATE, [...BANK, ...extra]).category));
-    expect([...cats].sort()).toEqual(['companies', 'programming_languages']);
+  it('mixes categories: picks from the whole pool, whatever the category (TS-55)', () => {
+    const ps = range(50).map((n) => gen(n));
+    const mixed = ps.filter((p) => new Set(p.items.map((i) => i.category)).size > 1);
+    expect(mixed.length).toBeGreaterThan(0);
+    const seen = new Set(ps.flatMap((p) => p.items.map((i) => i.category)));
+    expect([...seen].sort()).toEqual(['frameworks', 'programming_languages']);
+    // Una categoría con menos de 5 hechos también entra: 4 frameworks + 1 lenguaje alcanzan.
+    const fourAndOne = [...BANK.filter((f) => f.category === 'frameworks'), BANK[0]!];
+    const p = gen(1, DATE, fourAndOne);
+    expect(factIds(p).sort()).toEqual(fourAndOne.map((f) => f.id).sort());
+    expect(generator.verify(p, history(fourAndOne)).ok).toBe(true);
   });
 
   it('completes with non-eligible facts when needed (TS-53 variant)', () => {

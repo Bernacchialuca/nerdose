@@ -1,21 +1,24 @@
+import type { TimelineCategory } from '@nerdose/core';
 import { buttonClass, cn } from '@nerdose/ui';
 
 import { ITEMS_COUNT } from '../definition/schemas';
 
+import { CategoryTag } from './category-tag';
 import type { Translate } from './types';
 import { useRowSortable } from './use-row-sortable';
 
 type SortableRowProps = {
   id: string;
   label: string;
+  category: TimelineCategory | undefined;
   index: number;
   blocked: boolean;
   t: Translate;
   onMove: (delta: -1 | 1) => void;
 };
 
-/** `timeline.row` while playing: handle (the only drag activator) · position · name · up/down. */
-export function SortableRow({ id, label, index, blocked, t, onMove }: SortableRowProps) {
+/** `timeline.row` while playing: handle (the only drag activator) · position · name + category · up/down. */
+export function SortableRow({ id, label, category, index, blocked, t, onMove }: SortableRowProps) {
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, isDragging, isOver, style } =
     useRowSortable(id, blocked, t('row.roleDescription'));
   const names = { label, position: index + 1, total: ITEMS_COUNT };
@@ -49,7 +52,10 @@ export function SortableRow({ id, label, index, blocked, t, onMove }: SortableRo
       >
         {index + 1}
       </span>
-      <span className="min-w-0 grow break-words font-mono text-game-item text-text">{label}</span>
+      <div className="flex min-w-0 grow flex-col">
+        <span className="break-words font-mono text-game-item text-text">{label}</span>
+        {category ? <CategoryTag category={category} t={t} /> : null}
+      </div>
       <div className="flex flex-col gap-1 @xs:flex-row">
         <button
           type="button"

@@ -26,9 +26,8 @@ export const timeline: GameDefinition<
   moveSchema,
 
   toPublic: (p, locale) => ({
-    category: p.category,
     prompt: p.prompt[locale],
-    items: p.items.map(({ opaque_id, label }) => ({ opaque_id, label })),
+    items: p.items.map(({ opaque_id, label, category }) => ({ opaque_id, label, category })),
   }),
 
   initState: () => ({}),
@@ -58,6 +57,7 @@ export const timeline: GameDefinition<
             {
               opaque_id: i.opaque_id,
               label: i.label,
+              category: i.category,
               event_date: i.event_date,
               date_precision: i.date_precision,
               note: i.note[locale],
@@ -68,7 +68,6 @@ export const timeline: GameDefinition<
     return {
       win: score === ITEMS_COUNT,
       score,
-      category: p.category,
       correct_order: [...p.correct_order],
       submitted_order: [...submitted],
       items,
@@ -80,14 +79,15 @@ export const timeline: GameDefinition<
 
   initialStats: () => ({ by_category: {} }),
 
+  // Por hito: `r.items` va en el orden correcto, así que el item k acertó si quedó en la posición k.
   reduceStats(prev, r) {
-    const cur = prev.by_category[r.category] ?? { played: 0, correct: 0 };
-    return {
-      by_category: {
-        ...prev.by_category,
-        [r.category]: { played: cur.played + 1, correct: cur.correct + r.score },
-      },
-    };
+    const byCategory = { ...prev.by_category };
+    r.items.forEach((item, k) => {
+      const cur = byCategory[item.category] ?? { played: 0, correct: 0 };
+      const hit = r.submitted_order[k] === item.opaque_id ? 1 : 0;
+      byCategory[item.category] = { played: cur.played + 1, correct: cur.correct + hit };
+    });
+    return { by_category: byCategory };
   },
 
   historyLabel: (r) => `${r.score}/${ITEMS_COUNT}`,

@@ -4,8 +4,19 @@ import { cn } from '@nerdose/ui';
 import type { TimelineResult } from '../definition/schemas';
 import { formatEventDate } from '../shared/format-date';
 
+import { CategoryTag } from './category-tag';
+import type { Translate } from './types';
+
 /** `timeline.rail`: chronological list with the date above the name (fits any precision at 320 px). */
-export function Rail({ items, locale }: { items: TimelineResult['items']; locale: Locale }) {
+export function Rail({
+  items,
+  locale,
+  t,
+}: {
+  items: TimelineResult['items'];
+  locale: Locale;
+  t: Translate;
+}) {
   return (
     <ol className="flex flex-col">
       {items.map((item, i) => (
@@ -27,6 +38,7 @@ export function Rail({ items, locale }: { items: TimelineResult['items']; locale
               {formatEventDate(item.event_date, item.date_precision, locale)}
             </span>
             <span className="break-words font-mono text-game-item text-text">{item.label}</span>
+            <CategoryTag category={item.category} t={t} />
             <span className="font-sans text-body-sm text-text-lede">{item.note}</span>
           </div>
         </li>

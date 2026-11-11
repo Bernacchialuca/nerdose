@@ -7,13 +7,15 @@ export const es = {
     operating_systems: 'sistemas operativos',
     hardware: 'hardware',
     video_games: 'videojuegos',
+    databases: 'bases de datos',
+    software_tools: 'software y herramientas',
   },
   instructions: {
     meta: 'Desafío #{{number}} · ~1 min · una partida por día',
     rulesTitle: 'cómo se juega',
     step1: {
       kicker: '1 · Mirá los 5 hitos',
-      body: 'Son hechos de una misma categoría de la historia de la tecnología (lenguajes, frameworks, empresas…), mezclados y sin fecha.',
+      body: 'Son hechos de la historia de la tecnología de distintas categorías (lenguajes, frameworks, empresas…), mezclados y sin fecha.',
     },
     step2: {
       kicker: '2 · Ordenalos',
@@ -56,7 +58,7 @@ export const es = {
     message: '> {{message}}',
   },
   result: {
-    comment: 'consigna: del más antiguo al más reciente · {{category}}',
+    comment: 'consigna: del más antiguo al más reciente',
     won: 'Orden perfecto',
     partial: '{{score}} de {{total}} en su lugar',
     zero: 'Ninguno en su lugar esta vez',

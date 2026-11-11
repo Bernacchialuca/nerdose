@@ -14,14 +14,15 @@ const payloadItemSchema = z.object({
   fact_id: z.string().min(1),
   opaque_id: z.string().regex(OPAQUE_ID_PATTERN),
   label: z.string().min(1),
+  category,
   event_date: day,
   date_precision: precision,
   note: localized,
 });
 
+// Sin categoría propia: el desafío mezcla hechos de todas; cada item conserva la de su hecho.
 export const payloadSchema = z.object({
   date: day,
-  category,
   prompt: localized,
   items: z.array(payloadItemSchema).length(ITEMS_COUNT),
   correct_order: z.array(z.string()).length(ITEMS_COUNT),
@@ -36,10 +37,12 @@ export const moveSchema = z
 
 export const stateSchema = z.strictObject({ order: order.optional() });
 
+// La categoría de un hito no revela su fecha: puede ir en la vista pública.
 export const publicViewSchema = z.strictObject({
-  category,
   prompt: z.string(),
-  items: z.array(z.strictObject({ opaque_id: z.string(), label: z.string() })).length(ITEMS_COUNT),
+  items: z
+    .array(z.strictObject({ opaque_id: z.string(), label: z.string(), category }))
+    .length(ITEMS_COUNT),
 });
 
 export const feedbackSchema = z.null();
@@ -47,7 +50,6 @@ export const feedbackSchema = z.null();
 export const resultSchema = z.strictObject({
   win: z.boolean(),
   score: z.number().int().min(0).max(ITEMS_COUNT),
-  category,
   correct_order: z.array(z.string()),
   submitted_order: z.array(z.string()),
   items: z
@@ -55,6 +57,7 @@ export const resultSchema = z.strictObject({
       z.strictObject({
         opaque_id: z.string(),
         label: z.string(),
+        category,
         event_date: day,
         date_precision: precision,
         note: z.string(),
@@ -63,6 +66,7 @@ export const resultSchema = z.strictObject({
     .length(ITEMS_COUNT),
 });
 
+/** Acumulado por hito: cada item suma `played` a la categoría de su hecho y `correct` si quedó en su lugar. */
 export const statsSchema = z.object({
   by_category: z.partialRecord(
     category,

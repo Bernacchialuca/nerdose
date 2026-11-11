@@ -2,9 +2,9 @@ import { rngFrom } from '@nerdose/core';
 import type { DatePrecision, GameGenerator, TimelineCategory } from '@nerdose/core';
 
 import type { TimelinePayload } from '../definition';
-import { PROMPTS } from '../shared/prompts';
+import { PROMPT } from '../shared/prompts';
 import { compareChronological } from '../shared/dates';
-import { chooseCategory, chooseFacts } from './choose';
+import { chooseFacts } from './choose';
 import { REUSE_WINDOW_DAYS, eligibleFacts } from './eligibility';
 import { drawInitialOrder, drawOpaqueIds } from './opaque';
 import { verifyPayload } from './verify';
@@ -31,16 +31,14 @@ export const generator: GameGenerator<TimelinePayload, TimelineFact> = {
   generate({ date, seed, history }) {
     const rng = rngFrom(seed);
     const eligible = eligibleFacts(history.bankItems, date, history.recentChallenges);
-    const category = chooseCategory(eligible, history.bankItems, rng);
-    const chosen = chooseFacts(category, eligible, history.bankItems, rng);
+    const chosen = chooseFacts(eligible, history.bankItems, rng);
     const chrono = [...chosen].sort(compareChronological);
     const ids = drawOpaqueIds(rng);
     const order = drawInitialOrder(rng);
 
     return {
       date,
-      category,
-      prompt: { ...PROMPTS[category] },
+      prompt: { ...PROMPT },
       items: order.flatMap((k) => {
         const f = chrono[k];
         const opaque_id = ids[k];
@@ -50,6 +48,7 @@ export const generator: GameGenerator<TimelinePayload, TimelineFact> = {
                 fact_id: f.id,
                 opaque_id,
                 label: f.label,
+                category: f.category,
                 event_date: f.event_date,
                 date_precision: f.date_precision,
                 note: { es: f.note.es, en: f.note.en },

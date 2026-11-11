@@ -23,9 +23,7 @@ const lists = () => screen.getAllByRole('list');
 describe('Result 3/5', () => {
   it('shows comment, verdict, score and headings (TS-43)', () => {
     render(<Result {...base()} />);
-    expect(
-      screen.getByText('// consigna: del más antiguo al más reciente · lenguajes de programación'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('// consigna: del más antiguo al más reciente')).toBeInTheDocument();
     const h1 = screen.getByRole('heading', { level: 1 });
     expect(h1).toHaveTextContent('3 de 5 en su lugar');
     expect(h1).not.toHaveTextContent('✓');
@@ -61,18 +59,21 @@ describe('Result 3/5', () => {
   it('shows the correct order with dates by precision and notes (TS-45)', () => {
     render(<Result {...base()} />);
     const items = within(lists()[1] as HTMLElement).getAllByRole('listitem');
+    const PL = '// lenguajes de programación';
+    const ST = '// software y herramientas';
     const expected = [
-      ['20 de febrero de 1991', 'Python', 'nota de Python'],
-      ['23 de mayo de 1995', 'Java', 'nota de Java'],
-      ['2009', 'Go', 'nota de Go'],
-      ['20 de marzo de 2013', 'Docker', 'nota de Docker'],
-      ['junio de 2014', 'Kubernetes', 'nota de Kubernetes'],
+      ['20 de febrero de 1991', 'Python', 'nota de Python', PL],
+      ['23 de mayo de 1995', 'Java', 'nota de Java', PL],
+      ['2009', 'Go', 'nota de Go', PL],
+      ['20 de marzo de 2013', 'Docker', 'nota de Docker', ST],
+      ['junio de 2014', 'Kubernetes', 'nota de Kubernetes', ST],
     ];
     items.forEach((li, i) => {
-      const [date, name, note] = expected[i] as string[];
+      const [date, name, note, category] = expected[i] as string[];
       const dateEl = within(li).getByText(date as string);
       const nameEl = within(li).getByText(name as string);
       expect(within(li).getByText(note as string)).toBeInTheDocument();
+      expect(within(li).getByText(category as string)).toBeInTheDocument();
       expect(
         dateEl.compareDocumentPosition(nameEl) & Node.DOCUMENT_POSITION_FOLLOWING,
       ).toBeTruthy();
@@ -85,7 +86,8 @@ describe('Result variants', () => {
   it('renders in English (TS-46)', () => {
     render(<Result {...base({ locale: 'en', t: makeT('en'), result: RESULT_3_EN })} />);
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('3 of 5 in place');
-    expect(screen.getByText(/programming languages/)).toBeInTheDocument();
+    expect(screen.getAllByText('// programming languages')).toHaveLength(3);
+    expect(screen.getAllByText('// software and tools')).toHaveLength(2);
     expect(screen.getByText('February 20, 1991')).toBeInTheDocument();
     expect(screen.getByText('June 2014')).toBeInTheDocument();
     expect(screen.getByText('note on Python')).toBeInTheDocument();

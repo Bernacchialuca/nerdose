@@ -32,8 +32,10 @@ describe('timeline anti-spoiler contract', () => {
     (l) => {
       for (const s of [undefined, {}]) {
         const view = timeline.toPublic(PAYLOAD, l, s);
-        expect(Object.keys(view)).toEqual(['category', 'prompt', 'items']);
-        for (const item of view.items) expect(Object.keys(item)).toEqual(['opaque_id', 'label']);
+        expect(Object.keys(view)).toEqual(['prompt', 'items']);
+        for (const item of view.items) {
+          expect(Object.keys(item)).toEqual(['opaque_id', 'label', 'category']);
+        }
       }
     },
   );

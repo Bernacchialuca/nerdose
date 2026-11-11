@@ -28,10 +28,13 @@ describe('timeline rejection rate on the real dataset (TS-68)', () => {
       const history = { bankItems, recentChallenges: [] };
       const reasons: string[] = [];
       const categories = new Set<string>();
+      let mixed = 0;
       let ok = 0;
       for (let n = 1; n <= SEEDS; n++) {
         const p = payloadSchema.parse(generator.generate({ date: DATE, seed: seed(n), history }));
-        categories.add(p.category);
+        const inChallenge = new Set(p.items.map((i) => i.category));
+        for (const c of inChallenge) categories.add(c);
+        if (inChallenge.size > 1) mixed++;
         const v = generator.verify(p, history);
         if (v.ok) ok++;
         else reasons.push(v.reason ?? '?');
@@ -41,7 +44,8 @@ describe('timeline rejection rate on the real dataset (TS-68)', () => {
       );
       expect(ok / SEEDS).toBeGreaterThanOrEqual(MIN_RATE);
       expect(categories.size).toBeGreaterThanOrEqual(3);
-      expect(categories.has('hardware')).toBe(false);
+      // El desafío mezcla categorías: casi todos los candidatos traen más de una.
+      expect(mixed / SEEDS).toBeGreaterThanOrEqual(MIN_RATE);
     },
     TIMEOUT_MS,
   );
