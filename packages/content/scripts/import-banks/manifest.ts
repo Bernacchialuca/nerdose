@@ -1,4 +1,9 @@
-import { LOCALES, TERM_CATEGORIES, TIMELINE_CATEGORIES } from '@nerdose/core';
+import {
+  LOCALES,
+  TERM_CATEGORIES,
+  TIMELINE_CATEGORIES,
+  type TimelineCategory,
+} from '@nerdose/core';
 
 import {
   REJECTION_REASONS,
@@ -11,7 +16,7 @@ import {
 } from '../../src/schema';
 
 import { TERM_LENGTH } from './rules';
-import type { TermClass } from './wikidata';
+import type { TermClass, TimelineClass } from './wikidata';
 
 export { buildUserAgent } from './http';
 
@@ -121,4 +126,85 @@ export function buildManifest(
       timeline,
     },
   };
+}
+
+export const MIN_APPROVED_PER_CATEGORY = 100;
+export const MIN_TIMELINE_CATEGORIES = 3;
+
+type TimelineCounts = DatasetManifest['counts']['timeline_facts'];
+
+export function buildTimelineParameters(
+  classes: readonly TimelineClass[],
+  {
+    minSitelinks,
+    minApprovedPerCategory,
+    minCategories,
+  }: { minSitelinks: number; minApprovedPerCategory: number; minCategories: number },
+): DatasetManifest['parameters']['timeline'] {
+  const present = new Set(classes.map((cls) => cls.category));
+  return {
+    min_sitelinks: minSitelinks,
+    min_approved_per_category: minApprovedPerCategory,
+    min_categories: minCategories,
+    categories_v1: TIMELINE_CATEGORIES.filter((category) => present.has(category)),
+    classes: classes.map(({ wikidataClass, category, dateProperty }) => ({
+      wikidata_class: wikidataClass,
+      category,
+      date_property: dateProperty,
+    })),
+  };
+}
+
+export class InsufficientTimelineFactsError extends Error {
+  /** Lo completa runImport: ayuda a calibrar `--min-sitelinks-timeline` aun cuando falla. */
+  suggestedMinSitelinksTimeline: number | null = null;
+
+  constructor(
+    readonly shortfalls: { category: TimelineCategory; approved: number }[],
+    readonly minimum: number,
+    readonly categoriesV1Count: number,
+    readonly minCategories: number,
+    readonly byCategory: TimelineCounts['by_category'],
+  ) {
+    const problems: string[] = [];
+    for (const { category, approved } of shortfalls) {
+      problems.push(
+        `Hechos insuficientes: ${category} tiene ${approved} approved y el mínimo por categoría es ${minimum}.`,
+      );
+    }
+    if (categoriesV1Count < minCategories) {
+      problems.push(`Solo hay ${categoriesV1Count} categorías v1 y el mínimo es ${minCategories}.`);
+    }
+    const detail = Object.entries(byCategory)
+      .map(([category, counts]) => `${category}: ${counts.approved}`)
+      .join(', ');
+    super(`${problems.join(' ')} Approved por categoría: ${detail}`);
+    this.name = 'InsufficientTimelineFactsError';
+  }
+}
+
+export function assertTimelineMinimums(
+  counts: TimelineCounts,
+  {
+    categoriesV1,
+    minApprovedPerCategory,
+    minCategories,
+  }: {
+    categoriesV1: readonly TimelineCategory[];
+    minApprovedPerCategory: number;
+    minCategories: number;
+  },
+): void {
+  const shortfalls = categoriesV1
+    .map((category) => ({ category, approved: counts.by_category[category].approved }))
+    .filter(({ approved }) => approved < minApprovedPerCategory);
+  if (shortfalls.length > 0 || categoriesV1.length < minCategories) {
+    throw new InsufficientTimelineFactsError(
+      shortfalls,
+      minApprovedPerCategory,
+      categoriesV1.length,
+      minCategories,
+      counts.by_category,
+    );
+  }
 }

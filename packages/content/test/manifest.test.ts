@@ -2,12 +2,15 @@ import { describe, expect, it } from 'vitest';
 
 import {
   DEFAULT_TIMELINE_PARAMETERS,
+  InsufficientTimelineFactsError,
+  assertTimelineMinimums,
   buildManifest,
+  buildTimelineParameters,
   nextDatasetVersion,
 } from '../scripts/import-banks/manifest';
-import { manifestSchema } from '../src';
+import { manifestSchema, type DatasetManifest } from '../src';
 
-import { F_OK, T_OK } from './helpers';
+import { F_OK, MANIFEST_OK, T_OK } from './helpers';
 
 describe('nextDatasetVersion', () => {
   it('adds a suffix when the same day already has a version (TS-32)', () => {
@@ -90,3 +93,88 @@ describe('buildManifest', () => {
     expect(manifest.parameters.timeline).toEqual(DEFAULT_TIMELINE_PARAMETERS);
   });
 });
+
+describe('timeline minimums and parameters', () => {
+  const counts = (by: Record<string, number>): DatasetManifest['counts']['timeline_facts'] => ({
+    ...MANIFEST_OK.counts.timeline_facts,
+    by_category: Object.fromEntries(
+      Object.keys(MANIFEST_OK.counts.timeline_facts.by_category).map((category) => [
+        category,
+        { approved: by[category] ?? 0, rejected: 0 },
+      ]),
+    ) as DatasetManifest['counts']['timeline_facts']['by_category'],
+  });
+  const options = { minApprovedPerCategory: 100, minCategories: 3 };
+
+  it('fails naming the category and its count (TS-28)', () => {
+    const error = catchError(() =>
+      assertTimelineMinimums(
+        counts({ programming_languages: 120, frameworks: 80, video_games: 150 }),
+        { ...options, categoriesV1: ['programming_languages', 'frameworks', 'video_games'] },
+      ),
+    );
+    expect(error).toBeInstanceOf(InsufficientTimelineFactsError);
+    expect(error).toMatchObject({
+      shortfalls: [{ category: 'frameworks', approved: 80 }],
+      minimum: 100,
+    });
+    for (const text of ['frameworks', '80', '100'])
+      expect((error as Error).message).toContain(text);
+  });
+
+  it('fails with fewer than three v1 categories (TS-29)', () => {
+    const error = catchError(() =>
+      assertTimelineMinimums(counts({ programming_languages: 150, video_games: 150 }), {
+        ...options,
+        categoriesV1: ['programming_languages', 'video_games'],
+      }),
+    );
+    expect(error).toMatchObject({ categoriesV1Count: 2, minCategories: 3 });
+    for (const text of ['2', '3', 'categorías v1'])
+      expect((error as Error).message).toContain(text);
+  });
+
+  it('passes when every minimum is met (TS-30)', () => {
+    expect(() =>
+      assertTimelineMinimums(
+        counts({ programming_languages: 100, frameworks: 101, video_games: 250 }),
+        { ...options, categoriesV1: ['programming_languages', 'frameworks', 'video_games'] },
+      ),
+    ).not.toThrow();
+  });
+
+  it('builds the manifest parameters from the class mapping (TS-31)', () => {
+    expect(
+      buildTimelineParameters(
+        [
+          {
+            wikidataClass: 'Q7889',
+            category: 'video_games',
+            dateProperty: 'P577',
+            fallbackProperty: 'P571',
+          },
+          { wikidataClass: 'Q9143', category: 'programming_languages', dateProperty: 'P571' },
+        ],
+        { minSitelinks: 25, minApprovedPerCategory: 100, minCategories: 3 },
+      ),
+    ).toEqual({
+      min_sitelinks: 25,
+      min_approved_per_category: 100,
+      min_categories: 3,
+      categories_v1: ['programming_languages', 'video_games'],
+      classes: [
+        { wikidata_class: 'Q7889', category: 'video_games', date_property: 'P577' },
+        { wikidata_class: 'Q9143', category: 'programming_languages', date_property: 'P571' },
+      ],
+    });
+  });
+});
+
+function catchError(run: () => void): unknown {
+  try {
+    run();
+  } catch (error) {
+    return error;
+  }
+  return undefined;
+}

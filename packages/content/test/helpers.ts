@@ -119,7 +119,10 @@ const json = (body: unknown, status = 200): Response =>
 
 export type FakeFetch = typeof globalThis.fetch & { urls: string[]; headers: Headers[] };
 
-export function fixtureFetch(sparql: Record<string, string>): FakeFetch {
+export function fixtureFetch(
+  sparql: Record<string, string>,
+  timelineSparql: Record<string, string> = {},
+): FakeFetch {
   const urls: string[] = [];
   const headers: Headers[] = [];
   const fake = (async (input: string | URL | Request, init?: RequestInit) => {
@@ -128,9 +131,11 @@ export function fixtureFetch(sparql: Record<string, string>): FakeFetch {
     headers.push(new Headers(init?.headers));
     if (url.startsWith('https://query.wikidata.org/sparql')) {
       const query = decodeURIComponent(/query=([^&]+)/.exec(url)?.[1] ?? '');
-      const cls = Object.keys(sparql).find((id) => query.includes(`wd:${id} `));
+      // Las consultas de hechos son las únicas que piden `wikibase:timeValue`.
+      const fixtures = query.includes('wikibase:timeValue') ? timelineSparql : sparql;
+      const cls = Object.keys(fixtures).find((id) => query.includes(`wd:${id} `));
       if (cls === undefined) return json({ results: { bindings: [] } });
-      return json(readFixture(sparql[cls] as string));
+      return json(readFixture(fixtures[cls] as string));
     }
     try {
       return json(readFixture(`wikipedia/${summaryFixtureName(url)}`));

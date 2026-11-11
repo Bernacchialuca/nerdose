@@ -8,7 +8,9 @@ import {
   loadDataset,
   serializeItems,
 } from '../src';
-import { parseExclusions } from '../scripts/import-banks/rules';
+import { TIMELINE_CLASSES } from '../scripts/import-banks/classes';
+import { buildTimelineParameters } from '../scripts/import-banks/manifest';
+import { normalizeTerm, parseExclusions, YEAR_MENTION } from '../scripts/import-banks/rules';
 
 const dataFile = (name: string): URL => new URL(`../data/${name}`, import.meta.url);
 const text = (name: string): string => readFileSync(dataFile(name), 'utf8');
@@ -125,9 +127,64 @@ describe('committed dataset', () => {
     }
   });
 
-  it('keeps the terms bank untouched (TS-25)', () => {
-    expect(manifest.dataset_version).toBe('2026.11.10');
+  it('keeps the terms bank untouched (TS-25, TS-46)', () => {
+    expect(manifest.dataset_version).toMatch(/^2026\.\d{2}\.\d{2}(-\d+)?$/);
+    expect(manifest.dataset_version).not.toBe('2026.11.10');
     expect(manifest.counts.terms.approved).toBe(515);
     expect(manifest.counts.terms.rejected).toBe(4348);
+    expect(manifest.min_sitelinks).toBe(12);
+  });
+
+  it('covers at least three v1 categories with the minimum approved facts (TS-43)', () => {
+    const params = manifest.parameters.timeline;
+    expect(params.categories_v1.length).toBeGreaterThanOrEqual(3);
+    for (const category of params.categories_v1) {
+      expect(
+        manifest.counts.timeline_facts.by_category[category].approved,
+        category,
+      ).toBeGreaterThanOrEqual(100);
+    }
+    expect(params.classes).toEqual(
+      buildTimelineParameters(TIMELINE_CLASSES, {
+        minSitelinks: params.min_sitelinks,
+        minApprovedPerCategory: params.min_approved_per_category,
+        minCategories: params.min_categories,
+      }).classes,
+    );
+    expect(params.categories_v1).toEqual(
+      TIMELINE_CATEGORIES.filter((c) => TIMELINE_CLASSES.some((cls) => cls.category === c)),
+    );
+  });
+
+  it('has no facts in the deferred categories (TS-44)', () => {
+    const { categories_v1: v1 } = manifest.parameters.timeline;
+    for (const category of TIMELINE_CATEGORIES.filter((c) => !v1.includes(c))) {
+      expect(manifest.counts.timeline_facts.by_category[category], category).toEqual({
+        approved: 0,
+        rejected: 0,
+      });
+      expect(TIMELINE_CLASSES.some((cls) => cls.category === category)).toBe(false);
+    }
+  });
+
+  it('has well-formed approved facts (TS-45)', () => {
+    const facts = timelineFacts.filter((f) => f.status === 'approved');
+    const generatedYear = new Date(manifest.generated_at).getUTCFullYear();
+    const labels = new Set<string>();
+    for (const fact of facts) {
+      const year = Number(fact.event_date.slice(0, 4));
+      expect(year, fact.wikidata_id).toBeGreaterThanOrEqual(1800);
+      expect(year, fact.wikidata_id).toBeLessThanOrEqual(generatedYear);
+      expect(fact.label.trim().length, fact.wikidata_id).toBeGreaterThan(0);
+      for (const note of [fact.note.es, fact.note.en]) {
+        expect(note.length, fact.wikidata_id).toBeLessThanOrEqual(240);
+        for (const match of note.matchAll(YEAR_MENTION)) {
+          expect(Number(match[1]), `${fact.wikidata_id}: ${note}`).toBe(year);
+        }
+      }
+      const label = normalizeTerm(fact.label);
+      expect(labels.has(label), label).toBe(false);
+      labels.add(label);
+    }
   });
 });

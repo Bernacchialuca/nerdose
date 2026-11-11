@@ -122,7 +122,10 @@ describe('evaluateTerms', () => {
 
 describe('mergeByWikidataId / precheck / highestMinSitelinks', () => {
   it('merges the same id keeping the first class (TS-20)', () => {
-    const merged = mergeByWikidataId([C_OK, { ...C_OK, category: 'software_engineering' }]);
+    const merged = mergeByWikidataId([
+      C_OK,
+      { ...C_OK, category: 'software_engineering' as const },
+    ]);
     expect(merged).toHaveLength(1);
     expect(merged[0]?.category).toBe('programming_languages');
     expect(evaluateTerms(merged, base)[0]?.rejection_reason).toBeNull();

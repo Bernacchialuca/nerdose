@@ -46,6 +46,7 @@ function setup(overrides: Partial<RunImportOptions> = {}): {
     fetch,
     options: {
       dataDir: dir,
+      bank: 'terms',
       classes: CLASSES,
       minSitelinks: 20,
       minApproved: 3,
