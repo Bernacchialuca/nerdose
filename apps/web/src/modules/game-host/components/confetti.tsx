@@ -2,13 +2,82 @@ import { useEffect, useRef } from 'react';
 
 import type { GameId } from '@nerdose/core';
 
-const PIECES = 120;
+/** Piezas por fuente: lluvia desde arriba y un cañón en cada costado. */
+const RAIN = 60;
+const CANNON = 45;
 const DURATION_MS = 2600;
 
+const rand = (min: number, max: number) => min + Math.random() * (max - min);
+
+type Piece = {
+  x: number;
+  y: number;
+  keyframes: Keyframe[];
+  duration: number;
+  delay: number;
+};
+
+/** Cae desde arriba con deriva lateral y giro. */
+function rainPiece(width: number, height: number): Piece {
+  const drift = rand(-120, 120);
+  const spin = rand(-720, 720);
+  return {
+    x: rand(0, width),
+    y: -20,
+    keyframes: [
+      {
+        transform: 'translate3d(0, 0, 0) rotate(0deg)',
+        opacity: 1,
+        easing: 'cubic-bezier(0.2, 0.6, 0.4, 1)',
+      },
+      { opacity: 1, offset: 0.75 },
+      { transform: `translate3d(${drift}px, ${height + 60}px, 0) rotate(${spin}deg)`, opacity: 0 },
+    ],
+    duration: DURATION_MS * rand(0.8, 1.2),
+    delay: rand(0, 500),
+  };
+}
+
 /**
- * Festejo al ganar: confeti del color del juego (`--color-game-{id}` y su variante `-light`).
- * Decorativo (`aria-hidden`, sin eventos de puntero) y de una sola pasada: se monta solo en la
- * transición partida → resultado ganado, así que recargar el resultado no lo repite. Con
+ * Sale disparada desde un costado hacia el centro y arriba (frena al subir), y después cae
+ * acelerando: una parábola aproximada con dos tramos de easing.
+ */
+function cannonPiece(side: 'left' | 'right', width: number, height: number): Piece {
+  const dir = side === 'left' ? 1 : -1;
+  const startY = height * rand(0.55, 0.8);
+  const reach = width * rand(0.15, 0.45);
+  const peakY = height * rand(0.05, 0.4) - startY;
+  const spin = rand(-900, 900);
+  return {
+    x: side === 'left' ? -10 : width + 10,
+    y: startY,
+    keyframes: [
+      {
+        transform: 'translate3d(0, 0, 0) rotate(0deg)',
+        opacity: 1,
+        easing: 'cubic-bezier(0.1, 0.7, 0.3, 1)',
+      },
+      {
+        transform: `translate3d(${dir * reach * 0.7}px, ${peakY}px, 0) rotate(${spin * 0.4}deg)`,
+        opacity: 1,
+        offset: 0.35,
+        easing: 'cubic-bezier(0.5, 0, 0.9, 0.6)',
+      },
+      {
+        transform: `translate3d(${dir * reach}px, ${height - startY + 60}px, 0) rotate(${spin}deg)`,
+        opacity: 0,
+      },
+    ],
+    duration: DURATION_MS * rand(0.9, 1.25),
+    delay: rand(0, 250),
+  };
+}
+
+/**
+ * Festejo al ganar: confeti del color del juego (`--color-game-{id}` y su variante `-light`) que
+ * llueve desde arriba y sale disparado de los dos costados. Capa fija sobre la pantalla: no mueve
+ * el scroll. Decorativo (`aria-hidden`, sin eventos de puntero) y de una sola pasada: se monta solo
+ * en la transición partida → resultado ganado, así que recargar el resultado no lo repite. Con
  * `prefers-reduced-motion` no anima. Sin Web Animations API (jsdom) no dibuja nada.
  */
 export function Confetti({ gameId }: { gameId: GameId }) {
@@ -21,42 +90,35 @@ export function Confetti({ gameId }: { gameId: GameId }) {
 
     const colors = [`var(--color-game-${gameId})`, `var(--color-game-${gameId}-light)`];
     const { innerWidth: width, innerHeight: height } = window;
+    const pieces: Piece[] = [
+      ...Array.from({ length: RAIN }, () => rainPiece(width, height)),
+      ...Array.from({ length: CANNON }, () => cannonPiece('left', width, height)),
+      ...Array.from({ length: CANNON }, () => cannonPiece('right', width, height)),
+    ];
     const animations: Animation[] = [];
 
-    for (let i = 0; i < PIECES; i++) {
-      const piece = document.createElement('span');
-      const size = 6 + Math.random() * 6;
-      Object.assign(piece.style, {
+    pieces.forEach((p, i) => {
+      const el = document.createElement('span');
+      const size = rand(6, 12);
+      Object.assign(el.style, {
         position: 'absolute',
-        top: '0',
-        left: `${Math.random() * width}px`,
+        left: `${p.x}px`,
+        top: `${p.y}px`,
         width: `${size}px`,
-        height: `${size * (0.4 + Math.random() * 0.6)}px`,
+        height: `${size * rand(0.4, 1)}px`,
         background: colors[i % colors.length],
         borderRadius: i % 3 === 0 ? '50%' : '1px',
       });
-      root.appendChild(piece);
-      const drift = (Math.random() - 0.5) * 240;
-      const spin = (Math.random() - 0.5) * 1440;
+      root.appendChild(el);
       animations.push(
-        piece.animate(
-          [
-            { transform: 'translate3d(0, -20px, 0) rotate(0deg)', opacity: 1 },
-            { opacity: 1, offset: 0.75 },
-            {
-              transform: `translate3d(${drift}px, ${height + 40}px, 0) rotate(${spin}deg)`,
-              opacity: 0,
-            },
-          ],
-          {
-            duration: DURATION_MS * (0.7 + Math.random() * 0.5),
-            delay: Math.random() * 400,
-            easing: 'cubic-bezier(0.2, 0.6, 0.4, 1)',
-            fill: 'forwards',
-          },
-        ),
+        el.animate(p.keyframes, {
+          duration: p.duration,
+          delay: p.delay,
+          fill: 'forwards',
+          easing: 'linear',
+        }),
       );
-    }
+    });
 
     return () => {
       for (const a of animations) a.cancel();

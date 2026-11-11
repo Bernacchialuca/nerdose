@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { focusMainHeading } from './focus-main-heading';
 
@@ -25,6 +25,15 @@ describe('focusMainHeading', () => {
     document.body.innerHTML = '<main><h1 tabindex="0">Hola</h1></main>';
     focusMainHeading();
     expect(document.querySelector('h1')).toHaveAttribute('tabindex', '0');
+  });
+
+  it('con preventScroll enfoca sin mover la pantalla', () => {
+    document.body.innerHTML = '<main><h1>Hola</h1></main>';
+    const h1 = document.querySelector('h1') as HTMLElement;
+    const focus = vi.spyOn(h1, 'focus');
+    focusMainHeading({ preventScroll: true });
+    expect(focus).toHaveBeenCalledWith({ preventScroll: true });
+    expect(h1).toHaveFocus();
   });
 
   it('no falla sin h1', () => {
