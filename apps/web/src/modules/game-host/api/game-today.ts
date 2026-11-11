@@ -1,4 +1,4 @@
-import type { GameId, Locale } from '@nerdose/core';
+import type { GameId, Locale, ReportReason } from '@nerdose/core';
 
 import { api } from '@/lib/api-client';
 import type { PlayStatus } from '@/modules/catalog';
@@ -29,6 +29,7 @@ export type GameToday = {
   play: PlayView | null;
   result: unknown;
   game_stats: GameStatsView | null;
+  reported: boolean;
 };
 
 export type StartResponse = { play: PlayView };
@@ -46,8 +47,15 @@ export type MoveResponse = {
   game_stats: GameStatsView | null;
 };
 
+export type ReportRequest = { challenge_number: number; reason: ReportReason; message?: string };
+
+export type ReportResponse = { report_id: string };
+
+export type AcknowledgeVoidResponse = { play: { status: 'voided' }; streaks: Streaks };
+
 export const gameTodayKeys = {
   all: ['game-today'] as const,
+  game: (gameId: GameId) => ['game-today', gameId] as const,
   detail: (gameId: GameId, lang: Locale) => ['game-today', gameId, lang] as const,
 };
 

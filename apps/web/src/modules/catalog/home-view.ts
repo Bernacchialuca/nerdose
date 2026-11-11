@@ -21,7 +21,7 @@ export type CardCta =
   | {
       kind: 'link';
       to: string;
-      label: 'play' | 'continue' | 'result';
+      label: 'play' | 'continue' | 'result' | 'voided';
       tone: 'primary' | 'secondary';
     }
   | { kind: 'disabled'; label: CtaLabel };
@@ -144,10 +144,6 @@ function cardView(
       cta: { kind: 'disabled', label: 'play' },
     };
   }
-  if (game.challenge_status === 'voided' || game.play_status === 'voided') {
-    return { ...base, status: 'voided', label: null, streak: game.current_streak, cta: null };
-  }
-
   const to = `/${gameId}`;
   const streak = game.current_streak;
   const active = sessionStatus === 'active';
@@ -166,6 +162,21 @@ function cardView(
       : { kind: 'disabled', label: ctaLabel },
   });
 
+  // Con Play `voided` (jugó antes de la anulación o marcó como completado) se ve completada.
+  if (game.play_status === 'voided') {
+    return make('completed', game.history_label, 'result', 'secondary');
+  }
+  if (game.challenge_status === 'voided') {
+    return {
+      ...base,
+      status: 'voided',
+      label: null,
+      streak,
+      cta: active
+        ? { kind: 'link', to, label: 'voided', tone: 'secondary' }
+        : { kind: 'disabled', label: 'result' },
+    };
+  }
   if (game.play_status === 'in_progress') return make('inProgress', null, 'continue', 'primary');
   if (game.play_status === 'won' || game.play_status === 'lost') {
     return make('completed', game.history_label, 'result', 'secondary');

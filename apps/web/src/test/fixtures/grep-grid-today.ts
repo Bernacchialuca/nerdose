@@ -148,6 +148,7 @@ export const grepGridNotStarted = {
   play: null,
   result: null,
   game_stats: null,
+  reported: false,
 } satisfies GameToday;
 
 export const grepGridStarted = {
@@ -220,6 +221,7 @@ export const grepGridNone = {
   play: null,
   result: null,
   game_stats: null,
+  reported: false,
 } satisfies GameToday;
 
 export const grepGridVoided = {

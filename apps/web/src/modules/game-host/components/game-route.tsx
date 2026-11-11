@@ -23,6 +23,8 @@ import { Confetti } from './confetti';
 import { GameLoader } from './game-loader';
 import { NoChallengeView } from './no-client-view';
 import { PhaseFocus } from './phase-focus';
+import { ReportDialog } from './report-dialog';
+import { ReportLink } from './report-link';
 import { RetryButton } from './retry-button';
 import { VoidedResultView, VoidedView } from './voided-view';
 
@@ -42,6 +44,11 @@ export function GameRoute({ gameId }: { gameId: GameId }) {
   const feedback = submitMove.data?.feedback ?? null;
   const [dayChanged, setDayChanged] = useState(false);
   const [voidedDuringPlay, setVoidedDuringPlay] = useState(false);
+  const [reportTarget, setReportTarget] = useState<{
+    number: number;
+    from: 'game' | 'result';
+  } | null>(null);
+  const [reportedFor, setReportedFor] = useState<number | null>(null);
   const lastMove = useRef<{ number: number; move: unknown } | null>(null);
   // La primera fase de una carga directa no roba el foco (D6).
   const firstPhaseRef = useRef(location.key === 'default');
@@ -67,14 +74,18 @@ export function GameRoute({ gameId }: { gameId: GameId }) {
     [queryClient],
   );
 
+  const onDayExpired = useCallback(() => {
+    setDayChanged(true);
+    void invalidateDay();
+  }, [invalidateDay]);
+
   // Traduce el `error.code` de una mutación en una acción de pantalla (tabla de `error-handling`).
   const onActionError = useCallback(
     (error: Error) => {
       if (!(error instanceof ApiError)) return;
       switch (error.code) {
         case 'challenge_expired':
-          setDayChanged(true);
-          void invalidateDay();
+          onDayExpired();
           break;
         case 'challenge_voided':
           setVoidedDuringPlay(true);
@@ -86,7 +97,7 @@ export function GameRoute({ gameId }: { gameId: GameId }) {
           break;
       }
     },
-    [invalidateDay],
+    [invalidateDay, onDayExpired],
   );
 
   const handleStart = (challengeNumber: number) => {
@@ -135,81 +146,122 @@ export function GameRoute({ gameId }: { gameId: GameId }) {
     void query.refetch();
   };
 
+  const reportView =
+    view.kind === 'playing' || view.kind === 'result' || view.kind === 'voidedResult' ? view : null;
+  const reportLink = reportView ? (
+    <ReportLink
+      reported={reportView.reported || reportedFor === reportView.number}
+      onOpen={() => {
+        if (reportView.number !== null) {
+          setReportTarget({
+            number: reportView.number,
+            from: reportView.kind === 'playing' ? 'game' : 'result',
+          });
+        }
+      }}
+    />
+  ) : null;
+
   const focus = <PhaseFocus key={view.kind} firstPhaseRef={firstPhaseRef} />;
 
-  switch (view.kind) {
-    case 'loading':
-      return (
-        <div className={COLUMN}>
-          <GameLoader gameId={gameId} />
-        </div>
-      );
-    case 'loadError':
-      return (
-        <div className={COLUMN}>
-          {focus}
-          <Alert action={<RetryButton onClick={() => void query.refetch()} />}>
-            {t('gameHost.error.load', { game })}
-          </Alert>
-        </div>
-      );
-    case 'noClient':
-    case 'noChallenge':
-      return (
-        <>
-          {focus}
-          <NoChallengeView
-            gameId={gameId}
-            dayChangedNumber={view.kind === 'noChallenge' && view.dayChanged ? view.number : null}
-          />
-        </>
-      );
-    case 'voided':
-      return (
-        <>
-          {focus}
-          <VoidedView gameId={gameId} />
-        </>
-      );
-    case 'voidedResult':
-      return (
-        <>
-          {focus}
-          <VoidedResultView gameId={gameId} gameStats={view.gameStats} />
-        </>
-      );
-    default: {
-      const Screens = gameScreens[gameId];
-      if (!Screens) return null;
-      const rateLimited =
-        startPlay.error instanceof ApiError && startPlay.error.code === 'rate_limited';
-      // Festejo solo en la transición: la jugada que se acaba de enviar cerró la partida ganando.
-      // `submitMove.data` no sobrevive a una recarga, así que volver al resultado no lo repite.
-      const celebrate = view.kind === 'result' && submitMove.data?.play.status === 'won';
-      return (
-        <>
-          {celebrate ? <Confetti gameId={gameId} /> : null}
-          <Suspense fallback={<GameLoader gameId={gameId} />}>
-            <Screens
+  const renderView = () => {
+    switch (view.kind) {
+      case 'loading':
+        return (
+          <div className={COLUMN}>
+            <GameLoader gameId={gameId} />
+          </div>
+        );
+      case 'loadError':
+        return (
+          <div className={COLUMN}>
+            {focus}
+            <Alert action={<RetryButton onClick={() => void query.refetch()} />}>
+              {t('gameHost.error.load', { game })}
+            </Alert>
+          </div>
+        );
+      case 'noClient':
+      case 'noChallenge':
+        return (
+          <>
+            {focus}
+            <NoChallengeView
               gameId={gameId}
-              view={view}
-              feedback={feedback}
-              locale={locale}
-              firstPhaseRef={firstPhaseRef}
-              startNotice={
-                rateLimited ? <Banner variant="warning">{startPlay.error?.message}</Banner> : null
-              }
-              starting={startPlay.isPending}
-              movePending={submitMove.isPending}
-              onStart={() => handleStart(view.number)}
-              onMove={(move) => sendMove(view.number, move)}
-              onRetrySession={retrySession}
-              onRetryMove={retryLastMove}
-              onRecoverMove={recoverFromMoveFailure}
+              dayChangedNumber={view.kind === 'noChallenge' && view.dayChanged ? view.number : null}
             />
-          </Suspense>
-        </>
-      );
+          </>
+        );
+      case 'voided':
+        return (
+          <>
+            {focus}
+            <VoidedView
+              gameId={gameId}
+              number={view.number}
+              onExpired={onDayExpired}
+              onStale={() => void invalidateDay()}
+            />
+          </>
+        );
+      case 'voidedResult':
+        return (
+          <>
+            {focus}
+            <VoidedResultView gameId={gameId} gameStats={view.gameStats} reportLink={reportLink} />
+          </>
+        );
+      default: {
+        const Screens = gameScreens[gameId];
+        if (!Screens) return null;
+        const rateLimited =
+          startPlay.error instanceof ApiError && startPlay.error.code === 'rate_limited';
+        // Festejo solo en la transición: la jugada que se acaba de enviar cerró la partida ganando.
+        // `submitMove.data` no sobrevive a una recarga, así que volver al resultado no lo repite.
+        const celebrate = view.kind === 'result' && submitMove.data?.play.status === 'won';
+        return (
+          <>
+            {celebrate ? <Confetti gameId={gameId} /> : null}
+            <Suspense fallback={<GameLoader gameId={gameId} />}>
+              <Screens
+                gameId={gameId}
+                view={view}
+                feedback={feedback}
+                locale={locale}
+                firstPhaseRef={firstPhaseRef}
+                reportLink={reportLink}
+                startNotice={
+                  rateLimited ? <Banner variant="warning">{startPlay.error?.message}</Banner> : null
+                }
+                starting={startPlay.isPending}
+                movePending={submitMove.isPending}
+                onStart={() => handleStart(view.number)}
+                onMove={(move) => sendMove(view.number, move)}
+                onRetrySession={retrySession}
+                onRetryMove={retryLastMove}
+                onRecoverMove={recoverFromMoveFailure}
+              />
+            </Suspense>
+          </>
+        );
+      }
     }
-  }
+  };
+
+  return (
+    <>
+      {renderView()}
+      {reportTarget ? (
+        <ReportDialog
+          gameId={gameId}
+          number={reportTarget.number}
+          from={reportTarget.from}
+          onClose={(reported) => {
+            if (reported) setReportedFor(reportTarget.number);
+            setReportTarget(null);
+          }}
+        />
+      ) : null}
+    </>
+  );
 }

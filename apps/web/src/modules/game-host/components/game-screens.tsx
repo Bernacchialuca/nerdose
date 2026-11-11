@@ -22,6 +22,8 @@ export type GameScreensProps = {
   feedback: unknown;
   locale: Locale;
   firstPhaseRef: RefObject<boolean>;
+  /** Disparador de O-01 (lo arma el host: el estado del diálogo vive en `GameRoute`). */
+  reportLink: ReactNode;
   /** Aviso extra de «Empezar» (p. ej. `rate_limited`). */
   startNotice: ReactNode;
   starting: boolean;
@@ -41,6 +43,7 @@ export function GameScreens({
   feedback,
   locale,
   firstPhaseRef,
+  reportLink,
   startNotice,
   starting,
   movePending,
@@ -131,6 +134,7 @@ export function GameScreens({
             ) : undefined
           }
         />
+        <div className="mt-6 flex">{reportLink}</div>
       </>
     );
   }
@@ -145,6 +149,7 @@ export function GameScreens({
         result={view.result}
         publicView={view.publicView}
         gameStats={view.gameStats}
+        aside={reportLink}
         footer={<ResultExits gameId={gameId} gameStats={view.gameStats} />}
       />
     </>

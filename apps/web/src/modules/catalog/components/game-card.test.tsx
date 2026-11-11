@@ -4,6 +4,8 @@ import { MemoryRouter } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { axe } from 'vitest-axe';
 
+import { buttonClass } from '@nerdose/ui';
+
 import i18n from '@/i18n';
 import { todayFixture } from '@/test/fixtures/today';
 
@@ -76,10 +78,12 @@ describe('GameCard', () => {
     );
   });
 
-  it('bug-hunt anulado: sin link ni botón', () => {
+  it('TS-38: anulado sin Play: «Ver aviso de anulación» como link secundario a ancho completo', () => {
     renderCard('bug-hunt', cardOf('bug-hunt'));
     expect(screen.getByRole('article')).toHaveTextContent('anulado');
-    expect(screen.queryByRole('link')).toBeNull();
+    const link = screen.getByRole('link', { name: 'Ver aviso de anulación' });
+    expect(link).toHaveAttribute('href', '/bug-hunt');
+    expect(link).toHaveClass(...buttonClass({ variant: 'secondary', fullWidth: true }).split(' '));
     expect(screen.queryByRole('button')).toBeNull();
   });
 

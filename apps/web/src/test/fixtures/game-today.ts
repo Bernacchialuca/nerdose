@@ -75,6 +75,7 @@ export const gameTodayNotStarted = {
   play: null,
   result: null,
   game_stats: null,
+  reported: false,
 } satisfies GameToday;
 
 export const gameTodayInProgress = {
@@ -120,6 +121,7 @@ export const gameTodayNone = {
   play: null,
   result: null,
   game_stats: null,
+  reported: false,
 } satisfies GameToday;
 
 export const gameTodayVoided = {
@@ -138,6 +140,19 @@ export const gameTodayVoidedFinished = {
   result: RESULT_WIN,
   game_stats: GAME_STATS,
 } satisfies GameToday;
+
+export const gameTodayVoidedPlay = {
+  ...gameTodayVoided,
+  play: { status: 'voided', state: {}, score: null, code_language: null },
+  game_stats: GAME_STATS,
+} satisfies GameToday;
+
+export const reportCreated = { report_id: '3f6c1d2e-8a4b-4c1f-9e2a-7b5d0c9e1a23' };
+
+export const acknowledgeVoidOk = {
+  play: { status: 'voided' },
+  streaks: { game: { current: 4, max: 9 }, global: { current: 6, max: 12 } },
+};
 
 export const gameTodayNextDay = {
   ...gameTodayNotStarted,

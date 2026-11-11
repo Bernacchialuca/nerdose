@@ -8,10 +8,12 @@ import { describe, expect, it, vi } from 'vitest';
 import i18n from '@/i18n';
 import { SessionProvider } from '@/modules/session';
 import {
+  acknowledgeVoidOk,
   gameTodayInProgress,
   gameTodayNotStarted,
   moveInProgress,
   moveWon,
+  reportCreated,
 } from '@/test/fixtures/game-today';
 import { sessionFixture } from '@/test/fixtures/session';
 import { apiError, gameHandlers, server } from '@/test/msw';
@@ -19,6 +21,8 @@ import { apiError, gameHandlers, server } from '@/test/msw';
 import { gameTodayKeys } from './game-today';
 import type { GameToday } from './game-today';
 import { useGameToday } from './use-game-today';
+import { useAcknowledgeVoid } from './use-acknowledge-void';
+import { useReport } from './use-report';
 import { useStartPlay } from './use-start-play';
 import { useSubmitMove } from './use-submit-move';
 
@@ -168,5 +172,147 @@ describe('useSubmitMove', () => {
       ).rejects.toMatchObject({ code: 'invalid_move' });
     });
     expect(moves).toBe(1);
+  });
+});
+
+describe('useReport', () => {
+  it('TS-42: envía el body sin message vacío e invalida la query del juego', async () => {
+    const bodies: unknown[] = [];
+    const urls: string[] = [];
+    server.use(
+      http.post('/api/games/devdle/today/report', async ({ request }) => {
+        urls.push(new URL(request.url).search);
+        bodies.push(await request.json());
+        return HttpResponse.json(reportCreated, { status: 201 });
+      }),
+    );
+    const { wrapper, queryClient } = setup();
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries');
+    const { result } = renderHook(() => useReport('devdle'), { wrapper });
+    await act(() =>
+      result.current.mutateAsync({ challengeNumber: 128, reason: 'other', message: '' }),
+    );
+    expect(urls).toEqual(['?lang=es']);
+    expect(bodies).toEqual([{ challenge_number: 128, reason: 'other' }]);
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['game-today', 'devdle'] });
+  });
+
+  it('manda el message cuando tiene contenido', async () => {
+    const bodies: unknown[] = [];
+    server.use(
+      http.post('/api/games/devdle/today/report', async ({ request }) => {
+        bodies.push(await request.json());
+        return HttpResponse.json(reportCreated, { status: 201 });
+      }),
+    );
+    const { wrapper } = setup();
+    const { result } = renderHook(() => useReport('devdle'), { wrapper });
+    await act(() =>
+      result.current.mutateAsync({ challengeNumber: 128, reason: 'ambiguous', message: 'hola' }),
+    );
+    expect(bodies).toEqual([{ challenge_number: 128, reason: 'ambiguous', message: 'hola' }]);
+  });
+
+  it('TS-42: already_reported invalida la query y propaga el error', async () => {
+    server.use(
+      http.post('/api/games/devdle/today/report', () =>
+        HttpResponse.json(apiError('already_reported', 'Ya reportaste este desafío.'), {
+          status: 409,
+        }),
+      ),
+    );
+    const { wrapper, queryClient } = setup();
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries');
+    const { result } = renderHook(() => useReport('devdle'), { wrapper });
+    await act(async () => {
+      await expect(
+        result.current.mutateAsync({ challengeNumber: 128, reason: 'other', message: '' }),
+      ).rejects.toMatchObject({ code: 'already_reported' });
+    });
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['game-today', 'devdle'] });
+  });
+
+  it('otro error no invalida nada', async () => {
+    server.use(
+      http.post('/api/games/devdle/today/report', () =>
+        HttpResponse.json(apiError('internal_error', 'x'), { status: 500 }),
+      ),
+    );
+    const { wrapper, queryClient } = setup();
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries');
+    const { result } = renderHook(() => useReport('devdle'), { wrapper });
+    await act(async () => {
+      await expect(
+        result.current.mutateAsync({ challengeNumber: 128, reason: 'other', message: '' }),
+      ).rejects.toMatchObject({ code: 'internal_error' });
+    });
+    expect(invalidate).not.toHaveBeenCalled();
+  });
+
+  it('ante no_session recrea la sesión una vez y reintenta', async () => {
+    const calls: string[] = [];
+    let n = 0;
+    server.use(
+      http.post('/api/games/devdle/today/report', () => {
+        calls.push('report');
+        n += 1;
+        return n === 1
+          ? HttpResponse.json(apiError('no_session', 'x'), { status: 401 })
+          : HttpResponse.json(reportCreated, { status: 201 });
+      }),
+      http.post('/api/session', () => {
+        calls.push('session');
+        return HttpResponse.json(sessionFixture);
+      }),
+    );
+    const { wrapper } = setup();
+    const { result } = renderHook(() => useReport('devdle'), { wrapper });
+    await act(() =>
+      result.current.mutateAsync({ challengeNumber: 128, reason: 'other', message: '' }),
+    );
+    const first = calls.indexOf('report');
+    expect(calls.slice(first, first + 3)).toEqual(['report', 'session', 'report']);
+  });
+});
+
+describe('useAcknowledgeVoid', () => {
+  it('TS-42: envía challenge_number e invalida today y game-today', async () => {
+    const bodies: unknown[] = [];
+    server.use(
+      http.post('/api/games/devdle/today/acknowledge-void', async ({ request }) => {
+        bodies.push(await request.json());
+        return HttpResponse.json(acknowledgeVoidOk);
+      }),
+    );
+    const { wrapper, queryClient } = setup();
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries');
+    const { result } = renderHook(() => useAcknowledgeVoid('devdle'), { wrapper });
+    await act(() => result.current.mutateAsync({ challengeNumber: 128 }));
+    expect(bodies).toEqual([{ challenge_number: 128 }]);
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['today'] });
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['game-today'] });
+  });
+
+  it('ante no_session recrea la sesión una vez y reintenta', async () => {
+    const calls: string[] = [];
+    let n = 0;
+    server.use(
+      http.post('/api/games/devdle/today/acknowledge-void', () => {
+        calls.push('ack');
+        n += 1;
+        return n === 1
+          ? HttpResponse.json(apiError('no_session', 'x'), { status: 401 })
+          : HttpResponse.json(acknowledgeVoidOk);
+      }),
+      http.post('/api/session', () => {
+        calls.push('session');
+        return HttpResponse.json(sessionFixture);
+      }),
+    );
+    const { wrapper } = setup();
+    const { result } = renderHook(() => useAcknowledgeVoid('devdle'), { wrapper });
+    await act(() => result.current.mutateAsync({ challengeNumber: 128 }));
+    const first = calls.indexOf('ack');
+    expect(calls.slice(first, first + 3)).toEqual(['ack', 'session', 'ack']);
   });
 });

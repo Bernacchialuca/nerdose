@@ -8,6 +8,7 @@ import {
   gameTodayNotStarted,
   gameTodayVoided,
   gameTodayVoidedFinished,
+  gameTodayVoidedPlay,
   gameTodayWon,
   GAME_STATS,
   PUBLIC_VIEW_6,
@@ -77,6 +78,7 @@ describe('deriveGameView', () => {
       kind: 'voidedResult',
       number: 128,
       gameStats: GAME_STATS,
+      reported: false,
     });
     const playVoided: GameToday = {
       ...gameTodayNotStarted,
@@ -107,6 +109,7 @@ describe('deriveGameView', () => {
       result: RESULT_WIN,
       publicView: PUBLIC_VIEW_6,
       gameStats: GAME_STATS,
+      reported: false,
     });
   });
 
@@ -117,7 +120,21 @@ describe('deriveGameView', () => {
       result: grepGridLost6.result,
       publicView: grepGridLost6.public_view,
       gameStats: grepGridLost6.game_stats,
+      reported: false,
     });
+  });
+
+  it('TS-41: propaga reported a playing, result y voidedResult', () => {
+    expect(view({ ...gameTodayWon, reported: true })).toMatchObject({
+      kind: 'result',
+      reported: true,
+    });
+    expect(view({ ...gameTodayInProgress, reported: true })).toMatchObject({
+      kind: 'playing',
+      reported: true,
+    });
+    expect(view(gameTodayVoidedPlay)).toMatchObject({ kind: 'voidedResult', reported: false });
+    expect(view({ ...gameTodayVoidedPlay, reported: true })).toMatchObject({ reported: true });
   });
 
   it('sesión: cookies bloqueadas, no_session en la acción y unavailable', () => {

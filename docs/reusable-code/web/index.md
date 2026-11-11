@@ -10,7 +10,7 @@ App `apps/web` (not a package; imported through the `@/` alias).
 - **renderWithProviders** (apps/web/src/test/render.tsx) - Renders routes in a memory router with a fresh QueryClient and i18n in `es`
 - **gameHandlersFor / grepGridHandlers / timelineHandlers / game fixtures / stubSortableRects / game-route-helpers** (apps/web/src/test/) - Per-game MSW handlers, Grep Grid and Timeline API fixtures, dnd-kit rect stub and shared route-test helpers
 
-## Game host (11 items) - see game-host.md
+## Game host (14 items) - see game-host.md
 - **clientRegistry / hasGameClient** (apps/web/src/modules/game-host/registry.ts) - Only place that lists games (partial registry of dynamic `import()`s)
 - **loadGameClient / gameScreens / useLoadedGameClient** (apps/web/src/modules/game-host/) - Memoized client loading with i18n registration and the per-game `React.lazy` screens
 - **GameClient and props** (apps/web/src/modules/game-host/types.ts) - Structural copy of the `./client` contract
@@ -19,6 +19,9 @@ App `apps/web` (not a package; imported through the `@/` alias).
 - **GameHostHeader** (apps/web/src/modules/game-host/components/game-host-header.tsx) - `GameHeader` for the game screens
 - **ShareButton / ClientShareButton** (apps/web/src/modules/game-host/components/share-button.tsx) - Share with clipboard fallback and analytics
 - **ResultExits / Confetti** (apps/web/src/modules/game-host/components/) - Result closing card (streaks + countdown + exits) and win confetti
+- **useReport / useAcknowledgeVoid** (apps/web/src/modules/game-host/api/) - Mutations for reporting a challenge and acknowledging a voided one
+- **ReportDialog / ReportLink** (apps/web/src/modules/game-host/components/) - O-01 report form and its trigger (generic, no per-game logic)
+- **VoidedNoticeDialog** (apps/web/src/modules/game-host/components/voided-notice-dialog.tsx) - O-02 voided-challenge notice with «Marcar como completado»
 - **ShellHandle** (apps/web/src/lib/route-handle.ts) - Route-provided header contract for the `Shell`
 - **focusMainHeading** (apps/web/src/lib/focus-main-heading.ts) - Moves focus to `main h1`
 - **env / parseEnv / initAnalytics** (apps/web/src/lib/env.ts, analytics.ts) - Validated env and Plausible injection
