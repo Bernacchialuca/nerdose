@@ -6,6 +6,8 @@ import {
   DATE_PRECISIONS,
   GAME_IDS,
   LOCALES,
+  REPORT_REASONS,
+  REPORT_STATUSES,
   TERM_CATEGORIES,
   TIMELINE_CATEGORIES,
 } from '@nerdose/core';
@@ -13,6 +15,8 @@ import type {
   CodeLanguage,
   DatePrecision,
   GameId,
+  ReportReason,
+  ReportStatus,
   TermCategory,
   TimelineCategory,
 } from '@nerdose/core';
@@ -21,6 +25,7 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import {
   bankItemStatusEnum,
+  challengeReports,
   challengeStatusEnum,
   challenges,
   codeLanguageEnum,
@@ -28,6 +33,8 @@ import {
   datePrecisionEnum,
   gameIdEnum,
   jobRunStatusEnum,
+  reportReasonEnum,
+  reportStatusEnum,
   jobRuns,
   localeEnum,
   playStatusEnum,
@@ -43,6 +50,8 @@ import {
 } from '../src/index';
 import type {
   Challenge,
+  ChallengeReport,
+  NewChallengeReport,
   JobRun,
   NewChallenge,
   NewPlayer,
@@ -224,5 +233,48 @@ describe('timeline facts schema', () => {
     );
     expect(sql).toContain(`ALTER TYPE "public"."timeline_category" ADD VALUE 'databases';`);
     expect(sql).toContain(`ALTER TYPE "public"."timeline_category" ADD VALUE 'software_tools';`);
+  });
+});
+
+describe('challenge reports schema', () => {
+  it('S030-TS-42: pgEnums derive from @nerdose/core', () => {
+    expect(reportReasonEnum.enumValues).toEqual([...REPORT_REASONS]);
+    expect(reportStatusEnum.enumValues).toEqual([...REPORT_STATUSES]);
+    expect(reportReasonEnum.enumName).toBe('report_reason');
+    expect(reportStatusEnum.enumName).toBe('report_status');
+  });
+
+  it('S030-TS-43: inferred types', () => {
+    expectTypeOf<ChallengeReport['reason']>().toEqualTypeOf<ReportReason>();
+    expectTypeOf<ChallengeReport['status']>().toEqualTypeOf<ReportStatus>();
+    expectTypeOf<ChallengeReport['locale']>().toEqualTypeOf<'es' | 'en'>();
+    expectTypeOf<ChallengeReport['message']>().toEqualTypeOf<string | null>();
+    expectTypeOf<ChallengeReport['createdAt']>().toEqualTypeOf<Date>();
+    expectTypeOf<NewChallengeReport['status']>().toEqualTypeOf<ReportStatus | undefined>();
+  });
+
+  it('S030-TS-44: public exports', () => {
+    expect(challengeReports).toBeDefined();
+    expect(reportReasonEnum).toBeDefined();
+    expect(reportStatusEnum).toBeDefined();
+    expect(getTableName(challengeReports)).toBe('challenge_reports');
+  });
+
+  it('S030-TS-45: 0006 SQL has enums, table, function, trigger and grant', () => {
+    const sql = readFileSync(join(MIGRATIONS_FOLDER, '0006_challenge_reports.sql'), 'utf8');
+    for (const fragment of [
+      `CREATE TYPE "public"."report_reason" AS ENUM('wrong_answer', 'ambiguous', 'wrong_explanation', 'translation', 'display_bug', 'other');`,
+      `CREATE TYPE "public"."report_status" AS ENUM('open', 'resolved', 'dismissed');`,
+      'CREATE TABLE "challenge_reports"',
+      'CREATE FUNCTION challenge_reports_status_terminal()',
+      'CREATE TRIGGER challenge_reports_status_terminal BEFORE UPDATE OF status ON challenge_reports',
+      'GRANT SELECT, INSERT, UPDATE ON challenge_reports TO nerdose_api;',
+    ]) {
+      expect(sql).toContain(fragment);
+    }
+    for (const forbidden of ['nerdose_generator', 'TRUNCATE', 'DROP', 'DELETE FROM']) {
+      expect(sql).not.toContain(forbidden);
+    }
+    expect(sql).not.toMatch(/GRANT[^;]*DELETE/);
   });
 });

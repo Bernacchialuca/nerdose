@@ -30,3 +30,16 @@ export type TimelineCategory = (typeof TIMELINE_CATEGORIES)[number];
 
 export const DATE_PRECISIONS = ['year', 'month', 'day'] as const;
 export type DatePrecision = (typeof DATE_PRECISIONS)[number];
+
+export const REPORT_REASONS = [
+  'wrong_answer',
+  'ambiguous',
+  'wrong_explanation',
+  'translation',
+  'display_bug',
+  'other',
+] as const;
+export type ReportReason = (typeof REPORT_REASONS)[number];
+
+export const REPORT_STATUSES = ['open', 'resolved', 'dismissed'] as const;
+export type ReportStatus = (typeof REPORT_STATUSES)[number];

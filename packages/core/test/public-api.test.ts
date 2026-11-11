@@ -33,6 +33,8 @@ describe('public API of the "." entry', () => {
       'ERROR_CATALOG',
       'GAME_IDS',
       'LOCALES',
+      'REPORT_REASONS',
+      'REPORT_STATUSES',
       'TERM_CATEGORIES',
       'TIMELINE_CATEGORIES',
       'challengeNumber',

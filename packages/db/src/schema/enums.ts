@@ -3,6 +3,8 @@ import {
   DATE_PRECISIONS,
   GAME_IDS,
   LOCALES,
+  REPORT_REASONS,
+  REPORT_STATUSES,
   TERM_CATEGORIES,
   TIMELINE_CATEGORIES,
 } from '@nerdose/core';
@@ -24,3 +26,5 @@ export const challengeStatusEnum = pgEnum('challenge_status', [
 export const playStatusEnum = pgEnum('play_status', ['in_progress', 'won', 'lost', 'voided']);
 export const bankItemStatusEnum = pgEnum('bank_item_status', ['approved', 'rejected']);
 export const jobRunStatusEnum = pgEnum('job_run_status', ['running', 'success', 'failed']);
+export const reportReasonEnum = pgEnum('report_reason', REPORT_REASONS);
+export const reportStatusEnum = pgEnum('report_status', REPORT_STATUSES);

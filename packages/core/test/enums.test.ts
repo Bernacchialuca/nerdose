@@ -4,6 +4,8 @@ import {
   CODE_LANGUAGES,
   DATE_PRECISIONS,
   LOCALES,
+  REPORT_REASONS,
+  REPORT_STATUSES,
   TERM_CATEGORIES,
   TIMELINE_CATEGORIES,
   isGameId,
@@ -143,5 +145,17 @@ describe('DATE_PRECISIONS', () => {
       DATE_PRECISIONS.push('week');
     };
     expectTypeOf(mutate).toBeFunction();
+  });
+
+  it('lists REPORT_REASONS and REPORT_STATUSES (S-030)', () => {
+    expect(REPORT_REASONS).toEqual([
+      'wrong_answer',
+      'ambiguous',
+      'wrong_explanation',
+      'translation',
+      'display_bug',
+      'other',
+    ]);
+    expect(REPORT_STATUSES).toEqual(['open', 'resolved', 'dismissed']);
   });
 });
