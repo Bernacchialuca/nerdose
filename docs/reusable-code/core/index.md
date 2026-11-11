@@ -18,7 +18,7 @@ Package `@nerdose/core` (`packages/core`), isomorphic entry `.`.
 - **LOCALES / Locale** (packages/core/src/enums.ts) - Supported locales `es`, `en`
 - **CODE_LANGUAGES / CodeLanguage** (packages/core/src/enums.ts) - Code languages `js`, `go`, `java`
 - **TERM_CATEGORIES / TermCategory** (packages/core/src/enums.ts) - Eight term categories in fixed order (aligned with PG enum `term_category`)
-- **TIMELINE_CATEGORIES / TimelineCategory** (packages/core/src/enums.ts) - Six timeline fact categories in fixed order (aligned with PG enum `timeline_category`)
+- **TIMELINE_CATEGORIES / TimelineCategory** (packages/core/src/enums.ts) - Eight timeline fact categories in fixed order (aligned with PG enum `timeline_category`)
 - **DATE_PRECISIONS / DatePrecision** (packages/core/src/enums.ts) - Date precisions `year`, `month`, `day` (aligned with PG enum `date_precision`)
 
 ## Platform day (6 items) - see platform-day.md

@@ -72,7 +72,7 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 
 ## Timeline shared (3 items) - see timeline.md
 - **distinguishable / allDistinguishable / indistinguishablePairs / compareChronological / DatedFact** (packages/games/timeline/src/shared/dates.ts) - Date distinguishability by precision and chronological ordering
-- **PROMPTS** (packages/games/timeline/src/shared/prompts.ts) - Fixed `{ es, en }` prompt per category
+- **PROMPT** (packages/games/timeline/src/shared/prompts.ts) - Single fixed `{ es, en }` prompt for every day
 - **formatEventDate** (packages/games/timeline/src/shared/format-date.ts) - UTC date formatting by precision
 
 ## Timeline definition (4 items) - see timeline.md
@@ -93,6 +93,7 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **useTimelineSensors / MousePointerSensor** (packages/games/timeline/src/client/sensors.ts) - Mouse, touch and keyboard sensors
 - **SortableRow / useRowSortable** (packages/games/timeline/src/client/sortable-row.tsx, use-row-sortable.ts) - Playing row with handle and up/down buttons
 - **ConsoleHint / SectionPanel** (packages/games/timeline/src/client/console-hint.tsx, section-panel.tsx) - Silent hint line with live region; panel with `h2` header
+- **CategoryTag** (packages/games/timeline/src/client/category-tag.tsx) - `// <category>` tag per milestone
 - **Score / Rail / YourOrder** (packages/games/timeline/src/client/score.tsx, rail.tsx, your-order.tsx) - Result pieces
 - **makeT / test fixtures** (packages/games/timeline/src/client/test-utils.ts, test-fixtures.ts) - Test-only helpers
 
@@ -100,6 +101,6 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **generator / TimelineFact** (packages/games/timeline/src/generator/index.ts) - `GameGenerator<TimelinePayload, TimelineFact>`; `TimelineFact` is the `bankItems` contract for S-028
 - **verifyPayload** (packages/games/timeline/src/generator/verify.ts) - Nine ordered checks returning a `VerificationLog`
 - **eligibleFacts / sortById / isReusable / REUSE_WINDOW_DAYS** (packages/games/timeline/src/generator/eligibility.ts) - 90-day window and recent-challenge exclusion
-- **chooseCategory / chooseFacts** (packages/games/timeline/src/generator/choose.ts) - Category and greedy distinguishable selection
+- **chooseFacts** (packages/games/timeline/src/generator/choose.ts) - Greedy distinguishable selection from the whole bank (mixed categories)
 - **shuffle / drawOpaqueIds / drawInitialOrder / sameOrder / OPAQUE_ID_ALPHABET / MAX_REDRAWS** (packages/games/timeline/src/generator/opaque.ts) - Seed-driven shuffle and opaque ids
 - **addDays / isValidDate** (packages/games/timeline/src/generator/days.ts) - Clock-free `YYYY-MM-DD` arithmetic in UTC

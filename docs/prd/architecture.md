@@ -85,7 +85,7 @@ El contenido de los bancos se importa **offline** con el script `import:banks` d
 - **script → Wikipedia REST** (`/api/rest_v1/page/summary/{title}` en es y en): primer párrafo para definiciones, resúmenes y notas.
 - **build de `games/devdle` → Wikidata SPARQL + ENABLE:** la lista base de palabras válidas (ENABLE filtrado ∪ labels en inglés A–Z de conceptos de computación) también se genera offline y se commitea como artefacto del paquete.
 
-El script manda un `User-Agent` descriptivo con un contacto del proyecto, como exige la política de Wikimedia. Los bancos se reutilizan cuando vence su ventana anti-repetición, así que un dataset de ≥ 500 términos y ≥ 100 hechos por categoría alcanza indefinidamente. El script falla si no llega a esos mínimos.
+El script manda un `User-Agent` descriptivo con un contacto del proyecto, como exige la política de Wikimedia. Los bancos se reutilizan cuando vence su ventana anti-repetición, así que un dataset de ≥ 500 términos y ≥ 450 hechos en total (5 por día × 90 días de ventana de Timeline, sin mínimo por categoría) alcanza indefinidamente. El script falla si no llega a esos mínimos.
 
 ## Requerimientos Técnicos
 

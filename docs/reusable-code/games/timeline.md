@@ -10,10 +10,10 @@ Package `@nerdose/game-timeline` (`packages/games/timeline`). Entries: `./defini
 - **Signature:** `type DatedFact = { event_date; date_precision }`; `distinguishable(a, b): boolean`; `allDistinguishable(facts): boolean`; `indistinguishablePairs<T>(facts): [T, T][]`; `compareChronological(a, b): number` (by `event_date`, ties by `id`)
 - **Usage:** `[...facts].sort(compareChronological)`; `distinguishable({ event_date: '2009-01-01', date_precision: 'year' }, { event_date: '2009-05-01', date_precision: 'month' })` is `false`.
 
-### PROMPTS
+### PROMPT
 - **Location:** packages/games/timeline/src/shared/prompts.ts
-- **Description:** Fixed `{ es, en }` prompt per `TimelineCategory`.
-- **Signature:** `PROMPTS: Record<TimelineCategory, { es: string; en: string }>`
+- **Description:** Single fixed `{ es, en }` prompt for every day (the challenge mixes categories).
+- **Signature:** `PROMPT: { es: 'Ordená estos hitos del más antiguo al más reciente'; en: 'Order these milestones from oldest to newest' }`
 
 ### formatEventDate
 - **Location:** packages/games/timeline/src/shared/format-date.ts
@@ -25,7 +25,7 @@ Package `@nerdose/game-timeline` (`packages/games/timeline`). Entries: `./defini
 
 ### timeline / definition
 - **Location:** packages/games/timeline/src/definition/index.ts
-- **Description:** `GameDefinition` of Timeline. The state stays `{}` until the single move confirms the order (`{ order }`); `applyMove` revalidates the permutation and returns `feedback: null`. `score` counts positions equal to `correct_order`; `reduceStats` accumulates `by_category[c].{played, correct}`; `historyLabel` is `N/5`.
+- **Description:** `GameDefinition` of Timeline. The state stays `{}` until the single move confirms the order (`{ order }`); `applyMove` revalidates the permutation and returns `feedback: null`. `score` counts positions equal to `correct_order`; `reduceStats` accumulates per milestone: each of the 5 items adds `played` to its fact's category and `correct` when it ended in its position (`by_category[c].{played, correct}`); `toPublic` exposes `{ prompt, items: [{ opaque_id, label, category }] }`; `historyLabel` is `N/5`.
 - **Signature:** `GameDefinition<TimelinePayload, TimelinePublicView, TimelineState, TimelineMove, TimelineFeedback, TimelineResult, TimelineStats>`
 - **Usage:** `createGameRegistry([devdle, grepGrid, timeline])`
 
@@ -52,9 +52,14 @@ Entry `./client` (React 19, dnd-kit). Same props contract as Devdle and Grep Gri
 - **Description:** Playing screen: prompt `h1`, "// tu orden" panel with five sortable rows (dnd-kit: handle-only drag with mouse/touch, keyboard sensor, up/down buttons), silent hint line plus polite live region, help text (`#game-help`) and "Confirm order" (`moveSchema.parse` then `onMove`, once per submit). Local order survives a language change (same id set) and restarts when the id set changes; `pending`/`locked` block rows; `moveError` is handled by identity.
 - **Signature:** `Game(props: GameProps)`
 
+### CategoryTag
+- **Location:** packages/games/timeline/src/client/category-tag.tsx
+- **Description:** `// <category>` label of one milestone (translated, `data-category`), used in the playing rows and in the result rail; it never reveals the date.
+- **Signature:** `CategoryTag({ category, t })`
+
 ### Result
 - **Location:** packages/games/timeline/src/client/result.tsx
-- **Description:** Result screen: comment with the translated category, verdict `h1` (5/5 perfect, N of 5, none), score, "your order" with check/cross per position and "correct order" rail with dates by precision and notes. Slots `notices`, `aside`, `footer`.
+- **Description:** Result screen: fixed comment, verdict `h1` (5/5 perfect, N of 5, none), score, "your order" with check/cross per position and "correct order" rail with dates by precision, the category tag of each milestone and notes. Slots `notices`, `aside`, `footer`.
 - **Signature:** `Result(props: ResultProps)`
 
 ### share
@@ -116,15 +121,16 @@ Entry `./client` (React 19, dnd-kit). Same props contract as Devdle and Grep Gri
 
 ### verifyPayload
 - **Location:** packages/games/timeline/src/generator/verify.ts
-- **Description:** Nine ordered checks (`items_count`, `facts_in_bank`, `same_category`, `texts_bilingual`, `distinguishable`, `correct_order_consistent`, `opaque_ids`, `shuffled`, `not_used_90`); `reason` is the first failed one; never throws.
+- **Description:** Nine ordered checks (`items_count`, `facts_in_bank`, `item_category` (each item's category is valid and equals its fact's), `texts_bilingual`, `distinguishable`, `correct_order_consistent`, `opaque_ids`, `shuffled`, `not_used_90`); `reason` is the first failed one; never throws.
 
 ### eligibleFacts / isReusable / REUSE_WINDOW_DAYS / sortById
 - **Location:** packages/games/timeline/src/generator/eligibility.ts
 - **Description:** 90-day window plus exclusion of facts in recent challenges; stable order by `id`.
 
-### chooseCategory / chooseFacts
+### chooseFacts
 - **Location:** packages/games/timeline/src/generator/choose.ts
-- **Description:** Category with >= 5 eligible facts (picked with the rng; falls back to the bank, then throws `RangeError`); greedy selection of 5 distinguishable facts, completing with non-eligible ones when short.
+- **Description:** Greedy selection of 5 distinguishable facts from the whole bank, whatever the category (eligible ones shuffled with the rng first, then non-eligible ones when short); throws `RangeError` if the bank has fewer than 5 facts.
+- **Signature:** `chooseFacts(eligible, bankItems, rng): TimelineFact[]`
 
 ### shuffle / drawOpaqueIds / drawInitialOrder / OPAQUE_ID_ALPHABET / MAX_REDRAWS / sameOrder
 - **Location:** packages/games/timeline/src/generator/opaque.ts

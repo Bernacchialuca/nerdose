@@ -44,13 +44,13 @@ date: 2026-11-10
 
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
-| 1 | header | header | game-header · finished | layout | ambos | — | Breadcrumb `> nerdose / tech-timeline`, «desafío del dd/mm · categoría», Compartir activo, idioma y racha |
-| 2 | consigna | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Comentario de consigna con la categoría |
+| 1 | header | header | game-header · finished | layout | ambos | — | Breadcrumb `> nerdose / tech-timeline`, «desafío del dd/mm», Compartir activo, idioma y racha |
+| 2 | consigna | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Comentario de consigna fijo (`// consigna: del más antiguo al más reciente`; sin categoría del día desde 2026-11-11) |
 | 3 | veredicto | heading | h1 | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: perdió, cero aciertos, anulado | Veredicto de la partida, con texto además del color |
 | 4 | puntaje | paragraph | body | content | ambos | hidden_in_states: loading, error de sistema, anulado | Puntaje grande `N/5` «posiciones correctas» |
 | 5 | alerta-anulado | alert | warning | feedback | ambos | visible_only_in_states: anulado | Aviso de anulación |
 | 6 | lista-tu-orden | list | timeline.row | content | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: perdió, cero aciertos | Panel «// tu orden»: el orden confirmado con acierto o error por posición (ícono + texto + borde) |
-| 7 | lista-correcto | list | timeline.rail | content | ambos | hidden_in_states: loading, error de sistema, anulado | Panel «// orden correcto»: línea de tiempo con la fecha (según precisión), el nombre y la nota de cada hito |
+| 7 | lista-correcto | list | timeline.rail | content | ambos | hidden_in_states: loading, error de sistema, anulado | Panel «// orden correcto»: línea de tiempo con la fecha (según precisión), el nombre, la categoría y la nota de cada hito |
 | 8 | card-rachas | card | — | content | ambos | hidden_in_states: loading, error de sistema | Rachas de Tech Timeline y global actualizadas |
 | 9 | link-stats | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Ir a estadísticas |
 | 10 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Abre O-01 para avisar que el desafío está mal (FG-6) |
@@ -131,7 +131,7 @@ date: 2026-11-10
 
 ### lista-correcto
 - Texto/label: // orden correcto
-- Forma: `<ol>` de 5 ítems en orden cronológico; cada ítem: fecha · nodo del riel · nombre del hito + nota breve
+- Forma: `<ol>` de 5 ítems en orden cronológico; cada ítem: fecha · nodo del riel · nombre del hito + etiqueta de su categoría (`// bases de datos`) + nota breve
 - Icono: nada
 - Annotation: pattern `timeline.rail` dentro de un `panel` (cabecera `h2`, padding 20 24 como el prototipo). Fecha en Mono 800 18 violeta, formateada en el idioma activo según su precisión (RF 8, CA 9; supuesto «Formato de fecha»): `year` → «1991»; `month` → «jun 2014» / «Jun 2014»; `day` → «14 mar 2013» / «Mar 14, 2013». Nunca se inventa mes ni día. Nota: texto de Wikipedia/Wikidata en el idioma activo (Inter 14/1.5 `text.lede`), nunca generada; la atribución CC BY-SA está en `acerca-de`. A 320 px la columna de fecha se ajusta a su contenido (ver «Pendientes» en la Revisión UX de REQ-006) y el texto envuelve; sin scroll horizontal
 
@@ -139,7 +139,7 @@ date: 2026-11-10
 - Texto/label: // rachas
 - Texto secundario: Tech Timeline: 4 días · Global: 6 días · récord Tech Timeline: 9
 - Icono: nada
-- Annotation: rachas que devuelve el cierre; 0/5 también suma (decisión #3, CA 5). Si el jugador reabre el resultado más tarde, se leen con la racha viva. La stat propia de Tech Timeline (promedio de posiciones correctas por categoría) se muestra en `estadisticas` (FG-10), no acá (supuesto «Stats propias»)
+- Annotation: rachas que devuelve el cierre; 0/5 también suma (decisión #3, CA 5). Si el jugador reabre el resultado más tarde, se leen con la racha viva. La stat propia de Tech Timeline (acierto por categoría, acumulado por hito) se muestra en `estadisticas` (FG-10), no acá (supuesto «Stats propias»)
 
 ### link-stats
 - Texto/label: Ver mis estadísticas
@@ -273,7 +273,7 @@ date: 2026-11-10
 
 **Eventos:**
 - Compartir del header · on click → share nativo con «⏳ Tech Timeline #8 / 🟩🟥🟥🟩🟩 3/5 / nerdose.dev» o copia al portapapeles (estado success); registra `share:timeline`
-- ES|EN · on change → notas, formato de las fechas, consigna y categoría pasan al otro idioma; los nombres de los hitos, el puntaje y los aciertos no cambian
+- ES|EN · on change → notas, formato de las fechas, consigna y etiquetas de categoría pasan al otro idioma; los nombres de los hitos, el puntaje y los aciertos no cambian
 - btn-siguiente · on click → siguiente juego pendiente
 - link-volver · on click → `home`
 - link-reportar · on click → abre O-01 (FG-6)
@@ -301,7 +301,7 @@ date: 2026-11-10
 - REQ-006: el error por posición es ámbar + punteado con «✗ va en N°», nunca rojo, como fija el DS para Timeline.
 - REQ-006: la fecha se muestra según su precisión (año, mes y año, o fecha completa) en el idioma activo, sin inventar mes ni día (RF 8, supuesto «Formato de fecha»); el prototipo solo mostraba años.
 - REQ-006: share `⏳ Tech Timeline #N` / 5 cuadrados 🟩/🟥 + `N/5` / `nerdose.dev`, sin nombres, fechas ni orden (supuesto «Formato del share», CA 3).
-- REQ-006: se mantiene `card-rachas` además de la barra de cierre, como en Devdle y Grep Grid, porque suma la racha global y el récord que la barra del prototipo no muestra. La stat propia (promedio por categoría) va en `estadisticas` (FG-10).
+- REQ-006: se mantiene `card-rachas` además de la barra de cierre, como en Devdle y Grep Grid, porque suma la racha global y el récord que la barra del prototipo no muestra. La stat propia (acierto por categoría, por hito) va en `estadisticas` (FG-10).
 - REQ-006: «Siguiente juego» solo aparece si queda un juego con desafío sin completar, como en Devdle y Grep Grid.
 
 **Alternativas descartadas:**

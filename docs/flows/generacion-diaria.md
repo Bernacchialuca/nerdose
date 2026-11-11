@@ -99,7 +99,7 @@ sequenceDiagram
 - comunes: textos `es` y `en` presentes; reglas de variedad del juego;
 - devdle: término no usado en 365 días (`terms.last_used_devdle`); categoría distinta de los últimos 3 días;
 - grep-grid: checks en este orden, con `name` estable (el primero que falla va en `verification.reason`): `grid_shape` (12×12, solo A–Z), `words_count` (8 `term_id` distintos), `words_in_bank`, `word_shape` (`^[A-Z]{4,12}$`), `texts_bilingual` (`definition.es` y `.en`), `no_substrings` (ninguna palabra es subcadena de otra), `placements_consistent` (cada placement es una línea hacia adelante —`right`, `down`, `down_right`, `up_right`— y sus celdas deletrean la palabra), `exactly_once` (cada palabra exactamente 1 vez contando solo esas 4 direcciones; la reversa no cuenta), `not_used_30` (`terms.last_used_grep IS NULL` o `<= date − 30`, y el `term_id` no aparece en los challenges recientes);
-- timeline: misma categoría, ordenables sin ambigüedad, no usados en 90 días (`timeline_facts.last_used`);
+- timeline: 5 hechos de todo el banco, sin importar la categoría (cada item lleva la de su hecho), ordenables sin ambigüedad, no usados en 90 días (`timeline_facts.last_used`); consigna única;
 - big-o: `polyglot.run` de la versión instrumentada en js/go/java con varios `n`; el mejor ajuste es `answer` y no hay empate;
 - bug-hunt: `polyglot.run` de la correcta y la mutada en js/go/java; la correcta coincide; la mutada falla ≥ 1 test con el mismo resultado en los 3; ≥ 2 pasan; línea del bug ∈ `pickable_lines`.
 

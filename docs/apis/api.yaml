@@ -248,14 +248,13 @@ paths:
                     number: 8
                     challenge_status: published
                     public_view:
-                      category: programming_languages
-                      prompt: 'Ordená estos lenguajes del más antiguo al más reciente'
+                      prompt: 'Ordená estos hitos del más antiguo al más reciente'
                       items:
-                        - { opaque_id: g2n5w3, label: Go }
-                        - { opaque_id: k1v3s8, label: Kubernetes }
-                        - { opaque_id: p7k2m9, label: Python }
-                        - { opaque_id: d9r6t0, label: Docker }
-                        - { opaque_id: j4x8q1, label: Java }
+                        - { opaque_id: g2n5w3, label: Go, category: programming_languages }
+                        - { opaque_id: k1v3s8, label: Kubernetes, category: software_tools }
+                        - { opaque_id: p7k2m9, label: Python, category: programming_languages }
+                        - { opaque_id: d9r6t0, label: Docker, category: software_tools }
+                        - { opaque_id: j4x8q1, label: Java, category: programming_languages }
                     play:
                       status: in_progress
                       state: {}
@@ -489,15 +488,14 @@ paths:
                     result:
                       win: false
                       score: 3
-                      category: programming_languages
                       correct_order: [p7k2m9, j4x8q1, g2n5w3, d9r6t0, k1v3s8]
                       submitted_order: [p7k2m9, g2n5w3, j4x8q1, d9r6t0, k1v3s8]
                       items:
-                        - { opaque_id: p7k2m9, label: Python, event_date: '1991-02-20', date_precision: day, note: 'Guido van Rossum publica la primera versión.' }
-                        - { opaque_id: j4x8q1, label: Java, event_date: '1995-05-23', date_precision: day, note: 'Sun Microsystems presenta Java.' }
-                        - { opaque_id: g2n5w3, label: Go, event_date: '2009-01-01', date_precision: year, note: 'Google hace público el lenguaje Go.' }
-                        - { opaque_id: d9r6t0, label: Docker, event_date: '2013-03-20', date_precision: day, note: 'Docker se presenta al público.' }
-                        - { opaque_id: k1v3s8, label: Kubernetes, event_date: '2014-06-01', date_precision: month, note: 'Google libera Kubernetes como código abierto.' }
+                        - { opaque_id: p7k2m9, label: Python, category: programming_languages, event_date: '1991-02-20', date_precision: day, note: 'Guido van Rossum publica la primera versión.' }
+                        - { opaque_id: j4x8q1, label: Java, category: programming_languages, event_date: '1995-05-23', date_precision: day, note: 'Sun Microsystems presenta Java.' }
+                        - { opaque_id: g2n5w3, label: Go, category: programming_languages, event_date: '2009-01-01', date_precision: year, note: 'Google hace público el lenguaje Go.' }
+                        - { opaque_id: d9r6t0, label: Docker, category: software_tools, event_date: '2013-03-20', date_precision: day, note: 'Docker se presenta al público.' }
+                        - { opaque_id: k1v3s8, label: Kubernetes, category: software_tools, event_date: '2014-06-01', date_precision: month, note: 'Google libera Kubernetes como código abierto.' }
                     streaks: { game: { current: 1, max: 1 }, global: { current: 1, max: 1 } }
                     game_stats:
                       game_id: timeline
@@ -506,7 +504,7 @@ paths:
                       played: 1
                       wins: 0
                       win_rate: 0
-                      extra: { by_category: { programming_languages: { played: 1, correct: 3 } } }
+                      extra: { by_category: { programming_languages: { played: 3, correct: 1 }, software_tools: { played: 2, correct: 2 } } }
                 big_o_cierre:
                   value:
                     feedback: null
@@ -1110,7 +1108,7 @@ components:
       enum: [programming_languages, git, databases, networking, linux, apis, security, software_engineering]
     TimelineCategory:
       type: string
-      enum: [programming_languages, frameworks, companies, operating_systems, hardware, video_games]
+      enum: [programming_languages, frameworks, companies, operating_systems, hardware, video_games, databases, software_tools]
     DatePrecision:
       type: string
       enum: [year, month, day]
@@ -1316,9 +1314,11 @@ components:
 
     TimelinePublicView:
       type: object
-      required: [category, prompt, items]
+      description: |
+        El desafío mezcla hechos de todas las categorías: no tiene categoría propia. `prompt` es la consigna
+        única y fija en el locale resuelto. Cada item trae la categoría de su hecho, que no revela la fecha.
+      required: [prompt, items]
       properties:
-        category: { $ref: '#/components/schemas/TimelineCategory' }
         prompt: { type: string }
         items:
           type: array
@@ -1327,10 +1327,11 @@ components:
           maxItems: 5
           items:
             type: object
-            required: [opaque_id, label]
+            required: [opaque_id, label, category]
             properties:
               opaque_id: { type: string }
               label: { type: string }
+              category: { $ref: '#/components/schemas/TimelineCategory' }
 
     BigOPublicView:
       type: object
@@ -1593,11 +1594,10 @@ components:
 
     TimelineResult:
       type: object
-      required: [win, score, category, correct_order, submitted_order, items]
+      required: [win, score, correct_order, submitted_order, items]
       properties:
         win: { type: boolean }
         score: { type: integer, minimum: 0, maximum: 5 }
-        category: { $ref: '#/components/schemas/TimelineCategory' }
         correct_order:
           type: array
           items: { type: string }
@@ -1610,10 +1610,11 @@ components:
           maxItems: 5
           items:
             type: object
-            required: [opaque_id, label, event_date, date_precision, note]
+            required: [opaque_id, label, category, event_date, date_precision, note]
             properties:
               opaque_id: { type: string }
               label: { type: string }
+              category: { $ref: '#/components/schemas/TimelineCategory' }
               event_date: { type: string, format: date }
               date_precision: { $ref: '#/components/schemas/DatePrecision' }
               note: { type: string }
@@ -1767,7 +1768,7 @@ components:
             devdle = distribución de intentos (1–6 y derrotas);
             grep-grid = `{ words_found: { "0": n, …, "8": n } }` (partidas por cantidad de palabras encontradas;
             de ahí salen el promedio de palabras y el % de 8/8);
-            timeline = `{ by_category: { <category>: { played, correct } } }` (promedio de posiciones correctas = `correct / played`); big-o = aciertos por `recipe_category`;
+            timeline = `{ by_category: { <category>: { played, correct } } }`, acumulado por hito: cada uno de los 5 items suma `played` a la categoría de su hecho y `correct` si quedó en su lugar (acierto = `correct / played`; mejor categoría = mayor promedio); big-o = aciertos por `recipe_category`;
             bug-hunt = aciertos por `code_language` y por `bug_type`.
 
     MyStats:
@@ -1947,7 +1948,7 @@ components:
           type: boolean
           description: |
             true si el banco alcanza para ciclar indefinidamente respetando las ventanas anti-repetición
-            (terms ≥ 500; timeline_facts ≥ 100 por categoría)
+            (terms ≥ 500; timeline_facts ≥ 450 en total, sin mínimo por categoría)
         rejections:
           type: array
           description: Ítems `rejected` (por la importación o por anulación), del más reciente al más antiguo; máximo 200

@@ -18,7 +18,7 @@ date: 2026-11-10
 ## Identidad
 
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
-- **JTBD / Propósito:** Entender las reglas de Tech Timeline antes de empezar (5 hitos de una misma categoría, del más antiguo al más reciente, un solo intento, tres formas de mover: arrastrar desde el asa, teclado o botones ↑ ↓); «Empezar» crea la Play del día. Cubre también «sin desafío hoy», «anulado y sin Play», «sin sesión» y el aviso de «día nuevo» tras `challenge_expired`.
+- **JTBD / Propósito:** Entender las reglas de Tech Timeline antes de empezar (5 hitos de distintas categorías, del más antiguo al más reciente, un solo intento, tres formas de mover: arrastrar desde el asa, teclado o botones ↑ ↓); «Empezar» crea la Play del día. Cubre también «sin desafío hoy», «anulado y sin Play», «sin sesión» y el aviso de «día nuevo» tras `challenge_expired`.
 - **Viewports:**
   - **mobile** — reglas apiladas en 3 pasos y CTA al final, alcanzable con el pulgar.
   - **desktop** — columna centrada (10/12) con los 3 pasos en fila y el CTA a la vista sin scroll.
@@ -145,9 +145,9 @@ date: 2026-11-10
 
 ### paso-1
 - Texto/label: 1 · Mirá los 5 hitos
-- Texto secundario: Son hechos de una misma categoría de la historia de la tecnología (lenguajes, frameworks, empresas…), mezclados y sin fecha.
+- Texto secundario: Son hechos de la historia de la tecnología de distintas categorías (lenguajes, frameworks, empresas…), mezclados y sin fecha.
 - Icono: nada
-- Annotation: la categoría del día y la consigna aparecen recién en la partida; los nombres de los hitos no se traducen (supuesto «Etiqueta del hecho»)
+- Annotation: la consigna y la categoría de cada hito aparecen recién en la partida (desde 2026-11-11 no hay categoría del día); los nombres de los hitos no se traducen (supuesto «Etiqueta del hecho»)
 
 ### paso-2
 - Texto/label: 2 · Ordenalos

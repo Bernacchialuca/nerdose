@@ -53,7 +53,7 @@ Al revisarlo aparecieron tres cosas:
 - Cada ítem de `timeline_facts.json` MUST tener exactamente: `wikidata_id`, `label`, `category`, `event_date` (`YYYY-MM-DD`), `date_precision`, `note` (`{es,en}`), `sitelinks`, `status`, `rejection_reason`.
 - Los JSON MUST escribirse ordenados por `wikidata_id`, con indentación de 2 espacios y un ítem por bloque, para que los diffs sean legibles.
 - `manifest.json` MUST incluir `dataset_version` con el formato `YYYY.MM.DD` (más `-N` si hay varias el mismo día), `generated_at` (ISO 8601) y `min_sitelinks`.
-- `import:banks` MUST terminar con error si hay menos de 500 `terms` `approved` o menos de 100 `timeline_facts` `approved` en alguna categoría v1 (`programming_languages`, `frameworks`, `companies`, `operating_systems`, `video_games`; `hardware` quedó diferida en la primera corrida de REQ-006/S-026 por no llegar a 100 `approved`) o si hay menos de 3 categorías v1.
+- `import:banks` MUST terminar con error si hay menos de 500 `terms` `approved`, si hay menos de 450 `timeline_facts` `approved` en total (sumando todas las categorías: 5 hechos por desafío × 90 días de ventana anti-repetición de Timeline) o si hay menos de 3 categorías v1. No hay mínimo por categoría de hechos: el desafío de Timeline mezcla categorías, así que entra toda categoría con hechos que pasen el filtro de calidad (cambio del 2026-11-11, que reemplaza el mínimo de 100 por categoría).
 - `sync_banks` MUST hacer `INSERT … ON CONFLICT (wikidata_id) DO UPDATE` con estas reglas:
   - Si el ítem en la base está `rejected`, MUST NOT cambiarlo (sigue `rejected`).
   - Si en la base está `approved` y en el dataset `rejected`, pasa a `rejected` con su `rejection_reason`.

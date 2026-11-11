@@ -115,6 +115,8 @@ Enum timeline_category {
   operating_systems
   hardware
   video_games
+  databases
+  software_tools
 }
 
 Enum date_precision {
@@ -228,7 +230,7 @@ Table player_game_stats {
   played integer [not null, default: 0, note: 'Excluye plays voided']
   wins integer [not null, default: 0, note: 'Excluye plays voided']
   last_completed_date date [null]
-  extra jsonb [not null, default: `'{}'::jsonb`, note: 'Stats propias del juego (reduceStats). Excluye voided. Devdle: { guesses: { "1": n, …, "6": n }, losses: n }. Grep Grid: { words_found: { "0": n, …, "8": n } } (partidas por cantidad de palabras encontradas). Timeline: { by_category: { <category>: { played, correct } } }']
+  extra jsonb [not null, default: `'{}'::jsonb`, note: 'Stats propias del juego (reduceStats). Excluye voided. Devdle: { guesses: { "1": n, …, "6": n }, losses: n }. Grep Grid: { words_found: { "0": n, …, "8": n } } (partidas por cantidad de palabras encontradas). Timeline: { by_category: { <category>: { played, correct } } }, por hito (cada item suma played a la categoría de su hecho y correct si quedó en su lugar)']
 
   indexes {
     (player_id, game_id) [pk]
@@ -301,7 +303,7 @@ Table terms {
   Note: 'Banco de términos (Devdle, Grep Grid). Se carga desde @nerdose/content con sync_banks'
 }
 
-// Creada por la migración 0004_timeline_facts (REQ-006). rejection_reason: disputed_date, imprecise_date, missing_article, low_sitelinks, missing_note, note_year_mismatch, excluded, duplicate
+// Creada por la migración 0004_timeline_facts (REQ-006); 0005_timeline_categories_databases_software_tools suma databases y software_tools al enum timeline_category. rejection_reason: disputed_date, imprecise_date, missing_article, low_sitelinks, missing_note, note_year_mismatch, excluded, duplicate
 Table timeline_facts {
   id uuid [pk, default: `gen_random_uuid()`]
   label text [not null]
@@ -425,7 +427,7 @@ Las cuatro vistas viven en migraciones de `@nerdose/db` (ADR-014). El rol `nerdo
 | challenge_reports | idx_reports_challenge_reason | (challenge_id, reason) | BTREE | Conteo de `wrong_answer`/`ambiguous` para el umbral |
 | terms | idx_terms_devdle_pick | (status, category, last_used_devdle) | BTREE | Elegir término de Devdle (365 días, rotación de categoría) |
 | terms | idx_terms_grep_pick | (status, last_used_grep) | BTREE | Elegir 8 palabras de Grep Grid (30 días) |
-| timeline_facts | idx_timeline_facts_pick | (status, category, last_used) | BTREE | Elegir 5 hechos de una categoría (90 días) |
+| timeline_facts | idx_timeline_facts_pick | (status, category, last_used) | BTREE | Elegir hechos elegibles (90 días); el desafío mezcla categorías, así que hoy filtra por `status` y `last_used` |
 | generation_requests | uq_generation_requests_pending | (challenge_id) `WHERE status = 'pending'` | UNIQUE parcial | Un pedido pendiente por desafío |
 | generation_requests | idx_generation_requests_status | (status, requested_at) | BTREE | Poll de respaldo con `FOR UPDATE SKIP LOCKED` |
 | job_runs | idx_job_runs_job_started_at | (job, started_at) | BTREE | Última corrida de `sync_banks` en el stock del admin |

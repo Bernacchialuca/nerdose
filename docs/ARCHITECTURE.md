@@ -149,7 +149,7 @@ export interface GameDefinition<
 | Devdle | `{ guess: string }` | adivinó o 6 intentos | adivinó | distribución de intentos |
 | Bug Hunt | `{ language, line }` | 1 jugada | línea correcta | aciertos por lenguaje y por tipo de bug |
 | Big O | `{ language, option }` | 1 jugada | opción correcta | aciertos por categoría (recursión, loops…) |
-| Tech Timeline | `{ order: string[] }` | 1 jugada | 5/5 | promedio de posiciones, por categoría |
+| Tech Timeline | `{ order: string[] }` | 1 jugada | 5/5 | % de hitos en su lugar por categoría (por hito) |
 | Grep Grid | `{ from: [r,c], to: [r,c] }` | 8 palabras | completó | tiempo promedio y mejor tiempo |
 
 El share text lo arma el cliente a partir del `Result` y nunca incluye la solución.
@@ -507,7 +507,7 @@ Funciona igual que Big O: el generador arma el código combinando piezas que se 
 
 ### 10.8 Tech Timeline — elige del banco + algoritmo
 
-1. Elige una categoría y 5 hechos `approved` de `timeline_facts`, sin repetir hechos usados en los últimos 90 días.
+1. Elige 5 hechos `approved` de `timeline_facts` de todo el banco, sin importar la categoría (el desafío mezcla categorías), sin repetir hechos usados en los últimos 90 días.
 2. **Una sola respuesta posible:** los 5 hechos deben tener al menos 1 año de diferencia entre sí, o la precisión suficiente (mes o día) para distinguirlos.
 3. `PublicView` muestra los items con **IDs opacos aleatorios por desafío**, en orden mezclado. Así el orden no se filtra por los IDs.
 4. Score: cantidad de posiciones correctas (0–5).

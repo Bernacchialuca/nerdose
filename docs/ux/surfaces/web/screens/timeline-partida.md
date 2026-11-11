@@ -18,7 +18,7 @@ date: 2026-11-10
 ## Identidad
 
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
-- **JTBD / Propósito:** Ordenar los 5 hitos del día del más antiguo al más reciente, moviéndolos con el dedo desde el asa, con los botones ↑ ↓ o con el teclado, y confirmar el orden en un solo intento. El jugador solo ve la categoría, la consigna y el nombre de cada hito: las fechas, las notas y el orden correcto llegan recién al cerrar.
+- **JTBD / Propósito:** Ordenar los 5 hitos del día del más antiguo al más reciente, moviéndolos con el dedo desde el asa, con los botones ↑ ↓ o con el teclado, y confirmar el orden en un solo intento. El jugador solo ve la consigna fija y el nombre y la categoría de cada hito (el desafío mezcla categorías, 2026-11-11): las fechas, las notas y el orden correcto llegan recién al cerrar.
 - **Viewports:**
   - **mobile** — consigna arriba, lista vertical de 5 filas a ancho completo (asa · posición · nombre · ↑ ↓), la ayuda de cómo mover y «Confirmar orden» al final, alcanzable con el pulgar. Sin scroll horizontal desde 320 px.
   - **desktop** — consigna a ancho completo; la lista «// tu orden» a la izquierda (7/12) con el hint debajo, y la ayuda de cómo mover más «Confirmar orden» a la derecha (5/12), a la vista sin scroll.
@@ -44,12 +44,12 @@ date: 2026-11-10
 
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
-| 1 | header | header | game-header · playing | layout | ambos | — | Breadcrumb `> nerdose / tech-timeline`, «desafío del dd/mm · categoría», acciones de juego, idioma y racha |
-| 2 | consigna | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Comentario de consigna con la categoría y la regla de un solo intento |
+| 1 | header | header | game-header · playing | layout | ambos | — | Breadcrumb `> nerdose / tech-timeline`, «desafío del dd/mm», acciones de juego, idioma y racha |
+| 2 | consigna | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Comentario de consigna y la regla de un solo intento |
 | 3 | titulo | heading | h1 | content | ambos | hidden_in_states: loading, error de sistema | La consigna del día en el idioma activo |
 | 4 | alerta-anulado | alert | warning | feedback | ambos | visible_only_in_states: anulado | Aviso de desafío anulado durante la partida |
 | 5 | banner-cookies | alert | warning | feedback | ambos | visible_only_in_states: sin sesión | Explica que hace falta la cookie funcional (`no_session`) |
-| 6 | lista-hitos | list | timeline.row | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: moviendo, confirmando, anulado | Panel «// tu orden»: 5 filas reordenables con asa, posición, nombre y botones ↑ ↓ |
+| 6 | lista-hitos | list | timeline.row | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: moviendo, confirmando, anulado | Panel «// tu orden»: 5 filas reordenables con asa, posición, nombre + etiqueta de categoría y botones ↑ ↓ |
 | 7 | hint-jugada | paragraph | caption | feedback | ambos | hidden_in_states: loading, error de sistema; state_overrides: moviendo, error de validación, límite de jugadas | Línea de aviso del juego: anuncia el último movimiento y los rechazos del servidor, sin penalizar |
 | 8 | ayuda-mover | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema, anulado | Las tres formas de mover un hito |
 | 9 | btn-confirmar | button | accent | input | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: confirmando | Envía el orden armado (un solo intento) |
@@ -92,7 +92,7 @@ date: 2026-11-10
 ### header
 - Texto/label: > nerdose / tech-timeline · desafío del 30/10 · lenguajes de programación · [?] [stats] [Compartir] ES|EN · 🔥 4
 - Icono: nada
-- Annotation: `game-header` variant `playing` (REQ-006): el metadato suma la categoría del día, como el prototipo («desafío del 30/10 · lenguajes y herramientas»), traducida al idioma activo. «Cómo se juega» lleva a `ayuda-mover` de esta misma pantalla (con la Play en curso el servidor no vuelve a mostrar las instrucciones); «Estadísticas» → `estadisticas`; Compartir deshabilitado («disponible al terminar la partida»); ES|EN cambia consigna y categoría sin perder el orden armado (CA 36); píldora con la racha global. Sin nav global ni `nav-movil`
+- Annotation: `game-header` variant `playing` (REQ-006): el metadato es «desafío del dd/mm»; desde 2026-11-11 el desafío no tiene categoría propia (mezcla categorías), así que no se muestra una categoría del día. «Cómo se juega» lleva a `ayuda-mover` de esta misma pantalla (con la Play en curso el servidor no vuelve a mostrar las instrucciones); «Estadísticas» → `estadisticas`; Compartir deshabilitado («disponible al terminar la partida»); ES|EN cambia la consigna y las etiquetas de categoría sin perder el orden armado (CA 36); píldora con la racha global. Sin nav global ni `nav-movil`
 
 ### consigna
 - Texto/label: // consigna: del más antiguo al más reciente · un solo intento
@@ -102,7 +102,7 @@ date: 2026-11-10
 ### titulo
 - Texto/label: Ordená estos lenguajes del más antiguo al más reciente
 - Icono: nada
-- Annotation: `prompt` del desafío en el idioma activo (plantilla fija por categoría, supuesto «Consigna»): «Ordená estos frameworks…», «Ordená estas empresas…». Como en el prototipo, el `h1` es la consigna y no el nombre del juego, que ya está en el breadcrumb. Mono 34 con tracking negativo; a 320 px envuelve en 2 o 3 líneas
+- Annotation: `prompt` del desafío en el idioma activo: consigna única y fija para todos los días (actualización 2026-11-11): «Ordená estos hitos del más antiguo al más reciente» / «Order these milestones from oldest to newest». Como en el prototipo, el `h1` es la consigna y no el nombre del juego, que ya está en el breadcrumb. Mono 34 con tracking negativo; a 320 px envuelve en 2 o 3 líneas
 
 ### alerta-anulado
 - Texto/label: Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.
@@ -116,9 +116,9 @@ date: 2026-11-10
 
 ### lista-hitos
 - Texto/label: // tu orden
-- Forma: `<ol>` de 5 filas en el orden que el jugador va armando (al entrar, el orden mezclado que manda el servidor); cada fila: asa ⠿ · posición «1»…«5» · nombre del hito · botones ↑ ↓
+- Forma: `<ol>` de 5 filas en el orden que el jugador va armando (al entrar, el orden mezclado que manda el servidor); cada fila: asa ⠿ · posición «1»…«5» · nombre del hito con su categoría debajo (`// lenguajes de programación`, Mono 13 `text.dim`) · botones ↑ ↓
 - Icono: nada
-- Annotation: pattern `timeline.row` (fila de 52 px, `radius.control`, gap 8) dentro de un `panel` «// tu orden» (cabecera `h2`). Estado jugando: fondo `surface`, borde 1px `border.subtle`, sin badge (el badge «✓ bien / ✗ va en N°» es solo del resultado). Cada fila anuncia «Go, posición 3 de 5». **Asa** (botón con `aria-roledescription` «elemento reordenable», `touch-action: none` solo en el asa): arrastre con el dedo o el mouse; el resto de la fila deja hacer scroll (CA 11). **Botones ↑ ↓** (`button` `icon`, `aria-label` «Subir Go» / «Bajar Go»): mueven una posición; ↑ deshabilitado en la primera fila y ↓ en la última; el foco sigue al hito movido. Los nombres son los `label` en inglés, iguales en ES y EN. Ninguna fila muestra fecha, nota ni pista (RF 2). A 320 px la lista ocupa todo el ancho, el nombre envuelve a 2 líneas si no entra (la fila crece en alto, nunca en ancho) y no hay scroll horizontal (CA 11, RF 21)
+- Annotation: pattern `timeline.row` (fila de 52 px, `radius.control`, gap 8) dentro de un `panel` «// tu orden» (cabecera `h2`). Estado jugando: fondo `surface`, borde 1px `border.subtle`, sin badge (el badge «✓ bien / ✗ va en N°» es solo del resultado). Cada fila anuncia «Go, posición 3 de 5». **Asa** (botón con `aria-roledescription` «elemento reordenable», `touch-action: none` solo en el asa): arrastre con el dedo o el mouse; el resto de la fila deja hacer scroll (CA 11). **Botones ↑ ↓** (`button` `icon`, `aria-label` «Subir Go» / «Bajar Go»): mueven una posición; ↑ deshabilitado en la primera fila y ↓ en la última; el foco sigue al hito movido. Los nombres son los `label` en inglés, iguales en ES y EN. Ninguna fila muestra fecha, nota ni pista (RF 2); la etiqueta de categoría no revela la fecha (2026-11-11). A 320 px la lista ocupa todo el ancho, el nombre envuelve a 2 líneas si no entra (la fila crece en alto, nunca en ancho) y no hay scroll horizontal (CA 11, RF 21)
 
 ### hint-jugada
 - Texto/label: > moviste Go a la posición 3 de 5
@@ -248,7 +248,7 @@ date: 2026-11-10
 - respuesta `game_finished` → recarga y muestra `timeline-resultado` con el resultado ya registrado (CA 8, 18)
 - respuesta `challenge_expired` → carga el desafío nuevo y navega a `timeline-instrucciones` (estado `día nuevo`, CA 13)
 - respuesta `challenge_voided` → estado `anulado` (CA 14); `no_session` → estado `sin sesión` (CA 16); 429 → `límite de jugadas` (CA 17)
-- ES|EN del header → cambian consigna (`titulo`), categoría del header y textos de ayuda; los nombres de los hitos y el orden armado no cambian (CA 36)
+- ES|EN del header → cambian consigna (`titulo`), etiquetas de categoría de las filas y textos de ayuda; los nombres de los hitos y el orden armado no cambian (CA 36)
 - link-reportar · on click → abre O-01 (bottom-sheet en mobile, modal en desktop), cuando exista (FG-6)
 
 **Validaciones:**
@@ -268,7 +268,7 @@ date: 2026-11-10
 
 **Decisiones tomadas:**
 - Una pantalla por fase por juego: la partida de Tech Timeline difiere por completo de la de los otros.
-- REQ-006: header `game-header` (`playing`) en lugar del header de plataforma y la tira `nav-movil`, como Devdle y Grep Grid (supuesto «Cabecera de las pantallas»). El metadato suma la categoría del día, como el prototipo.
+- REQ-006: header `game-header` (`playing`) en lugar del header de plataforma y la tira `nav-movil`, como Devdle y Grep Grid (supuesto «Cabecera de las pantallas»). ~~El metadato suma la categoría del día~~ (2026-11-11: sin categoría del día; la categoría va por fila).
 - REQ-006: el `h1` es la consigna del día y el comentario `// consigna: …` va arriba, igual que en el resultado del prototipo; el nombre del juego queda en el breadcrumb. El bloque `titulo` deja de decir «Tech Timeline».
 - REQ-006: la lista usa el pattern `timeline.row` del DS dentro de un `panel` «// tu orden», la misma pieza que el resultado, para que el jugador reconozca su orden al cerrar. En la partida la fila no lleva badge.
 - REQ-006: tres formas de mover equivalentes (asa, ↑ ↓ y teclado), y el arrastre se inicia solo desde el asa para no pelear con el scroll en el teléfono (supuestos «Interacción: ordenar» y «Scroll táctil vs. arrastre», CA 10, 11).

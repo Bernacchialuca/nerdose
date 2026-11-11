@@ -20,8 +20,8 @@
 
 ## TIMELINE_CATEGORIES / TimelineCategory
 - **Location:** packages/core/src/enums.ts
-- **Description:** Fixed-order list of the 6 timeline fact categories; aligned with PG enum `timeline_category` and `TimelineCategory` in `api.yaml`. `@nerdose/content` re-exports it; the `timeline` game package imports it from `core`.
-- **Signature:** `TIMELINE_CATEGORIES = ['programming_languages','frameworks','companies','operating_systems','hardware','video_games'] as const`; `type TimelineCategory = (typeof TIMELINE_CATEGORIES)[number]`
+- **Description:** Fixed-order list of the 8 timeline fact categories (`databases` and `software_tools` appended in migration 0005); aligned with PG enum `timeline_category` and `TimelineCategory` in `api.yaml`. `@nerdose/content` re-exports it; the `timeline` game package imports it from `core`.
+- **Signature:** `TIMELINE_CATEGORIES = ['programming_languages','frameworks','companies','operating_systems','hardware','video_games','databases','software_tools'] as const`; `type TimelineCategory = (typeof TIMELINE_CATEGORIES)[number]`
 - **Usage:** `category: z.enum(TIMELINE_CATEGORIES)`
 
 ## DATE_PRECISIONS / DatePrecision

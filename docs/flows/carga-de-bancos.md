@@ -45,7 +45,7 @@ sequenceDiagram
     S->>WP: GET /api/rest_v1/page/summary/{title} (es, en)
     WP-->>S: extract
     S->>S: reglas de aceptación → approved | rejected (rejection_reason)
-    alt menos de 500 terms o de 100 hechos por categoría
+    alt menos de 500 terms o de 450 hechos en total
         S-->>S: termina con error (no escribe)
     else
         S->>R: data/terms.json, data/timeline_facts.json, data/manifest.json
@@ -85,7 +85,7 @@ sequenceDiagram
 - `timeline_facts.json`: `[{ "wikidata_id", "label", "category", "event_date", "date_precision", "note": { "es", "en" }, "sitelinks", "status", "rejection_reason" }]`
 - `manifest.json`: `{ "dataset_version", "generated_at", "min_sitelinks", "counts": { … } }`
 
-**Validación:** si hay menos de 500 `terms` `approved`, o menos de 100 `timeline_facts` `approved` en alguna categoría v1, el script termina con error y no escribe.
+**Validación:** si hay menos de 500 `terms` `approved`, o menos de 450 `timeline_facts` `approved` en total (todas las categorías juntas: 5 hechos por día × 90 días de ventana), el script termina con error y no escribe. No hay mínimo por categoría de hechos.
 
 ---
 
