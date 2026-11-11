@@ -10,6 +10,11 @@ import {
   payloadSchema as grepGridPayloadSchema,
 } from '@nerdose/game-grep-grid/definition';
 import { generator as grepGridGenerator } from '@nerdose/game-grep-grid/generator';
+import {
+  definition as timelineDefinition,
+  payloadSchema as timelinePayloadSchema,
+} from '@nerdose/game-timeline/definition';
+import { generator as timelineGenerator } from '@nerdose/game-timeline/generator';
 import type { z } from 'zod';
 
 export type GeneratorEntry = {
@@ -51,5 +56,11 @@ export const generatorRegistry = createGeneratorRegistry([
     generator: grepGridGenerator,
     payloadSchema: grepGridPayloadSchema,
     version: `grep-grid@${grepGridDefinition.version}`,
+  },
+  {
+    gameId: 'timeline',
+    generator: timelineGenerator,
+    payloadSchema: timelinePayloadSchema,
+    version: `timeline@${timelineDefinition.version}`,
   },
 ]);

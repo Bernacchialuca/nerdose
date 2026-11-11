@@ -77,6 +77,7 @@ export async function generateForDate(
     const verification = generator.verify(payload, history);
     if (verification.ok) {
       const approval = await repo.approve(id, verification, {
+        bank: spec.bank,
         lastUsedField: spec.lastUsedField,
         itemIds: generator.usedBankItems(payload),
         date,

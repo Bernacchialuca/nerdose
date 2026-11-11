@@ -1,13 +1,14 @@
 import { AppError } from '@nerdose/core';
 import { generator } from '@nerdose/game-devdle/generator';
 import { generator as grepGridGenerator } from '@nerdose/game-grep-grid/generator';
+import { generator as timelineGenerator } from '@nerdose/game-timeline/generator';
 import { describe, expect, it } from 'vitest';
 
 import { createGeneratorRegistry, generatorRegistry } from '@/games/registry';
 
 describe('generatorRegistry', () => {
-  it('registra devdle y grep-grid', () => {
-    expect(generatorRegistry.ids()).toEqual(['devdle', 'grep-grid']);
+  it('registra devdle, grep-grid y timeline', () => {
+    expect(generatorRegistry.ids()).toEqual(['devdle', 'grep-grid', 'timeline']);
     const entry = generatorRegistry.get('devdle');
     expect(entry).toMatchObject({ gameId: 'devdle', generator, version: 'devdle@1' });
     expect(entry.payloadSchema).toBeDefined();
@@ -18,12 +19,19 @@ describe('generatorRegistry', () => {
       version: 'grep-grid@1',
     });
     expect(grep.payloadSchema).toBeDefined();
+    const timeline = generatorRegistry.get('timeline');
+    expect(timeline).toMatchObject({
+      gameId: 'timeline',
+      generator: timelineGenerator,
+      version: 'timeline@1',
+    });
+    expect(timeline.payloadSchema).toBeDefined();
   });
 
   it('lanza not_found con un juego no registrado', () => {
     let error: unknown;
     try {
-      generatorRegistry.get('timeline');
+      generatorRegistry.get('big-o');
     } catch (e) {
       error = e;
     }

@@ -116,5 +116,5 @@ import { generator as devdle } from '@nerdose/game-devdle/generator';
 
 ## Update (REQ-006)
 
-- `ChallengePublishingRepository` is multi-bank: a `BANKS` map (`terms`, `timeline_facts`) replaces `LAST_USED_COLUMNS`. `bankItems(spec)` selects the `approved` items of the spec's bank, and `approve` receives `ApproveOptions.bank` and updates `last_used = GREATEST(last_used, D)` only in that bank's table. Approving a Timeline challenge never touches `terms`.
+- `ChallengePublishingRepository` is multi-bank: a `BANKS` map (`terms`, `timeline_facts`) replaces `LAST_USED_COLUMNS`. `bankItems(spec)` selects the `approved` items of the spec's bank, and `approve` receives `ApproveOptions.bank` and updates `last_used = GREATEST(last_used, D)` only in that bank's table. Approving a Timeline challenge never touches `terms`. **Adopted in S-028.**
 - Timeline: `historySpec = { bank: 'timeline_facts', lastUsedField: 'last_used', recentDays: 90 }`, `version: 'timeline@1'`.

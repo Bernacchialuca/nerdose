@@ -3,7 +3,7 @@
 ## generatorRegistry / createGeneratorRegistry / GeneratorEntry
 - **Location:** apps/generator/src/games/registry.ts
 - **Signature:** `createGeneratorRegistry(entries: GeneratorEntry[])` -> `{ ids(), get(id) }`; `GeneratorEntry = { gameId, generator, payloadSchema, version }`
-- **Description:** `get` throws `AppError('not_found')` for unknown games; duplicate or unknown ids throw `Error`. `generatorRegistry` holds Devdle (`devdle@1`) and Grep Grid (`grep-grid@1`).
+- **Description:** `get` throws `AppError('not_found')` for unknown games; duplicate or unknown ids throw `Error`. `generatorRegistry` holds Devdle (`devdle@1`), Grep Grid (`grep-grid@1`) and Timeline (`timeline@1`).
 - **Usage:** `generatorRegistry.get('devdle').generator.generate({ date, seed, history })`
 
 ## seedFor / seedToHex
@@ -26,8 +26,8 @@
 
 ## ChallengePublishingRepository
 - **Location:** apps/generator/src/domain/challenge-publishing/challenge-publishing.repository.ts
-- **Signature:** `coveredDates`, `bankItems(spec)`, `recentChallenges(gameId, from, to, payloadSchema)`, `insertDraft`, `approve(id, log, { lastUsedField, itemIds, date }): 'approved' | 'duplicate'`, `reject(id, log)`
-- **Description:** `lastUsedField` is mapped through a closed table; `approve` writes `last_used_* = GREATEST(last_used_*, date)` in the same transaction as `status = 'approved'`; it turns `uq_challenges_active_game_date` collisions into a `rejected` row with `reason: 'duplicate_active'`.
+- **Signature:** `coveredDates`, `bankItems(spec)` (per bank: `terms` rows, or `TimelineFact` shape with snake_case keys for `timeline_facts`), `recentChallenges(gameId, from, to, payloadSchema)`, `insertDraft`, `approve(id, log, { bank, lastUsedField, itemIds, date }): 'approved' | 'duplicate'`, `reject(id, log)`
+- **Description:** The `BANKS` map (`terms` -> `last_used_devdle`/`last_used_grep`; `timeline_facts` -> `last_used`) is the only source of allowed `(bank, lastUsedField)` pairs; others throw `Unknown last_used field` before any write. `bank: null` approves without touching any bank. `approve` writes `last_used_* = GREATEST(last_used_*, date)` only in the spec's bank table, in the same transaction as `status = 'approved'`; it turns `uq_challenges_active_game_date` collisions into a `rejected` row with `reason: 'duplicate_active'`.
 - **Usage:** `new ChallengePublishingRepository(db).coveredDates('devdle', from, to)`
 
 ## syncBanks
