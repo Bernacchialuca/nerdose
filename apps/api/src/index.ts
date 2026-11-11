@@ -1,6 +1,8 @@
 import { serve } from '@hono/node-server';
 
 import { loadEnv, loadLocalEnvFile } from '@/config/env';
+import { AdminRepository } from '@/domain/admin/admin.repository';
+import { AdminService } from '@/domain/admin/admin.service';
 import { IdentityRepository } from '@/domain/identity/identity.repository';
 import { IdentityService } from '@/domain/identity/identity.service';
 import { GameplayRepository, moveTransaction } from '@/domain/gameplay/gameplay.repository';
@@ -9,6 +11,7 @@ import { ProgressRepository } from '@/domain/progress/progress.repository';
 import { ProgressService } from '@/domain/progress/progress.service';
 import { QualityRepository } from '@/domain/quality/quality.repository';
 import { QualityService } from '@/domain/quality/quality.service';
+import { VoidService } from '@/domain/quality/void.service';
 import { PublishingRepository } from '@/domain/publishing/publishing.repository';
 import { PublishingService } from '@/domain/publishing/publishing.service';
 import { games } from '@/games/registry';
@@ -82,6 +85,8 @@ if (env) {
         ADMIN_ORIGIN: env.ADMIN_ORIGIN,
         TRUST_PROXY_HEADER: env.TRUST_PROXY_HEADER,
         LAUNCH_DATE: env.LAUNCH_DATE,
+        ADMIN_PASSWORD_HASH: env.ADMIN_PASSWORD_HASH,
+        ADMIN_JWT_SECRET: env.ADMIN_JWT_SECRET,
       },
       identity: new IdentityService(new IdentityRepository(db)),
       publishing,
@@ -106,6 +111,23 @@ if (env) {
           ratio: env.REPORT_ALERT_RATIO,
           ratioMinCount: env.REPORT_ALERT_RATIO_MIN_COUNT,
         },
+      }),
+      admin: new AdminService({
+        passwordHash: env.ADMIN_PASSWORD_HASH,
+        jwtSecret: env.ADMIN_JWT_SECRET,
+        clock,
+        repo: new AdminRepository(db),
+        games,
+      }),
+      voids: new VoidService({
+        games,
+        runInTx: (fn) =>
+          db.transaction((tx) =>
+            fn({ quality: new QualityRepository(tx), progress: new ProgressRepository(tx) }),
+          ),
+        cache: todayCache,
+        progress,
+        clock,
       }),
     });
     const server = serve({ fetch: app.fetch, port: env.PORT }, ({ port }) => {

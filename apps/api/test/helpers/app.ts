@@ -5,13 +5,17 @@ import { join } from 'node:path';
 import type { Db } from '@nerdose/db';
 import type { Logger } from 'pino';
 
+import { hashPassword, signAdminToken } from '@/domain/admin/admin-auth';
+import { AdminRepository } from '@/domain/admin/admin.repository';
+import { AdminService } from '@/domain/admin/admin.service';
 import { GameplayRepository, moveTransaction } from '@/domain/gameplay/gameplay.repository';
 import { GameplayService } from '@/domain/gameplay/gameplay.service';
 import type { MoveTxRepos } from '@/domain/gameplay/gameplay.types';
 import type { IdentityService } from '@/domain/identity/identity.service';
 import { QualityRepository } from '@/domain/quality/quality.repository';
 import { QualityService } from '@/domain/quality/quality.service';
-import type { AlertThresholds } from '@/domain/quality/quality.types';
+import type { AlertThresholds, VoidTxRepos } from '@/domain/quality/quality.types';
+import { VoidService } from '@/domain/quality/void.service';
 import { ProgressRepository } from '@/domain/progress/progress.repository';
 import { ProgressService } from '@/domain/progress/progress.service';
 import {
@@ -30,12 +34,32 @@ import { systemClock, type Clock } from '@/shared/clock';
 
 import { captureLogger } from './logger';
 
+export const TEST_ADMIN_PASSWORD = 'nerdose-admin-test';
+export const TEST_ADMIN_PASSWORD_HASH = await hashPassword(TEST_ADMIN_PASSWORD);
+export const TEST_ADMIN_JWT_SECRET = 'test-admin-jwt-secret-0123456789-abcdef';
+
 export const TEST_CONFIG = {
   WEB_ORIGIN: 'http://localhost:5173',
   ADMIN_ORIGIN: 'http://localhost:5174',
   TRUST_PROXY_HEADER: 'x-forwarded-for',
   LAUNCH_DATE: '2026-11-24',
+  ADMIN_PASSWORD_HASH: TEST_ADMIN_PASSWORD_HASH,
+  ADMIN_JWT_SECRET: TEST_ADMIN_JWT_SECRET,
 };
+
+export const ADMIN_HEADERS = {
+  Origin: 'http://localhost:5174',
+  'Content-Type': 'application/json',
+};
+
+/** Token de admin válido firmado con el secreto de test (`nowSeconds` por defecto: ahora). */
+export async function adminToken(nowSeconds?: number): Promise<string> {
+  return (await signAdminToken(TEST_ADMIN_JWT_SECRET, nowSeconds)).token;
+}
+
+export async function adminAuth(nowSeconds?: number) {
+  return { Authorization: `Bearer ${await adminToken(nowSeconds)}` };
+}
 
 export const DEFAULT_THRESHOLDS: AlertThresholds = { count: 3, ratio: 0.05, ratioMinCount: 2 };
 
@@ -48,6 +72,8 @@ export const TEST_ENV = {
   LAUNCH_DATE: '2026-11-24',
   WEB_ORIGIN: 'http://localhost:5173',
   ADMIN_ORIGIN: 'http://localhost:5174',
+  ADMIN_PASSWORD_HASH: TEST_ADMIN_PASSWORD_HASH,
+  ADMIN_JWT_SECRET: TEST_ADMIN_JWT_SECRET,
 };
 
 export const stubIdentity = new Proxy({} as IdentityService, {
@@ -134,7 +160,24 @@ export function buildMemoryServices(opts: { clock?: Clock; logger: Logger }) {
       throw new Error('sin base en este test');
     },
   };
-  return { publishing, gameplay, cache, progress, quality };
+  const admin = new AdminService({
+    passwordHash: TEST_CONFIG.ADMIN_PASSWORD_HASH,
+    jwtSecret: TEST_CONFIG.ADMIN_JWT_SECRET,
+    clock,
+    repo: {
+      listReportsByStatus: async () => [],
+      findChallengesByIds: async () => [],
+      closeReportIfOpen: async () => null,
+      reportExists: async () => false,
+    },
+    games,
+  });
+  const voids = {
+    void: async (): Promise<{ challenge_id: string; affected_plays: number }> => {
+      throw new Error('sin base en este test');
+    },
+  };
+  return { publishing, gameplay, cache, progress, quality, admin, voids };
 }
 
 export async function tempWordList(words: string[] = ['CACHE', 'REACT']) {
@@ -160,6 +203,8 @@ export async function buildDbServices(
     /** Envuelve los repos de la transacción (p. ej. para forzar una falla en el cierre). */
     wrapTxRepos?: (r: MoveTxRepos) => MoveTxRepos;
     thresholds?: AlertThresholds;
+    /** Envuelve los repos de la transacción de la anulación (p. ej. para forzar una falla). */
+    wrapVoidRepos?: (r: VoidTxRepos) => VoidTxRepos;
   },
 ) {
   const clock = opts.clock ?? systemClock;
@@ -203,7 +248,36 @@ export async function buildDbServices(
     clock,
     thresholds: opts.thresholds ?? DEFAULT_THRESHOLDS,
   });
-  return { identity: dbs.identity(), publishing, gameplay, quality, progress, cache, wordList };
+  const wrapVoid = opts.wrapVoidRepos;
+  const admin = new AdminService({
+    passwordHash: TEST_CONFIG.ADMIN_PASSWORD_HASH,
+    jwtSecret: TEST_CONFIG.ADMIN_JWT_SECRET,
+    clock,
+    repo: new AdminRepository(db),
+    games,
+  });
+  const voids = new VoidService({
+    games,
+    runInTx: (fn) =>
+      db.transaction((tx) => {
+        const repos = { quality: new QualityRepository(tx), progress: new ProgressRepository(tx) };
+        return fn(wrapVoid ? wrapVoid(repos) : repos);
+      }),
+    cache,
+    progress,
+    clock,
+  });
+  return {
+    identity: dbs.identity(),
+    publishing,
+    gameplay,
+    quality,
+    progress,
+    cache,
+    wordList,
+    admin,
+    voids,
+  };
 }
 
 export function buildTestApp(
@@ -220,6 +294,8 @@ export function buildTestApp(
     publishing: overrides.publishing ?? memory.publishing,
     gameplay: overrides.gameplay ?? memory.gameplay,
     quality: overrides.quality ?? memory.quality,
+    admin: overrides.admin ?? memory.admin,
+    voids: overrides.voids ?? memory.voids,
   });
   return { app, lines: captured.lines };
 }
@@ -239,6 +315,8 @@ export async function buildDbApp(
     publishing: services.publishing,
     gameplay: services.gameplay,
     quality: services.quality,
+    admin: services.admin,
+    voids: services.voids,
   });
   return { app, lines: captured.lines, ...services };
 }

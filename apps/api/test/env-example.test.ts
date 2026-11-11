@@ -23,6 +23,8 @@ describe('.env.example', () => {
       'LAUNCH_DATE',
       'WEB_ORIGIN',
       'ADMIN_ORIGIN',
+      'ADMIN_PASSWORD_HASH',
+      'ADMIN_JWT_SECRET',
       'TRUST_PROXY_HEADER',
       'REPORT_ALERT_COUNT',
       'REPORT_ALERT_RATIO',

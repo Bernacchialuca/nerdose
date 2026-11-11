@@ -44,3 +44,9 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 - **Signature:** `TL_PAYLOAD: TimelinePayload`; orders `CORRECT` (5/5), `SWAP` (3/5), `REVERSED` (1/5), `ROTATED` (0/5); `tlChrono(locale)`, `tlResult(order, locale)`; `seedTimeline(dbs, opts?)`, `seedTimelinePlay(dbs, challengeId, playerId, state, extra?)`; `tlGet/tlPost/tlMove(app, ..., player?, query?)`
 - **Description:** fixed Tech Timeline fixture for 2026-12-01 (challenge number 8), copied from the S-027 package fixtures (not exported by the package); `TL_FORBIDDEN` lists the keys and values that must never appear in a response or log before the Play closes
 - **Usage:** `const c = await seedTimeline(dbs); await seedTimelinePlay(dbs, c.id, player.id, {}); await tlMove(app, SWAP, player)`
+
+## ADMIN_HEADERS / adminToken / adminAuth / TEST_ADMIN_PASSWORD / TEST_ADMIN_JWT_SECRET
+- **Location:** apps/api/test/helpers/app.ts
+- **Signature:** `adminToken(nowSeconds?): Promise<string>`; `adminAuth(nowSeconds?): Promise<{ Authorization }>`
+- **Description:** `ADMIN_HEADERS` carries the admin `Origin` and JSON content type; tokens are signed with `TEST_ADMIN_JWT_SECRET`; `TEST_CONFIG.ADMIN_PASSWORD_HASH` is generated with `hashPassword(TEST_ADMIN_PASSWORD)`
+- **Usage:** `app.request(url, { method: 'POST', headers: { ...ADMIN_HEADERS, ...(await adminAuth()) }, body })`

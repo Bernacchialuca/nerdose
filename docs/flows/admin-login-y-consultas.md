@@ -2,10 +2,10 @@
 id: admin-login-y-consultas
 title: Admin — login, reportes, stock y métricas
 type: feature
-status: Draft
+status: Active
 created: 2026-11-03
-last_updated: 2026-11-03
-stories: []
+last_updated: 2026-11-11
+stories: [S-032]
 ---
 
 # Admin — login, reportes, stock y métricas

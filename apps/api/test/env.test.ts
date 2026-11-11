@@ -9,6 +9,8 @@ const VALID = {
   LAUNCH_DATE: '2026-11-24',
   WEB_ORIGIN: 'http://localhost:5173',
   ADMIN_ORIGIN: 'http://localhost:5174',
+  ADMIN_PASSWORD_HASH: 'scrypt$16384$8$1$c2FsdHNhbHRzYWx0c2FsdA==$aGFzaGhhc2hoYXNoaGFzaA==',
+  ADMIN_JWT_SECRET: 'test-admin-jwt-secret-0123456789-abcdef',
 };
 
 function catchError(fn: () => unknown): unknown {
@@ -113,6 +115,34 @@ describe('loadEnv', () => {
         TRUST_PROXY_HEADER: 'X-Forwarded-For',
       });
       expect(loadEnv(VALID).TRUST_PROXY_HEADER).toBeUndefined();
+    });
+
+    // TS-39
+    it('exige ADMIN_PASSWORD_HASH (formato completo) y ADMIN_JWT_SECRET (>= 32) sin mostrar valores', () => {
+      const rest: Record<string, string> = { ...VALID };
+      delete rest.ADMIN_PASSWORD_HASH;
+      const missing = catchError(() => loadEnv(rest)) as AppError;
+      expect(missing.code).toBe('validation_error');
+      expect(missing.message).toBe('Variables de entorno inválidas: ADMIN_PASSWORD_HASH');
+
+      const plain = catchError(() =>
+        loadEnv({ ...VALID, ADMIN_PASSWORD_HASH: 'plain' }),
+      ) as AppError;
+      expect(plain.message).toContain('ADMIN_PASSWORD_HASH');
+      expect(plain.message).not.toContain('plain');
+      const truncated = catchError(() =>
+        loadEnv({ ...VALID, ADMIN_PASSWORD_HASH: 'scrypt$16384$8$1$c2FsdA==' }),
+      ) as AppError;
+      expect(truncated.message).toContain('ADMIN_PASSWORD_HASH');
+
+      const short = catchError(() => loadEnv({ ...VALID, ADMIN_JWT_SECRET: 'corto' })) as AppError;
+      expect(short.message).toContain('ADMIN_JWT_SECRET');
+      expect(short.message).not.toContain('corto');
+
+      expect(loadEnv(VALID)).toMatchObject({
+        ADMIN_PASSWORD_HASH: VALID.ADMIN_PASSWORD_HASH,
+        ADMIN_JWT_SECRET: VALID.ADMIN_JWT_SECRET,
+      });
     });
 
     // TS-46
