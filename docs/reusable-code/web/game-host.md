@@ -2,9 +2,9 @@
 
 ## clientRegistry / hasGameClient
 - **Location:** apps/web/src/modules/game-host/registry.ts
-- **Description:** The only place that lists games: `game_id` to a dynamic `import()` of the package `./client`. Partial on purpose (Devdle and Grep Grid).
+- **Description:** The only place that lists games: `game_id` to a dynamic `import()` of the package `./client`. Partial on purpose (Devdle, Grep Grid and Tech Timeline).
 - **Signature:** `clientRegistry: Partial<Record<GameId, () => Promise<GameClient>>>`; `hasGameClient(id: GameId): boolean`
-- **Usage:** `hasGameClient('timeline') // false`
+- **Usage:** `hasGameClient('big-o') // false`
 
 ## loadGameClient / gameScreens / useLoadedGameClient
 - **Location:** apps/web/src/modules/game-host/load-game-client.ts, lazy-game-screens.tsx, use-loaded-game-client.ts
@@ -51,7 +51,7 @@
 - **Description:** Zod-validated `VITE_PLAUSIBLE_*` (script URL required when there is a domain); `initAnalytics()` calls `injectAnalytics` once from `main.tsx`.
 - **Signature:** `parseEnv(raw: Record<string, unknown>): Env`; `initAnalytics(e?: Env): void`
 
-## gameHandlersFor / grepGridHandlers / Grep Grid fixtures / game-route-helpers (tests)
-- **Location:** apps/web/src/test/msw.ts, apps/web/src/test/fixtures/grep-grid-today.ts, apps/web/src/test/game-route-helpers.ts
-- **Description:** `gameHandlersFor(gameId)` builds the MSW `today` / `start` / `move` handlers of one game (`gameHandlers` = Devdle, `grepGridHandlers` = Grep Grid). The Grep Grid fixtures are the API payloads in `snake_case` (grid, words, played states, results, moves, `todayWithGrepGrid`). `game-route-helpers` shares `recordCalls`, `countOf`, `errorResponse`, `settle`, `setShare` and `h1` between the route suites.
+## gameHandlersFor / grepGridHandlers / timelineHandlers / game fixtures / game-route-helpers (tests)
+- **Location:** apps/web/src/test/msw.ts, apps/web/src/test/fixtures/grep-grid-today.ts, apps/web/src/test/fixtures/timeline-today.ts, apps/web/src/test/dnd-rects.ts, apps/web/src/test/game-route-helpers.ts
+- **Description:** `gameHandlersFor(gameId)` builds the MSW `today` / `start` / `move` handlers of one game (`gameHandlers` = Devdle, `grepGridHandlers` = Grep Grid, `timelineHandlers` = Tech Timeline). The Grep Grid fixtures are the API payloads in `snake_case` (grid, words, played states, results, moves, `todayWithGrepGrid`); the Timeline fixtures (`timeline-today.ts`) follow the same shape (`tlResult`, `timelineInProgress`, `timelineLost3`, `todayWithTimeline`, ...). `stubSortableRects()` (`dnd-rects.ts`) gives `<li>` children of an `<ol>` measurable rects in jsdom so dnd-kit's keyboard sensor works; it returns a `restore()` function. `game-route-helpers` shares `recordCalls`, `countOf`, `errorResponse`, `settle`, `setShare` and `h1` between the route suites.
 - **Usage:** `server.use(grepGridHandlers.today(grepGridInProgress3), grepGridHandlers.move(ggMoveDocker))`

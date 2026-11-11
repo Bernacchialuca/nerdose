@@ -215,6 +215,9 @@ importers:
       '@nerdose/game-grep-grid':
         specifier: workspace:*
         version: link:../../packages/games/grep-grid
+      '@nerdose/game-timeline':
+        specifier: workspace:*
+        version: link:../../packages/games/timeline
       '@nerdose/ui':
         specifier: workspace:*
         version: link:../../packages/ui

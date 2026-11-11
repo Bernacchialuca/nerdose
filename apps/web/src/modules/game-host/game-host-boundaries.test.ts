@@ -13,6 +13,8 @@ function sources(dir: string): string[] {
   });
 }
 
+const DND = '@dnd' + '-kit';
+
 describe('game-host boundaries', () => {
   const files = sources(ROOT);
 
@@ -25,9 +27,41 @@ describe('game-host boundaries', () => {
     const text = readFileSync(withGame[0] as string, 'utf8');
     expect(text).toContain("import('@nerdose/game-devdle/client')");
     expect(text).toContain("import('@nerdose/game-grep-grid/client')");
+    expect(text).toContain("import('@nerdose/game-timeline/client')");
     expect(text).not.toContain("from '@nerdose/game-");
     expect(text).not.toContain("/definition'");
     expect(text).not.toContain("/generator'");
+  });
+
+  it('TS-2: ningún archivo de src/ (ni tests) menciona dnd-kit', () => {
+    const all = (dir: string): string[] =>
+      readdirSync(dir).flatMap((name) => {
+        const path = join(dir, name);
+        if (statSync(path).isDirectory()) return all(path);
+        return /\.tsx?$/.test(name) ? [path] : [];
+      });
+    for (const file of all(ROOT)) expect(readFileSync(file, 'utf8'), file).not.toContain(DND);
+  });
+
+  it('TS-43: sin lógica por juego para Timeline ni lectura de campos suyos', () => {
+    const allowed = [
+      'modules/game-host/registry.ts',
+      'modules/catalog/games.ts',
+      'modules/catalog/components/how-it-works.tsx',
+      'i18n/es.ts',
+      'i18n/en.ts',
+    ];
+    const rels = files.map((f) => f.slice(ROOT.length + 1)).filter((f) => !f.startsWith('test/'));
+    for (const file of rels.filter((f) =>
+      readFileSync(join(ROOT, f), 'utf8').includes("'timeline'"),
+    )) {
+      expect(allowed, file).toContain(file);
+    }
+    for (const file of rels) {
+      expect(readFileSync(join(ROOT, file), 'utf8'), file).not.toMatch(
+        /opaque_id|submitted_order|correct_order|public_view\.category/,
+      );
+    }
   });
 
   it('TS-46: sin lógica por juego ni lectura de feedback', () => {

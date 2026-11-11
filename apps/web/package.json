@@ -15,6 +15,7 @@
     "@nerdose/core": "workspace:*",
     "@nerdose/game-devdle": "workspace:*",
     "@nerdose/game-grep-grid": "workspace:*",
+    "@nerdose/game-timeline": "workspace:*",
     "@nerdose/ui": "workspace:*",
     "@tanstack/react-query": "^5.105.3",
     "i18next": "^26.7.1",
