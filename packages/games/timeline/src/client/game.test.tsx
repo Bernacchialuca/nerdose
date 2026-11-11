@@ -29,8 +29,9 @@ const base = (over: Partial<GameProps> = {}): GameProps => ({
   ...over,
 });
 
+const orderList = () => screen.getByRole('list', { name: /tu orden|your order/ });
 const names = () =>
-  within(screen.getByRole('list'))
+  within(orderList())
     .getAllByRole('listitem')
     .map((li) => li.getAttribute('data-row-id'));
 
@@ -65,7 +66,7 @@ afterEach(() => {
 describe('Game structure', () => {
   it('tags each row with the category of its milestone, without dates', () => {
     render(<Game {...base()} />);
-    const rows = within(screen.getByRole('list')).getAllByRole('listitem');
+    const rows = within(orderList()).getAllByRole('listitem');
     const tags = ['programming_languages', 'software_tools', 'programming_languages'];
     tags.push('software_tools', 'programming_languages');
     rows.forEach((row, i) => {
@@ -84,10 +85,10 @@ describe('Game structure', () => {
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText('// consigna: del más antiguo al más reciente · un solo intento'),
+      screen.getByText('// un solo intento · 1 punto por posición correcta'),
     ).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: /tu orden/ })).toBeInTheDocument();
-    expect(within(screen.getByRole('list')).getAllByRole('listitem')).toHaveLength(5);
+    expect(within(orderList()).getAllByRole('listitem')).toHaveLength(5);
     expect(names()).toEqual(INITIAL_ORDER);
     ['Go', 'Kubernetes', 'Python', 'Docker', 'Java'].forEach((label, i) => {
       expect(
@@ -223,6 +224,45 @@ describe('Game confirm', () => {
     render(<Game {...base({ onMove })} />);
     await user.click(screen.getByRole('button', { name: 'Confirmar orden' }));
     expect(onMove).toHaveBeenCalledWith({ order: INITIAL_ORDER });
+  });
+
+  it('«Reiniciar» goes back to the starting shuffle and announces it', async () => {
+    const user = userEvent.setup();
+    const onMove = vi.fn();
+    render(<Game {...base({ onMove })} />);
+    await user.click(screen.getByRole('button', { name: 'Subir Kubernetes' }));
+    expect(names()).not.toEqual(INITIAL_ORDER);
+    await user.click(screen.getByRole('button', { name: 'Reiniciar' }));
+    expect(names()).toEqual(INITIAL_ORDER);
+    expect(within(liveRegion()).getByText('> volviste al orden inicial')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Confirmar orden' }));
+    expect(onMove).toHaveBeenCalledWith({ order: INITIAL_ORDER });
+  });
+
+  it('shows the rules card with the streak, and no averages', () => {
+    const gameStats = {
+      game_id: 'timeline',
+      current_streak: 3,
+      max_streak: 5,
+      played: 37,
+      wins: 9,
+      win_rate: 0.24,
+      extra: null,
+    };
+    render(<Game {...base({ gameStats })} />);
+    const rules = screen.getByRole('region', { name: /reglas/ });
+    expect(rules).toHaveAttribute('id', 'game-help');
+    expect(within(rules).getByText('racha 3')).toBeInTheDocument();
+    expect(within(rules).getAllByRole('listitem')).toHaveLength(3);
+    expect(screen.queryByText(/promedio/)).not.toBeInTheDocument();
+  });
+
+  it('hides the streak with no streak and shows the date placeholder in every row', () => {
+    render(<Game {...base()} />);
+    expect(screen.queryByText(/^racha/)).not.toBeInTheDocument();
+    for (const row of within(orderList()).getAllByRole('listitem')) {
+      expect(within(row).getByText('????')).toHaveAttribute('aria-hidden', 'true');
+    }
   });
 
   it('sends the arranged order', async () => {
@@ -378,7 +418,7 @@ describe('Game layout and styles', () => {
 
   it('keeps 44px controls and wraps the name at 320px (TS-40)', () => {
     const { container } = render(<Game {...base()} />);
-    expect(screen.getByRole('list')).toHaveClass('@container');
+    expect(orderList()).toHaveClass('@container');
     const row = container.querySelector('[data-row-id="g2n5w3"]') as HTMLElement;
     const name = within(row).getByText('Go');
     expect(name).toHaveClass('break-words');

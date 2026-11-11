@@ -158,7 +158,7 @@ describe('abrir /timeline', () => {
     expect(starts).toHaveLength(1);
     expect(starts[0]?.body).toEqual({ challenge_number: 128 });
     expect(
-      screen.getByText('// consigna: del más antiguo al más reciente · un solo intento'),
+      screen.getByText('// un solo intento · 1 punto por posición correcta'),
     ).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: 'tu orden' })).toBeInTheDocument();
     expect(labels()).toEqual(['Go', 'Kubernetes', 'Python', 'Docker', 'Java']);
@@ -269,7 +269,7 @@ describe('confirmación y resultado', () => {
     expect(screen.queryByRole('alertdialog')).toBeNull();
     const todayBefore = countOf(calls, 'GET', '/api/today?lang=es');
     release();
-    const heading = await h1('3 de 5 en su lugar');
+    const heading = await h1('Casi: solo dos hitos cruzados');
     await waitFor(() => expect(heading).toHaveFocus());
     expect(countOf(calls, 'POST', MOVE)).toBe(1);
     expect(calls.find((c) => c.path === MOVE)?.body).toEqual(ORDER_SWAP);
@@ -285,7 +285,7 @@ describe('confirmación y resultado', () => {
     const { user } = await playing();
     server.use(movePost(tlMove3));
     await user.dblClick(confirmButton());
-    await h1('3 de 5 en su lugar');
+    await h1('Casi: solo dos hitos cruzados');
     const moves = calls.filter((c) => c.path === MOVE);
     expect(moves).toHaveLength(1);
     expect(moves[0]?.body).toEqual({ challenge_number: 128, move: { order: TL_INITIAL } });
@@ -294,7 +294,7 @@ describe('confirmación y resultado', () => {
   it('TS-17: resultado 3/5 completo', async () => {
     server.use(handlers.today(timelineLost3));
     view();
-    const heading = await h1('3 de 5 en su lugar');
+    const heading = await h1('Casi: solo dos hitos cruzados');
     expect(heading).not.toHaveTextContent('✓');
     expect(screen.getByText('// consigna: del más antiguo al más reciente')).toBeInTheDocument();
     expect(screen.getAllByText('3/5').length).toBeGreaterThan(0);
@@ -355,7 +355,7 @@ describe('confirmación y resultado', () => {
   it('TS-19: resultado 0/5', async () => {
     server.use(handlers.today(timelineLost0));
     view();
-    await h1('Ninguno en su lugar esta vez');
+    await h1('Hoy ganó la historia');
     expect(screen.getAllByText('0/5').length).toBeGreaterThan(0);
     expect(screen.getAllByText(/^✗ va en \d°$/)).toHaveLength(5);
     expect(screen.getByText('✗ va en 2°')).toBeInTheDocument();
@@ -368,14 +368,14 @@ describe('confirmación y resultado', () => {
     server.use(movePost(tlMove3));
     await toSwap(user);
     await user.click(confirmButton());
-    await h1('3 de 5 en su lugar');
+    await h1('Casi: solo dos hitos cruzados');
     const first = screen
       .getByRole('heading', { level: 2, name: 'tu orden' })
       .closest('section')?.textContent;
     document.body.innerHTML = '';
     server.use(handlers.today(timelineLost3));
     view();
-    await h1('3 de 5 en su lugar');
+    await h1('Casi: solo dos hitos cruzados');
     expect(
       screen.getByRole('heading', { level: 2, name: 'tu orden' }).closest('section')?.textContent,
     ).toBe(first);
@@ -385,7 +385,7 @@ describe('confirmación y resultado', () => {
   it('TS-21: rachas y salidas del resultado', async () => {
     server.use(handlers.today(timelineLost3));
     view();
-    await h1('3 de 5 en su lugar');
+    await h1('Casi: solo dos hitos cruzados');
     expect(screen.getByRole('heading', { level: 2, name: 'rachas' })).toBeInTheDocument();
     expect(screen.getByText(/Tech Timeline: 3 días/)).toBeInTheDocument();
     expect(screen.getByText(/Global: 5 días/)).toBeInTheDocument();
@@ -410,7 +410,7 @@ describe('confirmación y resultado', () => {
       http.get('/api/today', () => HttpResponse.json(todayWithTimeline('lost', '3/5'))),
     );
     view();
-    await h1('3 de 5 en su lugar');
+    await h1('Casi: solo dos hitos cruzados');
     await screen.findByRole('link', { name: /Volver a los juegos/ });
     expect(screen.queryByRole('link', { name: /Siguiente juego/ })).toBeNull();
   });
@@ -493,7 +493,7 @@ describe('errores del ciclo común', () => {
     expect(screen.queryByText('Jugada inválida.')).toBeNull();
     expect(screen.queryByRole('alert')).toBeNull();
     await user.click(confirmButton());
-    await h1('3 de 5 en su lugar');
+    await h1('Casi: solo dos hitos cruzados');
     expect(calls.filter((c) => c.path === MOVE).map((c) => c.body)).toEqual([
       ORDER_SWAP,
       ORDER_SWAP,
@@ -526,7 +526,7 @@ describe('errores del ciclo común', () => {
     server.use(movePostError('game_finished', 'La partida ya terminó', 409));
     server.use(handlers.today(timelineLost3));
     await user.click(confirmButton());
-    expect(await h1('3 de 5 en su lugar')).toBeInTheDocument();
+    expect(await h1('Casi: solo dos hitos cruzados')).toBeInTheDocument();
     expect(countOf(calls, 'GET', TODAY)).toBe(2);
   });
 
@@ -600,7 +600,7 @@ describe('errores del ciclo común', () => {
     );
     await toSwap(user);
     await user.click(confirmButton());
-    await h1('3 de 5 en su lugar');
+    await h1('Casi: solo dos hitos cruzados');
     const order = calls
       .filter((c) => c.method === 'POST')
       .map((c) => c.path.split('?')[0])
@@ -635,7 +635,7 @@ describe('errores del ciclo común', () => {
     healthy = true;
     const before = countOf(calls, 'POST', '/api/session');
     await user.click(within(banner).getByRole('button', { name: /Reintentar/ }));
-    await h1('3 de 5 en su lugar');
+    await h1('Casi: solo dos hitos cruzados');
     expect(countOf(calls, 'POST', '/api/session')).toBe(before + 1);
     expect(calls.filter((c) => c.path === MOVE).at(-1)?.body).toEqual(ORDER_SWAP);
   });
@@ -732,7 +732,7 @@ describe('idioma y retomar', () => {
     server.use(handlers.today(timelineLost3));
     const user = userEvent.setup();
     view();
-    await h1('3 de 5 en su lugar');
+    await h1('Casi: solo dos hitos cruzados');
     server.use(
       http.get('/api/games/timeline/today', ({ request }) =>
         HttpResponse.json(
@@ -741,7 +741,7 @@ describe('idioma y retomar', () => {
       ),
     );
     await user.click(lang('EN'));
-    expect(await h1('3 of 5 in place')).toBeInTheDocument();
+    expect(await h1('So close: just two milestones swapped')).toBeInTheDocument();
     expect(screen.getByText('// task: from oldest to newest')).toBeInTheDocument();
     expect(screen.getByText(/February 20, 1991/)).toBeInTheDocument();
     expect(screen.getByText('2009')).toBeInTheDocument();
@@ -776,11 +776,12 @@ describe('idioma y retomar', () => {
       expect(scroll).toHaveBeenCalledTimes(1);
       const target = scroll.mock.contexts[0] as HTMLElement;
       expect(target.id).toBe('game-help');
-      expect(target).toHaveTextContent(/^Arrastrá cada fila/);
+      expect(target).toHaveTextContent(/^\/\/ reglas/);
+      expect(target).toHaveTextContent(/Arrastrá cada fila/);
       expect(scroll).toHaveBeenCalledWith({ behavior: 'auto', block: 'start' });
       server.use(movePost(tlMove3));
       await user.click(confirmButton());
-      await h1('3 de 5 en su lugar');
+      await h1('Casi: solo dos hitos cruzados');
       const after = within(screen.getByRole('banner'));
       expect(after.queryByRole('button', { name: 'Cómo se juega' })).toBeNull();
       expect(after.getByRole('button', { name: 'Compartir' })).not.toHaveAttribute('aria-disabled');
@@ -834,7 +835,7 @@ describe('home', () => {
     server.use(movePost(tlMove3));
     await toSwap(user);
     await user.click(confirmButton());
-    await h1('3 de 5 en su lugar');
+    await h1('Casi: solo dos hitos cruzados');
     await waitFor(() => expect(todayCalls).toBeGreaterThanOrEqual(2));
     await user.click(await screen.findByRole('link', { name: /Volver a los juegos/ }));
     const card = (await screen.findByRole('heading', { name: 'Tech Timeline' })).closest(
@@ -885,7 +886,7 @@ describe('teclado y lector', () => {
     expect(labels()).toEqual(['Python', 'Go', 'Java', 'Kubernetes', 'Docker']);
     await tabTo(() => confirmButton());
     await user.keyboard('{Enter}');
-    await h1('3 de 5 en su lugar');
+    await h1('Casi: solo dos hitos cruzados');
     expect(calls.find((c) => c.path === MOVE)?.body).toEqual({
       challenge_number: 128,
       move: { order: ['p7k2m9', 'g2n5w3', 'j4x8q1', 'k1v3s8', 'd9r6t0'] },

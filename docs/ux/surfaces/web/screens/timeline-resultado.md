@@ -23,6 +23,10 @@ date: 2026-11-10
   - **mobile** — consigna, veredicto y puntaje arriba; «// tu orden», «// orden correcto» con fechas y notas, rachas y la barra de cierre al pie, en una columna.
   - **desktop** — consigna y veredicto a la izquierda con el puntaje grande a la derecha; «// tu orden» (`1 1 320px`) y «// orden correcto» (`2 1 520px`) lado a lado, como el prototipo; la card de cierre (rachas en una línea + cuenta regresiva y salidas) debajo. Al ganar (5/5) festeja un confeti violeta del juego; el título del veredicto se mantiene porque es el mismo para todos los desenlaces. «Compartir» solo en el header.
 
+> **Actualización 2026-11-11 (revisión visual del usuario).** Prevalece sobre lo de abajo donde difieran:
+> - El veredicto (`h1`) ya no repite el puntaje, que queda solo en el número grande: 5/5 «Orden perfecto», 3/5 «Casi: solo dos hitos cruzados» (con 5 hitos un 3/5 es exactamente un par cruzado y 4/5 no existe), 2/5 «A mitad de camino», 1/5 «La historia es traicionera», 0/5 «Hoy ganó la historia».
+> - Desktop: «// tu orden» y, debajo, la card de cierre del host (rachas, cuenta regresiva, «Siguiente juego», volver) en la columna izquierda (5/12); «// orden correcto» a la derecha (7/12). Mobile: tu orden, orden correcto y la card de cierre, en ese orden.
+
 ## Entrada y salida
 
 **Entradas:**
@@ -195,17 +199,17 @@ date: 2026-11-10
 
 ### perdió
 - Aplica: Sí (sub-estado de default)
-- Mensaje: 3 de 5 en su lugar. Este es el orden correcto, con la fecha y la historia de cada hito.
+- Mensaje: Casi: solo dos hitos cruzados. Este es el orden correcto, con la fecha y la historia de cada hito.
 - Cambios:
-  - veredicto: content="3 de 5 en su lugar", icon="nada", annotation="sin drama ni rojo: la partida perdida también suma a la racha (RF 6)" (state_override)
+  - veredicto: content="Casi: solo dos hitos cruzados", icon="nada", annotation="sin drama ni rojo: la partida perdida también suma a la racha (RF 6)" (state_override)
   - puntaje: content="3/5 · posiciones correctas" (state_override)
   - lista-tu-orden: annotation="Python ✓ bien · Go ✗ va en 3° · Java ✗ va en 2° · Docker ✓ bien · Kubernetes ✓ bien (CA 3)" (state_override)
 
 ### cero aciertos
 - Aplica: Sí (sub-estado de perdió)
-- Mensaje: Ninguno en su lugar esta vez. Este es el orden correcto.
+- Mensaje: Hoy ganó la historia. Este es el orden correcto.
 - Cambios:
-  - veredicto: content="Ninguno en su lugar esta vez" (state_override)
+  - veredicto: content="Hoy ganó la historia" (state_override)
   - puntaje: content="0/5 · posiciones correctas" (state_override)
   - lista-tu-orden: annotation="las 5 filas mal ubicadas, cada una con «✗ va en N°»; la partida cuenta para la racha (CA 5)" (state_override)
 

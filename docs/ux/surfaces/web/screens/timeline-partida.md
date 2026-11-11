@@ -23,6 +23,11 @@ date: 2026-11-10
   - **mobile** — consigna arriba, lista vertical de 5 filas a ancho completo (asa · posición · nombre · ↑ ↓), la ayuda de cómo mover y «Confirmar orden» al final, alcanzable con el pulgar. Sin scroll horizontal desde 320 px.
   - **desktop** — consigna a ancho completo; la lista «// tu orden» a la izquierda (7/12) con el hint debajo, y la ayuda de cómo mover más «Confirmar orden» a la derecha (5/12), a la vista sin scroll.
 
+> **Actualización 2026-11-11 (revisión visual del usuario).** Prevalece sobre la estructura de abajo donde difieran:
+> - Encabezado: comentario `// un solo intento · 1 punto por posición correcta`, la consigna como `h1` y un lede «Arriba el más antiguo, abajo el más reciente. Arrastrá cada tarjeta o usá las flechas.».
+> - Lista: cada hito es una tarjeta propia (tinte y borde del juego), sin panel contenedor; el `h2` «tu orden» queda solo para lectores de pantalla y rotula la lista. A la izquierda, un eje decorativo vertical «antes» → «después». Cada tarjeta muestra `????` donde irá la fecha (decorativo, desde 384 px de contenedor).
+> - Columna derecha: card «// reglas» (es el destino de «Cómo se juega», `#game-help`) con la racha del juego en el dato de la cabecera cuando es > 0, tres reglas numeradas 01–03 y la ayuda de teclado; debajo, «Confirmar orden →» y «Reiniciar» (vuelve a la mezcla inicial y lo anuncia en el hint). No hay card de promedios. Con el desafío anulado se oculta toda la columna.
+
 ## Entrada y salida
 
 **Entradas:**

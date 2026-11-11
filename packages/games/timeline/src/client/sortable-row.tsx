@@ -30,7 +30,7 @@ export function SortableRow({ id, label, category, index, blocked, t, onMove }: 
       data-row-id={id}
       data-row-index={index}
       className={cn(
-        'flex min-h-13 items-center gap-2 rounded-control border border-border-subtle bg-surface px-2 py-1',
+        'flex min-h-16 items-center gap-2 rounded-control border border-game-timeline-border bg-game-timeline-tint px-2 py-1.5',
         isDragging && 'border-2 border-game-timeline px-1.75 py-0.75',
         isOver && !isDragging && 'border-dashed border-game-timeline',
       )}
@@ -56,6 +56,12 @@ export function SortableRow({ id, label, category, index, blocked, t, onMove }: 
         <span className="break-words font-mono text-game-item text-text">{label}</span>
         {category ? <CategoryTag category={category} t={t} /> : null}
       </div>
+      <span
+        aria-hidden="true"
+        className="hidden shrink-0 font-mono text-label-comment text-text-dim @sm:inline"
+      >
+        {t('game.unknownDate')}
+      </span>
       <div className="flex flex-col gap-1 @xs:flex-row">
         <button
           type="button"

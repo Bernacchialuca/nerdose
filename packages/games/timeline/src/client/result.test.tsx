@@ -25,7 +25,8 @@ describe('Result 3/5', () => {
     render(<Result {...base()} />);
     expect(screen.getByText('// consigna: del más antiguo al más reciente')).toBeInTheDocument();
     const h1 = screen.getByRole('heading', { level: 1 });
-    expect(h1).toHaveTextContent('3 de 5 en su lugar');
+    expect(h1).toHaveTextContent('Casi: solo dos hitos cruzados');
+    expect(h1).not.toHaveTextContent('3');
     expect(h1).not.toHaveTextContent('✓');
     const score = screen.getByText('3/5').closest('p') as HTMLElement;
     expect(score).toHaveTextContent('posiciones');
@@ -82,10 +83,26 @@ describe('Result 3/5', () => {
   });
 });
 
+describe('Result verdict', () => {
+  it.each([
+    [0, 'Hoy ganó la historia'],
+    [1, 'La historia es traicionera'],
+    [2, 'A mitad de camino'],
+    [3, 'Casi: solo dos hitos cruzados'],
+  ])('does not repeat the score in the title (%i/5)', (score, verdict) => {
+    const items = RESULT_3_ES.items;
+    render(<Result {...base({ result: { ...RESULT_3_ES, score, win: false, items } })} />);
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(verdict);
+    expect(screen.getByText(`${score}/5`)).toBeInTheDocument();
+  });
+});
+
 describe('Result variants', () => {
   it('renders in English (TS-46)', () => {
     render(<Result {...base({ locale: 'en', t: makeT('en'), result: RESULT_3_EN })} />);
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('3 of 5 in place');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      'So close: just two milestones swapped',
+    );
     expect(screen.getAllByText('// programming languages')).toHaveLength(3);
     expect(screen.getAllByText('// software and tools')).toHaveLength(2);
     expect(screen.getByText('February 20, 1991')).toBeInTheDocument();
@@ -108,9 +125,7 @@ describe('Result variants', () => {
 
   it('shows zero hits (TS-48)', () => {
     render(<Result {...base({ result: RESULT_0_ES })} />);
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Ninguno en su lugar esta vez',
-    );
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Hoy ganó la historia');
     expect(screen.getByText('0/5')).toBeInTheDocument();
     for (const t of ['✗ va en 2°', '✗ va en 3°', '✗ va en 4°', '✗ va en 5°', '✗ va en 1°']) {
       expect(screen.getByText(t)).toBeInTheDocument();
@@ -127,19 +142,24 @@ describe('Result variants', () => {
         })}
       />,
     );
-    const lastList = lists()[1] as HTMLElement;
+    // The host's cards go right below «tu orden» (left column on desktop, after the rail on mobile).
+    const yourOrder = screen.getByRole('region', { name: /tu orden/ });
+    const leftCol = yourOrder.parentElement?.parentElement as HTMLElement;
+    expect(leftCol).toHaveClass('contents', 'lg:col-span-5');
     for (const text of ['rachas host', 'cierre host']) {
+      const slot = screen.getByText(text).parentElement as HTMLElement;
+      expect(slot.parentElement).toBe(leftCol);
+      expect(slot.className).toMatch(/order-[34]/);
       expect(
-        lastList.compareDocumentPosition(screen.getByText(text)) & Node.DOCUMENT_POSITION_FOLLOWING,
+        yourOrder.compareDocumentPosition(slot) & Node.DOCUMENT_POSITION_FOLLOWING,
       ).toBeTruthy();
     }
+    const rail = screen.getByRole('region', { name: /orden correcto/ }).parentElement;
+    expect(rail).toHaveClass('order-2', 'lg:col-span-7');
     const rows = container.querySelectorAll('.flex-wrap');
     expect(rows[0]).toHaveClass('items-end', 'justify-between');
-    const listRow = rows[1] as HTMLElement;
-    expect(listRow.children[0]).toHaveClass('grow', 'basis-80');
-    expect(listRow.children[1]).toHaveClass('grow-2', 'basis-130');
     rerender(<Result {...base()} />);
-    expect(container.querySelectorAll('.flex-wrap')).toHaveLength(2);
+    expect(screen.queryByText('cierre host')).not.toBeInTheDocument();
   });
 
   it('throws on an invalid result (TS-50)', () => {

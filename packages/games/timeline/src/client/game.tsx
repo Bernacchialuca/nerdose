@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
 import {
   closestCenter,
@@ -22,10 +22,11 @@ import { parsePublicView, parseState } from './parse';
 import { SectionPanel } from './section-panel';
 import { useTimelineSensors } from './sensors';
 import { SortableRow } from './sortable-row';
+import { TimeAxis } from './time-axis';
 import type { GameProps } from './types';
 
 type Hint =
-  | { key: 'idle' | 'invalidMove' | 'rateLimited' }
+  | { key: 'idle' | 'invalidMove' | 'rateLimited' | 'reset' }
   | { key: 'moved'; id: string }
   | { key: 'over'; id: string; at: string }
   | { key: 'message'; message: string };
@@ -42,6 +43,7 @@ export function Game({
   pending,
   moveError,
   locked = false,
+  gameStats = null,
 }: GameProps) {
   const view = parsePublicView(publicView);
   parseState(state);
@@ -56,6 +58,7 @@ export function Game({
   const listRef = useRef<HTMLOListElement>(null);
   const focusRef = useRef<{ id: string; dir: -1 | 1 } | null>(null);
   const submittedRef = useRef(false);
+  const listTitleId = useId();
 
   const labels = new Map(view.items.map((i) => [i.opaque_id, i.label]));
   const categories = new Map(view.items.map((i) => [i.opaque_id, i.category]));
@@ -149,22 +152,38 @@ export function Game({
     setHint({ key: 'over', id, at: id });
   };
 
+  const reset = () => {
+    if (blocked) return;
+    setOrder(initialOrder(view));
+    const h: Hint = { key: 'reset' };
+    setHint(h);
+    announce(h, order);
+  };
+
   const confirm = () => {
     if (blocked || submittedRef.current) return;
     submittedRef.current = true;
     onMove(moveSchema.parse({ order }));
   };
 
+  const streak = gameStats?.current_streak ?? 0;
+  const rules = ['game.rule1', 'game.rule2', 'game.rule3'];
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <p className="font-mono text-label-comment text-text-dim">{`// ${t('game.comment')}`}</p>
         <h1 className="font-mono text-title-game text-text">{view.prompt}</h1>
+        <p className="font-sans text-lede text-text-lede">{t('game.lede')}</p>
       </div>
       {notices}
       <div className="flex flex-wrap gap-6">
         <div className="flex min-w-0 grow-7 basis-130 flex-col gap-3.5">
-          <SectionPanel title={t('game.listTitle')} className="p-4">
+          <h2 id={listTitleId} className="sr-only">
+            {t('game.listTitle')}
+          </h2>
+          <div className="flex gap-3">
+            <TimeAxis t={t} />
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
@@ -178,7 +197,11 @@ export function Game({
               onDragCancel={onDragCancel}
             >
               <SortableContext items={order} strategy={verticalListSortingStrategy}>
-                <ol ref={listRef} className="@container flex flex-col gap-2">
+                <ol
+                  ref={listRef}
+                  aria-labelledby={listTitleId}
+                  className="@container flex min-w-0 grow flex-col gap-2.5"
+                >
                   {order.map((id, index) => (
                     <SortableRow
                       key={id}
@@ -194,33 +217,58 @@ export function Game({
                 </ol>
               </SortableContext>
             </DndContext>
-          </SectionPanel>
+          </div>
           <ConsoleHint text={text(hint, order)} announcement={announcement} />
         </div>
-        <div className="flex min-w-0 grow-5 basis-80 flex-col gap-4">
-          {locked ? null : (
-            <>
-              <p id={HELP_TARGET_ID} className="font-sans text-caption text-text-muted">
-                {t('game.help')}
-              </p>
-              <button
-                type="button"
-                aria-disabled={pending || undefined}
-                onClick={confirm}
-                className={buttonClass({
-                  variant: 'accent',
-                  game: 'timeline',
-                  size: 'lg',
-                  fullWidth: true,
-                  disabled: pending,
-                })}
-              >
-                <span aria-hidden="true">✓</span>
-                {pending ? t('game.confirming') : t('game.confirm')}
-              </button>
-            </>
-          )}
-        </div>
+        {locked ? null : (
+          <div className="flex min-w-0 grow-5 basis-80 flex-col gap-4">
+            <SectionPanel
+              id={HELP_TARGET_ID}
+              title={t('game.rulesTitle')}
+              datum={streak > 0 ? t('game.streak', { count: streak }) : undefined}
+            >
+              <ol className="flex flex-col gap-3">
+                {rules.map((key, i) => (
+                  <li key={key} className="flex gap-3">
+                    <span className="shrink-0 font-mono text-label-comment text-game-timeline">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span className="font-sans text-body-sm text-text-body">{t(key)}</span>
+                  </li>
+                ))}
+              </ol>
+              <p className="font-sans text-caption text-text-muted">{t('game.help')}</p>
+            </SectionPanel>
+            <button
+              type="button"
+              aria-disabled={pending || undefined}
+              onClick={confirm}
+              className={buttonClass({
+                variant: 'accent',
+                game: 'timeline',
+                size: 'lg',
+                fullWidth: true,
+                disabled: pending,
+              })}
+            >
+              {pending ? t('game.confirming') : t('game.confirm')}
+              <span aria-hidden="true">→</span>
+            </button>
+            <button
+              type="button"
+              disabled={pending}
+              onClick={reset}
+              className={buttonClass({
+                variant: 'secondary',
+                size: 'lg',
+                fullWidth: true,
+                disabled: pending,
+              })}
+            >
+              {t('game.reset')}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
