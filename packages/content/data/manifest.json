@@ -1,6 +1,6 @@
 {
-  "dataset_version": "2026.11.11",
-  "generated_at": "2026-11-11T01:19:49.596Z",
+  "dataset_version": "2026.11.11-2",
+  "generated_at": "2026-11-11T06:42:29.860Z",
   "min_sitelinks": 12,
   "counts": {
     "terms": {
@@ -51,8 +51,8 @@
       }
     },
     "timeline_facts": {
-      "approved": 1218,
-      "rejected": 1624,
+      "approved": 1480,
+      "rejected": 2079,
       "by_category": {
         "programming_languages": {
           "approved": 184,
@@ -63,31 +63,39 @@
           "rejected": 157
         },
         "companies": {
-          "approved": 383,
-          "rejected": 815
+          "approved": 382,
+          "rejected": 816
         },
         "operating_systems": {
           "approved": 235,
           "rejected": 153
         },
         "hardware": {
-          "approved": 0,
-          "rejected": 0
+          "approved": 164,
+          "rejected": 352
         },
         "video_games": {
           "approved": 314,
           "rejected": 258
+        },
+        "databases": {
+          "approved": 19,
+          "rejected": 27
+        },
+        "software_tools": {
+          "approved": 80,
+          "rejected": 75
         }
       },
       "by_reason": {
-        "disputed_date": 293,
-        "imprecise_date": 13,
-        "missing_article": 638,
-        "low_sitelinks": 657,
-        "missing_note": 9,
-        "note_year_mismatch": 6,
+        "disputed_date": 324,
+        "imprecise_date": 14,
+        "missing_article": 864,
+        "low_sitelinks": 847,
+        "missing_note": 14,
+        "note_year_mismatch": 7,
         "excluded": 5,
-        "duplicate": 3
+        "duplicate": 4
       }
     }
   },
@@ -250,14 +258,17 @@
     ],
     "timeline": {
       "min_sitelinks": 16,
-      "min_approved_per_category": 100,
+      "min_approved_total": 450,
       "min_categories": 3,
       "categories_v1": [
         "programming_languages",
         "frameworks",
         "companies",
         "operating_systems",
-        "video_games"
+        "hardware",
+        "video_games",
+        "databases",
+        "software_tools"
       ],
       "classes": [
         {
@@ -309,6 +320,71 @@
           "wikidata_class": "Q7889",
           "category": "video_games",
           "date_property": "P577"
+        },
+        {
+          "wikidata_class": "Q55990535",
+          "category": "hardware",
+          "date_property": "P577"
+        },
+        {
+          "wikidata_class": "Q56682555",
+          "category": "hardware",
+          "date_property": "P577"
+        },
+        {
+          "wikidata_class": "Q19723451",
+          "category": "hardware",
+          "date_property": "P577"
+        },
+        {
+          "wikidata_class": "Q176165",
+          "category": "databases",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q3932296",
+          "category": "databases",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q82231",
+          "category": "databases",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q6368",
+          "category": "software_tools",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q131212",
+          "category": "software_tools",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q522972",
+          "category": "software_tools",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q13741",
+          "category": "software_tools",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q3257930",
+          "category": "software_tools",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q7935198",
+          "category": "software_tools",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q118218718",
+          "category": "software_tools",
+          "date_property": "P571"
         }
       ]
     }
