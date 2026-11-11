@@ -42,6 +42,7 @@ export const ERROR_CATALOG = {
   invalid_move:             { status: 422 },
   not_in_word_list:         { status: 422 },
   invalid_report:           { status: 422 },
+  invalid_culprit:          { status: 422 },
   validation_error:         { status: 422 },
   rate_limited:             { status: 429 },
   internal_error:           { status: 500 },
@@ -70,6 +71,7 @@ export class AppError extends Error {
 | `already_reported` / `report_not_open` | Second report by the same player / resolving a report that is no longer `open`. |
 | `not_voidable` / `not_regenerable` / `not_voided` | Void a challenge that is not `published` / regenerate one that is not `approved` or has `date <= today` / acknowledge a challenge that is not voided. |
 | `invalid_move` / `not_in_word_list` / `invalid_report` / `validation_error` | Move fails `moveSchema` or the game state / Devdle word outside the valid list / bad report / any other invalid body, query or param. |
+| `invalid_culprit` | Admin void request whose culprit (`term` / `timeline_fact`) is not referenced by the challenge (`GameDefinition.culprits`). |
 | `rate_limited` | Rate limit exceeded (with `Retry-After`). |
 | `internal_error` | Unexpected error (never thrown on purpose). |
 

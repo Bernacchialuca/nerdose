@@ -60,7 +60,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
 - **Notes:**
   - El intento de un Player sobre un Challenge. Hay a lo sumo una Play por (player_id, challenge_id).
   - Es la **fuente de verdad del historial**: los agregados se recalculan a partir de Play.
-  - Una Play que no está `in_progress` no acepta jugadas. Una jugada sobre una Play cuya `date` < hoy se rechaza (`challenge_expired`). Si queda `in_progress` en un día pasado, queda así para siempre y no cuenta.
+  - Una Play que no está `in_progress` no acepta jugadas. Una jugada sobre una Play cuya `date` < hoy se rechaza (`challenge_expired`). Si queda `in_progress` en un día pasado, queda así para siempre y no cuenta, salvo que su Challenge se anule: entonces pasa a `voided` y cuenta como completada (C-41).
   - **Completada** = `won`, `lost` o `voided`. Una Play a medias no está completada.
   - Criterios por juego:
 
@@ -90,7 +90,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
 ### ChallengeReport
 - **Key attributes:** id (uuid, req), challenge_id (uuid, req), player_id (uuid, req), reason (enum: wrong_answer/ambiguous/wrong_explanation/translation/display_bug/other, req), message (string, opt, max: 1000), locale (enum locale, req), context (json, req: code_language, estado de la partida, user agent), status (enum: open/resolved/dismissed, default: open), created_at (timestamp, req)
 - **Relationships:** belongs_to Challenge, belongs_to Player
-- **Notes:** Hay a lo sumo un reporte por (player_id, challenge_id), y solo sobre Challenge `published` o `voided`. Se puede crear durante la partida o en el resultado. Solo `wrong_answer` y `ambiguous` cuentan para el umbral de alerta.
+- **Notes:** Hay a lo sumo un reporte por (player_id, challenge_id), y solo sobre Challenge `published` o `voided` de hoy o de un día pasado (el jugador que sigue en el resultado después del cambio de día puede reportarlo); nunca sobre uno `approved` futuro. Se puede crear durante la partida o en el resultado. Solo `wrong_answer` y `ambiguous` cuentan para el umbral de alerta.
 
 ### Term
 - **Key attributes:** id (uuid, req), term (string, req, único, solo A–Z en mayúsculas, 4–12 letras), category (enum: programming_languages/git/databases/networking/linux/apis/security/software_engineering, req), definition (json `{es,en}`, req), summary (json `{es,en}`, req), example (json `{es,en}`, opt, futuro), wikidata_id (string, req, único), sitelinks (int, req), status (enum: draft/approved/rejected, default: draft), rejection_reason (string, opt), last_used_devdle (date, opt), last_used_grep (date, opt)

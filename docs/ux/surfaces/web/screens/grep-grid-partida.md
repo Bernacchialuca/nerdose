@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.1"
-date: 2026-11-10
+version: "1.2"
+date: 2026-11-11
 ---
 
 # Pantalla: Grep Grid · Partida
@@ -34,7 +34,7 @@ date: 2026-11-10
 - A O-04 · «Rendirse» (confirmación)
 - A `home` · marca `> nerdose` del header (la partida queda en curso)
 - A `estadisticas` · botón «Estadísticas» del header (la partida queda en curso)
-- A O-01 · «Reportar un problema» (cuando exista, FG-6)
+- A O-01 · «Reportar un problema» (`link-reportar`, salvo en `ya reportado`)
 
 **Salidas automáticas:**
 - A `grep-grid-resultado` · al cerrarse la Play como ganada (octava palabra) o perdida (rendirse confirmado); el servidor decide
@@ -55,7 +55,7 @@ date: 2026-11-10
 | 8 | banner-cookies | alert | warning | feedback | ambos | visible_only_in_states: sin sesión | Explica que hace falta la cookie funcional (`no_session`) |
 | 9 | lista-palabras | list | grep-grid.word | content | ambos | hidden_in_states: loading, error de sistema | Las 8 palabras en orden fijo: pendientes con su largo; encontradas tachadas, con ✓ y su definición |
 | 10 | btn-rendirse | button | error | input | ambos | hidden_in_states: loading, error de sistema, anulado | Abre O-04 para cerrar la partida como perdida con `N/8` (C-20) |
-| 11 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Abre O-01 para avisar que el desafío está mal (FG-6) |
+| 11 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema; state_overrides: ya reportado | Abre O-01 para avisar que el desafío está mal (C-36); deshabilitado si el jugador ya reportó este desafío |
 | 12 | loader | loader | — | feedback | ambos | visible_only_in_states: loading | Indicador de carga |
 | 13 | alerta-sistema | alert | error | feedback | ambos | visible_only_in_states: error de sistema | Error de carga con causa y salida |
 | 14 | btn-reintentar | button | secondary | input | ambos | visible_only_in_states: error de sistema, sin sesión; state_overrides: sin sesión | Reintentar la carga o recrear la sesión |
@@ -144,7 +144,7 @@ date: 2026-11-10
 ### link-reportar
 - Texto/label: Reportar un problema
 - Icono: warning
-- Annotation: O-01 llega con FG-6: hasta entonces el enlace no se renderiza (supuesto «Reportar un problema»). Cuando exista, si ya reportó muestra «Ya reportado» y no abre O-01 (`already_reported`)
+- Annotation: abre O-01 (bottom-sheet en mobile, modal en desktop) desde la partida, con el aviso de no incluir la respuesta. Visible también en `anulado` (C-36 acepta desafíos `voided`). Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007)
 
 ### loader
 - Texto/label: $ cargando tu partida de grep-grid…
@@ -213,6 +213,12 @@ date: 2026-11-10
   - banner-cookies: solo visible en este estado (visible_only_in_states)
   - btn-reintentar: visible en este estado, annotation="recrea la sesión y reenvía la selección" (state_override)
 
+### ya reportado
+- Aplica: Sí (sub-estado de default; se combina con cualquier otro sub-estado)
+- Mensaje: Ya reportaste este desafío.
+- Cambios:
+  - link-reportar: content="Ya reportaste este desafío", state="disabled", icon="check" (state_override)
+
 ### loading
 - Aplica: Sí
 - Mensaje: $ cargando tu partida de grep-grid…
@@ -258,7 +264,7 @@ date: 2026-11-10
 - respuesta `challenge_expired` → carga el desafío nuevo y navega a `grep-grid-instrucciones` (estado `día nuevo`, CA 20)
 - respuesta `challenge_voided` → estado `anulado` (CA 22); `no_session` → estado `sin sesión` (CA 23); 429 → `límite de jugadas` (CA 24)
 - ES|EN del header → recarga la vista pública: las definiciones de las encontradas cambian de idioma; grilla, palabras y encontradas no cambian (CA 19)
-- link-reportar · on click → abre O-01 (bottom-sheet en mobile, modal en desktop), cuando exista (FG-6)
+- link-reportar · on click → abre O-01 desde la partida, con el aviso de no incluir la respuesta; al cerrarlo el foco vuelve al enlace y la pantalla sigue igual. Tras «Gracias, recibimos tu reporte» o `already_reported` → estado `ya reportado` (REQ-007)
 
 **Validaciones:**
 - selección · `from` igual a `to`, celdas no alineadas en una de las 4 direcciones hacia adelante, en reversa o fuera de 0–11 → el servidor responde `invalid_move` → «> las palabras se marcan de la primera a la última letra, hacia adelante»
@@ -288,7 +294,8 @@ date: 2026-11-10
 - REQ-005: «Rendirse» usa la variant `outline-tinted` con tinte de error del DS (destructiva suave), no un relleno rojo: la identidad pide error sin dramatismo y el modal O-04 ya protege de un toque accidental.
 - REQ-005: la grilla entra completa a 320 px sin scroll horizontal (CA 36, NFR-U01): celdas con `aspect-ratio: 1` escaladas al ancho, como se resolvió para Devdle; el área táctil por debajo de 40 px se acepta como adaptación documentada en el DS (supuesto «Ancho mínimo»). El `overflow-x: auto` del prototipo se descarta.
 - REQ-005: anti-spoiler en la vista: la grilla y la lista solo conocen posiciones y definiciones de lo ya encontrado (RF 2, CA 15); por eso la lista no muestra definiciones pendientes ni «pistas» de posición.
-- REQ-005: «Reportar un problema» queda documentado pero no se renderiza hasta FG-6.
+- REQ-005: «Reportar un problema» queda documentado pero no se renderiza hasta FG-6. Superado por REQ-007.
+- REQ-007: «Reportar un problema» se renderiza en los tres juegos (deja de estar oculto hasta FG-6). Es un enlace secundario al final de la columna lateral, no un botón, para no competir con la acción del juego; el estado «ya reportado» se lee de `GameToday.reported` para no ofrecer un intento que va a fallar.
 
 **Alternativas descartadas:**
 - Modal de instrucciones dentro de la partida: las reglas quedan en la fase de instrucciones; durante la partida, «Cómo se juega» del header lleva a la consigna y al hint de esta pantalla.
@@ -303,4 +310,4 @@ date: 2026-11-10
 
 ## Trazabilidad
 
-- F-05, C-19, C-20, C-10, C-11, C-36 · REQ-005 (RF 2-11, 19, 22; CA 2-8, 11, 13, 14, 19, 20, 22-25, 35, 36) · flujos 1 y 2 de `user-flows.md`.
+- F-05, C-19, C-20, C-10, C-11, C-36 · REQ-005 (RF 2-11, 19, 22; CA 2-8, 11, 13, 14, 19, 20, 22-25, 35, 36) · flujos 1 y 2 de `user-flows.md` · REQ-007 (RF 1, 9; CA 1-3, 24).

@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.1"
-date: 2026-11-10
+version: "1.2"
+date: 2026-11-11
 ---
 
 # Pantalla: Grep Grid · Resultado
@@ -29,10 +29,11 @@ date: 2026-11-10
 - `grep-grid-partida` · fin de partida (automático: octava palabra o rendición confirmada)
 - `home` · tarjeta «completado» (CTA «Ver resultado»)
 - URL directa `/grep-grid` con la Play terminada
-- O-02 · «Marcar como completado» (estado anulado, FG-6)
+- O-02 · «Marcar como completado» (estado anulado; REQ-007)
+- Instrucciones o URL directa con la Play `voided` (jugó antes de la anulación, o ya marcó como completado): llega directo al estado `anulado`
 
 **Salidas user-driven:**
-- A O-01 · «Reportar un problema» (cuando exista, FG-6)
+- A O-01 · «Reportar un problema» (`link-reportar`, salvo en `ya reportado`)
 - A `home` · «Volver a los juegos» o marca `> nerdose` del header
 - A `estadisticas` · «Ver mis estadísticas» o botón «Estadísticas» del header
 - A la siguiente `*-instrucciones` · «Siguiente juego» (solo si hay otro juego pendiente hoy)
@@ -50,7 +51,7 @@ date: 2026-11-10
 | 4 | grilla-final | image | grep-grid.cell | content | ambos | hidden_in_states: loading, error de sistema, anulado | Grilla 12×12 con las 8 palabras marcadas: encontradas y reveladas, distinguidas por algo más que el color |
 | 5 | lista-palabras | list | grep-grid.word | content | ambos | hidden_in_states: loading, error de sistema, anulado | Las 8 palabras con su definición en el idioma activo; las reveladas marcadas como no encontradas |
 | 6 | card-rachas | card | — | content | ambos | hidden_in_states: loading, error de sistema | Rachas de Grep Grid y global actualizadas |
-| 7 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Abre O-01 para avisar que el desafío está mal (FG-6) |
+| 7 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema; state_overrides: ya reportado | Abre O-01 para avisar que el desafío está mal (C-36); deshabilitado si el jugador ya reportó este desafío |
 | 8 | cuenta-regresiva | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Cuenta regresiva al próximo desafío |
 | 9 | btn-siguiente | button | secondary | input | ambos | hidden_in_states: loading, error de sistema, sin juegos pendientes | Lleva al siguiente juego pendiente |
 | 10 | link-stats | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Ir a estadísticas |
@@ -101,7 +102,7 @@ date: 2026-11-10
 ### alerta-anulado
 - Texto/label: Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.
 - Icono: warning
-- Annotation: la anulación llega con FG-6; en REQ-005 solo se respeta el estado al leer
+- Annotation: `banner` `warning` del DS. Se muestra con la Play `voided` (`challenge_status: voided`): la anulación y «Marcar como completado» llegan con REQ-007
 
 ### grilla-final
 - Texto/label: Grilla 12×12 · las 8 palabras marcadas · encontradas con relleno y ✓ · reveladas con borde punteado y ○
@@ -124,7 +125,7 @@ date: 2026-11-10
 ### link-reportar
 - Texto/label: Reportar un problema
 - Icono: warning
-- Annotation: O-01 llega con FG-6: hasta entonces el enlace no se renderiza. Cuando exista, si ya reportó muestra «Ya reportado» (`already_reported`)
+- Annotation: abre O-01 (bottom-sheet en mobile, modal en desktop) desde el resultado (también el anulado), sin el aviso de spoilers. Visible también en `anulado` (C-36 acepta desafíos `voided`). Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007)
 
 ### cuenta-regresiva
 - Texto/label: Próximo desafío en 05:42:10
@@ -203,6 +204,12 @@ date: 2026-11-10
 - Cambios:
   - Compartir del header: content="✓ Copiado", icon="check", annotation="confirmación en el mismo botón (`role=status`) durante unos segundos; vuelve a «Compartir»" (state_override)
 
+### ya reportado
+- Aplica: Sí (sub-estado de default; se combina con cualquier otro sub-estado)
+- Mensaje: Ya reportaste este desafío.
+- Cambios:
+  - link-reportar: content="Ya reportaste este desafío", state="disabled", icon="check" (state_override)
+
 ### loading
 - Aplica: Sí
 - Mensaje: $ cargando tu resultado de grep-grid…
@@ -242,7 +249,7 @@ date: 2026-11-10
 - Compartir del header · on click → share nativo con «🔎 Grep Grid #8 / 5/8 / nerdose.dev» o copia al portapapeles (estado success); registra `share:grep-grid`
 - ES|EN · on change → recarga las definiciones en el otro idioma; grilla, palabras, encontradas y reveladas no cambian (CA 19)
 - btn-siguiente · on click → siguiente juego pendiente
-- link-reportar · on click → abre O-01 (FG-6)
+- link-reportar · on click → abre O-01 desde el resultado (también el anulado), sin el aviso de spoilers; al cerrarlo el foco vuelve al enlace y la pantalla sigue igual. Tras «Gracias, recibimos tu reporte» o `already_reported` → estado `ya reportado` (REQ-007)
 
 **Validaciones:**
 - No aplica: la pantalla no tiene campos de entrada.
@@ -269,6 +276,8 @@ date: 2026-11-10
 - REQ-005: la lista muestra las 8 definiciones en el idioma activo (RF 13, CA 19); la stat propia (promedio y % de 8/8) no se muestra en el resultado sino en `estadisticas` (FG-10).
 - REQ-005: «Siguiente juego» solo aparece si queda un juego con desafío sin completar, como en Devdle.
 - REQ-005: la grilla final va en la columna principal y la lista con definiciones en la lateral, como el layout tablero + aside del prototipo; en mobile la lista sigue a la grilla porque es el momento de aprendizaje.
+- REQ-007: «Reportar un problema» se renderiza en los tres juegos (deja de estar oculto hasta FG-6). Es un enlace secundario al final de la columna lateral, no un botón, para no competir con la acción del juego; el estado «ya reportado» se lee de `GameToday.reported` para no ofrecer un intento que va a fallar.
+- REQ-007 resuelve la pregunta 2 del product-map: `anulado` es una sola variante mínima (aviso + rachas, sin Compartir ni solución) haya o no jugado el jugador antes de la anulación. `GameToday` devuelve la Play `voided` con `result: null` y `public_view: null` (decisión 5 del diseño técnico). «Reportar un problema» sigue visible.
 
 **Alternativas descartadas:**
 - Compartir también en el cuerpo: dos botones iguales compiten; el prototipo usa solo el del header.
@@ -277,11 +286,10 @@ date: 2026-11-10
 - Mostrar el promedio y el % de 8/8 en el resultado: la pantalla que los muestra es de FG-10 y el DS no define la pieza; las rachas alcanzan para el cierre.
 
 **Preguntas abiertas:**
-- Pregunta 2 del product-map: variantes de resultado anulado con y sin resultado propio.
 - Pregunta 5 del product-map: «Siguiente juego» o «Volver a los juegos» (REQ-005 sigue el criterio de REQ-004).
 
 - 2026-11-11 (pedido del usuario): al ganar no hay banner `success`: festeja un confeti del color del juego (host `web`, solo en la transición partida → resultado ganado, sin animación con `prefers-reduced-motion`) y el `h1` del veredicto queda `sr-only`. Al perder se mantiene el banner `failure`. Rachas y salidas van en una sola card de cierre (rachas en una línea + cuenta regresiva y salidas) debajo del tablero, para que la racha quede a la vista sin scroll; `card-rachas` deja de existir como card aparte.
 
 ## Trazabilidad
 
-- C-22, C-12, C-13, C-33, C-36, C-41 · REQ-005 (RF 12-14, 22; CA 9, 10, 12, 16-19) · flujos 1, 3, 4 y 5 de `user-flows.md`.
+- C-22, C-12, C-13, C-33, C-36, C-41 · REQ-005 (RF 12-14, 22; CA 9, 10, 12, 16-19) · flujos 1, 3, 4 y 5 de `user-flows.md` · REQ-007 (RF 1, 9; CA 1-3, 24).

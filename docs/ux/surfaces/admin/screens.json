@@ -51,10 +51,11 @@
      "type": "alert",
      "category": "feedback",
      "kind": "warning",
-     "content": "Demasiados intentos. El acceso está bloqueado temporalmente; probá de nuevo en unos minutos.",
+     "content": "Demasiados intentos. Probá de nuevo en 12 minutos.",
      "visible_only_in_states": [
       "bloqueado"
-     ]
+     ],
+     "annotation": "los minutos salen del `Retry-After` del `429` (redondeados hacia arriba); al vencer, el campo y el botón se habilitan solos"
     },
     {
      "name": "alerta-sistema",
@@ -88,7 +89,7 @@
        "value": "••••••••"
       }
      },
-     "annotation": "type=password; Enter envía"
+     "annotation": "type=password, autocomplete=\"current-password\"; Enter envía"
     },
     {
      "name": "btn-ingresar",
@@ -183,32 +184,36 @@
      "type": "link",
      "category": "navigation",
      "content": "Reportes (3)",
-     "annotation": "sección actual"
+     "annotation": "sección actual; el número es la cantidad de grupos con reportes abiertos"
     },
     {
      "name": "nav-proximos",
      "type": "link",
      "category": "navigation",
-     "content": "Próximos"
+     "content": "Próximos",
+     "annotation": "no se renderiza en REQ-007; se suma con FG-7"
     },
     {
      "name": "nav-stock",
      "type": "link",
      "category": "navigation",
-     "content": "Stock"
+     "content": "Stock",
+     "annotation": "no se renderiza en REQ-007; se suma con FG-7"
     },
     {
      "name": "nav-metricas",
      "type": "link",
      "category": "navigation",
-     "content": "Métricas"
+     "content": "Métricas",
+     "annotation": "no se renderiza en REQ-007; se suma con FG-10"
     },
     {
      "name": "nav-cerrar-sesion",
      "type": "link",
      "category": "navigation",
      "content": "Cerrar sesión",
-     "icon": "lock"
+     "icon": "lock",
+     "annotation": "descarta el token en el navegador (sin llamada al servidor)"
     },
     {
      "name": "titulo",
@@ -222,7 +227,19 @@
      "type": "paragraph",
      "category": "content",
      "level": "caption",
-     "content": "Agrupados por desafío · el más reportado primero"
+     "content": "Agrupados por desafío · alertados primero, después los más reportados y los más recientes"
+    },
+    {
+     "name": "alerta-anulado",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "success",
+     "content": "Devdle #8 anulado · 15 partidas afectadas. Los reportes abiertos quedaron resueltos.",
+     "icon": "check",
+     "visible_only_in_states": [
+      "anulación confirmada"
+     ],
+     "annotation": "role=status; usa `affected_plays`; se descarta al cambiar de filtro o al cerrar"
     },
     {
      "name": "tabs-estado",
@@ -237,9 +254,12 @@
      "state_overrides": {
       "resueltos": {
        "active": 1
+      },
+      "descartados": {
+       "active": 2
       }
      },
-     "annotation": "default: Abiertos (`open`)"
+     "annotation": "default: Abiertos (`open`); el conteo y los motivos cuentan solo los reportes de ese estado"
     },
     {
      "name": "alerta-sistema",
@@ -269,7 +289,8 @@
      "content": "No hay reportes abiertos. Todo al día.",
      "visible_only_in_states": [
       "empty"
-     ]
+     ],
+     "annotation": "en Resueltos: «Todavía no hay reportes resueltos.»; en Descartados: «Todavía no hay reportes descartados.»"
     },
     {
      "name": "cargando",
@@ -286,8 +307,16 @@
      "category": "content",
      "columns": [
       {
+       "label": "Alerta",
+       "width": 1
+      },
+      {
        "label": "Desafío",
-       "width": 3
+       "width": 2
+      },
+      {
+       "label": "Fecha",
+       "width": 1.5
       },
       {
        "label": "Reportes",
@@ -295,52 +324,61 @@
       },
       {
        "label": "Motivos",
-       "width": 4
+       "width": 3
       },
       {
-       "label": "Último",
-       "width": 2
+       "label": "Último reporte",
+       "width": 1.5
       },
       {
-       "label": "Desafío (estado)",
-       "width": 2
+       "label": "Estado del desafío",
+       "width": 1.5
+      },
+      {
+       "label": "Acción",
+       "width": 1
       }
      ],
      "rows": [
       [
-       "Devdle #128",
-       "7",
-       "wrong_answer ×5 · ambiguous ×2",
-       "hace 12 min",
-       "badge:Publicado"
+       "badge:alertado",
+       "Grep Grid #8",
+       "2026-11-08",
+       "3",
+       "Respuesta incorrecta ×3",
+       "hace 2 h",
+       "badge:publicado",
+       "Anular"
       ],
       [
-       "Bug Hunt #128",
-       "4",
-       "wrong_answer ×3 · display_bug ×1",
-       "hace 1 h",
-       "badge:Publicado"
+       "—",
+       "Devdle #7",
+       "2026-11-07",
+       "5",
+       "Ambiguo ×3, Traducción ×2",
+       "hace 1 día",
+       "badge:publicado",
+       "Anular"
       ],
       [
-       "Big O #127",
+       "—",
+       "Bug Hunt #7",
+       "2026-11-07",
        "2",
-       "wrong_explanation ×2",
-       "hace 5 h",
-       "badge:Publicado"
+       "Explicación incorrecta ×2",
+       "hace 1 día",
+       "badge:publicado",
+       "Anular"
       ],
       [
-       "Tech Timeline #127",
+       "—",
+       "Tech Timeline #6",
+       "2026-11-06",
        "1",
-       "translation ×1",
-       "ayer",
-       "badge:Publicado"
-      ],
-      [
-       "Grep Grid #126",
-       "1",
-       "other ×1",
-       "hace 2 días",
-       "badge:Anulado"
+       "Error de visualización ×1",
+       "hace 3 días",
+       "badge:anulado",
+       "—"
       ]
      ],
      "hidden_in_states": [
@@ -349,45 +387,100 @@
       "error de sistema"
      ],
      "state_overrides": {
+      "anulación confirmada": {
+       "rows": [
+        [
+         "badge:alertado",
+         "Grep Grid #8",
+         "2026-11-08",
+         "3",
+         "Respuesta incorrecta ×3",
+         "hace 2 h",
+         "badge:publicado",
+         "Anular"
+        ],
+        [
+         "—",
+         "Bug Hunt #7",
+         "2026-11-07",
+         "2",
+         "Explicación incorrecta ×2",
+         "hace 1 día",
+         "badge:publicado",
+         "Anular"
+        ],
+        [
+         "—",
+         "Tech Timeline #6",
+         "2026-11-06",
+         "1",
+         "Error de visualización ×1",
+         "hace 3 días",
+         "badge:anulado",
+         "—"
+        ]
+       ]
+      },
       "resueltos": {
        "rows": [
         [
-         "Devdle #125",
-         "3",
-         "wrong_answer ×3",
-         "hace 3 días",
-         "badge:Resuelto"
+         "—",
+         "Devdle #8",
+         "2026-11-08",
+         "4",
+         "Respuesta incorrecta ×4",
+         "hace 1 h",
+         "badge:anulado",
+         "—"
         ],
         [
-         "Big O #124",
+         "—",
+         "Big O #5",
+         "2026-11-05",
          "1",
-         "ambiguous ×1",
+         "Ambiguo ×1",
          "hace 4 días",
-         "badge:Descartado"
+         "badge:publicado",
+         "Anular"
         ],
         [
-         "Bug Hunt #123",
-         "5",
-         "wrong_answer ×5",
+         "—",
+         "Bug Hunt #4",
+         "2026-11-04",
+         "2",
+         "Respuesta incorrecta ×2",
          "hace 6 días",
-         "badge:Resuelto"
+         "badge:publicado",
+         "Anular"
+        ]
+       ]
+      },
+      "descartados": {
+       "rows": [
+        [
+         "—",
+         "Tech Timeline #7",
+         "2026-11-07",
+         "2",
+         "Otro ×2",
+         "hace 1 día",
+         "badge:publicado",
+         "Anular"
+        ],
+        [
+         "—",
+         "Devdle #5",
+         "2026-11-05",
+         "1",
+         "Traducción ×1",
+         "hace 5 días",
+         "badge:publicado",
+         "Anular"
         ]
        ]
       }
      },
-     "annotation": "clic en la fila → detalle; acción «Anular» por fila solo si el desafío está `published`"
-    },
-    {
-     "name": "paginacion",
-     "type": "pagination",
-     "category": "navigation",
-     "pages": 3,
-     "page_size": 20,
-     "hidden_in_states": [
-      "empty",
-      "loading",
-      "error de sistema"
-     ]
+     "annotation": "orden fijo: alertados primero, luego cantidad de reportes, luego fecha (sin orden por columna ni paginación). «alertado» es texto + ámbar. Clic o Enter en la fila → detalle; «Anular» solo con el desafío `published`"
     }
    ],
    "layouts": {
@@ -421,13 +514,13 @@
        },
        {
         "w": 2,
-        "stack": [
-         "nav-cerrar-sesion"
-        ]
+        "stack": []
        },
        {
         "w": 2,
-        "stack": []
+        "stack": [
+         "nav-cerrar-sesion"
+        ]
        }
       ]
      },
@@ -438,7 +531,8 @@
         "w": 12,
         "stack": [
          "titulo",
-         "subtitulo"
+         "subtitulo",
+         "alerta-anulado"
         ]
        }
       ]
@@ -456,8 +550,7 @@
          "btn-reintentar",
          "estado-vacio",
          "cargando",
-         "tabla-grupos",
-         "paginacion"
+         "tabla-grupos"
         ]
        }
       ]
@@ -468,6 +561,11 @@
     {
      "name": "default",
      "applies": true
+    },
+    {
+     "name": "anulación confirmada",
+     "applies": true,
+     "parent_state": "default"
     },
     {
      "name": "empty",
@@ -483,6 +581,10 @@
     },
     {
      "name": "resueltos",
+     "applies": true
+    },
+    {
+     "name": "descartados",
      "applies": true
     }
    ]
@@ -1919,31 +2021,24 @@
      "type": "paragraph",
      "category": "content",
      "level": "body",
-     "content": "Devdle #128 · publicado"
+     "content": "Devdle #8 · 2026-11-08 · publicado"
     },
     {
      "name": "campo-motivo",
      "type": "textarea",
      "category": "input",
      "content": "Motivo de la anulación",
-     "value": "",
+     "value": "Ej.: definición incorrecta",
      "h": 96,
      "state_overrides": {
       "error de validación": {
-       "value": ""
+       "state": "error",
+       "value": "",
+       "error_msg": "Contá por qué se anula el desafío.",
+       "annotation": "Contá por qué se anula el desafío."
       }
      },
-     "annotation": "obligatorio"
-    },
-    {
-     "name": "error-motivo",
-     "type": "alert",
-     "category": "feedback",
-     "kind": "error",
-     "content": "Contá por qué se anula el desafío.",
-     "visible_only_in_states": [
-      "error de validación"
-     ]
+     "annotation": "obligatorio, hasta 500 caracteres; se guarda en el desafío y como motivo de rechazo del culpable"
     },
     {
      "name": "campo-culpable",
@@ -1952,48 +2047,76 @@
      "content": "Culpable del error",
      "state": "closed",
      "options": [
-      "Término",
-      "Hecho de timeline",
-      "Plantilla",
-      "Ninguno"
+      "Término · REDIS",
+      "La plantilla del juego",
+      "Ninguno (no se identifica un culpable)"
      ],
      "state_overrides": {
       "culpable abierto": {
        "state": "open"
-      }
-     }
-    },
-    {
-     "name": "campo-id",
-     "type": "text-input",
-     "category": "input",
-     "content": "ID del término o del hecho",
-     "value": "",
-     "state": "default",
-     "state_overrides": {
+      },
       "error de validación": {
        "state": "error",
-       "error_msg": "Indicá el ID del culpable."
+       "error_msg": "Elegí el culpable del error.",
+       "annotation": "Elegí el culpable del error."
       }
      },
-     "annotation": "solo se pide si el culpable es Término o Hecho de timeline"
+     "annotation": "obligatorio, sin preselección; ítems de `culprits` por nombre (Devdle 1 término, Grep Grid 8, Timeline 5 hechos). No se tipea ningún id"
     },
     {
      "name": "resumen",
      "type": "alert",
      "category": "feedback",
      "kind": "warning",
-     "content": "Esto no se puede deshacer: el desafío deja de aceptar jugadas, las partidas pasan a anuladas, los reportes abiertos se resuelven, el término o hecho culpable se rechaza y se recalculan las rachas."
+     "icon": "warning",
+     "content": "Esto no se puede deshacer. Devdle #8 deja de aceptar jugadas y todas sus partidas pasan a anuladas (las terminadas conservan su resultado); los jugadores conservan su racha. Los reportes abiertos se resuelven. El término REDIS queda rechazado y no vuelve a usarse. Se recalculan las estadísticas de los jugadores afectados.",
+     "state_overrides": {
+      "culpable sin ítem": {
+       "content": "Esto no se puede deshacer. Devdle #8 deja de aceptar jugadas y todas sus partidas pasan a anuladas (las terminadas conservan su resultado); los jugadores conservan su racha. Los reportes abiertos se resuelven. Ningún término ni hecho cambia de estado. Se recalculan las estadísticas de los jugadores afectados."
+      }
+     },
+     "annotation": "Los desafíos ya generados de los próximos días que usen REDIS no cambian."
+    },
+    {
+     "name": "alerta-conflicto",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "warning",
+     "content": "Este desafío ya no se puede anular: ya está anulado o no está publicado. Cerrá y revisá su estado en Reportes.",
+     "visible_only_in_states": [
+      "no anulable",
+      "culpable inválido"
+     ],
+     "state_overrides": {
+      "culpable inválido": {
+       "content": "El culpable elegido no corresponde a este desafío. Elegí otro."
+      }
+     },
+     "annotation": "`409 not_voidable` / `422 invalid_culprit`"
     },
     {
      "name": "alerta-sistema",
      "type": "alert",
      "category": "feedback",
      "kind": "error",
-     "content": "No pudimos anular el desafío. Recargá Reportes y verificá su estado antes de reintentar.",
+     "content": "No pudimos anular el desafío. No se aplicó ningún cambio: recargá Reportes y verificá su estado antes de reintentar.",
      "visible_only_in_states": [
       "error de sistema"
-     ]
+     ],
+     "annotation": "anulación atómica: ante un error el desafío sigue publicado; no se reenvía solo"
+    },
+    {
+     "name": "btn-cancelar",
+     "type": "button",
+     "category": "input",
+     "variant": "tertiary",
+     "content": "Cancelar",
+     "state_overrides": {
+      "loading": {
+       "variant": "disabled",
+       "annotation": "Escape no cierra mientras se anula"
+      }
+     }
     },
     {
      "name": "btn-anular",
@@ -2006,15 +2129,11 @@
       "loading": {
        "variant": "disabled",
        "content": "Anulando…"
+      },
+      "no anulable": {
+       "variant": "disabled"
       }
      }
-    },
-    {
-     "name": "btn-cancelar",
-     "type": "button",
-     "category": "input",
-     "variant": "tertiary",
-     "content": "Cancelar"
     }
    ],
    "layouts": {
@@ -2031,13 +2150,27 @@
         "stack": [
          "desafio",
          "campo-motivo",
-         "error-motivo",
          "campo-culpable",
-         "campo-id",
          "resumen",
+         "alerta-conflicto",
          "alerta-sistema",
-         "btn-anular",
-         "btn-cancelar"
+         {
+          "row": "acciones",
+          "cols": [
+           {
+            "w": 6,
+            "stack": [
+             "btn-cancelar"
+            ]
+           },
+           {
+            "w": 6,
+            "stack": [
+             "btn-anular"
+            ]
+           }
+          ]
+         }
         ]
        },
        {
@@ -2055,7 +2188,13 @@
     },
     {
      "name": "culpable abierto",
-     "applies": true
+     "applies": true,
+     "parent_state": "default"
+    },
+    {
+     "name": "culpable sin ítem",
+     "applies": true,
+     "parent_state": "default"
     },
     {
      "name": "error de validación",
@@ -2063,6 +2202,14 @@
     },
     {
      "name": "loading",
+     "applies": true
+    },
+    {
+     "name": "no anulable",
+     "applies": true
+    },
+    {
+     "name": "culpable inválido",
      "applies": true
     },
     {
@@ -2085,7 +2232,7 @@
      "name": "header",
      "type": "header",
      "category": "layout",
-     "content": "Devdle #128",
+     "content": "Devdle #8",
      "icon": "close"
     },
     {
@@ -2093,67 +2240,239 @@
      "type": "chips",
      "category": "content",
      "items": [
-      "Publicado",
-      "2026-11-03"
-     ]
+      "Devdle",
+      "#8",
+      "2026-11-08",
+      "publicado",
+      "alertado"
+     ],
+     "state_overrides": {
+      "anulado": {
+       "items": [
+        "Devdle",
+        "#8",
+        "2026-11-08",
+        "anulado"
+       ]
+      },
+      "desde próximos": {
+       "items": [
+        "Devdle",
+        "#14",
+        "2026-11-14",
+        "aprobado"
+       ]
+      }
+     },
+     "annotation": "«alertado» solo si alcanzó el umbral (`alerted_at`)"
     },
     {
-     "name": "preview-es",
-     "type": "image",
+     "name": "motivo-anulacion",
+     "type": "paragraph",
      "category": "content",
-     "aspect_ratio": "4:3",
-     "h": 220,
-     "content": "Preview ES · solución"
+     "level": "body",
+     "icon": "warning",
+     "content": "Anulado el 2026-11-08 14:32 · definición incorrecta",
+     "visible_only_in_states": [
+      "anulado"
+     ],
+     "annotation": "`voided_at` y `void_reason`"
     },
     {
-     "name": "preview-en",
-     "type": "image",
+     "name": "alerta-desactualizado",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "warning",
+     "content": "Este reporte ya estaba cerrado. Actualizamos la lista.",
+     "visible_only_in_states": [
+      "reporte ya cerrado"
+     ],
+     "annotation": "`409 report_not_open` o `404 not_found`; la lista se recarga"
+    },
+    {
+     "name": "payload-es",
+     "type": "list",
      "category": "content",
-     "aspect_ratio": "4:3",
-     "h": 220,
-     "content": "Preview EN · solución"
+     "hidden_in_states": [
+      "loading",
+      "error de sistema"
+     ],
+     "items": [
+      {
+       "title": "Palabra",
+       "subtitle": "REDIS"
+      },
+      {
+       "title": "Categoría",
+       "subtitle": "bases de datos"
+      },
+      {
+       "title": "Definición",
+       "subtitle": "Almacén de datos en memoria clave-valor…"
+      },
+      {
+       "title": "Resumen",
+       "subtitle": "Se usa como caché, cola y broker de mensajes…"
+      }
+     ],
+     "annotation": "vista genérica del `payload` (PayloadView), texto plano; la preview del `client` la reemplaza en FG-7"
+    },
+    {
+     "name": "payload-en",
+     "type": "list",
+     "category": "content",
+     "hidden_in_states": [
+      "loading",
+      "error de sistema"
+     ],
+     "items": [
+      {
+       "title": "Word",
+       "subtitle": "REDIS"
+      },
+      {
+       "title": "Category",
+       "subtitle": "databases"
+      },
+      {
+       "title": "Definition",
+       "subtitle": "In-memory key-value data store…"
+      },
+      {
+       "title": "Summary",
+       "subtitle": "Used as a cache, queue and message broker…"
+      }
+     ],
+     "annotation": "alineada fila a fila con ES para comparar la traducción"
+    },
+    {
+     "name": "payload-comun",
+     "type": "list",
+     "category": "content",
+     "hidden_in_states": [
+      "loading",
+      "error de sistema"
+     ],
+     "items": [
+      {
+       "title": "term_id",
+       "subtitle": "3f2a9c1e…"
+      },
+      {
+       "title": "length",
+       "subtitle": "5"
+      },
+      {
+       "title": "seed",
+       "subtitle": "88120417"
+      },
+      {
+       "title": "culprits",
+       "subtitle": "Término · REDIS"
+      }
+     ],
+     "annotation": "resto del `payload` como clave · valor; `culprits` por nombre"
     },
     {
      "name": "log-verificacion",
      "type": "list",
      "category": "content",
+     "hidden_in_states": [
+      "loading",
+      "error de sistema"
+     ],
      "items": [
       {
        "title": "Solución verificada",
-       "subtitle": "2026-11-02 03:05 UTC · ok",
+       "subtitle": "2026-11-07 03:05 UTC · ok",
        "icon": "check"
       },
       {
        "title": "Traducción ES/EN consistente",
-       "subtitle": "2026-11-02 03:05 UTC · ok",
+       "subtitle": "2026-11-07 03:05 UTC · ok",
        "icon": "check"
       }
-     ]
+     ],
+     "annotation": "`verification` del desafío"
     },
     {
      "name": "lista-reportes",
      "type": "list",
      "category": "content",
-     "items": [
-      {
-       "title": "wrong_answer · es",
-       "subtitle": "«La palabra tiene otra definición en el diccionario»"
-      },
-      {
-       "title": "ambiguous · en",
-       "subtitle": "«Two valid answers fit the hints»"
-      },
-      {
-       "title": "wrong_answer · es",
-       "subtitle": "Sin mensaje"
-      }
-     ],
-     "visible_only_in_states": [
-      "default",
-      "terminal",
+     "hidden_in_states": [
+      "desde próximos",
       "loading",
       "error de sistema"
-     ]
+     ],
+     "items": [
+      {
+       "title": "Respuesta incorrecta · es · hace 2 h · jugador a1b2c3d4",
+       "subtitle": "«dos palabras posibles» · partida en curso, Chrome 130"
+      },
+      {
+       "title": "Ambiguo · en · hace 5 h · jugador 9f0e1d2c",
+       "subtitle": "(sin mensaje) · partida terminada, Safari 18"
+      },
+      {
+       "title": "Traducción · es · ayer · jugador 77aa01bc",
+       "subtitle": "«la definición en inglés dice otra cosa» · partida terminada, Firefox 132"
+      }
+     ],
+     "state_overrides": {
+      "anulado": {
+       "items": [
+        {
+         "title": "Respuesta incorrecta · es · hace 2 h · jugador a1b2c3d4 · resuelto",
+         "subtitle": "«dos palabras posibles» · partida en curso, Chrome 130"
+        },
+        {
+         "title": "Ambiguo · en · hace 5 h · jugador 9f0e1d2c · resuelto",
+         "subtitle": "(sin mensaje) · partida terminada, Safari 18"
+        },
+        {
+         "title": "Traducción · es · ayer · jugador 77aa01bc · resuelto",
+         "subtitle": "«la definición en inglés dice otra cosa» · partida terminada, Firefox 132"
+        }
+       ]
+      }
+     },
+     "annotation": "`player_ref` de 8 caracteres; mensaje como texto plano; los cerrados muestran su estado en lugar de acciones"
+    },
+    {
+     "name": "btn-resolver",
+     "type": "button",
+     "category": "input",
+     "variant": "secondary",
+     "content": "Resolver",
+     "icon": "check",
+     "hidden_in_states": [
+      "desde próximos",
+      "loading",
+      "error de sistema",
+      "anulado"
+     ],
+     "state_overrides": {
+      "resolviendo": {
+       "variant": "disabled",
+       "content": "Resolviendo…"
+      }
+     },
+     "annotation": "una por reporte `open`; PATCH → `resolved`"
+    },
+    {
+     "name": "btn-descartar",
+     "type": "button",
+     "category": "input",
+     "variant": "tertiary",
+     "content": "Descartar",
+     "icon": "x",
+     "hidden_in_states": [
+      "desde próximos",
+      "loading",
+      "error de sistema",
+      "anulado"
+     ],
+     "annotation": "una por reporte `open`; PATCH → `dismissed`"
     },
     {
      "name": "cargando",
@@ -2172,7 +2491,8 @@
      "content": "No pudimos cargar el desafío. Probá de nuevo.",
      "visible_only_in_states": [
       "error de sistema"
-     ]
+     ],
+     "annotation": "al fallar un cambio de reporte: «No pudimos actualizar el reporte. Probá de nuevo.»"
     },
     {
      "name": "btn-reintentar",
@@ -2186,80 +2506,24 @@
      ]
     },
     {
-     "name": "btn-resolver",
-     "type": "button",
-     "category": "input",
-     "variant": "secondary",
-     "content": "Resolver",
-     "icon": "check",
-     "visible_only_in_states": [
-      "default",
-      "terminal",
-      "loading",
-      "error de sistema"
-     ],
-     "state_overrides": {
-      "terminal": {
-       "variant": "disabled"
-      },
-      "loading": {
-       "variant": "disabled"
-      },
-      "error de sistema": {
-       "variant": "disabled"
-      }
-     }
-    },
-    {
-     "name": "btn-descartar",
-     "type": "button",
-     "category": "input",
-     "variant": "secondary",
-     "content": "Descartar",
-     "icon": "x",
-     "visible_only_in_states": [
-      "default",
-      "terminal",
-      "loading",
-      "error de sistema"
-     ],
-     "state_overrides": {
-      "terminal": {
-       "variant": "disabled"
-      },
-      "loading": {
-       "variant": "disabled"
-      },
-      "error de sistema": {
-       "variant": "disabled"
-      }
-     }
-    },
-    {
      "name": "btn-anular",
      "type": "button",
      "category": "input",
      "variant": "error",
-     "content": "Anular",
+     "content": "Anular desafío",
      "icon": "warning",
-     "visible_only_in_states": [
-      "default",
-      "terminal",
+     "hidden_in_states": [
+      "desde próximos",
       "loading",
       "error de sistema"
      ],
      "state_overrides": {
-      "terminal": {
+      "anulado": {
        "variant": "disabled",
-       "annotation": "Solo se puede anular un desafío publicado."
-      },
-      "loading": {
-       "variant": "disabled"
-      },
-      "error de sistema": {
-       "variant": "disabled"
+       "annotation": "Solo se anulan desafíos publicados."
       }
-     }
+     },
+     "annotation": "solo con el desafío `published`"
     },
     {
      "name": "btn-regenerar",
@@ -2271,7 +2535,7 @@
      "visible_only_in_states": [
       "desde próximos"
      ],
-     "annotation": "solo `approved` con fecha posterior a hoy"
+     "annotation": "solo `approved` con fecha posterior a hoy (FG-7)"
     }
    ],
    "layouts": {
@@ -2283,6 +2547,8 @@
         "w": 12,
         "stack": [
          "estado",
+         "motivo-anulacion",
+         "alerta-desactualizado",
          "cargando",
          "alerta-sistema",
          "btn-reintentar"
@@ -2291,20 +2557,35 @@
       ]
      },
      {
-      "row": "previews",
+      "row": "solucion",
       "cols": [
        {
         "w": 6,
         "card": true,
+        "title": "ES",
         "stack": [
-         "preview-es"
+         "payload-es"
         ]
        },
        {
         "w": 6,
         "card": true,
+        "title": "EN",
         "stack": [
-         "preview-en"
+         "payload-en"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "datos",
+      "card": true,
+      "title": "Datos del desafío",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "payload-comun"
         ]
        }
       ]
@@ -2325,12 +2606,24 @@
      {
       "row": "reportes",
       "card": true,
-      "title": "Reportes del desafío",
+      "title": "Reportes (3)",
       "cols": [
        {
-        "w": 12,
+        "w": 8,
         "stack": [
          "lista-reportes"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "btn-resolver"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "btn-descartar"
         ]
        }
       ]
@@ -2339,26 +2632,13 @@
       "row": "acciones",
       "cols": [
        {
-        "w": 3,
-        "stack": [
-         "btn-resolver"
-        ]
+        "w": 9,
+        "stack": []
        },
        {
         "w": 3,
         "stack": [
-         "btn-descartar"
-        ]
-       },
-       {
-        "w": 3,
-        "stack": [
-         "btn-anular"
-        ]
-       },
-       {
-        "w": 3,
-        "stack": [
+         "btn-anular",
          "btn-regenerar"
         ]
        }
@@ -2372,6 +2652,20 @@
      "applies": true
     },
     {
+     "name": "resolviendo",
+     "applies": true,
+     "parent_state": "default"
+    },
+    {
+     "name": "reporte ya cerrado",
+     "applies": true,
+     "parent_state": "default"
+    },
+    {
+     "name": "anulado",
+     "applies": true
+    },
+    {
      "name": "desde próximos",
      "applies": true
     },
@@ -2381,10 +2675,6 @@
     },
     {
      "name": "error de sistema",
-     "applies": true
-    },
-    {
-     "name": "terminal",
      "applies": true
     }
    ]
@@ -2679,24 +2969,10 @@
    "automatic": false
   },
   {
-   "src": "o-02-detalle-desafio",
-   "srcBlock": "btn-resolver",
-   "dst": "reportes",
-   "trigger": "Resolver",
-   "automatic": false
-  },
-  {
-   "src": "o-02-detalle-desafio",
-   "srcBlock": "btn-descartar",
-   "dst": "reportes",
-   "trigger": "Descartar",
-   "automatic": false
-  },
-  {
    "src": "o-01-anular-desafio",
    "srcBlock": "btn-anular",
    "dst": "reportes",
-   "trigger": "Confirmar anulación",
+   "trigger": "Confirmar anulación (aviso)",
    "automatic": false
   },
   {

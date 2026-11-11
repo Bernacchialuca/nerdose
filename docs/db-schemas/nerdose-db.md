@@ -255,6 +255,7 @@ Table player_stats {
 
 // ─────────────────────────── Quality ───────────────────────────
 
+// Creada por la migración 0006_challenge_reports (REQ-007, S-030), junto con los enums report_reason y report_status.
 Table challenge_reports {
   id uuid [pk, default: `gen_random_uuid()`]
   challenge_id uuid [not null, ref: > challenges.id]
@@ -441,7 +442,8 @@ Las cuatro vistas viven en migraciones de `@nerdose/db` (ADR-014). El rol `nerdo
 - `plays`: `status <> 'in_progress'` ⇒ `finished_at IS NOT NULL`.
 - `plays`: `code_language IS NULL OR game_id IN ('big-o','bug-hunt')`.
 - `player_game_stats` y `player_stats`: todos los contadores y rachas `>= 0`, `max_streak >= current_streak` y `max_global_streak >= global_streak`.
-- `challenge_reports.message IS NULL OR char_length(message) <= 1000`.
+- `challenge_reports`: `ck_reports_message_length` (`message IS NULL OR char_length(message) <= 1000`).
+- Trigger `challenge_reports_status_terminal` (BEFORE UPDATE OF status): si `OLD.status <> 'open'` y el estado cambia, error; `resolved` y `dismissed` son terminales.
 - `terms.term ~ '^[A-Z]{4,12}$'` (invariante 30).
 - `rejected_guesses.word ~ '^[A-Z]+$'`.
 - `terms`/`timeline_facts`: `status = 'rejected'` ⇒ `rejection_reason IS NOT NULL`.

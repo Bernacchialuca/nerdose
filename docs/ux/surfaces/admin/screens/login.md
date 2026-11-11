@@ -8,8 +8,8 @@ audiences:
   - responsable
 fidelity: mid
 status: diseñada
-version: "1.0"
-date: 2026-11-03
+version: "1.1"
+date: 2026-11-11
 ---
 
 # Pantalla: P-01 · Login
@@ -25,8 +25,8 @@ date: 2026-11-03
 
 **Entradas:**
 - Cualquier ruta sin token (redirección)
-- Petición con `401` (sesión vencida)
-- «Cerrar sesión» del encabezado
+- Petición con `401 unauthorized` (token vencido, ausente o malformado): borra el token y limpia los datos en memoria
+- «Cerrar sesión» del encabezado (descarta el token solo en el navegador; no hay cierre en el servidor)
 
 **Salidas user-driven:**
 - A `reportes` · «Ingresar» con credencial válida
@@ -87,9 +87,9 @@ date: 2026-11-03
 - Annotation: nada
 
 ### alerta-bloqueo
-- Texto/label: Demasiados intentos. El acceso está bloqueado temporalmente; probá de nuevo en unos minutos.
+- Texto/label: Demasiados intentos. Probá de nuevo en 12 minutos.
 - Icono: nada
-- Annotation: nada
+- Annotation: los minutos salen del `Retry-After` del `429` (redondeados hacia arriba); al vencer, el campo y el botón se habilitan solos
 
 ### alerta-sistema
 - Texto/label: No pudimos conectarnos con el servidor. Probá de nuevo.
@@ -99,7 +99,7 @@ date: 2026-11-03
 ### campo-password
 - Texto/label: Contraseña
 - Icono: lock
-- Annotation: type=password; Enter envía
+- Annotation: `type=password`, `autocomplete="current-password"`; Enter envía
 - Mensaje de error: Contraseña incorrecta.
 
 ### btn-ingresar
@@ -129,7 +129,7 @@ date: 2026-11-03
 
 ### bloqueado
 - Aplica: Sí
-- Mensaje: Demasiados intentos. El acceso está bloqueado temporalmente; probá de nuevo en unos minutos.
+- Mensaje: Demasiados intentos. Probá de nuevo en 12 minutos.
 - Cambios:
   - alerta-bloqueo: visible solo acá.
   - campo-password: state="disabled".
@@ -159,8 +159,8 @@ date: 2026-11-03
 - Credencial inválida: mensaje genérico, sin detalle (NFR-S07).
 
 **Feedback:**
-- El bloqueo informa que es temporal; no muestra tiempo restante (no está definido en el PRD).
-- Error de red se distingue de contraseña incorrecta y no cuenta como intento fallido (supuesto, a confirmar con `api`).
+- El bloqueo informa el tiempo de espera a partir del `Retry-After` y deshabilita el envío hasta entonces (REQ-007, CA 12). Durante el bloqueo no se evalúa la contraseña, aunque sea la correcta.
+- Error de red se distingue de contraseña incorrecta. Un error de red no llega a la API, así que no cuenta como intento.
 
 ## Accesibilidad
 
@@ -174,12 +174,15 @@ date: 2026-11-03
 - Un solo campo, sin «usuario»: es una contraseña única (C-38).
 - Avisos como alertas inline sobre el campo, no como modal: el login es la pantalla de destino de la sesión vencida.
 
+- REQ-007: la sesión dura 8 h y vive en `sessionStorage` (se pierde al cerrar la pestaña); el login lleva siempre a `reportes` (resuelve la pregunta 3 del product-map: no se conserva la ruta ni el borrador).
+- REQ-007: el bloqueo muestra los minutos de espera, porque la API los informa (`Retry-After`) y así el responsable no prueba de nuevo a ciegas.
+
 **Alternativas descartadas:**
 - Volver a la ruta anterior tras el login: no definido, el login lleva siempre a `reportes` (pregunta abierta 3 del product-map).
 
 **Preguntas abiertas:**
-- ¿Mostrar el tiempo restante del bloqueo? El PRD no lo define.
+- Ninguna propia de esta pantalla.
 
 ## Trazabilidad
 
-- C-38, NFR-S07 · flujo 1 de `user-flows.md`.
+- C-38, NFR-S07 · REQ-007 (RF 5, 12; CA 10-13) · flujo 1 de `user-flows.md`.
