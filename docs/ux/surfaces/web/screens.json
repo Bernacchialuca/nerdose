@@ -2205,7 +2205,15 @@
             "loading",
             "error de sistema"
           ],
-          "annotation": "O-01 llega con FG-6: hasta entonces no se renderiza. Si ya reportó muestra «Ya reportado» (`already_reported`)"
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) con el aviso de no incluir la respuesta; visible también en `anulado`",
+          "state_overrides": {
+            "ya reportado": {
+              "content": "Ya reportaste este desafío",
+              "state": "disabled",
+              "icon": "check",
+              "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
+            }
+          }
         },
         {
           "name": "loader",
@@ -2373,6 +2381,11 @@
           "applies": true
         },
         {
+          "name": "ya reportado",
+          "applies": true,
+          "parent_state": "default"
+        },
+        {
           "name": "loading",
           "applies": true
         },
@@ -2428,7 +2441,7 @@
           "visible_only_in_states": [
             "anulado"
           ],
-          "annotation": "la anulación llega con FG-6; en REQ-004 solo se respeta el estado al leer"
+          "annotation": "`banner` `warning` del DS; se muestra con la Play `voided` (`challenge_status: voided`). Variante mínima: aviso + rachas"
         },
         {
           "name": "grilla-resultado",
@@ -2492,7 +2505,15 @@
             "loading",
             "error de sistema"
           ],
-          "annotation": "O-01 llega con FG-6: hasta entonces no se renderiza. Si ya reportó muestra «Ya reportado» (`already_reported`)"
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) sin el aviso de spoilers; visible también en `anulado` (C-36 acepta desafíos `voided`)",
+          "state_overrides": {
+            "ya reportado": {
+              "content": "Ya reportaste este desafío",
+              "state": "disabled",
+              "icon": "check",
+              "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
+            }
+          }
         },
         {
           "name": "cuenta-regresiva",
@@ -2670,6 +2691,11 @@
         {
           "name": "success",
           "applies": true
+        },
+        {
+          "name": "ya reportado",
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "loading",
@@ -5130,7 +5156,15 @@
             "loading",
             "error de sistema"
           ],
-          "annotation": "no se renderiza hasta FG-6"
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) con el aviso de no incluir la respuesta; visible también en `anulado`",
+          "state_overrides": {
+            "ya reportado": {
+              "content": "Ya reportaste este desafío",
+              "state": "disabled",
+              "icon": "check",
+              "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
+            }
+          }
         },
         {
           "name": "loader",
@@ -5252,6 +5286,11 @@
           "applies": true
         },
         {
+          "name": "ya reportado",
+          "applies": true,
+          "parent_state": "default"
+        },
+        {
           "name": "loading",
           "applies": true
         },
@@ -5363,7 +5402,7 @@
           "visible_only_in_states": [
             "anulado"
           ],
-          "annotation": "la anulación llega con FG-6"
+          "annotation": "`banner` `warning` del DS; se muestra con la Play `voided` (`challenge_status: voided`). Variante mínima: aviso + rachas"
         },
         {
           "name": "lista-tu-orden",
@@ -5518,7 +5557,15 @@
             "loading",
             "error de sistema"
           ],
-          "annotation": "no se renderiza hasta FG-6"
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) sin el aviso de spoilers; visible también en `anulado` (C-36 acepta desafíos `voided`)",
+          "state_overrides": {
+            "ya reportado": {
+              "content": "Ya reportaste este desafío",
+              "state": "disabled",
+              "icon": "check",
+              "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
+            }
+          }
         },
         {
           "name": "cuenta-regresiva",
@@ -5722,6 +5769,11 @@
         {
           "name": "success",
           "applies": true
+        },
+        {
+          "name": "ya reportado",
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "loading",
@@ -6266,7 +6318,15 @@
             "loading",
             "error de sistema"
           ],
-          "annotation": "O-01 llega con FG-6: hasta entonces no se renderiza. Si ya reportó muestra «Ya reportado» (`already_reported`)"
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) con el aviso de no incluir la respuesta; visible también en `anulado`",
+          "state_overrides": {
+            "ya reportado": {
+              "content": "Ya reportaste este desafío",
+              "state": "disabled",
+              "icon": "check",
+              "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
+            }
+          }
         },
         {
           "name": "loader",
@@ -6414,6 +6474,11 @@
           "applies": true
         },
         {
+          "name": "ya reportado",
+          "applies": true,
+          "parent_state": "default"
+        },
+        {
           "name": "loading",
           "applies": true
         },
@@ -6488,7 +6553,7 @@
           "visible_only_in_states": [
             "anulado"
           ],
-          "annotation": "la anulación llega con FG-6; en REQ-005 solo se respeta el estado al leer"
+          "annotation": "`banner` `warning` del DS; se muestra con la Play `voided` (`challenge_status: voided`). Variante mínima: aviso + rachas"
         },
         {
           "name": "grilla-final",
@@ -6614,7 +6679,15 @@
             "loading",
             "error de sistema"
           ],
-          "annotation": "O-01 llega con FG-6: hasta entonces no se renderiza. Si ya reportó muestra «Ya reportado» (`already_reported`)"
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) sin el aviso de spoilers; visible también en `anulado` (C-36 acepta desafíos `voided`)",
+          "state_overrides": {
+            "ya reportado": {
+              "content": "Ya reportaste este desafío",
+              "state": "disabled",
+              "icon": "check",
+              "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
+            }
+          }
         },
         {
           "name": "cuenta-regresiva",
@@ -6816,6 +6889,11 @@
           "applies": true
         },
         {
+          "name": "ya reportado",
+          "applies": true,
+          "parent_state": "default"
+        },
+        {
           "name": "loading",
           "applies": true
         },
@@ -6840,17 +6918,20 @@
           "type": "header",
           "category": "layout",
           "content": "Reportar un problema",
-          "icon": "close"
+          "icon": "close",
+          "annotation": "`h2` del `dialog`; debajo «Devdle #8»"
         },
         {
           "name": "aviso-partida",
           "type": "alert",
           "category": "feedback",
-          "content": "No incluyas la respuesta si todavía estás jugando.",
           "kind": "warning",
+          "icon": "warning",
+          "content": "No incluyas la respuesta si todavía estás jugando.",
           "visible_only_in_states": [
             "desde partida"
-          ]
+          ],
+          "annotation": "`banner` `warning` del DS"
         },
         {
           "name": "dd-motivo",
@@ -6866,59 +6947,107 @@
             "Error de visualización",
             "Otro"
           ],
+          "hidden_in_states": [
+            "success",
+            "ya reportado"
+          ],
           "state_overrides": {
             "motivo abierto": {
               "state": "open"
+            },
+            "error de validación": {
+              "state": "error",
+              "error_msg": "Elegí un motivo para enviar el reporte.",
+              "annotation": "Elegí un motivo para enviar el reporte."
             }
-          }
+          },
+          "annotation": "`select` nativo con label visible, sin opción preseleccionada"
         },
         {
           "name": "txt-mensaje",
           "type": "textarea",
           "category": "input",
-          "content": "Contanos qué pasa (opcional, máx. 1000 caracteres)",
+          "label": "Contanos qué pasa (opcional)",
+          "content": "Ej.: la definición no corresponde a la palabra",
           "h": 90,
-          "label": "Mensaje"
+          "hidden_in_states": [
+            "success",
+            "ya reportado"
+          ],
+          "state_overrides": {
+            "mensaje largo": {
+              "state": "error",
+              "value": "La definición en inglés dice otra cosa y además…",
+              "error_msg": "El mensaje puede tener hasta 1000 caracteres.",
+              "annotation": "El mensaje puede tener hasta 1000 caracteres."
+            }
+          },
+          "annotation": "`maxlength=1000`; se envía tal cual (sin formato)"
         },
         {
-          "name": "alerta-validacion",
-          "type": "alert",
+          "name": "contador",
+          "type": "paragraph",
           "category": "feedback",
-          "content": "Elegí un motivo para enviar el reporte.",
-          "kind": "error",
-          "visible_only_in_states": [
-            "error de validación"
-          ]
+          "level": "caption",
+          "content": "0 / 1000",
+          "hidden_in_states": [
+            "success",
+            "ya reportado"
+          ],
+          "state_overrides": {
+            "mensaje largo": {
+              "content": "1000 / 1000"
+            }
+          },
+          "annotation": "`aria-live=polite` solo al pasar de 900"
         },
         {
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos enviar el reporte. Probá de nuevo.",
           "kind": "error",
+          "content": "No pudimos enviar el reporte. Probá de nuevo.",
           "visible_only_in_states": [
-            "error de sistema"
-          ]
+            "error de sistema",
+            "límite de reportes"
+          ],
+          "state_overrides": {
+            "límite de reportes": {
+              "content": "Se enviaron muchos reportes desde esta conexión. Probá de nuevo más tarde.",
+              "annotation": "`429`, 10 por IP por hora"
+            }
+          },
+          "annotation": "el formulario conserva el motivo y el mensaje para reintentar"
         },
         {
           "name": "alerta-exito",
           "type": "alert",
           "category": "feedback",
-          "content": "Gracias, recibimos tu reporte.",
           "kind": "success",
+          "icon": "check",
+          "content": "Gracias, recibimos tu reporte.",
           "visible_only_in_states": [
-            "success"
-          ]
+            "success",
+            "ya reportado"
+          ],
+          "state_overrides": {
+            "ya reportado": {
+              "content": "Ya reportaste este desafío. Lo vamos a revisar.",
+              "annotation": "`409 already_reported` (por ejemplo, desde otra pestaña)"
+            }
+          },
+          "annotation": "Lo vamos a revisar. Si el desafío tenía un error, se anula y tu racha no se ve afectada."
         },
         {
           "name": "btn-enviar",
           "type": "button",
           "category": "input",
-          "content": "Enviar reporte",
           "variant": "primary",
+          "content": "Enviar reporte",
           "icon": "check",
           "hidden_in_states": [
-            "success"
+            "success",
+            "ya reportado"
           ],
           "state_overrides": {
             "loading": {
@@ -6931,8 +7060,16 @@
           "name": "btn-cancelar",
           "type": "button",
           "category": "input",
+          "variant": "tertiary",
           "content": "Cancelar",
-          "variant": "tertiary"
+          "state_overrides": {
+            "success": {
+              "content": "Cerrar"
+            },
+            "ya reportado": {
+              "content": "Cerrar"
+            }
+          }
         },
         {
           "name": "footer",
@@ -6946,7 +7083,7 @@
           "aviso-partida",
           "dd-motivo",
           "txt-mensaje",
-          "alerta-validacion",
+          "contador",
           "alerta-sistema",
           "alerta-exito",
           "btn-enviar",
@@ -6966,11 +7103,26 @@
                   "aviso-partida",
                   "dd-motivo",
                   "txt-mensaje",
-                  "alerta-validacion",
+                  "contador",
                   "alerta-sistema",
                   "alerta-exito",
-                  "btn-enviar",
-                  "btn-cancelar"
+                  {
+                    "row": "acciones",
+                    "cols": [
+                      {
+                        "w": 6,
+                        "stack": [
+                          "btn-cancelar"
+                        ]
+                      },
+                      {
+                        "w": 6,
+                        "stack": [
+                          "btn-enviar"
+                        ]
+                      }
+                    ]
+                  }
                 ]
               },
               {
@@ -6988,11 +7140,18 @@
         },
         {
           "name": "desde partida",
-          "applies": true
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "motivo abierto",
-          "applies": true
+          "applies": true,
+          "parent_state": "default"
+        },
+        {
+          "name": "mensaje largo",
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "loading",
@@ -7007,7 +7166,15 @@
           "applies": true
         },
         {
+          "name": "límite de reportes",
+          "applies": true
+        },
+        {
           "name": "success",
+          "applies": true
+        },
+        {
+          "name": "ya reportado",
           "applies": true
         }
       ]
@@ -7033,44 +7200,54 @@
           "name": "texto",
           "type": "paragraph",
           "category": "content",
-          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
-          "level": "body"
+          "level": "body",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada."
         },
         {
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos marcar el desafío como completado. Probá de nuevo.",
           "kind": "error",
+          "content": "No pudimos marcar el desafío como completado. Probá de nuevo.",
           "visible_only_in_states": [
             "error de sistema"
           ]
         },
         {
+          "name": "aviso-racha",
+          "type": "paragraph",
+          "category": "content",
+          "level": "caption",
+          "content": "Marcarlo suma el día a tu racha de este juego y a la global, sin contar como partida jugada.",
+          "annotation": "C-42: suma a rachas y `total_completed`, no a `played`, `wins` ni stats propias"
+        },
+        {
           "name": "btn-marcar",
           "type": "button",
           "category": "input",
-          "content": "Marcar como completado",
           "variant": "primary",
+          "content": "Marcar como completado",
           "icon": "check",
           "state_overrides": {
             "loading": {
               "variant": "disabled",
               "content": "Marcando…"
             }
-          }
+          },
+          "annotation": "idempotente: si ya existe la Play, devuelve la misma"
         },
         {
           "name": "btn-cerrar",
           "type": "button",
           "category": "input",
-          "content": "Cerrar",
-          "variant": "tertiary"
+          "variant": "tertiary",
+          "content": "Cerrar"
         }
       ],
       "layouts": {
         "mobile": [
           "texto",
+          "aviso-racha",
           "alerta-sistema",
           "btn-marcar",
           "btn-cerrar"
@@ -7087,9 +7264,25 @@
                 "w": 6,
                 "stack": [
                   "texto",
+                  "aviso-racha",
                   "alerta-sistema",
-                  "btn-marcar",
-                  "btn-cerrar"
+                  {
+                    "row": "acciones",
+                    "cols": [
+                      {
+                        "w": 6,
+                        "stack": [
+                          "btn-cerrar"
+                        ]
+                      },
+                      {
+                        "w": 6,
+                        "stack": [
+                          "btn-marcar"
+                        ]
+                      }
+                    ]
+                  }
                 ]
               },
               {
@@ -7878,6 +8071,12 @@
       "dst": "home",
       "trigger": "Reintentar",
       "automatic": false
+    },
+    {
+      "src": "o-02-anulado",
+      "dst": "devdle-instrucciones",
+      "trigger": "409 challenge_expired: desafío de hoy",
+      "automatic": true
     }
   ]
 }

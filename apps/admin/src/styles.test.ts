@@ -5,23 +5,28 @@ import { describe, expect, it } from 'vitest';
 
 const srcDir = fileURLToPath(new URL('.', import.meta.url));
 
-function tsxFiles(dir: string): string[] {
+function sourceFiles(dir: string, exts: string[]): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     const full = `${dir}${entry.name}`;
-    if (entry.isDirectory()) return tsxFiles(`${full}/`);
-    return entry.name.endsWith('.tsx') ? [full] : [];
+    if (entry.isDirectory()) return sourceFiles(`${full}/`, exts);
+    return exts.some((e) => entry.name.endsWith(e)) ? [full] : [];
   });
 }
+
+const tsxFiles = (dir: string) => sourceFiles(dir, ['.tsx']);
+const isTest = (file: string) => /\.test\.tsx?$/.test(file) || file.includes('/test/');
 
 describe('index.css', () => {
   const css = readFileSync(`${srcDir}index.css`, 'utf8');
 
-  it('importa Tailwind, los tokens de @nerdose/ui y JetBrains Mono en orden', () => {
+  it('importa Tailwind, los tokens de @nerdose/ui JetBrains Mono e Inter en orden', () => {
     const imports = [
       "@import 'tailwindcss';",
       "@import '@nerdose/ui/tokens.css';",
       "@import '@fontsource/jetbrains-mono/400.css';",
       "@import '@fontsource/jetbrains-mono/500.css';",
+      "@import '@fontsource/inter/400.css';",
+      "@import '@fontsource/inter/700.css';",
       "@import '@fontsource/jetbrains-mono/700.css';",
     ];
     const positions = imports.map((i) => css.indexOf(i));
@@ -42,6 +47,36 @@ describe('componentes', () => {
       const content = readFileSync(file, 'utf8');
       expect(content, file).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
       expect(content, file).not.toContain('[#');
+    }
+  });
+});
+
+describe('guardas estáticas del código de producción', () => {
+  const files = sourceFiles(srcDir, ['.ts', '.tsx']).filter((f) => !isTest(f));
+  const tsx = files.filter((f) => f.endsWith('.tsx'));
+
+  it('los .tsx no usan valores arbitrarios ni clases fuera de los tokens', () => {
+    for (const file of tsx) {
+      const content = readFileSync(file, 'utf8');
+      expect(content, file).not.toMatch(/\[(\d|#|rgb)/);
+      for (const forbidden of ['rounded-md', 'shadow-md', 'text-2xl', 'font-semibold']) {
+        expect(content, file).not.toContain(forbidden);
+      }
+    }
+  });
+
+  it('nunca inserta HTML ni usa localStorage', () => {
+    for (const file of files) {
+      const content = readFileSync(file, 'utf8');
+      expect(content, file).not.toContain('dangerouslySetInnerHTML');
+      expect(content, file).not.toContain('localStorage');
+    }
+  });
+
+  it('no importa paquetes ni apps prohibidos', () => {
+    for (const file of files) {
+      const content = readFileSync(file, 'utf8');
+      expect(content, file).not.toMatch(/from '(@nerdose\/db|@nerdose\/game-|[^']*apps\/web)/);
     }
   });
 });

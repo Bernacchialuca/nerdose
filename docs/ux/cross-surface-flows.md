@@ -1,7 +1,7 @@
 ---
 document: UX Cross-Surface Flows
-version: "1.0"
-date: 2026-11-03
+version: "1.1"
+date: 2026-11-11
 status: Draft - Punto de partida para discusión
 flows_count: 2
 ---
@@ -32,16 +32,17 @@ flows_count: 2
 
 **Secuencia:**
 
-1. **[web]** El jugador abre el formulario de reporte (overlay), elige el motivo y envía. El reporte queda `open`.
-2. **[admin]** El reporte aparece en `/reports`, agrupado por desafío y ordenado por cantidad. Si se alcanza el umbral, el grupo queda marcado como alertado y se ordena primero (C-37, ADR-017). No hay mail: la alerta solo existe en el admin.
-3. **[admin]** El responsable abre el detalle del desafío (solución en ES y EN, motivos, mensajes), confirma el error y lo anula con motivo y culpable.
-4. **[web]** Al abrir el juego, la home y la pantalla del juego muestran el estado "anulado" con el aviso "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada". Si el jugador no tenía partida, puede tocar "Marcar como completado" (C-42).
+1. **[web]** El jugador abre el formulario de reporte (O-01) desde la partida o el resultado, elige el motivo y envía. El reporte queda `open` y el enlace pasa a "Ya reportaste este desafío".
+2. **[admin]** El reporte aparece en `/reports`, agrupado por desafío: alertados primero, luego por cantidad y luego por fecha. Si se alcanza el umbral, el grupo queda marcado como alertado (C-37, ADR-017). No hay mail: la alerta solo existe en el admin, con el contador del encabezado.
+3. **[admin]** El responsable abre el detalle del desafío (solución en ES y EN, log, motivos, mensajes), confirma el error y lo anula con motivo y culpable elegido de la lista del desafío. El admin confirma cuántas partidas se afectaron.
+4. **[web]** Al abrir el juego, la home y la pantalla del juego muestran el estado "anulado" con el aviso "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada". Si el jugador no tenía partida, puede tocar "Marcar como completado" (C-42); si ya había jugado, ve el resultado anulado (aviso + rachas, sin solución) con sus estadísticas recalculadas.
 5. **[web]** Si el jugador tenía una partida en curso y hace una jugada, recibe `challenge_voided` y la pantalla pasa al estado anulado.
 
 **Sincronización:**
 - **Tipo:** Manual / bajo demanda: la web no recibe push; consulta el estado al cargar la home o el juego, o al hacer una jugada.
 - **Latencia esperada:** hasta la próxima carga o jugada del jugador. El estado del lado del servidor cambia en el momento de anular.
-- **Qué se comparte:** reporte (motivo, mensaje, contexto), estado del desafío (`published` → `voided`), Play pasadas a `voided`, rachas recalculadas.
+- **Qué se comparte:** reporte (motivo, mensaje, contexto), alerta (`alerted_at`), estado del desafío (`published` → `voided`), Play pasadas a `voided`, agregados recalculados, ítem culpable `rejected`.
+- **Implementado por:** REQ-007.
 
 **Estados intermedios:**
 

@@ -1,8 +1,8 @@
 ---
 document: UX Product Map
 surface: admin
-version: "1.0"
-date: 2026-11-03
+version: "1.1"
+date: 2026-11-11
 status: Draft - Punto de partida para discusión
 audiences: [responsable]
 ---
@@ -24,8 +24,8 @@ Viewport: `desktop` (único). No hay caso mobile relevado (ver pregunta abierta 
 
 | # | Pantalla | Slug / ruta | Propósito | Audiencia primaria | Viewports | Referencia PRD |
 |---|----------|-------------|-----------|---------------------|-----------|----------------|
-| P-01 | Login | `login` · `/login` | Ingresar con la contraseña única; muestra el motivo si volvió por sesión vencida o por límite de intentos | responsable | solo desktop | C-38, NFR-S07 |
-| P-02 | Reportes | `reportes` · `/reports` | Cola de reportes agrupados por desafío (más reportado primero), filtro por estado (default `open`), resolver, descartar y acceder a anular | responsable | solo desktop | C-39, C-40, C-41 |
+| P-01 | Login | `login` · `/login` | Ingresar con la contraseña única; muestra el motivo si volvió por sesión vencida o por límite de intentos (con los minutos de espera) | responsable | solo desktop | C-38, NFR-S07, REQ-007 |
+| P-02 | Reportes | `reportes` · `/reports` | Cola de reportes agrupados por desafío (alertados primero, luego más reportados, luego más recientes; sin paginación en v1), filtro por estado (abiertos / resueltos / descartados; default `open`), acceso al detalle y a anular; aviso de anulación confirmada | responsable | solo desktop | C-37, C-39, C-40, C-41, REQ-007 |
 | P-03 | Próximos desafíos | `proximos-desafios` · `/upcoming` | Grilla de 14 días × 5 juegos con estado por celda (aprobado, sin desafío, regeneración pendiente) y acceso a regenerar | responsable | solo desktop | C-43, C-44 |
 | P-04 | Stock de contenido | `stock-contenido` · `/content` | Salud de los bancos (términos y hechos), última carga del dataset y top 50 de palabras rechazadas en Devdle; solo lectura | responsable | solo desktop | C-45 |
 | P-05 | Métricas | `metricas` · `/metrics` | Rango de fechas, cifras resumen y tablas: jugadores únicos, retención D1/D7, distribución de rachas, calidad por desafío | responsable | solo desktop | C-46 |
@@ -40,8 +40,8 @@ Viewport: `desktop` (único). No hay caso mobile relevado (ver pregunta abierta 
 
 | # | Overlay | Slug | Tipo | Trigger | Propósito |
 |---|---------|------|------|---------|-----------|
-| O-01 | Anular desafío | `anular-desafio` | modal | P-02 · acción "Anular" del grupo de reportes y de O-02 | Formulario `void_reason` (req) + culpable `kind` (term / timeline_fact / template / none) y `id` (req si term o timeline_fact), con resumen de consecuencias irreversibles antes de confirmar. Solo si el desafío está `published` (C-41) |
-| O-02 | Detalle del desafío | `detalle-desafio` | drawer ancho (panel lateral) | P-02 · fila del grupo de reportes; P-03 · celda de juego/día | Preview del `client` del juego en modo solución, ES y EN lado a lado, log de verificación; desde P-02 suma motivos, mensajes y contexto de cada reporte y las acciones resolver/descartar/anular; desde P-03 suma la acción regenerar |
+| O-01 | Anular desafío | `anular-desafio` | modal | P-02 · acción "Anular" del grupo de reportes y de O-02 | Formulario `void_reason` (req, máx. 500) + culpable elegido de una lista con los ítems del propio desafío (`culprits`: términos o hechos por nombre), "La plantilla del juego" o "Ninguno"; sin tipear ids (REQ-007). Resumen de consecuencias irreversibles que nombra el ítem a rechazar. Avisos propios para `not_voidable` e `invalid_culprit`. Solo si el desafío está `published` (C-41) |
+| O-02 | Detalle del desafío | `detalle-desafio` | drawer ancho (panel lateral) | P-02 · fila del grupo de reportes; P-03 · celda de juego/día | Solución completa ES y EN lado a lado y log de verificación. Hasta FG-7 la solución se muestra con una vista genérica del `payload` (`PayloadView`, REQ-007); FG-7 la reemplaza por la preview del `client` en modo solución. Desde P-02 suma cada reporte (motivo, mensaje en texto plano, idioma, contexto, `player_ref`, fecha) con resolver/descartar **por reporte**, y "Anular desafío"; desde P-03 suma la acción regenerar |
 | O-03 | Regenerar desafío | `regenerar-desafio` | modal | P-03 · acción "Regenerar" de la celda y de O-02 | Confirma el pedido de regeneración (solo `approved` con fecha > hoy); al confirmar, la celda pasa a "regeneración pendiente" y P-03 inicia polling hasta que el reemplazo pasa la verificación o falla (queda el actual) |
 
 > **Sesión vencida: no es un overlay.** NFR-S07 y C-38 definen que un token vencido devuelve al login. Se resuelve como estado global (ver abajo) con aviso en P-01, no como modal sobre la pantalla vigente.
@@ -52,7 +52,7 @@ Viewport: `desktop` (único). No hay caso mobile relevado (ver pregunta abierta 
 
 ### Navegación principal
 
-Barra superior fija (encabezado único, sin sidebar), visible en P-02 a P-05:
+Barra superior fija (encabezado único, sin sidebar), visible en P-02 a P-05. **REQ-007 entrega solo Reportes y Cerrar sesión**; Próximos y Stock se suman con FG-7 y Métricas con FG-10:
 
 - **Reportes** → P-02 (destino de `/`)
 - **Próximos** → P-03
@@ -60,7 +60,7 @@ Barra superior fija (encabezado único, sin sidebar), visible en P-02 a P-05:
 - **Métricas** → P-05
 - **Cerrar sesión** (acción) → borra el token y va a P-01
 
-Las etiquetas del encabezado y de los títulos de pantalla son idénticas (uso esporádico, consistencia entre secciones). Reportes lleva un contador de grupos abiertos (hipótesis: como no hay alertas por mail, el contador es el aviso; a validar).
+Las etiquetas del encabezado y de los títulos de pantalla son idénticas (uso esporádico, consistencia entre secciones). Reportes lleva un contador de grupos con reportes abiertos: como no hay alertas por mail (ADR-017), el contador es el aviso (REQ-007).
 
 ### Navegación secundaria
 
@@ -95,8 +95,8 @@ O-02 es un solo componente con dos orígenes (P-02 y P-03): misma vista del desa
 ## Estados Globales
 
 - **Autenticado vs no autenticado** — Todo salvo P-01 requiere sesión. Sin token, o ante un `401`, se borra el token de `sessionStorage` y se redirige a P-01.
-- **Sesión vencida** — Token de 8 h expirado: vuelve a P-01 con aviso "La sesión venció, ingresá de nuevo". Se pierde el contexto de la pantalla y cualquier formulario abierto (ver pregunta abierta 3).
-- **Login bloqueado** — 5 intentos por IP cada 15 min: P-01 informa el bloqueo temporal y deshabilita el envío.
+- **Sesión vencida** — Token de 8 h expirado, ausente o malformado (`401 unauthorized`): borra el token, limpia los datos en memoria y vuelve a P-01 con aviso "La sesión venció, ingresá de nuevo". Se pierde el contexto de la pantalla y cualquier formulario abierto; el login lleva siempre a P-02 (pregunta abierta 3, resuelta por REQ-007).
+- **Login bloqueado** — 5 intentos por IP cada 15 min: P-01 informa los minutos de espera (`Retry-After`) y deshabilita el envío hasta entonces.
 - **Regeneración pendiente** — Mientras exista algún `pending_request` en P-03, la pantalla hace polling (5 s sugerido, a confirmar) y marca la celda; el resultado reemplaza el desafío o deja el actual si falla.
 - **Sin datos / vacío** — Reportes sin abiertos, rango de métricas sin Play, celdas sin desafío en P-03: cada pantalla distingue "no hay nada" de "error de carga".
 
@@ -125,15 +125,15 @@ flowchart TD
 
 ## Preguntas Abiertas
 
-1. **¿El responsable necesita saber que hay reportes o fallas sin abrir Reportes (contador en el encabezado, aviso de generación fallida, días sin desafío)?**
+1. **¿El responsable necesita saber que hay reportes o fallas sin abrir Reportes (contador en el encabezado, aviso de generación fallida, días sin desafío)?** — **Parcialmente resuelta por REQ-007:** el encabezado lleva el contador de grupos con reportes abiertos y los alertados van primero en P-02. El aviso de fallas de generación queda para FG-7.
    - Si sí: agregar indicadores globales en el encabezado (reportes alertados, fallas de generación en los próximos 14 días) y estado global "alerta activa". Con el ADR-017 las alertas solo existen en el admin, así que este es el único aviso.
    - Si no: el encabezado es solo navegación; las alertas se ven solo dentro de Reportes y Próximos desafíos.
 
-2. **¿Hace falta ver el log de verificación y el detalle de culpables desde Reportes, o alcanza con solución y textos ES/EN?**
+2. ~~**¿Hace falta ver el log de verificación y el detalle de culpables desde Reportes, o alcanza con solución y textos ES/EN?**~~ **Resuelta por REQ-007:** O-02 muestra el log en ambos orígenes y O-01 ofrece los culpables del propio desafío (`culprits`) por nombre.
    - Si hace falta el log en P-02: O-02 muestra el mismo bloque de log en ambos orígenes y el selector de culpable de O-01 se alimenta desde el desafío (term o hecho ya identificado).
    - Si no: O-02 desde Reportes se reduce a solución, ES/EN y reportes; el log solo vive en el origen P-03.
 
-3. **¿Qué pasa con una anulación o regeneración en curso cuando la sesión vence (401)?**
+3. ~~**¿Qué pasa con una anulación o regeneración en curso cuando la sesión vence (401)?**~~ **Resuelta por REQ-007:** se descarta. El login siempre lleva a P-02 y el responsable verifica el estado del desafío antes de repetir (la anulación es atómica: o se aplicó completa o no se aplicó).
    - Si se conserva el borrador (motivo y culpable): agregar estado "sesión vencida con retorno" y volver a la misma ruta tras el login.
    - Si se descarta: el login siempre lleva a P-02; más simple, pero el motivo escrito se pierde (la anulación es irreversible, el riesgo es el reintento, no el dato).
 

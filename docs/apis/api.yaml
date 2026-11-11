@@ -550,6 +550,7 @@ paths:
       description: |
         F6, C-42. Para un jugador sin Play en el desafío anulado de hoy: crea una Play `voided`
         (`finished_at = now()`), `ON CONFLICT DO NOTHING`, y actualiza rachas y `total_completed`.
+        Es idempotente: con Play existente devuelve `play: { status: voided }` y las rachas vivas sin volver a sumar.
 
         Rate limit: 30 / min por `player_id`.
       operationId: acknowledgeVoid
@@ -589,10 +590,11 @@ paths:
   /api/games/{game_id}/today/report:
     post:
       tags: [Reports]
-      summary: Reportar un problema con el desafío de hoy
+      summary: Reportar un problema con un desafío publicado o anulado
       description: |
-        F5, C-36, C-37. Solo sobre desafíos de hoy `published` o `voided`. Guarda `context`
-        (`code_language`, `play_status`, `play_state`, `user_agent`) y `locale`. Uno por jugador y desafío.
+        F5, C-36, C-37. Solo sobre un desafío `published` o `voided` de ese juego, de hoy o de un día pasado,
+        identificado por `challenge_number`. `context` lo arma el servidor (`code_language`, `play_status`,
+        `play_state`, `user_agent`) y `locale`. Uno por jugador y desafío.
 
         Si se alcanza el umbral (`REPORT_ALERT_COUNT` = 3, o `REPORT_ALERT_RATIO_MIN_COUNT` = 2 y
         > `REPORT_ALERT_RATIO` = 5% de las Play terminadas, contando solo `wrong_answer`/`ambiguous`) y
@@ -624,9 +626,9 @@ paths:
               example: { report_id: 3f6c1d2e-8a4b-4c1f-9e2a-7b5d0c9e1a23 }
         '401': { $ref: '#/components/responses/NoSession' }
         '403': { $ref: '#/components/responses/ForbiddenOrigin' }
-        '404': { $ref: '#/components/responses/NoChallengeToday' }
+        '404': { $ref: '#/components/responses/NotFound' }
         '409':
-          description: '`already_reported` o `challenge_expired`'
+          description: '`already_reported`'
           content:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
@@ -821,7 +823,11 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
               example: { error: { code: not_voidable, message: 'Solo se puede anular un desafío publicado' } }
-        '422': { $ref: '#/components/responses/ValidationError' }
+        '422':
+          description: '`validation_error` (body inválido) o `invalid_culprit` (el culpable no pertenece al desafío)'
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
 
   /api/admin/challenges/upcoming:
     get:
@@ -1147,6 +1153,7 @@ components:
                 - invalid_move
                 - not_in_word_list
                 - invalid_report
+                - invalid_culprit
                 - validation_error
                 - rate_limited
                 - internal_error
@@ -1674,7 +1681,7 @@ components:
     # ─────────── Gameplay: responses ───────────
     GameToday:
       type: object
-      required: [game_id, date, number, challenge_status, public_view, play, result, game_stats]
+      required: [game_id, date, number, challenge_status, public_view, play, result, game_stats, reported]
       properties:
         game_id: { $ref: '#/components/schemas/GameId' }
         date: { type: string, format: date }
@@ -1691,13 +1698,17 @@ components:
         play:
           allOf: [ { $ref: '#/components/schemas/PlayView' } ]
           nullable: true
+          description: 'Con `challenge_status: voided` viene la Play del jugador si existe (`status: voided`)'
         result:
           allOf: [ { $ref: '#/components/schemas/Result' } ]
           nullable: true
         game_stats:
           allOf: [ { $ref: '#/components/schemas/GameStatsView' } ]
           nullable: true
-          description: Solo si la Play terminó
+          description: Si la Play terminó o está `voided`
+        reported:
+          type: boolean
+          description: El jugador ya reportó este desafío; false sin sesión
 
     MoveResponse:
       type: object
@@ -1742,7 +1753,9 @@ components:
         challenge_number: { type: integer, minimum: 1 }
         reason: { $ref: '#/components/schemas/ReportReason' }
         message: { type: string, maxLength: 1000 }
-        code_language: { $ref: '#/components/schemas/CodeLanguage' }
+        code_language:
+          allOf: [ { $ref: '#/components/schemas/CodeLanguage' } ]
+          description: Solo big-o y bug-hunt; si la Play tiene `code_language`, manda la Play
 
     # ─────────── Stats ───────────
     GameStatsView:
@@ -1822,7 +1835,7 @@ components:
 
     AdminChallenge:
       type: object
-      required: [id, game_id, date, number, status, payload, verification]
+      required: [id, game_id, date, number, status, payload, verification, void_reason, voided_at, culprits]
       properties:
         id: { type: string, format: uuid }
         game_id: { $ref: '#/components/schemas/GameId' }
@@ -1837,10 +1850,22 @@ components:
           type: object
           additionalProperties: true
           description: '`challenges.verification`: log de la verificación'
+        void_reason: { type: string, nullable: true }
+        voided_at: { type: string, format: date-time, nullable: true }
+        culprits:
+          type: array
+          description: Ítems de banco referenciados por el desafío (`GameDefinition.culprits`)
+          items:
+            type: object
+            required: [kind, id, label]
+            properties:
+              kind: { type: string, enum: [term, timeline_fact] }
+              id: { type: string, format: uuid }
+              label: { type: string }
 
     AdminReport:
       type: object
-      required: [id, reason, message, locale, context, status, created_at]
+      required: [id, reason, message, locale, context, status, created_at, player_ref]
       properties:
         id: { type: string, format: uuid }
         reason: { $ref: '#/components/schemas/ReportReason' }
@@ -1852,9 +1877,14 @@ components:
           additionalProperties: true
         status: { $ref: '#/components/schemas/ReportStatus' }
         created_at: { type: string, format: date-time }
+        player_ref:
+          type: string
+          pattern: '^[0-9a-f]{8}$'
+          description: Primeros 8 hex de sha256(player_id); identifica al jugador sin exponer el nd_pid
 
     ReportGroup:
       type: object
+      description: Orden, `alerted_at` no nulo primero, `report_count` desc, `challenge.date` desc. `report_count` y `reasons` cuentan solo los reportes del estado filtrado
       required: [challenge, alerted_at, report_count, reasons, reports]
       properties:
         challenge: { $ref: '#/components/schemas/AdminChallenge' }
@@ -1877,7 +1907,7 @@ components:
       type: object
       required: [void_reason, culprit]
       properties:
-        void_reason: { type: string, minLength: 1 }
+        void_reason: { type: string, minLength: 1, maxLength: 500, description: Se aplica trim }
         culprit:
           type: object
           required: [kind]
@@ -1889,7 +1919,7 @@ components:
             id:
               type: string
               format: uuid
-              description: Obligatorio si `kind` es `term` o `timeline_fact`
+              description: Obligatorio si `kind` es `term` o `timeline_fact`, prohibido si no; debe estar en `AdminChallenge.culprits`
 
     UpcomingDay:
       type: object

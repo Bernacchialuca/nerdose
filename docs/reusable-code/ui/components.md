@@ -38,6 +38,12 @@ Components hold no visible text of their own (ADR-002): all text comes in throug
 - **Signature:** `Card(props: CardProps)` (discriminated by `variant`; see `CardProps`)
 - **Usage:** `<Card game="bug-hunt" next thumbnail={<GameThumbnail game="bug-hunt" />} aria-labelledby="g-bh">…</Card>`
 
+## Dialog
+- **Location:** packages/ui/src/components/dialog.tsx
+- **Description:** Modal (centered, `z-50`) or drawer (right-anchored, `max-w-5xl`, `z-40`) with `role="dialog"` / `"alertdialog"`, `aria-modal`, focus trap, Escape and overlay close, focus return to the trigger. `closeDisabled` blocks every close path. No own text: `closeLabel` is the accessible name of the close button.
+- **Signature:** `Dialog(props: DialogProps)` where `DialogProps = { variant: 'modal' | 'drawer'; title: ReactNode; closeLabel: string; onClose: () => void; closeDisabled?: boolean; role?: 'dialog' | 'alertdialog'; initialFocusRef?: RefObject<HTMLElement | null>; titleRef?: RefObject<HTMLHeadingElement | null>; children: ReactNode }`
+- **Usage:** `<Dialog variant="modal" title="Anular desafío" closeLabel="Cerrar" onClose={close} closeDisabled={pending} initialFocusRef={reasonRef}>...</Dialog>`
+
 ## GameHeader
 - **Location:** packages/ui/src/components/game-header.tsx
 - **Description:** Header of game screens: `<nav aria-label>` + `<ol>` breadcrumb `> nerdose / {game}` (crumb in the game accent via `GAME_CLASSES`, `aria-current="page"`), optional `#number` meta and an actions slot (`children`). The home link is built by the app through `renderHome`. No per-game conditionals.
@@ -49,6 +55,12 @@ Components hold no visible text of their own (ADR-002): all text comes in throug
 - **Description:** Lucide icons for the game header actions: `HelpIcon` (`circle-help`, 18px), `ChartIcon` (stats bars, 18px) and `ShareIcon` (`share`, 16px). `aria-hidden`, `currentColor`.
 - **Signature:** `HelpIcon({ className?: string })` (same for `ChartIcon`, `ShareIcon`); `IconProps = { className?: string }`
 - **Usage:** `<button aria-label={t('stats')} className={buttonClass({ variant: 'icon' })}><ChartIcon /></button>`
+
+## TextField / TextAreaField / SelectField
+- **Location:** packages/ui/src/components/form-field.tsx
+- **Description:** Native input, textarea (4 rows by default) and select with a visible `<label>`, optional `hint` (helper or counter) and `error`. `aria-describedby` lists hint then error; `aria-invalid` with `error`; `aria-required` only with `required` (not the HTML attribute, so forms use `noValidate`).
+- **Signature:** `TextField(props: TextFieldProps)`, `TextAreaField(props: TextAreaFieldProps)`, `SelectField(props: SelectFieldProps)`; native props (minus `id`, `className`, `required`) plus `{ label: ReactNode; error?: string; hint?: ReactNode; required?: boolean }` and `inputRef` / `textareaRef` / `selectRef`
+- **Usage:** `<TextAreaField label={t('report.message')} hint={`${message.length} / 1000`} maxLength={1000} value={message} onChange={...} />`
 
 ## GameThumbnail
 - **Location:** packages/ui/src/components/game-thumbnail.tsx
@@ -85,6 +97,12 @@ Components hold no visible text of their own (ADR-002): all text comes in throug
 - **Description:** Amber pill with a flame icon. With `render` the app builds the link (`<a>` / `<Link>`) and gets 44px height, focus and hover; without it, a `<span>`. `value` 0 or `null` renders the neutral gray pill.
 - **Signature:** `StreakPill({ value: number | null; children: ReactNode; className?: string; render?: (props: { className: string; children: ReactNode }) => ReactElement })`
 - **Usage:** `<StreakPill value={4} render={(p) => <Link to="/stats" aria-label={t('streak.aria', { n: 4 })} {...p} />}>{t('streak.days', { n: 4 })}</StreakPill>`
+
+## Tabs
+- **Location:** packages/ui/src/components/tabs.tsx
+- **Description:** `role="tablist"` with roving tabindex, automatic activation by click, ArrowLeft / ArrowRight (circular), Home and End; each tab styled with `navItemClass`; children render in the linked `tabpanel`.
+- **Signature:** `Tabs<T extends string>(props: TabsProps<T>)` where `TabsProps<T> = { label: string; tabs: readonly TabItem<T>[]; value: T; onChange: (value: T) => void; children: ReactNode }` and `TabItem<T> = { value: T; label: string }`
+- **Usage:** `<Tabs label="Estado" tabs={STATUS_TABS} value={status} onChange={setStatus}>...</Tabs>`
 
 ## TerminalWindow
 - **Location:** packages/ui/src/components/terminal-window.tsx

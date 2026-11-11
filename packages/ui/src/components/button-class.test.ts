@@ -158,4 +158,46 @@ describe('buttonClass', () => {
       'min-h-12 gap-2.5 px-5.5 text-button-lg',
     );
   });
+
+  it('builds the destructive error button (S-033 TS-1..TS-3)', () => {
+    const c = classes(buttonClass({ variant: 'error' }));
+    for (const k of [
+      'inline-flex',
+      'items-center',
+      'justify-center',
+      'rounded-control',
+      'font-mono',
+      'min-h-11',
+      'gap-2',
+      'px-4',
+      'text-button-md',
+      'font-bold',
+      'bg-status-error',
+      'text-status-error-on',
+      'hover:bg-error',
+      'focus-visible:outline-2',
+      'focus-visible:outline-offset-2',
+      'focus-visible:outline-accent',
+    ])
+      expect(c, k).toContain(k);
+    expect(c).not.toContain('bg-accent');
+    expect(c).not.toContain('w-full');
+
+    const lg = classes(buttonClass({ variant: 'error', size: 'lg', fullWidth: true }));
+    for (const k of [
+      'min-h-12',
+      'px-5.5',
+      'gap-2.5',
+      'text-button-lg',
+      'bg-status-error',
+      'w-full',
+    ])
+      expect(lg, k).toContain(k);
+
+    const disabled = buttonClass({ variant: 'error', disabled: true });
+    expect(disabled).toBe(buttonClass({ disabled: true }));
+    expect(classes(disabled)).not.toContain('bg-status-error');
+    for (const k of ['bg-control', 'text-text-disabled', 'cursor-not-allowed'])
+      expect(classes(disabled), k).toContain(k);
+  });
 });

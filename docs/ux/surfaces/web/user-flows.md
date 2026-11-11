@@ -1,8 +1,8 @@
 ---
 document: UX User Flows
 surface: web
-version: "1.4"
-date: 2026-11-10
+version: "1.5"
+date: 2026-11-11
 status: Draft - Punto de partida para discusión
 flows_count: 5
 ---
@@ -143,13 +143,16 @@ El jugador ve las instrucciones (o la tarjeta "Sin jugar") del desafío nuevo co
 
 - **Entrada por URL directa** — El jugador abre `/:game_id` y llega a `{juego}-instrucciones` en estado "Anulado y sin Play": se muestra O-02 y no se puede empezar. Mismo recorrido desde el paso 2. `[fuente: C-08, product-map]`
 - **Anulación mientras jugaba (Play `in_progress`)** — La Play pasa a `voided` y se cierra como completada; al volver, el jugador ve `{juego}-resultado` con el aviso de anulación, sin tener que marcar nada. Si el jugador estaba en `{juego}-partida`, su siguiente jugada recibe `challenge_voided`. `[fuente: C-41, C-11]`
-- **Anulación después de terminar (Play `won`/`lost`)** — La Play pasa a `voided` conservando su `result`; los agregados se recalculan (C-35). Qué ve el jugador en el resultado está abierto: pregunta 2 del product-map (resultado con o sin solución propia, share o no).
+- **Anulación después de terminar (Play `won`/`lost`)** — La Play pasa a `voided` conservando su `result`; los agregados se recalculan (C-35): `played` y `wins` bajan, la racha no cambia. El jugador ve `{juego}-resultado` en estado anulado: aviso + rachas, sin solución ni Compartir (pregunta 2 del product-map, resuelta por REQ-007), y puede reportar. `[fuente: REQ-007 decisión 5, CA 18]`
 - **Cerrar O-02 sin marcar** — El jugador cierra el modal y vuelve a `home`; la tarjeta sigue "anulado" y puede marcar después, el mismo día.
 - **Varios juegos anulados el mismo día** — El jugador repite el flujo por cada juego (una acción por juego, C-42 es por `challenge_number`).
 
 ### Errores y recuperación
 
-- **Doble toque o reintento en "Marcar como completado"** — C-42 crea la Play solo si no hay una previa; el reintento no duplica y lleva al mismo `{juego}-resultado`. Inferencia de la restricción "si el jugador no tenía Play" y de que a lo sumo hay una Play por jugador y Challenge (C-09). `[hipótesis | inferida-PRD]`
+- **Doble toque o reintento en "Marcar como completado"** — La acción es idempotente: si la Play ya existe, devuelve la misma sin sumar dos veces y lleva al mismo `{juego}-resultado`. `[fuente: REQ-007 CA 26]`
+- **Cambio de día con O-02 abierto (`challenge_expired`)** — El desafío anulado era de ayer: la acción se rechaza, las rachas no cambian y la pantalla recarga el desafío de hoy. `[fuente: REQ-007 CA 27]`
+- **El desafío ya no figura anulado (`not_voided`)** — O-02 se cierra y la pantalla se refresca; no se crea ninguna Play. `[fuente: REQ-007 CA 28]`
+- **Falla de red al marcar** — O-02 muestra "No pudimos marcar el desafío como completado. Probá de nuevo." y deja reintentar (idempotente).
 - **El jugador no marca antes del cambio de día** — C-42 es solo para el Challenge `voided` de hoy; pasado el día no se puede marcar y el día no suma. El PRD no define un aviso previo; a validar si el jugador entiende que debe actuar el mismo día. `[fuente: C-42; pregunta a validar]`
 - **Sin sesión (cookies bloqueadas)** — O-03 visible; no se puede crear la Play. Recuperación: habilitar cookies y recargar (flujo 1).
 - **Dudas sobre la racha** — O-02 afirma "Tu racha no se ve afectada" y `acerca-de` explica las reglas de racha (completar cuenta, días neutros, anulados). `[fuente: product-map, `acerca-de`]`
@@ -174,31 +177,32 @@ El jugador ve `{juego}-resultado` en estado anulado y la tarjeta en `home` como 
 
 ### Happy path
 
-1. En `{juego}-resultado` (o en `{juego}-partida`), el jugador toca "Reportar un problema" (btn-reportar).
-2. Se abre O-01 (bottom-sheet en mobile, modal en desktop). Elige un motivo de los 6 (`wrong_answer`, `ambiguous`, `wrong_explanation`, `translation`, `display_bug`, `other`) y, opcionalmente, escribe un mensaje de hasta 1000 caracteres. Si está en partida, ve el aviso "No incluyas la respuesta si todavía estás jugando".
-3. Toca enviar. El sistema guarda el reporte con contexto (idioma, lenguaje de código, estado de la partida, user agent) (C-36).
-4. O-01 se cierra y el trigger pasa a "ya reportado". El jugador sigue donde estaba, sin perder la partida.
-5. Del lado del sistema (fuera de esta superficie): si se superan los umbrales, se alerta al responsable (C-37). No es un flujo de la web.
+1. En `{juego}-resultado` (o en `{juego}-partida`), el jugador toca "Reportar un problema" (`link-reportar`). Si ya había reportado ese desafío, el enlace dice "Ya reportaste este desafío" y está deshabilitado (`GameToday.reported`).
+2. Se abre O-01 (bottom-sheet en mobile, modal en desktop). Elige un motivo de los 6 (`wrong_answer`, `ambiguous`, `wrong_explanation`, `translation`, `display_bug`, `other`) y, opcionalmente, escribe un mensaje de hasta 1000 caracteres (con contador). Si está en partida, ve el aviso "No incluyas la respuesta si todavía estás jugando".
+3. Toca "Enviar reporte". El sistema guarda el reporte con el contexto que arma el servidor (idioma, lenguaje de código, estado de la partida, user agent) (C-36).
+4. O-01 muestra "Gracias, recibimos tu reporte." El jugador toca "Cerrar" y el enlace pasa a "Ya reportaste este desafío". Sigue donde estaba, sin perder la partida. `[fuente: REQ-007 CA 1]`
+5. Del lado del sistema (fuera de esta superficie): si se superan los umbrales, el desafío queda alertado en el admin (C-37). No es un flujo de la web: el desafío sigue jugable (CA 6).
 
 ### Caminos alternativos
 
 - **Reporte desde la partida** — El jugador reporta sin salir de `{juego}-partida`; al cerrar O-01 la partida sigue en el mismo estado. `[fuente: C-36, product-map]`
 - **Reporte tras ver el resultado** — Mismo formulario, con más contexto para el jugador (ya vio la solución), sin el aviso de no incluir la respuesta. `[fuente: product-map O-01]`
 - **Cancelar** — El jugador cierra O-01 sin enviar; no se guarda nada y el estado del juego no cambia.
-- **Reporte sobre un desafío anulado** — Permitido: C-36 acepta Challenge `published` o `voided`.
+- **Reporte sobre un desafío anulado** — Permitido desde el resultado anulado: C-36 acepta Challenge `published` o `voided`. No genera alerta nueva (REQ-007 CA 30).
 
 ### Errores y recuperación
 
-- **Ya reportó este desafío (`already_reported`)** — Un reporte por jugador y desafío: el trigger muestra "ya reportado" y no abre un formulario nuevo; si igual se envía, se informa que ya existe. Recuperación: ninguna necesaria; el reporte previo sigue vigente. `[fuente: C-36]`
-- **Límite por IP (10 por hora)** — El envío se rechaza; el jugador conserva el texto escrito y puede reintentar más tarde. Mensaje sin definir. `[fuente: C-36; hipótesis de diseño]`
-- **Cambio de día con O-01 abierto** — El reporte lleva `challenge_number`; si el desafío cambió, el reporte no corresponde al desafío vigente. El PRD no define este caso: a validar si se reporta contra el desafío viejo o se rechaza.
-- **Sin sesión** — Sin cookie no hay partida ni contexto; el PRD no declara el comportamiento de C-36 sin sesión: **vacío a resolver con el cliente**.
-- **Error de red al enviar** — El PRD no define copy ni reintento (product-map, Estados Globales). Mínimo esperado: no perder el mensaje escrito y permitir reintentar.
+- **Ya reportó este desafío (`already_reported`)** — Un reporte por jugador y desafío: el enlace muestra "Ya reportaste este desafío" y no abre el formulario. Si el envío igual llega (otra pestaña), O-01 confirma "Ya reportaste este desafío. Lo vamos a revisar." Recuperación: ninguna necesaria; el reporte previo sigue vigente. `[fuente: C-36, REQ-007 CA 2]`
+- **Límite por IP (10 por hora)** — El envío se rechaza con "Se enviaron muchos reportes desde esta conexión. Probá de nuevo más tarde."; el formulario conserva lo escrito. `[fuente: REQ-007 CA 7]`
+- **Mensaje de más de 1000 caracteres o motivo inválido (`invalid_report`)** — El campo no acepta más de 1000; si el servidor rechaza, se marca el campo. `[fuente: REQ-007 CA 9]`
+- **Cambio de día con O-01 abierto** — El reporte se guarda contra el desafío que el jugador estaba viendo (lleva `challenge_number`; la API acepta desafíos pasados `published` o `voided`). `[fuente: REQ-007 decisión 4]`
+- **Sin sesión** — Si la sesión se perdió (`no_session`), se recrea y se reintenta una vez sin intervención; con cookies bloqueadas el enlace no se ofrece (no hay partida ni resultado). `[fuente: REQ-007 manejo de errores]`
+- **Error de red al enviar** — "No pudimos enviar el reporte. Probá de nuevo."; el formulario conserva el motivo y el mensaje.
 - **El jugador incluye la respuesta en el mensaje** — Se mitiga solo con el aviso del formulario; no hay validación del contenido. `[fuente: C-36]`
 
 ### Estado final
 
-El reporte queda guardado y el trigger muestra "ya reportado". El jugador sigue en la pantalla de origen, con la partida intacta.
+El reporte queda guardado y el enlace muestra "Ya reportaste este desafío". El jugador sigue en la pantalla de origen, con la partida intacta.
 
 ### Criterios de éxito
 

@@ -1,8 +1,8 @@
 ---
 document: UX User Flows
 surface: admin
-version: "1.0"
-date: 2026-11-03
+version: "1.1"
+date: 2026-11-11
 status: Draft - Punto de partida para discusión
 flows_count: 5
 ---
@@ -43,16 +43,16 @@ flows_count: 5
 
 ### Caminos alternativos
 
-- **Sesión vencida durante el uso** — Una petición devuelve `401`; se borra el token y se redirige a P-01 con el aviso "La sesión venció, ingresá de nuevo". Tras ingresar, el login lleva a P-02 (no vuelve a la ruta anterior; ver pregunta abierta 3 del product-map).
-- **Cerrar sesión voluntariamente** — Acción "Cerrar sesión" del encabezado: borra el token y va a P-01.
-- **Entrada por link directo a una ruta interna** — Sin token redirige a P-01; el retorno a esa ruta tras el login no está definido (pregunta abierta 3).
+- **Sesión vencida durante el uso** — Una petición devuelve `401 unauthorized` (token de más de 8 h, ausente o malformado); se borra el token, se limpian los datos en memoria y se redirige a P-01 con el aviso "La sesión venció, ingresá de nuevo". Tras ingresar, el login lleva a P-02 (no vuelve a la ruta anterior; pregunta abierta 3, resuelta por REQ-007). `[fuente: REQ-007 CA 13]`
+- **Cerrar sesión voluntariamente** — Acción "Cerrar sesión" del encabezado: borra el token en el navegador y va a P-01 (no hay cierre de sesión en el servidor; el token igual vence a las 8 h).
+- **Entrada por link directo a una ruta interna** — Sin token redirige a P-01; tras el login va a P-02.
 
 ### Errores y recuperación
 
 - **Contraseña incorrecta** — P-01 informa que la credencial es inválida sin revelar más detalle y deja reintentar. Recuperación: reintentar; el contador de intentos corre por IP.
-- **Bloqueo por límite (5 intentos por IP en 15 min)** — P-01 informa el bloqueo temporal y deshabilita el envío. Recuperación: esperar la ventana; el mensaje debe indicar que es temporal. Supuesto: si debe mostrar el tiempo restante, no está definido en el PRD.
+- **Bloqueo por límite (5 intentos por IP en 15 min)** — P-01 informa "Demasiados intentos. Probá de nuevo en N minutos." (del `Retry-After`) y deshabilita el envío hasta entonces; durante el bloqueo no se evalúa la contraseña, aunque sea la correcta. Recuperación: esperar. `[fuente: REQ-007 CA 12]`
 - **Vencimiento con un formulario abierto (O-01 o O-03)** — El `401` descarta el contexto y el motivo escrito. Recuperación: ingresar de nuevo y verificar el estado del desafío en P-02 antes de repetir la acción, porque la anulación puede haberse aplicado o no. Qué se conserva está abierto (pregunta abierta 3).
-- **Error de red o API caída al enviar** — P-01 distingue "no se pudo conectar" de "contraseña incorrecta". Recuperación: reintentar sin consumir la sensación de intento fallido (supuesto a confirmar con arquitectura de `api`).
+- **Error de red o API caída al enviar** — P-01 distingue "no se pudo conectar" de "contraseña incorrecta". Recuperación: reintentar; un pedido que no llega a la API no cuenta como intento.
 
 ### Estado final
 
@@ -74,13 +74,13 @@ El responsable está en P-02 con el encabezado de navegación visible y el token
 
 ### Happy path
 
-1. Con sesión activa, el responsable entra a P-02 (Reportes). Ve grupos por desafío, el más reportado primero, con filtro en `open` por defecto.
-2. Abre un grupo (fila) y se despliega O-02 (Detalle del desafío): preview del `client` en modo solución, ES y EN lado a lado, log de verificación, y motivos, mensajes y contexto de cada reporte.
+1. Con sesión activa, el responsable entra a P-02 (Reportes). Ve grupos por desafío: los alertados primero (marcados "alertado"), luego los más reportados y luego los más recientes, con filtro en `open` por defecto. `[fuente: REQ-007 CA 14]`
+2. Abre un grupo (fila) y se despliega O-02 (Detalle del desafío): la solución completa en ES y EN lado a lado (vista genérica del `payload` hasta FG-7), los datos del desafío, el log de verificación y cada reporte con motivo, mensaje, idioma, contexto y `player_ref`.
 3. Concluye que el error es real y pulsa "Anular". Se abre O-01 (Anular desafío).
-4. Completa `void_reason` (obligatorio) y elige el culpable: `term`, `timeline_fact`, `template` o `none`. Si es `term` o `timeline_fact`, indica el `id` (obligatorio).
+4. Completa `void_reason` (obligatorio, hasta 500 caracteres) y elige el culpable de una lista: los términos o hechos del propio desafío por nombre (`culprits`), "La plantilla del juego" o "Ninguno". No se tipea ningún id. `[fuente: REQ-007 decisión 3]`
 5. O-01 muestra el resumen de consecuencias irreversibles: el desafío deja de aceptar jugadas y muestra el mensaje de anulación, las Play pasan a `voided`, los reportes abiertos pasan a `resolved`, el culpable pasa a `rejected` si es término o hecho, y se recalculan los agregados de los jugadores. `[fuente: PRD C-41]`
-6. El responsable confirma. El sistema ejecuta la anulación.
-7. P-02 se actualiza: el grupo sale de la cola de abiertos (sus reportes quedaron `resolved`).
+6. El responsable confirma. El sistema ejecuta la anulación en una sola operación (o se aplica completa o no se aplica nada).
+7. P-02 se actualiza con el aviso "Devdle #8 anulado · N partidas afectadas": el grupo sale de la cola de abiertos (sus reportes quedaron `resolved`) y el contador baja.
 
 ### Caminos alternativos
 
@@ -91,11 +91,13 @@ El responsable está en P-02 con el encabezado de navegación visible y el token
 
 ### Errores y recuperación
 
-- **Desafío no `published`** — La acción "Anular" no está disponible (C-41 solo admite `published`). El control se muestra deshabilitado con el motivo; recuperación: nada que anular (por ejemplo ya está `voided`).
-- **Falta `void_reason` o `id` del culpable** — O-01 bloquea la confirmación y marca el campo faltante. Recuperación: completar.
-- **Confirmación enviada pero la respuesta falla (red, 5xx)** — Por ser irreversible, el reintento es el riesgo. Recuperación: O-01 informa el error, no reenvía solo; el responsable recarga P-02 y verifica el estado del desafío antes de reintentar. Supuesto: la API rechaza anular un desafío ya anulado; a confirmar en arquitectura de `api`.
+- **Desafío no `published`** — La acción "Anular" no está disponible (C-41 solo admite `published`). El control se muestra deshabilitado con el motivo; recuperación: nada que anular (por ejemplo ya está `voided`). Si cambió con O-01 abierto (otra pestaña), la API responde `not_voidable` y O-01 lo informa con su propio aviso. `[fuente: REQ-007 CA 22]`
+- **Culpable que no corresponde al desafío (`invalid_culprit`)** — No debería pasar porque la lista sale del desafío; si pasa, O-01 pide elegir otro y no se aplica nada. `[fuente: REQ-007 CA 21]`
+- **Falta `void_reason` o el culpable** — O-01 bloquea la confirmación y marca el campo faltante. Recuperación: completar.
+- **Confirmación enviada pero la respuesta falla (red, 5xx)** — Por ser irreversible, el reintento es el riesgo. Recuperación: O-01 informa el error, no reenvía solo; el responsable recarga P-02 y verifica el estado del desafío antes de reintentar. La API rechaza anular un desafío ya anulado (`not_voidable`), así que el reintento no duplica efectos. `[fuente: REQ-007 CA 22, 23]`
 - **Sesión vencida con O-01 abierto** — Ver Flujo 1; se pierde el motivo escrito. Pregunta abierta 3 del product-map.
-- **Elegir culpable equivocado** — No hay deshacer. Por eso el resumen de consecuencias previo a confirmar es parte obligatoria del flujo. Cómo se corrige un culpable mal elegido no está definido en el PRD (supuesto: fuera de la superficie, a validar).
+- **Elegir culpable equivocado** — No hay deshacer. Por eso el culpable se elige por nombre y el resumen previo nombra el ítem que se rechaza. Cómo se corrige un culpable mal elegido no está definido en el PRD (supuesto: fuera de la superficie, a validar).
+- **El ítem rechazado está en desafíos ya generados de los próximos días** — Esos desafíos no cambian (riesgo aceptado en REQ-007); O-01 lo advierte y se revisan en Próximos con FG-7.
 - **Carga del detalle falla (O-02)** — Se muestra el error en el drawer con reintento; no se habilita "Anular" sin ver el desafío (hipótesis, a validar).
 
 ### Estado final
@@ -119,20 +121,20 @@ El grupo desaparece de la cola de abiertos en P-02 y aparece bajo "resueltos" si
 ### Happy path
 
 1. En P-02 (filtro `open`), el responsable abre un grupo con O-02 y lee solución, ES/EN y motivos.
-2. Decide que no hay error en el desafío: elige "Descartar". Si el reporte era válido y ya se corrigió o atendió, elige "Resolver".
-3. El sistema pasa el reporte a `dismissed` o `resolved` (estados terminales, solo desde `open`).
-4. El reporte sale de la cola de abiertos y el contador del encabezado baja (si se mantiene; pregunta abierta 1).
+2. Para cada reporte decide: si no hay error en el desafío, "Descartar"; si el reporte era válido y ya se atendió, "Resolver".
+3. El sistema pasa ese reporte a `dismissed` o `resolved` (estados terminales, solo desde `open`), sin tocar el desafío ni las partidas. El drawer sigue abierto con el resto. `[fuente: REQ-007 CA 15]`
+4. Cuando no quedan reportes abiertos en el grupo, el grupo sale de la cola de abiertos y el contador del encabezado baja.
 
 ### Caminos alternativos
 
-- **Cerrar varios reportes del mismo desafío** — Se actúa sobre cada reporte del grupo; si resolver/descartar en bloque por grupo existe no está definido en el PRD (C-40 es por reporte). A validar.
+- **Cerrar varios reportes del mismo desafío** — Se actúa sobre cada reporte del grupo; no hay acción en bloque (C-40 es por reporte; REQ-007).
 - **Reportes en el mismo desafío con distinto veredicto** — Algunos se descartan y otros se resuelven; el grupo permanece en `open` hasta que no queden reportes abiertos.
 - **Cola sin abiertos** — P-02 muestra "no hay reportes abiertos" distinto de un error de carga.
 - **Cambia de decisión y quiere anular** — Si el desafío sigue `published`, anula (Flujo 2) antes de cerrar los reportes; anular resuelve los abiertos automáticamente.
 
 ### Errores y recuperación
 
-- **Reporte ya no está `open`** (cerrado en otra pestaña o por una anulación) — La API rechaza la transición. P-02 refresca el grupo y muestra su estado actual. Recuperación: ninguna acción pendiente.
+- **Reporte ya no está `open`** (cerrado en otra pestaña o por una anulación) — La API rechaza la transición (`report_not_open`). O-02 avisa "Este reporte ya estaba cerrado. Actualizamos la lista." y refresca. Recuperación: ninguna acción pendiente. `[fuente: REQ-007 CA 16]`
 - **Cierre por error** — Los estados son terminales; no hay reabrir. Recuperación: ninguna en la superficie; el filtro de resueltos/descartados permite ver qué se cerró. Supuesto: si una acción de descartar necesita confirmación no está definido; a validar con el responsable.
 - **Falla de red al cerrar** — La fila conserva su estado y se informa el error con reintento; no se marca como cerrada hasta confirmar.
 - **Sesión vencida** — Ver Flujo 1; tras ingresar, verificar la cola de abiertos.
