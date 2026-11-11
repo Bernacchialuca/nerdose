@@ -176,7 +176,7 @@ The image is the same one Testcontainers uses in tests.
 
 ## How to use
 
-- Start-up order (documented in `README.md`): `docker compose up -d` → `pnpm --filter @nerdose/db db:migrate` → `pnpm dev`.
+- Start-up order (documented in `README.md`): `docker compose up -d` → `pnpm dev`. The turbo `dev` task depends on `^db:migrate`, so `@nerdose/db#db:migrate` (uncached, not persistent) runs once before `api` and `generator` start; `web` and `admin` do not depend on `@nerdose/db` and start right away.
 - Copy each `.env.example` to `.env.local` (and the root one to `.env` for Compose) and fill the values. Real values are never committed.
 - Add a workspace by creating its folder under `apps/`, `packages/` or `packages/games/`; it must define `lint`, `typecheck` and `test` scripts so Turborepo picks it up.
 - Run a single package: `pnpm --filter @nerdose/<name> <script>`.

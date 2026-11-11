@@ -8,7 +8,7 @@ Library en node (TypeScript, Node.js 24 LTS, pnpm + Turborepo). No es desplegabl
 
 ## Modulos del dominio
 - **tooling**: workspaces, tareas de Turborepo (`dev`, `build`, `lint`, `typecheck`, `test`), base de TypeScript, ESLint con `no-restricted-imports` y Vitest raíz.
-- **local-env**: `compose.yaml` con PostgreSQL 16, `.env.example`, `.gitignore` y README de arranque (`docker compose up -d` → `db:migrate` → `pnpm dev`).
+- **local-env**: `compose.yaml` con PostgreSQL 16, `.env.example`, `.gitignore` y README de arranque (`docker compose up -d` → `pnpm dev`, que corre `db:migrate` antes de `api` y `generator`).
 
 ## Notas adicionales
 - **Convención propia única:** `monorepo-tooling` se basa en ADR-003 y en el diseño técnico de REQ-001 (S-001, S-002 y S-005). `_base` es la del catálogo de node.

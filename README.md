@@ -82,17 +82,13 @@ packages/
    docker compose up -d
    ```
 
-4. Migrar la base (crea `nerdose_api` y `nerdose_generator` y fija sus contraseñas; es idempotente):
-
-   ```bash
-   pnpm --filter @nerdose/db db:migrate
-   ```
-
-5. Levantar todo:
+4. Levantar todo. `pnpm dev` corre primero `db:migrate` (crea `nerdose_api` y `nerdose_generator`, fija sus contraseñas y aplica las migraciones pendientes; es idempotente) y después levanta las apps:
 
    ```bash
    pnpm dev
    ```
+
+   Para migrar sin levantar las apps: `pnpm --filter @nerdose/db db:migrate`.
 
 ## Dataset de términos
 

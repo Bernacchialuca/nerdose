@@ -6,6 +6,7 @@ import { REPO_ROOT } from './repo';
 export interface TurboDryRunTask {
   taskId: string;
   command: string;
+  dependencies?: string[];
   resolvedTaskDefinition: { persistent: boolean; cache: boolean };
 }
 

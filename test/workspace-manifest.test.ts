@@ -52,7 +52,12 @@ describe('turbo.json', () => {
 
   it('defines the build and dev tasks', () => {
     expect(turbo.tasks['build']).toEqual({ dependsOn: ['^build'], outputs: ['dist/**'] });
-    expect(turbo.tasks['dev']).toEqual({ persistent: true, cache: false });
+    expect(turbo.tasks['dev']).toEqual({
+      dependsOn: ['^db:migrate'],
+      persistent: true,
+      cache: false,
+    });
+    expect(turbo.tasks['db:migrate']).toEqual({ cache: false });
   });
 
   it('defines lint, typecheck and test with their dependencies', () => {
