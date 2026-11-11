@@ -87,6 +87,10 @@ describe('committed dataset', () => {
       expect(exclusions.terms.has(term.term), term.term).toBe(false);
       expect(exclusions.ids.has(term.wikidata_id), term.wikidata_id).toBe(false);
     }
+    for (const fact of timelineFacts.filter((f) => f.status === 'approved')) {
+      expect(exclusions.ids.has(fact.wikidata_id), fact.wikidata_id).toBe(false);
+      expect(exclusions.timelineIds.has(fact.wikidata_id), fact.wikidata_id).toBe(false);
+    }
   });
 
   it('ships a canonical timeline_facts.json (TS-23)', () => {

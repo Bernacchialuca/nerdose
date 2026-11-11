@@ -139,6 +139,7 @@ describe('evaluateFacts', () => {
     );
     expect(reason(KUBERNETES, parseExclusions('Q22661306'))).toBe('excluded');
     expect(reason(KUBERNETES, parseExclusions('KUBERNETES'))).toBe('excluded');
+    expect(reason(KUBERNETES, parseExclusions('timeline:Q22661306'))).toBe('excluded');
   });
 
   it('keeps the most sitelinked of two equal labels (TS-23)', () => {

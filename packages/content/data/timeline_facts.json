@@ -164,8 +164,8 @@
       "en": "MySQL is a free and open-source relational database management system (RDBMS)."
     },
     "sitelinks": 85,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "excluded"
   },
   {
     "wikidata_id": "Q1406",
@@ -2950,8 +2950,8 @@
       "en": "CKEditor is a WYSIWYG rich text editor which enables writing content directly inside of web pages or online applications."
     },
     "sitelinks": 18,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "excluded"
   },
   {
     "wikidata_id": "Q136915",
@@ -3692,8 +3692,8 @@
       "en": "WordPerfect (WP) is a word processing application, now owned by Corel."
     },
     "sitelinks": 26,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "excluded"
   },
   {
     "wikidata_id": "Q174841",
@@ -9124,8 +9124,8 @@
       "en": "Evernote is a note-taking and task-management application developed by the Evernote Corporation."
     },
     "sitelinks": 28,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "excluded"
   },
   {
     "wikidata_id": "Q431171",
@@ -20772,8 +20772,8 @@
       "en": "The Nintendo DS Browser is a port of the Opera 8.5 web browser for use on the Nintendo DS, developed by Opera Software and Nintendo, and sold as a standalone game cartridge."
     },
     "sitelinks": 19,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "excluded"
   },
   {
     "wikidata_id": "Q1084900",
@@ -23292,8 +23292,8 @@
       "en": "Ecosia is a search engine and web browser whose profits are used to pursue environmental goals."
     },
     "sitelinks": 41,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "excluded"
   },
   {
     "wikidata_id": "Q1283542",
@@ -27100,8 +27100,8 @@
       "en": "version 4 of web browser Mozilla Firefox"
     },
     "sitelinks": 16,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "excluded"
   },
   {
     "wikidata_id": "Q1956256",
@@ -39294,8 +39294,8 @@
       "en": "Qwant is a French search engine, launched in February 2013."
     },
     "sitelinks": 28,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "excluded"
   },
   {
     "wikidata_id": "Q14822068",
@@ -40330,8 +40330,8 @@
       "en": "Wikibase is a set of software tools for working with versioned semi-structured data in a central repository."
     },
     "sitelinks": 30,
-    "status": "approved",
-    "rejection_reason": null
+    "status": "rejected",
+    "rejection_reason": "excluded"
   },
   {
     "wikidata_id": "Q16625595",

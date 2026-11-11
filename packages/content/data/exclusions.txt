@@ -1,5 +1,6 @@
 # Lista de exclusión de import:banks.
 # Una entrada por línea: un término (A-Z, se compara en mayúsculas) o un wikidata_id (Q123).
+# Con el prefijo `timeline:` (timeline:Q123) excluye solo de Tech Timeline y no de Devdle/Grep Grid.
 # Se ignoran las líneas vacías y las que empiezan con #.
 # Sirve para sacar términos ofensivos o demasiado genéricos sin tocar el código.
 
@@ -36,3 +37,18 @@ LUANTI
 OMNIROM
 STEAMOS
 UNITY
+
+# Revisión de Tech Timeline (2026-11-11): hechos que no encajan en su categoría o con fecha incorrecta.
+# Buscadores, apps de notas y procesadores de texto colados en software_tools.
+timeline:Q1282139
+timeline:Q14657870
+timeline:Q430526
+timeline:Q174757
+# Una versión puntual (Firefox 4), un componente web y un navegador de consola de nicho.
+timeline:Q1950119
+timeline:Q136559
+timeline:Q1071410
+# Wikibase es el software de Wikidata, no un motor de bases de datos.
+timeline:Q16354758
+# MySQL figura con 2001 en Wikidata; su primera versión es de 1995 (sigue en Devdle).
+timeline:Q850

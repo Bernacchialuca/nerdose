@@ -1,6 +1,6 @@
 {
-  "dataset_version": "2026.11.11-2",
-  "generated_at": "2026-11-11T06:42:29.860Z",
+  "dataset_version": "2026.11.11-5",
+  "generated_at": "2026-11-11T07:20:21.305Z",
   "min_sitelinks": 12,
   "counts": {
     "terms": {
@@ -51,8 +51,8 @@
       }
     },
     "timeline_facts": {
-      "approved": 1480,
-      "rejected": 2079,
+      "approved": 1471,
+      "rejected": 2088,
       "by_category": {
         "programming_languages": {
           "approved": 184,
@@ -79,12 +79,12 @@
           "rejected": 258
         },
         "databases": {
-          "approved": 19,
-          "rejected": 27
+          "approved": 17,
+          "rejected": 29
         },
         "software_tools": {
-          "approved": 80,
-          "rejected": 75
+          "approved": 73,
+          "rejected": 82
         }
       },
       "by_reason": {
@@ -94,7 +94,7 @@
         "low_sitelinks": 847,
         "missing_note": 14,
         "note_year_mismatch": 7,
-        "excluded": 5,
+        "excluded": 14,
         "duplicate": 4
       }
     }

@@ -24,7 +24,11 @@ export type Candidate = {
   summary_es?: string | null;
 };
 
-export type Exclusions = { terms: Set<string>; ids: Set<string> };
+/**
+ * `terms` and `ids` apply to every bank. `timelineIds` (lines `timeline:Q123`) apply only to
+ * `timeline_facts`, for items that are valid Devdle terms but do not fit Tech Timeline.
+ */
+export type Exclusions = { terms: Set<string>; ids: Set<string>; timelineIds: Set<string> };
 
 export type EvaluateOptions = { minSitelinks: number; exclusions: Exclusions };
 
@@ -147,13 +151,16 @@ export function evaluateTerms(
 export function parseExclusions(text: string): Exclusions {
   const terms = new Set<string>();
   const ids = new Set<string>();
+  const timelineIds = new Set<string>();
   for (const rawLine of text.split(/\r?\n/)) {
     const line = rawLine.trim();
     if (line === '' || line.startsWith('#')) continue;
-    if (/^Q[1-9]\d*$/i.test(line)) ids.add(line.toUpperCase());
+    const timeline = /^timeline:\s*(Q[1-9]\d*)$/i.exec(line);
+    if (timeline?.[1] !== undefined) timelineIds.add(timeline[1].toUpperCase());
+    else if (/^Q[1-9]\d*$/i.test(line)) ids.add(line.toUpperCase());
     else terms.add(normalizeTerm(line));
   }
-  return { terms, ids };
+  return { terms, ids, timelineIds };
 }
 
 export function highestMinSitelinks(
@@ -423,7 +430,11 @@ export function evaluateFacts(
       continue;
     }
     const label = normalizeTerm(candidate.label_en ?? '');
-    if (exclusions.ids.has(candidate.wikidata_id) || exclusions.terms.has(label)) {
+    if (
+      exclusions.ids.has(candidate.wikidata_id) ||
+      exclusions.timelineIds.has(candidate.wikidata_id) ||
+      exclusions.terms.has(label)
+    ) {
       reject('excluded', { es: es.text, en: en.text });
       continue;
     }
