@@ -8,6 +8,7 @@ import {
   playerStats,
   players,
   terms,
+  timelineFacts,
 } from '@nerdose/db';
 import { createDb } from '@nerdose/db';
 import { truncateAll } from '@nerdose/db/testing';
@@ -107,6 +108,27 @@ export function useDatabases() {
           reason: 'wrong_answer',
           locale: 'es',
           context: { code_language: null, play_status: null, play_state: null, user_agent: null },
+          ...values,
+        })
+        .returning();
+      return row!;
+    },
+    insertTimelineFact: async (
+      values: Partial<typeof timelineFacts.$inferInsert> & { id: string },
+    ) => {
+      termSeq += 1;
+      const [row] = await owner.db
+        .insert(timelineFacts)
+        .values({
+          label: 'fact',
+          category: 'programming_languages',
+          eventDate: '2000-01-01',
+          datePrecision: 'day',
+          note: { es: 'n', en: 'n' },
+          wikidataId: `Q${randomUUID()}-${termSeq}`,
+          sitelinks: 10,
+          status: 'approved',
+          datasetVersion: 'test',
           ...values,
         })
         .returning();

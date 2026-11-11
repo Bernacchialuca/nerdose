@@ -72,3 +72,21 @@
 - **Signature:** `startSession({ pid, acceptLanguage })`, `find(pid)`, `updatePreferences(playerId, patch)`; `issuePlayerCookie(c, playerId)`
 - **Description:** idempotent anonymous session over `players` (invalid/unknown pid treated as absent); cookie `nd_pid` with exact ADR-009 attributes
 - **Usage:** `const { player, created } = await deps.identity.startSession(...)`
+
+## hashPassword / verifyPassword / signAdminToken
+- **Location:** apps/api/src/domain/admin/admin-auth.ts
+- **Signature:** `hashPassword(password, params?): Promise<string>`; `verifyPassword(password, stored): Promise<boolean>`; `signAdminToken(secret, nowSeconds?): Promise<{ token, expires_at }>`
+- **Description:** scrypt hash in the `scrypt$<N>$<r>$<p>$<salt_b64>$<hash_b64>` format (also emitted by `pnpm --filter api admin:hash`); verification reads N/r/p/length from the stored string, uses `timingSafeEqual` and returns `false` on malformed input; the token is signed with `hono/jwt` HS256 and claims exactly `sub`, `iat`, `exp`
+- **Usage:** `const { token, expires_at } = await signAdminToken(secret, Math.floor(clock.now().getTime() / 1000))`
+
+## adminAuth / adminAuthExcept
+- **Location:** apps/api/src/domain/admin/admin-auth.middleware.ts
+- **Signature:** `adminAuth(secret)`; `adminAuthExcept(except: Array<{ method; path }>, secret)`
+- **Description:** verifies the Bearer JWT (HS256 only, `sub === 'admin'`, `exp` required); `hono/jwt` 401s are translated to `unauthorized` by `createErrorHandler`
+- **Usage:** `app.use('/api/admin/*', adminAuthExcept([{ method: 'POST', path: '/api/admin/login' }], secret))`
+
+## AdminService / AdminRepository
+- **Location:** apps/api/src/domain/admin/
+- **Signature:** `login(password, log)`, `listReportGroups(status)`, `updateReport(reportId, status, log)`; `playerRef(playerId)`
+- **Description:** report groups are ordered alerted first, `report_count` desc, `challenge.date` desc; `player_ref` is the first 8 hex of `sha256(player_id)`; games without a registered definition yield `culprits: []`
+- **Usage:** `const { groups } = await deps.admin.listReportGroups('open')`

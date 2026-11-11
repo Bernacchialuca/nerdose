@@ -1,7 +1,20 @@
-import { liveStreak, nextStreak, type AnyGameDefinition, type GameId } from '@nerdose/core';
+import {
+  liveStreak,
+  nextStreak,
+  rebuildGameStats,
+  replayStreak,
+  type AnyGameDefinition,
+  type GameId,
+} from '@nerdose/core';
 
 import type { ProgressRepository } from './progress.repository';
-import type { GameStatsView, Outcome, ProgressWriteRepo, Streaks } from './progress.types';
+import type {
+  GameStatsView,
+  Outcome,
+  ProgressRecomputeRepo,
+  ProgressWriteRepo,
+  Streaks,
+} from './progress.types';
 
 type Repo = Pick<
   ProgressRepository,
@@ -161,5 +174,72 @@ export class ProgressService {
         extra,
       },
     };
+  }
+
+  /**
+   * ADR-011: reconstruye `player_game_stats` (del juego) y `player_stats` desde `plays` para un
+   * lote de jugadores. Bloquea en orden `player_id` asc (game_stats → player_stats), igual que
+   * `applyResult`, y lee los datos una sola vez por lote.
+   */
+  async recompute(
+    repo: ProgressRecomputeRepo,
+    input: { playerIds: readonly string[]; game: AnyGameDefinition },
+  ): Promise<{ players: number }> {
+    const { game } = input;
+    const ids = [...new Set(input.playerIds)].sort();
+    for (const id of ids) {
+      await repo.lockGameStats(id, game.id, game.initialStats() as unknown);
+      await repo.lockPlayerStats(id);
+    }
+    if (ids.length === 0) return { players: 0 };
+
+    const [active, completed] = await Promise.all([repo.activeDays(), repo.completedPlays(ids)]);
+    const gameActive: string[] = [];
+    const anyActive: string[] = [];
+    for (const a of active) {
+      anyActive.push(a.date);
+      if (a.gameId === game.id) gameActive.push(a.date);
+    }
+    const byPlayer = new Map<string, typeof completed>();
+    for (const p of completed) {
+      const list = byPlayer.get(p.playerId);
+      if (list) list.push(p);
+      else byPlayer.set(p.playerId, [p]);
+    }
+
+    for (const id of ids) {
+      const all = byPlayer.get(id) ?? [];
+      const own = all.filter((p) => p.gameId === game.id);
+      const streak = replayStreak(
+        own.map((p) => p.date),
+        gameActive,
+      );
+      const rebuilt = rebuildGameStats(
+        game,
+        own.map((p) => ({ date: p.date, status: p.status, result: p.result ?? null })),
+      );
+      const global = replayStreak(
+        all.map((p) => p.date),
+        anyActive,
+      );
+      await repo.saveGameStats({
+        playerId: id,
+        gameId: game.id,
+        currentStreak: streak.current,
+        maxStreak: streak.max,
+        played: rebuilt.played,
+        wins: rebuilt.wins,
+        lastCompletedDate: streak.lastCompleted,
+        extra: rebuilt.extra as unknown,
+      });
+      await repo.savePlayerStats({
+        playerId: id,
+        globalStreak: global.current,
+        maxGlobalStreak: global.max,
+        lastActiveDate: global.lastCompleted,
+        totalCompleted: all.length,
+      });
+    }
+    return { players: ids.length };
   }
 }

@@ -58,9 +58,10 @@ describe('originAndContentType', () => {
       Origin: 'http://localhost:5174',
       'Content-Type': 'application/json',
     });
-    expect(admin.status).toBe(404);
+    // Una ruta de admin inexistente sin token responde 401 (CA-3), no 404.
+    expect(admin.status).toBe(401);
     expect(await admin.json()).toEqual({
-      error: { code: 'not_found', message: 'Recurso no encontrado.' },
+      error: { code: 'unauthorized', message: 'No autorizado.' },
     });
     const adminOnPlayer = await post(app, '/api/no-existe', {
       Origin: 'http://localhost:5174',

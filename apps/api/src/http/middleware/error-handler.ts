@@ -15,7 +15,9 @@ export const createErrorHandler =
     const err =
       rawErr instanceof HTTPException && rawErr.status === 400
         ? new AppError('validation_error')
-        : rawErr;
+        : rawErr instanceof HTTPException && rawErr.status === 401
+          ? new AppError('unauthorized')
+          : rawErr;
     if (err instanceof AppError) {
       log.warn({ code: err.code }, 'Application error');
       return c.json(

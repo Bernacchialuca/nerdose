@@ -1,7 +1,7 @@
 import type { GameId } from '@nerdose/core';
-import { challenges, playerGameStats, playerStats } from '@nerdose/db';
+import { challenges, playerGameStats, playerStats, plays } from '@nerdose/db';
 import type { Db, PlayerGameStats, PlayerStats, Tx } from '@nerdose/db';
-import { and, eq, inArray, lt, max } from 'drizzle-orm';
+import { and, eq, inArray, lt, max, ne } from 'drizzle-orm';
 
 /** Lecturas de progreso y escrituras del cierre de partida (siempre dentro de una transacción). */
 export class ProgressRepository {
@@ -44,6 +44,38 @@ export class ProgressRepository {
       if (global === null || r.day > global) global = r.day;
     }
     return { byGame, global };
+  }
+
+  /** Días activos (ADR-011) de todos los juegos: challenges `published`/`voided`. */
+  async activeDays(): Promise<Array<{ gameId: GameId; date: string }>> {
+    return this.db
+      .select({ gameId: challenges.gameId, date: challenges.date })
+      .from(challenges)
+      .where(inArray(challenges.status, ['published', 'voided']));
+  }
+
+  /** Play completadas (`won`/`lost`/`voided`) de los jugadores dados. */
+  async completedPlays(playerIds: string[]): Promise<
+    Array<{
+      playerId: string;
+      gameId: GameId;
+      date: string;
+      status: 'won' | 'lost' | 'voided';
+      result: unknown;
+    }>
+  > {
+    if (playerIds.length === 0) return [];
+    const rows = await this.db
+      .select({
+        playerId: plays.playerId,
+        gameId: plays.gameId,
+        date: plays.date,
+        status: plays.status,
+        result: plays.result,
+      })
+      .from(plays)
+      .where(and(inArray(plays.playerId, playerIds), ne(plays.status, 'in_progress')));
+    return rows.map((r) => ({ ...r, status: r.status as 'won' | 'lost' | 'voided' }));
   }
 
   /** Asegura la fila (con `extra` inicial) y la bloquea con FOR UPDATE. */

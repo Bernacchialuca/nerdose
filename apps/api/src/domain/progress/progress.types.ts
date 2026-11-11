@@ -17,6 +17,17 @@ export type Streaks = { game: Streak; global: Streak };
 
 export type Outcome = { status: 'won' | 'lost'; result: unknown } | { status: 'voided' };
 
+/** Subconjunto del repositorio que usa el recálculo por lote (anulación), ligado a una transacción. */
+export type ProgressRecomputeRepo = Pick<
+  ProgressRepository,
+  | 'lockGameStats'
+  | 'lockPlayerStats'
+  | 'activeDays'
+  | 'completedPlays'
+  | 'saveGameStats'
+  | 'savePlayerStats'
+>;
+
 /** Subconjunto del repositorio que usa el cierre, ligado a una transacción. */
 export type ProgressWriteRepo = Pick<
   ProgressRepository,

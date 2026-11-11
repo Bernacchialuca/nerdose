@@ -1,5 +1,5 @@
 import type { CodeLanguage, GameId, Locale, ReportReason } from '@nerdose/core';
-import { challengeReports, challenges, plays } from '@nerdose/db';
+import { challengeReports, challenges, plays, terms, timelineFacts } from '@nerdose/db';
 import type { Db, Tx } from '@nerdose/db';
 import { and, count, eq, inArray, lte, sql } from 'drizzle-orm';
 
@@ -98,6 +98,76 @@ export class QualityRepository {
         and(eq(challengeReports.playerId, playerId), eq(challengeReports.challengeId, challengeId)),
       )
       .limit(1);
+    return rows.length > 0;
+  }
+
+  /** Desafío con FOR UPDATE: serializa contra el FOR SHARE de start/move/acknowledge-void/report. */
+  async lockChallengeForUpdate(id: string): Promise<{
+    id: string;
+    gameId: GameId;
+    date: string;
+    status: string;
+    payload: unknown;
+  } | null> {
+    const [row] = await this.db
+      .select({
+        id: challenges.id,
+        gameId: challenges.gameId,
+        date: challenges.date,
+        status: challenges.status,
+        payload: challenges.payload,
+      })
+      .from(challenges)
+      .where(eq(challenges.id, id))
+      .for('update');
+    return row ?? null;
+  }
+
+  async markVoided(id: string, reason: string): Promise<void> {
+    await this.db
+      .update(challenges)
+      .set({ status: 'voided', voidReason: reason, voidedAt: sql`now()` })
+      .where(eq(challenges.id, id));
+  }
+
+  /** Anula todas las Play del desafío (conservan `result` y `score`); devuelve los player_id. */
+  async voidPlays(challengeId: string): Promise<string[]> {
+    const rows = await this.db
+      .update(plays)
+      .set({ status: 'voided', finishedAt: sql`coalesce(${plays.finishedAt}, now())` })
+      .where(eq(plays.challengeId, challengeId))
+      .returning({ playerId: plays.playerId });
+    return rows.map((r) => r.playerId);
+  }
+
+  /** Reportes abiertos → resolved; devuelve la cantidad. */
+  async resolveOpenReports(challengeId: string): Promise<number> {
+    const rows = await this.db
+      .update(challengeReports)
+      .set({ status: 'resolved' })
+      .where(
+        and(eq(challengeReports.challengeId, challengeId), eq(challengeReports.status, 'open')),
+      )
+      .returning({ id: challengeReports.id });
+    return rows.length;
+  }
+
+  /** true si el término estaba `approved` y pasó a `rejected`. */
+  async rejectTerm(id: string, reason: string): Promise<boolean> {
+    const rows = await this.db
+      .update(terms)
+      .set({ status: 'rejected', rejectionReason: reason })
+      .where(and(eq(terms.id, id), eq(terms.status, 'approved')))
+      .returning({ id: terms.id });
+    return rows.length > 0;
+  }
+
+  async rejectTimelineFact(id: string, reason: string): Promise<boolean> {
+    const rows = await this.db
+      .update(timelineFacts)
+      .set({ status: 'rejected', rejectionReason: reason })
+      .where(and(eq(timelineFacts.id, id), eq(timelineFacts.status, 'approved')))
+      .returning({ id: timelineFacts.id });
     return rows.length > 0;
   }
 }

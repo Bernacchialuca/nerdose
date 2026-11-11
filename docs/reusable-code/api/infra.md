@@ -46,3 +46,15 @@
 - **Location:** apps/api/src/domain/progress/
 - **Signature:** `gameStatsView(playerId, game, day): Promise<GameStatsView>`; `todayStreaks(playerId, day)`; `applyResult(repo: ProgressWriteRepo, { playerId, game, date, outcome }): Promise<{ streaks, gameStats }>` (outcome `won | lost | voided`); `ProgressRepository(db | tx)`: `findGameStats`, `findAllGameStats`, `findPlayerStats`, `prevActiveDays(day)`, `lockGameStats`, `lockPlayerStats`, `saveGameStats`, `savePlayerStats`
 - **Description:** live streaks via `liveStreak()` and incremental streak/counter update via `nextStreak()` from `@nerdose/core`. `voided` counts for streaks and `total_completed` but not `played`, `wins` or `extra`.
+
+## VoidService
+- **Location:** apps/api/src/domain/quality/void.service.ts
+- **Signature:** `void(challengeId, body: VoidRequest, log): Promise<{ challenge_id, affected_plays }>`; `VoidTx` / `VoidTxRepos` in `quality.types.ts`
+- **Description:** one transaction: `lockChallengeForUpdate` (404/409), culprit check against `game.culprits` (422), `markVoided`, `voidPlays`, `resolveOpenReports`, `rejectTerm`/`rejectTimelineFact`, `ProgressService.recompute`; after COMMIT emits the domain events and reloads `TodayCache` only when the challenge is today (a reload failure is logged, response stays 200)
+- **Usage:** `await deps.voids.void(id, { void_reason: 'x', culprit: { kind: 'none' } }, log)`
+
+## ProgressService.recompute / ProgressRepository.activeDays / completedPlays
+- **Location:** apps/api/src/domain/progress/
+- **Signature:** `recompute(repo: ProgressRecomputeRepo, { playerIds, game }): Promise<{ players }>`; `activeDays()`, `completedPlays(playerIds)`
+- **Description:** rebuilds one game's `player_game_stats` and the global `player_stats` from `plays` with `replayStreak` / `rebuildGameStats`; locks players in ascending id order (game stats then player stats) and reads once per batch
+- **Usage:** `await progress.recompute(new ProgressRepository(tx), { playerIds, game })`

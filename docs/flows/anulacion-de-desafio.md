@@ -2,10 +2,10 @@
 id: anulacion-de-desafio
 title: Anulación de un desafío y marcado como completado
 type: feature
-status: Draft
+status: Active
 created: 2026-11-03
-last_updated: 2026-11-03
-stories: []
+last_updated: 2026-11-11
+stories: [S-032]
 ---
 
 # Anulación de un desafío y marcado como completado

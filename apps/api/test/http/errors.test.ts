@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import { errorMessage } from '@/http/error-messages';
 
-import { MUTATION_HEADERS, buildTestApp } from '../helpers/app';
+import { MUTATION_HEADERS, adminAuth, buildTestApp } from '../helpers/app';
 
 const NOT_FOUND = { error: { code: 'not_found', message: 'Recurso no encontrado.' } };
 const okHealth = { check: async () => ({ status: 'ok', db: 'ok' }) as const };
@@ -15,8 +15,16 @@ function appWith(check: () => Promise<never> | Promise<{ status: 'ok'; db: 'ok' 
 describe('notFound', () => {
   const { app } = buildTestApp({ health: okHealth });
 
-  it.each(['/api/no-existe', '/api/admin/no-existe'])('GET %s responde 404', async (path) => {
-    const res = await app.request(path);
+  it('GET /api/no-existe responde 404', async () => {
+    const res = await app.request('/api/no-existe');
+    expect(res.status).toBe(404);
+    expect(await res.json()).toEqual(NOT_FOUND);
+  });
+
+  it('GET /api/admin/no-existe sin token responde 401, con token 404', async () => {
+    const anon = await app.request('/api/admin/no-existe');
+    expect(anon.status).toBe(401);
+    const res = await app.request('/api/admin/no-existe', { headers: await adminAuth() });
     expect(res.status).toBe(404);
     expect(await res.json()).toEqual(NOT_FOUND);
   });
