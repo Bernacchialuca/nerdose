@@ -1,6 +1,6 @@
 {
-  "dataset_version": "2026.11.10",
-  "generated_at": "2026-11-10T18:08:07.682Z",
+  "dataset_version": "2026.11.11",
+  "generated_at": "2026-11-11T01:19:49.596Z",
   "min_sitelinks": 12,
   "counts": {
     "terms": {
@@ -51,43 +51,43 @@
       }
     },
     "timeline_facts": {
-      "approved": 0,
-      "rejected": 0,
+      "approved": 1218,
+      "rejected": 1624,
       "by_category": {
         "programming_languages": {
-          "approved": 0,
-          "rejected": 0
+          "approved": 184,
+          "rejected": 241
         },
         "frameworks": {
-          "approved": 0,
-          "rejected": 0
+          "approved": 102,
+          "rejected": 157
         },
         "companies": {
-          "approved": 0,
-          "rejected": 0
+          "approved": 383,
+          "rejected": 815
         },
         "operating_systems": {
-          "approved": 0,
-          "rejected": 0
+          "approved": 235,
+          "rejected": 153
         },
         "hardware": {
           "approved": 0,
           "rejected": 0
         },
         "video_games": {
-          "approved": 0,
-          "rejected": 0
+          "approved": 314,
+          "rejected": 258
         }
       },
       "by_reason": {
-        "disputed_date": 0,
-        "imprecise_date": 0,
-        "missing_article": 0,
-        "low_sitelinks": 0,
-        "missing_note": 0,
-        "note_year_mismatch": 0,
-        "excluded": 0,
-        "duplicate": 0
+        "disputed_date": 293,
+        "imprecise_date": 13,
+        "missing_article": 638,
+        "low_sitelinks": 657,
+        "missing_note": 9,
+        "note_year_mismatch": 6,
+        "excluded": 5,
+        "duplicate": 3
       }
     }
   },
@@ -249,11 +249,68 @@
       }
     ],
     "timeline": {
-      "min_sitelinks": 10,
+      "min_sitelinks": 16,
       "min_approved_per_category": 100,
       "min_categories": 3,
-      "categories_v1": [],
-      "classes": []
+      "categories_v1": [
+        "programming_languages",
+        "frameworks",
+        "companies",
+        "operating_systems",
+        "video_games"
+      ],
+      "classes": [
+        {
+          "wikidata_class": "Q9143",
+          "category": "programming_languages",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q271680",
+          "category": "frameworks",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q1330336",
+          "category": "frameworks",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q188860",
+          "category": "frameworks",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q1058914",
+          "category": "companies",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q18388277",
+          "category": "companies",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q1137109",
+          "category": "companies",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q9135",
+          "category": "operating_systems",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q920890",
+          "category": "operating_systems",
+          "date_property": "P571"
+        },
+        {
+          "wikidata_class": "Q7889",
+          "category": "video_games",
+          "date_property": "P577"
+        }
+      ]
     }
   }
 }

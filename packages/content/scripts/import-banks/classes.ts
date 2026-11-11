@@ -1,4 +1,4 @@
-import type { TermClass } from './wikidata';
+import type { TermClass, TimelineClass } from './wikidata';
 
 // QIDs verificados contra Wikidata (wbsearchentities + consulta SPARQL de etiquetas).
 export const TERM_CLASSES: readonly TermClass[] = [
@@ -38,4 +38,27 @@ export const TERM_CLASSES: readonly TermClass[] = [
   { wikidataClass: 'Q235557', category: 'software_engineering' },
   { wikidataClass: 'Q37045', category: 'software_engineering' },
   { wikidataClass: 'Q1077784', category: 'software_engineering' },
+];
+
+// QIDs verificados contra Wikidata (wbsearchentities + consulta SPARQL de etiquetas y conteos).
+// Categorías v1 = categorías con clases en este mapeo; una categoría diferida se quita de acá.
+// `hardware` quedó diferida en la primera corrida (39 approved con Q3966, mínimo 100).
+export const TIMELINE_CLASSES: readonly TimelineClass[] = [
+  { wikidataClass: 'Q9143', category: 'programming_languages', dateProperty: 'P571' },
+  { wikidataClass: 'Q271680', category: 'frameworks', dateProperty: 'P571' },
+  { wikidataClass: 'Q1330336', category: 'frameworks', dateProperty: 'P571' },
+  { wikidataClass: 'Q188860', category: 'frameworks', dateProperty: 'P571' },
+  { wikidataClass: 'Q1058914', category: 'companies', dateProperty: 'P571' },
+  { wikidataClass: 'Q18388277', category: 'companies', dateProperty: 'P571' },
+  { wikidataClass: 'Q1137109', category: 'companies', dateProperty: 'P571' },
+  { wikidataClass: 'Q9135', category: 'operating_systems', dateProperty: 'P571' },
+  { wikidataClass: 'Q920890', category: 'operating_systems', dateProperty: 'P571' },
+  {
+    wikidataClass: 'Q7889',
+    category: 'video_games',
+    dateProperty: 'P577',
+    fallbackProperty: 'P571',
+    // Clase enorme: sin piso propio la consulta da timeout y habría miles de summaries por pedir.
+    queryFloor: 30,
+  },
 ];

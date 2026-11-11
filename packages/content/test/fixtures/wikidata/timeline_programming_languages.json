@@ -1,0 +1,383 @@
+{
+  "head": {
+    "vars": [
+      "item",
+      "label_en",
+      "label_es",
+      "description_en",
+      "description_es",
+      "sitelinks",
+      "article_en",
+      "article_es",
+      "date_prop",
+      "time",
+      "precision",
+      "rank",
+      "earliest",
+      "latest",
+      "sourcing"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q251"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Java"
+        },
+        "label_es": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Java"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "object-oriented programming language"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "lenguaje de programación orientado a objetos"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "159"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Java (programming language)"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Java (lenguaje de programación)"
+        },
+        "date_prop": {
+          "type": "literal",
+          "value": "P571"
+        },
+        "time": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "1995-01-01T00:00:00Z"
+        },
+        "precision": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "9"
+        },
+        "rank": {
+          "type": "uri",
+          "value": "http://wikiba.se/ontology#NormalRank"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q206904"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "R"
+        },
+        "label_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "R"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "programming language for statistical analysis"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "lenguaje de programación para el cálculo estadístico"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "77"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "R (programming language)"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "R (lenguaje de programación)"
+        },
+        "date_prop": {
+          "type": "literal",
+          "value": "P571"
+        },
+        "time": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "1993-08-01T00:00:00Z"
+        },
+        "precision": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "10"
+        },
+        "rank": {
+          "type": "uri",
+          "value": "http://wikiba.se/ontology#NormalRank"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q575650"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Rust"
+        },
+        "label_es": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Rust"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "memory-safe programming language without garbage collection"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "lenguaje de programación"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "66"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Rust (programming language)"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Rust (lenguaje de programación)"
+        },
+        "date_prop": {
+          "type": "literal",
+          "value": "P571"
+        },
+        "time": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2006-01-01T00:00:00Z"
+        },
+        "precision": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "9"
+        },
+        "rank": {
+          "type": "uri",
+          "value": "http://wikiba.se/ontology#PreferredRank"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q575650"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Rust"
+        },
+        "label_es": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Rust"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "memory-safe programming language without garbage collection"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "lenguaje de programación"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "66"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Rust (programming language)"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Rust (lenguaje de programación)"
+        },
+        "date_prop": {
+          "type": "literal",
+          "value": "P571"
+        },
+        "time": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2006-07-23T00:00:00Z"
+        },
+        "precision": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "11"
+        },
+        "rank": {
+          "type": "uri",
+          "value": "http://wikiba.se/ontology#NormalRank"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q726218"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "XML User Interface Language"
+        },
+        "label_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "XML User Interface Language"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "user interface markup language implemented as an XML dialect"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "aplicación de XML a la descripción de la interfaz de usuario en el navegador Mozilla"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "28"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "XUL"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "XML User Interface Language"
+        },
+        "date_prop": {
+          "type": "literal",
+          "value": "P571"
+        },
+        "time": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "1999-01-01T00:00:00Z"
+        },
+        "precision": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "9"
+        },
+        "rank": {
+          "type": "uri",
+          "value": "http://wikiba.se/ontology#NormalRank"
+        },
+        "sourcing": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q5727902"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q620464"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "G-code"
+        },
+        "label_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "G-code"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "programming languages"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "lenguaje de programación"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "28"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "G-code"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "G-code"
+        },
+        "date_prop": {
+          "type": "literal",
+          "value": "P571"
+        },
+        "time": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "1950-01-01T00:00:00Z"
+        },
+        "precision": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "8"
+        },
+        "rank": {
+          "type": "uri",
+          "value": "http://wikiba.se/ontology#NormalRank"
+        }
+      }
+    ]
+  }
+}

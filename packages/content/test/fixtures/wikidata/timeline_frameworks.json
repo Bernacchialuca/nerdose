@@ -1,0 +1,423 @@
+{
+  "head": {
+    "vars": [
+      "item",
+      "label_en",
+      "label_es",
+      "description_en",
+      "description_es",
+      "sitelinks",
+      "article_en",
+      "article_es",
+      "date_prop",
+      "time",
+      "precision",
+      "rank",
+      "earliest",
+      "latest",
+      "sourcing"
+    ]
+  },
+  "results": {
+    "bindings": [
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q24589705"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Vue.js"
+        },
+        "label_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Vue.js"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "JavaScript framework"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "42"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Vue.js"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Vue.js"
+        },
+        "date_prop": {
+          "type": "literal",
+          "value": "P571"
+        },
+        "time": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2014-02-01T00:00:00Z"
+        },
+        "precision": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "10"
+        },
+        "rank": {
+          "type": "uri",
+          "value": "http://wikiba.se/ontology#NormalRank"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q89114416"
+        },
+        "label_en": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Luanti"
+        },
+        "label_es": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Luanti"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "opensource voxel game engine"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "motor de videojuegos voxel de código abierto"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "27"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Luanti"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Luanti"
+        },
+        "date_prop": {
+          "type": "literal",
+          "value": "P571"
+        },
+        "time": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2010-10-10T00:00:00Z"
+        },
+        "precision": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "11"
+        },
+        "rank": {
+          "type": "uri",
+          "value": "http://wikiba.se/ontology#PreferredRank"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q89114416"
+        },
+        "label_en": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Luanti"
+        },
+        "label_es": {
+          "xml:lang": "mul",
+          "type": "literal",
+          "value": "Luanti"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "opensource voxel game engine"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "motor de videojuegos voxel de código abierto"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "27"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Luanti"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Luanti"
+        },
+        "date_prop": {
+          "type": "literal",
+          "value": "P571"
+        },
+        "time": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2010-11-01T00:00:00Z"
+        },
+        "precision": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "10"
+        },
+        "rank": {
+          "type": "uri",
+          "value": "http://wikiba.se/ontology#NormalRank"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q900957"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Apache Struts"
+        },
+        "label_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Apache Struts"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "open-source web application framework"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "24"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Apache Struts"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Apache Struts"
+        },
+        "date_prop": {
+          "type": "literal",
+          "value": "P571"
+        },
+        "time": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2006-10-10T00:00:00Z"
+        },
+        "precision": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "11"
+        },
+        "rank": {
+          "type": "uri",
+          "value": "http://wikiba.se/ontology#NormalRank"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q900957"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Apache Struts"
+        },
+        "label_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Apache Struts"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "open-source web application framework"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "24"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Apache Struts"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Apache Struts"
+        },
+        "date_prop": {
+          "type": "literal",
+          "value": "P571"
+        },
+        "time": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2014-04-11T00:00:00Z"
+        },
+        "precision": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "11"
+        },
+        "rank": {
+          "type": "uri",
+          "value": "http://wikiba.se/ontology#NormalRank"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q7573619"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Apache Spark"
+        },
+        "label_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Apache Spark"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "open-source data analytics cluster computing framework"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "plataforma de análisis de datos de forma distribuida"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "20"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Apache Spark"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Apache Spark"
+        },
+        "date_prop": {
+          "type": "literal",
+          "value": "P571"
+        },
+        "time": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2014-05-30T00:00:00Z"
+        },
+        "precision": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "11"
+        },
+        "rank": {
+          "type": "uri",
+          "value": "http://wikiba.se/ontology#NormalRank"
+        }
+      },
+      {
+        "item": {
+          "type": "uri",
+          "value": "http://www.wikidata.org/entity/Q7573619"
+        },
+        "label_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Apache Spark"
+        },
+        "label_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Apache Spark"
+        },
+        "description_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "open-source data analytics cluster computing framework"
+        },
+        "description_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "plataforma de análisis de datos de forma distribuida"
+        },
+        "sitelinks": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "20"
+        },
+        "article_en": {
+          "xml:lang": "en",
+          "type": "literal",
+          "value": "Apache Spark"
+        },
+        "article_es": {
+          "xml:lang": "es",
+          "type": "literal",
+          "value": "Apache Spark"
+        },
+        "date_prop": {
+          "type": "literal",
+          "value": "P571"
+        },
+        "time": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#dateTime",
+          "type": "literal",
+          "value": "2014-03-01T00:00:00Z"
+        },
+        "precision": {
+          "datatype": "http://www.w3.org/2001/XMLSchema#integer",
+          "type": "literal",
+          "value": "11"
+        },
+        "rank": {
+          "type": "uri",
+          "value": "http://wikiba.se/ontology#NormalRank"
+        }
+      }
+    ]
+  }
+}

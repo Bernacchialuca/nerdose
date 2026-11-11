@@ -68,7 +68,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
   |---|---|---|---|---|---|
   | devdle | guesses (con feedback por letra) | adivina o 6 intentos válidos | intentos usados (1–6) | adivinó | "✓ 4/6" / "✗ X/6" |
   | grep-grid | found_words, gave_up | 8 encontradas o se rinde | palabras encontradas (0–8) | 8/8 | "8/8" / "5/8" |
-  | timeline | — | 1 confirmación | posiciones correctas (0–5) | 5/5 | "3/5" |
+  | timeline | order (vacío hasta confirmar; los 5 opaque_id confirmados) | 1 confirmación | posiciones correctas (0–5) | 5/5 | "3/5" |
   | big-o | — | 1 confirmación | 1/0 | opción correcta | "✓ O(n log n)" / "✗" |
   | bug-hunt | — | 1 confirmación | 1/0 | línea correcta | "✓ L7" / "✗ L7" |
 
@@ -78,7 +78,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
 - **Notes:** PK (player_id, game_id). Agregado que se actualiza en la misma transacción que cierra la Play. `played` y `wins` excluyen las Play `voided`. Contenido de `extra`:
   - devdle: distribución de intentos (1–6 y derrotas);
   - grep-grid: distribución de palabras encontradas por partida (0–8), de la que salen el promedio de palabras encontradas y el porcentaje de 8/8;
-  - timeline: promedio de posiciones correctas por categoría;
+  - timeline: por categoría, partidas jugadas y suma de posiciones correctas (`{ by_category: { <category>: { played, correct } } }`), de donde sale el promedio de posiciones correctas por categoría;
   - big-o: aciertos por `recipe_category`;
   - bug-hunt: aciertos por `code_language` y por `bug_type`.
 
@@ -100,7 +100,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
 ### TimelineFact
 - **Key attributes:** id (uuid, req), label (string, req), category (enum: programming_languages/frameworks/companies/operating_systems/hardware/video_games, req), event_date (date, req), date_precision (enum: year/month/day, req), note (json `{es,en}`, req), wikidata_id (string, req, único), sitelinks (int, req), status (enum: draft/approved/rejected, default: draft), rejection_reason (string, opt), last_used (date, opt)
 - **Relationships:** referenced_by Challenge (timeline)
-- **Notes:** Hito tech que usa Tech Timeline. Requiere una única fecha, sin contradicciones en Wikidata. Si la nota menciona un año distinto del de `event_date`, se usa la descripción corta. Las categorías `internet` y `general_history` quedan diferidas hasta tener una fuente fiable. Pasa a `rejected` si un Challenge anulado lo señala como causa.
+- **Notes:** Hito tech que usa Tech Timeline. Requiere una única fecha, sin contradicciones en Wikidata. Si la nota menciona un año distinto del de `event_date`, se usa la descripción corta. Las categorías `internet` y `general_history` quedan diferidas hasta tener una fuente fiable, y `hardware` queda diferida tras la primera corrida del importador (39 hechos `approved` con las clases disponibles, por debajo del mínimo de 100). Categorías v1: `programming_languages`, `frameworks`, `companies`, `operating_systems` y `video_games`. Pasa a `rejected` si un Challenge anulado lo señala como causa.
 
 ### RejectedGuess
 - **Key attributes:** word (string, req, A–Z), player_id (uuid, req), created_at (timestamp, req)
