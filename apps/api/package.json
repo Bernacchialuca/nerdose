@@ -16,6 +16,7 @@
     "@nerdose/db": "workspace:*",
     "@nerdose/game-devdle": "workspace:*",
     "@nerdose/game-grep-grid": "workspace:*",
+    "@nerdose/game-timeline": "workspace:*",
     "@t3-oss/env-core": "^0.13.11",
     "dotenv": "^18.0.9",
     "drizzle-orm": "^0.45.4",

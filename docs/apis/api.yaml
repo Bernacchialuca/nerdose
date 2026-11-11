@@ -188,7 +188,7 @@ paths:
                 games:
                   - { game_id: devdle, challenge_status: published, play_status: won, history_label: '✓ 4/6', current_streak: 5 }
                   - { game_id: grep-grid, challenge_status: published, play_status: in_progress, history_label: null, current_streak: 2 }
-                  - { game_id: timeline, challenge_status: published, play_status: null, history_label: null, current_streak: 0 }
+                  - { game_id: timeline, challenge_status: published, play_status: lost, history_label: '3/5', current_streak: 1 }
                   - { game_id: big-o, challenge_status: none, play_status: null, history_label: null, current_streak: 3 }
                   - { game_id: bug-hunt, challenge_status: voided, play_status: null, history_label: null, current_streak: 1 }
         '429': { $ref: '#/components/responses/RateLimited' }
@@ -236,6 +236,29 @@ paths:
                     play:
                       status: in_progress
                       state: { guesses: [ { guess: REACT, marks: [absent, present, absent, absent, absent] } ] }
+                      score: null
+                      code_language: null
+                    result: null
+                    game_stats: null
+                timeline_en_curso:
+                  summary: Tech Timeline en curso (`state` vacío hasta confirmar; los 5 ítems llegan mezclados y sin fechas)
+                  value:
+                    game_id: timeline
+                    date: '2026-11-03'
+                    number: 8
+                    challenge_status: published
+                    public_view:
+                      category: programming_languages
+                      prompt: 'Ordená estos lenguajes del más antiguo al más reciente'
+                      items:
+                        - { opaque_id: g2n5w3, label: Go }
+                        - { opaque_id: k1v3s8, label: Kubernetes }
+                        - { opaque_id: p7k2m9, label: Python }
+                        - { opaque_id: d9r6t0, label: Docker }
+                        - { opaque_id: j4x8q1, label: Java }
+                    play:
+                      status: in_progress
+                      state: {}
                       score: null
                       code_language: null
                     result: null
@@ -355,7 +378,7 @@ paths:
               grep_grid_give_up:
                 value: { challenge_number: 128, move: { type: give_up } }
               timeline:
-                value: { challenge_number: 128, move: { order: [k3f9, a01x, z7q2, m4b8, p2c6] } }
+                value: { challenge_number: 128, move: { order: [p7k2m9, g2n5w3, j4x8q1, d9r6t0, k1v3s8] } }
               big_o:
                 value: { challenge_number: 128, move: { language: go, option: o_n_log_n } }
               bug_hunt:
@@ -455,6 +478,35 @@ paths:
                       wins: 7
                       win_rate: 0.58
                       extra: { words_found: { '0': 0, '1': 1, '2': 0, '3': 1, '4': 0, '5': 1, '6': 1, '7': 1, '8': 7 } }
+                timeline_cierre_3_de_5:
+                  summary: Confirmar un orden con 3/5 posiciones correctas (cierra la Play como `lost`)
+                  value:
+                    feedback: null
+                    play:
+                      status: lost
+                      state: { order: [p7k2m9, g2n5w3, j4x8q1, d9r6t0, k1v3s8] }
+                      score: 3
+                    result:
+                      win: false
+                      score: 3
+                      category: programming_languages
+                      correct_order: [p7k2m9, j4x8q1, g2n5w3, d9r6t0, k1v3s8]
+                      submitted_order: [p7k2m9, g2n5w3, j4x8q1, d9r6t0, k1v3s8]
+                      items:
+                        - { opaque_id: p7k2m9, label: Python, event_date: '1991-02-20', date_precision: day, note: 'Guido van Rossum publica la primera versión.' }
+                        - { opaque_id: j4x8q1, label: Java, event_date: '1995-05-23', date_precision: day, note: 'Sun Microsystems presenta Java.' }
+                        - { opaque_id: g2n5w3, label: Go, event_date: '2009-01-01', date_precision: year, note: 'Google hace público el lenguaje Go.' }
+                        - { opaque_id: d9r6t0, label: Docker, event_date: '2013-03-20', date_precision: day, note: 'Docker se presenta al público.' }
+                        - { opaque_id: k1v3s8, label: Kubernetes, event_date: '2014-06-01', date_precision: month, note: 'Google libera Kubernetes como código abierto.' }
+                    streaks: { game: { current: 1, max: 1 }, global: { current: 1, max: 1 } }
+                    game_stats:
+                      game_id: timeline
+                      current_streak: 1
+                      max_streak: 1
+                      played: 1
+                      wins: 0
+                      win_rate: 0
+                      extra: { by_category: { programming_languages: { played: 1, correct: 3 } } }
                 big_o_cierre:
                   value:
                     feedback: null
@@ -487,7 +539,8 @@ paths:
               schema: { $ref: '#/components/schemas/Error' }
               examples:
                 invalid_move:
-                  value: { error: { code: invalid_move, message: 'Jugada inválida' } }
+                  summary: Jugada inválida (por ejemplo faltantes, duplicados o ids ajenos en Timeline)
+                  value: { error: { code: invalid_move, message: 'Jugada inválida.' } }
                 not_in_word_list:
                   value: { error: { code: not_in_word_list, message: 'La palabra no está en la lista' } }
         '429': { $ref: '#/components/responses/RateLimited' }

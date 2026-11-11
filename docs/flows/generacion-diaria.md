@@ -106,7 +106,7 @@ sequenceDiagram
 **Operación de BD (ok):**
 - **Tabla:** `challenges` — UPDATE `status = 'approved'`, `verification`
 - **Tabla:** `terms` — UPDATE `last_used_devdle = GREATEST(last_used_devdle, date)` (devdle) o `last_used_grep = GREATEST(last_used_grep, date)` (grep-grid)
-- **Tabla:** `timeline_facts` — UPDATE `last_used = date` (timeline)
+- **Tabla:** `timeline_facts` — UPDATE `last_used = GREATEST(last_used, date)` (timeline)
 
 **Operación de BD (no ok):**
 - **Tabla:** `challenges` — UPDATE `status = 'rejected'`, `verification`

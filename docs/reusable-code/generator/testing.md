@@ -47,6 +47,12 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 - **Description:** `makeFact` returns the Docker fact; `makeFacts` returns n approved facts; `withFacts` loads fixture `base` and replaces facts (validated with `timelineFactsFileSchema`) and version; `insertFacts` inserts `timeline_facts` rows with defaults.
 - **Usage:** `runJob('sync_banks', syncBanksJob({ db, loadDataset: withFacts('v1', makeFacts(40), '2026.12.10') }), deps)`
 
+## FACT_ID / CHRONO5 / AMBIGUOUS5 / EXTRA_PL5
+- **Location:** apps/generator/test/helpers/facts.ts
+- **Signature:** `FACT_ID(nn: string): string`; `CHRONO5`, `AMBIGUOUS5`, `EXTRA_PL5: Array<Partial<NewTimelineFact> & { wikidataId: string }>`
+- **Description:** `timeline_facts` fixtures with fixed ids (so whole payloads can be compared in determinism tests). `CHRONO5` is 5 distinguishable `programming_languages` facts, `AMBIGUOUS5` is 5 facts the verifier rejects as indistinguishable, `EXTRA_PL5` adds 5 more of the same category.
+- **Usage:** `await insertFacts(t.owner.db, CHRONO5)`
+
 ## Dataset fixtures
 - **Location:** apps/generator/test/fixtures/datasets/{v1,v2,invalid,invalid-facts,dup-rejected,conflict}
 - **Description:** valid `manifest.json` + `terms.json` + `timeline_facts.json` sets (`invalid-facts` has an invalid fact) for `sync_banks` scenarios, loadable with `loadDataset(dir)`.

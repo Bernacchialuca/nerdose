@@ -280,10 +280,10 @@ describe('GET /api/games/{game_id}/today', () => {
   });
 
   it('TS-25 juego sin paquete y juego inexistente: 404 not_found', async () => {
-    await dbs.insertChallenge({ gameId: 'timeline', date: '2026-12-01', status: 'published' });
+    await dbs.insertChallenge({ gameId: 'big-o', date: '2026-12-01', status: 'published' });
     const player = await dbs.insertPlayer();
     const { app } = await buildDbApp(dbs);
-    for (const id of ['timeline', 'foo']) {
+    for (const id of ['big-o', 'foo']) {
       const res = await app.request(`/api/games/${id}/today`, { headers: cookie(player.id) });
       expect(res.status).toBe(404);
       expect(await res.json()).toEqual({

@@ -6,6 +6,7 @@ import { runGenerateToday } from '@/domain/challenge-publishing/fill.service';
 import { generatorRegistry } from '@/games/registry';
 
 import { BANK16, insertTerms } from '../helpers/bank';
+import { CHRONO5, insertFacts } from '../helpers/facts';
 import { setupTestDb } from '../helpers/db';
 import { captureLogger } from '../helpers/logger';
 
@@ -34,6 +35,7 @@ const allRows = () =>
 beforeEach(async () => {
   await t.reset();
   await insertTerms(t.owner.db, BANK16);
+  await insertFacts(t.owner.db, CHRONO5);
 });
 afterAll(() => t.cleanup());
 
@@ -41,7 +43,7 @@ describe('generate:today (solo dev)', () => {
   it('genera y aprueba el desafío de hoy, y nada más', async () => {
     const { summary, failed } = await run();
     expect(failed).toBe(false);
-    expect(summary.approved).toBe(2);
+    expect(summary.approved).toBe(3);
     expect(summary.missing).toBe(0);
     expect(summary.generated).toBe(summary.approved + summary.rejected);
     const rows = await allRows();
@@ -50,6 +52,7 @@ describe('generate:today (solo dev)', () => {
     ).toEqual([
       ['devdle', '2026-12-01', 12],
       ['grep-grid', '2026-12-01', 12],
+      ['timeline', '2026-12-01', 12],
     ]);
   });
 
@@ -61,6 +64,7 @@ describe('generate:today (solo dev)', () => {
     expect(rows.filter((r) => r.status === 'approved').map((r) => r.gameId)).toEqual([
       'devdle',
       'grep-grid',
+      'timeline',
     ]);
   });
 
