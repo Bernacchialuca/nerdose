@@ -13,6 +13,7 @@ y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Código alineado con el spec
 - `@nerdose/game-timeline/client` (S-029): `Instructions`, `Game`, `Result`, `share()` y las piezas `timeline.row` (jugando y resultado), `timeline.rail`, `timeline.hint` y el puntaje `score` compuesto localmente. Los tokens `status.success.row-bg`, `status.misplaced.*`, `type.display.score`, `type.numeric.year` y `type.game.item` los aporta `@nerdose/ui` (ver «Requisitos a `@nerdose/ui`» del Story Plan de S-029).
+- `@nerdose/ui` (S-029): tokens `status.success.row-bg` (`--color-status-success-row-bg`), `status.misplaced.bg` (`--color-status-misplaced-bg`), `status.misplaced.border` (`--color-status-misplaced-border`), `type.display.score` (`--text-display-score`, 56/800/1/-2), `type.numeric.year` (`--text-numeric-year`, 18/800) y `type.game.item` (`--text-game-item`, 16/700), los tres roles en `TEXT_ROLES`. `#5C4419` se declara como token propio aunque coincide con `game.bug-hunt.featured` y `streak.border-hover`: distinto significado.
 
 ### Notas para limpiar en otros docs
 - `timeline-resultado.md` · ejemplos de fecha abreviados («jun 2014»): el código usa el formato largo de `formatEventDate` («junio de 2014»).
