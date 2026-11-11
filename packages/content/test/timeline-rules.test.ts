@@ -225,11 +225,10 @@ describe('highestMinSitelinksTimeline', () => {
   const base = {
     exclusions: parseExclusions(''),
     currentYear: 2026,
-    minApprovedPerCategory: 2,
-    categories: ['programming_languages', 'frameworks'] as const,
+    minApprovedTotal: 4,
   };
 
-  it('returns the lowest of the per-category thresholds (TS-27)', () => {
+  it('returns the sitelinks of the n-th approved fact across categories (TS-27)', () => {
     const candidates = [
       fact('Q1', 'programming_languages', 50, 'A1'),
       fact('Q2', 'programming_languages', 40, 'A2'),
@@ -238,7 +237,8 @@ describe('highestMinSitelinksTimeline', () => {
       fact('Q5', 'frameworks', 20, 'B2'),
       fact('Q6', 'frameworks', 10, 'B3'),
     ];
-    expect(highestMinSitelinksTimeline(candidates, base)).toBe(20);
-    expect(highestMinSitelinksTimeline(candidates.slice(0, 4), base)).toBeNull();
+    // 60, 50, 40, 30, 20, 10: el cuarto es 30, sin importar la categoría.
+    expect(highestMinSitelinksTimeline(candidates, base)).toBe(30);
+    expect(highestMinSitelinksTimeline(candidates.slice(0, 3), base)).toBeNull();
   });
 });

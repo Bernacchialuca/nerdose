@@ -147,7 +147,7 @@ describe('loadDataset', () => {
   it('accepts the extended manifest (TS-10)', () => {
     const parsed = manifestSchema.parse(MANIFEST_OK);
     expect(Object.keys(parsed.counts)).toEqual(['terms', 'timeline_facts']);
-    expect(Object.keys(parsed.counts.timeline_facts.by_category)).toHaveLength(6);
+    expect(Object.keys(parsed.counts.timeline_facts.by_category)).toHaveLength(8);
     expect(Object.keys(parsed.counts.timeline_facts.by_reason)).toHaveLength(8);
   });
 });

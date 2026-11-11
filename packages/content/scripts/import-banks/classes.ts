@@ -41,8 +41,9 @@ export const TERM_CLASSES: readonly TermClass[] = [
 ];
 
 // QIDs verificados contra Wikidata (wbsearchentities + consulta SPARQL de etiquetas y conteos).
-// Categorías v1 = categorías con clases en este mapeo; una categoría diferida se quita de acá.
-// `hardware` quedó diferida en la primera corrida (39 approved con Q3966, mínimo 100).
+// Categorías v1 = categorías con clases en este mapeo. No hay mínimo por categoría: entra toda
+// categoría con hechos que pasen el filtro de calidad; el mínimo es el total (MIN_APPROVED_TIMELINE_TOTAL).
+// El orden importa: un ítem que aparece en dos clases conserva la categoría de la primera.
 export const TIMELINE_CLASSES: readonly TimelineClass[] = [
   { wikidataClass: 'Q9143', category: 'programming_languages', dateProperty: 'P571' },
   { wikidataClass: 'Q271680', category: 'frameworks', dateProperty: 'P571' },
@@ -60,5 +61,88 @@ export const TIMELINE_CLASSES: readonly TimelineClass[] = [
     fallbackProperty: 'P571',
     // Clase enorme: sin piso propio la consulta da timeout y habría miles de summaries por pedir.
     queryFloor: 30,
+  },
+  // hardware estuvo diferida con el mínimo por categoría; sin ese mínimo vuelve a entrar. Se usan
+  // las clases de modelos (computadora, consola, smartphone): `computer hardware` (Q3966) arrastraba
+  // sistemas de archivos y software (ext4, Samba…) que no son hardware.
+  {
+    wikidataClass: 'Q55990535',
+    category: 'hardware',
+    dateProperty: 'P577',
+    fallbackProperty: 'P571',
+  },
+  {
+    wikidataClass: 'Q56682555',
+    category: 'hardware',
+    dateProperty: 'P577',
+    fallbackProperty: 'P571',
+  },
+  {
+    wikidataClass: 'Q19723451',
+    category: 'hardware',
+    dateProperty: 'P577',
+    fallbackProperty: 'P571',
+  },
+  // Sistemas de bases de datos (DBMS, relacionales y NoSQL): fecha de creación o, si falta, de publicación.
+  {
+    wikidataClass: 'Q176165',
+    category: 'databases',
+    dateProperty: 'P571',
+    fallbackProperty: 'P577',
+  },
+  {
+    wikidataClass: 'Q3932296',
+    category: 'databases',
+    dateProperty: 'P571',
+    fallbackProperty: 'P577',
+  },
+  {
+    wikidataClass: 'Q82231',
+    category: 'databases',
+    dateProperty: 'P571',
+    fallbackProperty: 'P577',
+  },
+  // Software y herramientas: navegadores, editores, IDEs, control de versiones, contenedores.
+  {
+    wikidataClass: 'Q6368',
+    category: 'software_tools',
+    dateProperty: 'P571',
+    fallbackProperty: 'P577',
+  },
+  {
+    wikidataClass: 'Q131212',
+    category: 'software_tools',
+    dateProperty: 'P571',
+    fallbackProperty: 'P577',
+  },
+  {
+    wikidataClass: 'Q522972',
+    category: 'software_tools',
+    dateProperty: 'P571',
+    fallbackProperty: 'P577',
+  },
+  {
+    wikidataClass: 'Q13741',
+    category: 'software_tools',
+    dateProperty: 'P571',
+    fallbackProperty: 'P577',
+  },
+  {
+    wikidataClass: 'Q3257930',
+    category: 'software_tools',
+    dateProperty: 'P571',
+    fallbackProperty: 'P577',
+  },
+  {
+    wikidataClass: 'Q7935198',
+    category: 'software_tools',
+    dateProperty: 'P571',
+    fallbackProperty: 'P577',
+  },
+  {
+    wikidataClass: 'Q118218718',
+    category: 'software_tools',
+    dateProperty: 'P571',
+    fallbackProperty: 'P577',
   },
 ];

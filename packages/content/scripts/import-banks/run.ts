@@ -16,7 +16,7 @@ import { TERM_CLASSES, TIMELINE_CLASSES } from './classes';
 import { parseInclusions } from './inclusions';
 import type { WikimediaClient } from './http';
 import {
-  MIN_APPROVED_PER_CATEGORY,
+  MIN_APPROVED_TIMELINE_TOTAL,
   MIN_TIMELINE_CATEGORIES,
   assertTimelineMinimums,
   buildManifest,
@@ -76,7 +76,7 @@ export type RunImportOptions = {
   timelineClasses?: readonly TimelineClass[];
   minSitelinksTimeline?: number;
   // Solo para tests: el CLI nunca los expone.
-  minApprovedPerCategory?: number;
+  minApprovedTimelineTotal?: number;
   minCategories?: number;
   minSitelinks?: number;
   minApproved?: number;
@@ -207,14 +207,14 @@ async function importTimelineFacts(
   {
     classes,
     minSitelinks,
-    minApprovedPerCategory,
+    minApprovedTotal,
     exclusions,
     currentYear,
     log,
   }: {
     classes: readonly TimelineClass[];
     minSitelinks: number;
-    minApprovedPerCategory: number;
+    minApprovedTotal: number;
     exclusions: Exclusions;
     currentYear: number;
     log: (message: string) => void;
@@ -254,8 +254,7 @@ async function importTimelineFacts(
   const suggestedMinSitelinksTimeline = highestMinSitelinksTimeline(candidates, {
     exclusions,
     currentYear,
-    minApprovedPerCategory,
-    categories: [...new Set(classes.map((cls) => cls.category))],
+    minApprovedTotal,
   });
   return { facts, candidates, suggestedMinSitelinksTimeline };
 }
@@ -267,7 +266,7 @@ export async function runImport(options: RunImportOptions): Promise<RunImportRes
     classes = TERM_CLASSES,
     timelineClasses = TIMELINE_CLASSES,
     minApproved = MIN_APPROVED_TERMS,
-    minApprovedPerCategory = MIN_APPROVED_PER_CATEGORY,
+    minApprovedTimelineTotal = MIN_APPROVED_TIMELINE_TOTAL,
     minCategories = MIN_TIMELINE_CATEGORIES,
     now = new Date(),
     exclusionsPath = join(dataDir, 'exclusions.txt'),
@@ -314,7 +313,7 @@ export async function runImport(options: RunImportOptions): Promise<RunImportRes
     factsPart = await importTimelineFacts(client, {
       classes: timelineClasses,
       minSitelinks: minSitelinksTimeline,
-      minApprovedPerCategory,
+      minApprovedTotal: minApprovedTimelineTotal,
       exclusions,
       currentYear: now.getUTCFullYear(),
       log,
@@ -326,7 +325,7 @@ export async function runImport(options: RunImportOptions): Promise<RunImportRes
   const timeline = factsPart
     ? buildTimelineParameters(timelineClasses, {
         minSitelinks: minSitelinksTimeline,
-        minApprovedPerCategory,
+        minApprovedTotal: minApprovedTimelineTotal,
         minCategories,
       })
     : previous?.parameters.timeline;
@@ -361,7 +360,7 @@ export async function runImport(options: RunImportOptions): Promise<RunImportRes
     try {
       assertTimelineMinimums(manifest.counts.timeline_facts, {
         categoriesV1: manifest.parameters.timeline.categories_v1,
-        minApprovedPerCategory,
+        minApprovedTotal: minApprovedTimelineTotal,
         minCategories,
       });
     } catch (error) {

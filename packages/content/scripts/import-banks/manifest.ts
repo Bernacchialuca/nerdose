@@ -41,7 +41,7 @@ export type BuildManifestOptions = {
 
 export const DEFAULT_TIMELINE_PARAMETERS: DatasetManifest['parameters']['timeline'] = {
   min_sitelinks: 10,
-  min_approved_per_category: 100,
+  min_approved_total: 450,
   min_categories: 3,
   categories_v1: [],
   classes: [],
@@ -128,7 +128,14 @@ export function buildManifest(
   };
 }
 
-export const MIN_APPROVED_PER_CATEGORY = 100;
+// Mínimo total de hechos approved (todas las categorías juntas): cada desafío usa 5 hechos
+// (ITEMS_COUNT de @nerdose/game-timeline) y un hecho no se repite dentro de la ventana de 90 días
+// (REUSE_WINDOW_DAYS del generador), así que 5 × 90 = 450 cubre la ventana sin repetir.
+// No hay mínimo por categoría: el desafío mezcla hechos de todas.
+export const TIMELINE_FACTS_PER_CHALLENGE = 5;
+export const TIMELINE_REUSE_WINDOW_DAYS = 90;
+export const MIN_APPROVED_TIMELINE_TOTAL =
+  TIMELINE_FACTS_PER_CHALLENGE * TIMELINE_REUSE_WINDOW_DAYS;
 export const MIN_TIMELINE_CATEGORIES = 3;
 
 type TimelineCounts = DatasetManifest['counts']['timeline_facts'];
@@ -137,14 +144,14 @@ export function buildTimelineParameters(
   classes: readonly TimelineClass[],
   {
     minSitelinks,
-    minApprovedPerCategory,
+    minApprovedTotal,
     minCategories,
-  }: { minSitelinks: number; minApprovedPerCategory: number; minCategories: number },
+  }: { minSitelinks: number; minApprovedTotal: number; minCategories: number },
 ): DatasetManifest['parameters']['timeline'] {
   const present = new Set(classes.map((cls) => cls.category));
   return {
     min_sitelinks: minSitelinks,
-    min_approved_per_category: minApprovedPerCategory,
+    min_approved_total: minApprovedTotal,
     min_categories: minCategories,
     categories_v1: TIMELINE_CATEGORIES.filter((category) => present.has(category)),
     classes: classes.map(({ wikidataClass, category, dateProperty }) => ({
@@ -160,16 +167,16 @@ export class InsufficientTimelineFactsError extends Error {
   suggestedMinSitelinksTimeline: number | null = null;
 
   constructor(
-    readonly shortfalls: { category: TimelineCategory; approved: number }[],
+    readonly approved: number,
     readonly minimum: number,
     readonly categoriesV1Count: number,
     readonly minCategories: number,
     readonly byCategory: TimelineCounts['by_category'],
   ) {
     const problems: string[] = [];
-    for (const { category, approved } of shortfalls) {
+    if (approved < minimum) {
       problems.push(
-        `Hechos insuficientes: ${category} tiene ${approved} approved y el mínimo por categoría es ${minimum}.`,
+        `Hechos insuficientes: hay ${approved} approved en total y el mínimo es ${minimum}.`,
       );
     }
     if (categoriesV1Count < minCategories) {
@@ -187,21 +194,22 @@ export function assertTimelineMinimums(
   counts: TimelineCounts,
   {
     categoriesV1,
-    minApprovedPerCategory,
+    minApprovedTotal,
     minCategories,
   }: {
     categoriesV1: readonly TimelineCategory[];
-    minApprovedPerCategory: number;
+    minApprovedTotal: number;
     minCategories: number;
   },
 ): void {
-  const shortfalls = categoriesV1
-    .map((category) => ({ category, approved: counts.by_category[category].approved }))
-    .filter(({ approved }) => approved < minApprovedPerCategory);
-  if (shortfalls.length > 0 || categoriesV1.length < minCategories) {
+  const approved = categoriesV1.reduce(
+    (total, category) => total + counts.by_category[category].approved,
+    0,
+  );
+  if (approved < minApprovedTotal || categoriesV1.length < minCategories) {
     throw new InsufficientTimelineFactsError(
-      shortfalls,
-      minApprovedPerCategory,
+      approved,
+      minApprovedTotal,
       categoriesV1.length,
       minCategories,
       counts.by_category,

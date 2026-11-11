@@ -37,7 +37,8 @@ export type TimelineClass = {
   wikidataClass: string;
   category: TimelineCategory;
   dateProperty: TimelineDateProperty;
-  fallbackProperty?: 'P571';
+  /** Propiedad que se usa si la principal no tiene valores vivos (siempre la otra de las dos). */
+  fallbackProperty?: TimelineDateProperty;
   /** Piso de sitelinks propio de la clase (clases enormes que dan timeout con el piso general). */
   queryFloor?: number;
 };

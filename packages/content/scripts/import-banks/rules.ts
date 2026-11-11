@@ -1,4 +1,4 @@
-import type { TermCategory, TimelineCategory } from '@nerdose/core';
+import type { TermCategory } from '@nerdose/core';
 
 import type {
   DatePrecision,
@@ -457,27 +457,16 @@ export function highestMinSitelinksTimeline(
   {
     exclusions,
     currentYear,
-    minApprovedPerCategory,
-    categories,
+    minApprovedTotal,
   }: {
     exclusions: Exclusions;
     currentYear: number;
-    minApprovedPerCategory: number;
-    categories: readonly TimelineCategory[];
+    minApprovedTotal: number;
   },
 ): number | null {
-  const approved = evaluateFacts(candidates, { minSitelinks: 0, exclusions, currentYear }).filter(
-    (item) => item.status === 'approved',
-  );
-  let lowest: number | null = null;
-  for (const category of categories) {
-    const sitelinks = approved
-      .filter((item) => item.category === category)
-      .map((item) => item.sitelinks)
-      .sort((a, b) => b - a);
-    const threshold = sitelinks[minApprovedPerCategory - 1];
-    if (threshold === undefined) return null;
-    lowest = lowest === null ? threshold : Math.min(lowest, threshold);
-  }
-  return lowest;
+  const sitelinks = evaluateFacts(candidates, { minSitelinks: 0, exclusions, currentYear })
+    .filter((item) => item.status === 'approved')
+    .map((item) => item.sitelinks)
+    .sort((a, b) => b - a);
+  return sitelinks[minApprovedTotal - 1] ?? null;
 }

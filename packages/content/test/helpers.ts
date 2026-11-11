@@ -65,6 +65,8 @@ export const MANIFEST_OK: DatasetManifest = {
         operating_systems: { approved: 0, rejected: 0 },
         hardware: { approved: 0, rejected: 0 },
         video_games: { approved: 0, rejected: 0 },
+        databases: { approved: 0, rejected: 0 },
+        software_tools: { approved: 0, rejected: 0 },
       },
       by_reason: {
         disputed_date: 0,
@@ -86,7 +88,7 @@ export const MANIFEST_OK: DatasetManifest = {
     classes: [{ wikidata_class: 'Q9143', category: 'programming_languages' }],
     timeline: {
       min_sitelinks: 10,
-      min_approved_per_category: 100,
+      min_approved_total: 450,
       min_categories: 3,
       categories_v1: ['programming_languages'],
       classes: [

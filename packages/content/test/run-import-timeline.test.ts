@@ -58,7 +58,7 @@ function setup(
       minSitelinks: 20,
       minSitelinksTimeline: 20,
       minApproved: 3,
-      minApprovedPerCategory: 1,
+      minApprovedTimelineTotal: 1,
       minCategories: 1,
       now: NOW,
       client,
@@ -121,16 +121,24 @@ describe('runImport --bank=timeline', () => {
     expect(() => loadDataset(dir)).not.toThrow();
   });
 
-  it('fails below the minimum without writing anything (TS-33)', async () => {
+  it('fails below the total minimum without writing anything (TS-33)', async () => {
     const files = withTerms();
-    const { dir, options } = setup(files, { minApprovedPerCategory: 100 });
+    const { dir, options } = setup(files, { minApprovedTimelineTotal: 6 });
     const error = await runImport(options).catch((e: unknown) => e);
     expect(error).toBeInstanceOf(InsufficientTimelineFactsError);
-    const { shortfalls } = error as InsufficientTimelineFactsError;
-    expect(shortfalls.map((s) => s.category)).toEqual(['programming_languages', 'frameworks']);
-    expect(shortfalls.map((s) => s.approved)).toEqual([3, 2]);
+    // 3 programming_languages + 2 frameworks = 5 approved en total.
+    expect(error).toMatchObject({ approved: 5, minimum: 6 });
     for (const [name, content] of Object.entries(files)) expect(read(dir, name)).toBe(content);
     expect(readdirSync(dir).filter((f) => f.endsWith('.tmp'))).toEqual([]);
+  });
+
+  it('has no per-category minimum: the total is enough (TS-33b)', async () => {
+    const { manifest } = await runImport(
+      setup(withTerms(), { minApprovedTimelineTotal: 5 }).options,
+    );
+    expect(manifest.counts.timeline_facts.approved).toBe(5);
+    expect(manifest.counts.timeline_facts.by_category.frameworks.approved).toBe(2);
+    expect(manifest.parameters.timeline.min_approved_total).toBe(5);
   });
 
   it('rejects an invalid terms.json before any request (TS-34)', async () => {
@@ -184,15 +192,14 @@ describe('runImport --bank=timeline', () => {
       highestMinSitelinksTimeline(result.factCandidates, {
         exclusions: parseExclusions(''),
         currentYear: 2026,
-        minApprovedPerCategory: 1,
-        categories: ['programming_languages', 'frameworks'],
+        minApprovedTotal: 1,
       }),
     );
     expect(typeof result.suggestedMinSitelinksTimeline).toBe('number');
 
-    const short = await runImport(setup(withTerms(), { minApprovedPerCategory: 3 }).options).catch(
-      (e: unknown) => e,
-    );
+    const short = await runImport(
+      setup(withTerms(), { minApprovedTimelineTotal: 6 }).options,
+    ).catch((e: unknown) => e);
     expect(short).toBeInstanceOf(InsufficientTimelineFactsError);
     expect((short as InsufficientTimelineFactsError).suggestedMinSitelinksTimeline).toBeNull();
   });
@@ -222,7 +229,7 @@ describe('runImport --bank=timeline', () => {
 
 describe('runImport --bank=all', () => {
   it('validates both minimums before writing (TS-36)', async () => {
-    const timeline = setup('empty', { bank: 'all', minApprovedPerCategory: 100 });
+    const timeline = setup('empty', { bank: 'all', minApprovedTimelineTotal: 100 });
     expect(await runImport(timeline.options).catch((e: unknown) => e)).toBeInstanceOf(
       InsufficientTimelineFactsError,
     );

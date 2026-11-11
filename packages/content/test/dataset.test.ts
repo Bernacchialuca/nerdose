@@ -114,17 +114,13 @@ describe('committed dataset', () => {
         timelineFacts.filter((f) => f.rejection_reason === reason).length,
       );
     }
-    expect(params.min_approved_per_category).toBe(100);
+    expect(params.min_approved_total).toBe(450);
     expect(params.min_categories).toBe(3);
     for (const fact of facts) {
       expect(params.categories_v1, fact.wikidata_id).toContain(fact.category);
       expect(fact.sitelinks, fact.wikidata_id).toBeGreaterThanOrEqual(params.min_sitelinks);
     }
-    for (const category of params.categories_v1) {
-      expect(counts.by_category[category].approved, category).toBeGreaterThanOrEqual(
-        params.min_approved_per_category,
-      );
-    }
+    expect(counts.approved).toBeGreaterThanOrEqual(params.min_approved_total);
   });
 
   it('keeps the terms bank untouched (TS-25, TS-46)', () => {
@@ -135,19 +131,14 @@ describe('committed dataset', () => {
     expect(manifest.min_sitelinks).toBe(12);
   });
 
-  it('covers at least three v1 categories with the minimum approved facts (TS-43)', () => {
+  it('covers at least three v1 categories and the total minimum of approved facts (TS-43)', () => {
     const params = manifest.parameters.timeline;
     expect(params.categories_v1.length).toBeGreaterThanOrEqual(3);
-    for (const category of params.categories_v1) {
-      expect(
-        manifest.counts.timeline_facts.by_category[category].approved,
-        category,
-      ).toBeGreaterThanOrEqual(100);
-    }
+    expect(manifest.counts.timeline_facts.approved).toBeGreaterThanOrEqual(450);
     expect(params.classes).toEqual(
       buildTimelineParameters(TIMELINE_CLASSES, {
         minSitelinks: params.min_sitelinks,
-        minApprovedPerCategory: params.min_approved_per_category,
+        minApprovedTotal: params.min_approved_total,
         minCategories: params.min_categories,
       }).classes,
     );

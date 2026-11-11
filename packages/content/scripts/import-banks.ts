@@ -7,7 +7,10 @@ import { createFileCache, resolveCacheDir } from './import-banks/cache';
 import { loadImportEnv } from './import-banks/env';
 import { createWikimediaClient } from './import-banks/http';
 import { buildUserAgent } from './import-banks/manifest';
-import { InsufficientTimelineFactsError, MIN_APPROVED_PER_CATEGORY } from './import-banks/manifest';
+import {
+  InsufficientTimelineFactsError,
+  MIN_APPROVED_TIMELINE_TOTAL,
+} from './import-banks/manifest';
 import { InsufficientApprovedError, MIN_APPROVED_TERMS, runImport } from './import-banks/run';
 
 try {
@@ -67,7 +70,7 @@ try {
       console.log(`  ${reason}: ${count}`);
     }
     console.log(
-      `Valor más alto que mantiene ≥ ${MIN_APPROVED_PER_CATEGORY} approved por categoría: ${suggestedMinSitelinksTimeline ?? 'ninguno'}`,
+      `Valor más alto que mantiene ≥ ${MIN_APPROVED_TIMELINE_TOTAL} approved en total: ${suggestedMinSitelinksTimeline ?? 'ninguno'}`,
     );
   }
 } catch (error) {
@@ -78,7 +81,7 @@ try {
     console.error(`${error.message}\nNo se escribió ningún archivo.`);
     if (error instanceof InsufficientTimelineFactsError) {
       console.error(
-        `Valor más alto que mantiene ≥ ${MIN_APPROVED_PER_CATEGORY} approved por categoría: ${error.suggestedMinSitelinksTimeline ?? 'ninguno'}`,
+        `Valor más alto que mantiene ≥ ${MIN_APPROVED_TIMELINE_TOTAL} approved en total: ${error.suggestedMinSitelinksTimeline ?? 'ninguno'}`,
       );
     }
   } else {

@@ -228,7 +228,7 @@ const timelineCountsSchema = z.strictObject({
 
 const timelineParametersSchema = z.strictObject({
   min_sitelinks: count,
-  min_approved_per_category: count,
+  min_approved_total: count,
   min_categories: count,
   categories_v1: z
     .array(z.enum(TIMELINE_CATEGORIES))

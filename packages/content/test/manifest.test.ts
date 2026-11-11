@@ -3,6 +3,9 @@ import { describe, expect, it } from 'vitest';
 import {
   DEFAULT_TIMELINE_PARAMETERS,
   InsufficientTimelineFactsError,
+  MIN_APPROVED_TIMELINE_TOTAL,
+  TIMELINE_FACTS_PER_CHALLENGE,
+  TIMELINE_REUSE_WINDOW_DAYS,
   assertTimelineMinimums,
   buildManifest,
   buildTimelineParameters,
@@ -34,7 +37,7 @@ describe('buildManifest', () => {
   it('counts the timeline facts (TS-16)', () => {
     const timeline = {
       min_sitelinks: 30,
-      min_approved_per_category: 100,
+      min_approved_total: 450,
       min_categories: 3,
       categories_v1: ['programming_languages'] as const,
       classes: [],
@@ -85,7 +88,7 @@ describe('buildManifest', () => {
     expect(Object.values(counts.by_reason).every((n) => n === 0)).toBe(true);
     expect(manifest.parameters.timeline).toEqual({
       min_sitelinks: 10,
-      min_approved_per_category: 100,
+      min_approved_total: 450,
       min_categories: 3,
       categories_v1: [],
       classes: [],
@@ -104,27 +107,41 @@ describe('timeline minimums and parameters', () => {
       ]),
     ) as DatasetManifest['counts']['timeline_facts']['by_category'],
   });
-  const options = { minApprovedPerCategory: 100, minCategories: 3 };
+  const options = { minApprovedTotal: 450, minCategories: 3 };
 
-  it('fails naming the category and its count (TS-28)', () => {
+  it('derives the total minimum from 5 facts per day over the 90-day window', () => {
+    expect(MIN_APPROVED_TIMELINE_TOTAL).toBe(450);
+    expect(MIN_APPROVED_TIMELINE_TOTAL).toBe(
+      TIMELINE_FACTS_PER_CHALLENGE * TIMELINE_REUSE_WINDOW_DAYS,
+    );
+    expect(DEFAULT_TIMELINE_PARAMETERS.min_approved_total).toBe(MIN_APPROVED_TIMELINE_TOTAL);
+  });
+
+  it('fails when the total across categories is below the minimum (TS-28)', () => {
     const error = catchError(() =>
       assertTimelineMinimums(
-        counts({ programming_languages: 120, frameworks: 80, video_games: 150 }),
+        counts({ programming_languages: 200, frameworks: 100, video_games: 149 }),
         { ...options, categoriesV1: ['programming_languages', 'frameworks', 'video_games'] },
       ),
     );
     expect(error).toBeInstanceOf(InsufficientTimelineFactsError);
-    expect(error).toMatchObject({
-      shortfalls: [{ category: 'frameworks', approved: 80 }],
-      minimum: 100,
-    });
-    for (const text of ['frameworks', '80', '100'])
+    expect(error).toMatchObject({ approved: 449, minimum: 450 });
+    for (const text of ['449', '450', 'frameworks: 100'])
       expect((error as Error).message).toContain(text);
+  });
+
+  it('has no per-category minimum (TS-28b)', () => {
+    expect(() =>
+      assertTimelineMinimums(counts({ programming_languages: 440, frameworks: 1, hardware: 9 }), {
+        ...options,
+        categoriesV1: ['programming_languages', 'frameworks', 'hardware'],
+      }),
+    ).not.toThrow();
   });
 
   it('fails with fewer than three v1 categories (TS-29)', () => {
     const error = catchError(() =>
-      assertTimelineMinimums(counts({ programming_languages: 150, video_games: 150 }), {
+      assertTimelineMinimums(counts({ programming_languages: 300, video_games: 300 }), {
         ...options,
         categoriesV1: ['programming_languages', 'video_games'],
       }),
@@ -137,7 +154,7 @@ describe('timeline minimums and parameters', () => {
   it('passes when every minimum is met (TS-30)', () => {
     expect(() =>
       assertTimelineMinimums(
-        counts({ programming_languages: 100, frameworks: 101, video_games: 250 }),
+        counts({ programming_languages: 100, frameworks: 100, video_games: 250 }),
         { ...options, categoriesV1: ['programming_languages', 'frameworks', 'video_games'] },
       ),
     ).not.toThrow();
@@ -155,11 +172,11 @@ describe('timeline minimums and parameters', () => {
           },
           { wikidataClass: 'Q9143', category: 'programming_languages', dateProperty: 'P571' },
         ],
-        { minSitelinks: 25, minApprovedPerCategory: 100, minCategories: 3 },
+        { minSitelinks: 25, minApprovedTotal: 450, minCategories: 3 },
       ),
     ).toEqual({
       min_sitelinks: 25,
-      min_approved_per_category: 100,
+      min_approved_total: 450,
       min_categories: 3,
       categories_v1: ['programming_languages', 'video_games'],
       classes: [

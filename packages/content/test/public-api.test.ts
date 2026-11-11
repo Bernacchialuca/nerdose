@@ -14,6 +14,8 @@ describe('public API', () => {
       'operating_systems',
       'hardware',
       'video_games',
+      'databases',
+      'software_tools',
     ]);
     expect(content.DATE_PRECISIONS).toBe(core.DATE_PRECISIONS);
     expect(content.DATE_PRECISIONS).toEqual(['year', 'month', 'day']);
