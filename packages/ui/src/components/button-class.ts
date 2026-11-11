@@ -6,12 +6,13 @@ import { GAME_CLASSES, type UiGameId } from './game-classes';
 type ButtonBase = { size?: 'lg' | 'md' | 'share'; fullWidth?: boolean; disabled?: boolean };
 
 export type ButtonClassOptions =
-  | (ButtonBase & { variant?: 'primary' | 'secondary' })
+  | (ButtonBase & { variant?: 'primary' | 'secondary' | 'error' })
   | (ButtonBase & { variant: 'accent'; game: UiGameId })
   | { variant: 'icon'; disabled?: boolean };
 
 /**
  * Solo clases: el consumidor pone `aria-disabled="true"` y bloquea la acción (en un `<Link>`, no navegar).
+ * `variant: 'error'`: acción destructiva (UX `variant=error`); su hover está Pendiente en el DS.
  * Con `variant: 'icon'` el consumidor debe poner además `aria-label` (no hay texto visible).
  */
 export function buttonClass(options: ButtonClassOptions = {}): string {
@@ -35,6 +36,8 @@ export function buttonClass(options: ButtonClassOptions = {}): string {
     colors = 'bg-accent text-on-accent hover:bg-accent-hover';
   } else if (variant === 'secondary') {
     colors = 'border border-border-strong text-text hover:border-border-hover';
+  } else if (variant === 'error') {
+    colors = 'bg-status-error text-status-error-on hover:bg-error';
   } else {
     const game = GAME_CLASSES[(options as { game: UiGameId }).game];
     colors = cn(game.bg, game.on, game.bgHover);

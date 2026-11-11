@@ -15,6 +15,12 @@ export { buttonClass } from './components/button-class';
 export type { ButtonClassOptions } from './components/button-class';
 export { Card } from './components/card';
 export type { CardProps } from './components/card';
+export { dataTableClass } from './components/data-table-class';
+export type { DataTableClasses } from './components/data-table-class';
+export { Dialog } from './components/dialog';
+export type { DialogProps } from './components/dialog';
+export { SelectField, TextAreaField, TextField } from './components/form-field';
+export type { SelectFieldProps, TextAreaFieldProps, TextFieldProps } from './components/form-field';
 export { GameHeader } from './components/game-header';
 export type { GameHeaderProps } from './components/game-header';
 export { ChartIcon, HelpIcon, ShareIcon } from './components/icons';
@@ -35,6 +41,8 @@ export { StreakNumber } from './components/streak-number';
 export type { StreakNumberProps } from './components/streak-number';
 export { StreakPill } from './components/streak-pill';
 export type { StreakPillProps } from './components/streak-pill';
+export { Tabs } from './components/tabs';
+export type { TabItem, TabsProps } from './components/tabs';
 export { TerminalWindow } from './components/terminal-window';
 export type {
   TerminalRow,

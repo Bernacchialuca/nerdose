@@ -38,6 +38,10 @@ describe('ui components', () => {
         'link-class.ts',
         'nav-item-class.ts',
         'game-classes.ts',
+        'dialog.tsx',
+        'form-field.tsx',
+        'tabs.tsx',
+        'data-table-class.ts',
       ]),
     );
     for (const file of files) {
