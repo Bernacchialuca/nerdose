@@ -62,6 +62,11 @@
 - **Description:** `@hono/zod-validator` hook that throws `AppError('validation_error')`
 - **Usage:** `zValidator('json', schema, validationHook)`
 
+## reportValidationHook / reportBodySchema
+- **Location:** apps/api/src/domain/quality/quality.schema.ts
+- **Description:** zod-validator hook that throws `AppError('invalid_report')` for any body failure of the report route; `reportBodySchema` validates `challenge_number`, `reason`, `message` (trimmed, max 1000) and `code_language`
+- **Usage:** `zValidator('json', reportBodySchema, reportValidationHook)`
+
 ## IdentityService / IdentityRepository / issuePlayerCookie
 - **Location:** apps/api/src/domain/identity/
 - **Signature:** `startSession({ pid, acceptLanguage })`, `find(pid)`, `updatePreferences(playerId, patch)`; `issuePlayerCookie(c, playerId)`

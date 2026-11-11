@@ -50,3 +50,23 @@ export const makeMove = (deps: AppDeps) =>
       );
     },
   );
+
+export const acknowledgeVoid = (deps: AppDeps) =>
+  factory.createHandlers(
+    playerSession(deps.identity, 'required'),
+    limit({ windowMs: 60_000, limit: 30, key: (c) => c.var.player!.id }),
+    zValidator('param', gameParamSchema, validationHook),
+    zValidator('json', challengeNumberBodySchema, validationHook),
+    async (c) => {
+      const { game_id } = c.req.valid('param');
+      const body = c.req.valid('json');
+      return c.json(
+        await deps.gameplay.acknowledgeVoid(
+          game_id,
+          c.var.player!,
+          body.challenge_number,
+          c.var.logger,
+        ),
+      );
+    },
+  );

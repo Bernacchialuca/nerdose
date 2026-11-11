@@ -21,6 +21,12 @@ export type GameToday = {
   play: PlayView | null;
   result: unknown;
   game_stats: GameStatsView | null;
+  reported: boolean;
+};
+
+export type AcknowledgeVoidResponse = {
+  play: { status: 'voided' };
+  streaks: Streaks;
 };
 
 export type MoveResponse = {
@@ -32,7 +38,16 @@ export type MoveResponse = {
 };
 
 export type MoveTxRepos = {
-  plays: Pick<GameplayRepository, 'insertPlayIfAbsent' | 'lockPlay' | 'updateState' | 'closePlay'>;
+  plays: Pick<
+    GameplayRepository,
+    | 'insertPlayIfAbsent'
+    | 'lockPlay'
+    | 'updateState'
+    | 'closePlay'
+    | 'lockChallenge'
+    | 'findPlay'
+    | 'insertVoidedPlayIfAbsent'
+  >;
   progress: ProgressWriteRepo;
 };
 

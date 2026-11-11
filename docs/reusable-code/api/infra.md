@@ -34,8 +34,13 @@
 
 ## GameplayService / GameplayRepository
 - **Location:** apps/api/src/domain/gameplay/
-- **Signature:** `getToday(gameId, player | null, locale): Promise<GameToday>`; `start(gameId, player, challengeNumber, log): Promise<{ play }>` (idempotent); `move(gameId, player, { challenge_number, move }, locale, log): Promise<MoveResponse>`; `GameplayRepository(db | tx)`: `findPlay`, `findPlaysOfDay`, `insertPlayIfAbsent`, `lockPlay` (FOR UPDATE), `updateState`, `closePlay`, `insertRejectedGuess`; `moveTransaction(db): MoveTx` builds the transactional repos
-- **Description:** generic over the game registry, never serializes `payload`. `move` validates in order (game, day, cache, voided, moveSchema), then runs one transaction (insert-if-absent + lock, `applyMove`, close + `applyResult`). Domain logs are emitted after COMMIT; rejected guesses are recorded best-effort outside the transaction.
+- **Signature:** `getToday(gameId, player | null, locale): Promise<GameToday>`; `start(gameId, player, challengeNumber, log): Promise<{ play }>` (idempotent); `move(gameId, player, { challenge_number, move }, locale, log): Promise<MoveResponse>`; `GameplayRepository(db | tx)`: `findPlay`, `findPlaysOfDay`, `insertPlayIfAbsent`, `lockPlay` (FOR UPDATE), `updateState`, `closePlay`, `insertRejectedGuess`, `lockChallenge` (FOR SHARE), `insertVoidedPlayIfAbsent`; `moveTransaction(db): MoveTx` builds the transactional repos; `acknowledgeVoid(gameId, player, challengeNumber, log): Promise<AcknowledgeVoidResponse>` (idempotent "mark as completed" for a voided challenge); `GameToday` now carries `reported` and, when voided, the player's `voided` Play
+- **Description:** generic over the game registry, never serializes `payload`. `start` and `move` validate in order (game, day, cache, voided), lock the challenge row with `FOR SHARE` inside the transaction (a voided challenge or Play → `challenge_voided`), then `move` runs one transaction (insert-if-absent + lock, `applyMove`, close + `applyResult`). Domain logs are emitted after COMMIT; rejected guesses are recorded best-effort outside the transaction.
+
+## QualityService / QualityRepository
+- **Location:** apps/api/src/domain/quality/
+- **Signature:** `QualityService({ games, runInTx, clock, thresholds }).report(gameId, player, body, { locale, userAgent }, log): Promise<{ report_id }>`; `QualityRepository(db | tx)`: `lockReportable`, `findPlay`, `insertReportIfAbsent`, `countThresholdReports`, `countFinishedPlays`, `markAlerted`, `hasReported`; `shouldAlert({ n, f }, thresholds)` and `REPORT_THRESHOLD_REASONS` in `quality.threshold.ts`
+- **Description:** challenge report with server-built context, one per player and challenge (`already_reported`), alert threshold (`alerted_at` set once, in the same transaction) and a single retry on deadlock `40P01`. Never changes `challenges.status`.
 
 ## ProgressService / ProgressRepository
 - **Location:** apps/api/src/domain/progress/

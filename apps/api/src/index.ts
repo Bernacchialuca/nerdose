@@ -7,6 +7,8 @@ import { GameplayRepository, moveTransaction } from '@/domain/gameplay/gameplay.
 import { GameplayService } from '@/domain/gameplay/gameplay.service';
 import { ProgressRepository } from '@/domain/progress/progress.repository';
 import { ProgressService } from '@/domain/progress/progress.service';
+import { QualityRepository } from '@/domain/quality/quality.repository';
+import { QualityService } from '@/domain/quality/quality.service';
 import { PublishingRepository } from '@/domain/publishing/publishing.repository';
 import { PublishingService } from '@/domain/publishing/publishing.service';
 import { games } from '@/games/registry';
@@ -88,11 +90,22 @@ if (env) {
         cache: todayCache,
         repo: gameplayRepo,
         progress,
+        reports: new QualityRepository(db),
         runInTx: moveTransaction(db),
         wordList,
         rejected: gameplayRepo,
         clock,
         launchDate: env.LAUNCH_DATE,
+      }),
+      quality: new QualityService({
+        games,
+        runInTx: (fn) => db.transaction((tx) => fn(new QualityRepository(tx))),
+        clock,
+        thresholds: {
+          count: env.REPORT_ALERT_COUNT,
+          ratio: env.REPORT_ALERT_RATIO,
+          ratioMinCount: env.REPORT_ALERT_RATIO_MIN_COUNT,
+        },
       }),
     });
     const server = serve({ fetch: app.fetch, port: env.PORT }, ({ port }) => {

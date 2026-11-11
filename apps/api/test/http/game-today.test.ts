@@ -54,6 +54,7 @@ const publicBase = {
   play: null,
   result: null,
   game_stats: null,
+  reported: false,
 };
 
 async function finishedPlay(
@@ -101,7 +102,7 @@ describe('GET /api/games/{game_id}/today', () => {
     });
   });
 
-  it('TS-14 anulado aunque haya Play', async () => {
+  it('TS-14 anulado con Play: devuelve la Play voided sin public_view ni result', async () => {
     const challenge = await publish('voided');
     const player = await dbs.insertPlayer();
     await dbs.insertPlay({
@@ -110,7 +111,25 @@ describe('GET /api/games/{game_id}/today', () => {
       gameId: 'devdle',
       date: '2026-12-01',
       state: { guesses: [G_REACT] },
+      status: 'voided',
+      finishedAt: new Date('2026-12-01T09:30:00Z'),
     });
+    const { app } = await buildDbApp(dbs);
+    const res = await app.request('/api/games/devdle/today', { headers: cookie(player.id) });
+    expect(await res.json()).toMatchObject({
+      ...publicBase,
+      challenge_status: 'voided',
+      public_view: null,
+      play: { status: 'voided', state: { guesses: [G_REACT] }, score: null, code_language: null },
+      result: null,
+      game_stats: { game_id: 'devdle', current_streak: 0, played: 0 },
+    });
+  });
+
+  // TS-26
+  it('TS-26 anulado sin Play', async () => {
+    await publish('voided');
+    const player = await dbs.insertPlayer();
     const { app } = await buildDbApp(dbs);
     const res = await app.request('/api/games/devdle/today', { headers: cookie(player.id) });
     expect(await res.json()).toEqual({
@@ -118,6 +137,65 @@ describe('GET /api/games/{game_id}/today', () => {
       challenge_status: 'voided',
       public_view: null,
     });
+  });
+
+  // TS-27
+  it('TS-27 anulado con Play voided de una victoria: stats vivas', async () => {
+    const challenge = await publish('voided');
+    const player = await dbs.insertPlayer();
+    await dbs.insertGameStats({
+      playerId: player.id,
+      gameId: 'devdle',
+      currentStreak: 4,
+      maxStreak: 9,
+      played: 9,
+      wins: 7,
+      lastCompletedDate: '2026-12-01',
+      extra: STATS.extra,
+    });
+    await dbs.insertPlay({
+      playerId: player.id,
+      challengeId: challenge.id,
+      gameId: 'devdle',
+      date: '2026-12-01',
+      state: { guesses: [G_REACT, G_MERGE] },
+      status: 'voided',
+      result: { won: true },
+      score: 2,
+      finishedAt: new Date('2026-12-01T09:30:00Z'),
+    });
+    const { app } = await buildDbApp(dbs);
+    const body = await (
+      await app.request('/api/games/devdle/today', { headers: cookie(player.id) })
+    ).json();
+    expect(body).toMatchObject({
+      challenge_status: 'voided',
+      public_view: null,
+      result: null,
+      play: { status: 'voided', score: 2, code_language: null },
+      game_stats: { current_streak: 4, max_streak: 9, played: 9, wins: 7 },
+      reported: false,
+    });
+    expect(body.game_stats.win_rate).toBeCloseTo(7 / 9);
+  });
+
+  // TS-28 y TS-29
+  it('TS-28 reported true en published y voided; TS-29 false sin sesión o sin reporte', async () => {
+    const challenge = await publish();
+    const player = await dbs.insertPlayer();
+    const other = await dbs.insertPlayer();
+    await dbs.insertReport({ challengeId: challenge.id, playerId: player.id });
+    const { app } = await buildDbApp(dbs);
+    const get = async (h?: Record<string, string>) =>
+      (await (await app.request('/api/games/devdle/today', { headers: h })).json()).reported;
+    expect(await get(cookie(player.id))).toBe(true);
+    expect(await get()).toBe(false);
+    expect(await get(cookie(other.id))).toBe(false);
+
+    await dbs.owner.sql`UPDATE challenges SET status='voided', void_reason='x', voided_at=now()`;
+    const { app: app2 } = await buildDbApp(dbs);
+    const res = await app2.request('/api/games/devdle/today', { headers: cookie(player.id) });
+    expect(await res.json()).toMatchObject({ challenge_status: 'voided', reported: true });
   });
 
   it('TS-15 sin sesión: vista pública y sin consultas', async () => {
