@@ -19,6 +19,7 @@ import { deriveGameView } from '../game-view';
 import { gameScreens } from '../lazy-game-screens';
 import { hasGameClient } from '../registry';
 
+import { Confetti } from './confetti';
 import { GameLoader } from './game-loader';
 import { NoChallengeView } from './no-client-view';
 import { PhaseFocus } from './phase-focus';
@@ -182,26 +183,32 @@ export function GameRoute({ gameId }: { gameId: GameId }) {
       if (!Screens) return null;
       const rateLimited =
         startPlay.error instanceof ApiError && startPlay.error.code === 'rate_limited';
+      // Festejo solo en la transición: la jugada que se acaba de enviar cerró la partida ganando.
+      // `submitMove.data` no sobrevive a una recarga, así que volver al resultado no lo repite.
+      const celebrate = view.kind === 'result' && submitMove.data?.play.status === 'won';
       return (
-        <Suspense fallback={<GameLoader gameId={gameId} />}>
-          <Screens
-            gameId={gameId}
-            view={view}
-            feedback={feedback}
-            locale={locale}
-            firstPhaseRef={firstPhaseRef}
-            startNotice={
-              rateLimited ? <Banner variant="warning">{startPlay.error?.message}</Banner> : null
-            }
-            starting={startPlay.isPending}
-            movePending={submitMove.isPending}
-            onStart={() => handleStart(view.number)}
-            onMove={(move) => sendMove(view.number, move)}
-            onRetrySession={retrySession}
-            onRetryMove={retryLastMove}
-            onRecoverMove={recoverFromMoveFailure}
-          />
-        </Suspense>
+        <>
+          {celebrate ? <Confetti gameId={gameId} /> : null}
+          <Suspense fallback={<GameLoader gameId={gameId} />}>
+            <Screens
+              gameId={gameId}
+              view={view}
+              feedback={feedback}
+              locale={locale}
+              firstPhaseRef={firstPhaseRef}
+              startNotice={
+                rateLimited ? <Banner variant="warning">{startPlay.error?.message}</Banner> : null
+              }
+              starting={startPlay.isPending}
+              movePending={submitMove.isPending}
+              onStart={() => handleStart(view.number)}
+              onMove={(move) => sendMove(view.number, move)}
+              onRetrySession={retrySession}
+              onRetryMove={retryLastMove}
+              onRecoverMove={recoverFromMoveFailure}
+            />
+          </Suspense>
+        </>
       );
     }
   }

@@ -203,7 +203,7 @@ export const es = {
       gameStreak_other: '{{game}}: {{count}} días',
       globalStreak_one: 'Global: {{count}} día',
       globalStreak_other: 'Global: {{count}} días',
-      record: 'récord {{game}}: {{count}}',
+      record: 'récord: {{count}}',
       share: 'Compartir',
       copied: '✓ Copiado',
       countdown: 'Próximo desafío en',

@@ -1,8 +1,8 @@
 ---
 pattern: game-boards
-version: 1.3.0
+version: 1.4.0
 status: active
-last_updated: 2026-11-10
+last_updated: 2026-11-11
 source: docs/nerdose.html
 related: [card, panel, code-block, button, chip, streak-pill]
 ---
@@ -242,9 +242,9 @@ Panel `SectionPanel` "// palabras de hoy" (`h2`); lista gap 8 en orden fijo. Fil
 
 Encontrada y revelada suman la **definición** (Inter 13/1.5 `text.body`, rol `text-caption`; el prototipo dice 1.45): el momento de aprendizaje.
 
-### `grep-grid.counter` — card `counter` local (1.2.0)
+### `grep-grid.counter` — dato `N/8` en el encabezado de la lista (1.4.0)
 
-`card` `counter` (`card.counter.*`) implementada dentro de `@nerdose/game-grep-grid/client` (`CounterCard`), candidata a `@nerdose/ui`: `<p>` con valor `text-numeric-lg text-game-grep-grid` ("3/8") y etiqueta `text-meta text-text-muted`. **No es live region**: el avance se anuncia en la región del hint.
+El contador es el dato a la derecha de «// palabras de hoy» en `grep-grid.word-list`: valor `font-mono text-mono-body font-bold text-game-grep-grid` ("3/8") y la etiqueta «encontradas» `sr-only`. Mismo tamaño durante la partida y en el resultado. **No es live region**: el avance se anuncia en la región del hint. (Hasta 1.3.0 era una `card` `counter` sobre la grilla; se quitó para que la grilla arranque a la altura del título y entre en pantalla.)
 
 ### `grep-grid.surrender` — botón «Rendirse» (`outline-tinted`, 1.2.0)
 

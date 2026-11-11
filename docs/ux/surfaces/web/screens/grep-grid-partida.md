@@ -20,8 +20,8 @@ date: 2026-11-10
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
 - **JTBD / Propósito:** Encontrar las 8 palabras de la lista en la grilla de 12×12 tocando (o marcando con el teclado) la primera y la última letra de cada una, leer la definición de cada palabra encontrada, seguir el contador `N/8`, sin tiempo y con «Rendirse» siempre disponible.
 - **Viewports:**
-  - **mobile** — contador, grilla 12×12 escalada al ancho (sin scroll horizontal desde 320 px), hint de consola, lista de palabras y «Rendirse» en una columna; «Rendirse» queda separado de la grilla para evitar un toque accidental.
-  - **desktop** — grilla a la izquierda (7/12) con el contador y el hint; lista de palabras, «Rendirse» y reporte a la derecha (5/12), como el layout tablero + aside del prototipo.
+  - **mobile** — grilla 12×12 escalada al ancho (sin scroll horizontal desde 320 px), hint de consola, lista de palabras y «Rendirse» en una columna; «Rendirse» queda separado de la grilla para evitar un toque accidental.
+  - **desktop** — título, grilla y hint a la izquierda (7/12); lista de palabras (con el contador `N/8` en su encabezado), «Rendirse» y reporte a la derecha (5/12). Las dos columnas arrancan arriba para que la grilla entre en pantalla.
 
 ## Entrada y salida
 
@@ -84,8 +84,8 @@ date: 2026-11-10
 - alerta-sistema
 - btn-reintentar
 - row `juego`
-  - col 7/12: titulo, consigna, alerta-anulado, contador, grilla, hint-jugada
-  - col 5/12: lista-palabras, btn-rendirse, link-reportar
+  - col 7/12: titulo, consigna, alerta-anulado, grilla, hint-jugada
+  - col 5/12: lista-palabras (contador `N/8` en el encabezado), btn-rendirse, link-reportar
 
 ## Contenido
 
@@ -105,9 +105,9 @@ date: 2026-11-10
 - Annotation: prompt del prototipo en Mono 13 `text.dim`; la segunda parte es la consigna en Inter. Sin «tu tiempo final es tu puntaje» (se elimina: el puntaje son las palabras encontradas, C-22)
 
 ### contador
-- Texto/label: 3/8 encontradas
+- Texto/label: 3/8 (en el encabezado de `lista-palabras`; «encontradas» `sr-only`)
 - Icono: nada
-- Annotation: `card` variant `counter` del DS con el valor en el acento del juego; `role=status` para anunciar el avance. Al retomar muestra el valor real de la Play (CA 14). No hay segunda tarjeta de tiempo: el prototipo la mostraba y el PRD la elimina (decisión #6)
+- Annotation: dato `N/8` en Mono bold con el acento del juego, a la derecha de «// palabras de hoy»; no es live region (el avance lo anuncia `hint-jugada`). Al retomar muestra el valor real de la Play (CA 14). No hay segunda tarjeta de tiempo: el prototipo la mostraba y el PRD la elimina (decisión #6)
 
 ### grilla
 - Texto/label: Grilla 12×12 · 144 letras A–Z · las celdas de las palabras encontradas quedan marcadas
@@ -270,7 +270,7 @@ date: 2026-11-10
 
 ## Accesibilidad
 
-- **Orden de foco:** header → titulo → contador → grilla (una sola parada de tabulación; dentro, las flechas) → hint → lista-palabras (lectura) → btn-rendirse → link-reportar.
+- **Orden de foco:** header → titulo → grilla (una sola parada de tabulación; dentro, las flechas) → hint → lista-palabras (lectura) → btn-rendirse → link-reportar.
 - **Landmarks y jerarquía:** `h1` con el nombre del juego; la cabecera `// palabras de hoy` es `h2`. Landmarks: header (breadcrumb como `nav` con nombre), main, footer.
 - **Foco y teclado:** la grilla es `role="grid"` con roving tabindex: las flechas mueven el foco entre las 144 celdas, Enter o Espacio marcan la primera y la última celda, Escape cancela la celda inicial (NFR-U03, CA 35). O-04 atrapa el foco y lo devuelve a `btn-rendirse` al cerrarse (CA 11). O-01, cuando exista, igual.
 - **Propio de esta composición:** cada celda anuncia «{letra}, fila {r}, columna {c}, {encontrada|inicio|libre}»; el resultado de cada selección (encontrada, no es una palabra, selección inválida, límite) se anuncia una sola vez en `hint-jugada` (`aria-live=polite`), y el contador en `role=status`. Las celdas encontradas se distinguen por relleno más peso/glifo, nunca solo por color (NFR-U04). Textos cortos para que la región viva no sea ruidosa con 144 celdas.
@@ -298,6 +298,8 @@ date: 2026-11-10
 
 **Preguntas abiertas:**
 - Ninguna propia de esta pantalla. La pregunta 6 del product-map (confirmación de «Rendirse») quedó resuelta por REQ-005: O-04 se implementa.
+
+- 2026-11-11 (pedido del usuario): el contador deja de ser una `card` `counter` sobre la grilla y pasa a un `N/8` rosa en el encabezado de `lista-palabras` (mismo tamaño en toda la partida; «encontradas» queda para lectores). Sin la card, la grilla arranca a la altura del título y entra en pantalla.
 
 ## Trazabilidad
 

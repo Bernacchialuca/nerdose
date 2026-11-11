@@ -21,7 +21,7 @@ date: 2026-11-10
 - **JTBD / Propósito:** Ver cuántas posiciones acertó (`N/5`, victoria solo con 5/5), contrastar su orden con el correcto posición por posición, aprender la fecha y una nota breve de cada hito, ver las rachas actualizadas y compartir `N/5` sin revelar los hechos.
 - **Viewports:**
   - **mobile** — consigna, veredicto y puntaje arriba; «// tu orden», «// orden correcto» con fechas y notas, rachas y la barra de cierre al pie, en una columna.
-  - **desktop** — consigna y veredicto a la izquierda con el puntaje grande a la derecha; «// tu orden» (`1 1 320px`) y «// orden correcto» (`2 1 520px`) lado a lado, como el prototipo; rachas y la barra de cierre a ancho completo debajo. «Compartir» solo en el header.
+  - **desktop** — consigna y veredicto a la izquierda con el puntaje grande a la derecha; «// tu orden» (`1 1 320px`) y «// orden correcto» (`2 1 520px`) lado a lado, como el prototipo; la card de cierre (rachas en una línea + cuenta regresiva y salidas) debajo. Al ganar (5/5) festeja un confeti violeta del juego; el título del veredicto se mantiene porque es el mismo para todos los desenlaces. «Compartir» solo en el header.
 
 ## Entrada y salida
 
@@ -313,6 +313,8 @@ date: 2026-11-10
 **Preguntas abiertas:**
 - Pregunta 2 del product-map: variantes de resultado anulado con y sin resultado propio.
 - Pregunta 5 del product-map: «Siguiente juego» o «Volver a los juegos» (REQ-006 sigue el criterio de REQ-004 y REQ-005).
+
+- 2026-11-11 (pedido del usuario): al ganar no hay banner `success`: festeja un confeti del color del juego (host `web`, solo en la transición partida → resultado ganado, sin animación con `prefers-reduced-motion`) y el `h1` del veredicto queda `sr-only`. Al perder se mantiene el banner `failure`. Rachas y salidas van en una sola card de cierre (rachas en una línea + cuenta regresiva y salidas) debajo del tablero, para que la racha quede a la vista sin scroll; `card-rachas` deja de existir como card aparte.
 
 ## Trazabilidad
 

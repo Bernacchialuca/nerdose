@@ -20,8 +20,8 @@ date: 2026-11-10
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
 - **JTBD / Propósito:** Ver el veredicto `N/8` (victoria solo con 8/8), la grilla con las 8 palabras marcadas distinguiendo las encontradas de las reveladas, la lista de las 8 palabras con su definición y las rachas actualizadas; compartir `N/8` sin revelar las palabras.
 - **Viewports:**
-  - **mobile** — veredicto arriba, grilla final, lista de palabras con definiciones, rachas y las salidas al pie, en una columna.
-  - **desktop** — columna principal a la izquierda (7/12) con veredicto, grilla final y barra de salidas; lista de palabras con definiciones, rachas y reporte a la derecha (5/12), como el layout tablero + aside del prototipo. «Compartir» solo en el header.
+  - **mobile** — veredicto arriba, grilla final, lista de palabras con definiciones y la card de cierre (rachas + salidas) al pie, en una columna.
+  - **desktop** — grilla final y card de cierre (rachas + salidas) a la izquierda (7/12); veredicto y lista de palabras con definiciones a la derecha (5/12). Las dos columnas arrancan arriba para que la grilla y la racha entren en pantalla. «Compartir» solo en el header.
 
 ## Entrada y salida
 
@@ -83,8 +83,8 @@ date: 2026-11-10
 - alerta-sistema
 - btn-reintentar
 - row `resultado`
-  - col 7/12: veredicto, grilla-final, barra `salida` (tarjeta: cuenta-regresiva a la izquierda; btn-siguiente y link-volver a la derecha)
-  - col 5/12: lista-palabras, card-rachas (con link-stats al pie), link-reportar
+  - col 7/12: grilla-final, card de cierre (rachas en una línea con link-stats; debajo cuenta-regresiva a la izquierda y btn-siguiente + link-volver a la derecha)
+  - col 5/12: veredicto (solo al rendirse; al ganar es un `h1` `sr-only` y festeja el confeti), lista-palabras (con `N/8` en su encabezado), link-reportar
 
 ## Contenido
 
@@ -96,7 +96,7 @@ date: 2026-11-10
 ### veredicto
 - Texto/label: 8/8: las encontraste todas
 - Icono: check
-- Annotation: banner `success` del DS al ganar / `failure` al rendirse, sin drama; el veredicto se dice con texto además del color. Victoria solo con 8/8 (RF 13)
+- Annotation: al ganar, sin banner: confeti rosa del juego y `h1` `sr-only` («8/8: las encontraste todas»); al rendirse, banner `failure` del DS, sin drama, con el veredicto en texto además del color. Victoria solo con 8/8 (RF 13)
 
 ### alerta-anulado
 - Texto/label: Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.
@@ -116,8 +116,8 @@ date: 2026-11-10
 - Annotation: pattern `grep-grid.word`; ahora las 8 tienen definición (RF 13). Las reveladas usan el estilo «pendiente» con la etiqueta «○ no la encontraste» en lugar del largo, para distinguirlas de las encontradas por texto y glifo, no solo por color. La cabecera `//` es `h2`. Las definiciones se recalculan en el idioma activo al cambiar ES|EN (CA 19)
 
 ### card-rachas
-- Texto/label: // rachas
-- Texto secundario: Grep Grid: 3 días · Global: 4 días · récord Grep Grid: 7
+- Texto/label: (h2 `sr-only`: rachas) — fila superior de la card de cierre
+- Texto secundario: Grep Grid: 3 días · Global: 4 días · récord: 7 · Ver mis estadísticas →
 - Icono: nada
 - Annotation: rachas que devuelve el cierre (rendirse también suma, CA 10, 17). Si el jugador reabre el resultado más tarde, se leen con la racha viva. La stat propia de Grep Grid (promedio de palabras y % de 8/8) se muestra en `estadisticas` (FG-10), no acá (supuesto «Stats propias»)
 
@@ -279,6 +279,8 @@ date: 2026-11-10
 **Preguntas abiertas:**
 - Pregunta 2 del product-map: variantes de resultado anulado con y sin resultado propio.
 - Pregunta 5 del product-map: «Siguiente juego» o «Volver a los juegos» (REQ-005 sigue el criterio de REQ-004).
+
+- 2026-11-11 (pedido del usuario): al ganar no hay banner `success`: festeja un confeti del color del juego (host `web`, solo en la transición partida → resultado ganado, sin animación con `prefers-reduced-motion`) y el `h1` del veredicto queda `sr-only`. Al perder se mantiene el banner `failure`. Rachas y salidas van en una sola card de cierre (rachas en una línea + cuenta regresiva y salidas) debajo del tablero, para que la racha quede a la vista sin scroll; `card-rachas` deja de existir como card aparte.
 
 ## Trazabilidad
 

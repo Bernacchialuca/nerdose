@@ -53,7 +53,6 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **Translate / ClientBaseProps / InstructionsProps / GameProps / ResultProps / MoveErrorInfo / GameStatsView** (packages/games/grep-grid/src/client/types.ts) - Prop contract
 - **Board** (packages/games/grep-grid/src/client/board.tsx) - 12x12 grid, `play` mode (roving tabindex, two taps) and `result` mode (read-only table); scales with `@container` variables
 - **WordList** (packages/games/grep-grid/src/client/word-list.tsx) - 8 word rows (pending / found / revealed) with definitions
-- **CounterCard** (packages/games/grep-grid/src/client/counter-card.tsx) - `N/8` counter card (no live region); candidate for `@nerdose/ui`
 - **ConsoleHint** (packages/games/grep-grid/src/client/console-hint.tsx) - Silent console line plus a polite region with one keyed node per announcement
 - **SurrenderDialog / SURRENDER_BUTTON** (packages/games/grep-grid/src/client/{surrender-dialog.tsx,surrender-button.ts}) - O-04 `alertdialog` with focus trap and the error-tinted outline button class
 - **SectionPanel** (packages/games/grep-grid/src/client/section-panel.tsx) - Copy of the Devdle panel with a `//` header as `h2`

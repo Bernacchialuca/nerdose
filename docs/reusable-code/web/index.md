@@ -18,7 +18,7 @@ App `apps/web` (not a package; imported through the `@/` alias).
 - **deriveGameView / toMoveError** (apps/web/src/modules/game-host/game-view.ts) - Pure screen selector and error mapping
 - **GameHostHeader** (apps/web/src/modules/game-host/components/game-host-header.tsx) - `GameHeader` for the game screens
 - **ShareButton / ClientShareButton** (apps/web/src/modules/game-host/components/share-button.tsx) - Share with clipboard fallback and analytics
-- **CardStreaks / ResultExits / ResultAside** (apps/web/src/modules/game-host/components/) - Result column and exits row
+- **ResultExits / Confetti** (apps/web/src/modules/game-host/components/) - Result closing card (streaks + countdown + exits) and win confetti
 - **ShellHandle** (apps/web/src/lib/route-handle.ts) - Route-provided header contract for the `Shell`
 - **focusMainHeading** (apps/web/src/lib/focus-main-heading.ts) - Moves focus to `main h1`
 - **env / parseEnv / initAnalytics** (apps/web/src/lib/env.ts, analytics.ts) - Validated env and Plausible injection

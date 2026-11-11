@@ -21,7 +21,7 @@ date: 2026-11-06
 - **JTBD / Propósito:** Ver el veredicto, la palabra con su categoría, definición y resumen, la distribución de intentos y las rachas, y compartir sin spoilers.
 - **Viewports:**
   - **mobile** — veredicto arriba, explicación en columna y las salidas al pie de la columna principal.
-  - **desktop** — columna principal a la izquierda (7/12) con veredicto, grilla, explicación y barra de salidas al pie, todos con el mismo ancho; distribución, rachas y reporte a la derecha (5/12) como sección aparte. «Compartir» solo en el header.
+  - **desktop** — columna principal a la izquierda (7/12) con veredicto, grilla, explicación y la card de cierre (rachas + salidas) al pie, todos con el mismo ancho; distribución y reporte a la derecha (5/12) como sección aparte. «Compartir» solo en el header.
 
 ## Entrada y salida
 
@@ -87,7 +87,7 @@ date: 2026-11-06
 - btn-reintentar
 - row `resultado`
   - col 7/12: veredicto, grilla-resultado, card-palabra, barra `salida` (tarjeta: cuenta-regresiva a la izquierda; btn-siguiente y link-volver a la derecha)
-  - col 5/12: distribucion, card-rachas (con link-stats al pie), link-reportar
+  - col 5/12: distribucion, link-reportar (las rachas pasan a la card de cierre de la col 7/12)
 
 ## Contenido
 
@@ -99,7 +99,7 @@ date: 2026-11-06
 ### veredicto
 - Texto/label: Ganaste en 4/6
 - Icono: check
-- Annotation: banner `success` del DS («Ganaste») / `failure` al perder, sin drama; el veredicto se dice con texto además del color
+- Annotation: al ganar, sin banner: confeti verde del juego y `h1` `sr-only` («Ganaste en N/6»); al perder, banner `failure` del DS, sin drama, con el veredicto en texto además del color
 
 ### alerta-anulado
 - Texto/label: Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.
@@ -286,6 +286,8 @@ date: 2026-11-06
 **Preguntas abiertas:**
 - Pregunta 2 del product-map: variantes de resultado anulado con y sin resultado propio.
 - Pregunta 5 del product-map: «Siguiente juego» o «Volver a los juegos» (REQ-004 solo fija que «Siguiente juego» se oculta cuando no hay pendientes).
+
+- 2026-11-11 (pedido del usuario): al ganar no hay banner `success`: festeja un confeti del color del juego (host `web`, solo en la transición partida → resultado ganado, sin animación con `prefers-reduced-motion`) y el `h1` del veredicto queda `sr-only`. Al perder se mantiene el banner `failure`. Rachas y salidas van en una sola card de cierre (rachas en una línea + cuenta regresiva y salidas) debajo del tablero, para que la racha quede a la vista sin scroll; `card-rachas` deja de existir como card aparte.
 
 ## Trazabilidad
 

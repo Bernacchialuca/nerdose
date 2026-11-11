@@ -16,17 +16,14 @@ export function Result({ t, notices, result, gameStats, aside, footer }: ResultP
           lateral (intentos y rachas) queda como sección aparte. Sin items-center: solo el tablero,
           más angosto, va centrado. */}
       <div className="flex min-w-0 grow-999 basis-140 flex-col gap-7">
-        <Banner
-          variant={r.win ? 'success' : 'failure'}
-          titleAs="h1"
-          title={
-            r.win
-              ? t('result.won', { score: r.score, max: MAX_GUESSES })
-              : t('result.lost', { max: MAX_GUESSES })
-          }
-        >
-          {r.win ? undefined : t('result.lostDetail')}
-        </Banner>
+        {/* Al ganar no hay banner: festeja el confeti del host y el `h1` queda para lectores. */}
+        {r.win ? (
+          <h1 className="sr-only">{t('result.won', { score: r.score, max: MAX_GUESSES })}</h1>
+        ) : (
+          <Banner variant="failure" titleAs="h1" title={t('result.lost', { max: MAX_GUESSES })}>
+            {t('result.lostDetail')}
+          </Banner>
+        )}
         {notices}
         <div className="flex justify-center">
           <Board

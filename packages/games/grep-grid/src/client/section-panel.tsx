@@ -2,7 +2,8 @@ import { useId, type ReactNode } from 'react';
 
 type SectionPanelProps = {
   title: string;
-  datum?: string;
+  /** Dato a la derecha del título (p. ej. el contador `N/8`), en el color del juego. */
+  datum?: ReactNode;
   id?: string;
   children: ReactNode;
 };
@@ -21,7 +22,9 @@ export function SectionPanel({ title, datum, id, children }: SectionPanelProps) 
           <span aria-hidden="true">// </span>
           {title}
         </h2>
-        {datum ? <span className="font-mono text-label-comment text-streak">{datum}</span> : null}
+        {datum ? (
+          <span className="font-mono text-mono-body font-bold text-game-grep-grid">{datum}</span>
+        ) : null}
       </div>
       {children}
     </section>

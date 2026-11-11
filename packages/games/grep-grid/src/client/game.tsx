@@ -8,7 +8,6 @@ import { sameCell, type Cell } from '../shared/geometry';
 import { Board } from './board';
 import { cellKey, playCells } from './cells';
 import { ConsoleHint, type HintAnnouncement } from './console-hint';
-import { CounterCard } from './counter-card';
 import { HELP_TARGET_ID } from './help-target';
 import { parseFeedback, parsePublicView, parseState } from './parse';
 import { SURRENDER_BUTTON } from './surrender-button';
@@ -151,8 +150,14 @@ export function Game({
 
   return (
     <div className="relative">
-      <div inert={dialog !== 'closed'} className="flex flex-wrap gap-7">
-        <div className="flex min-w-0 grow-7 basis-155 flex-col items-center gap-3.5">
+      {/* Mobile: una columna en orden de lectura. Desktop: tablero 7/12 a la izquierda (título,
+          grilla, hint) y lista 5/12 a la derecha (con el contador N/8 en su encabezado) y
+          «Rendirse»; las dos columnas arrancan arriba para que la grilla entre en pantalla. */}
+      <div
+        inert={dialog !== 'closed'}
+        className="flex flex-col gap-7 lg:grid lg:grid-cols-12 lg:items-start"
+      >
+        <div className="flex min-w-0 flex-col gap-3.5 lg:col-span-7">
           <div id={HELP_TARGET_ID} className="flex w-full flex-col gap-2">
             <h1 className="font-mono text-title-game text-text">{t('title')}</h1>
             <p>
@@ -164,9 +169,6 @@ export function Game({
             </p>
           </div>
           {notices}
-          <div className="flex w-full justify-start">
-            <CounterCard found={found} t={t} />
-          </div>
           <Board
             mode="play"
             cells={playCells(view.grid, foundCells, start)}
@@ -176,11 +178,9 @@ export function Game({
             onCellPress={onCellPress}
             onCancel={onCancel}
           />
-          <div className="w-full">
-            <ConsoleHint text={text(hint)} announcement={announcement} />
-          </div>
+          <ConsoleHint text={text(hint)} announcement={announcement} />
         </div>
-        <div className="flex min-w-0 grow-5 basis-85 flex-col gap-4">
+        <div className="flex min-w-0 flex-col gap-4 lg:col-span-5">
           <WordList rows={rows} mode="play" t={t} />
           {locked ? null : (
             <button

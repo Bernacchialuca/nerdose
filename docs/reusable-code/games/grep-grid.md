@@ -36,9 +36,9 @@ Package `@nerdose/game-grep-grid` (`packages/games/grep-grid`). Entries: `./defi
 - **Description:** 12x12 board. `mode: 'play'` renders `role="grid"` with a button per cell and roving tabindex (arrows, Home, End, Enter/Space, Escape); `mode: 'result'` renders a read-only `role="table"`.
 - **Signature:** `Board(props: { mode: 'play'; cells; label; t; disabled; onCellPress; onCancel } | { mode: 'result'; cells; label; t })`
 
-### WordList / CounterCard / ConsoleHint / SectionPanel
-- **Location:** packages/games/grep-grid/src/client/{word-list,counter-card,console-hint,section-panel}.tsx
-- **Description:** `WordList({ rows, mode, t })` (pending/found/revealed rows), `CounterCard({ found, t })` (no live region), `ConsoleHint({ text, announcement })` (one keyed node per announcement), `SectionPanel` (panel with `//` `h2`). `CounterCard` is a candidate for `@nerdose/ui`.
+### WordList / ConsoleHint / SectionPanel
+- **Location:** packages/games/grep-grid/src/client/{word-list,console-hint,section-panel}.tsx
+- **Description:** `WordList({ rows, mode, t })` (pending/found/revealed rows; shows the `N/8` counter as the panel `datum`, no live region), `ConsoleHint({ text, announcement })` (one keyed node per announcement), `SectionPanel({ title, datum? })` (panel with `//` `h2` and an optional game-colored datum on the right).
 
 ### SurrenderDialog / SURRENDER_BUTTON
 - **Location:** packages/games/grep-grid/src/client/{surrender-dialog.tsx,surrender-button.ts}

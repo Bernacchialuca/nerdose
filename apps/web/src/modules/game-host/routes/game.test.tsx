@@ -267,6 +267,8 @@ describe('jugar', () => {
     await user.keyboard('PARSER{Enter}');
     const verdict = await h1('Ganaste en 3/6');
     await waitFor(() => expect(verdict).toHaveFocus());
+    // La jugada que gana dispara el confeti del host (decorativo, oculto a lectores).
+    expect(screen.getByTestId('confetti')).toHaveAttribute('aria-hidden', 'true');
     expect(countOf(calls, 'GET', '/api/games/devdle/today?lang=es')).toBe(1);
     await waitFor(() =>
       expect(countOf(calls, 'GET', '/api/today?lang=es')).toBeGreaterThan(todayBefore),
@@ -277,7 +279,7 @@ describe('jugar', () => {
       expect(within(streaks as HTMLElement).getByText('Global: 6 días')).toBeInTheDocument(),
     );
     expect(within(streaks as HTMLElement).getByText('Devdle: 3 días')).toBeInTheDocument();
-    expect(within(streaks as HTMLElement).getByText('récord Devdle: 7')).toBeInTheDocument();
+    expect(within(streaks as HTMLElement).getByText('récord: 7')).toBeInTheDocument();
   });
 
   it('TS-17: not_in_word_list no consume intento', async () => {
@@ -745,10 +747,12 @@ describe('resultado', () => {
     server.use(gameHandlers.today(gameTodayWon));
     view();
     const heading = await screen.findByRole('heading', { level: 2, name: 'rachas' });
+    // Abrir un resultado ya ganado no repite el festejo.
+    expect(screen.queryByTestId('confetti')).toBeNull();
     const card = within(heading.closest('section') as HTMLElement);
     expect(card.getByText('Devdle: 3 días')).toBeInTheDocument();
     await waitFor(() => expect(card.getByText('Global: 5 días')).toBeInTheDocument());
-    expect(card.getByText('récord Devdle: 7')).toBeInTheDocument();
+    expect(card.getByText('récord: 7')).toBeInTheDocument();
   });
 
   it('TS-44: cuenta regresiva y recarga del día al llegar a 0', async () => {

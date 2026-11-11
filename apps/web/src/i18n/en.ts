@@ -209,7 +209,7 @@ export const en: Resources = {
       gameStreak_other: '{{game}}: {{count}} days',
       globalStreak_one: 'Global: {{count}} day',
       globalStreak_other: 'Global: {{count}} days',
-      record: '{{game}} record: {{count}}',
+      record: 'best: {{count}}',
       share: 'Share',
       copied: '✓ Copied',
       countdown: 'Next challenge in',

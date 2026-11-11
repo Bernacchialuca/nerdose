@@ -389,7 +389,7 @@ describe('confirmación y resultado', () => {
     expect(screen.getByRole('heading', { level: 2, name: 'rachas' })).toBeInTheDocument();
     expect(screen.getByText(/Tech Timeline: 3 días/)).toBeInTheDocument();
     expect(screen.getByText(/Global: 5 días/)).toBeInTheDocument();
-    expect(screen.getByText(/récord Tech Timeline: 4/)).toBeInTheDocument();
+    expect(screen.getByText(/récord: 4/)).toBeInTheDocument();
     expect(
       await screen.findByText(
         (_c, el) =>

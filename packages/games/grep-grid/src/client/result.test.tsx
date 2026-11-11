@@ -29,8 +29,13 @@ const base = (over: Partial<ResultProps> = {}): ResultProps => ({
 describe('Result', () => {
   it('shows a win (TS-63)', () => {
     render(<Result {...base()} />);
+    // Al ganar no hay banner (festeja el confeti del host): el h1 queda para lectores de pantalla.
     const h1 = screen.getByRole('heading', { level: 1, name: '8/8: las encontraste todas' });
-    expect(h1.closest('[role="status"]')).toHaveClass('border-status-success-border');
+    expect(h1).toHaveClass('sr-only');
+    expect(h1.closest('[role="status"]')).toBeNull();
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'palabras de hoy' }).parentElement,
+    ).toHaveTextContent('8/8');
     const table = screen.getByRole('table', { name: 'Grilla final: 8 encontradas y 0 reveladas' });
     expect(within(table).getAllByRole('cell')).toHaveLength(144);
     expect(within(table).queryAllByRole('cell', { name: /, revelada$/ })).toHaveLength(0);
@@ -114,21 +119,48 @@ describe('Result', () => {
 
   it('renders slots and layout (TS-68)', () => {
     const { container } = render(
-      <Result {...base({ notices: <p>nota</p>, aside: <p>rachas</p>, footer: <p>salidas</p> })} />,
+      <Result
+        {...base({
+          result: RESULT_GAVE_UP_5,
+          notices: <p>nota</p>,
+          aside: <p>rachas</p>,
+          footer: <p>salidas</p>,
+        })}
+      />,
     );
     const root = container.firstElementChild as HTMLElement;
-    const [main, side, foot] = Array.from(root.children) as HTMLElement[];
-    expect(main).toHaveClass('grow-7', 'basis-155');
-    expect(side).toHaveClass('grow-5', 'basis-85');
-    expect(foot).toHaveClass('basis-full');
-    expect(foot).toHaveTextContent('salidas');
-    expect(main).toContainElement(screen.getByText('nota'));
+    expect(root.firstElementChild).toHaveTextContent('nota');
+    const layout = root.querySelector('.lg\\:grid-cols-12') as HTMLElement;
+    const [side, main] = Array.from(layout.children) as HTMLElement[];
+    // Desktop: grilla y cierre a la izquierda (7/12), veredicto y lista a la derecha (5/12).
+    expect(main).toHaveClass('contents', 'lg:col-span-7', 'lg:col-start-1', 'lg:flex');
+    expect(side).toHaveClass('contents', 'lg:col-span-5', 'lg:col-start-8', 'lg:flex');
     expect(main).toContainElement(screen.getByRole('table'));
-    expect(side!.firstElementChild).toContainElement(screen.getByRole('list'));
-    expect(side!.lastElementChild).toHaveTextContent('rachas');
+    expect(main).toContainElement(screen.getByText('salidas'));
+    expect(side).toContainElement(screen.getByRole('heading', { level: 1 }));
+    expect(side).toContainElement(screen.getByRole('list'));
+    expect(side).toContainElement(screen.getByText('rachas'));
+    // Mobile (una columna): veredicto, grilla, lista, cierre y aside, por `order`.
+    const orderOf = (el: Element) => {
+      for (let node: Element | null = el; node; node = node.parentElement) {
+        const m = /(?:^|\s)order-(\d)(?:\s|$)/.exec(node.className);
+        if (m) return Number(m[1]);
+      }
+      return null;
+    };
     const banner = screen.getByRole('heading', { level: 1 }).closest('[role="status"]')!;
     expect(
-      banner.compareDocumentPosition(screen.getByText('nota')) & Node.DOCUMENT_POSITION_FOLLOWING,
+      [
+        banner,
+        screen.getByRole('table'),
+        screen.getByRole('list'),
+        screen.getByText('salidas'),
+        screen.getByText('rachas'),
+      ].map(orderOf),
+    ).toEqual([1, 2, 3, 4, 5]);
+    // En el DOM el h1 va antes que la grilla.
+    expect(
+      banner.compareDocumentPosition(screen.getByRole('table')) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
   });
 

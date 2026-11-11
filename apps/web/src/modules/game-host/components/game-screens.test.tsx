@@ -105,7 +105,8 @@ describe('GameScreens', () => {
     const props = resultProps.at(-1);
     expect(props?.publicView).toBe(PV);
     expect(props?.result).toBe(RESULT);
-    expect(props?.aside).toBeDefined();
+    // Rachas y salidas van juntas en el `footer` (card de cierre); el host ya no usa `aside`.
+    expect(props?.aside).toBeUndefined();
     expect(props?.footer).toBeDefined();
   });
 });

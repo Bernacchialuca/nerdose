@@ -3,6 +3,16 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.8.0] - 2026-11-11
+
+**MINOR.** Resultado y partida más compactos (pedido del usuario). Ningún token cambia.
+
+### Cambiado
+- `patterns/game-boards.md` 1.4.0: `grep-grid.counter` pasa de `card` `counter` sobre la grilla a un dato `N/8` (Mono bold, acento del juego) en el encabezado de la lista de palabras.
+- Resultado de los juegos: al ganar no hay banner `success`; festeja un confeti del color del juego (`--color-game-{id}` y `-light`), decorativo, una sola vez en la transición partida → resultado ganado y sin animación con `prefers-reduced-motion`. El `h1` del veredicto queda `sr-only`. Al perder se mantiene el banner `failure`.
+- Rachas y salidas del resultado en una sola card de cierre debajo del tablero (rachas en una línea con «Ver mis estadísticas» y, debajo, cuenta regresiva + salidas). La card `// rachas` aparte deja de existir; «récord» ya no repite el nombre del juego.
+- Grep Grid en desktop: tablero 7/12 a la izquierda y lista 5/12 a la derecha, ambas columnas arriba (partida: título + grilla + hint | lista + «Rendirse»; resultado: grilla + cierre | veredicto + lista).
+
 ## [1.7.0] - 2026-11-10
 
 **MINOR.** Tech Timeline jugable (story S-029). Ningún valor definido cambia. Los otros planes de S-029 (`ui`, `web`) suman sus ítems a esta misma entrada.

@@ -27,8 +27,10 @@ const bar = (label: string) => {
 describe('Result', () => {
   it('shows a win (TS-50)', () => {
     render(<Result {...base()} />);
+    // Al ganar no hay banner (festeja el confeti del host): el h1 queda para lectores de pantalla.
     const h1 = screen.getByRole('heading', { level: 1, name: 'Ganaste en 3/6' });
-    expect(h1.closest('[role="status"]')).not.toBeNull();
+    expect(h1).toHaveClass('sr-only');
+    expect(h1.closest('[role="status"]')).toBeNull();
     expect(screen.getByRole('grid', { name: 'Tus intentos' })).toBeInTheDocument();
     expect(screen.getAllByRole('gridcell')).toHaveLength(18);
     const row3 = within(screen.getAllByRole('row')[2] as HTMLElement).getAllByRole('gridcell');

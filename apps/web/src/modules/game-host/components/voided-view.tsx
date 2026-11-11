@@ -3,13 +3,9 @@ import { useTranslation } from 'react-i18next';
 import type { GameId } from '@nerdose/core';
 import { Banner } from '@nerdose/ui';
 
-import { useToday } from '@/modules/catalog';
-import { useSession } from '@/modules/session';
-
 import type { GameStatsView } from '../types';
 
 import { BackLink } from './back-link';
-import { CardStreaks } from './card-streaks';
 import { ResultExits } from './result-exits';
 
 /** Desafío anulado sin Play: aviso + volver (O-02 y `acknowledge-void` son FG-6, D4). */
@@ -36,21 +32,12 @@ export function VoidedResultView({
   gameStats: GameStatsView | null;
 }) {
   const { t } = useTranslation();
-  const { status } = useSession();
-  const { data } = useToday();
-  const globalStreak =
-    data && status !== 'cookies_blocked' && status !== 'unavailable'
-      ? data.global_streak.current
-      : null;
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6">
       <Banner variant="warning" titleAs="h1" title={t('gameHost.notice.voidedTitle')}>
         {t('gameHost.notice.voided')}
       </Banner>
-      {gameStats ? (
-        <CardStreaks gameId={gameId} gameStats={gameStats} globalStreak={globalStreak} />
-      ) : null}
-      <ResultExits gameId={gameId} />
+      <ResultExits gameId={gameId} gameStats={gameStats} />
     </div>
   );
 }

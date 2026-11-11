@@ -37,9 +37,9 @@
 - **Description:** Web Share API with clipboard fallback, `✓ Copiado` for 3 s (`role="status"`) and `track('share:<game_id>')` only after success; `AbortError` is ignored. The text always comes from the game's `share()`.
 - **Signature:** `ShareButton({ gameId, getText, variant: 'body' | 'header' })`; `ClientShareButton({ gameId, result, number, variant })`
 
-## CardStreaks / ResultExits / ResultAside
-- **Location:** apps/web/src/modules/game-host/components/
-- **Signature:** `CardStreaks({ gameId, gameStats, globalStreak })`; `ResultExits({ gameId })` (countdown that reloads the day and the game, next game, stats, back); `ResultAside({ gameId, client, result, number, gameStats })`
+## ResultExits / Confetti
+- **Location:** apps/web/src/modules/game-host/components/{result-exits,confetti}.tsx
+- **Signature:** `ResultExits({ gameId, gameStats? })` — card de cierre del resultado: rachas en una línea (juego, global, récord) con link a estadísticas, y debajo la cuenta regresiva que recarga el día y el juego, «Siguiente juego» y «Volver». Va en el slot `footer` del client (el host ya no pasa `aside`). `Confetti({ gameId })` — festejo decorativo con el color del juego; `GameRoute` lo monta solo si la jugada recién enviada cerró la partida ganando (`submitMove.data.play.status === 'won'`).
 
 ## ShellHandle / focusMainHeading
 - **Location:** apps/web/src/lib/route-handle.ts, focus-main-heading.ts

@@ -10,7 +10,6 @@ import type { GameClient, Translate } from '../types';
 
 import { BackLink } from './back-link';
 import { PhaseFocus } from './phase-focus';
-import { ResultAside } from './result-aside';
 import { ResultExits } from './result-exits';
 import { RetryButton } from './retry-button';
 
@@ -146,8 +145,7 @@ export function GameScreens({
         result={view.result}
         publicView={view.publicView}
         gameStats={view.gameStats}
-        aside={<ResultAside gameId={gameId} gameStats={view.gameStats} />}
-        footer={<ResultExits gameId={gameId} />}
+        footer={<ResultExits gameId={gameId} gameStats={view.gameStats} />}
       />
     </>
   );

@@ -1,5 +1,7 @@
 import { cn } from '@nerdose/ui';
 
+import { WORDS_COUNT } from '../definition/schemas';
+
 import { SectionPanel } from './section-panel';
 import type { Translate } from './types';
 
@@ -31,8 +33,18 @@ export function WordList({
   mode: 'play' | 'result';
   t: Translate;
 }) {
+  const found = rows.filter((r) => r.status === 'found').length;
   return (
-    <SectionPanel title={t('words.title')}>
+    <SectionPanel
+      title={t('words.title')}
+      datum={
+        // Contador `N/8`: no es live region (el hint anuncia cada hallazgo).
+        <>
+          {t('counter.value', { found, total: WORDS_COUNT })}
+          <span className="sr-only"> {t('counter.label')}</span>
+        </>
+      }
+    >
       <ul className="flex flex-col gap-2">
         {rows.map((row) => (
           <li

@@ -215,9 +215,13 @@ describe('Game two-tap selection', () => {
 describe('Game feedback', () => {
   it('shows the counter without a clock (TS-27)', () => {
     const { container } = render(<Game {...base()} />);
+    // Contador N/8 en el encabezado de la lista, en el color del juego; «encontradas» para lectores.
     const value = screen.getByText('3/8');
-    expect(value).toHaveClass('text-numeric-lg', 'text-game-grep-grid');
-    expect(screen.getByText('encontradas')).toBeInTheDocument();
+    expect(value).toHaveClass('text-game-grep-grid', 'font-bold');
+    expect(
+      screen.getByRole('heading', { level: 2, name: 'palabras de hoy' }).parentElement,
+    ).toContainElement(value);
+    expect(screen.getByText('encontradas')).toHaveClass('sr-only');
     expect(container.textContent).not.toMatch(/\d\d:\d\d/);
     expect(value.closest('[role="status"],[aria-live]')).toBeNull();
   });
@@ -548,28 +552,27 @@ describe('Game layout and style', () => {
     expect(btn.querySelector('[aria-hidden="true"]')).toHaveTextContent('✕');
   });
 
-  it('lays out two flex-wrap columns (TS-54)', () => {
+  it('lays out board 7/12 and word list 5/12 on desktop, one column on mobile (TS-54)', () => {
     const { container } = render(<Game {...base()} />);
-    const root = container.querySelector('.flex-wrap') as HTMLElement;
-    expect(root).toHaveClass('flex', 'gap-7');
+    const root = container.querySelector('.lg\\:grid-cols-12') as HTMLElement;
+    expect(root).toHaveClass('flex', 'flex-col', 'lg:grid', 'lg:items-start');
     const [main, side] = Array.from(root.children) as HTMLElement[];
-    expect(main).toHaveClass('min-w-0', 'grow-7', 'basis-155');
-    expect(side).toHaveClass('min-w-0', 'grow-5', 'basis-85');
+    expect(main).toHaveClass('min-w-0', 'lg:col-span-7');
+    expect(side).toHaveClass('min-w-0', 'lg:col-span-5');
     const before = (x: Element | null, y: Element | null) =>
       expect(x!.compareDocumentPosition(y!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     const h1 = main!.querySelector('h1');
     const help = main!.querySelector('#game-help p');
-    const counter = screen.getByText('3/8').closest('p');
     const grid = main!.querySelector('[role="grid"]');
     const hint = screen.getByText('> tocá la primera letra de una palabra');
     before(h1, help);
-    before(help, counter);
-    before(counter, grid);
+    before(help, grid);
     before(grid, hint);
     expect(main).toContainElement(hint);
+    // El contador N/8 vive en el encabezado de la lista (columna lateral), no sobre la grilla.
+    expect(side).toContainElement(screen.getByText('3/8'));
     before(side!.querySelector('ul'), screen.getByRole('button', { name: /Rendirse/ }));
     expect(main!.querySelector('h1')).toHaveTextContent('Grep Grid');
-    expect(side!.querySelector('ul')).not.toBeNull();
     expect(side!.lastElementChild).toHaveTextContent('Rendirse');
   });
 
