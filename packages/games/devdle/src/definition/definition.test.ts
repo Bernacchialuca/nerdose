@@ -1,9 +1,10 @@
 import { createGameRegistry } from '@nerdose/core';
-import { describe, expect, it, vi } from 'vitest';
+import type { Culprit } from '@nerdose/core';
+import { describe, expect, expectTypeOf, it, vi } from 'vitest';
 
 import { definition, devdle, payloadSchema, resultSchema, stateSchema } from './index';
 import type { DevdleMove, DevdleState } from './index';
-import { ALL_VALID, NONE_VALID, NOW, PAYLOAD_REACT } from './test-fixtures';
+import { ALL_VALID, NONE_VALID, NOW, PAYLOAD_MERGE, PAYLOAD_REACT } from './test-fixtures';
 
 const S0: DevdleState = { guesses: [] };
 
@@ -236,5 +237,40 @@ describe('devdle definition', () => {
 
   it('payloadSchema parses the fixture', () => {
     expect(() => payloadSchema.parse(PAYLOAD_REACT)).not.toThrow();
+  });
+});
+
+describe('devdle culprits', () => {
+  const REACT = [
+    { kind: 'term', id: '0b7e6f1c-3a52-4c1e-9f0a-1d2e3f4a5b6c', label: 'REACT' },
+  ] satisfies Culprit[];
+
+  it('returns a single term culprit with the word (TS-1)', () => {
+    const out = devdle.culprits(PAYLOAD_REACT);
+    expect(out).toHaveLength(1);
+    expect(out).toEqual(REACT);
+  });
+
+  it('follows the payload (TS-2)', () => {
+    expect(devdle.culprits(PAYLOAD_MERGE)).toEqual([
+      { kind: 'term', id: '7c1d2e3f-4a5b-4c6d-8e9f-0a1b2c3d4e5f', label: 'MERGE' },
+    ]);
+  });
+
+  it('is pure (TS-3)', () => {
+    const before = structuredClone(PAYLOAD_REACT);
+    const a = devdle.culprits(PAYLOAD_REACT);
+    const b = devdle.culprits(PAYLOAD_REACT);
+    expect(PAYLOAD_REACT).toEqual(before);
+    expect(a).toEqual(b);
+    expect(a).not.toBe(b);
+  });
+
+  it('works through the registry (TS-4)', () => {
+    expect(createGameRegistry([devdle]).get('devdle').culprits(PAYLOAD_REACT)).toEqual(REACT);
+  });
+
+  it('is typed as Culprit[] (TS-21)', () => {
+    expectTypeOf(devdle.culprits).returns.toEqualTypeOf<Culprit[]>();
   });
 });

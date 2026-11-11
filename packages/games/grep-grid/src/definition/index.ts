@@ -98,6 +98,7 @@ export const grepGrid: GameDefinition<
   },
 
   historyLabel: (r) => `${r.score}/${WORDS_COUNT}`,
+  culprits: (p) => p.words.map((w) => ({ kind: 'term', id: w.term_id, label: w.word })),
 };
 
 export { grepGrid as definition };

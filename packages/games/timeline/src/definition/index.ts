@@ -91,6 +91,7 @@ export const timeline: GameDefinition<
   },
 
   historyLabel: (r) => `${r.score}/${ITEMS_COUNT}`,
+  culprits: (p) => p.items.map((i) => ({ kind: 'timeline_fact', id: i.fact_id, label: i.label })),
 };
 
 export { timeline as definition };

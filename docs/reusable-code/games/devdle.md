@@ -2,7 +2,7 @@
 
 ## devdle (GameDefinition)
 - **Location:** packages/games/devdle/src/definition/index.ts
-- **Description:** Implements every `GameDefinition` method. `toPublic` returns `{ length, possible_categories }` (the 8 categories, fixed order, no solution). `applyMove` validates in order: finished game, shape and length (`invalid_move`), word list through `ctx.isValidWord` (`not_in_word_list`; the answer itself is always accepted). `result` resolves `definition` and `summary` to the locale. A loss scores 6 and its label is `✗ X/6`. Never mutates its arguments.
+- **Description:** Implements every `GameDefinition` method. `toPublic` returns `{ length, possible_categories }` (the 8 categories, fixed order, no solution). `applyMove` validates in order: finished game, shape and length (`invalid_move`), word list through `ctx.isValidWord` (`not_in_word_list`; the answer itself is always accepted). `result` resolves `definition` and `summary` to the locale. A loss scores 6 and its label is `✗ X/6`. Never mutates its arguments. `culprits(p)` returns 1 `term` (`term_id`, `word`); contains the solution, admin-only, matches `generator.usedBankItems` (checked in `src/generator/culprits.test.ts`).
 - **Signature:** `devdle: GameDefinition<DevdlePayload, DevdlePublicView, DevdleState, DevdleMove, DevdleFeedback, DevdleResult, DevdleStats>`
 - **Usage:** `import { devdle } from '@nerdose/game-devdle/definition'; createGameRegistry([devdle])`
 

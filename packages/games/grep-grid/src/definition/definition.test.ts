@@ -1,5 +1,6 @@
 import { createGameRegistry } from '@nerdose/core';
-import { describe, expect, it } from 'vitest';
+import type { Culprit } from '@nerdose/core';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import { definition, grepGrid } from './index';
 import {
@@ -266,5 +267,54 @@ describe('toPublic', () => {
   it('does not depend on placements (TS-42)', () => {
     const p = { ...PAYLOAD, placements: [] } as unknown as GrepGridPayload;
     expect(grepGrid.toPublic(p, 'es', S3)).toEqual(grepGrid.toPublic(PAYLOAD, 'es', S3));
+  });
+});
+
+describe('grepGrid culprits', () => {
+  const EXPECTED = (
+    ['CACHE', 'DOCKER', 'KERNEL', 'KUBERNETES', 'MERGE', 'OAUTH', 'PYTHON', 'REDIS'] as const
+  ).map((w) => ({ kind: 'term', id: ID[w], label: w }));
+
+  it('returns eight term culprits in words order (TS-7)', () => {
+    const out = grepGrid.culprits(PAYLOAD);
+    expect(out).toHaveLength(8);
+    expect(out).toEqual(EXPECTED);
+  });
+
+  it('exposes only kind, id and label (TS-8)', () => {
+    for (const k of grepGrid.culprits(PAYLOAD).map((x) => Object.keys(x).sort())) {
+      expect(k).toEqual(['id', 'kind', 'label']);
+    }
+  });
+
+  it('follows p.words, not p.placements (TS-9)', () => {
+    const p = { ...PAYLOAD, words: [...PAYLOAD.words].reverse() };
+    expect(grepGrid.culprits(p).map((x) => x.label)).toEqual([
+      'REDIS',
+      'PYTHON',
+      'OAUTH',
+      'MERGE',
+      'KUBERNETES',
+      'KERNEL',
+      'DOCKER',
+      'CACHE',
+    ]);
+  });
+
+  it('is pure (TS-10)', () => {
+    const before = structuredClone(PAYLOAD);
+    const a = grepGrid.culprits(PAYLOAD);
+    const b = grepGrid.culprits(PAYLOAD);
+    expect(PAYLOAD).toEqual(before);
+    expect(a).toEqual(b);
+    expect(a).not.toBe(b);
+  });
+
+  it('works through the registry (TS-11)', () => {
+    expect(createGameRegistry([grepGrid]).get('grep-grid').culprits(PAYLOAD)).toEqual(EXPECTED);
+  });
+
+  it('is typed as Culprit[] (TS-21)', () => {
+    expectTypeOf(grepGrid.culprits).returns.toEqualTypeOf<Culprit[]>();
   });
 });

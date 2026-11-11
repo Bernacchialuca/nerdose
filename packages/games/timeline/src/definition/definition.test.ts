@@ -1,5 +1,6 @@
 import { createGameRegistry } from '@nerdose/core';
-import { describe, expect, it } from 'vitest';
+import type { Culprit } from '@nerdose/core';
+import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import { definition, timeline } from './index';
 import { feedbackSchema, publicViewSchema, resultSchema, statsSchema } from './schemas';
@@ -8,7 +9,9 @@ import {
   CORRECT,
   CTX_EN,
   CTX_ES,
+  ID,
   NOW,
+  OID,
   PAYLOAD,
   REVERSED,
   ROTATED,
@@ -230,5 +233,52 @@ describe('timeline definition', () => {
       'feedback',
       null,
     );
+  });
+});
+
+describe('timeline culprits', () => {
+  const EXPECTED = [
+    { kind: 'timeline_fact', id: ID.GO, label: 'Go' },
+    { kind: 'timeline_fact', id: ID.KUBERNETES, label: 'Kubernetes' },
+    { kind: 'timeline_fact', id: ID.PYTHON, label: 'Python' },
+    { kind: 'timeline_fact', id: ID.DOCKER, label: 'Docker' },
+    { kind: 'timeline_fact', id: ID.JAVA, label: 'Java' },
+  ];
+
+  it('returns five timeline_fact culprits in items order (TS-14)', () => {
+    const out = timeline.culprits(PAYLOAD);
+    expect(out).toHaveLength(5);
+    expect(out).toEqual(EXPECTED);
+  });
+
+  it('uses fact_id, never opaque_id (TS-15)', () => {
+    const ids = timeline.culprits(PAYLOAD).map((c) => c.id);
+    for (const id of ids) {
+      expect(Object.values(OID)).not.toContain(id);
+      expect(Object.values(ID)).toContain(id);
+    }
+  });
+
+  it('exposes only kind, id and label (TS-16)', () => {
+    for (const k of timeline.culprits(PAYLOAD).map((x) => Object.keys(x).sort())) {
+      expect(k).toEqual(['id', 'kind', 'label']);
+    }
+  });
+
+  it('is pure (TS-17)', () => {
+    const before = structuredClone(PAYLOAD);
+    const a = timeline.culprits(PAYLOAD);
+    const b = timeline.culprits(PAYLOAD);
+    expect(PAYLOAD).toEqual(before);
+    expect(a).toEqual(b);
+    expect(a).not.toBe(b);
+  });
+
+  it('works through the registry (TS-18)', () => {
+    expect(createGameRegistry([timeline]).get('timeline').culprits(PAYLOAD)).toEqual(EXPECTED);
+  });
+
+  it('is typed as Culprit[] (TS-21)', () => {
+    expectTypeOf(timeline.culprits).returns.toEqualTypeOf<Culprit[]>();
   });
 });
