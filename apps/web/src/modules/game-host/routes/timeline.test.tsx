@@ -401,7 +401,7 @@ describe('confirmación y resultado', () => {
       '/grep-grid',
     );
     expect(screen.getByRole('link', { name: /Volver a los juegos/ })).toHaveAttribute('href', '/');
-    expect(screen.queryByText(/Reportar un problema/)).toBeNull();
+    expect(screen.getByRole('button', { name: 'Reportar un problema' })).toBeInTheDocument();
   });
 
   it('TS-22: «Siguiente juego» oculto sin pendientes', async () => {
@@ -655,7 +655,7 @@ describe('errores del ciclo común', () => {
     a.unmount();
     server.use(handlers.today(timelineVoided));
     view();
-    expect(await screen.findByText(VOIDED)).toBeInTheDocument();
+    expect((await screen.findAllByText(VOIDED)).length).toBeGreaterThan(0);
     expect(screen.queryByRole('button', { name: /Empezar/ })).toBeNull();
     expect(screen.queryByRole('dialog')).toBeNull();
   });

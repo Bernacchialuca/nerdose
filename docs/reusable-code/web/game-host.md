@@ -39,7 +39,7 @@
 
 ## ResultExits / Confetti
 - **Location:** apps/web/src/modules/game-host/components/{result-exits,confetti}.tsx
-- **Signature:** `ResultExits({ gameId, gameStats? })` — card de cierre del resultado: rachas en una línea (juego, global, récord) con link a estadísticas, y debajo la cuenta regresiva que recarga el día y el juego, «Siguiente juego» y «Volver». Va en el slot `footer` del client (el host ya no pasa `aside`). `Confetti({ gameId })` — festejo decorativo con el color del juego; `GameRoute` lo monta solo si la jugada recién enviada cerró la partida ganando (`submitMove.data.play.status === 'won'`).
+- **Signature:** `ResultExits({ gameId, gameStats? })` — card de cierre del resultado: rachas en una línea (juego, global, récord) con link a estadísticas, y debajo la cuenta regresiva que recarga el día y el juego, «Siguiente juego» y «Volver». Va en el slot `footer` del client (el `aside` lleva el `ReportLink`). `Confetti({ gameId })` — festejo decorativo con el color del juego; `GameRoute` lo monta solo si la jugada recién enviada cerró la partida ganando (`submitMove.data.play.status === 'won'`).
 
 ## ShellHandle / focusMainHeading
 - **Location:** apps/web/src/lib/route-handle.ts, focus-main-heading.ts
@@ -55,3 +55,18 @@
 - **Location:** apps/web/src/test/msw.ts, apps/web/src/test/fixtures/grep-grid-today.ts, apps/web/src/test/fixtures/timeline-today.ts, apps/web/src/test/dnd-rects.ts, apps/web/src/test/game-route-helpers.ts
 - **Description:** `gameHandlersFor(gameId)` builds the MSW `today` / `start` / `move` handlers of one game (`gameHandlers` = Devdle, `grepGridHandlers` = Grep Grid, `timelineHandlers` = Tech Timeline). The Grep Grid fixtures are the API payloads in `snake_case` (grid, words, played states, results, moves, `todayWithGrepGrid`); the Timeline fixtures (`timeline-today.ts`) follow the same shape (`tlResult`, `timelineInProgress`, `timelineLost3`, `todayWithTimeline`, ...). `stubSortableRects()` (`dnd-rects.ts`) gives `<li>` children of an `<ol>` measurable rects in jsdom so dnd-kit's keyboard sensor works; it returns a `restore()` function. `game-route-helpers` shares `recordCalls`, `countOf`, `errorResponse`, `settle`, `setShare` and `h1` between the route suites.
 - **Usage:** `server.use(grepGridHandlers.today(grepGridInProgress3), grepGridHandlers.move(ggMoveDocker))`
+
+## useReport / useAcknowledgeVoid
+- **Location:** apps/web/src/modules/game-host/api/use-report.ts, use-acknowledge-void.ts
+- **Description:** `useReport` posts `/today/report` (omits an empty `message`, invalidates `['game-today', gameId]` on success and on `already_reported`); `useAcknowledgeVoid` posts `/today/acknowledge-void` and its `onSuccess` returns the invalidation of `today` and `game-today`, so the mutation stays pending until the new `GameToday` arrives. Both use `withSessionRetry`.
+- **Signature:** `useReport(gameId).mutate({ challengeNumber, reason, message })`; `useAcknowledgeVoid(gameId).mutate({ challengeNumber })`
+
+## ReportDialog / ReportLink
+- **Location:** apps/web/src/modules/game-host/components/report-dialog.tsx, report-link.tsx
+- **Description:** O-01 inside `Dialog variant="sheet"` from `@nerdose/ui` (described by the spoiler notice via `describedBy` when `from === 'game'`; select + textarea with counter, success / already-reported phases, system and rate-limit alerts). `GameRoute` mounts it outside the view `switch` with a snapshot of the challenge number. `ReportLink` is the trigger; `reported` makes it `aria-disabled`.
+- **Signature:** `ReportDialog({ gameId, number, from: 'game' | 'result', onClose(reported) })`; `ReportLink({ reported, onOpen })`
+
+## VoidedNoticeDialog
+- **Location:** apps/web/src/modules/game-host/components/voided-notice-dialog.tsx
+- **Description:** O-02 `alertdialog` (`variant="modal"`, described by its text via `describedBy`); `challenge_expired` calls `onExpired`, `not_voided` / `no_challenge_today` call `onStale`, any other error shows an inline alert.
+- **Signature:** `VoidedNoticeDialog({ gameId, number, onClose, onExpired, onStale })`

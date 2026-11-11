@@ -112,7 +112,11 @@ describe('deriveHomeView', () => {
       streak: 3,
       cta: { kind: 'disabled', label: 'none' },
     });
-    expect(card(view, 'bug-hunt')).toMatchObject({ status: 'voided', streak: 1, cta: null });
+    expect(card(view, 'bug-hunt')).toMatchObject({
+      status: 'voided',
+      streak: 1,
+      cta: { kind: 'link', to: '/bug-hunt', label: 'voided', tone: 'secondary' },
+    });
     expect(v.hero.label).toBe('continue');
     expect(v.summary).toBe('streaks');
   });
@@ -361,5 +365,52 @@ describe('nextPendingGame', () => {
   it('salta el juego excluido y devuelve null sin pendientes', () => {
     expect(nextPendingGame(todayFixture, 'grep-grid')).toBe('timeline');
     expect(nextPendingGame(todayNoChallengesFixture)).toBeNull();
+  });
+});
+
+describe('tarjeta anulada', () => {
+  const voidedGame = (play_status: 'voided' | null) => ({
+    ...todayFixture,
+    games: [
+      {
+        ...todayFixture.games[0]!,
+        challenge_status: 'voided' as const,
+        play_status,
+        history_label: null,
+        current_streak: 6,
+      },
+      ...todayFixture.games.slice(1),
+    ],
+  });
+  const first = (
+    today: ReturnType<typeof voidedGame>,
+    sessionStatus: 'active' | 'cookies_blocked',
+  ) => {
+    const v = deriveHomeView({ today, isPending: false, isError: false, sessionStatus });
+    if (v.kind !== 'ready') throw new Error('ready');
+    return v;
+  };
+
+  it('TS-39: con Play voided se ve completada con «Ver resultado»', () => {
+    const v = first(voidedGame('voided'), 'active');
+    expect(v.cards[0]).toMatchObject({
+      status: 'completed',
+      cta: { kind: 'link', to: '/devdle', label: 'result', tone: 'secondary' },
+    });
+    expect(v.terminal.rows[0]).toMatchObject({ state: 'done', status: 'done' });
+  });
+
+  it('sin Play ofrece «Ver aviso de anulación»', () => {
+    const v = first(voidedGame(null), 'active');
+    expect(v.cards[0]).toMatchObject({
+      status: 'voided',
+      cta: { kind: 'link', to: '/devdle', label: 'voided', tone: 'secondary' },
+    });
+    expect(v.terminal.rows[0]).toMatchObject({ state: 'voided' });
+  });
+
+  it('TS-40: sin sesión activa mantiene el estado de cookies bloqueadas', () => {
+    const v = first(voidedGame(null), 'cookies_blocked');
+    expect(v.cards[0]).toMatchObject({ status: 'noSession', cta: { kind: 'disabled' } });
   });
 });

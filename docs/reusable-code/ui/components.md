@@ -40,9 +40,9 @@ Components hold no visible text of their own (ADR-002): all text comes in throug
 
 ## Dialog
 - **Location:** packages/ui/src/components/dialog.tsx
-- **Description:** Modal (centered, `z-50`) or drawer (right-anchored, `max-w-5xl`, `z-40`) with `role="dialog"` / `"alertdialog"`, `aria-modal`, focus trap, Escape and overlay close, focus return to the trigger. `closeDisabled` blocks every close path. No own text: `closeLabel` is the accessible name of the close button.
-- **Signature:** `Dialog(props: DialogProps)` where `DialogProps = { variant: 'modal' | 'drawer'; title: ReactNode; closeLabel: string; onClose: () => void; closeDisabled?: boolean; role?: 'dialog' | 'alertdialog'; initialFocusRef?: RefObject<HTMLElement | null>; titleRef?: RefObject<HTMLHeadingElement | null>; children: ReactNode }`
-- **Usage:** `<Dialog variant="modal" title="Anular desafío" closeLabel="Cerrar" onClose={close} closeDisabled={pending} initialFocusRef={reasonRef}>...</Dialog>`
+- **Description:** Modal (centered, `z-50`), sheet (bottom-anchored with rounded top corners on mobile, same as modal from `sm`, `z-50`) or drawer (right-anchored, `max-w-5xl`, `z-40`) with `role="dialog"` / `"alertdialog"`, `aria-modal`, focus trap, Escape and overlay close, focus return to the trigger. While mounted, everything outside the dialog gets `inert` (restored before focus returns). `describedBy` sets `aria-describedby` on the panel (omitted without it). `closeDisabled` blocks every close path. No own text: `closeLabel` is the accessible name of the close button.
+- **Signature:** `Dialog(props: DialogProps)` where `DialogProps = { variant: 'modal' | 'drawer' | 'sheet'; title: ReactNode; closeLabel: string; onClose: () => void; closeDisabled?: boolean; role?: 'dialog' | 'alertdialog'; initialFocusRef?: RefObject<HTMLElement | null>; titleRef?: RefObject<HTMLHeadingElement | null>; describedBy?: string; children: ReactNode }`
+- **Usage:** `<Dialog variant="modal" title="Anular desafío" closeLabel="Cerrar" onClose={close} closeDisabled={pending} initialFocusRef={reasonRef}>...</Dialog>`; `<Dialog variant="sheet" title={t('report.title')} closeLabel={t('close')} describedBy={noticeId} onClose={close}>...</Dialog>`
 
 ## GameHeader
 - **Location:** packages/ui/src/components/game-header.tsx

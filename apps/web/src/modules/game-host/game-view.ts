@@ -24,7 +24,12 @@ export type GameView =
   | { kind: 'loadError' }
   | { kind: 'noChallenge'; number: number | null; dayChanged: boolean }
   | { kind: 'voided'; number: number | null }
-  | { kind: 'voidedResult'; number: number | null; gameStats: GameStatsView | null }
+  | {
+      kind: 'voidedResult';
+      number: number | null;
+      gameStats: GameStatsView | null;
+      reported: boolean;
+    }
   | { kind: 'instructions'; number: number; dayChanged: boolean; session: Session }
   | {
       kind: 'playing';
@@ -36,6 +41,7 @@ export type GameView =
       session: Session;
       moveFailed: boolean;
       gameStats: GameStatsView | null;
+      reported: boolean;
     }
   | {
       kind: 'result';
@@ -43,6 +49,7 @@ export type GameView =
       result: unknown;
       publicView: unknown;
       gameStats: GameStatsView | null;
+      reported: boolean;
     };
 
 const INLINE_MOVE_ERRORS = ['not_in_word_list', 'rate_limited', 'invalid_move', 'validation_error'];
@@ -92,7 +99,7 @@ export function deriveGameView({
   const { number, play } = data;
   const finished = play?.status === 'won' || play?.status === 'lost';
   if (play?.status === 'voided' || (data.challenge_status === 'voided' && finished)) {
-    return { kind: 'voidedResult', number, gameStats: data.game_stats };
+    return { kind: 'voidedResult', number, gameStats: data.game_stats, reported: data.reported };
   }
   if (data.challenge_status === 'voided') return { kind: 'voided', number };
 
@@ -108,6 +115,7 @@ export function deriveGameView({
       moveError: toMoveError(actionError),
       session,
       gameStats: data.game_stats,
+      reported: data.reported,
       moveFailed:
         actionError !== null &&
         actionError !== undefined &&
@@ -120,5 +128,6 @@ export function deriveGameView({
     result: data.result,
     publicView: data.public_view,
     gameStats: data.game_stats,
+    reported: data.reported,
   };
 }

@@ -21,7 +21,7 @@ Package `@nerdose/ui` (`packages/ui`), consumed by `web` and `admin`.
 - **BrandMark** (packages/ui/src/components/brand-mark.tsx) - `> nerdose_` logo with optional blinking cursor
 - **Card** (packages/ui/src/components/card.tsx) - `game` (+ `next`, `thumbnail`), `placeholder`, `step` and `mini-stat` variants
 - **ChartIcon** (packages/ui/src/components/icons.tsx) - 18px Lucide stats chart icon, `aria-hidden`
-- **Dialog** (packages/ui/src/components/dialog.tsx) - Modal or right drawer with focus trap, Escape / overlay close, focus return and `closeDisabled`; text comes by props
+- **Dialog** (packages/ui/src/components/dialog.tsx) - Modal, right drawer or `sheet` (bottom-sheet on mobile, modal from `sm`) with focus trap, Escape / overlay close, focus return, `closeDisabled`, `describedBy` and inert background; text comes by props
 - **GameHeader** (packages/ui/src/components/game-header.tsx) - Game screen header: `> nerdose / {game}` breadcrumb `<nav>`, `#number` meta and actions slot
 - **GameThumbnail** (packages/ui/src/components/game-thumbnail.tsx) - Decorative 150px card header content for the five games
 - **HelpIcon** (packages/ui/src/components/icons.tsx) - 18px Lucide `circle-help` icon, `aria-hidden`

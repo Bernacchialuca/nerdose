@@ -49,6 +49,7 @@ function screens(view: GameScreensProps['view'], feedback: unknown) {
               feedback={feedback}
               locale="es"
               firstPhaseRef={{ current: true }}
+              reportLink={<button type="button">report-link</button>}
               startNotice={null}
               starting={false}
               movePending={false}
@@ -75,6 +76,7 @@ const playing: Extract<GameView, { kind: 'playing' }> = {
   session: 'ok',
   moveFailed: false,
   gameStats: null,
+  reported: false,
 };
 
 beforeAll(() => {
@@ -98,15 +100,22 @@ describe('GameScreens', () => {
     resultProps.length = 0;
     render(
       screens(
-        { kind: 'result', number: 128, result: RESULT, publicView: PV, gameStats: null },
+        {
+          kind: 'result',
+          number: 128,
+          result: RESULT,
+          publicView: PV,
+          gameStats: null,
+          reported: false,
+        },
         null,
       ),
     );
     const props = resultProps.at(-1);
     expect(props?.publicView).toBe(PV);
     expect(props?.result).toBe(RESULT);
-    // Rachas y salidas van juntas en el `footer` (card de cierre); el host ya no usa `aside`.
-    expect(props?.aside).toBeUndefined();
+    // Rachas y salidas van juntas en el `footer`; el `aside` lleva el link de reporte (D5).
+    expect(props?.aside).toBeDefined();
     expect(props?.footer).toBeDefined();
   });
 });

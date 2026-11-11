@@ -189,7 +189,7 @@ describe('empezar', () => {
     const start1 = await screen.findByRole('button', { name: /Empezar/ });
     server.use(gameHandlers.today(gameTodayVoided));
     await user.click(start1);
-    expect(await screen.findByText(VOIDED)).toBeInTheDocument();
+    expect((await screen.findAllByText(VOIDED)).length).toBeGreaterThan(0);
     expect(screen.queryByRole('button', { name: /Empezar/ })).toBeNull();
     a.unmount();
 
@@ -542,14 +542,14 @@ describe('estados sin client', () => {
     expect(within(nav).getByText('big-o')).toBeInTheDocument();
   });
 
-  it('TS-32: anulado sin Play no abre ningún diálogo', async () => {
+  it('TS-32: anulado sin Play abre O-02 sobre el aviso, sin poder empezar', async () => {
     server.use(gameHandlers.today(gameTodayVoided));
     view();
     expect(await h1('Devdle')).toBeInTheDocument();
-    expect(screen.getByText(VOIDED)).toBeInTheDocument();
+    expect(await screen.findByRole('alertdialog', { name: 'Desafío anulado' })).toBeInTheDocument();
+    expect(screen.getAllByText(VOIDED)).toHaveLength(2);
     expect(screen.getByRole('link', { name: /Volver a los juegos/ })).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Empezar/ })).toBeNull();
-    expect(screen.queryByRole('dialog')).toBeNull();
   });
 
   it('TS-33: resultado anulado en un solo banner', async () => {
@@ -827,16 +827,16 @@ describe('resultado', () => {
     expect(back.closest('.rounded-panel')).toHaveTextContent(/Próximo desafío en/);
   });
 
-  it('TS-47: «Reportar un problema» no se renderiza', async () => {
+  it('TS-47: «Reportar un problema» se renderiza en la partida y en el resultado', async () => {
     server.use(gameHandlers.today(gameTodayInProgress));
     const a = view();
     await screen.findByText(/intento 3 de 6/);
-    expect(screen.queryByText('Reportar un problema')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Reportar un problema' })).toBeInTheDocument();
     a.unmount();
     server.use(gameHandlers.today(gameTodayWon));
     view();
     await h1('Ganaste en 3/6');
-    expect(screen.queryByText('Reportar un problema')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Reportar un problema' })).toBeInTheDocument();
   });
 });
 

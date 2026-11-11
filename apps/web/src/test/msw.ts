@@ -33,6 +33,12 @@ export const gameHandlersFor = (gameId: GameId) => ({
     http.post(`/api/games/${gameId}/today/start`, () => HttpResponse.json(body as object, init)),
   move: (body: unknown, init?: ResponseInit) =>
     http.post(`/api/games/${gameId}/today/move`, () => HttpResponse.json(body as object, init)),
+  report: (body: unknown, init?: ResponseInit) =>
+    http.post(`/api/games/${gameId}/today/report`, () => HttpResponse.json(body as object, init)),
+  acknowledgeVoid: (body: unknown, init?: ResponseInit) =>
+    http.post(`/api/games/${gameId}/today/acknowledge-void`, () =>
+      HttpResponse.json(body as object, init),
+    ),
 });
 
 export const gameHandlers = gameHandlersFor('devdle');

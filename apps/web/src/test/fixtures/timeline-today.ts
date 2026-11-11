@@ -109,6 +109,7 @@ export const timelineNotStarted = {
   play: null,
   result: null,
   game_stats: null,
+  reported: false,
 } satisfies GameToday;
 
 export const timelineStarted = {
@@ -161,6 +162,7 @@ export const timelineNone = {
   play: null,
   result: null,
   game_stats: null,
+  reported: false,
 } satisfies GameToday;
 
 export const timelineVoided = {

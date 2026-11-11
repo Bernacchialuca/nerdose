@@ -27,5 +27,5 @@ export function renderWithProviders({
       </I18nextProvider>
     </QueryClientProvider>
   );
-  return render(strict ? <StrictMode>{tree}</StrictMode> : tree);
+  return { ...render(strict ? <StrictMode>{tree}</StrictMode> : tree), queryClient };
 }

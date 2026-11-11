@@ -137,7 +137,10 @@ describe('Home', () => {
     expect(bigO).toHaveTextContent('no afecta tu racha');
     expect(within(bigO).getByRole('button', { name: 'Sin desafío hoy' })).toBeInTheDocument();
     expect(bug).toHaveTextContent('anulado');
-    expect(within(bug).queryByRole('link')).toBeNull();
+    expect(within(bug).getByRole('link', { name: 'Ver aviso de anulación' })).toHaveAttribute(
+      'href',
+      '/bug-hunt',
+    );
     expect(within(bug).queryByRole('button')).toBeNull();
     const progress = within(screen.getByRole('region', { name: 'Tu progreso' }));
     expect(progress.getByText('5')).toHaveClass('text-display-streak-compact', 'text-streak');
@@ -851,5 +854,66 @@ describe('Home con Devdle jugable', () => {
       const card = screen.getByRole('article', { name });
       expect(within(card).getByRole('button', { name: /Sin desafío hoy/i })).toBeInTheDocument();
     }
+  });
+});
+
+describe('Home · tarjeta anulada', () => {
+  const withDevdle = (patch: Record<string, unknown>) => ({
+    ...todayFixture,
+    games: [{ ...todayFixture.games[0]!, ...patch }, ...todayFixture.games.slice(1)],
+  });
+
+  it('TS-38: sin Play lleva a la ruta del juego con O-02 abierto', async () => {
+    const user = userEvent.setup();
+    const voided = withDevdle({
+      challenge_status: 'voided',
+      play_status: null,
+      history_label: null,
+      current_streak: 5,
+    });
+    useToday(voided);
+    server.use(
+      http.get('/api/games/devdle/today', () =>
+        HttpResponse.json({
+          game_id: 'devdle',
+          date: '2026-11-03',
+          number: 128,
+          challenge_status: 'voided',
+          public_view: null,
+          play: null,
+          result: null,
+          game_stats: null,
+          reported: false,
+        }),
+      ),
+    );
+    await renderHome();
+    const card = screen.getByRole('article', { name: 'Devdle' });
+    expect(card).toHaveTextContent('anulado');
+    await user.click(within(card).getByRole('link', { name: 'Ver aviso de anulación' }));
+    expect(await screen.findByRole('alertdialog', { name: 'Desafío anulado' })).toBeInTheDocument();
+  });
+
+  it('TS-39: con Play voided se ve completada con «Ver resultado»', async () => {
+    useToday(
+      withDevdle({ challenge_status: 'voided', play_status: 'voided', history_label: null }),
+    );
+    await renderHome();
+    const card = screen.getByRole('article', { name: 'Devdle' });
+    expect(card).toHaveTextContent('completado');
+    expect(within(card).getByRole('link', { name: 'Ver resultado' })).toHaveAttribute(
+      'href',
+      '/devdle',
+    );
+  });
+
+  it('TS-40: sin sesión activa no hay link al juego', async () => {
+    useToday({
+      ...withDevdle({ challenge_status: 'voided', play_status: null, history_label: null }),
+      has_session: false,
+    });
+    await renderHome();
+    const card = screen.getByRole('article', { name: 'Devdle' });
+    expect(within(card).queryByRole('link', { name: 'Ver aviso de anulación' })).toBeNull();
   });
 });
