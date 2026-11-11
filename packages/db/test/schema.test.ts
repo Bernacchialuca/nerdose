@@ -1,8 +1,22 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { CODE_LANGUAGES, GAME_IDS, LOCALES, TERM_CATEGORIES } from '@nerdose/core';
-import type { CodeLanguage, GameId, TermCategory } from '@nerdose/core';
+import {
+  CODE_LANGUAGES,
+  DATE_PRECISIONS,
+  GAME_IDS,
+  LOCALES,
+  TERM_CATEGORIES,
+  TIMELINE_CATEGORIES,
+} from '@nerdose/core';
+import type {
+  CodeLanguage,
+  DatePrecision,
+  GameId,
+  TermCategory,
+  TimelineCategory,
+} from '@nerdose/core';
+import { getTableName } from 'drizzle-orm';
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import {
@@ -11,6 +25,7 @@ import {
   challenges,
   codeLanguageEnum,
   createDb,
+  datePrecisionEnum,
   gameIdEnum,
   jobRunStatusEnum,
   jobRuns,
@@ -23,8 +38,20 @@ import {
   rejectedGuesses,
   termCategoryEnum,
   terms,
+  timelineCategoryEnum,
+  timelineFacts,
 } from '../src/index';
-import type { Challenge, JobRun, NewChallenge, NewPlayer, Play, Player, Term } from '../src/index';
+import type {
+  Challenge,
+  JobRun,
+  NewChallenge,
+  NewPlayer,
+  Play,
+  Player,
+  Term,
+  TimelineFact,
+  NewTimelineFact,
+} from '../src/index';
 import { MIGRATIONS_FOLDER } from '../src/migrations/run-migrations';
 
 describe('players schema', () => {
@@ -143,5 +170,50 @@ describe('gameplay and banks schema', () => {
     ]) {
       expect(x).toBeDefined();
     }
+  });
+});
+
+describe('timeline facts schema', () => {
+  it('S025-TS-39: pgEnums derive from @nerdose/core', () => {
+    expect(timelineCategoryEnum.enumValues).toEqual([...TIMELINE_CATEGORIES]);
+    expect(timelineCategoryEnum.enumName).toBe('timeline_category');
+    expect(datePrecisionEnum.enumValues).toEqual([...DATE_PRECISIONS]);
+    expect(datePrecisionEnum.enumName).toBe('date_precision');
+  });
+
+  it('S025-TS-40: inferred types', () => {
+    expectTypeOf<TimelineFact['category']>().toEqualTypeOf<TimelineCategory>();
+    expectTypeOf<TimelineFact['datePrecision']>().toEqualTypeOf<DatePrecision>();
+    expectTypeOf<TimelineFact['eventDate']>().toEqualTypeOf<string>();
+    expectTypeOf<TimelineFact['lastUsed']>().toEqualTypeOf<string | null>();
+    expectTypeOf<TimelineFact['rejectionReason']>().toEqualTypeOf<string | null>();
+    expectTypeOf<TimelineFact['status']>().toEqualTypeOf<'approved' | 'rejected'>();
+    expectTypeOf<NewTimelineFact['lastUsed']>().toEqualTypeOf<string | null | undefined>();
+  });
+
+  it('S025-TS-41: public exports', () => {
+    expect(timelineFacts).toBeDefined();
+    expect(timelineCategoryEnum).toBeDefined();
+    expect(datePrecisionEnum).toBeDefined();
+    expect(getTableName(timelineFacts)).toBe('timeline_facts');
+  });
+
+  it('S025-TS-42: 0004 SQL has enums, table, triggers and grants', () => {
+    const sql = readFileSync(join(MIGRATIONS_FOLDER, '0004_timeline_facts.sql'), 'utf8');
+    expect(sql).toContain(
+      `CREATE TYPE "public"."timeline_category" AS ENUM('programming_languages', 'frameworks', 'companies', 'operating_systems', 'hardware', 'video_games');`,
+    );
+    expect(sql).toContain(`CREATE TYPE "public"."date_precision" AS ENUM('year', 'month', 'day');`);
+    expect(sql).toContain('CREATE TABLE "timeline_facts"');
+    expect(sql).toContain('GRANT SELECT ON timeline_facts TO nerdose_api;');
+    expect(sql).toContain(
+      'GRANT UPDATE (status, rejection_reason) ON timeline_facts TO nerdose_api;',
+    );
+    expect(sql).toContain('GRANT SELECT, INSERT, UPDATE ON timeline_facts TO nerdose_generator;');
+    expect(sql).toContain(
+      'CREATE TRIGGER bank_items_rejected_terminal BEFORE UPDATE OF status ON timeline_facts',
+    );
+    expect(sql).toContain('CREATE TRIGGER set_updated_at BEFORE UPDATE ON timeline_facts');
+    expect(sql).not.toMatch(/CREATE FUNCTION|DELETE|TRUNCATE|DROP/);
   });
 });

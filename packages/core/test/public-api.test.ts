@@ -27,10 +27,12 @@ describe('public API of the "." entry', () => {
     expect(Object.keys(core).sort()).toEqual([
       'AppError',
       'CODE_LANGUAGES',
+      'DATE_PRECISIONS',
       'ERROR_CATALOG',
       'GAME_IDS',
       'LOCALES',
       'TERM_CATEGORIES',
+      'TIMELINE_CATEGORIES',
       'challengeNumber',
       'createGameRegistry',
       'isGameId',

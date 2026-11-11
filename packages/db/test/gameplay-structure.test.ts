@@ -28,9 +28,9 @@ const columns = async (table: string) => {
 };
 
 describe('gameplay and banks structure', () => {
-  it('S015-TS-1: migrations up to 0003_rename_alerted_at are registered', async () => {
+  it('S015-TS-1: migrations up to 0004_timeline_facts are registered', async () => {
     const [row] = await owner`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`;
-    expect(row!.n).toBe(4);
+    expect(row!.n).toBe(5);
   });
 
   it('S015-TS-2: game_id enum equals GAME_IDS', async () => {
@@ -195,7 +195,7 @@ describe('gameplay and banks structure', () => {
     );
   });
 
-  it('S015-TS-12: exactly the 14 check constraints', async () => {
+  it('S015-TS-12: exactly the 16 check constraints', async () => {
     const rows = await owner`SELECT conname FROM pg_constraint
       WHERE contype = 'c' AND connamespace = 'public'::regnamespace ORDER BY conname`;
     expect(rows.map((r) => r.conname)).toEqual(
@@ -214,18 +214,22 @@ describe('gameplay and banks structure', () => {
         'ck_terms_rejection_reason',
         'ck_terms_definition_locales',
         'ck_terms_summary_locales',
+        'ck_timeline_facts_rejection_reason',
+        'ck_timeline_facts_note_locales',
       ].sort(),
     );
   });
 
   it('S015-TS-13: triggers', async () => {
     const rows = await owner`SELECT tgname, tgrelid::regclass::text AS t FROM pg_trigger
-      WHERE NOT tgisinternal ORDER BY tgname`;
+      WHERE NOT tgisinternal ORDER BY tgname, tgrelid::regclass::text`;
     expect(rows.map((r) => [r.tgname, r.t])).toEqual([
       ['bank_items_rejected_terminal', 'terms'],
+      ['bank_items_rejected_terminal', 'timeline_facts'],
       ['challenges_payload_immutable', 'challenges'],
       ['challenges_status_transition', 'challenges'],
       ['set_updated_at', 'terms'],
+      ['set_updated_at', 'timeline_facts'],
     ]);
   });
 });

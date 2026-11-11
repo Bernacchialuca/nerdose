@@ -35,6 +35,16 @@
 - **Signature:** `terms = pgTable('terms', ...)`; `wikidataId` is the upsert key of `sync_banks`; `rejected` is terminal (trigger)
 - **Usage:** `insert(terms).values(...).onConflictDoUpdate({ target: terms.wikidataId, set })`
 
+## timelineFacts / TimelineFact / NewTimelineFact
+- **Location:** packages/db/src/schema/banks.ts
+- **Signature:** `timelineFacts = pgTable('timeline_facts', ...)`; `wikidataId` is the upsert key of `sync_banks`; `rejected` is terminal (trigger); `nerdose_api` only updates `status` and `rejectionReason`; `eventDate` and `lastUsed` are `YYYY-MM-DD` strings
+- **Usage:** `insert(timelineFacts).values(...).onConflictDoUpdate({ target: timelineFacts.wikidataId, set, setWhere: sql`${timelineFacts.status} <> 'rejected'` })`
+
+## timelineCategoryEnum / datePrecisionEnum
+- **Location:** packages/db/src/schema/enums.ts
+- **Signature:** PostgreSQL enums `timeline_category` and `date_precision`, built from `TIMELINE_CATEGORIES` and `DATE_PRECISIONS` of `@nerdose/core`
+- **Usage:** `timelineCategoryEnum('category').notNull()`
+
 ## jobRuns / JobRun / NewJobRun
 - **Location:** packages/db/src/schema/jobs.ts
 - **Signature:** `jobRuns = pgTable('job_runs', ...)`; `summary` is `jsonb`

@@ -29,6 +29,13 @@
       "when": 1794343368359,
       "tag": "0003_rename_alerted_at",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1794355193144,
+      "tag": "0004_timeline_facts",
+      "breakpoints": true
     }
   ]
 }

@@ -29,7 +29,7 @@ const PRIVS = [
   'TRIGGER',
 ] as const;
 const PLAYER_TABLES = ['plays', 'player_game_stats', 'player_stats', 'rejected_guesses'];
-const CONTENT_TABLES = ['challenges', 'terms', 'job_runs'];
+const CONTENT_TABLES = ['challenges', 'terms', 'timeline_facts', 'job_runs'];
 
 const matrix: [string, string, string[]][] = [
   ...PLAYER_TABLES.map((t): [string, string, string[]] => [
@@ -68,6 +68,7 @@ describe('role privileges', () => {
     };
     expect(await cols('challenges')).toEqual(['alerted_at', 'status', 'void_reason', 'voided_at']);
     expect(await cols('terms')).toEqual(['rejection_reason', 'status']);
+    expect(await cols('timeline_facts')).toEqual(['rejection_reason', 'status']);
   });
 
   it('S015-TS-52/53: api cannot write challenge payload nor create challenges', async () => {

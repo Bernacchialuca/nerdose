@@ -1,10 +1,19 @@
-import { CODE_LANGUAGES, GAME_IDS, LOCALES, TERM_CATEGORIES } from '@nerdose/core';
+import {
+  CODE_LANGUAGES,
+  DATE_PRECISIONS,
+  GAME_IDS,
+  LOCALES,
+  TERM_CATEGORIES,
+  TIMELINE_CATEGORIES,
+} from '@nerdose/core';
 import { pgEnum } from 'drizzle-orm/pg-core';
 
 export const localeEnum = pgEnum('locale', LOCALES);
 export const codeLanguageEnum = pgEnum('code_language', CODE_LANGUAGES);
 export const gameIdEnum = pgEnum('game_id', GAME_IDS);
 export const termCategoryEnum = pgEnum('term_category', TERM_CATEGORIES);
+export const timelineCategoryEnum = pgEnum('timeline_category', TIMELINE_CATEGORIES);
+export const datePrecisionEnum = pgEnum('date_precision', DATE_PRECISIONS);
 export const challengeStatusEnum = pgEnum('challenge_status', [
   'draft',
   'approved',
