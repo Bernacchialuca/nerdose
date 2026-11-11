@@ -17,6 +17,8 @@ export { AppError, ERROR_CATALOG, type ErrorCode } from './errors';
 export {
   GAME_IDS,
   isGameId,
+  type Culprit,
+  type CulpritKind,
   type GameDefinition,
   type GameId,
   type Locale,
@@ -36,4 +38,14 @@ export type {
 export { createGameRegistry, type AnyGameDefinition, type GameRegistry } from './game-registry';
 export { challengeNumber, nextResetAt, secondsToReset, today } from './platform-day';
 export { rngFrom, type Rng } from './prng';
-export { liveStreak, nextStreak, type StreakInput } from './streaks';
+export {
+  liveStreak,
+  nextStreak,
+  rebuildGameStats,
+  replayStreak,
+  type CompletedPlay,
+  type CompletedPlayStatus,
+  type RebuiltGameStats,
+  type ReplayedStreak,
+  type StreakInput,
+} from './streaks';

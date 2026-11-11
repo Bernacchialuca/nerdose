@@ -19,6 +19,18 @@ All functions are pure and isomorphic; the clock is injected via `now`.
 - **Signature:** `secondsToReset(now: Date): number` - integer in 1..86400 (ceil)
 - **Usage:** `secondsToReset(now)`
 
+## replayStreak
+- **Location:** packages/core/src/streaks.ts
+- **Signature:** `replayStreak(completedDays: readonly string[], activeDays: readonly string[]): ReplayedStreak` with `ReplayedStreak = { current, max, lastCompleted: string | null }`
+- **Rule:** dedupes and sorts both lists, chains `nextStreak` day by day, `max` = maximum seen. Pure.
+- **Usage:** per game: `replayStreak(gameCompletedDays, gameActiveDays)`; global: all completed days and any game's active days.
+
+## rebuildGameStats
+- **Location:** packages/core/src/streaks.ts
+- **Signature:** `rebuildGameStats<Result, Stats>(game: { initialStats(); reduceStats(prev, r) }, plays: readonly CompletedPlay<Result>[]): { played, wins, extra }` with `CompletedPlay = { date, status: 'won' | 'lost' | 'voided', result: Result | null }`
+- **Rule:** only `won`/`lost`, in `date` order; `voided` is skipped; `won`/`lost` without `result` throws.
+- **Usage:** `rebuildGameStats(registry.get(id), plays)`
+
 ## nextStreak / liveStreak
 - **Location:** packages/core/src/streaks.ts
 - **Signature:** `nextStreak(input: StreakInput, day: string): number`; `liveStreak(input: StreakInput, today: string): number`; `StreakInput = { current, lastCompleted: string | null, prevActiveDay: string | null }`

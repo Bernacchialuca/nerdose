@@ -18,6 +18,15 @@ export interface MoveContext {
   locale: Locale;
 }
 
+export type CulpritKind = 'term' | 'timeline_fact';
+
+/** Bank item referenced by a challenge; the admin picks one when voiding (REQ-007). */
+export interface Culprit {
+  kind: CulpritKind;
+  id: string;
+  label: string;
+}
+
 export interface GameDefinition<Payload, PublicView, State, Move, Feedback, Result, Stats> {
   id: GameId;
   version: number;
@@ -40,4 +49,5 @@ export interface GameDefinition<Payload, PublicView, State, Move, Feedback, Resu
   initialStats(): Stats;
   reduceStats(prev: Stats, r: Result): Stats;
   historyLabel(r: Result): string;
+  culprits(p: Payload): Culprit[];
 }

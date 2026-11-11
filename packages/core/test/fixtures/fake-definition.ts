@@ -30,6 +30,7 @@ export function makeDefinition(id: GameId): FakeDefinition {
     initialStats: () => ({ played: 0 }),
     reduceStats: (prev) => ({ played: prev.played + 1 }),
     historyLabel: (r) => (r.won ? '✓' : '✗'),
+    culprits: () => [],
   };
 }
 
@@ -74,5 +75,6 @@ export function makeLocalizedDefinition(): LocalizedDefinition {
     initialStats: () => ({ played: 0 }),
     reduceStats: (prev) => ({ played: prev.played + 1 }),
     historyLabel: (r) => (r.won ? '1/1' : '0/1'),
+    culprits: (p) => [{ kind: 'term', id: '00000000-0000-4000-8000-000000000001', label: p.word }],
   };
 }

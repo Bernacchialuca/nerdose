@@ -19,3 +19,8 @@
 - **Location:** packages/core/src/game-generator.ts
 - **Signature:** `GameGenerator<Payload, BankItem = unknown> { historySpec: HistorySpec; usedBankItems(p): string[]; generate({ date, seed, history }): Payload; verify(p, history): VerificationLog }`; `GeneratorHistory<Payload, BankItem> = { bankItems, recentChallenges: { date, payload }[] }`; `VerificationLog = { ok, checks: { name, ok, detail? }[], reason? }`; `AnyGameGenerator = GameGenerator<any, any>`
 - **Usage:** `const log = gen.verify(payload, history); if (!log.ok) retry` (log is stored in `challenges.verification`).
+
+## Culprit, CulpritKind and culprits(p)
+- **Location:** packages/core/src/game-definition.ts
+- **Signature:** `type CulpritKind = 'term' | 'timeline_fact'`; `interface Culprit { kind: CulpritKind; id: string; label: string }`; `GameDefinition.culprits(p: Payload): Culprit[]`
+- **Usage:** Devdle returns 1 `term`, Grep Grid 8 `term`, Timeline 5 `timeline_fact`; Big O and Bug Hunt return `[]`. The api uses it to validate the culprit when voiding.

@@ -15,6 +15,8 @@ import type {
   DatePrecision,
   GameId,
   Locale,
+  ReportReason,
+  ReportStatus,
   TermCategory,
   TimelineCategory,
 } from '../src/index';
@@ -157,5 +159,19 @@ describe('DATE_PRECISIONS', () => {
       'other',
     ]);
     expect(REPORT_STATUSES).toEqual(['open', 'resolved', 'dismissed']);
+  });
+});
+
+describe('report enums types', () => {
+  it('derives ReportReason and ReportStatus and is read-only (TS-40)', () => {
+    expectTypeOf<ReportReason>().toEqualTypeOf<
+      'wrong_answer' | 'ambiguous' | 'wrong_explanation' | 'translation' | 'display_bug' | 'other'
+    >();
+    expectTypeOf<ReportStatus>().toEqualTypeOf<'open' | 'resolved' | 'dismissed'>();
+    const mutate = (): void => {
+      // @ts-expect-error REPORT_REASONS is readonly
+      REPORT_REASONS.push('spam');
+    };
+    expectTypeOf(mutate).toBeFunction();
   });
 });
