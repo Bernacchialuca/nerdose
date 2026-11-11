@@ -1,11 +1,25 @@
-import { createBrowserRouter } from 'react-router';
+import { createBrowserRouter, Navigate } from 'react-router';
 import type { RouteObject } from 'react-router';
+
+import { RequireAuth } from '@/modules/auth';
 
 import { RouteError } from './route-error';
 import { Shell } from './shell';
 
 export const routes: RouteObject[] = [
-  { path: '/', element: <Shell />, errorElement: <RouteError /> },
+  { path: '/login', lazy: () => import('@/modules/auth/routes/login') },
+  {
+    element: (
+      <RequireAuth>
+        <Shell />
+      </RequireAuth>
+    ),
+    errorElement: <RouteError />,
+    children: [
+      { index: true, element: <Navigate to="/reports" replace /> },
+      { path: 'reports', lazy: () => import('@/modules/reports/routes/reports') },
+    ],
+  },
 ];
 
 export const router = createBrowserRouter(routes);

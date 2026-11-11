@@ -40,6 +40,8 @@ describe('package.json', () => {
     expect(pkg.scripts.typecheck).toBe('tsc --noEmit');
     expect(pkg.scripts.test).toBe('vitest run');
     expect(pkg.dependencies['@nerdose/ui']).toBe('workspace:*');
+    expect(pkg.dependencies['@nerdose/core']).toBe('workspace:*');
+    expect(pkg.dependencies['@fontsource/inter']).toBe('^5.3.0');
   });
 });
 

@@ -14,10 +14,23 @@ Same implementation as `apps/web` (`docs/reusable-code/web/api-client.md`), copi
 
 ## renderWithProviders
 - **Location:** apps/admin/src/test/render.tsx
-- **Signature:** `renderWithProviders({ route?: string; routes?: RouteObject[] } = {})` (defaults: `'/'`, app `routes`)
-- **Description:** fresh `QueryClient` with `retry: false` + `createMemoryRouter`. Unlike web, no i18n provider.
+- **Signature:** `renderWithProviders({ route?, routes?, session? } = {})` → render result + `{ queryClient, router, user }`
+- **Description:** fresh `QueryClient` (`retry: false`), `registerApiHooks`, `AuthProvider` and `createMemoryRouter`; `session` pre-seeds `sessionStorage`. No i18n provider.
 - **Usage:** `renderWithProviders({ route: '/no-existe' })`; custom tree: `renderWithProviders({ routes: [{ path: '/', element: <X />, errorElement: <RouteError /> }] })`
 
 ## test setup (jest-dom + axe)
 - **Location:** apps/admin/src/test/setup.ts
+- **Description:** also starts MSW (`onUnhandledFrame: 'error'`), sets `TZ=UTC`, clears `sessionStorage` and recorded requests after each test.
 - **Usage:** `import { axe } from 'vitest-axe'; expect(await axe(container)).toHaveNoViolations()`
+
+## msw server / adminHandlers / requests
+- **Location:** apps/admin/src/test/msw.ts
+- **Description:** `server.use(adminHandlers.reports('open', body))`, `patchReport(id, body, init?)`, `voidChallenge(id, ...)`, `login(...)`; handlers record each request in `requests` (`requestsTo(method, pathname)`).
+
+## fixtures / useFixedClock
+- **Location:** apps/admin/src/test/fixtures/reports.ts, apps/admin/src/test/helpers.ts
+- **Description:** `SESSION`, `DEVDLE_GROUP`, `TIMELINE_GROUP`, `VOIDED_GROUP`, `OPEN_GROUPS`; `useFixedClock()` fixes time at `2026-11-11T12:00:00Z`.
+
+## registerApiHooks / isApiError
+- **Location:** apps/admin/src/app/api-hooks.ts, apps/admin/src/lib/api-errors.ts
+- **Description:** `registerApiHooks(queryClient)` sets the Bearer header and, on `401 unauthorized`, clears the session and the cache. `isApiError(e, code?)` narrows to `ApiError`.

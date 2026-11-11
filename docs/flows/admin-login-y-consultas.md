@@ -5,7 +5,7 @@ type: feature
 status: Active
 created: 2026-11-03
 last_updated: 2026-11-11
-stories: [S-032]
+stories: [S-032, S-033]
 ---
 
 # Admin — login, reportes, stock y métricas

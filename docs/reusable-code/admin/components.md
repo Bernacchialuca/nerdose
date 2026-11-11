@@ -5,8 +5,8 @@ Styled with Tailwind utilities from the design tokens (`bg-bg`, `text-text`, `te
 ## Shell
 - **Location:** apps/admin/src/app/shell.tsx
 - **Props:** none
-- **Description:** root layout for `/`. Header with `<span aria-hidden>&gt; </span>nerdose` in accent; `<main>` holds the only `<h1>` ("Admin") followed by `<Outlet />`. Sets `document.title = 'Admin · nerdose'` on mount.
-- **Usage:** add admin screens as children of the `/` route so they render inside the `<Outlet />`
+- **Description:** layout of the protected area. `AppHeader` with `BrandMark`, nav "Reportes (N)" (open groups count) and "Cerrar sesión"; `<main>` with `<Outlet />`. Each route owns its `<h1>` and title.
+- **Usage:** add admin screens as children of the protected layout route
 
 ## RouteError
 - **Location:** apps/admin/src/app/route-error.tsx
@@ -23,4 +23,32 @@ Styled with Tailwind utilities from the design tokens (`bg-bg`, `text-text`, `te
 ## Providers
 - **Location:** apps/admin/src/app/providers.tsx
 - **Signature:** `Providers({ children }: PropsWithChildren)`
-- **Description:** wraps with `QueryClientProvider client={queryClient}`; add future app-wide providers (auth) here
+- **Description:** wraps with `QueryClientProvider client={queryClient}` and `AuthProvider`; also mounts `AuthProvider`
+
+## Dialog
+- **Location:** apps/admin/src/components/dialog.tsx
+- **Signature:** `Dialog({ variant: 'modal' | 'drawer', title, onClose, closeDisabled?, initialFocusRef?, titleRef?, children })`
+- **Description:** `role="dialog" aria-modal`, focus trap, Escape and overlay click close (unless `closeDisabled`), returns focus to the previously focused element on unmount.
+
+## TextField / TextAreaField / SelectField
+- **Location:** apps/admin/src/components/form-field.tsx
+- **Signature:** `TextField({ label, error?, inputRef?, ...inputProps })` (same for textarea/select with `textareaRef`/`selectRef`)
+- **Description:** visible label, `aria-invalid`, `aria-describedby` to the error text, `aria-required`.
+
+## Tabs
+- **Location:** apps/admin/src/components/tabs.tsx
+- **Signature:** `Tabs({ label, tabs, value, onChange, children })`
+- **Description:** `tablist` with automatic activation; arrows, Home and End move between tabs.
+
+## dangerButtonClass
+- **Location:** apps/admin/src/components/danger-button.ts
+- **Signature:** `dangerButtonClass({ disabled? })`
+
+## usePageTitle
+- **Location:** apps/admin/src/hooks/use-page-title.ts
+- **Signature:** `usePageTitle(title, { focusHeading? }) => RefObject<HTMLHeadingElement>`
+- **Usage:** `<h1 ref={usePageTitle('Reportes · Admin · nerdose')} tabIndex={-1}>`
+
+## formatInstant / formatRelative
+- **Location:** apps/admin/src/lib/format-date.ts
+- **Signature:** `formatInstant(iso)` → `YYYY-MM-DD HH:mm`; `formatRelative(iso, now?)` → `hace 2 h`, `ayer`
