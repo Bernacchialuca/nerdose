@@ -82,6 +82,8 @@ describe('timeline_facts structure', () => {
       'operating_systems',
       'hardware',
       'video_games',
+      'databases',
+      'software_tools',
     ]);
     expect(labels).toEqual([...TIMELINE_CATEGORIES]);
   });

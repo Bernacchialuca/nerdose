@@ -84,7 +84,7 @@ describe('TERM_CATEGORIES', () => {
 });
 
 describe('TIMELINE_CATEGORIES', () => {
-  it('lists the six categories in fixed order (TS-1)', () => {
+  it('lists the eight categories in fixed order (TS-1)', () => {
     expect(TIMELINE_CATEGORIES).toEqual([
       'programming_languages',
       'frameworks',
@@ -92,8 +92,10 @@ describe('TIMELINE_CATEGORIES', () => {
       'operating_systems',
       'hardware',
       'video_games',
+      'databases',
+      'software_tools',
     ]);
-    expect(TIMELINE_CATEGORIES).toHaveLength(6);
+    expect(TIMELINE_CATEGORIES).toHaveLength(8);
   });
 
   it('derives TimelineCategory (TS-2)', () => {
@@ -104,6 +106,8 @@ describe('TIMELINE_CATEGORIES', () => {
       | 'operating_systems'
       | 'hardware'
       | 'video_games'
+      | 'databases'
+      | 'software_tools'
     >();
   });
 
@@ -115,11 +119,11 @@ describe('TIMELINE_CATEGORIES', () => {
     expectTypeOf(mutate).toBeFunction();
   });
 
-  it('shares only one literal with TERM_CATEGORIES (TS-7)', () => {
+  it('shares only programming_languages and databases with TERM_CATEGORIES (TS-7)', () => {
     expect(TERM_CATEGORIES).toHaveLength(8);
     expect(
       TIMELINE_CATEGORIES.filter((c) => (TERM_CATEGORIES as readonly string[]).includes(c)),
-    ).toEqual(['programming_languages']);
+    ).toEqual(['programming_languages', 'databases']);
   });
 });
 

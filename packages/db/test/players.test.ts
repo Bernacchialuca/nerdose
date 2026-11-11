@@ -26,9 +26,9 @@ afterAll(async () => {
 });
 
 describe('players structure', () => {
-  it('S006-TS-1: migrations up to 0004 are registered', async () => {
+  it('S006-TS-1: migrations up to 0005 are registered', async () => {
     const [row] = await owner`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`;
-    expect(row!.n).toBe(5);
+    expect(row!.n).toBe(6);
   });
 
   it.each([

@@ -23,6 +23,8 @@ export const TIMELINE_CATEGORIES = [
   'operating_systems',
   'hardware',
   'video_games',
+  'databases',
+  'software_tools',
 ] as const;
 export type TimelineCategory = (typeof TIMELINE_CATEGORIES)[number];
 

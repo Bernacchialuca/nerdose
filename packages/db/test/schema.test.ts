@@ -216,4 +216,13 @@ describe('timeline facts schema', () => {
     expect(sql).toContain('CREATE TRIGGER set_updated_at BEFORE UPDATE ON timeline_facts');
     expect(sql).not.toMatch(/CREATE FUNCTION|DELETE|TRUNCATE|DROP/);
   });
+
+  it('0005 SQL adds databases and software_tools to timeline_category', () => {
+    const sql = readFileSync(
+      join(MIGRATIONS_FOLDER, '0005_timeline_categories_databases_software_tools.sql'),
+      'utf8',
+    );
+    expect(sql).toContain(`ALTER TYPE "public"."timeline_category" ADD VALUE 'databases';`);
+    expect(sql).toContain(`ALTER TYPE "public"."timeline_category" ADD VALUE 'software_tools';`);
+  });
 });
