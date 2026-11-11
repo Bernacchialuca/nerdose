@@ -21,7 +21,7 @@ date: 2026-11-11
 - **JTBD / Propósito:** Encontrar las 8 palabras de la lista en la grilla de 12×12 tocando (o marcando con el teclado) la primera y la última letra de cada una, leer la definición de cada palabra encontrada, seguir el contador `N/8`, sin tiempo y con «Rendirse» siempre disponible.
 - **Viewports:**
   - **mobile** — grilla 12×12 escalada al ancho (sin scroll horizontal desde 320 px), hint de consola, lista de palabras y «Rendirse» en una columna; «Rendirse» queda separado de la grilla para evitar un toque accidental.
-  - **desktop** — título, grilla y hint a la izquierda (7/12); lista de palabras (con el contador `N/8` en su encabezado), «Rendirse» y reporte a la derecha (5/12). Las dos columnas arrancan arriba para que la grilla entre en pantalla.
+  - **desktop** — título y consigna a todo el ancho; debajo, grilla y hint a la izquierda (7/12) y lista de palabras (con el contador `N/8` en su encabezado), «Rendirse» y reporte a la derecha (5/12), con la grilla y la lista alineadas arriba.
 
 ## Entrada y salida
 
@@ -84,7 +84,8 @@ date: 2026-11-11
 - alerta-sistema
 - btn-reintentar
 - row `juego`
-  - col 7/12: titulo, consigna, alerta-anulado, grilla, hint-jugada
+  - col 12/12: titulo, consigna, alerta-anulado
+  - col 7/12: grilla, hint-jugada
   - col 5/12: lista-palabras (contador `N/8` en el encabezado), btn-rendirse, link-reportar
 
 ## Contenido
@@ -95,9 +96,9 @@ date: 2026-11-11
 - Annotation: `game-header` variant `playing` (REQ-005): «Cómo se juega» lleva a la consigna y al hint de esta misma pantalla (con la Play en curso el servidor no vuelve a mostrar la fase de instrucciones); «Estadísticas» → `estadisticas`; Compartir deshabilitado («disponible al terminar la partida»); ES|EN cambia el idioma sin perder la partida: las definiciones de las encontradas se recargan en el idioma nuevo, la grilla y las palabras no cambian (CA 19); píldora con la racha global. Sin nav global ni `nav-movil`
 
 ### titulo
-- Texto/label: Grep Grid
+- Texto/label: Encontrá las 8 palabras escondidas
 - Icono: nada
-- Annotation: nada
+- Annotation: la consigna es el `h1` de la partida (como Devdle y Tech Timeline); el nombre del juego queda para las instrucciones y el breadcrumb
 
 ### consigna
 - Texto/label: $ grep -o '[A-Z]*' hoy.txt · tocá la primera y la última letra de cada palabra

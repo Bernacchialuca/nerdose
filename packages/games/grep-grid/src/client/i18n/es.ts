@@ -20,6 +20,7 @@ export const es = {
     start: 'Empezar',
   },
   game: {
+    title: 'Encontrá las {{total}} palabras escondidas',
     prompt: "$ grep -o '[A-Z]*' hoy.txt",
     instruction: 'tocá la primera y la última letra de cada palabra',
   },

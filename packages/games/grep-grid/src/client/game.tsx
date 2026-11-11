@@ -150,16 +150,19 @@ export function Game({
 
   return (
     <div className="relative">
-      {/* Mobile: una columna en orden de lectura. Desktop: tablero 7/12 a la izquierda (título,
-          grilla, hint) y lista 5/12 a la derecha (con el contador N/8 en su encabezado) y
-          «Rendirse»; las dos columnas arrancan arriba para que la grilla entre en pantalla. */}
+      {/* Mobile: una columna en orden de lectura. Desktop: consigna a todo el ancho y, debajo,
+          tablero 7/12 (grilla, hint) y lista 5/12 (con el contador N/8 en su encabezado) y
+          «Rendirse», alineados arriba. */}
       <div
         inert={dialog !== 'closed'}
-        className="flex flex-col gap-7 lg:grid lg:grid-cols-12 lg:items-start"
+        className="flex flex-col gap-3.5 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-7 lg:gap-y-3.5"
       >
-        <div className="flex min-w-0 flex-col gap-3.5 lg:col-span-7">
+        {/* Consigna a todo el ancho: la grilla y la lista arrancan a la misma altura debajo. */}
+        <div className="flex min-w-0 flex-col gap-3.5 lg:col-span-12">
           <div id={HELP_TARGET_ID} className="flex w-full flex-col gap-2">
-            <h1 className="font-mono text-title-game text-text">{t('title')}</h1>
+            <h1 className="font-mono text-title-game text-text">
+              {t('game.title', { total: WORDS_COUNT })}
+            </h1>
             <p>
               <span className="font-mono text-label-comment text-text-dim">{t('game.prompt')}</span>{' '}
               <span aria-hidden="true">·</span>{' '}
@@ -169,6 +172,8 @@ export function Game({
             </p>
           </div>
           {notices}
+        </div>
+        <div className="flex min-w-0 flex-col gap-3.5 lg:col-span-7">
           <Board
             mode="play"
             cells={playCells(view.grid, foundCells, start)}
@@ -180,7 +185,7 @@ export function Game({
           />
           <ConsoleHint text={text(hint)} announcement={announcement} />
         </div>
-        <div className="flex min-w-0 flex-col gap-4 lg:col-span-5">
+        <div className="mt-3.5 flex min-w-0 flex-col gap-4 lg:col-span-5 lg:mt-0">
           <WordList rows={rows} mode="play" t={t} />
           {locked ? null : (
             <button

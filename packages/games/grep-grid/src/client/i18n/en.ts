@@ -22,6 +22,7 @@ export const en: Resources = {
     start: 'Start',
   },
   game: {
+    title: 'Find the {{total}} hidden words',
     prompt: "$ grep -o '[A-Z]*' today.txt",
     instruction: 'tap the first and last letter of each word',
   },
