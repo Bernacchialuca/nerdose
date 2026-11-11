@@ -1,0 +1,16 @@
+[
+  {
+    "wikidata_id": "Q15206305",
+    "label": "Docker",
+    "category": "frameworks",
+    "event_date": "2013-03-20",
+    "date_precision": "day",
+    "note": {
+      "es": "Docker se lanzó en 2013.",
+      "en": ""
+    },
+    "sitelinks": 60,
+    "status": "approved",
+    "rejection_reason": null
+  }
+]

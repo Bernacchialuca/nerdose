@@ -2,15 +2,17 @@
 
 Package `@nerdose/content` (`packages/content`), runtime entry `.` (no network). The import script lives in `scripts/` and is never importable from other packages.
 
-## Dataset (5 items) - see dataset.md
-- **loadDataset / Dataset / DatasetError** (packages/content/src/index.ts) - Synchronous, Zod-validated loader of `data/` (`{ terms, timelineFacts, manifest }`); a missing `timeline_facts.json` is an empty list
+## Dataset (6 items) - see dataset.md
+- **loadDataset / Dataset / DatasetError** (packages/content/src/index.ts) - Synchronous, Zod-validated loader of `data/` (`{ terms, timelineFacts, manifest }`); the three files are required (a missing `timeline_facts.json` throws `DatasetError`)
 - **termItemSchema / termsFileSchema / timelineFactItemSchema / timelineFactsFileSchema / manifestSchema** (packages/content/src/schema.ts) - Strict Zod schemas of the dataset files
-- **TermItem / TimelineFactItem / DatasetManifest / RejectionReason** (packages/content/src/schema.ts) - Inferred types
-- **REJECTION_REASONS / TIMELINE_CATEGORIES / DATE_PRECISIONS** (packages/content/src/schema.ts) - Closed value lists aligned with the DB enums
+- **TermItem / TimelineFactItem / DatasetManifest / RejectionReason / TimelineRejectionReason / TimelineCategory / DatePrecision** (packages/content/src/schema.ts) - Inferred types
+- **REJECTION_REASONS / TIMELINE_REJECTION_REASONS** (packages/content/src/schema.ts) - Closed lists of rejection codes (7 for terms, 8 for facts)
+- **TIMELINE_CATEGORIES / DATE_PRECISIONS** (packages/content/src/schema.ts) - Re-exported from `@nerdose/core` (same reference), aligned with the DB enums
 - **serializeItems / serializeManifest / sortByWikidataId / compareWikidataId** (packages/content/src/serialize.ts) - Canonical ordering (numeric by `wikidata_id`) and JSON format (2 spaces, trailing newline)
 
-## Import script (6 items) - see import-script.md
-- **runImport / InsufficientApprovedError / MIN_APPROVED_TERMS / DEFAULT_MIN_SITELINKS** (packages/content/scripts/import-banks/run.ts) - Orchestration of `import:banks`; fails before writing when approved terms are below the minimum
+## Import script (7 items) - see import-script.md
+- **runImport / InsufficientApprovedError / MIN_APPROVED_TERMS / DEFAULT_MIN_SITELINKS** (packages/content/scripts/import-banks/run.ts) - Orchestration of `import:banks`; fails before writing when approved terms are below the minimum; keeps the existing fact bank and timeline parameters
+- **buildManifest / countTimelineFacts / DEFAULT_TIMELINE_PARAMETERS / writeDataset** (packages/content/scripts/import-banks/manifest.ts, write.ts) - Manifest construction with fact counts and validated atomic write of the three dataset files
 - **evaluateTerms / precheck / mergeByWikidataId / parseExclusions / highestMinSitelinks / normalizeTerm** (packages/content/scripts/import-banks/rules.ts) - Pure acceptance rules (C-50) with a single rejection reason per item
 - **createWikimediaClient / buildUserAgent / WikimediaRequestError** (packages/content/scripts/import-banks/http.ts) - Polite HTTP client: User-Agent, pause, retries with backoff
 - **createFileCache / resolveCacheDir** (packages/content/scripts/import-banks/cache.ts) - Resumable on-disk cache outside the repo

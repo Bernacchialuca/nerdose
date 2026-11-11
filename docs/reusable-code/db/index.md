@@ -6,7 +6,7 @@ Package `@nerdose/db` (`packages/db`), entries `.` and `./testing`.
 - **createDb** (packages/db/src/client.ts) - Creates a postgres.js connection plus Drizzle instance for a role URL
 - **Db / Tx** (packages/db/src/client.ts) - Types of the Drizzle instance and of a transaction
 
-## Schema (23 items) - see schema.md
+## Schema (26 items) - see schema.md
 - **players** (packages/db/src/schema/identity.ts) - Drizzle table of anonymous players (`id`, `locale`, `preferredCodeLanguage`, `userId`, `createdAt`, `lastSeenAt`)
 - **localeEnum** (packages/db/src/schema/enums.ts) - PostgreSQL enum `locale`, built from `LOCALES` of `@nerdose/core`
 - **codeLanguageEnum** (packages/db/src/schema/enums.ts) - PostgreSQL enum `code_language`, built from `CODE_LANGUAGES` of `@nerdose/core`
@@ -19,6 +19,8 @@ Package `@nerdose/db` (`packages/db`), entries `.` and `./testing`.
 - **plays / rejectedGuesses** (packages/db/src/schema/gameplay.ts) - Drizzle tables of a player's play per challenge and of rejected Devdle words
 - **playerGameStats / playerStats** (packages/db/src/schema/progress.ts) - Drizzle tables of per-game and global streak aggregates
 - **terms** (packages/db/src/schema/banks.ts) - Drizzle table of the Devdle/Grep term bank (unique `term` and `wikidataId`)
+- **timelineFacts / TimelineFact / NewTimelineFact** (packages/db/src/schema/banks.ts) - Drizzle table of the Tech Timeline fact bank (unique `wikidataId`, `rejected` terminal, `lastUsed` untouched by `sync_banks`)
+- **timelineCategoryEnum / datePrecisionEnum** (packages/db/src/schema/enums.ts) - PostgreSQL enums `timeline_category` and `date_precision`, built from `TIMELINE_CATEGORIES` and `DATE_PRECISIONS` of `@nerdose/core`
 - **jobRuns** (packages/db/src/schema/jobs.ts) - Drizzle table of generator job executions (`fill`, `sync_banks`)
 - **Challenge / NewChallenge, Play / NewPlay, RejectedGuess / NewRejectedGuess, PlayerGameStats / NewPlayerGameStats, PlayerStats / NewPlayerStats, Term / NewTerm, JobRun / NewJobRun** (packages/db/src/schema/*.ts) - Inferred select and insert types of the new tables
 

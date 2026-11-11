@@ -1,0 +1,18 @@
+[
+  {
+    "wikidata_id": "Q400",
+    "term": "KERNEL",
+    "category": "linux",
+    "definition": {
+      "es": "núcleo del sistema",
+      "en": "system core"
+    },
+    "summary": {
+      "es": "El kernel es…",
+      "en": "The kernel is…"
+    },
+    "sitelinks": 50,
+    "status": "approved",
+    "rejection_reason": null
+  }
+]

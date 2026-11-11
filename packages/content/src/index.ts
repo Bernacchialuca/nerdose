@@ -17,15 +17,19 @@ export {
   DATE_PRECISIONS,
   REJECTION_REASONS,
   TIMELINE_CATEGORIES,
+  TIMELINE_REJECTION_REASONS,
   manifestSchema,
   termItemSchema,
   termsFileSchema,
   timelineFactItemSchema,
   timelineFactsFileSchema,
   type DatasetManifest,
+  type DatePrecision,
   type RejectionReason,
   type TermItem,
+  type TimelineCategory,
   type TimelineFactItem,
+  type TimelineRejectionReason,
 } from './schema';
 export {
   compareWikidataId,
@@ -50,17 +54,11 @@ export class DatasetError extends Error {
   }
 }
 
-function readJsonFile<T>(
-  dir: string,
-  file: string,
-  schema: z.ZodType<T>,
-  optional: boolean,
-): T | undefined {
+function readJsonFile<T>(dir: string, file: string, schema: z.ZodType<T>): T {
   let raw: string;
   try {
     raw = readFileSync(join(dir, file), 'utf8');
   } catch (error) {
-    if (optional && (error as NodeJS.ErrnoException).code === 'ENOENT') return undefined;
     throw new DatasetError(file, `No se pudo leer ${file}: ${(error as Error).message}`);
   }
   let json: unknown;
@@ -78,9 +76,8 @@ function readJsonFile<T>(
 
 export function loadDataset(dataDir: string | URL = new URL('../data/', import.meta.url)): Dataset {
   const dir = typeof dataDir === 'string' ? dataDir : fileURLToPath(dataDir);
-  const terms = readJsonFile(dir, 'terms.json', termsFileSchema, false) as TermItem[];
-  const timelineFacts =
-    readJsonFile(dir, 'timeline_facts.json', timelineFactsFileSchema, true) ?? [];
-  const manifest = readJsonFile(dir, 'manifest.json', manifestSchema, false) as DatasetManifest;
+  const terms = readJsonFile(dir, 'terms.json', termsFileSchema);
+  const timelineFacts = readJsonFile(dir, 'timeline_facts.json', timelineFactsFileSchema);
+  const manifest = readJsonFile(dir, 'manifest.json', manifestSchema);
   return { terms, timelineFacts, manifest };
 }

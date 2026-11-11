@@ -1,10 +1,13 @@
-import { LOCALES, TERM_CATEGORIES } from '@nerdose/core';
+import { LOCALES, TERM_CATEGORIES, TIMELINE_CATEGORIES } from '@nerdose/core';
 
 import {
   REJECTION_REASONS,
+  TIMELINE_REJECTION_REASONS,
   type DatasetManifest,
   type RejectionReason,
   type TermItem,
+  type TimelineFactItem,
+  type TimelineRejectionReason,
 } from '../../src/schema';
 
 import { TERM_LENGTH } from './rules';
@@ -27,7 +30,40 @@ export type BuildManifestOptions = {
   minSitelinks: number;
   minApproved: number;
   classes: readonly TermClass[];
+  timelineFacts?: readonly TimelineFactItem[];
+  timeline?: DatasetManifest['parameters']['timeline'];
 };
+
+export const DEFAULT_TIMELINE_PARAMETERS: DatasetManifest['parameters']['timeline'] = {
+  min_sitelinks: 10,
+  min_approved_per_category: 100,
+  min_categories: 3,
+  categories_v1: [],
+  classes: [],
+};
+
+export function countTimelineFacts(
+  facts: readonly TimelineFactItem[],
+): DatasetManifest['counts']['timeline_facts'] {
+  const byCategory = Object.fromEntries(
+    TIMELINE_CATEGORIES.map((category) => [category, { approved: 0, rejected: 0 }]),
+  ) as DatasetManifest['counts']['timeline_facts']['by_category'];
+  const byReason = Object.fromEntries(
+    TIMELINE_REJECTION_REASONS.map((reason) => [reason, 0]),
+  ) as Record<TimelineRejectionReason, number>;
+  let approved = 0;
+  for (const fact of facts) {
+    byCategory[fact.category][fact.status] += 1;
+    if (fact.status === 'approved') approved += 1;
+    else if (fact.rejection_reason !== null) byReason[fact.rejection_reason] += 1;
+  }
+  return {
+    approved,
+    rejected: facts.length - approved,
+    by_category: byCategory,
+    by_reason: byReason,
+  };
+}
 
 export function countByCategory(
   terms: readonly TermItem[],
@@ -41,7 +77,15 @@ export function countByCategory(
 
 export function buildManifest(
   terms: readonly TermItem[],
-  { datasetVersion, generatedAt, minSitelinks, minApproved, classes }: BuildManifestOptions,
+  {
+    datasetVersion,
+    generatedAt,
+    minSitelinks,
+    minApproved,
+    classes,
+    timelineFacts = [],
+    timeline = DEFAULT_TIMELINE_PARAMETERS,
+  }: BuildManifestOptions,
 ): DatasetManifest {
   const byReason = Object.fromEntries(REJECTION_REASONS.map((reason) => [reason, 0])) as Record<
     RejectionReason,
@@ -63,6 +107,7 @@ export function buildManifest(
         by_category: countByCategory(terms),
         by_reason: byReason,
       },
+      timeline_facts: countTimelineFacts(timelineFacts),
     },
     parameters: {
       min_sitelinks: minSitelinks,
@@ -73,6 +118,7 @@ export function buildManifest(
         wikidata_class: wikidataClass,
         category,
       })),
+      timeline,
     },
   };
 }

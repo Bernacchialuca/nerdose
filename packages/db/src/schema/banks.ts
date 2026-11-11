@@ -11,7 +11,12 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 
-import { bankItemStatusEnum, termCategoryEnum } from './enums';
+import {
+  bankItemStatusEnum,
+  datePrecisionEnum,
+  termCategoryEnum,
+  timelineCategoryEnum,
+} from './enums';
 
 export const terms = pgTable(
   'terms',
@@ -47,3 +52,33 @@ export const terms = pgTable(
 
 export type Term = typeof terms.$inferSelect;
 export type NewTerm = typeof terms.$inferInsert;
+
+export const timelineFacts = pgTable(
+  'timeline_facts',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    label: text('label').notNull(),
+    category: timelineCategoryEnum('category').notNull(),
+    eventDate: date('event_date', { mode: 'string' }).notNull(),
+    datePrecision: datePrecisionEnum('date_precision').notNull(),
+    note: jsonb('note').notNull(),
+    wikidataId: text('wikidata_id').notNull().unique(),
+    sitelinks: integer('sitelinks').notNull(),
+    status: bankItemStatusEnum('status').notNull(),
+    rejectionReason: text('rejection_reason'),
+    lastUsed: date('last_used', { mode: 'string' }),
+    datasetVersion: text('dataset_version').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index('idx_timeline_facts_pick').on(t.status, t.category, t.lastUsed),
+    check(
+      'ck_timeline_facts_rejection_reason',
+      sql`${t.status} <> 'rejected' OR ${t.rejectionReason} IS NOT NULL`,
+    ),
+    check('ck_timeline_facts_note_locales', sql`${t.note} ? 'es' AND ${t.note} ? 'en'`),
+  ],
+);
+export type TimelineFact = typeof timelineFacts.$inferSelect;
+export type NewTimelineFact = typeof timelineFacts.$inferInsert;

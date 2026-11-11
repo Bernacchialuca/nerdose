@@ -15,3 +15,16 @@ export const TERM_CATEGORIES = [
   'software_engineering',
 ] as const;
 export type TermCategory = (typeof TERM_CATEGORIES)[number];
+
+export const TIMELINE_CATEGORIES = [
+  'programming_languages',
+  'frameworks',
+  'companies',
+  'operating_systems',
+  'hardware',
+  'video_games',
+] as const;
+export type TimelineCategory = (typeof TIMELINE_CATEGORIES)[number];
+
+export const DATE_PRECISIONS = ['year', 'month', 'day'] as const;
+export type DatePrecision = (typeof DATE_PRECISIONS)[number];

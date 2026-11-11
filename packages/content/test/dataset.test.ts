@@ -1,7 +1,13 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-import { REJECTION_REASONS, loadDataset, serializeItems } from '../src';
+import {
+  REJECTION_REASONS,
+  TIMELINE_CATEGORIES,
+  TIMELINE_REJECTION_REASONS,
+  loadDataset,
+  serializeItems,
+} from '../src';
 import { parseExclusions } from '../scripts/import-banks/rules';
 
 const dataFile = (name: string): URL => new URL(`../data/${name}`, import.meta.url);
@@ -33,6 +39,7 @@ describe('committed dataset', () => {
 
   it('is written in the canonical format (TS-42)', () => {
     expect(text('terms.json')).toBe(serializeItems(terms));
+    expect(text('timeline_facts.json')).toBe(serializeItems(timelineFacts));
     expect(text('manifest.json')).toBe(JSON.stringify(manifest, null, 2) + '\n');
   });
 
@@ -80,8 +87,47 @@ describe('committed dataset', () => {
     }
   });
 
-  it('has no timeline_facts until FG-5 (TS-46)', () => {
-    expect(existsSync(dataFile('timeline_facts.json'))).toBe(false);
-    expect(timelineFacts).toEqual([]);
+  it('ships a canonical timeline_facts.json (TS-23)', () => {
+    expect(existsSync(dataFile('timeline_facts.json'))).toBe(true);
+    expect(text('timeline_facts.json')).toBe(serializeItems(timelineFacts));
+  });
+
+  it('has a manifest consistent with the timeline facts (TS-24)', () => {
+    const counts = manifest.counts.timeline_facts;
+    const params = manifest.parameters.timeline;
+    const facts = timelineFacts.filter((f) => f.status === 'approved');
+    expect(counts.approved).toBe(facts.length);
+    expect(counts.rejected).toBe(timelineFacts.length - facts.length);
+    for (const category of TIMELINE_CATEGORIES) {
+      const inCategory = timelineFacts.filter((f) => f.category === category);
+      expect(counts.by_category[category].approved, category).toBe(
+        inCategory.filter((f) => f.status === 'approved').length,
+      );
+      expect(counts.by_category[category].rejected, category).toBe(
+        inCategory.filter((f) => f.status === 'rejected').length,
+      );
+    }
+    for (const reason of TIMELINE_REJECTION_REASONS) {
+      expect(counts.by_reason[reason], reason).toBe(
+        timelineFacts.filter((f) => f.rejection_reason === reason).length,
+      );
+    }
+    expect(params.min_approved_per_category).toBe(100);
+    expect(params.min_categories).toBe(3);
+    for (const fact of facts) {
+      expect(params.categories_v1, fact.wikidata_id).toContain(fact.category);
+      expect(fact.sitelinks, fact.wikidata_id).toBeGreaterThanOrEqual(params.min_sitelinks);
+    }
+    for (const category of params.categories_v1) {
+      expect(counts.by_category[category].approved, category).toBeGreaterThanOrEqual(
+        params.min_approved_per_category,
+      );
+    }
+  });
+
+  it('keeps the terms bank untouched (TS-25)', () => {
+    expect(manifest.dataset_version).toBe('2026.11.10');
+    expect(manifest.counts.terms.approved).toBe(515);
+    expect(manifest.counts.terms.rejected).toBe(4348);
   });
 });

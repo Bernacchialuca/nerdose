@@ -1,0 +1,16 @@
+[
+  {
+    "wikidata_id": "Q251",
+    "label": "Java",
+    "category": "programming_languages",
+    "event_date": "1995-05-23",
+    "date_precision": "day",
+    "note": {
+      "es": "Java es un lenguaje de programación…",
+      "en": "Java is a high-level…"
+    },
+    "sitelinks": 150,
+    "status": "approved",
+    "rejection_reason": null
+  }
+]

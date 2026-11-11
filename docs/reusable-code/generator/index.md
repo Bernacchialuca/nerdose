@@ -26,14 +26,15 @@ App `apps/generator` (not a package; imported through the `@/` alias → `src/`)
 - **generateForDate** (apps/generator/src/domain/challenge-publishing/generate.ts) - Draft -> verify -> approved/rejected pipeline for one game and date
 - **fillRange / runFill** (apps/generator/src/domain/challenge-publishing/fill.service.ts) - Computes `[max(today+1, LAUNCH_DATE), today+14]` and fills the gaps
 - **ChallengePublishingRepository** (apps/generator/src/domain/challenge-publishing/challenge-publishing.repository.ts) - Covered dates, history, draft/approve (`last_used_* = GREATEST`)/reject with `duplicate_active` handling
-- **syncBanks** (apps/generator/src/domain/content-banks/sync-banks.service.ts) - Loads `terms` from the dataset with the ADR-016 UPSERT rules and a summary
-- **ContentBanksRepository** (apps/generator/src/domain/content-banks/content-banks.repository.ts) - `listTerms` and `upsertTerm` (never touches `rejected` rows or `last_used_*`)
+- **syncBanks** (apps/generator/src/domain/content-banks/sync-banks.service.ts) - Loads `terms` and `timeline_facts` from the dataset in one transaction with the ADR-016 UPSERT rules; summary with totals and `by_bank`; exports `sameFactContent` and `isStorableDate`
+- **ContentBanksRepository** (apps/generator/src/domain/content-banks/content-banks.repository.ts) - `listTerms`/`upsertTerm` and `listTimelineFacts`/`upsertTimelineFact` (never touches `rejected` rows or `last_used_*`)
 
-## Testing utils (9 items) - see testing.md
+## Testing utils (10 items) - see testing.md
 - **setupTestDb** (apps/generator/test/helpers/db.ts) - Owner and generator-role connections plus `reset()` / `cleanup()`
 - **insertTerms / BANK16** (apps/generator/test/helpers/bank.ts) - Inserts `terms` fixtures; `BANK16` is 16 approved terms, 2 per category; `TermSpec.lastUsedGrep`
 - **devdleOnlyRegistry** (apps/generator/test/helpers/registry.ts) - Registry with only Devdle for Devdle-specific tests
-- **dataset fixtures** (apps/generator/test/fixtures/datasets/) - `v1`, `v2`, `invalid`, `dup-rejected`, `conflict` datasets for `sync_banks` tests
+- **makeFact / makeFacts / withFacts / insertFacts** (apps/generator/test/helpers/facts.ts) - Build valid `timeline_facts` items, override a fixture dataset's facts and version, and insert fact rows
+- **dataset fixtures** (apps/generator/test/fixtures/datasets/) - `v1`, `v2`, `invalid`, `invalid-facts`, `dup-rejected`, `conflict` datasets for `sync_banks` tests
 - **captureLogger** (apps/generator/test/helpers/logger.ts) - Real logger writing to memory; `lines()` returns parsed JSON entries
 - **freePort** (apps/generator/test/helpers/net.ts) - Returns a free local TCP port
 - **silentServer** (apps/generator/test/helpers/net.ts) - TCP server that accepts and never answers (simulates a hung DB)

@@ -1,9 +1,13 @@
 export {
   CODE_LANGUAGES,
+  DATE_PRECISIONS,
   LOCALES,
   TERM_CATEGORIES,
+  TIMELINE_CATEGORIES,
   type CodeLanguage,
+  type DatePrecision,
   type TermCategory,
+  type TimelineCategory,
 } from './enums';
 export { AppError, ERROR_CATALOG, type ErrorCode } from './errors';
 export {
