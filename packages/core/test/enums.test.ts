@@ -1,7 +1,21 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
-import { CODE_LANGUAGES, LOCALES, TERM_CATEGORIES, isGameId } from '../src/index';
-import type { CodeLanguage, GameId, Locale, TermCategory } from '../src/index';
+import {
+  CODE_LANGUAGES,
+  DATE_PRECISIONS,
+  LOCALES,
+  TERM_CATEGORIES,
+  TIMELINE_CATEGORIES,
+  isGameId,
+} from '../src/index';
+import type {
+  CodeLanguage,
+  DatePrecision,
+  GameId,
+  Locale,
+  TermCategory,
+  TimelineCategory,
+} from '../src/index';
 import { GAME_IDS } from '../src/game-definition';
 
 describe('shared enums', () => {
@@ -64,6 +78,65 @@ describe('TERM_CATEGORIES', () => {
     const mutate = (): void => {
       // @ts-expect-error TERM_CATEGORIES is readonly
       TERM_CATEGORIES.push('ai');
+    };
+    expectTypeOf(mutate).toBeFunction();
+  });
+});
+
+describe('TIMELINE_CATEGORIES', () => {
+  it('lists the six categories in fixed order (TS-1)', () => {
+    expect(TIMELINE_CATEGORIES).toEqual([
+      'programming_languages',
+      'frameworks',
+      'companies',
+      'operating_systems',
+      'hardware',
+      'video_games',
+    ]);
+    expect(TIMELINE_CATEGORIES).toHaveLength(6);
+  });
+
+  it('derives TimelineCategory (TS-2)', () => {
+    expectTypeOf<TimelineCategory>().toEqualTypeOf<
+      | 'programming_languages'
+      | 'frameworks'
+      | 'companies'
+      | 'operating_systems'
+      | 'hardware'
+      | 'video_games'
+    >();
+  });
+
+  it('is read-only (TS-3)', () => {
+    const mutate = (): void => {
+      // @ts-expect-error TIMELINE_CATEGORIES is readonly
+      TIMELINE_CATEGORIES.push('ai');
+    };
+    expectTypeOf(mutate).toBeFunction();
+  });
+
+  it('shares only one literal with TERM_CATEGORIES (TS-7)', () => {
+    expect(TERM_CATEGORIES).toHaveLength(8);
+    expect(
+      TIMELINE_CATEGORIES.filter((c) => (TERM_CATEGORIES as readonly string[]).includes(c)),
+    ).toEqual(['programming_languages']);
+  });
+});
+
+describe('DATE_PRECISIONS', () => {
+  it('lists the three precisions in fixed order (TS-4)', () => {
+    expect(DATE_PRECISIONS).toEqual(['year', 'month', 'day']);
+    expect(DATE_PRECISIONS).toHaveLength(3);
+  });
+
+  it('derives DatePrecision (TS-5)', () => {
+    expectTypeOf<DatePrecision>().toEqualTypeOf<'year' | 'month' | 'day'>();
+  });
+
+  it('is read-only (TS-6)', () => {
+    const mutate = (): void => {
+      // @ts-expect-error DATE_PRECISIONS is readonly
+      DATE_PRECISIONS.push('week');
     };
     expectTypeOf(mutate).toBeFunction();
   });

@@ -14,10 +14,12 @@ Package `@nerdose/core` (`packages/core`), isomorphic entry `.`.
 - **GameGenerator / AnyGameGenerator** (packages/core/src/game-generator.ts) - Generator contract with `historySpec`, `usedBankItems`, `generate`, `verify`
 - **GeneratorHistory / RecentChallenge / HistorySpec / BankName / VerificationLog / VerificationCheck** (packages/core/src/game-generator.ts) - Generic history and verification log types
 
-## Shared enums (3 items) - see enums.md
+## Shared enums (5 items) - see enums.md
 - **LOCALES / Locale** (packages/core/src/enums.ts) - Supported locales `es`, `en`
 - **CODE_LANGUAGES / CodeLanguage** (packages/core/src/enums.ts) - Code languages `js`, `go`, `java`
 - **TERM_CATEGORIES / TermCategory** (packages/core/src/enums.ts) - Eight term categories in fixed order (aligned with PG enum `term_category`)
+- **TIMELINE_CATEGORIES / TimelineCategory** (packages/core/src/enums.ts) - Six timeline fact categories in fixed order (aligned with PG enum `timeline_category`)
+- **DATE_PRECISIONS / DatePrecision** (packages/core/src/enums.ts) - Date precisions `year`, `month`, `day` (aligned with PG enum `date_precision`)
 
 ## Platform day (6 items) - see platform-day.md
 - **today / challengeNumber / nextResetAt / secondsToReset** (packages/core/src/platform-day.ts) - Pure UTC day, challenge number and reset countdown functions

@@ -18,6 +18,8 @@ import type {
   Rng,
   StreakInput,
   TermCategory,
+  TimelineCategory,
+  DatePrecision,
   VerificationCheck,
   VerificationLog,
 } from '../src/index';
@@ -65,6 +67,8 @@ describe('public API of the "." entry', () => {
     expectTypeOf<VerificationLog>().not.toBeNever();
     expectTypeOf<VerificationCheck>().not.toBeNever();
     expectTypeOf<TermCategory>().not.toBeNever();
+    expectTypeOf<TimelineCategory>().not.toBeNever();
+    expectTypeOf<DatePrecision>().not.toBeNever();
     expectTypeOf<StreakInput>().not.toBeNever();
     expectTypeOf<Rng>().not.toBeNever();
     expectTypeOf(core.nextStreak).toEqualTypeOf<(input: StreakInput, day: string) => number>();
