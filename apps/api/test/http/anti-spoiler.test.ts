@@ -18,6 +18,16 @@ import {
   selectWord,
   type GGWord,
 } from '../helpers/grep-grid';
+import {
+  CORRECT,
+  SWAP,
+  TL_FORBIDDEN,
+  seedTimeline,
+  seedTimelinePlay,
+  tlGet,
+  tlMove,
+  tlPost,
+} from '../helpers/timeline';
 
 const dbs = useDatabases();
 beforeAll(() => dbs.reset());
@@ -291,5 +301,117 @@ describe('anti-spoiler de la api (Grep Grid)', () => {
     const res = await ggMove(voidedApp, selectWord('KERNEL'), c);
     expect(res.status).toBe(409);
     await check(res, rest);
+  });
+});
+
+function assertNoTimelineSpoiler(raw: string) {
+  for (const v of TL_FORBIDDEN) expect(raw).not.toContain(v);
+}
+
+describe('anti-spoiler de la api (Timeline)', () => {
+  const LANGS = ['?lang=es', '?lang=en'];
+  const FOREIGN = ['p7k2m9', 'j4x8q1', 'g2n5w3', 'd9r6t0', 'zzzzzz'];
+  const UPPER = ['P7K2M9', 'j4x8q1', 'g2n5w3', 'd9r6t0', 'k1v3s8'];
+
+  it('TS-35 today, start y /api/today no contienen la solución', async () => {
+    await seedTimeline(dbs);
+    const a = undefined;
+    const b = await dbs.insertPlayer();
+    const { app } = await buildDbApp(dbs);
+    const bodies: string[] = [];
+    const grab = async (res: Response | Promise<Response>) => {
+      const r = await res;
+      expect(r.status).toBe(200);
+      bodies.push(await r.text());
+    };
+    for (const q of LANGS) {
+      await grab(tlGet(app, a, q));
+      await grab(tlGet(app, b, q));
+    }
+    await grab(tlPost(app, 'start', { challenge_number: 8 }, b));
+    for (const q of LANGS) await grab(tlGet(app, b, q));
+    await grab(app.request('/api/today', { headers: { Cookie: `nd_pid=${b.id}` } }));
+    expect(bodies.length).toBeGreaterThan(0);
+    for (const raw of bodies) assertNoTimelineSpoiler(raw);
+  });
+
+  it('TS-36 las respuestas de move previas al cierre no contienen la solución', async () => {
+    const challenge = await seedTimeline(dbs);
+    const b = await dbs.insertPlayer();
+    await seedTimelinePlay(dbs, challenge.id, b.id, {});
+    const { app } = await buildDbApp(dbs);
+    const bodies: string[] = [];
+    for (const q of LANGS) {
+      for (const move of [
+        { order: CORRECT.slice(0, 4) },
+        { order: ['p7k2m9', 'p7k2m9', 'g2n5w3', 'd9r6t0', 'k1v3s8'] },
+        { order: [...CORRECT, 'x00000'] },
+        { order: [1, 2, 3, 4, 5] },
+        {},
+        { order: CORRECT, extra: 1 },
+        { guess: 'REACT' },
+        { order: FOREIGN },
+        { order: UPPER },
+      ]) {
+        const res = await tlMove(app, move, b, q);
+        expect(res.status).toBe(422);
+        bodies.push(await res.text());
+      }
+      const late = await tlMove(app, SWAP, b, q, 7);
+      expect(late.status).toBe(409);
+      expect((await late.clone().json()).error.code).toBe('challenge_expired');
+      bodies.push(await late.text());
+      const anon = await tlMove(app, SWAP, undefined, q);
+      expect(anon.status).toBe(401);
+      bodies.push(await anon.text());
+    }
+    for (const raw of bodies) assertNoTimelineSpoiler(raw);
+  });
+
+  it('TS-36 challenge anulado no filtra la solución', async () => {
+    await seedTimeline(dbs, {
+      status: 'voided',
+      voidReason: 'wrong_answer',
+      voidedAt: new Date('2026-12-01T09:00:00Z'),
+    });
+    const b = await dbs.insertPlayer();
+    const { app } = await buildDbApp(dbs);
+    for (const res of [
+      await tlGet(app, b),
+      await tlPost(app, 'start', { challenge_number: 8 }, b),
+      await tlMove(app, SWAP, b),
+    ]) {
+      assertNoTimelineSpoiler(await res.text());
+    }
+  });
+
+  it('TS-37 los logs no contienen la solución', async () => {
+    const challenge = await seedTimeline(dbs);
+    const b = await dbs.insertPlayer();
+    const { app, lines } = await buildDbApp(dbs);
+    await tlPost(app, 'start', { challenge_number: 8 }, b);
+    await tlMove(app, CORRECT.slice(0, 4), b);
+    await tlMove(app, FOREIGN, b);
+    expect((await tlMove(app, SWAP, b)).status).toBe(200);
+    const logs = JSON.stringify(lines());
+    for (const bad of [
+      'nota de ',
+      'note on ',
+      '1991-02-20',
+      '2014-06-01',
+      '"correct_order"',
+      '"result"',
+    ]) {
+      expect(logs).not.toContain(bad);
+    }
+    const finished = lines().filter((l) => l.event === 'PlayFinished');
+    expect(finished).toHaveLength(1);
+    for (const k of ['play_id', 'player_id', 'challenge_id', 'game_id', 'status', 'score']) {
+      expect(finished[0]).toHaveProperty(k);
+    }
+    for (const k of ['result', 'state', 'order', 'payload']) {
+      expect(finished[0]).not.toHaveProperty(k);
+    }
+    expect(finished[0]).toMatchObject({ challenge_id: challenge.id, game_id: 'timeline' });
   });
 });

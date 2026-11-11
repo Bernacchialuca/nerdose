@@ -114,6 +114,9 @@ importers:
       '@nerdose/game-grep-grid':
         specifier: workspace:*
         version: link:../../packages/games/grep-grid
+      '@nerdose/game-timeline':
+        specifier: workspace:*
+        version: link:../../packages/games/timeline
       '@t3-oss/env-core':
         specifier: ^0.13.11
         version: 0.13.11(typescript@6.0.3)(zod@4.6.7)

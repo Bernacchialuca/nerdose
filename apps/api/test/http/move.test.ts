@@ -461,10 +461,10 @@ describe('POST /api/games/{game_id}/today/move', () => {
   });
 
   it('TS-29 juego sin paquete o inexistente', async () => {
-    await dbs.insertChallenge({ gameId: 'timeline', date: '2026-12-01', number: 8 });
+    await dbs.insertChallenge({ gameId: 'big-o', date: '2026-12-01', number: 8 });
     const player = await dbs.insertPlayer();
     const { app } = await buildDbApp(dbs);
-    for (const game of ['timeline', 'foo']) {
+    for (const game of ['big-o', 'foo']) {
       const res = await post(app, body('REACT'), player, {}, `/api/games/${game}/today/move`);
       expect(res.status).toBe(404);
       expect(await res.json()).toEqual(err('not_found', 'Recurso no encontrado.'));

@@ -33,7 +33,7 @@ App `apps/api` (not a package; imported through the `@/` alias → `src/`). Hono
 - **createLogger** (apps/api/src/shared/logger.ts) - Pino logger with service/env base fields, ISO time, secret redaction, pretty in dev
 - **withTimeout** (apps/api/src/shared/with-timeout.ts) - Races a promise against a timer and always clears it
 - **Clock / systemClock** (apps/api/src/shared/clock.ts) - Injectable clock (`now(): Date`)
-- **games** (apps/api/src/games/registry.ts) - The api's `GameRegistry` instance (registers `devdle` and `grepGrid`)
+- **games** (apps/api/src/games/registry.ts) - The api's `GameRegistry` instance (registers `devdle`, `grepGrid` and `timeline`)
 
 ## Testing utils (8 items) - see testing.md
 - **captureLogger** (apps/api/test/helpers/logger.ts) - Real logger writing to memory; `lines()` returns parsed JSON entries
@@ -44,4 +44,5 @@ App `apps/api` (not a package; imported through the `@/` alias → `src/`). Hono
 - **buildDbApp / buildDbServices / buildMemoryServices / tempWordList** (apps/api/test/helpers/app.ts) - App with real api-role services or in-memory fakes; `buildDbServices` accepts `wrapTxRepos` to inject failures inside the move transaction
 - **buildTestApp / TEST_CONFIG / MUTATION_HEADERS / TEST_ENV / stubIdentity** (apps/api/test/helpers/app.ts) - Builds the app with default deps and valid mutation headers
 - **useDatabases / parseSetCookie / COOKIE_ATTRS** (apps/api/test/helpers/db.ts) - Owner and api connections, fixtures (`insertChallenge/Play/GameStats/PlayerStats/Term`, `PAYLOAD`, `CATS`) and `Set-Cookie` parsing
+- **TL_PAYLOAD / TL_ID / TL_OID / CORRECT / SWAP / REVERSED / ROTATED / TL_PUBLIC_ES / TL_PUBLIC_EN / tlChrono / tlResult / TL_FORBIDDEN / seedTimeline / seedTimelinePlay / tlGet / tlPost / tlMove** (apps/api/test/helpers/timeline.ts) - Fixed Tech Timeline payload (validated with `payloadSchema` on import), ordering fixtures and helpers to seed challenges/plays and call the generic routes
 - **GG_PAYLOAD / GG_ID / cellsOf / selectWord / found / SEVEN / INITIAL_EXTRA / seedGrepGrid / seedGrepGridPlay / ggGet / ggPost / ggMove** (apps/api/test/helpers/grep-grid.ts) - Fixed Grep Grid payload (validated with `payloadSchema` on import) and helpers to seed challenges/plays and call the generic routes

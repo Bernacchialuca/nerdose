@@ -345,9 +345,9 @@ describe('GET /api/today con estado real', () => {
 
   it('TS-49 juego no registrado con desafío en la base aparece none', async () => {
     await publish();
-    await dbs.insertChallenge({ gameId: 'timeline', date: '2026-12-01', status: 'published' });
+    await dbs.insertChallenge({ gameId: 'big-o', date: '2026-12-01', status: 'published' });
     const body = await fetchToday();
-    expect(body.games[2]).toEqual(none[2]);
+    expect(body.games[3]).toEqual(none[3]);
     expect(body.games[0].challenge_status).toBe('published');
   });
 
