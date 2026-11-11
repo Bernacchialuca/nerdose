@@ -14,6 +14,7 @@ describe('@nerdose/game-timeline package manifest', () => {
       exports: unknown;
       scripts: Record<string, string>;
       dependencies: Record<string, string>;
+      peerDependencies: Record<string, string>;
       devDependencies: Record<string, string>;
     };
     expect(pkg.name).toBe('@nerdose/game-timeline');
@@ -30,10 +31,12 @@ describe('@nerdose/game-timeline package manifest', () => {
     expect(pkg.dependencies['@nerdose/core']).toBe('workspace:*');
     expect(pkg.dependencies.zod).toBe('^4.6.7');
     expect(pkg.devDependencies['@nerdose/content']).toBe('workspace:*');
-    const all = { ...pkg.dependencies, ...pkg.devDependencies };
-    expect(all.react).toBeUndefined();
-    expect(all['@nerdose/ui']).toBeUndefined();
-    expect(Object.keys(all).some((k) => k.startsWith('@dnd-kit/'))).toBe(false);
+    expect(pkg.dependencies['@nerdose/ui']).toBe('workspace:*');
+    for (const dnd of ['core', 'sortable', 'utilities']) {
+      expect(pkg.dependencies[`@dnd-kit/${dnd}`]).toBeDefined();
+    }
+    expect(pkg.peerDependencies.react).toBe('^19.3.1');
+    expect(pkg.dependencies.react).toBeUndefined();
   });
 
   it('extends the base tsconfig and includes the code folders', () => {

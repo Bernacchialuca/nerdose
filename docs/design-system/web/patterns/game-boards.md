@@ -1,6 +1,6 @@
 ---
 pattern: game-boards
-version: 1.2.0
+version: 1.3.0
 status: active
 last_updated: 2026-11-10
 source: docs/nerdose.html
@@ -167,18 +167,33 @@ Layout: título (`// consigna: …` + `h1`) ↔ puntaje [`streak-number` `score`
 |---|---|---|---|---|
 | correcta | `#0E1A13` | 1px solid `#1E4A30` | `badge.success` strong "✓ bien" | L1064, L1063 |
 | mal ubicada | `#17130B` | **1px dashed** `#5C4419` | `badge.pending` strong "✗ va en 3°" | L1064, L1063 |
-| jugando: default / arrastrando / foco | **Pendiente — el prototipo solo muestra el resultado** | | | — |
+| jugando: default (1.3.0) | `surface` | 1px solid `border.subtle`, sin badge | — | — |
+| jugando: foco (1.3.0) | `surface` | 1px `border.subtle`; el anillo `focus-visible` (`--color-accent`) está en el asa y en cada botón ↑ ↓ | — | — |
+| jugando: tomada (arrastre o Espacio) (1.3.0) | `surface` | **2px solid** `game.timeline.accent`; el padding se compensa (7×3 en vez de 8×4) para que el borde no mueva el layout | — | — |
+| jugando: destino (1.3.0) | `surface` | 2px `dashed` `game.timeline.accent` (hueco punteado) sobre la fila sobre la que está el hito | — | — |
+| jugando: bloqueada (1.3.0) | `surface` | 1px `border.subtle` | asa y ↑ ↓ deshabilitados (neutro, sin hover) | — |
+
+**Fila de partida (1.3.0):** flex, gap 8, `min-height: 52px`, padding 0 8, `radius.control`. Contenido: asa `⠿` (botón `icon` 44×44, único activador de arrastre, `touch-action: none` solo en ella) · posición Mono 13 `text.dim` (ancho 18) · nombre `type.game.item` (`flex-grow: 1`, envuelve) · grupo ↑ ↓ (botones `icon` 44×44). Sin animación: no hay transición de reacomodo ni de soltado.
+
+**A 320px (1.3.0):** contenido útil 256px; panel padding 16 → 224; fila padding 8 → 208. Asa 44 + posición 18 + ↑↓ apilados 44 + 3 gaps de 8 = 130 → quedan **78px para el nombre**, que envuelve a 2 líneas (la fila crece en alto, nunca en ancho) y nunca achica los controles de 44px. Con la lista a 320px o más (`@container`) los ↑ ↓ van en línea.
 
 El error es **ámbar + punteado**, no rojo, y el badge dice dónde va. Nota Inter 13: "Se arrastra y se suelta. En pantallas táctiles, cada fila también tiene flechas para subir y bajar." (L1021).
 
-**Adaptación requerida (NFR-U03):** el orden tiene que poder cambiarse con teclado; las flechas por fila que menciona la nota no están dibujadas en el prototipo → **Pendiente** su estética.
+**Adaptación requerida (NFR-U03) — resuelta en 1.3.0:** el orden se cambia con teclado (`KeyboardSensor` sobre el asa: Espacio/Enter toma, ↑ ↓ mueven, Espacio/Enter suelta, Escape devuelve) y con botones ↑ ↓ por fila (`icon`, `aria-label` «Subir {hito}» / «Bajar {hito}», deshabilitados en los extremos; el foco sigue al hito movido). Arrastre con mouse (`PointerSensor` limitado a mouse/pen) y con el dedo (`TouchSensor`, `delay: 150`, `tolerance: 5`) solo desde el asa.
 
 ### `timeline.rail` — línea de tiempo vertical (L1026-1036, L1074-1076)
 
 `<ol>` sin gap (línea continua). Ítem `grid-template-columns: 64px 20px 1fr; gap: 14px`:
 - Año `type.numeric.year` (Mono 800 18) `game.timeline.accent`, `padding-top: 12px`.
+- **Columna de fecha (1.3.0):** la columna fija de 64px solo entra con años; con `month`/`day` («20 de febrero de 1991», «June 2014») no. La fecha va **arriba del nombre**, dentro de la columna de texto, y el ítem es `flex` gap 14 = riel (20px) + texto. Funciona igual a 320 y a 1200px. Formato largo de `Intl` según precisión.
 - Riel: tramo superior 2×16, nodo 12×12 `radius.pill` `#C39BFF`, tramo inferior 2px `flex-grow: 1`; tramos `#3C2E60`, transparentes en el extremo superior del primero e inferior del último.
 - Texto (padding 10 0 18, gap 4): nombre Mono 700 16 + nota Inter 14/1.5 `text.lede`.
+
+### `timeline.hint` — línea de aviso (1.3.0)
+
+Línea Mono 13 `text.dim` (`type.label.comment`), siempre montada con `min-height: 20px`, vacía al entrar. La línea visible es silenciosa; una región `aria-live="polite"` `sr-only` anuncia un nodo por mensaje. Textos (ES / EN): `> moviste {hito} a la posición {n} de 5` / `> you moved {hito} to position {n} of 5` (↑ ↓ y soltar), `> {hito}, posición {n} de 5` mientras un hito está tomado, `> no pudimos registrar ese orden. Revisalo y confirmá de nuevo` (`invalid_move`), `> vas muy rápido. Esperá unos segundos y probá de nuevo` (429), `> {mensaje}` para otros códigos. Sin rojo ni shake: un rechazo no consume el intento.
+
+Los arrastres (puntero y teclado) los anuncia dnd-kit en su propia región, para que cada movimiento se anuncie una sola vez: «Tomaste {hito}, posición {n} de 5.», «{hito}, posición {n} de 5.», «Soltaste {hito} en la posición {n} de 5.», «{hito} volvió a la posición {n} de 5.». `screenReaderInstructions`: «Para tomar un hito, presioná Espacio o Enter. Movelo con las flechas arriba y abajo. Presioná Espacio o Enter para soltarlo, o Escape para devolverlo a su lugar.» (EN: «To pick up a milestone, press Space or Enter. Move it with the up and down arrow keys. Press Space or Enter to drop it, or Escape to put it back.»).
 
 ## Grep Grid
 
@@ -262,10 +277,11 @@ Cabecera de 150px de la [tarjeta de juego](../components/card.md), `aria-hidden`
 - No animar celdas ni filas.
 - No usar rojo para el error de Timeline ni para la jugada fallida de Grep.
 - No rellenar de amarillo el "presente" de Devdle.
-- No implementar estados marcados **Pendiente** sin pasar antes por `/product-design-system-update`. Los de Devdle quedaron resueltos en 1.1.0 (story S-021) y los de Grep Grid en 1.2.0 (story S-024).
+- No implementar estados marcados **Pendiente** sin pasar antes por `/product-design-system-update`. Los de Devdle quedaron resueltos en 1.1.0 (story S-021) los de Grep Grid en 1.2.0 (story S-024) y los de Timeline en 1.3.0 (story S-029).
 
 ## Historial
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: piezas de Devdle (celda, leyenda, tecla, distribución), Bug Hunt (línea elegible, confirmar, tests, pasos, resultado), Big O (opción, caja "en números"), Tech Timeline (fila, riel) y Grep Grid (tablero, celda, hint, palabra), miniaturas de tarjeta y adaptaciones requeridas por NFR-U01/U03/U04.
 - 2026-11-09 v1.1.0 — Story S-021: se resuelven los «Pendiente» de Devdle (glifo no cromático, escalado a 320px, tecla presente, descartada ≥ 4,5:1, borde estable, hover/foco/deshabilitado, ancho de tecla a 320px) y se documentan el aviso de jugada y la cabecera `//` como `h2`.
 - 2026-11-10 v1.2.0 — Story S-024: se resuelven los «Pendiente» de Grep Grid (tablero escalado a 320px, estados revelada/hover/foco/bloqueada de la celda, `<div role="gridcell">` + `<button>`, textos y anuncio del hint, estado revelada de la palabra, `outline-tinted` de error) y se documentan el contador sin reloj y O-04 «¿Rendirte?».
+- 2026-11-10 v1.3.0 — Story S-029: se resuelven los «Pendiente» de Tech Timeline (estados de juego de `timeline.row`: default, foco, tomada, destino y bloqueada; medidas a 320px; teclado y botones ↑ ↓; columna de fecha de `timeline.rail`) y se documenta `timeline.hint` con sus anuncios ES/EN.

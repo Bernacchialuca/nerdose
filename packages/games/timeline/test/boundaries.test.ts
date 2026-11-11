@@ -7,7 +7,10 @@ import { describe, expect, it } from 'vitest';
 const srcDir = fileURLToPath(new URL('../src', import.meta.url));
 
 const isSource = (f: string) =>
-  /\.tsx?$/.test(f) && !/\.test\.tsx?$/.test(f) && !f.endsWith('test-fixtures.ts');
+  /\.tsx?$/.test(f) &&
+  !/\.test\.tsx?$/.test(f) &&
+  !f.endsWith('test-fixtures.ts') &&
+  !f.endsWith('test-utils.ts');
 
 const files = readdirSync(srcDir, { recursive: true, encoding: 'utf8' })
   .map((f) => f.replace(/\\/g, '/'))
@@ -27,7 +30,18 @@ const ALLOWED: Record<string, { dirs: string[]; externals: string[] }> = {
     dirs: ['src/generator', 'src/definition', 'src/shared'],
     externals: ['@nerdose/core', 'zod'],
   },
-  client: { dirs: [], externals: [] },
+  client: {
+    dirs: ['src/client', 'src/definition/schemas', 'src/shared/format-date'],
+    externals: [
+      '@nerdose/core',
+      '@nerdose/ui',
+      'zod',
+      'react',
+      '@dnd-kit/core',
+      '@dnd-kit/sortable',
+      '@dnd-kit/utilities',
+    ],
+  },
 };
 
 describe('game-timeline entry boundaries (TS-2)', () => {
@@ -48,6 +62,21 @@ describe('game-timeline entry boundaries (TS-2)', () => {
         } else {
           expect(rules.externals, `${file} -> ${spec}`).toContain(spec);
         }
+      }
+    }
+  });
+
+  it('client contains no storage, analytics, game imports nor impure calls (TS-2)', () => {
+    const clientFiles = files.filter((f) => f.file.startsWith('client/'));
+    expect(clientFiles.length).toBeGreaterThan(0);
+    for (const { file, text } of clientFiles) {
+      for (const forbidden of [
+        'localStorage',
+        'sessionStorage',
+        'window.plausible',
+        '@nerdose/game-',
+      ]) {
+        expect(text.includes(forbidden), `${file} contains ${forbidden}`).toBe(false);
       }
     }
   });
