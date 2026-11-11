@@ -32,12 +32,12 @@
 
 ## syncBanks
 - **Location:** apps/generator/src/domain/content-banks/sync-banks.service.ts
-- **Signature:** `syncBanks({ db, log, loadDataset? }): Promise<{ dataset_version, inserted, updated, unchanged, kept_rejected, skipped }>`
-- **Description:** classifies dataset items in memory inside one transaction (approved first) and writes only what changes. Never deletes, never touches `rejected` rows or `last_used_*`.
+- **Signature:** `syncBanks({ db, log, loadDataset? }): Promise<SyncBanksSummary>` where `SyncBanksSummary = BankCounts & { dataset_version, by_bank: { terms: BankCounts; timeline_facts: BankCounts } }` and `BankCounts = { inserted, updated, unchanged, kept_rejected, skipped }`; also exports pure `sameFactContent(row, item)` and `isStorableDate(value)`
+- **Description:** classifies `terms` (approved first) and then `timeline_facts` in memory inside one transaction and writes only what changes. Never deletes, never touches `rejected` rows or `last_used_*`.
 - **Usage:** `await syncBanks({ db, log })`
 
 ## ContentBanksRepository
 - **Location:** apps/generator/src/domain/content-banks/content-banks.repository.ts
-- **Signature:** `listTerms()`; `upsertTerm(item, datasetVersion, mode: 'approved' | 'to_rejected' | 'insert_rejected')`
-- **Description:** `INSERT ... ON CONFLICT (wikidata_id) DO UPDATE ... WHERE terms.status <> 'rejected'`.
+- **Signature:** `listTerms()`; `upsertTerm(item, datasetVersion, mode: 'approved' | 'to_rejected' | 'insert_rejected')`; `listTimelineFacts(): TimelineFactRow[]`; `upsertTimelineFact(item: TimelineFactItem, datasetVersion, mode)`
+- **Description:** `INSERT ... ON CONFLICT (wikidata_id) DO UPDATE ... WHERE terms.status <> 'rejected'`; same rule for `timeline_facts` (never writes `last_used`).
 - **Usage:** `await repo.upsertTerm(item, '2026.12.01', 'approved')`

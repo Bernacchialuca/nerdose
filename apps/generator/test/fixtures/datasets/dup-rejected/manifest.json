@@ -98,10 +98,7 @@
       "min": 4,
       "max": 12
     },
-    "languages": [
-      "es",
-      "en"
-    ],
+    "languages": ["es", "en"],
     "classes": [
       {
         "wikidata_class": "Q9143",

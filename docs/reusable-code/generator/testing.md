@@ -41,7 +41,13 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 - **Usage:** `registry: devdleOnlyRegistry`
 - **Usage:** `await insertTerms(t.owner.db, BANK16)`
 
+## makeFact / makeFacts / withFacts / insertFacts
+- **Location:** apps/generator/test/helpers/facts.ts
+- **Signature:** `makeFact(overrides?)`; `makeFacts(n, startId = 5000001)`; `withFacts(base, facts, version?): () => Dataset`; `insertFacts(ownerDb, specs)`
+- **Description:** `makeFact` returns the Docker fact; `makeFacts` returns n approved facts; `withFacts` loads fixture `base` and replaces facts (validated with `timelineFactsFileSchema`) and version; `insertFacts` inserts `timeline_facts` rows with defaults.
+- **Usage:** `runJob('sync_banks', syncBanksJob({ db, loadDataset: withFacts('v1', makeFacts(40), '2026.12.10') }), deps)`
+
 ## Dataset fixtures
-- **Location:** apps/generator/test/fixtures/datasets/{v1,v2,invalid,dup-rejected,conflict}
-- **Description:** valid `manifest.json` + `terms.json` pairs for `sync_banks` scenarios, loadable with `loadDataset(dir)`.
+- **Location:** apps/generator/test/fixtures/datasets/{v1,v2,invalid,invalid-facts,dup-rejected,conflict}
+- **Description:** valid `manifest.json` + `terms.json` + `timeline_facts.json` sets (`invalid-facts` has an invalid fact) for `sync_banks` scenarios, loadable with `loadDataset(dir)`.
 - **Usage:** `loadDataset(fileURLToPath(new URL('../fixtures/datasets/v1/', import.meta.url)))`

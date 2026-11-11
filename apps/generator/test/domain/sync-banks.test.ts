@@ -53,6 +53,10 @@ describe('sync_banks', () => {
       unchanged: 0,
       kept_rejected: 0,
       skipped: 2,
+      by_bank: {
+        terms: { inserted: 3, updated: 0, unchanged: 0, kept_rejected: 0, skipped: 2 },
+        timeline_facts: { inserted: 0, updated: 0, unchanged: 0, kept_rejected: 0, skipped: 0 },
+      },
     });
     expect(await term('Q100')).toMatchObject({
       term: 'REACT',
@@ -81,6 +85,10 @@ describe('sync_banks', () => {
       unchanged: 2,
       kept_rejected: 1,
       skipped: 2,
+      by_bank: {
+        terms: { inserted: 0, updated: 0, unchanged: 2, kept_rejected: 1, skipped: 2 },
+        timeline_facts: { inserted: 0, updated: 0, unchanged: 0, kept_rejected: 0, skipped: 0 },
+      },
     });
     expect(await t.owner.db.select().from(terms).orderBy(terms.wikidataId)).toEqual(before);
   });
@@ -147,6 +155,10 @@ describe('sync_banks', () => {
       unchanged: 0,
       kept_rejected: 0,
       skipped: 0,
+      by_bank: {
+        terms: { inserted: 1, updated: 2, unchanged: 0, kept_rejected: 0, skipped: 0 },
+        timeline_facts: { inserted: 0, updated: 0, unchanged: 0, kept_rejected: 0, skipped: 0 },
+      },
     });
   });
 
@@ -175,6 +187,10 @@ describe('sync_banks', () => {
       unchanged: 0,
       kept_rejected: 1,
       skipped: 0,
+      by_bank: {
+        terms: { inserted: 0, updated: 2, unchanged: 0, kept_rejected: 1, skipped: 0 },
+        timeline_facts: { inserted: 0, updated: 0, unchanged: 0, kept_rejected: 0, skipped: 0 },
+      },
     });
   });
 
