@@ -33,6 +33,8 @@ export type GameProps = ClientBaseProps & {
   moveError: MoveErrorInfo | null;
   locked?: boolean;
   gameStats?: GameStatsView | null;
+  /** Pie de la columna lateral (link de reporte). */
+  aside?: ReactNode;
 };
 export type ResultProps = ClientBaseProps & {
   result: unknown;

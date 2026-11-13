@@ -131,7 +131,7 @@ export function Dialog({
             id={titleId}
             ref={titleRef}
             tabIndex={-1}
-            className="font-mono text-title-panel text-text"
+            className="font-mono text-title-panel text-text outline-none"
           >
             {title}
           </h2>
@@ -141,7 +141,10 @@ export function Dialog({
             aria-label={closeLabel}
             aria-disabled={closeDisabled || undefined}
             onClick={close}
-            className={buttonClass({ variant: 'icon', disabled: closeDisabled })}
+            className={cn(
+              buttonClass({ variant: 'icon', disabled: closeDisabled }),
+              'size-8 shrink-0 text-xs',
+            )}
           >
             <span aria-hidden="true">✕</span>
           </button>

@@ -44,7 +44,6 @@ export const en: Shape<typeof es> = {
     rule1: 'Five milestones from different categories. Dates are revealed when you confirm.',
     rule2: 'You get a single try. Each milestone in place scores 1 point.',
     rule3: 'At the end, each milestone shows its date and a bit of history.',
-    reset: 'Reset',
     unknownDate: '????',
     help: 'Drag each row by its handle ⠿ or use ↑ ↓. With the keyboard: Space to pick up a milestone, arrow keys to move it, Space to drop it and Escape to put it back.',
     confirm: 'Confirm order',
@@ -70,7 +69,6 @@ export const en: Shape<typeof es> = {
     invalidMove: '> we could not save that order. Check it and confirm again',
     rateLimited: '> you are going too fast. Wait a few seconds and try again',
     message: '> {{message}}',
-    reset: '> back to the starting order',
   },
   result: {
     comment: 'task: from oldest to newest',

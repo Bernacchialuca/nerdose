@@ -302,3 +302,39 @@
   background-image: radial-gradient(var(--color-canvas-dot) 1px, transparent 1px);
   background-size: 24px 24px;
 }
+
+/* SelectField: la lista de opciones sigue el tema oscuro. Con el select personalizable (Chromium 135+)
+   el resaltado de la opción usa tokens propios en vez del celeste del sistema; el resto de los
+   navegadores mantiene el popup nativo con fondo y texto del DS. */
+.ds-select option {
+  background-color: var(--color-control);
+  color: var(--color-text);
+}
+@supports (appearance: base-select) {
+  .ds-select,
+  .ds-select::picker(select) {
+    appearance: base-select;
+  }
+  .ds-select::picker(select) {
+    margin-block: 4px;
+    border: 1px solid var(--color-border-interactive);
+    border-radius: var(--radius-control);
+    background-color: var(--color-control);
+    padding-block: 4px;
+  }
+  .ds-select option {
+    padding: 8px 14px;
+  }
+  .ds-select option::checkmark {
+    display: none;
+  }
+  .ds-select option:hover,
+  .ds-select option:focus-visible {
+    background-color: var(--color-control-selected);
+    color: var(--color-text);
+    outline: none;
+  }
+  .ds-select option:checked {
+    color: var(--color-accent);
+  }
+}

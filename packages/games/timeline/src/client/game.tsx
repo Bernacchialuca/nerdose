@@ -26,7 +26,7 @@ import { TimeAxis } from './time-axis';
 import type { GameProps } from './types';
 
 type Hint =
-  | { key: 'idle' | 'invalidMove' | 'rateLimited' | 'reset' }
+  | { key: 'idle' | 'invalidMove' | 'rateLimited' }
   | { key: 'moved'; id: string }
   | { key: 'over'; id: string; at: string }
   | { key: 'message'; message: string };
@@ -44,6 +44,7 @@ export function Game({
   moveError,
   locked = false,
   gameStats = null,
+  aside,
 }: GameProps) {
   const view = parsePublicView(publicView);
   parseState(state);
@@ -152,14 +153,6 @@ export function Game({
     setHint({ key: 'over', id, at: id });
   };
 
-  const reset = () => {
-    if (blocked) return;
-    setOrder(initialOrder(view));
-    const h: Hint = { key: 'reset' };
-    setHint(h);
-    announce(h, order);
-  };
-
   const confirm = () => {
     if (blocked || submittedRef.current) return;
     submittedRef.current = true;
@@ -220,55 +213,45 @@ export function Game({
           </div>
           <ConsoleHint text={text(hint, order)} announcement={announcement} />
         </div>
-        {locked ? null : (
-          <div className="flex min-w-0 grow-5 basis-80 flex-col gap-4">
-            <SectionPanel
-              id={HELP_TARGET_ID}
-              title={t('game.rulesTitle')}
-              datum={streak > 0 ? t('game.streak', { count: streak }) : undefined}
-            >
-              <ol className="flex flex-col gap-3">
-                {rules.map((key, i) => (
-                  <li key={key} className="flex gap-3">
-                    <span className="shrink-0 font-mono text-label-comment text-game-timeline">
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
-                    <span className="font-sans text-body-sm text-text-body">{t(key)}</span>
-                  </li>
-                ))}
-              </ol>
-              <p className="font-sans text-caption text-text-muted">{t('game.help')}</p>
-            </SectionPanel>
-            <button
-              type="button"
-              aria-disabled={pending || undefined}
-              onClick={confirm}
-              className={buttonClass({
-                variant: 'accent',
-                game: 'timeline',
-                size: 'lg',
-                fullWidth: true,
-                disabled: pending,
-              })}
-            >
-              {pending ? t('game.confirming') : t('game.confirm')}
-              <span aria-hidden="true">→</span>
-            </button>
-            <button
-              type="button"
-              disabled={pending}
-              onClick={reset}
-              className={buttonClass({
-                variant: 'secondary',
-                size: 'lg',
-                fullWidth: true,
-                disabled: pending,
-              })}
-            >
-              {t('game.reset')}
-            </button>
-          </div>
-        )}
+        <div className="flex min-w-0 grow-5 basis-80 flex-col gap-4">
+          {locked ? null : (
+            <>
+              <SectionPanel
+                id={HELP_TARGET_ID}
+                title={t('game.rulesTitle')}
+                datum={streak > 0 ? t('game.streak', { count: streak }) : undefined}
+              >
+                <ol className="flex flex-col gap-3">
+                  {rules.map((key, i) => (
+                    <li key={key} className="flex gap-3">
+                      <span className="shrink-0 font-mono text-label-comment text-game-timeline">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <span className="font-sans text-body-sm text-text-body">{t(key)}</span>
+                    </li>
+                  ))}
+                </ol>
+                <p className="font-sans text-caption text-text-muted">{t('game.help')}</p>
+              </SectionPanel>
+              <button
+                type="button"
+                aria-disabled={pending || undefined}
+                onClick={confirm}
+                className={buttonClass({
+                  variant: 'accent',
+                  game: 'timeline',
+                  size: 'lg',
+                  fullWidth: true,
+                  disabled: pending,
+                })}
+              >
+                {pending ? t('game.confirming') : t('game.confirm')}
+                <span aria-hidden="true">→</span>
+              </button>
+            </>
+          )}
+          {aside}
+        </div>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ const TONE_CLASSES: Record<StatusIconProps['tone'], string> = {
   error:
     'flex size-10 flex-none items-center justify-center rounded-full bg-status-error text-status-error-on',
   warning:
-    'flex size-10 flex-none items-center justify-center rounded-full bg-status-warning text-status-warning-on',
+    'flex size-10 flex-none items-center justify-center rounded-full border-2 border-status-warning text-status-warning',
   success:
     'flex size-10 flex-none items-center justify-center rounded-full bg-status-success text-status-success-on',
 };

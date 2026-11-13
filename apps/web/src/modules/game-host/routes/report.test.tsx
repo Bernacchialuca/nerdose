@@ -134,8 +134,9 @@ describe('abrir el diálogo', () => {
     expect(screen.getByText('Devdle #128')).toBeInTheDocument();
     expect(screen.getByText(SPOILER)).toBeInTheDocument();
     expect(screen.getByText(SPOILER).closest('[role="status"]')).toBeNull();
+    expect(screen.getByRole('heading', { level: 2, name: LINK })).toHaveFocus();
     const select = screen.getByRole('combobox', { name: /Elegí un motivo/ });
-    expect(select).toHaveFocus();
+    expect(select).not.toHaveFocus();
     expect(select).toHaveValue('');
     expect(Array.from((select as HTMLSelectElement).options).map((o) => o.textContent)).toEqual([
       'Sin elegir',
@@ -529,7 +530,7 @@ describe('O-01 · sheet, descripción y fondo inerte (S-034/ui)', () => {
     const d = await openDialog(user);
     expect(d).toHaveClass('rounded-t-panel', 'sm:rounded-panel');
     expect(d).toHaveAccessibleDescription(SPOILER);
-    expect(screen.getByRole('combobox', { name: /Elegí un motivo/ })).toHaveFocus();
+    expect(screen.getByRole('heading', { level: 2, name: LINK })).toHaveFocus();
   });
 
   it('TS-16: desde el resultado es sheet sin descripción', async () => {

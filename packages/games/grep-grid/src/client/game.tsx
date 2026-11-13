@@ -35,6 +35,7 @@ export function Game({
   pending,
   moveError,
   locked = false,
+  aside,
 }: GameProps) {
   const view = parsePublicView(publicView);
   const play = parseState(state);
@@ -204,6 +205,7 @@ export function Game({
               {t('surrender.button')}
             </button>
           )}
+          {aside}
         </div>
       </div>
       {dialog === 'closed' ? null : (

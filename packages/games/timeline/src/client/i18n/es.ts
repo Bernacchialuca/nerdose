@@ -40,7 +40,6 @@ export const es = {
     rule1: 'Cinco hitos de distintas categorías. Las fechas se revelan al confirmar.',
     rule2: 'Tenés un solo intento. Cada hito en su lugar suma 1 punto.',
     rule3: 'Al terminar, cada hito muestra su fecha y un poco de historia.',
-    reset: 'Reiniciar',
     unknownDate: '????',
     help: 'Arrastrá cada fila desde su asa ⠿ o usá ↑ ↓. Con teclado: Espacio para tomar un hito, flechas para moverlo, Espacio para soltarlo y Escape para devolverlo a su lugar.',
     confirm: 'Confirmar orden',
@@ -66,7 +65,6 @@ export const es = {
     invalidMove: '> no pudimos registrar ese orden. Revisalo y confirmá de nuevo',
     rateLimited: '> vas muy rápido. Esperá unos segundos y probá de nuevo',
     message: '> {{message}}',
-    reset: '> volviste al orden inicial',
   },
   result: {
     comment: 'consigna: del más antiguo al más reciente',

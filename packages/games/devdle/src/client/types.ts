@@ -48,6 +48,8 @@ export type GameProps = ClientBaseProps & {
   locked?: boolean;
   /** GameToday.game_stats: "tus intentos" panel in the aside while playing. */
   gameStats?: GameStatsView | null;
+  /** Slot for host content at the bottom of the aside column (e.g. the report link). */
+  aside?: ReactNode;
 };
 export type ResultProps = ClientBaseProps & {
   result: unknown;

@@ -127,7 +127,7 @@ export function SelectField({
       hint={hint}
       required={required}
       render={(aria) => (
-        <select ref={selectRef} {...rest} {...aria}>
+        <select ref={selectRef} {...rest} {...aria} className={cn(aria.className, 'ds-select')}>
           {children}
         </select>
       )}

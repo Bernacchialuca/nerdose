@@ -21,8 +21,8 @@ describe('Banner', () => {
     );
     for (const c of ['border-l-4', 'px-4', 'lg:px-12']) expect(status).not.toHaveClass(c);
     expect(status.querySelector('[aria-hidden="true"]')).toHaveClass(
-      'bg-status-warning',
-      'text-status-warning-on',
+      'border-status-warning',
+      'text-status-warning',
     );
     expect(screen.getByText(TITLE)).toHaveClass('font-mono', 'text-title-banner', 'text-text');
     expect(screen.getByText(DETAIL)).toHaveClass(

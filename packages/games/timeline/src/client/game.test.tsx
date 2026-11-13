@@ -226,17 +226,9 @@ describe('Game confirm', () => {
     expect(onMove).toHaveBeenCalledWith({ order: INITIAL_ORDER });
   });
 
-  it('«Reiniciar» goes back to the starting shuffle and announces it', async () => {
-    const user = userEvent.setup();
-    const onMove = vi.fn();
-    render(<Game {...base({ onMove })} />);
-    await user.click(screen.getByRole('button', { name: 'Subir Kubernetes' }));
-    expect(names()).not.toEqual(INITIAL_ORDER);
-    await user.click(screen.getByRole('button', { name: 'Reiniciar' }));
-    expect(names()).toEqual(INITIAL_ORDER);
-    expect(within(liveRegion()).getByText('> volviste al orden inicial')).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'Confirmar orden' }));
-    expect(onMove).toHaveBeenCalledWith({ order: INITIAL_ORDER });
+  it('has no «Reiniciar» button', () => {
+    render(<Game {...base()} />);
+    expect(screen.queryByRole('button', { name: 'Reiniciar' })).not.toBeInTheDocument();
   });
 
   it('shows the rules card with the streak, and no averages', () => {

@@ -4,16 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { REPORT_REASONS } from '@nerdose/core';
 import type { GameId, ReportReason } from '@nerdose/core';
-import {
-  Alert,
-  Banner,
-  buttonClass,
-  cn,
-  Dialog,
-  linkClass,
-  SelectField,
-  TextAreaField,
-} from '@nerdose/ui';
+import { Alert, Banner, buttonClass, cn, Dialog, SelectField, TextAreaField } from '@nerdose/ui';
 
 import { ApiError } from '@/lib/api-client';
 
@@ -41,6 +32,8 @@ export function ReportDialog({ gameId, number, from, onClose }: ReportDialogProp
   const report = useReport(gameId);
   const spoilerId = useId();
   const selectRef = useRef<HTMLSelectElement>(null);
+  // Al abrir, el foco va al título (sin anillo visible): el select se enfoca recién al usarlo.
+  const titleRef = useRef<HTMLHeadingElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const [phase, setPhase] = useState<Phase>('form');
   const [reason, setReason] = useState<ReportReason | ''>('');
@@ -98,7 +91,8 @@ export function ReportDialog({ gameId, number, from, onClose }: ReportDialogProp
       closeLabel={t('gameHost.report.close')}
       onClose={close}
       closeDisabled={pending}
-      initialFocusRef={selectRef}
+      initialFocusRef={titleRef}
+      titleRef={titleRef}
       describedBy={from === 'game' ? spoilerId : undefined}
     >
       <p className="font-mono text-label-comment text-text-dim">
@@ -178,7 +172,7 @@ export function ReportDialog({ gameId, number, from, onClose }: ReportDialogProp
               </button>
               <button
                 type="button"
-                className={cn(linkClass({ tone: 'subtle' }), 'justify-center', half)}
+                className={cn(buttonClass({ variant: 'secondary' }), half)}
                 onClick={close}
               >
                 {t('gameHost.report.cancel')}

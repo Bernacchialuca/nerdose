@@ -26,6 +26,7 @@ export function Game({
   moveError,
   locked = false,
   gameStats = null,
+  aside,
 }: GameProps) {
   const view = parsePublicView(publicView);
   const play = parseState(state);
@@ -148,6 +149,7 @@ export function Game({
         <Legend t={t} />
         <CategoryHint categories={view.possible_categories} t={t} />
         {gameStats ? <Distribution stats={gameStats} t={t} /> : null}
+        {aside}
       </aside>
     </div>
   );

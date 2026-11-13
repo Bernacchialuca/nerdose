@@ -128,13 +128,13 @@ export function GameScreens({
           moveError={view.moveError}
           locked={view.locked}
           gameStats={view.gameStats}
+          aside={reportLink}
           notices={
             view.locked ? (
               <Banner variant="warning">{host('gameHost.notice.voided')}</Banner>
             ) : undefined
           }
         />
-        <div className="mt-6 flex">{reportLink}</div>
       </>
     );
   }

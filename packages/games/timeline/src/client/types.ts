@@ -50,6 +50,8 @@ export type GameProps = ClientBaseProps & {
   locked?: boolean;
   /** Accepted for host compatibility; Timeline does not show it while playing. */
   gameStats?: GameStatsView | null;
+  /** Slot for host content at the bottom of the aside column (e.g. the report link). */
+  aside?: ReactNode;
 };
 export type ResultProps = ClientBaseProps & {
   result: unknown;
