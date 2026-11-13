@@ -36,7 +36,7 @@ El único mensaje entre backends es el **pedido de regeneración**, implementado
 - Si ya existe un `generation_requests` con `status='pending'` para ese `challenge_id`, la `api` MUST devolver ese `request_id` (`202`) sin crear otro.
 - El `generator` MUST tomar pedidos con `FOR UPDATE SKIP LOCKED` y MUST hacer un poll de respaldo cada 60 s.
 - El reemplazo viejo→nuevo MUST hacerse en una sola transacción. El desafío viejo MUST seguir `approved` hasta que el nuevo esté verificado.
-- `generation_requests.status` MUST ser uno de `pending | done | failed`.
+- `generation_requests.status` MUST ser uno de `pending | done | failed | cancelled`. `cancelled` (REQ-008) marca el pedido que el `generator` no atiende porque la fecha llegó o el challenge dejó de ser `approved`; `failed` queda para la verificación fallida tras todos los intentos.
 - El `NOTIFY` es fire-and-forget: la respuesta al admin MUST NOT depender de que el `generator` esté vivo.
 
 ## Consecuencias

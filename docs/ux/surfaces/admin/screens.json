@@ -190,15 +190,14 @@
      "name": "nav-proximos",
      "type": "link",
      "category": "navigation",
-     "content": "Próximos",
-     "annotation": "no se renderiza en REQ-007; se suma con FG-7"
+     "content": "Próximos (1)",
+     "annotation": "el número son las fallas de generación activas (`GET /api/admin/generation-failures`); sin fallas, sin número"
     },
     {
      "name": "nav-stock",
      "type": "link",
      "category": "navigation",
-     "content": "Stock",
-     "annotation": "no se renderiza en REQ-007; se suma con FG-7"
+     "content": "Stock"
     },
     {
      "name": "nav-metricas",
@@ -614,7 +613,12 @@
      "type": "link",
      "category": "navigation",
      "content": "Próximos",
-     "annotation": "sección actual"
+     "annotation": "sección actual. con fallas de generación activas suma el contador («Próximos (1)», `aria-label` «1 falla de generación activa»); sin fallas, sin número",
+     "state_overrides": {
+      "falla de generación": {
+       "content": "Próximos (1)"
+      }
+     }
     },
     {
      "name": "nav-stock",
@@ -626,7 +630,8 @@
      "name": "nav-metricas",
      "type": "link",
      "category": "navigation",
-     "content": "Métricas"
+     "content": "Métricas",
+     "annotation": "no se renderiza hasta FG-10"
     },
     {
      "name": "nav-cerrar-sesion",
@@ -647,7 +652,8 @@
      "type": "paragraph",
      "category": "content",
      "level": "caption",
-     "content": "Próximos 14 días (UTC) · 5 juegos"
+     "content": "Del 2026-12-02 al 2026-12-15 (UTC) · 3 juegos · hoy no se muestra",
+     "annotation": "ventana de mañana a hoy + 14; juegos del registry (Big O y Bug Hunt se suman solos)"
     },
     {
      "name": "leyenda",
@@ -656,27 +662,44 @@
      "items": [
       "Aprobado",
       "Sin desafío",
-      "Regenerando…"
-     ]
+      "Falla de generación",
+      "Regenerando…",
+      "Regeneración fallida",
+      "Usa un ítem rechazado"
+     ],
+     "annotation": "cada estado es texto además de color"
     },
     {
-     "name": "alerta-regeneracion",
+     "name": "alerta-fallas",
      "type": "alert",
      "category": "feedback",
-     "kind": "error",
-     "content": "No se pudo regenerar el desafío. Queda el actual.",
+     "kind": "warning",
+     "icon": "warning",
+     "content": "1 juego no tiene desafío para mañana: Devdle (2026-12-02), falla tras 20 intentos. Se reintenta en la próxima corrida.",
      "visible_only_in_states": [
-      "error de regeneración"
-     ]
+      "falla de generación"
+     ],
+     "annotation": "sin mail (ADR-017): este aviso y el contador del encabezado son el único canal; desaparece sola cuando una corrida logra el desafío"
     },
     {
      "name": "alerta-pendiente",
      "type": "alert",
      "category": "feedback",
      "kind": "info",
-     "content": "Hay una regeneración en curso. La grilla se actualiza sola.",
+     "content": "Hay una regeneración en curso. La grilla se actualiza sola cada 5 segundos.",
      "visible_only_in_states": [
       "regeneración pendiente"
+     ],
+     "annotation": "el desafío actual sigue aprobado y se publica tal cual si llega su fecha antes del reemplazo"
+    },
+    {
+     "name": "alerta-regeneracion",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "error",
+     "content": "No se pudo regenerar Grep Grid del 2026-12-05: ningún reemplazo pasó la verificación (overlap_conflict). Queda el actual.",
+     "visible_only_in_states": [
+      "regeneración fallida"
      ]
     },
     {
@@ -704,7 +727,7 @@
      "name": "cargando",
      "type": "loader",
      "category": "feedback",
-     "content": "Cargando grilla…",
+     "content": "Cargando próximos desafíos…",
      "visible_only_in_states": [
       "loading"
      ]
@@ -716,140 +739,104 @@
      "columns": [
       {
        "label": "Día",
-       "width": 1
+       "width": 2
       },
       {
        "label": "Devdle",
-       "width": 2
-      },
-      {
-       "label": "Bug Hunt",
-       "width": 2
-      },
-      {
-       "label": "Big O",
-       "width": 2
-      },
-      {
-       "label": "Tech Timeline",
-       "width": 2
+       "width": 3
       },
       {
        "label": "Grep Grid",
-       "width": 2
+       "width": 3
+      },
+      {
+       "label": "Tech Timeline",
+       "width": 3
       }
      ],
      "rows": [
       [
-       "03/11",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
-      ],
-      [
-       "04/11",
-       "badge:Aprobado",
-       "badge:Aprobado",
+       "02/12 #32",
        "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado"
       ],
       [
-       "05/11",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
-      ],
-      [
-       "06/11",
-       "badge:Aprobado",
-       "badge:Aprobado",
+       "03/12 #33",
        "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado"
       ],
       [
-       "07/11",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
-      ],
-      [
-       "08/11",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "Sin desafío",
-       "badge:Aprobado",
-       "badge:Aprobado"
-      ],
-      [
-       "09/11",
-       "badge:Aprobado",
-       "badge:Aprobado",
+       "04/12 #34",
        "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado"
       ],
       [
-       "10/11",
+       "05/12 #35",
+       "badge:Usa un ítem rechazado: CAP theorem",
        "badge:Aprobado",
-       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "06/12 #36",
        "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado"
       ],
       [
-       "11/11",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
-      ],
-      [
-       "12/11",
-       "badge:Aprobado",
-       "badge:Aprobado",
+       "07/12 #37",
        "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado"
       ],
       [
-       "13/11",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
-      ],
-      [
-       "14/11",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "Sin desafío"
-      ],
-      [
-       "15/11",
-       "badge:Aprobado",
-       "badge:Aprobado",
+       "08/12 #38",
        "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado"
       ],
       [
-       "16/11",
+       "09/12 #39",
        "badge:Aprobado",
-       "Sin desafío",
        "badge:Aprobado",
-       "Sin desafío",
+       "badge:Aprobado"
+      ],
+      [
+       "10/12 #40",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "11/12 #41",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "12/12 #42",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "13/12 #43",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "14/12 #44",
+       "badge:Aprobado",
+       "badge:Aprobado",
+       "badge:Aprobado"
+      ],
+      [
+       "15/12 #45",
+       "badge:Aprobado",
+       "badge:Aprobado",
        "badge:Aprobado"
       ]
      ],
@@ -858,124 +845,272 @@
       "error de sistema"
      ],
      "state_overrides": {
+      "falla de generación": {
+       "rows": [
+        [
+         "02/12 #32",
+         "badge:Sin desafío · Falla de generación · 20 intentos · no_valid_term",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "03/12 #33",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "04/12 #34",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "05/12 #35",
+         "badge:Usa un ítem rechazado: CAP theorem",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "06/12 #36",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "07/12 #37",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "08/12 #38",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "09/12 #39",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "10/12 #40",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "11/12 #41",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "12/12 #42",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "13/12 #43",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "14/12 #44",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "15/12 #45",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ]
+       ]
+      },
       "regeneración pendiente": {
        "rows": [
         [
-         "03/11",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
-        ],
-        [
-         "04/11",
-         "badge:Aprobado",
-         "badge:Aprobado",
+         "02/12 #32",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
-         "05/11",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
-        ],
-        [
-         "06/11",
-         "badge:Aprobado",
-         "badge:Aprobado",
+         "03/12 #33",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
-         "07/11",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Regenerando…"
-        ],
-        [
-         "08/11",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "Sin desafío",
-         "badge:Aprobado",
-         "badge:Aprobado"
-        ],
-        [
-         "09/11",
-         "badge:Aprobado",
-         "badge:Aprobado",
+         "04/12 #34",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
-         "10/11",
-         "badge:Aprobado",
-         "badge:Aprobado",
+         "05/12 #35",
+         "badge:Usa un ítem rechazado: CAP theorem",
+         "badge:Regenerando…",
+         "badge:Aprobado"
+        ],
+        [
+         "06/12 #36",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
-         "11/11",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
-        ],
-        [
-         "12/11",
-         "badge:Aprobado",
-         "badge:Aprobado",
+         "07/12 #37",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
-         "13/11",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
-        ],
-        [
-         "14/11",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "Sin desafío"
-        ],
-        [
-         "15/11",
-         "badge:Aprobado",
-         "badge:Aprobado",
+         "08/12 #38",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
-         "16/11",
+         "09/12 #39",
          "badge:Aprobado",
-         "Sin desafío",
          "badge:Aprobado",
-         "Sin desafío",
+         "badge:Aprobado"
+        ],
+        [
+         "10/12 #40",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "11/12 #41",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "12/12 #42",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "13/12 #43",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "14/12 #44",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "15/12 #45",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ]
+       ]
+      },
+      "regeneración fallida": {
+       "rows": [
+        [
+         "02/12 #32",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "03/12 #33",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "04/12 #34",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "05/12 #35",
+         "badge:Usa un ítem rechazado: CAP theorem",
+         "badge:Aprobado · Regeneración fallida",
+         "badge:Aprobado"
+        ],
+        [
+         "06/12 #36",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "07/12 #37",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "08/12 #38",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "09/12 #39",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "10/12 #40",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "11/12 #41",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "12/12 #42",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "13/12 #43",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "14/12 #44",
+         "badge:Aprobado",
+         "badge:Aprobado",
+         "badge:Aprobado"
+        ],
+        [
+         "15/12 #45",
+         "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ]
        ]
       }
      },
-     "annotation": "clic en celda con desafío → detalle; «Regenerar» solo en `approved` con fecha futura; polling 5 s mientras haya pendientes (a confirmar)"
+     "annotation": "fila por día (mañana a +14) con su número; columna por juego del registry. Celda con desafío: estado + «Regenerar» (solo `approved`, fecha futura, sin pedido pendiente); clic → detalle. «Sin desafío» sin acción. «Usa un ítem rechazado» nunca se regenera solo. Polling 5 s solo con regeneraciones pendientes"
     }
    ],
    "layouts": {
@@ -1034,12 +1169,13 @@
      {
       "row": "panel-grilla",
       "card": true,
-      "title": "Grilla de 14 días",
+      "title": "Próximos 14 días",
       "cols": [
        {
         "w": 12,
         "stack": [
          "leyenda",
+         "alerta-fallas",
          "alerta-pendiente",
          "alerta-regeneracion",
          "alerta-sistema",
@@ -1058,11 +1194,15 @@
      "applies": true
     },
     {
+     "name": "falla de generación",
+     "applies": true
+    },
+    {
      "name": "regeneración pendiente",
      "applies": true
     },
     {
-     "name": "error de regeneración",
+     "name": "regeneración fallida",
      "applies": true
     },
     {
@@ -1099,7 +1239,8 @@
      "name": "nav-proximos",
      "type": "link",
      "category": "navigation",
-     "content": "Próximos"
+     "content": "Próximos (1)",
+     "annotation": "el número son las fallas de generación activas; sin fallas, sin número"
     },
     {
      "name": "nav-stock",
@@ -1112,7 +1253,8 @@
      "name": "nav-metricas",
      "type": "link",
      "category": "navigation",
-     "content": "Métricas"
+     "content": "Métricas",
+     "annotation": "no se renderiza hasta FG-10"
     },
     {
      "name": "nav-cerrar-sesion",
@@ -1130,20 +1272,60 @@
     },
     {
      "name": "carga-dataset",
-     "type": "paragraph",
+     "type": "list",
      "category": "content",
-     "level": "caption",
-     "content": "Última carga del dataset: 2026-10-28 03:12 UTC"
+     "items": [
+      {
+       "title": "Fecha",
+       "subtitle": "2026-11-28 03:12 UTC"
+      },
+      {
+       "title": "Versión",
+       "subtitle": "2026.11.2"
+      },
+      {
+       "title": "Insertados",
+       "subtitle": "40"
+      },
+      {
+       "title": "Actualizados",
+       "subtitle": "12"
+      },
+      {
+       "title": "Sin cambios",
+       "subtitle": "1.284"
+      },
+      {
+       "title": "Rechazados conservados",
+       "subtitle": "9"
+      }
+     ],
+     "hidden_in_states": [
+      "loading",
+      "error de sistema"
+     ],
+     "state_overrides": {
+      "sin datos": {
+       "items": [
+        {
+         "title": "Sin datos de carga: el dataset todavía no se cargó."
+        }
+       ]
+      }
+     },
+     "annotation": "última corrida exitosa de la carga de bancos"
     },
     {
      "name": "alerta-stock",
      "type": "alert",
      "category": "feedback",
      "kind": "warning",
-     "content": "El banco de hechos no alcanza para ciclar con la ventana anti-repetición.",
+     "icon": "warning",
+     "content": "El banco de hechos no alcanza para ciclar: Tech Timeline necesita 450 hechos aprobados para su ventana de 90 días y hay 380.",
      "visible_only_in_states": [
       "stock bajo"
-     ]
+     ],
+     "annotation": "uno por banco o juego con «Alcanza para ciclar: No»"
     },
     {
      "name": "alerta-sistema",
@@ -1176,41 +1358,147 @@
      ]
     },
     {
+     "name": "resumen-terminos",
+     "type": "list",
+     "category": "content",
+     "items": [
+      {
+       "title": "Aprobados disponibles",
+       "subtitle": "1.050"
+      },
+      {
+       "title": "Aprobados totales",
+       "subtitle": "1.320"
+      },
+      {
+       "title": "Rechazados",
+       "subtitle": "14"
+      },
+      {
+       "title": "Días de stock",
+       "subtitle": "131"
+      },
+      {
+       "title": "Alcanza para ciclar",
+       "subtitle": "Sí"
+      }
+     ],
+     "hidden_in_states": [
+      "loading",
+      "error de sistema"
+     ],
+     "annotation": "a nivel banco: disponibles para todos sus juegos, días de stock = el menor, alcanza = Sí solo si todos alcanzan"
+    },
+    {
      "name": "tabla-terminos",
      "type": "table",
      "category": "content",
      "columns": [
       {
-       "label": "Banco de términos",
+       "label": "Juego",
        "width": 3
       },
       {
-       "label": "Valor",
+       "label": "Ventana",
        "width": 2
+      },
+      {
+       "label": "Por desafío",
+       "width": 2
+      },
+      {
+       "label": "Disponibles",
+       "width": 2
+      },
+      {
+       "label": "Días de stock",
+       "width": 2
+      },
+      {
+       "label": "Alcanza para ciclar",
+       "width": 3
       }
      ],
      "rows": [
       [
-       "Aprobados disponibles",
-       "1.842 de 2.310"
+       "Devdle",
+       "365 días",
+       "1",
+       "1.050",
+       "1.050",
+       "badge:Sí"
       ],
       [
-       "Rechazados",
-       "468 (ver motivos)"
-      ],
-      [
-       "Días de stock estimados",
-       "920"
-      ],
-      [
-       "Alcanza para ciclar",
+       "Grep Grid",
+       "30 días",
+       "8",
+       "1.120",
+       "140",
        "badge:Sí"
       ]
      ],
      "hidden_in_states": [
       "loading",
       "error de sistema"
-     ]
+     ],
+     "annotation": "una fila por juego que usa el banco; ventana y ítems por desafío salen del contrato del juego"
+    },
+    {
+     "name": "resumen-hechos",
+     "type": "list",
+     "category": "content",
+     "items": [
+      {
+       "title": "Aprobados disponibles",
+       "subtitle": "310"
+      },
+      {
+       "title": "Aprobados totales",
+       "subtitle": "520"
+      },
+      {
+       "title": "Rechazados",
+       "subtitle": "3"
+      },
+      {
+       "title": "Días de stock",
+       "subtitle": "62"
+      },
+      {
+       "title": "Alcanza para ciclar",
+       "subtitle": "Sí"
+      }
+     ],
+     "hidden_in_states": [
+      "loading",
+      "error de sistema"
+     ],
+     "state_overrides": {
+      "stock bajo": {
+       "items": [
+        {
+         "title": "Aprobados disponibles",
+         "subtitle": "170"
+        },
+        {
+         "title": "Aprobados totales",
+         "subtitle": "380"
+        },
+        {
+         "title": "Rechazados",
+         "subtitle": "3"
+        },
+        {
+         "title": "Días de stock",
+         "subtitle": "34"
+        },
+        {
+         "title": "Alcanza para ciclar",
+         "subtitle": "No"
+        }
+       ]
+      }
+     }
     },
     {
      "name": "tabla-hechos",
@@ -1218,29 +1506,37 @@
      "category": "content",
      "columns": [
       {
-       "label": "Banco de hechos",
+       "label": "Juego",
        "width": 3
       },
       {
-       "label": "Valor",
+       "label": "Ventana",
        "width": 2
+      },
+      {
+       "label": "Por desafío",
+       "width": 2
+      },
+      {
+       "label": "Disponibles",
+       "width": 2
+      },
+      {
+       "label": "Días de stock",
+       "width": 2
+      },
+      {
+       "label": "Alcanza para ciclar",
+       "width": 3
       }
      ],
      "rows": [
       [
-       "Aprobados disponibles",
-       "412 de 530"
-      ],
-      [
-       "Rechazados",
-       "118 (ver motivos)"
-      ],
-      [
-       "Días de stock estimados",
-       "82"
-      ],
-      [
-       "Alcanza para ciclar",
+       "Tech Timeline",
+       "90 días",
+       "5",
+       "310",
+       "62",
        "badge:Sí"
       ]
      ],
@@ -1252,24 +1548,63 @@
       "stock bajo": {
        "rows": [
         [
-         "Aprobados disponibles",
-         "64 de 530"
-        ],
-        [
-         "Rechazados",
-         "466 (ver motivos)"
-        ],
-        [
-         "Días de stock estimados",
-         "12"
-        ],
-        [
-         "Alcanza para ciclar",
+         "Tech Timeline",
+         "90 días",
+         "5",
+         "170",
+         "34",
          "badge:No"
         ]
        ]
       }
-     }
+     },
+     "annotation": "una fila por juego que usa el banco"
+    },
+    {
+     "name": "tabla-rechazos-banco",
+     "type": "table",
+     "category": "content",
+     "columns": [
+      {
+       "label": "Banco",
+       "width": 2
+      },
+      {
+       "label": "Ítem",
+       "width": 4
+      },
+      {
+       "label": "Motivo",
+       "width": 6
+      }
+     ],
+     "rows": [
+      [
+       "Términos",
+       "CAP theorem",
+       "definición incorrecta (anulación Devdle #8)"
+      ],
+      [
+       "Hechos",
+       "Lanzamiento de Java 1.0",
+       "fecha incorrecta"
+      ],
+      [
+       "Términos",
+       "Memoization",
+       "traducción EN incorrecta"
+      ],
+      [
+       "Términos",
+       "Monad",
+       "categoría incorrecta"
+      ]
+     ],
+     "hidden_in_states": [
+      "loading",
+      "error de sistema"
+     ],
+     "annotation": "rechazados de ambos bancos, más recientes primero (hasta 200); «Ningún ítem rechazado» si no hay"
     },
     {
      "name": "tabla-rechazadas",
@@ -1282,69 +1617,60 @@
       },
       {
        "label": "Palabra",
+       "width": 6
+      },
+      {
+       "label": "Jugadores distintos",
        "width": 3
-      },
-      {
-       "label": "Veces rechazada",
-       "width": 2
-      },
-      {
-       "label": "Último intento",
-       "width": 2
       }
      ],
      "rows": [
       [
        "1",
-       "kernel",
-       "214",
-       "hace 3 h"
+       "KAFKA",
+       "41"
       ],
       [
        "2",
-       "async",
-       "187",
-       "hace 1 h"
+       "REACT",
+       "37"
       ],
       [
        "3",
-       "regex",
-       "152",
-       "ayer"
+       "CRONS",
+       "22"
       ],
       [
        "4",
-       "proxy",
-       "131",
-       "hace 2 días"
+       "NGINX",
+       "19"
       ],
       [
        "5",
-       "tokens",
-       "119",
-       "hace 4 h"
+       "LINUX",
+       "17"
       ],
       [
        "6",
-       "cache",
-       "96",
-       "ayer"
+       "VIMRC",
+       "12"
       ]
      ],
      "hidden_in_states": [
       "loading",
-      "error de sistema"
-     ]
+      "error de sistema",
+      "sin datos"
+     ],
+     "annotation": "ordenadas por jugadores distintos (empate: alfabético). Solo lectura: sumar a la lista base es un cambio de código"
     },
     {
-     "name": "paginacion",
-     "type": "pagination",
-     "category": "navigation",
-     "pages": 3,
-     "page_size": 10,
-     "hidden_in_states": [
-      "loading",
-      "error de sistema"
+     "name": "vacio-rechazadas",
+     "type": "empty-state",
+     "category": "feedback",
+     "icon": "check",
+     "content": "Sin rechazos: ningún jugador intentó una palabra que Devdle no acepte.",
+     "visible_only_in_states": [
+      "sin datos"
      ]
     }
    ],
@@ -1395,8 +1721,7 @@
        {
         "w": 12,
         "stack": [
-         "titulo",
-         "carga-dataset"
+         "titulo"
         ]
        }
       ]
@@ -1416,20 +1741,50 @@
       ]
      },
      {
+      "row": "panel-carga",
+      "card": true,
+      "title": "Última carga del dataset",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "carga-dataset"
+        ]
+       }
+      ]
+     },
+     {
       "row": "bancos",
       "cols": [
        {
         "w": 6,
         "card": true,
+        "title": "Banco de términos",
         "stack": [
+         "resumen-terminos",
          "tabla-terminos"
         ]
        },
        {
         "w": 6,
         "card": true,
+        "title": "Banco de hechos",
         "stack": [
+         "resumen-hechos",
          "tabla-hechos"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "panel-rechazos",
+      "card": true,
+      "title": "Ítems rechazados",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "tabla-rechazos-banco"
         ]
        }
       ]
@@ -1443,7 +1798,7 @@
         "w": 12,
         "stack": [
          "tabla-rechazadas",
-         "paginacion"
+         "vacio-rechazadas"
         ]
        }
       ]
@@ -1457,6 +1812,10 @@
     },
     {
      "name": "stock bajo",
+     "applies": true
+    },
+    {
+     "name": "sin datos",
      "applies": true
     },
     {
@@ -1493,7 +1852,8 @@
      "name": "nav-proximos",
      "type": "link",
      "category": "navigation",
-     "content": "Próximos"
+     "content": "Próximos (1)",
+     "annotation": "el número son las fallas de generación activas (`GET /api/admin/generation-failures`); sin fallas, sin número"
     },
     {
      "name": "nav-stock",
@@ -2233,7 +2593,21 @@
      "type": "header",
      "category": "layout",
      "content": "Devdle #8",
-     "icon": "close"
+     "icon": "close",
+     "state_overrides": {
+      "desde próximos": {
+       "content": "Grep Grid #35"
+      },
+      "regeneración pendiente": {
+       "content": "Grep Grid #35"
+      },
+      "regeneración fallida": {
+       "content": "Grep Grid #35"
+      },
+      "ítem rechazado": {
+       "content": "Devdle #35"
+      }
+     }
     },
     {
      "name": "estado",
@@ -2257,14 +2631,41 @@
       },
       "desde próximos": {
        "items": [
-        "Devdle",
-        "#14",
-        "2026-11-14",
+        "Grep Grid",
+        "#35",
+        "2026-12-05",
         "aprobado"
+       ]
+      },
+      "regeneración pendiente": {
+       "items": [
+        "Grep Grid",
+        "#35",
+        "2026-12-05",
+        "aprobado",
+        "regenerando…"
+       ]
+      },
+      "regeneración fallida": {
+       "items": [
+        "Grep Grid",
+        "#35",
+        "2026-12-05",
+        "aprobado",
+        "regeneración fallida"
+       ]
+      },
+      "ítem rechazado": {
+       "items": [
+        "Devdle",
+        "#35",
+        "2026-12-05",
+        "aprobado",
+        "usa un ítem rechazado"
        ]
       }
      },
-     "annotation": "«alertado» solo si alcanzó el umbral (`alerted_at`)"
+     "annotation": "«alertado» solo si alcanzó el umbral (`alerted_at`), con la fecha en el `title`"
     },
     {
      "name": "motivo-anulacion",
@@ -2290,12 +2691,104 @@
      "annotation": "`409 report_not_open` o `404 not_found`; la lista se recarga"
     },
     {
+     "name": "alerta-item-rechazado",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "warning",
+     "icon": "warning",
+     "content": "Este desafío usa un ítem rechazado: CAP theorem (definición incorrecta). No se regenera solo: regeneralo si no querés publicarlo.",
+     "visible_only_in_states": [
+      "ítem rechazado"
+     ],
+     "annotation": "`rejected_items` del desafío; un ítem por línea si hay varios"
+    },
+    {
+     "name": "alerta-regen-pendiente",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "info",
+     "content": "Regeneración pendiente desde las 14:02. Mientras tanto este desafío sigue aprobado y se publica tal cual si llega su fecha.",
+     "visible_only_in_states": [
+      "regeneración pendiente"
+     ],
+     "annotation": "se actualiza con el polling de Próximos (5 s)"
+    },
+    {
+     "name": "alerta-regen-fallida",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "error",
+     "content": "La última regeneración falló a las 14:05: ningún reemplazo pasó la verificación (overlap_conflict). Queda este desafío.",
+     "visible_only_in_states": [
+      "regeneración fallida"
+     ],
+     "annotation": "`regeneration.error` y `processed_at`; se puede volver a regenerar"
+    },
+    {
+     "name": "datos-generacion",
+     "type": "paragraph",
+     "category": "content",
+     "level": "caption",
+     "content": "Intento 3 · generator 1.4.0",
+     "visible_only_in_states": [
+      "desde próximos",
+      "regeneración pendiente",
+      "regeneración fallida",
+      "ítem rechazado"
+     ],
+     "annotation": "`attempt` y `generator_version`; el seed nunca se muestra"
+    },
+    {
+     "name": "preview-es",
+     "type": "card",
+     "category": "content",
+     "content": "Preview · modo solución",
+     "paragraph": "Grilla 12 × 12 con las 8 palabras resaltadas · Lista: REDIS — almacén de datos en memoria…",
+     "h": 220,
+     "visible_only_in_states": [
+      "desde próximos",
+      "regeneración pendiente",
+      "regeneración fallida",
+      "ítem rechazado"
+     ],
+     "state_overrides": {
+      "ítem rechazado": {
+       "paragraph": "CAP theorem · sistemas distribuidos · Definición: no se pueden garantizar a la vez consistencia, disponibilidad y tolerancia a particiones…"
+      }
+     },
+     "annotation": "`Preview` del `client` en modo solución, solo lectura; sin `Preview` cae a `PayloadView`"
+    },
+    {
+     "name": "preview-en",
+     "type": "card",
+     "category": "content",
+     "content": "Preview · solution mode",
+     "paragraph": "12 × 12 grid with the 8 words highlighted · List: REDIS — in-memory data store…",
+     "h": 220,
+     "visible_only_in_states": [
+      "desde próximos",
+      "regeneración pendiente",
+      "regeneración fallida",
+      "ítem rechazado"
+     ],
+     "state_overrides": {
+      "ítem rechazado": {
+       "paragraph": "CAP theorem · distributed systems · Definition: consistency, availability and partition tolerance cannot all be guaranteed at once…"
+      }
+     },
+     "annotation": "misma preview en inglés, al lado de la española"
+    },
+    {
      "name": "payload-es",
      "type": "list",
      "category": "content",
      "hidden_in_states": [
       "loading",
-      "error de sistema"
+      "error de sistema",
+      "desde próximos",
+      "regeneración pendiente",
+      "regeneración fallida",
+      "ítem rechazado"
      ],
      "items": [
       {
@@ -2315,7 +2808,7 @@
        "subtitle": "Se usa como caché, cola y broker de mensajes…"
       }
      ],
-     "annotation": "vista genérica del `payload` (PayloadView), texto plano; la preview del `client` la reemplaza en FG-7"
+     "annotation": "vista genérica del `payload` (`PayloadView`), texto plano; desde Próximos la reemplaza la preview (REQ-008)"
     },
     {
      "name": "payload-en",
@@ -2323,7 +2816,11 @@
      "category": "content",
      "hidden_in_states": [
       "loading",
-      "error de sistema"
+      "error de sistema",
+      "desde próximos",
+      "regeneración pendiente",
+      "regeneración fallida",
+      "ítem rechazado"
      ],
      "items": [
       {
@@ -2363,8 +2860,8 @@
        "subtitle": "5"
       },
       {
-       "title": "seed",
-       "subtitle": "88120417"
+       "title": "categoría",
+       "subtitle": "databases"
       },
       {
        "title": "culprits",
@@ -2401,6 +2898,9 @@
      "category": "content",
      "hidden_in_states": [
       "desde próximos",
+      "regeneración pendiente",
+      "regeneración fallida",
+      "ítem rechazado",
       "loading",
       "error de sistema"
      ],
@@ -2447,6 +2947,9 @@
      "icon": "check",
      "hidden_in_states": [
       "desde próximos",
+      "regeneración pendiente",
+      "regeneración fallida",
+      "ítem rechazado",
       "loading",
       "error de sistema",
       "anulado"
@@ -2468,6 +2971,9 @@
      "icon": "x",
      "hidden_in_states": [
       "desde próximos",
+      "regeneración pendiente",
+      "regeneración fallida",
+      "ítem rechazado",
       "loading",
       "error de sistema",
       "anulado"
@@ -2514,6 +3020,9 @@
      "icon": "warning",
      "hidden_in_states": [
       "desde próximos",
+      "regeneración pendiente",
+      "regeneración fallida",
+      "ítem rechazado",
       "loading",
       "error de sistema"
      ],
@@ -2533,9 +3042,18 @@
      "content": "Regenerar",
      "icon": "refresh",
      "visible_only_in_states": [
-      "desde próximos"
+      "desde próximos",
+      "regeneración pendiente",
+      "regeneración fallida",
+      "ítem rechazado"
      ],
-     "annotation": "solo `approved` con fecha posterior a hoy (FG-7)"
+     "annotation": "solo `approved` con fecha posterior a hoy y sin pedido pendiente",
+     "state_overrides": {
+      "regeneración pendiente": {
+       "variant": "disabled",
+       "content": "Regenerando…"
+      }
+     }
     }
    ],
    "layouts": {
@@ -2549,6 +3067,10 @@
          "estado",
          "motivo-anulacion",
          "alerta-desactualizado",
+         "alerta-item-rechazado",
+         "alerta-regen-pendiente",
+         "alerta-regen-fallida",
+         "datos-generacion",
          "cargando",
          "alerta-sistema",
          "btn-reintentar"
@@ -2564,6 +3086,7 @@
         "card": true,
         "title": "ES",
         "stack": [
+         "preview-es",
          "payload-es"
         ]
        },
@@ -2572,6 +3095,7 @@
         "card": true,
         "title": "EN",
         "stack": [
+         "preview-en",
          "payload-en"
         ]
        }
@@ -2670,6 +3194,21 @@
      "applies": true
     },
     {
+     "name": "regeneración pendiente",
+     "applies": true,
+     "parent_state": "desde próximos"
+    },
+    {
+     "name": "regeneración fallida",
+     "applies": true,
+     "parent_state": "desde próximos"
+    },
+    {
+     "name": "ítem rechazado",
+     "applies": true,
+     "parent_state": "desde próximos"
+    },
+    {
      "name": "loading",
      "applies": true
     },
@@ -2701,17 +3240,18 @@
      "type": "paragraph",
      "category": "content",
      "level": "body",
-     "content": "Se generará un reemplazo para Tech Timeline #134 (2026-11-07). Si pasa la verificación, el actual se rechaza; si falla, queda el actual."
+     "content": "Se pedirá un reemplazo para Grep Grid #35 (2026-12-05). El generador lo prepara en segundo plano: si pasa la verificación reemplaza al actual; si no, queda el actual. Si llega la fecha antes, se publica el actual sin cambios."
     },
     {
      "name": "alerta-no-disponible",
      "type": "alert",
      "category": "feedback",
      "kind": "warning",
-     "content": "Este desafío ya no se puede regenerar: dejó de estar aprobado o su fecha ya no es futura. Refrescá Próximos.",
+     "content": "Solo se puede regenerar un desafío aprobado de una fecha futura. Refrescá Próximos.",
      "visible_only_in_states": [
       "no disponible"
-     ]
+     ],
+     "annotation": "`409 not_regenerable`"
     },
     {
      "name": "alerta-sistema",
@@ -3003,6 +3543,29 @@
    "trigger": "Ingresar de nuevo",
    "automatic": false,
    "srcBlock": "btn-ingresar"
+  },
+  {
+   "src": "o-02-detalle-desafio",
+   "srcState": "regeneración fallida",
+   "srcBlock": "btn-regenerar",
+   "dst": "o-03-regenerar-desafio",
+   "trigger": "Volver a regenerar",
+   "automatic": false
+  },
+  {
+   "src": "o-02-detalle-desafio",
+   "srcState": "ítem rechazado",
+   "srcBlock": "btn-regenerar",
+   "dst": "o-03-regenerar-desafio",
+   "trigger": "Regenerar",
+   "automatic": false
+  },
+  {
+   "src": "o-03-regenerar-desafio",
+   "srcState": "no disponible",
+   "dst": "proximos-desafios",
+   "trigger": "404: cierra y refresca",
+   "automatic": true
   }
  ]
 }

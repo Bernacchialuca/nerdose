@@ -835,9 +835,11 @@ paths:
       summary: Próximos desafíos
       description: |
         F11, C-43. Para cada día de `today+1` a `today+days`, el desafío vigente de cada juego
-        (`approved`) con `payload` completo y log de verificación, y el pedido de regeneración pendiente
-        si existe. Si no hay desafío y el generator registró una falla (`generation_failures`), la incluye
-        en `failure` (ADR-017). El admin hace polling mientras haya `pending_request`.
+        (`approved`) con `payload` completo, log de verificación, `attempt` e ítems de banco rechazados
+        (`rejected_items`), y el último pedido de regeneración si está `pending` o `failed` (`regeneration`).
+        Si no hay desafío y el generator registró una falla (`generation_failures`), la incluye
+        en `failure` (ADR-017). `active_failures` cuenta las fallas activas. El admin hace polling cada 5 s
+        mientras haya `regeneration.status = pending`. Nunca incluye hoy ni el pasado (REQ-008).
       operationId: listUpcomingChallenges
       security:
         - adminBearer: []
@@ -853,11 +855,14 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [days]
+                required: [days, active_failures]
                 properties:
                   days:
                     type: array
                     items: { $ref: '#/components/schemas/UpcomingDay' }
+                  active_failures:
+                    type: integer
+                    description: Fallas de generación activas (fecha en la ventana y sin challenge vigente)
         '401': { $ref: '#/components/responses/Unauthorized' }
         '422': { $ref: '#/components/responses/ValidationError' }
 
@@ -868,7 +873,8 @@ paths:
       description: |
         F8, C-44, ADR-005. Inserta en `generation_requests` (`status = pending`) y ejecuta
         `pg_notify('generation_requests', request_id)`. Si ya hay uno pendiente para ese challenge, devuelve
-        ese. El viejo sigue `approved` hasta que el `generator` verifique el nuevo.
+        ese (idempotente, `INSERT ... ON CONFLICT DO NOTHING`). El viejo sigue `approved` hasta que el
+        `generator` verifique el nuevo. Si la fecha llega antes, el `generator` cancela el pedido.
       operationId: regenerateChallenge
       security:
         - adminBearer: []
@@ -881,9 +887,11 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [request_id]
+                required: [request_id, status, requested_at]
                 properties:
                   request_id: { type: string, format: uuid }
+                  status: { type: string, enum: [pending] }
+                  requested_at: { type: string, format: date-time }
         '401': { $ref: '#/components/responses/Unauthorized' }
         '404': { $ref: '#/components/responses/NotFound' }
         '409':
@@ -892,6 +900,38 @@ paths:
             application/json:
               schema: { $ref: '#/components/schemas/Error' }
               example: { error: { code: not_regenerable, message: 'Solo se puede regenerar un desafío aprobado de una fecha futura' } }
+
+  /api/admin/generation-failures:
+    get:
+      tags: [Admin]
+      summary: Fallas de generación activas
+      description: |
+        ADR-017, C-49 (REQ-008). Fallas activas: `date` en `[today+1, today+14]` y sin challenge vigente para
+        ese (`game_id`, `date`). Liviano, sin `payload`: lo usa el shell del admin para el contador "Próximos (n)".
+      operationId: listGenerationFailures
+      security:
+        - adminBearer: []
+      responses:
+        '200':
+          description: Fallas activas, ordenadas por fecha y juego
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [failures]
+                properties:
+                  failures:
+                    type: array
+                    items:
+                      type: object
+                      required: [game_id, date, attempts, last_reason, updated_at]
+                      properties:
+                        game_id: { $ref: '#/components/schemas/GameId' }
+                        date: { type: string, format: date }
+                        attempts: { type: integer, minimum: 1 }
+                        last_reason: { type: string, nullable: true }
+                        updated_at: { type: string, format: date-time }
+        '401': { $ref: '#/components/responses/Unauthorized' }
 
   /api/admin/content/stock:
     get:
@@ -1931,26 +1971,44 @@ components:
           type: array
           items:
             type: object
-            required: [game_id, challenge, pending_request, failure]
+            required: [game_id, challenge, regeneration, failure]
             properties:
               game_id: { $ref: '#/components/schemas/GameId' }
               challenge:
                 type: object
                 nullable: true
-                required: [id, status, payload, verification, generator_version]
+                required: [id, status, payload, verification, generator_version, attempt, rejected_items]
                 properties:
                   id: { type: string, format: uuid }
                   status: { $ref: '#/components/schemas/ChallengeStatus' }
                   payload: { type: object, additionalProperties: true }
                   verification: { type: object, additionalProperties: true }
                   generator_version: { type: string }
-              pending_request:
+                  attempt: { type: integer, minimum: 0, description: El seed derivado nunca se devuelve }
+                  rejected_items:
+                    type: array
+                    description: Ítems de banco del payload (`definition.culprits`) que hoy están `rejected`; vacío si ninguno
+                    items:
+                      type: object
+                      required: [kind, id, label, rejection_reason]
+                      properties:
+                        kind: { type: string, enum: [term, timeline_fact] }
+                        id: { type: string, format: uuid }
+                        label: { type: string }
+                        rejection_reason: { type: string }
+              regeneration:
                 type: object
                 nullable: true
-                required: [request_id, status]
+                description: |
+                  Último pedido de regeneración del challenge vigente, solo si está `pending` o `failed`.
+                  null si no hay pedido o el último está `done` o `cancelled`.
+                required: [request_id, status, error, requested_at, processed_at]
                 properties:
                   request_id: { type: string, format: uuid }
-                  status: { type: string, enum: [pending, done, failed] }
+                  status: { type: string, enum: [pending, failed] }
+                  error: { type: string, nullable: true }
+                  requested_at: { type: string, format: date-time }
+                  processed_at: { type: string, format: date-time, nullable: true }
               failure:
                 type: object
                 nullable: true
@@ -1963,22 +2021,36 @@ components:
 
     BankStock:
       type: object
-      required: [bank, approved_available, approved_total, rejected_total, days_of_stock, cycle_ok, rejections]
+      required: [bank, approved_available, approved_total, rejected_total, days_of_stock, cycle_ok, consumers, rejections]
       properties:
         bank: { type: string, enum: [terms, timeline_facts] }
         approved_available:
           type: integer
-          description: Ítems approved fuera de su ventana anti-repetición (usables hoy)
+          description: Ítems approved disponibles para todos los consumidores del banco (fuera de su ventana anti-repetición)
         approved_total: { type: integer }
         rejected_total: { type: integer }
         days_of_stock:
           type: integer
-          description: Días que cubren los `approved_available` al ritmo de consumo actual, sin reutilizar
+          description: Mínimo de `days_of_stock` de los consumidores; por consumidor, `floor(approved_available / items_per_challenge)`
         cycle_ok:
           type: boolean
           description: |
-            true si el banco alcanza para ciclar indefinidamente respetando las ventanas anti-repetición
-            (terms ≥ 500; timeline_facts ≥ 450 en total, sin mínimo por categoría)
+            true si todos los consumidores son `cycle_ok`; por consumidor,
+            `approved_total >= items_per_challenge × window_days` (Devdle 365, Grep Grid 240, Timeline 450).
+            Reemplaza la regla fija terms ≥ 500 (era el umbral de la importación, C-50)
+        consumers:
+          type: array
+          description: Un item por juego que consume el banco (`GameDefinition.bankUsage`); `terms` = Devdle y Grep Grid
+          items:
+            type: object
+            required: [game_id, window_days, items_per_challenge, approved_available, days_of_stock, cycle_ok]
+            properties:
+              game_id: { $ref: '#/components/schemas/GameId' }
+              window_days: { type: integer }
+              items_per_challenge: { type: integer }
+              approved_available: { type: integer }
+              days_of_stock: { type: integer }
+              cycle_ok: { type: boolean }
         rejections:
           type: array
           description: Ítems `rejected` (por la importación o por anulación), del más reciente al más antiguo; máximo 200

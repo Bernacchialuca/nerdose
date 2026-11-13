@@ -129,6 +129,7 @@ Enum generation_request_status {
   pending
   done
   failed
+  cancelled  // REQ-008: la fecha llegó o el challenge dejó de ser approved antes de atenderlo
 }
 
 Enum job_run_status {
@@ -342,7 +343,10 @@ Table generation_requests {
   indexes {
     challenge_id [unique, name: 'uq_generation_requests_pending', note: "Parcial: WHERE status = 'pending'"]
     (status, requested_at) [name: 'idx_generation_requests_status']
+    (challenge_id, requested_at) [name: 'idx_generation_requests_challenge', note: 'Último pedido por challenge (upcoming)']
   }
+
+  // Checks (REQ-008): status = 'done' => new_challenge_id IS NOT NULL; status <> 'pending' => processed_at IS NOT NULL. Migración 0007_generation_queue_and_failures
 
   Note: 'Cola de regeneración (api inserta + NOTIFY; generator toma con FOR UPDATE SKIP LOCKED)'
 }
@@ -431,6 +435,7 @@ Las cuatro vistas viven en migraciones de `@nerdose/db` (ADR-014). El rol `nerdo
 | timeline_facts | idx_timeline_facts_pick | (status, category, last_used) | BTREE | Elegir hechos elegibles (90 días); el desafío mezcla categorías, así que hoy filtra por `status` y `last_used` |
 | generation_requests | uq_generation_requests_pending | (challenge_id) `WHERE status = 'pending'` | UNIQUE parcial | Un pedido pendiente por desafío |
 | generation_requests | idx_generation_requests_status | (status, requested_at) | BTREE | Poll de respaldo con `FOR UPDATE SKIP LOCKED` |
+| generation_requests | idx_generation_requests_challenge | (challenge_id, requested_at) | BTREE | Último pedido por desafío en Próximos desafíos (REQ-008) |
 | job_runs | idx_job_runs_job_started_at | (job, started_at) | BTREE | Última corrida de `sync_banks` en el stock del admin |
 
 ## Constraints y Reglas de Negocio

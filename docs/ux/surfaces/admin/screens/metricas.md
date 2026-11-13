@@ -8,8 +8,8 @@ audiences:
   - responsable
 fidelity: mid
 status: diseñada
-version: "1.0"
-date: 2026-11-03
+version: "1.1"
+date: 2026-11-13
 ---
 
 # Pantalla: P-05 · Métricas
@@ -126,9 +126,9 @@ date: 2026-11-03
 - Annotation: nada
 
 ### nav-proximos
-- Texto/label: Próximos
+- Texto/label: Próximos (1)
 - Icono: nada
-- Annotation: nada
+- Annotation: el número son las fallas de generación activas (REQ-008); sin fallas, sin número
 
 ### nav-stock
 - Texto/label: Stock
@@ -286,6 +286,7 @@ date: 2026-11-03
 **Decisiones tomadas:**
 - Cifras resumen antes del detalle (benchmark: Plausible Analytics).
 - Solo tablas, sin gráficos (decisión de arquitectura de `admin`).
+- REQ-008: «Próximos» del encabezado lleva el contador de fallas de generación activas, igual que en el resto de las pantallas.
 
 **Alternativas descartadas:**
 - Selector de rangos predefinidos (7/30/90 días): el PRD define `from` y `to` libres.

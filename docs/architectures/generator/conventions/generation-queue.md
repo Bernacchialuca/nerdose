@@ -91,10 +91,12 @@ The `api` inserts the row (only one `pending` per challenge) and runs `SELECT pg
 - `LISTEN` uses a dedicated persistent connection and reconnects on error; the poll covers any lost notification.
 - The old->new replacement happens in a single transaction: old `rejected` (`verification.reason = 'regenerated'`), new `approved`, request `done` with `new_challenge_id`. The old challenge stays `approved` until the new one is verified.
 - If generation fails after the retries, the request becomes `failed` with `error` and the old challenge stays `approved`.
-- `generation_requests.status` is one of `pending | done | failed`.
-- Requests for a challenge that is no longer `approved` or whose `date <= today` are marked `failed` without generating.
+- `generation_requests.status` is one of `pending | done | failed | cancelled` (`cancelled` added by REQ-008).
+- Requests for a challenge that is no longer `approved` or whose `date <= today` are marked `cancelled` (not `failed`) without generating. `failed` is only for verification failing after all retries.
+- The replacement transaction re-reads the old challenge with `SELECT ... FOR UPDATE`; if it is no longer `approved` or its date arrived, the new candidate becomes `rejected` (`verification.reason = 'request_cancelled'`) and the request `cancelled`. A `published` challenge is never replaced.
+- Candidates are inserted/rejected in their own transactions; a regeneration that fails does not write `generation_failures`.
 - The `generator` never answers the `api` directly; the admin sees the result by reading the tables.
-- A failure processing one request does not stop the loop: it is logged and the request is marked `failed`.
+- A failure processing one request does not stop the loop: it is logged and the request is marked `failed` (or stays `pending` on a DB error in the replacement, to be retried at the next drain).
 
 ## Integration with other conventions
 

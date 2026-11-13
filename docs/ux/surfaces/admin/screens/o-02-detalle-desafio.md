@@ -8,8 +8,8 @@ audiences:
   - responsable
 fidelity: mid
 status: diseñada
-version: "1.1"
-date: 2026-11-11
+version: "1.2"
+date: 2026-11-13
 overlay: true
 overlay_type: drawer
 triggered_by: reportes
@@ -20,7 +20,7 @@ triggered_by: reportes
 ## Identidad
 
 - **Audiencia primaria:** [responsable](../../../audiences/responsable/research-context.md)
-- **JTBD / Propósito:** Revisar un desafío (solución completa en ES y EN lado a lado, log de verificación) y actuar según el origen: resolver o descartar cada reporte y anular desde Reportes; regenerar desde Próximos (FG-7).
+- **JTBD / Propósito:** Revisar un desafío (solución completa en ES y EN lado a lado, log de verificación) y actuar según el origen: resolver o descartar cada reporte y anular desde Reportes; desde Próximos, ver el desafío como lo ve el jugador con la solución superpuesta, su estado de regeneración y si usa un ítem rechazado, y regenerarlo (REQ-008).
 - **Viewports:**
   - **desktop** — Drawer ancho (panel lateral) con ES y EN lado a lado (6/6); el contenido de acciones cambia según el origen. (único viewport de la superficie; no hay caso mobile relevado).
 
@@ -28,12 +28,12 @@ triggered_by: reportes
 
 **Entradas:**
 - `reportes` · fila del grupo (trae el desafío y sus reportes del filtro activo)
-- `proximos-desafios` · celda de juego/día (FG-7)
+- `proximos-desafios` · celda de juego/día con desafío (REQ-008)
 
 **Salidas user-driven:**
 - A `o-01-anular-desafio` · «Anular desafío» (solo `published`)
-- A `o-03-regenerar-desafio` · «Regenerar» (desde Próximos, FG-7)
-- A `reportes` · cierre (ícono, Escape)
+- A `o-03-regenerar-desafio` · «Regenerar» (desde Próximos)
+- A `reportes` o `proximos-desafios` · cierre (ícono, Escape), según el origen
 
 **Salidas automáticas:**
 - A `login` · `401 unauthorized` (borra el token).
@@ -43,21 +43,27 @@ triggered_by: reportes
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
 | 1 | header | header | — | layout | desktop | — | Título del drawer y cierre |
-| 2 | estado | chips | — | content | desktop | state_overrides: anulado | Juego, número, fecha, estado y alerta del desafío |
+| 2 | estado | chips | — | content | desktop | state_overrides: anulado, desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado | Juego, número, fecha, estado y alerta del desafío |
 | 3 | motivo-anulacion | paragraph | body | content | desktop | visible_only_in_states: anulado | Motivo y fecha de una anulación ya hecha |
 | 4 | alerta-desactualizado | alert | warning | feedback | desktop | visible_only_in_states: reporte ya cerrado | El reporte cambió en otra pestaña |
-| 5 | payload-es | list | — | content | desktop | hidden_in_states: loading, error de sistema | Textos y solución en español |
-| 6 | payload-en | list | — | content | desktop | hidden_in_states: loading, error de sistema | Textos y solución en inglés |
+| 4a | alerta-item-rechazado | alert | warning | feedback | desktop | visible_only_in_states: ítem rechazado | El desafío usa un término o hecho que hoy está rechazado |
+| 4b | alerta-regen-pendiente | alert | info | feedback | desktop | visible_only_in_states: regeneración pendiente | Hay una regeneración en curso para este desafío |
+| 4c | alerta-regen-fallida | alert | error | feedback | desktop | visible_only_in_states: regeneración fallida | La última regeneración falló; queda el actual |
+| 4d | datos-generacion | paragraph | caption | content | desktop | visible_only_in_states: desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado | Intento y versión del generador (el seed nunca se muestra) |
+| 4e | preview-es | card | — | content | desktop | visible_only_in_states: desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado | Preview del juego en modo solución, en español |
+| 4f | preview-en | card | — | content | desktop | visible_only_in_states: desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado | Preview del juego en modo solución, en inglés |
+| 5 | payload-es | list | — | content | desktop | hidden_in_states: loading, error de sistema, desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado | Textos y solución en español |
+| 6 | payload-en | list | — | content | desktop | hidden_in_states: loading, error de sistema, desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado | Textos y solución en inglés |
 | 7 | payload-comun | list | — | content | desktop | hidden_in_states: loading, error de sistema | Datos del desafío que no dependen del idioma (clave · valor) |
 | 8 | log-verificacion | list | — | content | desktop | hidden_in_states: loading, error de sistema | Log de verificación |
-| 9 | lista-reportes | list | — | content | desktop | hidden_in_states: desde próximos, loading, error de sistema | Cada reporte con motivo, mensaje, idioma, contexto, jugador y fecha |
-| 10 | btn-resolver | button | variant=secondary | input | desktop | hidden_in_states: desde próximos, loading, error de sistema; state_overrides: resolviendo | Pasa un reporte `open` a `resolved` (por reporte) |
-| 11 | btn-descartar | button | variant=tertiary | input | desktop | hidden_in_states: desde próximos, loading, error de sistema | Pasa un reporte `open` a `dismissed` (por reporte) |
+| 9 | lista-reportes | list | — | content | desktop | hidden_in_states: desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado, loading, error de sistema | Cada reporte con motivo, mensaje, idioma, contexto, jugador y fecha |
+| 10 | btn-resolver | button | variant=secondary | input | desktop | hidden_in_states: desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado, loading, error de sistema; state_overrides: resolviendo | Pasa un reporte `open` a `resolved` (por reporte) |
+| 11 | btn-descartar | button | variant=tertiary | input | desktop | hidden_in_states: desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado, loading, error de sistema | Pasa un reporte `open` a `dismissed` (por reporte) |
 | 12 | cargando | loader | — | feedback | desktop | visible_only_in_states: loading | Carga del detalle |
 | 13 | alerta-sistema | alert | error | feedback | desktop | visible_only_in_states: error de sistema | Falla al cargar el detalle o al cambiar un reporte |
 | 14 | btn-reintentar | button | variant=secondary | input | desktop | visible_only_in_states: error de sistema | Reintenta la carga |
-| 15 | btn-anular | button | variant=error | input | desktop | hidden_in_states: desde próximos, loading, error de sistema; state_overrides: anulado | Abre O-01 (solo `published`) |
-| 16 | btn-regenerar | button | variant=primary | input | desktop | visible_only_in_states: desde próximos | Abre O-03 (solo `approved` con fecha futura; FG-7) |
+| 15 | btn-anular | button | variant=error | input | desktop | hidden_in_states: desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado, loading, error de sistema; state_overrides: anulado | Abre O-01 (solo `published`) |
+| 16 | btn-regenerar | button | variant=primary | input | desktop | visible_only_in_states: desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado; state_overrides: regeneración pendiente | Abre O-03 (solo `approved` con fecha futura y sin pedido pendiente) |
 
 ## Layout por viewport
 
@@ -67,13 +73,19 @@ triggered_by: reportes
     - estado
     - motivo-anulacion
     - alerta-desactualizado
+    - alerta-item-rechazado
+    - alerta-regen-pendiente
+    - alerta-regen-fallida
+    - datos-generacion
     - cargando
     - alerta-sistema
     - btn-reintentar
 - row `solucion`
   - col 6/12 (card, título «ES»):
+    - preview-es
     - payload-es
   - col 6/12 (card, título «EN»):
+    - preview-en
     - payload-en
 - row `datos` (card, título «Datos del desafío»)
   - col 12/12:
@@ -106,7 +118,7 @@ triggered_by: reportes
 ### estado
 - Texto/label: Devdle, #8, 2026-11-08, publicado, alertado
 - Icono: nada
-- Annotation: «alertado» solo si el desafío alcanzó el umbral (`alerted_at`), con la fecha en el `title`; en `anulado` el chip de estado dice «anulado»
+- Annotation: «alertado» solo si el desafío alcanzó el umbral (`alerted_at`), con la fecha en el `title`; en `anulado` el chip de estado dice «anulado». Desde Próximos: «Grep Grid, #35, 2026-12-05, aprobado» (más «regenerando…», «regeneración fallida» o «usa un ítem rechazado» según el caso)
 
 ### motivo-anulacion
 - Texto/label: Anulado el 2026-11-08 14:32 · definición incorrecta
@@ -118,10 +130,40 @@ triggered_by: reportes
 - Icono: nada
 - Annotation: respuesta `409 report_not_open` o `404 not_found`; la lista se recarga
 
+### alerta-item-rechazado
+- Texto/label: Este desafío usa un ítem rechazado: CAP theorem (definición incorrecta). No se regenera solo: regeneralo si no querés publicarlo.
+- Icono: warning
+- Annotation: `rejected_items` del desafío; un ítem por línea si hay varios
+
+### alerta-regen-pendiente
+- Texto/label: Regeneración pendiente desde las 14:02. Mientras tanto este desafío sigue aprobado y se publica tal cual si llega su fecha.
+- Icono: nada
+- Annotation: el drawer se actualiza con el polling de Próximos; si el reemplazo pasa la verificación, muestra el desafío nuevo
+
+### alerta-regen-fallida
+- Texto/label: La última regeneración falló a las 14:05: ningún reemplazo pasó la verificación (overlap_conflict). Queda este desafío.
+- Icono: nada
+- Annotation: `regeneration.error` y `processed_at`; se puede volver a regenerar
+
+### datos-generacion
+- Texto/label: Intento 3 · generator 1.4.0
+- Icono: nada
+- Annotation: `attempt` y `generator_version`; el seed derivado nunca se muestra
+
+### preview-es
+- Texto/label: Grilla 12 × 12 con las 8 palabras resaltadas · Lista: REDIS — almacén de datos en memoria…
+- Icono: nada
+- Annotation: `Preview` del `client` del juego en modo solución, solo lectura (no se juega ni se crea una partida). Devdle: la palabra con su categoría, definición y resumen. Grep Grid: la grilla con las 8 palabras resaltadas y la lista con definiciones. Tech Timeline: la consigna y los 5 hechos en el orden correcto con fecha y nota. Si el juego no tiene `Preview` en el admin, cae a la vista genérica del `payload`
+
+### preview-en
+- Texto/label: 12 × 12 grid with the 8 words highlighted · List: REDIS — in-memory data store…
+- Icono: nada
+- Annotation: misma preview con los textos en inglés, al lado de la española para comparar la traducción
+
 ### payload-es
 - Texto/label: Palabra: REDIS · Categoría: bases de datos · Definición: Almacén de datos en memoria… · Resumen: …
 - Icono: nada
-- Annotation: vista genérica del `payload` (`PayloadView`): cada campo `{ es, en }` se muestra en su columna, como texto plano. La preview del `client` del juego en modo solución reemplaza esta vista en FG-7
+- Annotation: vista genérica del `payload` (`PayloadView`): cada campo `{ es, en }` se muestra en su columna, como texto plano. Desde Próximos la reemplaza la preview del `client` (REQ-008); desde Reportes se mantiene
 
 ### payload-en
 - Texto/label: Word: REDIS · Category: databases · Definition: In-memory data store… · Summary: …
@@ -129,14 +171,14 @@ triggered_by: reportes
 - Annotation: misma estructura que la columna ES, alineada fila a fila para comparar la traducción
 
 ### payload-comun
-- Texto/label: term_id: 3f2a… · length: 5 · seed: 8812…
+- Texto/label: term_id: 3f2a… · length: 5 · categoría: databases
 - Icono: nada
 - Annotation: el resto del `payload` como lista clave · valor; los culpables posibles (`culprits`) se muestran con su nombre («Término · REDIS»)
 
 ### log-verificacion
 - Texto/label: Solución verificada, Traducción ES/EN consistente
 - Icono: check
-- Annotation: `verification` del desafío
+- Annotation: `verification` del desafío, legible: cada verificación con su resultado; el seed derivado no se muestra
 
 ### lista-reportes
 - Texto/label: Respuesta incorrecta · es · hace 2 h · jugador a1b2c3d4 · «dos palabras posibles» · partida en curso, Chrome 130 / Ambiguo · en · hace 5 h · jugador 9f0e1d2c · (sin mensaje) · partida terminada, Safari 18 / Traducción · es · ayer · jugador 77aa01bc · «la definición en inglés dice otra cosa» · partida terminada, Firefox 132
@@ -176,7 +218,7 @@ triggered_by: reportes
 ### btn-regenerar
 - Texto/label: Regenerar
 - Icono: refresh
-- Annotation: solo `approved` con fecha posterior a hoy (FG-7)
+- Annotation: solo `approved` con fecha posterior a hoy y sin pedido pendiente; en `regeneración pendiente`, deshabilitado con «Regenerando…»
 
 ## Estados
 
@@ -209,10 +251,36 @@ triggered_by: reportes
 
 ### desde próximos
 - Aplica: Sí
-- Mensaje: Detalle desde Próximos: solución ES/EN, datos y log, con la acción regenerar (FG-7).
+- Mensaje: Detalle desde Próximos: preview en modo solución ES/EN, datos, intento y log, con la acción regenerar.
 - Cambios:
+  - estado: content="Grep Grid, #35, 2026-12-05, aprobado"
+  - header: content="Grep Grid #35"
+  - preview-es, preview-en y datos-generacion: visibles (reemplazan a payload-es y payload-en).
   - lista-reportes, btn-resolver, btn-descartar y btn-anular: ocultos.
-  - btn-regenerar: visible solo acá.
+  - btn-regenerar: visible.
+
+### regeneración pendiente
+- Aplica: Sí (sub-estado de desde próximos)
+- Mensaje: Regeneración pendiente desde las 14:02. Mientras tanto este desafío sigue aprobado y se publica tal cual si llega su fecha.
+- Cambios:
+  - estado: content="Grep Grid, #35, 2026-12-05, aprobado, regenerando…"
+  - alerta-regen-pendiente: visible solo acá.
+  - btn-regenerar: variant="disabled", content="Regenerando…".
+
+### regeneración fallida
+- Aplica: Sí (sub-estado de desde próximos)
+- Mensaje: La última regeneración falló a las 14:05: ningún reemplazo pasó la verificación (overlap_conflict). Queda este desafío.
+- Cambios:
+  - estado: content="Grep Grid, #35, 2026-12-05, aprobado, regeneración fallida"
+  - alerta-regen-fallida: visible solo acá.
+  - btn-regenerar: habilitado (se puede volver a pedir).
+
+### ítem rechazado
+- Aplica: Sí (sub-estado de desde próximos)
+- Mensaje: Este desafío usa un ítem rechazado: CAP theorem (definición incorrecta). No se regenera solo: regeneralo si no querés publicarlo.
+- Cambios:
+  - estado: content="Devdle, #35, 2026-12-05, aprobado, usa un ítem rechazado"
+  - alerta-item-rechazado: visible solo acá.
 
 ### loading
 - Aplica: Sí
@@ -234,7 +302,8 @@ triggered_by: reportes
 - btn-resolver / btn-descartar · on click → cambia ese reporte (`open` → `resolved`/`dismissed`), recarga la cola y el contador; el drawer sigue abierto. Cuando no quedan reportes en el estado filtrado, el grupo sale de la cola y el drawer muestra los reportes con su nuevo estado
 - respuesta `409 report_not_open` o `404 not_found` → estado `reporte ya cerrado` y recarga
 - btn-anular · on click → abre `o-01-anular-desafio` con el desafío y sus `culprits`
-- btn-regenerar · on click → abre `o-03-regenerar-desafio` (FG-7)
+- btn-regenerar · on click → abre `o-03-regenerar-desafio`; al confirmar, el drawer pasa a `regeneración pendiente`
+- con una regeneración pendiente, el drawer se refresca con el polling de Próximos (5 s): si el reemplazo pasa, muestra el desafío nuevo; si falla, pasa a `regeneración fallida`; si el desafío dejó de estar en la ventana (llegó su fecha), se cierra y vuelve a Próximos
 
 **Validaciones:**
 - Resolver y descartar solo sobre reportes `open`; los estados son terminales y no se reabren.
@@ -259,14 +328,19 @@ triggered_by: reportes
 - REQ-007: el log de verificación también se muestra desde Reportes (resuelve la pregunta 2 del product-map): ayuda a decidir si el error es del generador.
 - REQ-007: el jugador se identifica con `player_ref` (8 caracteres), suficiente para ver si dos reportes son de la misma persona sin exponer su id.
 
+- REQ-008: desde Próximos, la solución se muestra con el `Preview` de cada juego (como lo ve el jugador, con la solución superpuesta) en ES y EN lado a lado, en lugar de `PayloadView` (decisión 10 del diseño técnico). Un juego sin `Preview` en el admin cae a `PayloadView`.
+- REQ-008: se muestran el intento y la versión del generador, nunca el seed (CA 2).
+- REQ-008: el estado de la regeneración (pendiente o fallida con su motivo) y el aviso de ítem rechazado viven en la cabecera del drawer, además de la celda.
+
 **Alternativas descartadas:**
 - Pestañas ES/EN: obligan a recordar lo que se vio en la otra (relevante solo si hubiera mobile).
 - Resolver/descartar en bloque por grupo: C-40 es por reporte y anular ya resuelve todos los abiertos.
-- Preview del `client` en este request: su contrato no está cerrado y es parte de FG-7.
+- Preview del `client` en REQ-007: su contrato no estaba cerrado y era parte de FG-7.
+- REQ-008: extender la preview a Reportes. El diseño técnico la carga solo en el módulo de Próximos; desde Reportes sigue `PayloadView` (ver pregunta abierta).
 
 **Preguntas abiertas:**
-- Ninguna propia de esta pantalla.
+- ¿La preview en modo solución debería reemplazar también a `PayloadView` desde Reportes? REQ-008 la limita a Próximos.
 
 ## Trazabilidad
 
-- C-39, C-40, C-41, C-43, C-44 · REQ-007 (RF 6, 7; CA 14-16) · flujos 2, 3 y 4 de `user-flows.md`.
+- C-39, C-40, C-41, C-43, C-44 · REQ-007 (RF 6, 7; CA 14-16) · REQ-008 (RF 1-3; CA 2, 3, 6, 10) · flujos 2, 3 y 4 de `user-flows.md`.

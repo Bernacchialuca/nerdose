@@ -44,6 +44,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
   - El `payload` es inmutable desde que se aprueba: cambiar el generador no altera desafíos ya generados.
   - Solo un Challenge `published` cuya `date` es hoy acepta jugadas.
   - Solo lo crea el Sistema. Solo se puede regenerar uno `approved` con `date` > hoy, nunca uno `published`. Anular es siempre una acción manual del Responsable y exige `void_reason`.
+  - Regenerar (GenerationRequest) reemplaza un `approved` futuro de forma atómica: el nuevo queda `approved` y el viejo pasa a `rejected` (`verification.reason = regenerated`) en la misma transacción; hasta entonces el viejo sigue vigente. El reemplazo usa un `attempt` nuevo (mayor que todos los ya usados para ese juego y fecha) y solo ítems `approved` del banco.
   - **Payload** (con solución, nunca sale del servidor antes de terminar la partida) y **vista pública** (lo que ve el cliente antes de terminar) por juego:
 
   | game_id | Payload (resumen) | Vista pública |
@@ -110,7 +111,12 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
 ### GenerationFailure
 - **Key attributes:** game_id (enum game_id, req), date (date UTC, req), attempts (int, req), last_reason (string, opt), created_at (timestamp, req), updated_at (timestamp, req)
 - **Relationships:** — (referencia lógica al juego y la fecha del Challenge que no se pudo generar)
-- **Notes:** PK (game_id, date). La crea el Sistema cuando un juego no logra el desafío de mañana tras 20 reintentos. Es la alerta: no se envía mail, se muestra en el admin (Próximos desafíos).
+- **Notes:** PK (game_id, date). La crea el Sistema cuando un juego no logra el desafío de mañana tras 20 reintentos. Es la alerta: no se envía mail, se muestra en el admin (Próximos desafíos). Si una corrida posterior vuelve a fallar para esa fecha, se actualiza (`attempts`, `last_reason`, `updated_at`) sin duplicarse. Nunca se borra: está **activa** mientras su `date` esté en los próximos 14 días y el (game_id, date) siga sin Challenge vigente.
+
+### GenerationRequest
+- **Key attributes:** id (uuid, req), challenge_id (uuid, req, ref Challenge: el `approved` a reemplazar), status (enum: pending/done/failed/cancelled, req, default: pending), new_challenge_id (uuid, opt, ref Challenge, req si status = done), error (string, opt: motivo del último candidato rechazado si status = failed), requested_at (timestamp, req), processed_at (timestamp, opt, req si status ≠ pending)
+- **Relationships:** belongs_to Challenge (el reemplazado), references Challenge (el nuevo, opt)
+- **Notes:** Pedido de regeneración del Responsable (C-44). Lo crea la `api` y lo atiende el Sistema (generator). A lo sumo un `pending` por Challenge: repetir el pedido devuelve el pendiente. `done` = el reemplazo pasó la verificación y se hizo de forma atómica (viejo `rejected`, nuevo `approved`). `failed` = ningún candidato pasó tras 20 reintentos; el actual sigue `approved` y no se registra una GenerationFailure. `cancelled` = cuando se iba a atender, el Challenge ya no era `approved` o su fecha había llegado; se publica sin cambios. Estados terminales: done, failed, cancelled.
 
 ### Ciclos de Vida
 

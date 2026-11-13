@@ -39,7 +39,7 @@ export const clientRegistry = {
 } satisfies Record<GameId, () => Promise<GameClient>>;
 ```
 
-`GameClient` is the `./client` entry shape defined by the game contract (`Instructions`, `Game`, `Result`, `share`). Props are owned by the game packages and `@nerdose/core`; the admin passes the payload through without reinterpreting it.
+`GameClient` is the `./client` entry shape defined by the game contract (`Instructions`, `Game`, `Result`, `share`, and `Preview` with props `{ payload, language }`, read-only, REQ-008). The admin mounts `Preview` in two panels (`es`, `en`) with the fixed i18next instances; a game without `Preview` falls back to `PayloadView`. Props are owned by the game packages and `@nerdose/core`; the admin passes the payload through without reinterpreting it.
 
 ## How to use
 

@@ -68,7 +68,8 @@ const Client = lazy(clientRegistry[gameId]);
 
 ### Admin preview
 
-- `admin` mounts the same `Game`/`Result` components in **solution mode** with the full `payload` returned by `/api/admin/*`, in Spanish and in English side by side. The admin renders the preview inside a container that makes it read-only (no moves are sent).
+- Each `client` also exports `Preview` with props `{ payload, language }` (REQ-008): read-only, shows the board with the solution overlaid, no API calls and no play state. `payload` is the full `{es,en}` payload and `language` picks the text. Games without `Preview` fall back to `PayloadView` in the admin.
+- `admin` mounts `Preview` (and previously the same `Game`/`Result` components in **solution mode**) with the full `payload` returned by `/api/admin/*`, in Spanish and in English side by side. The admin renders the preview inside a container that makes it read-only (no moves are sent).
 
 ## Rules
 

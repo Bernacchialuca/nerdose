@@ -4,8 +4,8 @@ title: Admin — login, reportes, stock y métricas
 type: feature
 status: Active
 created: 2026-11-03
-last_updated: 2026-11-11
-stories: [S-032, S-033]
+last_updated: 2026-11-13
+stories: [S-032, S-033, S-037, S-039, S-040]
 ---
 
 # Admin — login, reportes, stock y métricas
@@ -56,7 +56,10 @@ sequenceDiagram
     A-->>AD: 200 AdminReport
     AD->>A: GET /api/admin/content/stock
     A->>DB: SELECT terms, timeline_facts, job_runs (sync_banks), rejected_guesses
-    A-->>AD: 200 { banks[], last_sync, top_rejected_guesses[] }
+    A-->>AD: 200 { banks[] (con consumers), last_sync, top_rejected_guesses[] }
+    AD->>A: GET /api/admin/generation-failures (contador "Próximos (n)")
+    A->>DB: SELECT generation_failures + challenges vigentes
+    A-->>AD: 200 { failures[] }
     AD->>A: GET /api/admin/metrics?from&to
     A->>DB: SELECT metrics_* WHERE rango
     A-->>AD: 200 Metrics
@@ -147,16 +150,17 @@ sequenceDiagram
 **Request:** `GET /api/admin/content/stock`
 
 **Operación de BD:**
-- **Tabla:** `terms` / `timeline_facts` — conteos por `status`. `approved_available` = `approved` fuera de su ventana anti-repetición (`last_used_devdle`, `last_used_grep`, `last_used`). `rejections` = `wikidata_id`, `term`/`label`, `rejection_reason` de los `rejected` (máximo 200).
-- **Tabla:** `job_runs` — última fila con `job = 'sync_banks'` (`finished_at`, `summary`).
-- **Tabla:** `rejected_guesses` — `word`, `count(*) AS distinct_players` GROUP BY `word` ORDER BY 2 DESC LIMIT 50.
+- **Tabla:** `terms` / `timeline_facts` — conteos por `status`. por consumidor (`GameDefinition.bankUsage`): `approved_available` = `approved` con `last_used_* IS NULL OR <= today - windowDays`, `days_of_stock = floor(approved_available / itemsPerChallenge)`, `cycle_ok = approved_total >= itemsPerChallenge × windowDays`; a nivel banco: disponibles para todos los consumidores, mínimo de días y todos `cycle_ok`. `rejections` ORDER BY `updated_at` DESC. `rejections` = `wikidata_id`, `term`/`label`, `rejection_reason` de los `rejected` (máximo 200).
+- **Tabla:** `job_runs` — última fila con `job = 'sync_banks'` y `status = 'success'` (`finished_at`, `summary`); `null` si nunca hubo.
+- **Nuevo paso (REQ-008):** `GET /api/admin/generation-failures` devuelve las fallas activas (sin `payload`) para el contador del shell.
+- **Tabla:** `rejected_guesses` — `word`, `count(*) AS distinct_players` GROUP BY `word` ORDER BY 2 DESC, `word` ASC LIMIT 50.
 
 **Response (éxito):**
 - **Status:** 200
 - **Body:**
   ```json
   {
-    "banks": [ { "bank": "terms | timeline_facts", "approved_available", "approved_total", "rejected_total", "days_of_stock", "cycle_ok", "rejections": [ { "wikidata_id", "label", "reason" } ] } ],
+    "banks": [ { "bank": "terms | timeline_facts", "approved_available", "approved_total", "rejected_total", "days_of_stock", "cycle_ok", "consumers": [ { "game_id", "window_days", "items_per_challenge", "approved_available", "days_of_stock", "cycle_ok" } ], "rejections": [ { "wikidata_id", "label", "reason" } ] } ],
     "last_sync": { "finished_at", "dataset_version", "inserted", "updated", "unchanged", "kept_rejected" },
     "top_rejected_guesses": [ { "word", "distinct_players" } ]
   }

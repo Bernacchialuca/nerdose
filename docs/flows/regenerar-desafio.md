@@ -4,8 +4,8 @@ title: Regenerar un desafío desde el admin
 type: feature
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-03
-stories: []
+last_updated: 2026-11-13
+stories: [S-035, S-036, S-037, S-038, S-039]
 ---
 
 # Regenerar un desafío desde el admin
@@ -39,11 +39,14 @@ sequenceDiagram
     participant G as generator
 
     AD->>A: POST /api/admin/challenges/{challenge_id}/regenerate (Bearer)
-    A->>DB: INSERT generation_requests (pending) o devuelve el pendiente
+    A->>DB: INSERT generation_requests (pending) ON CONFLICT DO NOTHING o devuelve el pendiente
     A->>DB: SELECT pg_notify('generation_requests', request_id)
-    A-->>AD: 202 { request_id }
+    A-->>AD: 202 { request_id, status, requested_at }
     DB-->>G: NOTIFY generation_requests (o poll cada 60 s)
     G->>DB: SELECT ... WHERE status='pending' FOR UPDATE SKIP LOCKED
+    alt challenge ya no approved o date <= today
+        G->>DB: UPDATE generation_requests SET status='cancelled'
+    end
     loop attempt = último + 1 ... + GENERATION_MAX_ATTEMPTS
         G->>DB: INSERT challenges (draft)
         G->>G: verify()
@@ -52,13 +55,13 @@ sequenceDiagram
         end
     end
     alt alguno pasó
-        G->>DB: BEGIN; viejo → rejected; nuevo → approved; request → done; COMMIT
+        G->>DB: BEGIN; SELECT viejo FOR UPDATE; viejo → rejected; nuevo → approved; request → done; COMMIT (si ya no es approved: nuevo → rejected, request → cancelled)
     else ninguno pasó
         G->>DB: UPDATE generation_requests SET status='failed', error
     end
-    loop mientras haya pending_request
+    loop cada 5 s mientras haya regeneration.status = pending
         AD->>A: GET /api/admin/challenges/upcoming
-        A-->>AD: 200 { days[].games[].challenge, pending_request }
+        A-->>AD: 200 { days[].games[].challenge, regeneration, active_failures }
     end
 ```
 
@@ -77,12 +80,12 @@ sequenceDiagram
 
 **Operación de BD:**
 - **Tabla:** `generation_requests`
-- **Operación:** SELECT `id` WHERE `challenge_id` AND `status = 'pending'`; si no hay, INSERT (`challenge_id`, `status = 'pending'`, `requested_at`)
+- **Operación:** INSERT (`challenge_id`) ON CONFLICT ON CONSTRAINT `uq_generation_requests_pending` DO NOTHING RETURNING; si no devuelve fila, SELECT del pendiente existente. Todo en la misma transacción que lee el challenge
 - **Operación:** `SELECT pg_notify('generation_requests', <id>)`
 
 **Response (éxito):**
 - **Status:** 202
-- **Body:** `{ "request_id": "uuid" }`
+- **Body:** `{ "request_id": "uuid", "status": "pending", "requested_at": "date-time" }`
 
 **Ref:** `docs/apis/api.yaml` POST /api/admin/challenges/{challenge_id}/regenerate
 
@@ -98,7 +101,9 @@ sequenceDiagram
 
 **Operación de BD:**
 - **Tabla:** `generation_requests` — SELECT `id`, `challenge_id` WHERE `status = 'pending'` FOR UPDATE SKIP LOCKED
-- **Tabla:** `challenges` — SELECT `game_id`, `date`, `max(attempt)` para (`game_id`, `date`)
+- **Tabla:** `challenges` — SELECT `game_id`, `date`, `status`, `max(attempt)` para (`game_id`, `date`)
+
+**Cancelación:** si el challenge ya no es `approved` o `date <= today`, UPDATE `status = 'cancelled'`, `processed_at`; COMMIT, sin generar (REQ-008, enmienda ADR-005).
 
 ---
 
@@ -123,9 +128,10 @@ sequenceDiagram
 **Tipo:** Interno (transacción)
 
 **Operaciones de BD:**
+0. **Tabla:** `challenges` (viejo) — SELECT ... FOR UPDATE; si ya no es `approved` o `date <= today`: nuevo → `rejected` (`reason = 'request_cancelled'`), pedido → `cancelled`, fin
 1. **Tabla:** `challenges` (viejo) — UPDATE `status = 'rejected'`, `verification = verification || '{"reason":"regenerated"}'`
 2. **Tabla:** `challenges` (nuevo) — UPDATE `status = 'approved'`, `verification`
-3. **Tabla:** `terms` / `timeline_facts` — UPDATE `last_used_devdle` / `last_used_grep` / `last_used = date` de los ítems del nuevo
+3. **Tabla:** `terms` / `timeline_facts` — UPDATE `last_used_*` = `GREATEST(last_used_*, date)` de los ítems del nuevo (los del viejo no se revierten)
 4. **Tabla:** `generation_requests` — UPDATE `status = 'done'`, `new_challenge_id`, `processed_at = now()`
 
 El orden 1 → 2 respeta el índice único parcial `uq_challenges_active_game_date`.
@@ -142,9 +148,9 @@ El orden 1 → 2 respeta el índice único parcial `uq_challenges_active_game_da
 
 **Request:** `GET /api/admin/challenges/upcoming?days=14`
 
-**Operación de BD:** `challenges` (`status = 'approved'`, `date` en `[today+1, today+days]`) + `generation_requests` (último por `challenge_id`).
+**Operación de BD:** `challenges` (`status = 'approved'`, `date` en `[today+1, today+days]`) + `generation_requests` (último por `challenge_id`, solo `pending`/`failed`) + `generation_failures` + `terms`/`timeline_facts` (`rejected_items` vía `definition.culprits`). El admin refetchea cada 5 s mientras haya un pedido `pending`. El contador del shell usa `GET /api/admin/generation-failures`.
 
-**Response:** `200 { "days": [ { "date", "number", "games": [ { "game_id", "challenge": { "id", "status", "payload", "verification", "generator_version" } | null, "pending_request": { "request_id", "status" } | null } ] } ] }`
+**Response:** `200 { "days": [ { "date", "number", "games": [ { "game_id", "challenge": { "id", "status", "payload", "verification", "generator_version", "attempt", "rejected_items" } | null, "regeneration": { "request_id", "status", "error", "requested_at", "processed_at" } | null, "failure" } ] } ], "active_failures": n }`
 
 **Ref:** `docs/apis/api.yaml` GET /api/admin/challenges/upcoming (`UpcomingDay`)
 
@@ -156,7 +162,8 @@ El orden 1 → 2 respeta el índice único parcial `uq_challenges_active_game_da
 | 1 | Challenge inexistente | 404 | `{ "error": { "code": "not_found", … } }` | admin refresca |
 | 1 | No `approved` o `date <= today` | 409 | `{ "error": { "code": "not_regenerable", … } }` | admin muestra que no se puede regenerar |
 | 2 | `generator` caído | — | — | El pedido queda `pending`; se procesa al volver (poll) |
-| 3 | Ningún candidato pasa la verificación | — | `generation_requests.status = 'failed'`, `error` | El viejo sigue `approved`; el admin ve "falló" |
+| 2 | La fecha llegó o el challenge ya no es `approved` | — | `generation_requests.status = 'cancelled'` | El original se publica sin cambios; el admin no lo ve pendiente |
+| 3 | Ningún candidato pasa la verificación | — | `generation_requests.status = 'failed'`, `error` | El viejo sigue `approved`; el admin ve "regeneración fallida" con el motivo; no se escribe `generation_failures` |
 | 4 | Error de BD en el reemplazo | — | ROLLBACK | El viejo sigue `approved`; el pedido sigue `pending` y se reintenta |
 
 ## Resultado

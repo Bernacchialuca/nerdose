@@ -8,8 +8,8 @@ audiences:
   - responsable
 fidelity: mid
 status: diseñada
-version: "1.0"
-date: 2026-11-03
+version: "1.1"
+date: 2026-11-13
 overlay: true
 overlay_type: modal
 triggered_by: proximos-desafios
@@ -20,7 +20,7 @@ triggered_by: proximos-desafios
 ## Identidad
 
 - **Audiencia primaria:** [responsable](../../../audiences/responsable/research-context.md)
-- **JTBD / Propósito:** Confirmar el pedido de regeneración de un desafío aprobado con fecha futura.
+- **JTBD / Propósito:** Confirmar el pedido de regeneración de un desafío aprobado con fecha futura, sabiendo que se atiende en segundo plano y que el actual sigue vigente hasta el reemplazo.
 - **Viewports:**
   - **desktop** — Modal centrado (6/12). (único viewport de la superficie; no hay caso mobile relevado).
 
@@ -31,10 +31,11 @@ triggered_by: proximos-desafios
 - `o-02-detalle-desafio` · «Regenerar»
 
 **Salidas user-driven:**
-- A `proximos-desafios` · «Regenerar» (la celda pasa a «regeneración pendiente») o «Cancelar»
+- A `proximos-desafios` (o a `o-02-detalle-desafio` si se abrió desde ahí) · «Regenerar» (la celda pasa a «regeneración pendiente») o «Cancelar»
 
 **Salidas automáticas:**
 - A `login` · `401` por token vencido (borra el token).
+- A `proximos-desafios` · `404 not_found` (el desafío ya no existe): cierra y refresca la grilla.
 
 ## Estructura
 
@@ -70,14 +71,14 @@ triggered_by: proximos-desafios
 - Annotation: nada
 
 ### texto
-- Texto/label: Se generará un reemplazo para Tech Timeline #134 (2026-11-07). Si pasa la verificación, el actual se rechaza; si falla, queda el actual.
+- Texto/label: Se pedirá un reemplazo para Grep Grid #35 (2026-12-05). El generador lo prepara en segundo plano: si pasa la verificación reemplaza al actual; si no, queda el actual. Si llega la fecha antes, se publica el actual sin cambios.
 - Icono: nada
 - Annotation: nada
 
 ### alerta-no-disponible
-- Texto/label: Este desafío ya no se puede regenerar: dejó de estar aprobado o su fecha ya no es futura. Refrescá Próximos.
+- Texto/label: Solo se puede regenerar un desafío aprobado de una fecha futura. Refrescá Próximos.
 - Icono: nada
-- Annotation: nada
+- Annotation: respuesta `409 not_regenerable` (el desafío se publicó, se anuló, se rechazó o su fecha ya no es futura)
 
 ### alerta-sistema
 - Texto/label: No pudimos pedir la regeneración. Probá de nuevo.
@@ -110,7 +111,7 @@ triggered_by: proximos-desafios
 
 ### no disponible
 - Aplica: Sí
-- Mensaje: Este desafío ya no se puede regenerar: dejó de estar aprobado o su fecha ya no es futura. Refrescá Próximos.
+- Mensaje: Solo se puede regenerar un desafío aprobado de una fecha futura. Refrescá Próximos.
 - Cambios:
   - alerta-no-disponible: visible solo acá.
   - btn-regenerar: variant="disabled".
@@ -124,7 +125,9 @@ triggered_by: proximos-desafios
 ## Interacciones
 
 **Eventos:**
-- btn-regenerar · on click → `POST /api/admin/challenges/{id}/regenerate`; cierra y marca la celda como pendiente
+- btn-regenerar · on click → `POST /api/admin/challenges/{id}/regenerate`; con `202` cierra, marca la celda como pendiente y Próximos inicia el polling. Si ya había un pedido pendiente, la respuesta es ese mismo pedido: no se crea otro (idempotente)
+- respuesta `409 not_regenerable` → estado `no disponible`
+- respuesta `404 not_found` → cierra y refresca Próximos
 - btn-cancelar · on click → cierra sin cambios
 
 **Validaciones:**
@@ -142,6 +145,9 @@ triggered_by: proximos-desafios
 
 **Decisiones tomadas:**
 - La acción no es destructiva (el actual queda si el reemplazo falla), por eso el botón es primario y no `error`.
+- REQ-008: el texto avisa que el pedido es asíncrono y que, si llega la fecha antes del reemplazo, se publica el actual (CA 7).
+- REQ-008: repetir el pedido no duplica nada (CA 4), por eso no hace falta un estado propio para «ya pendiente»: la celda ya no ofrece «Regenerar» y, si se cuela un doble clic, la API devuelve el pedido existente.
+- REQ-008: el mensaje de `not_regenerable` es el del diseño técnico («solo se puede regenerar un desafío aprobado de una fecha futura»).
 
 **Alternativas descartadas:**
 - Regenerar sin confirmar: consume generación (costo), se confirma siempre.
@@ -151,4 +157,4 @@ triggered_by: proximos-desafios
 
 ## Trazabilidad
 
-- C-44 · flujo 4 de `user-flows.md`.
+- C-44 · REQ-008 (RF 3, 5; CA 3-5, 7) · flujo 4 de `user-flows.md`.

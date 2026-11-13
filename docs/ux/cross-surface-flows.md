@@ -1,7 +1,7 @@
 ---
 document: UX Cross-Surface Flows
-version: "1.1"
-date: 2026-11-11
+version: "1.2"
+date: 2026-11-13
 status: Draft - Punto de partida para discusión
 flows_count: 2
 ---
@@ -53,24 +53,26 @@ flows_count: 2
 
 **Superficies involucradas:**
 1. admin — pide la regeneración (C-44) y ve el resultado con polling
-2. web — recibe el desafío que reemplaza al anterior cuando llega su fecha (indirecto)
+2. web — recibe el desafío vigente de esa fecha cuando se publica (indirecto)
 
 **Audiencias involucradas:**
-- responsable en admin: mira los próximos 14 días y regenera un desafío aprobado.
+- responsable en admin: mira los próximos 14 días y regenera un desafío aprobado (por duda, por una falla del contenido o porque usa un ítem rechazado).
 - jugador en web: no ve el proceso; solo juega el desafío vigente el día correspondiente.
 
 **Secuencia:**
 
-1. **[admin]** En `/upcoming` el responsable regenera un desafío `approved` con fecha futura. La celda pasa a "regeneración pendiente".
-2. **[admin]** La vista consulta cada pocos segundos hasta que el reemplazo pasa la verificación (el viejo pasa a `rejected`) o falla (queda el actual).
-3. **[web]** Llegado el día, la home y el juego muestran el desafío vigente de esa fecha, sin diferencia visible para el jugador.
+1. **[admin]** En `/upcoming` el responsable regenera un desafío `approved` con fecha futura. La celda pasa a "regeneración pendiente"; el desafío actual sigue aprobado y publicable.
+2. **[admin]** La vista consulta cada 5 s hasta que el reemplazo pasa la verificación (el nuevo queda aprobado y el viejo `rejected` en la misma operación) o falla (queda el actual, con el motivo visible).
+3. **[admin → web]** Si llega la fecha antes de que se atienda el pedido, el pedido se cancela y se publica el desafío original sin cambios: nunca se reemplaza un desafío publicado.
+4. **[web]** Llegado el día, la home y el juego muestran el desafío vigente de esa fecha, sin diferencia visible para el jugador.
 
 **Sincronización:**
-- **Tipo:** Polling en el admin; sin propagación hacia la web hasta la publicación (00:00 UTC).
-- **Latencia esperada:** pendiente de confirmar (la convención del admin sugiere 5 s de polling); la web no depende de ella.
-- **Qué se comparte:** el Challenge `approved` de esa fecha y su estado de regeneración.
+- **Tipo:** Polling en el admin (5 s, solo mientras hay pendientes); sin propagación hacia la web hasta la publicación (00:00 UTC).
+- **Latencia esperada:** la del generador al atender el pedido (inmediata si está activo; al volver si estaba caído). La web no depende de ella.
+- **Qué se comparte:** el Challenge `approved` de esa fecha (el nuevo o el original) y el estado del pedido (pendiente, atendido, fallido, cancelado).
+- **Implementado por:** REQ-008.
 
 **Estados intermedios:**
 
-- **responsable en admin ve:** "regeneración pendiente" y el desafío actual sigue visible hasta el reemplazo.
-- **jugador en web ve:** nada: los desafíos futuros no son visibles para el jugador.
+- **responsable en admin ve:** "regeneración pendiente" con el desafío actual visible hasta el reemplazo; después el nuevo, o "regeneración fallida" con su motivo. Un pedido cancelado por cambio de día no se muestra (el día ya salió de la ventana).
+- **jugador en web ve:** nada: los desafíos futuros, su solución y su log nunca salen por los endpoints de jugador (NFR-S01).

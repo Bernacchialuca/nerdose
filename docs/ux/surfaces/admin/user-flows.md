@@ -1,8 +1,8 @@
 ---
 document: UX User Flows
 surface: admin
-version: "1.1"
-date: 2026-11-11
+version: "1.2"
+date: 2026-11-13
 status: Draft - Punto de partida para discusión
 flows_count: 5
 ---
@@ -153,44 +153,49 @@ Los reportes tratados quedan `resolved` o `dismissed` y visibles bajo su filtro;
 
 ## Flujo 4: Revisar los próximos 14 días y regenerar un desafío
 
-**JTBD que resuelve:** "Cuando quiero anticipar problemas sin cargar nada a mano, quiero mirar los próximos 14 días y regenerar un desafío si hace falta, para detectar un hueco o un desafío dudoso antes de su fecha." `[fuente: PRD §F-12 C-43, C-44]`
+**JTBD que resuelve:** "Cuando quiero anticipar problemas sin cargar nada a mano, quiero mirar los próximos 14 días y regenerar un desafío si hace falta, para detectar un hueco o un desafío dudoso antes de su fecha." `[fuente: PRD §F-12 C-43, C-44, C-49]`
 **Audiencia:** responsable ([research-context](../../audiences/responsable/research-context.md))
-**Trigger:** Revisión de rutina de Próximos desafíos, donde se ven las fallas de generación registradas (C-49); también un reporte previo que hace dudar de un desafío futuro similar (hipótesis).
+**Trigger:** Revisión de rutina de Próximos desafíos; el contador «Próximos (n)» del encabezado avisa que hay fallas de generación activas (C-49, sin mail por ADR-017); también un reporte o una anulación previa que hace dudar de un desafío futuro (REQ-007 dejó los desafíos que usan un ítem rechazado para revisarlos acá).
 
 ### Happy path
 
-1. El responsable entra a P-03 (Próximos desafíos) desde el encabezado ("Próximos").
-2. Ve la grilla de 14 días × 5 juegos con el estado de cada celda: aprobado, sin desafío o regeneración pendiente.
-3. Abre una celda aprobada que le parece dudosa: O-02 muestra la preview en modo solución, ES/EN y log de verificación.
-4. Pulsa "Regenerar". Se abre O-03 que pide confirmar (solo `approved` con fecha posterior a hoy).
-5. Confirma. La celda pasa a "regeneración pendiente" y P-03 hace polling (5 s sugerido, a confirmar).
-6. El reemplazo pasa la verificación: la celda vuelve a "aprobado" con el desafío nuevo (el viejo pasa a `rejected`, de forma atómica).
+1. El responsable entra a P-03 (Próximos desafíos) desde el encabezado («Próximos», con el número de fallas activas si hay).
+2. Ve la grilla de mañana a +14 días × juegos registrados con el estado de cada celda: aprobado, sin desafío (con su falla de generación), regeneración pendiente, regeneración fallida o «usa un ítem rechazado». Hoy no aparece. `[fuente: REQ-008 CA 1]`
+3. Abre una celda aprobada que le parece dudosa: O-02 muestra la preview del juego en modo solución (como la ve el jugador, con la solución superpuesta) en ES y EN lado a lado, el intento, la versión del generador y el log de verificación, sin el seed. `[fuente: REQ-008 CA 2]`
+4. Pulsa «Regenerar». O-03 explica que el pedido se atiende en segundo plano y pide confirmar (solo `approved` con fecha posterior a hoy).
+5. Confirma. La celda (y O-02 si está abierto) pasa a «regeneración pendiente»; el desafío actual sigue aprobado. P-03 hace polling cada 5 s. `[fuente: REQ-008 CA 3]`
+6. El reemplazo pasa la verificación: la celda vuelve a «aprobado» con el desafío nuevo (el viejo pasa a `rejected` en la misma operación) y el polling se corta.
 
 ### Caminos alternativos
 
-- **Revisión sin intervención** — Recorre la grilla, no ve huecos ni dudas y sale. Es el caso esperado la mayoría de los días (hipótesis `inferida-PRD`).
-- **Celda sin desafío** — No admite "Regenerar" (C-44 solo aplica a `approved`). Se detecta el hueco y se actúa fuera de esta superficie; la superficie no define acción para completarlo (ver riesgo abajo).
-- **Regenerar desde la celda sin abrir el detalle** — Acción directa que abre O-03 (product-map O-03).
-- **Salir de la pantalla durante la regeneración** — El proceso sigue en el servidor; al volver a P-03 el estado pendiente se retoma por el polling.
+- **Revisión sin intervención** — Recorre la grilla, no ve huecos ni avisos y sale. Es el caso esperado la mayoría de los días (hipótesis `inferida-PRD`).
+- **Desafío que usa un ítem rechazado** — La celda y O-02 muestran «Usa un ítem rechazado: <término o hecho>» con «Regenerar» disponible. No se regenera solo: el responsable decide. `[fuente: REQ-008 CA 10]`
+- **Celda sin desafío por una falla de generación** — Muestra los intentos (20) y el último motivo, destacada, y el aviso de la sección la resume. No admite «Regenerar» (C-44 solo aplica a `approved`): la próxima corrida del generador lo reintenta. Cuando una corrida lo logra, la falla deja de mostrarse sola. `[fuente: REQ-008 CA 8, 9]`
+- **Regenerar desde la celda sin abrir el detalle** — Acción directa que abre O-03.
+- **Pedir de nuevo con una regeneración pendiente** — «Regenerar» no está disponible; si un doble clic llega a la API, devuelve el pedido existente y no se crea otro. `[fuente: REQ-008 CA 4]`
+- **Salir de la pantalla durante la regeneración** — El pedido sigue en el servidor; al volver a P-03 la celda muestra su estado real y el polling se retoma si sigue pendiente.
+- **Llega la fecha antes de que se atienda el pedido** — El pedido se cancela, el desafío original se publica sin cambios y el día sale de la grilla (pasa a ser hoy). `[fuente: REQ-008 CA 7]`
 
 ### Errores y recuperación
 
-- **La regeneración falla o el reemplazo no pasa la verificación** — Queda el desafío actual `approved` (C-44). P-03 quita el estado pendiente e informa que no se pudo regenerar. Recuperación: reintentar o dejar el actual.
-- **Fecha ya no es futura o el desafío dejó de ser `approved`** — O-03 no permite confirmar y explica por qué. Recuperación: refrescar P-03.
-- **Regeneración ya pendiente en esa celda** — "Regenerar" no está disponible; el responsable espera el resultado.
-- **Falla al cargar la grilla o las previews** — P-03 distingue error de carga de "sin datos" con reintento; las previews se renderizan al abrir O-02 (pregunta abierta 5).
-- **Sesión vencida durante el polling o con O-03 abierto** — Ver Flujo 1; al volver, P-03 muestra el estado real de cada celda.
-- **Hueco de generación sin vía de resolución en la superficie** — El PRD permite ver los días sin desafío (C-43) pero no ofrece acción para crearlos desde el admin; es un riesgo de recuperación abierto. A confirmar con el responsable.
+- **El reemplazo no pasa la verificación** — Queda el desafío actual `approved`. La celda y O-02 muestran «regeneración fallida» con el motivo; P-03 lo avisa. Recuperación: volver a regenerar o dejar el actual. No se registra una falla de generación, porque el día tiene desafío. `[fuente: REQ-008 CA 6]`
+- **El desafío dejó de ser regenerable** (se publicó, se anuló o su fecha ya no es futura) — La API responde `not_regenerable`; O-03 informa «Solo se puede regenerar un desafío aprobado de una fecha futura» y no crea el pedido. Recuperación: refrescar P-03. `[fuente: REQ-008 CA 5]`
+- **El desafío ya no existe** (`404`) — O-03 se cierra y P-03 se refresca.
+- **El generador está caído** — El pedido queda pendiente y la celda en «Regenerando…» hasta que el generador vuelve y lo atiende (o hasta que llega la fecha y se cancela). Recuperación: ninguna en la superficie.
+- **Falla al cargar la grilla** — P-03 distingue error de carga de «sin desafío», con reintento; las previews se cargan solo al abrir O-02.
+- **Sesión vencida durante el polling o con O-03 abierto** — Ver Flujo 1; al volver, P-03 muestra el estado real de cada celda (el pedido, si se envió, sigue en curso).
+- **Hueco de generación sin vía de resolución en la superficie** — El admin muestra los días sin desafío y sus fallas, pero no crea desafíos (fuera de alcance de REQ-008); depende de que una corrida posterior lo logre. Riesgo de recuperación aceptado.
 
 ### Estado final
 
-La grilla refleja que cada celda dudosa fue reemplazada (desafío nuevo aprobado) o que se dejó el actual. No quedan celdas en "regeneración pendiente" salvo las en curso.
+La grilla refleja que cada celda dudosa fue reemplazada (desafío nuevo aprobado) o que se dejó el actual (con su motivo si la regeneración falló). No quedan celdas en «regeneración pendiente» salvo las en curso, y las fallas activas siguen a la vista hasta que una corrida las resuelve.
 
 ### Criterios de éxito
 
-- Detecta de un vistazo qué días de los próximos 14 quedan sin desafío en cada juego. `[fuente: PRD §F-12 C-43]`
-- Puede revisar un desafío futuro (solución, ES/EN, log) sin cargar nada a mano.
-- Una regeneración fallida nunca deja una celda sin desafío.
+- Detecta de un vistazo qué días de los próximos 14 quedan sin desafío en cada juego, y por qué. `[fuente: PRD §F-12 C-43, C-49]`
+- Puede revisar un desafío futuro como lo verá el jugador (solución, ES/EN, log) sin cargar nada a mano.
+- Una regeneración fallida o cancelada nunca deja una celda sin desafío.
+- Se entera de una falla de generación desde cualquier pantalla del admin por el contador del encabezado, sin mail.
 
 ---
 
@@ -203,7 +208,7 @@ La grilla refleja que cada celda dudosa fue reemplazada (desafío nuevo aprobado
 ### Happy path
 
 1. El responsable abre P-04 (Stock de contenido) desde el encabezado.
-2. Ve por banco (términos, hechos): ítems aprobados disponibles y totales, rechazados con motivo, días de stock estimados, si el banco alcanza para ciclar respetando la ventana anti-repetición, y la última carga del dataset. Además el top 50 de palabras rechazadas en Devdle.
+2. Ve la última carga del dataset (fecha, versión, insertados, actualizados) y, por banco (términos desglosado por Devdle y Grep Grid; hechos para Tech Timeline): ítems aprobados disponibles y totales, rechazados con motivo, días de stock estimados y si alcanza para ciclar respetando la ventana anti-repetición de cada juego. Además el top 50 de palabras rechazadas en Devdle por cantidad de jugadores distintos, solo lectura. `[fuente: REQ-008 CA 11-13]`
 3. Concluye que el stock es suficiente y abre P-05 (Métricas).
 4. Elige el rango de fechas (`from`, `to`). Ve cifras resumen y tablas: jugadores únicos, retención D1/D7, distribución de rachas, calidad por desafío.
 5. Identifica un desafío con tasa de completado baja o reportes altos y decide si revisarlo (ver camino alternativo).
@@ -212,7 +217,9 @@ La grilla refleja que cada celda dudosa fue reemplazada (desafío nuevo aprobado
 
 - **Solo métricas** — Entra directo a P-05 sin pasar por P-04.
 - **Un desafío de baja calidad** — La fila de calidad no enlaza hoy a Reportes ni al desafío (pregunta abierta 6). El responsable va a P-02 manualmente para investigar. Supuesto: si debe haber enlace, depende de la respuesta a esa pregunta.
-- **Banco por agotarse** — P-04 muestra días de stock bajos o que no alcanza para ciclar; la acción es externa a la superficie (solo lectura, C-45). Alimenta el Flujo 4 si empiezan a aparecer huecos.
+- **Banco por agotarse** — P-04 muestra días de stock bajos o «Alcanza para ciclar: No» con un aviso que dice qué juego no alcanza; la acción es externa a la superficie (solo lectura, C-45). Alimenta el Flujo 4 si empiezan a aparecer huecos.
+- **Palabra rechazada que debería aceptarse** — El responsable la ve en el top 50 y la suma a la lista base fuera del admin (cambio de código, F-15): no hay acción en P-04.
+- **Sin carga registrada o sin rechazos** — P-04 muestra «Sin datos de carga» y «Sin rechazos» como estados vacíos, no como error. `[fuente: REQ-008 CA 14]`
 - **Cambiar el rango** — Reconsultar con otro rango; todas las tablas lo respetan.
 
 ### Errores y recuperación

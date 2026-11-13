@@ -110,6 +110,7 @@ Each game has a test that serializes `toPublic(payload)` and every pre-result re
 ## Update (REQ-004)
 
 - `applyMove(p, s, m, now, ctx: MoveContext)`: `ctx = { isValidWord(word) }` is built by the `api` from `WordList.has`; games that do not need it ignore it.
+- `GameDefinition.bankUsage` (REQ-008) is `{ bank: 'terms' | 'timeline_facts'; lastUsedField: string; windowDays: number; itemsPerChallenge: number } | null` (Devdle `terms`/`last_used_devdle`/365/1, Grep Grid `terms`/`last_used_grep`/30/8, Timeline `timeline_facts`/`last_used`/90/5, Big O and Bug Hunt `null`). The `api` builds the content stock from it without per-game constants; a package test asserts it matches `historySpec`.
 - `GameGenerator` declares `historySpec = { bank, lastUsedField, recentDays }` and `usedBankItems(payload)`; the `generator` builds a generic history `{ bankItems, recentChallenges }`, with no per-game logic.
 
 ## Update (REQ-005)

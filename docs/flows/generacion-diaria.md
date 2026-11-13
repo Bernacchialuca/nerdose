@@ -4,8 +4,8 @@ title: Generación de desafíos (relleno de 14 días) y alerta de falla
 type: event
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-10
-stories: [S-022, S-023]
+last_updated: 2026-11-13
+stories: [S-022, S-023, S-036]
 ---
 
 # Generación de desafíos (relleno de 14 días) y alerta de falla
@@ -124,9 +124,9 @@ sequenceDiagram
 **Condición:** para `date = today+1`, un juego sigue sin desafío vigente después de todos los intentos.
 
 **Operación de BD:**
-- **Tabla:** `generation_failures` — INSERT (`game_id`, `date`, `attempts`, `last_reason`) ON CONFLICT (`game_id`, `date`) DO UPDATE `attempts`, `last_reason`
+- **Tabla:** `generation_failures` — INSERT (`game_id`, `date`, `attempts`, `last_reason`) ON CONFLICT (`game_id`, `date`) DO UPDATE `attempts`, `last_reason`; `attempts` = `GENERATION_MAX_ATTEMPTS` de la corrida y `last_reason` = `verification.reason` del último candidato
 
-La fila es la alerta (ADR-017): no se envía nada. El admin la ve en Próximos desafíos (`GET /api/admin/challenges/upcoming`, campo `failure`). Una corrida posterior para la misma fecha actualiza la fila, no crea otra.
+La fila es la alerta (ADR-017): no se envía nada. El admin la ve en Próximos desafíos (`GET /api/admin/challenges/upcoming`, campo `failure`). Una corrida posterior para la misma fecha actualiza la fila, no crea otra. Una falla es **activa** si su `date` está en `[today+1, today+14]` y no existe challenge vigente para ese (`game_id`, `date`): deja de mostrarse sola cuando una corrida logra el desafío (la fila no se borra).
 
 **Evento de dominio:** `ChallengeGenerationFailed` (`game_id`, `date`, `attempts`), solo en los logs.
 

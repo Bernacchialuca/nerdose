@@ -29,7 +29,7 @@ Frontend en React 19 + Vite (SPA, sin SSR), TypeScript estricto.
 - **Rutas supuestas.** Los documentos no fijan las rutas del admin; se asumió `/login`, `/reports`, `/upcoming`, `/content` y `/metrics`, con `/` redirigiendo a `/reports`.
 - **UI solo en español, sin i18n propio.** Los textos del admin se escriben directamente en español. Se inicializan dos instancias fijas de i18next (es y en) únicamente para que los `client` de los juegos, que traducen su UI con react-i18next, se vean en cada panel de la preview. El código de la app no usa `t()`.
 - **Preview en modo solución.** Se asumió que los `client` pueden renderizarse en modo solución recibiendo el `payload` completo (con `es` y `en`) y en modo de solo lectura. El contrato de props de los `client` aún no está definido (ADR-006 solo lista `Instructions`, `Game`, `Result`, `share`); hay que cerrarlo en el diseño de la story correspondiente.
-- **Intervalo de polling.** Los flujos mencionan el polling pero no su frecuencia; la convención sugiere 5 s mientras haya un pedido pendiente (valor a confirmar).
+- **Intervalo de polling.** Confirmado en REQ-008: 5 s, solo mientras algún juego tenga `regeneration.status = 'pending'`. El shell muestra "Próximos (n)" con `GET /api/admin/generation-failures`.
 - **Design System.** Todavía no existe; lo generará `/product-ux-generate` en `docs/design-system/`. Cuando exista, sus tokens mandan sobre los de la convención `styling`.
 - **Convenciones en inglés, documentos de servicio en español**, como pide el template de convenciones del workflow.
 - **Fuera de alcance (diferido por decisión del usuario):** Dockerfile, CI y despliegue. El host debe servir `index.html` para cualquier ruta y enrutar `/api/admin/*` a la `api`.

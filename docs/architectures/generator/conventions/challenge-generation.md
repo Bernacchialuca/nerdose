@@ -90,6 +90,7 @@ import { generator as devdle } from '@nerdose/game-devdle/generator';
 - The seed is `HMAC-SHA256(GENERATOR_SECRET, "{game_id}:{date}:{attempt}")` with `date` as `YYYY-MM-DD`, feeding `pure-rand` (xoroshiro128+). `Math.random()` and the current time are never used for generation.
 - `GENERATOR_SECRET` exists only in the `generator` environment and is never logged.
 - `GENERATION_MAX_ATTEMPTS` defaults to 20 and is configurable by env; `attempt` goes from 0 to `GENERATION_MAX_ATTEMPTS - 1`.
+- `generateForDate` accepts `firstAttempt` and a `regenerate` mode (REQ-008). Regeneration starts at `max(challenges.attempt)` for the (`game_id`, `date`) + 1, tries up to `GENERATION_MAX_ATTEMPTS` candidates (never repeating a seed) and returns the verified candidate as `draft` instead of approving it; the queue worker performs the atomic replacement.
 - `generate` is deterministic: same `{ date, seed, history }` gives the same payload. A game package never reads clock or randomness by itself.
 - A candidate is inserted as `draft` first, then `verify()` runs. It becomes `approved` only if `verify()` returns `ok: true`; the full log is stored in `challenges.verification`. Otherwise it becomes `rejected`.
 - `verify` fails if any text is missing a language (`{ es, en }`).

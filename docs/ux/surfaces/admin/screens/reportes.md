@@ -8,8 +8,8 @@ audiences:
   - responsable
 fidelity: mid
 status: diseñada
-version: "1.1"
-date: 2026-11-11
+version: "1.2"
+date: 2026-11-13
 ---
 
 # Pantalla: P-02 · Reportes
@@ -33,7 +33,7 @@ date: 2026-11-11
 **Salidas user-driven:**
 - A `o-02-detalle-desafio` · clic en la fila del grupo
 - A `o-01-anular-desafio` · acción «Anular» de la fila (solo desafío `published`; el recorrido recomendado pasa por el detalle)
-- A `proximos-desafios`, `stock-contenido`, `metricas` · encabezado (cuando existan: FG-7 y FG-10)
+- A `proximos-desafios`, `stock-contenido` · encabezado (REQ-008); a `metricas` cuando exista (FG-10)
 - A `login` · «Cerrar sesión»
 
 **Salidas automáticas:**
@@ -45,8 +45,8 @@ date: 2026-11-11
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
 | 1 | header | header | — | layout | desktop | — | Marca del panel |
 | 2 | nav-reportes | link | — | navigation | desktop | — | Navegación a Reportes, con el contador de grupos abiertos |
-| 3 | nav-proximos | link | — | navigation | desktop | — | Navegación a Próximos (FG-7) |
-| 4 | nav-stock | link | — | navigation | desktop | — | Navegación a Stock (FG-7) |
+| 3 | nav-proximos | link | — | navigation | desktop | — | Navegación a Próximos, con el contador de fallas de generación activas (REQ-008) |
+| 4 | nav-stock | link | — | navigation | desktop | — | Navegación a Stock (REQ-008) |
 | 5 | nav-metricas | link | — | navigation | desktop | — | Navegación a Métricas (FG-10) |
 | 6 | nav-cerrar-sesion | link | — | navigation | desktop | — | Cierra la sesión: borra el token y va a Login |
 | 7 | titulo | heading | h1 | content | desktop | — | Título |
@@ -103,14 +103,14 @@ date: 2026-11-11
 - Annotation: sección actual; el número es la cantidad de grupos con reportes abiertos (se refresca al resolver, descartar o anular)
 
 ### nav-proximos
-- Texto/label: Próximos
+- Texto/label: Próximos (1)
 - Icono: nada
-- Annotation: no se renderiza en REQ-007; se suma con FG-7
+- Annotation: se renderiza desde REQ-008; el número son las fallas de generación activas (`GET /api/admin/generation-failures`); sin fallas, sin número
 
 ### nav-stock
 - Texto/label: Stock
 - Icono: nada
-- Annotation: no se renderiza en REQ-007; se suma con FG-7
+- Annotation: se renderiza desde REQ-008
 
 ### nav-metricas
 - Texto/label: Métricas
@@ -251,6 +251,7 @@ date: 2026-11-11
 - La anulación queda a una fila de distancia, pero el recorrido recomendado pasa por el detalle para ver la solución primero.
 - REQ-007: sin paginación en v1 (volumen bajo, supuesto del request); se quita `paginacion`.
 - REQ-007: el encabezado solo muestra Reportes (con el contador de grupos abiertos) y Cerrar sesión. Próximos, Stock y Métricas siguen en el diseño y se renderizan con FG-7 y FG-10. Esto resuelve la pregunta 1 del product-map para reportes: el contador es el aviso, porque no hay mail.
+- REQ-008: el encabezado suma Próximos (con el contador de fallas de generación activas, igual que Reportes) y Stock. Métricas sigue para FG-10.
 - REQ-007: tras anular, un aviso confirma la anulación con la cantidad de partidas afectadas. El grupo desaparece de «Abiertos», y sin el aviso no quedaría rastro visible de que la acción ocurrió.
 - REQ-007: se suma la pestaña «Descartados» como estado propio (antes solo estaba «resueltos»).
 
