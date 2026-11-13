@@ -59,3 +59,18 @@
 - **Location:** packages/db/src/schema/enums.ts
 - **Signature:** PostgreSQL enums `report_reason` and `report_status`, built from `REPORT_REASONS` and `REPORT_STATUSES` of `@nerdose/core`
 - **Usage:** `reportReasonEnum('reason').notNull()`
+
+## generationRequests / GenerationRequest / NewGenerationRequest
+- **Location:** packages/db/src/schema/generation.ts
+- **Signature:** `generationRequests = pgTable('generation_requests', ...)`; regeneration queue with at most one `pending` per `challengeId` (`uq_generation_requests_pending`, a partial unique index: use `ON CONFLICT DO NOTHING` or `ON CONFLICT (challenge_id) WHERE status = 'pending' DO NOTHING`, never `ON CONSTRAINT`); `done` requires `newChallengeId`; any non-`pending` status requires `processedAt`; `nerdose_api` has `SELECT, INSERT`, `nerdose_generator` has `SELECT, INSERT, UPDATE`
+- **Usage:** `insert(generationRequests).values({ challengeId }).onConflictDoNothing().returning()`
+
+## generationFailures / GenerationFailure / NewGenerationFailure
+- **Location:** packages/db/src/schema/generation.ts
+- **Signature:** `generationFailures = pgTable('generation_failures', ...)`; PK `(gameId, date)` is the arbiter of the `fill` UPSERT, `attempts >= 1`, `updatedAt` maintained by the `set_updated_at` trigger; `nerdose_api` only has `SELECT`
+- **Usage:** `insert(generationFailures).values({ gameId, date, attempts, lastReason }).onConflictDoUpdate({ target: [generationFailures.gameId, generationFailures.date], set: { attempts, lastReason } })`
+
+## generationRequestStatusEnum
+- **Location:** packages/db/src/schema/enums.ts
+- **Signature:** PostgreSQL enum `generation_request_status`, built from `GENERATION_REQUEST_STATUSES` of `@nerdose/core`
+- **Usage:** `generationRequestStatusEnum('status').notNull().default('pending')`

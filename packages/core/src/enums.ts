@@ -31,6 +31,9 @@ export type TimelineCategory = (typeof TIMELINE_CATEGORIES)[number];
 export const DATE_PRECISIONS = ['year', 'month', 'day'] as const;
 export type DatePrecision = (typeof DATE_PRECISIONS)[number];
 
+export const GENERATION_REQUEST_STATUSES = ['pending', 'done', 'failed', 'cancelled'] as const;
+export type GenerationRequestStatus = (typeof GENERATION_REQUEST_STATUSES)[number];
+
 export const REPORT_REASONS = [
   'wrong_answer',
   'ambiguous',

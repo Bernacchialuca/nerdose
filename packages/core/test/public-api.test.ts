@@ -40,6 +40,7 @@ describe('public API of the "." entry', () => {
       'DATE_PRECISIONS',
       'ERROR_CATALOG',
       'GAME_IDS',
+      'GENERATION_REQUEST_STATUSES',
       'LOCALES',
       'REPORT_REASONS',
       'REPORT_STATUSES',

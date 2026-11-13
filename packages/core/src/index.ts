@@ -1,6 +1,7 @@
 export {
   CODE_LANGUAGES,
   DATE_PRECISIONS,
+  GENERATION_REQUEST_STATUSES,
   LOCALES,
   REPORT_REASONS,
   REPORT_STATUSES,
@@ -8,6 +9,7 @@ export {
   TIMELINE_CATEGORIES,
   type CodeLanguage,
   type DatePrecision,
+  type GenerationRequestStatus,
   type ReportReason,
   type ReportStatus,
   type TermCategory,

@@ -50,6 +50,10 @@ const matrix: [string, string, string[]][] = [
     ['SELECT', 'INSERT', 'UPDATE'],
   ]),
   ...PLAYER_TABLES.map((t): [string, string, string[]] => ['nerdose_generator', t, []]),
+  ['nerdose_api', 'generation_requests', ['SELECT', 'INSERT']],
+  ['nerdose_api', 'generation_failures', ['SELECT']],
+  ['nerdose_generator', 'generation_requests', ['SELECT', 'INSERT', 'UPDATE']],
+  ['nerdose_generator', 'generation_failures', ['SELECT', 'INSERT', 'UPDATE']],
 ];
 
 describe('role privileges', () => {
