@@ -3,6 +3,7 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import {
   CODE_LANGUAGES,
   DATE_PRECISIONS,
+  GENERATION_REQUEST_STATUSES,
   LOCALES,
   REPORT_REASONS,
   REPORT_STATUSES,
@@ -14,6 +15,7 @@ import type {
   CodeLanguage,
   DatePrecision,
   GameId,
+  GenerationRequestStatus,
   Locale,
   ReportReason,
   ReportStatus,
@@ -173,5 +175,31 @@ describe('report enums types', () => {
       REPORT_REASONS.push('spam');
     };
     expectTypeOf(mutate).toBeFunction();
+  });
+});
+
+describe('GENERATION_REQUEST_STATUSES', () => {
+  it('lists values in order (TS-12)', () => {
+    expect(GENERATION_REQUEST_STATUSES).toEqual(['pending', 'done', 'failed', 'cancelled']);
+    expect(GENERATION_REQUEST_STATUSES).toHaveLength(4);
+  });
+
+  it('derives GenerationRequestStatus and is read-only (TS-13)', () => {
+    expectTypeOf<GenerationRequestStatus>().toEqualTypeOf<
+      'pending' | 'done' | 'failed' | 'cancelled'
+    >();
+    const mutate = (): void => {
+      // @ts-expect-error GENERATION_REQUEST_STATUSES is readonly
+      GENERATION_REQUEST_STATUSES.push('running');
+    };
+    expectTypeOf(mutate).toBeFunction();
+  });
+
+  it('accepts cancelled and rejects invented values (TS-14)', () => {
+    const s: GenerationRequestStatus = 'cancelled';
+    // @ts-expect-error 'running' is not a GenerationRequestStatus
+    const r: GenerationRequestStatus = 'running';
+    expect(s).toBe('cancelled');
+    expect(r).toBe('running');
   });
 });

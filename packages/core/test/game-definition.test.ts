@@ -5,7 +5,9 @@ import type { ErrorCode } from '../src/errors';
 import { GAME_IDS } from '../src/game-definition';
 import { createGameRegistry } from '../src/game-registry';
 import type { AnyGameDefinition } from '../src/game-registry';
+import type { HistorySpec } from '../src/game-generator';
 import type {
+  BankUsage,
   Culprit,
   CulpritKind,
   GameDefinition,
@@ -71,10 +73,92 @@ describe('game contract', () => {
     // @ts-expect-error culprits is missing
     const missingCulprits: Def = noCulprits;
     expect(missingCulprits).toBeDefined();
+    const noBankUsage = { ...makeDefinition('devdle'), bankUsage: undefined };
+    delete noBankUsage.bankUsage;
+    // @ts-expect-error bankUsage is missing
+    const missingBankUsage: Def = noBankUsage;
+    expect(missingBankUsage).toBeDefined();
     // @ts-expect-error 'chess' is not a GameId
     const unknownId: Pick<Def, 'id'> = { id: 'chess' };
     expect(missing).toBeDefined();
     expect(unknownId).toBeDefined();
+  });
+});
+
+describe('bankUsage', () => {
+  const GREP = {
+    bank: 'terms',
+    lastUsedField: 'last_used_grep',
+    windowDays: 30,
+    itemsPerChallenge: 8,
+  };
+
+  it('declares the BankUsage shape (TS-1)', () => {
+    expectTypeOf<keyof BankUsage>().toEqualTypeOf<
+      'bank' | 'lastUsedField' | 'windowDays' | 'itemsPerChallenge'
+    >();
+    expectTypeOf<BankUsage['bank']>().toEqualTypeOf<'terms' | 'timeline_facts'>();
+    expectTypeOf<BankUsage['lastUsedField']>().toEqualTypeOf<string>();
+    expectTypeOf<BankUsage['windowDays']>().toEqualTypeOf<number>();
+    expectTypeOf<BankUsage['itemsPerChallenge']>().toEqualTypeOf<number>();
+  });
+
+  it('types the member as BankUsage | null (TS-2)', () => {
+    expectTypeOf<FakeDefinition['bankUsage']>().toEqualTypeOf<BankUsage | null>();
+    expectTypeOf<
+      GameDefinition<1, 2, 3, 4, 5, 6, 7>['bankUsage']
+    >().toEqualTypeOf<BankUsage | null>();
+  });
+
+  it('rejects a bank outside the contract (TS-4)', () => {
+    const u: BankUsage = {
+      // @ts-expect-error 'templates' is not a BankName
+      bank: 'templates',
+      lastUsedField: 'last_used',
+      windowDays: 30,
+      itemsPerChallenge: 1,
+    };
+    expect(u).toBeDefined();
+  });
+
+  it('requires every field (TS-5)', () => {
+    // @ts-expect-error itemsPerChallenge is missing
+    const u: BankUsage = { bank: 'terms', lastUsedField: 'last_used_devdle', windowDays: 365 };
+    expect(u).toBeDefined();
+  });
+
+  it('is null for a game without a bank (TS-6)', () => {
+    expect(makeDefinition('big-o').bankUsage).toBeNull();
+  });
+
+  it('carries the declared bank usage (TS-7)', () => {
+    expect(makeLocalizedDefinition().bankUsage).toEqual(GREP);
+  });
+
+  it('is visible through the registry (TS-8)', () => {
+    const reg = createGameRegistry([makeLocalizedDefinition(), makeDefinition('big-o')]);
+    expect(reg.get('grep-grid').bankUsage).toEqual(GREP);
+    expect(reg.get('big-o').bankUsage).toBeNull();
+    expectTypeOf<AnyGameDefinition['bankUsage']>().toEqualTypeOf<BankUsage | null>();
+  });
+
+  it('lets consumers be filtered generically (TS-9)', () => {
+    const reg = createGameRegistry([makeLocalizedDefinition(), makeDefinition('big-o')]);
+    const consumers = reg
+      .ids()
+      .map((id) => reg.get(id))
+      .filter((g) => g.bankUsage !== null)
+      .map((g) => [g.id, g.bankUsage?.bank]);
+    expect(consumers).toEqual([['grep-grid', 'terms']]);
+  });
+
+  it('aligns its types with HistorySpec (TS-10)', () => {
+    expectTypeOf<BankUsage['bank']>().toEqualTypeOf<NonNullable<HistorySpec['bank']>>();
+    expectTypeOf<BankUsage['lastUsedField']>().toEqualTypeOf<HistorySpec['lastUsedField']>();
+  });
+
+  it('keeps the full contract in makeWordDefinition (TS-11)', () => {
+    expect(makeWordDefinition().bankUsage).toBeNull();
   });
 });
 

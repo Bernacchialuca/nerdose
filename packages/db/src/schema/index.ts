@@ -6,3 +6,4 @@ export * from './progress';
 export * from './banks';
 export * from './quality';
 export * from './jobs';
+export * from './generation';

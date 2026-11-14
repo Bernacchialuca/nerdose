@@ -5,6 +5,7 @@ import {
   CODE_LANGUAGES,
   DATE_PRECISIONS,
   GAME_IDS,
+  GENERATION_REQUEST_STATUSES,
   LOCALES,
   REPORT_REASONS,
   REPORT_STATUSES,
@@ -15,6 +16,7 @@ import type {
   CodeLanguage,
   DatePrecision,
   GameId,
+  GenerationRequestStatus,
   ReportReason,
   ReportStatus,
   TermCategory,
@@ -32,6 +34,9 @@ import {
   createDb,
   datePrecisionEnum,
   gameIdEnum,
+  generationFailures,
+  generationRequests,
+  generationRequestStatusEnum,
   jobRunStatusEnum,
   reportReasonEnum,
   reportStatusEnum,
@@ -51,6 +56,9 @@ import {
 import type {
   Challenge,
   ChallengeReport,
+  GenerationFailure,
+  GenerationRequest,
+  NewGenerationRequest,
   NewChallengeReport,
   JobRun,
   NewChallenge,
@@ -276,5 +284,62 @@ describe('challenge reports schema', () => {
       expect(sql).not.toContain(forbidden);
     }
     expect(sql).not.toMatch(/GRANT[^;]*DELETE/);
+  });
+});
+
+describe('generation schema', () => {
+  it('S035-TS-50: pgEnum derives from @nerdose/core', () => {
+    expect(generationRequestStatusEnum.enumValues).toEqual([...GENERATION_REQUEST_STATUSES]);
+    expect(generationRequestStatusEnum.enumName).toBe('generation_request_status');
+  });
+
+  it('S035-TS-51: inferred types', () => {
+    expectTypeOf<GenerationRequest['status']>().toEqualTypeOf<GenerationRequestStatus>();
+    expectTypeOf<GenerationRequest['newChallengeId']>().toEqualTypeOf<string | null>();
+    expectTypeOf<GenerationRequest['processedAt']>().toEqualTypeOf<Date | null>();
+    expectTypeOf<NewGenerationRequest['status']>().toEqualTypeOf<
+      GenerationRequestStatus | undefined
+    >();
+    expectTypeOf<GenerationFailure['gameId']>().toEqualTypeOf<GameId>();
+    expectTypeOf<GenerationFailure['date']>().toEqualTypeOf<string>();
+    expectTypeOf<GenerationFailure['attempts']>().toEqualTypeOf<number>();
+    expectTypeOf<GenerationFailure['lastReason']>().toEqualTypeOf<string | null>();
+    expectTypeOf<GenerationFailure['updatedAt']>().toEqualTypeOf<Date>();
+  });
+
+  it('S035-TS-52: public exports', () => {
+    expect(generationRequests).toBeDefined();
+    expect(generationFailures).toBeDefined();
+    expect(getTableName(generationRequests)).toBe('generation_requests');
+    expect(getTableName(generationFailures)).toBe('generation_failures');
+  });
+
+  it('S035-TS-53: 0007 SQL has enum, tables, index, trigger and grants', () => {
+    const sql = readFileSync(
+      join(MIGRATIONS_FOLDER, '0007_generation_queue_and_failures.sql'),
+      'utf8',
+    );
+    for (const fragment of [
+      `CREATE TYPE "public"."generation_request_status" AS ENUM('pending', 'done', 'failed', 'cancelled');`,
+      'CREATE TABLE "generation_requests"',
+      'CREATE TABLE "generation_failures"',
+      'CREATE UNIQUE INDEX "uq_generation_requests_pending"',
+      'CREATE TRIGGER set_updated_at BEFORE UPDATE ON generation_failures',
+      'GRANT SELECT, INSERT ON generation_requests TO nerdose_api;',
+      'GRANT SELECT ON generation_failures TO nerdose_api;',
+      'GRANT SELECT, INSERT, UPDATE ON generation_requests, generation_failures TO nerdose_generator;',
+    ]) {
+      expect(sql).toContain(fragment);
+    }
+    for (const forbidden of [
+      'CREATE FUNCTION',
+      'ALTER TABLE "challenges"',
+      'TRUNCATE',
+      'DROP',
+      'DELETE FROM',
+    ]) {
+      expect(sql).not.toContain(forbidden);
+    }
+    expect(sql).not.toMatch(/GRANT[^;]*\bDELETE\b/);
   });
 });

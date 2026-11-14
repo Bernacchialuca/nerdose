@@ -28,9 +28,9 @@ const columns = async (table: string) => {
 };
 
 describe('gameplay and banks structure', () => {
-  it('S015-TS-1: migrations up to 0006_challenge_reports are registered', async () => {
+  it('S015-TS-1: migrations up to 0007_generation_queue_and_failures are registered', async () => {
     const [row] = await owner`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`;
-    expect(row!.n).toBe(7);
+    expect(row!.n).toBe(8);
   });
 
   it('S015-TS-2: game_id enum equals GAME_IDS', async () => {
@@ -188,6 +188,8 @@ describe('gameplay and banks structure', () => {
       [
         ['challenge_reports', 'challenges', 'r'],
         ['challenge_reports', 'players', 'r'],
+        ['generation_requests', 'challenges', 'r'],
+        ['generation_requests', 'challenges', 'r'],
         ['plays', 'challenges', 'r'],
         ['plays', 'players', 'r'],
         ['player_game_stats', 'players', 'r'],
@@ -197,7 +199,7 @@ describe('gameplay and banks structure', () => {
     );
   });
 
-  it('S015-TS-12: exactly the 17 check constraints', async () => {
+  it('S015-TS-12: exactly the 20 check constraints', async () => {
     const rows = await owner`SELECT conname FROM pg_constraint
       WHERE contype = 'c' AND connamespace = 'public'::regnamespace ORDER BY conname`;
     expect(rows.map((r) => r.conname)).toEqual(
@@ -219,6 +221,9 @@ describe('gameplay and banks structure', () => {
         'ck_terms_summary_locales',
         'ck_timeline_facts_rejection_reason',
         'ck_timeline_facts_note_locales',
+        'ck_generation_failures_attempts',
+        'ck_generation_requests_done_new_challenge',
+        'ck_generation_requests_processed_at',
       ].sort(),
     );
   });
@@ -232,6 +237,7 @@ describe('gameplay and banks structure', () => {
       ['challenge_reports_status_terminal', 'challenge_reports'],
       ['challenges_payload_immutable', 'challenges'],
       ['challenges_status_transition', 'challenges'],
+      ['set_updated_at', 'generation_failures'],
       ['set_updated_at', 'terms'],
       ['set_updated_at', 'timeline_facts'],
     ]);

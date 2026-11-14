@@ -2,6 +2,7 @@ import {
   CODE_LANGUAGES,
   DATE_PRECISIONS,
   GAME_IDS,
+  GENERATION_REQUEST_STATUSES,
   LOCALES,
   REPORT_REASONS,
   REPORT_STATUSES,
@@ -28,3 +29,7 @@ export const bankItemStatusEnum = pgEnum('bank_item_status', ['approved', 'rejec
 export const jobRunStatusEnum = pgEnum('job_run_status', ['running', 'success', 'failed']);
 export const reportReasonEnum = pgEnum('report_reason', REPORT_REASONS);
 export const reportStatusEnum = pgEnum('report_status', REPORT_STATUSES);
+export const generationRequestStatusEnum = pgEnum(
+  'generation_request_status',
+  GENERATION_REQUEST_STATUSES,
+);

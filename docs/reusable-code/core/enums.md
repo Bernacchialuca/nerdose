@@ -41,3 +41,9 @@
 - **Description:** Report statuses; aligned with the PG enum `report_status`.
 - **Signature:** `REPORT_STATUSES = ['open','resolved','dismissed'] as const`
 - **Usage:** `pgEnum('report_status', REPORT_STATUSES)`
+
+## GENERATION_REQUEST_STATUSES / GenerationRequestStatus
+- **Location:** packages/core/src/enums.ts
+- **Description:** Regeneration request statuses; aligned with the PG enum `generation_request_status`.
+- **Signature:** `GENERATION_REQUEST_STATUSES = ['pending','done','failed','cancelled'] as const`
+- **Usage:** `pgEnum('generation_request_status', GENERATION_REQUEST_STATUSES)`

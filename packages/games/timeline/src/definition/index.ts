@@ -24,6 +24,12 @@ export const timeline: GameDefinition<
   id: 'timeline',
   version: 1,
   moveSchema,
+  bankUsage: {
+    bank: 'timeline_facts',
+    lastUsedField: 'last_used',
+    windowDays: 90,
+    itemsPerChallenge: ITEMS_COUNT,
+  },
 
   toPublic: (p, locale) => ({
     prompt: p.prompt[locale],

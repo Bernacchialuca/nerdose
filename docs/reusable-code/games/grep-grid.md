@@ -14,7 +14,7 @@ Package `@nerdose/game-grep-grid` (`packages/games/grep-grid`). Entries: `./defi
 
 ### grepGrid / definition
 - **Location:** packages/games/grep-grid/src/definition/index.ts
-- **Description:** `GameDefinition` of Grep Grid. `applyMove` handles `select` and `give_up`; "not a word" and "already found" are valid moves that keep the state. `toPublic(p, locale, state?)` reveals `definition` only for found words. `culprits(p)` returns the 8 `words` as `term` culprits (`term_id`, `word`) in `words` order; admin-only, matches `generator.usedBankItems` (checked in `src/generator/culprits.test.ts`).
+- **Description:** `GameDefinition` of Grep Grid. `applyMove` handles `select` and `give_up`; "not a word" and "already found" are valid moves that keep the state. `toPublic(p, locale, state?)` reveals `definition` only for found words. `culprits(p)` returns the 8 `words` as `term` culprits (`term_id`, `word`) in `words` order; admin-only, matches `generator.usedBankItems` (checked in `src/generator/culprits.test.ts`). Declares `bankUsage` (`terms`, `last_used_grep`, 30 days, `WORDS_COUNT` items per challenge); `src/generator/bank-usage.test.ts` ties it to `historySpec`, `REUSE_WINDOW_DAYS` and `usedBankItems`.
 - **Signature:** `GameDefinition<GrepGridPayload, GrepGridPublicView, GrepGridState, GrepGridMove, GrepGridFeedback, GrepGridResult, GrepGridStats>`
 - **Usage:** `createGameRegistry([grepGrid])`
 

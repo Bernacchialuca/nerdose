@@ -39,6 +39,18 @@ describe('grepGrid registration and schemas', () => {
     expect(definition).toBe(grepGrid);
     expect(grepGrid.id).toBe('grep-grid');
     expect(grepGrid.version).toBe(1);
+    expect(grepGrid.bankUsage).toEqual({
+      bank: 'terms',
+      lastUsedField: 'last_used_grep',
+      windowDays: 30,
+      itemsPerChallenge: 8,
+    });
+    expect(createGameRegistry([grepGrid]).get('grep-grid').bankUsage).toEqual({
+      bank: 'terms',
+      lastUsedField: 'last_used_grep',
+      windowDays: 30,
+      itemsPerChallenge: 8,
+    });
   });
   it('schemas accept the definition outputs (TS-16)', () => {
     expect(() => stateSchema.parse(S3)).not.toThrow();

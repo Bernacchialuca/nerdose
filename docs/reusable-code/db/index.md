@@ -6,7 +6,7 @@ Package `@nerdose/db` (`packages/db`), entries `.` and `./testing`.
 - **createDb** (packages/db/src/client.ts) - Creates a postgres.js connection plus Drizzle instance for a role URL
 - **Db / Tx** (packages/db/src/client.ts) - Types of the Drizzle instance and of a transaction
 
-## Schema (29 items) - see schema.md
+## Schema (32 items) - see schema.md
 - **players** (packages/db/src/schema/identity.ts) - Drizzle table of anonymous players (`id`, `locale`, `preferredCodeLanguage`, `userId`, `createdAt`, `lastSeenAt`)
 - **localeEnum** (packages/db/src/schema/enums.ts) - PostgreSQL enum `locale`, built from `LOCALES` of `@nerdose/core`
 - **codeLanguageEnum** (packages/db/src/schema/enums.ts) - PostgreSQL enum `code_language`, built from `CODE_LANGUAGES` of `@nerdose/core`
@@ -23,6 +23,9 @@ Package `@nerdose/db` (`packages/db`), entries `.` and `./testing`.
 - **timelineCategoryEnum / datePrecisionEnum** (packages/db/src/schema/enums.ts) - PostgreSQL enums `timeline_category` and `date_precision`, built from `TIMELINE_CATEGORIES` and `DATE_PRECISIONS` of `@nerdose/core`
 - **challengeReports / ChallengeReport / NewChallengeReport** (packages/db/src/schema/quality.ts) - Drizzle table of player reports on a challenge (unique per player and challenge, `resolved`/`dismissed` terminal, `nerdose_api` only)
 - **reportReasonEnum / reportStatusEnum** (packages/db/src/schema/enums.ts) - PostgreSQL enums `report_reason` and `report_status`, built from `REPORT_REASONS` and `REPORT_STATUSES` of `@nerdose/core`
+- **generationRequests / GenerationRequest / NewGenerationRequest** (packages/db/src/schema/generation.ts) - Drizzle table of the regeneration queue (one `pending` per challenge via partial unique index, `done` needs `newChallengeId`, closed needs `processedAt`)
+- **generationFailures / GenerationFailure / NewGenerationFailure** (packages/db/src/schema/generation.ts) - Drizzle table of dates where a game failed to generate (PK `(gameId, date)` for the `fill` UPSERT, `nerdose_api` read-only)
+- **generationRequestStatusEnum** (packages/db/src/schema/enums.ts) - PostgreSQL enum `generation_request_status`, built from `GENERATION_REQUEST_STATUSES` of `@nerdose/core`
 - **jobRuns** (packages/db/src/schema/jobs.ts) - Drizzle table of generator job executions (`fill`, `sync_banks`)
 - **Challenge / NewChallenge, Play / NewPlay, RejectedGuess / NewRejectedGuess, PlayerGameStats / NewPlayerGameStats, PlayerStats / NewPlayerStats, Term / NewTerm, JobRun / NewJobRun** (packages/db/src/schema/*.ts) - Inferred select and insert types of the new tables
 
