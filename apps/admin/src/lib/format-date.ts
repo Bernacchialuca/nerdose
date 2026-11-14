@@ -23,3 +23,13 @@ export function formatRelative(iso: string, now: Date = new Date()): string {
   if (hours < 24) return RELATIVE.format(-hours, 'hour');
   return RELATIVE.format(-Math.floor(hours / 24), 'day');
 }
+
+const TIME = new Intl.DateTimeFormat('es', {
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+});
+
+export function formatTime(iso: string): string {
+  return TIME.format(new Date(iso));
+}

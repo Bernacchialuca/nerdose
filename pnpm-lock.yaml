@@ -47,6 +47,15 @@ importers:
       '@nerdose/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@nerdose/game-devdle':
+        specifier: workspace:*
+        version: link:../../packages/games/devdle
+      '@nerdose/game-grep-grid':
+        specifier: workspace:*
+        version: link:../../packages/games/grep-grid
+      '@nerdose/game-timeline':
+        specifier: workspace:*
+        version: link:../../packages/games/timeline
       '@nerdose/ui':
         specifier: workspace:*
         version: link:../../packages/ui

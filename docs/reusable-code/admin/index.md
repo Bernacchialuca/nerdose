@@ -9,9 +9,9 @@ App `apps/admin` (not a package; imported through the `@/` alias → `src/`). Vi
 - **registerApiHooks** (apps/admin/src/app/api-hooks.ts) - Wires `Authorization: Bearer` and the global `401 unauthorized` handling into `configureApi`
 
 ## Components (11 items) - see components.md
-- **Shell** (apps/admin/src/app/shell.tsx) - Protected layout: `AppHeader` with "Reportes (N)" link and "Cerrar sesión", `<main>` with `<Outlet />`
+- **Shell** (apps/admin/src/app/shell.tsx) - Protected layout: `AppHeader` with "Reportes (N)" and "Próximos (n)" links and "Cerrar sesión", `<main>` with `<Outlet />`
 - **RouteError** (apps/admin/src/app/route-error.tsx) - Route `errorElement`: generic "Algo salió mal" alert with "Reintentar" (reload)
-- **routes / router** (apps/admin/src/app/router.tsx) - Route table (`/login`, protected `/` → `/reports`, `reports`) and browser router
+- **routes / router** (apps/admin/src/app/router.tsx) - Route table (`/login`, protected `/` → `/reports`, `reports`, `upcoming`) and browser router
 - **Providers** (apps/admin/src/app/providers.tsx) - `QueryClientProvider` + `AuthProvider`
 - **Dialog** (apps/admin/src/components/dialog.tsx) - Modal/drawer with focus trap, Escape, focus return
 - **TextField / TextAreaField / SelectField** (apps/admin/src/components/form-field.tsx) - Labelled controls with `aria-invalid` + error text
@@ -19,7 +19,7 @@ App `apps/admin` (not a package; imported through the `@/` alias → `src/`). Vi
 - **dangerButtonClass** (apps/admin/src/components/danger-button.ts) - Classes for the destructive button
 - **usePageTitle** (apps/admin/src/hooks/use-page-title.ts) - Sets `document.title` and focuses the route `<h1>`
 - **ReportGroupsTable / ChallengeDrawer / VoidChallengeDialog / VoidNotice / PayloadView / VerificationLog / ReportItem** (apps/admin/src/modules/reports/components/) - Reports section UI
-- **formatInstant / formatRelative** (apps/admin/src/lib/format-date.ts) - Spanish date formatting helpers
+- **formatInstant / formatRelative / formatTime** (apps/admin/src/lib/format-date.ts) - Spanish date formatting helpers (`formatTime` → `HH:mm`)
 
 ## Auth module (4 items) - see auth.md
 - **token-store** (apps/admin/src/modules/auth/token-store.ts) - Session in `sessionStorage` + external store (`subscribe`, `getSessionSnapshot`, `getEndReason`)
@@ -27,15 +27,24 @@ App `apps/admin` (not a package; imported through the `@/` alias → `src/`). Vi
 - **RequireAuth** (apps/admin/src/modules/auth/require-auth.tsx) - Route guard redirecting to `/login`
 - **useLogin** (apps/admin/src/modules/auth/api/login.ts) - Login mutation that stores the session
 
-## Reports module (7 items) - see reports.md
+## Reports module (9 items) - see reports.md
 - **useReportGroups / useUpdateReport / useVoidChallenge / reportKeys** (apps/admin/src/modules/reports/api/) - Data layer for reports and voiding
 - **labels** (apps/admin/src/modules/reports/labels.ts) - Spanish labels, `challengeLabel`, `reasonsSummary`, `parseStatusParam`
+- **PayloadBilingual / PayloadCommon / PayloadView** (apps/admin/src/modules/reports/components/payload-view.tsx) - Bilingual ES/EN panels and common-data panel; re-exported by `@/modules/reports` for `upcoming`
 - **flattenPayload / readVerification** (apps/admin/src/modules/reports/payload-view-model.ts) - Pure view models for `PayloadView` and the verification log
 - **voidSummary** (apps/admin/src/modules/reports/components/void-summary.ts) - Consequences text for the void modal
 
-## Testing utils (5 items) - see api-client.md
+## Upcoming module (9 items) - see upcoming.md
+- **useUpcoming / hasPendingRegeneration / useGenerationFailures / useRegenerateChallenge / upcomingKeys / failureKeys** (apps/admin/src/modules/upcoming/api/) - Data layer with conditional 5 s polling, shell counter and regenerate mutation
+- **cellState / cellBadges / LEGEND / rowLabel / windowSubtitle / upcomingAlerts** (apps/admin/src/modules/upcoming/cell-state.ts) - Pure model of grid cells, legend, row labels and alert texts
+- **registry (hasPreview / previewComponent)** (apps/admin/src/modules/upcoming/registry.ts) - Only place listing games: lazy `import()` of each `./client` `Preview`
+- **ChallengePreview / PreviewErrorBoundary** (apps/admin/src/modules/upcoming/components/) - ES/EN solution previews with fallback to `PayloadBilingual`
+- **UpcomingGrid / UpcomingAlerts / UpcomingChallengeDrawer / RegenerateDialog** (apps/admin/src/modules/upcoming/components/) - P-03 grid, live alerts, O-02 drawer and O-03 modal
+
+## Testing utils (6 items) - see api-client.md
 - **renderWithProviders** (apps/admin/src/test/render.tsx) - Renders routes with QueryClient, AuthProvider and the HTTP hooks; returns `{ queryClient, router, user }`
 - **test setup** (apps/admin/src/test/setup.ts) - jest-dom, axe matchers, MSW lifecycle, `TZ=UTC`, session cleanup
-- **msw server / adminHandlers / requests** (apps/admin/src/test/msw.ts) - MSW server with recording handlers for the admin endpoints
+- **msw server / adminHandlers / requests** (apps/admin/src/test/msw.ts) - MSW server with recording handlers for the admin endpoints (reports, void, login, upcoming, regenerate, generation-failures; default unrecorded `generation-failures` handler)
+- **upcoming fixtures** (apps/admin/src/test/fixtures/upcoming.ts) - `upcoming()` builder, `UPCOMING_*` variants, game payloads, `FAILURES_*`, `REGEN_202`
 - **fixtures** (apps/admin/src/test/fixtures/reports.ts) - `SESSION`, groups and reports fixtures from `api.yaml`
-- **useFixedClock** (apps/admin/src/test/helpers.ts) - Fake timers fixed at `2026-11-11T12:00:00Z`
+- **useFixedClock / useUpcomingClock** (apps/admin/src/test/helpers.ts) - Fake timers fixed at `2026-11-11T12:00:00Z` / `2026-12-01T14:10:00Z`

@@ -18,6 +18,7 @@ export const routes: RouteObject[] = [
     children: [
       { index: true, element: <Navigate to="/reports" replace /> },
       { path: 'reports', lazy: () => import('@/modules/reports/routes/reports') },
+      { path: 'upcoming', lazy: () => import('@/modules/upcoming/routes/upcoming') },
     ],
   },
 ];
