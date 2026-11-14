@@ -5,6 +5,7 @@ import type { ErrorCode } from '../src/errors';
 import { GAME_IDS } from '../src/game-definition';
 import { createGameRegistry } from '../src/game-registry';
 import type { AnyGameDefinition } from '../src/game-registry';
+import type { CodeLanguage } from '../src/enums';
 import type { HistorySpec } from '../src/game-generator';
 import type {
   BankUsage,
@@ -17,6 +18,7 @@ import type {
   MoveError,
 } from '../src/game-definition';
 import {
+  makeCodeDefinition,
   makeDefinition,
   makeLocalizedDefinition,
   makeWordDefinition,
@@ -78,6 +80,11 @@ describe('game contract', () => {
     // @ts-expect-error bankUsage is missing
     const missingBankUsage: Def = noBankUsage;
     expect(missingBankUsage).toBeDefined();
+    const noCodeLanguage = { ...makeDefinition('devdle'), codeLanguage: undefined };
+    delete noCodeLanguage.codeLanguage;
+    // @ts-expect-error codeLanguage is missing
+    const missingCodeLanguage: Def = noCodeLanguage;
+    expect(missingCodeLanguage).toBeDefined();
     // @ts-expect-error 'chess' is not a GameId
     const unknownId: Pick<Def, 'id'> = { id: 'chess' };
     expect(missing).toBeDefined();
@@ -375,5 +382,87 @@ describe('toPublic with state', () => {
     const en = makeLocalizedDefinition().toPublic(P_DOCKER, 'en', { found: true });
     expect(en).toEqual({ length: 6, definition: 'container platform' });
     expect(en.length).toBe(es.length);
+  });
+});
+
+describe('codeLanguage (S-042)', () => {
+  const NOW = new Date('2026-12-01T10:00:00.000Z');
+  const CTX = { isValidWord: () => true, locale: 'es' } as const;
+
+  it('declares the member signature (S-042 TS-10)', () => {
+    expectTypeOf<FakeDefinition['codeLanguage']>().parameters.toEqualTypeOf<
+      [{ attempts: number }]
+    >();
+    expectTypeOf<FakeDefinition['codeLanguage']>().returns.toEqualTypeOf<CodeLanguage | null>();
+    expectTypeOf<GameDefinition<1, 2, 3, 4, 5, 6, 7>['codeLanguage']>().toEqualTypeOf<
+      (s: 3) => CodeLanguage | null
+    >();
+  });
+
+  it('rejects a return outside CodeLanguage (S-042 TS-12)', () => {
+    const def: FakeDefinition = {
+      ...makeDefinition('devdle'),
+      // @ts-expect-error 'rust' is not a CodeLanguage
+      codeLanguage: () => 'rust',
+    };
+    expect(def).toBeDefined();
+  });
+
+  it('returns null for games without code (S-042 TS-13)', () => {
+    expect(makeDefinition('devdle').codeLanguage({ attempts: 6 })).toBeNull();
+    expect(makeWordDefinition().codeLanguage({ attempts: 2 })).toBeNull();
+    expect(makeLocalizedDefinition().codeLanguage({ found: true })).toBeNull();
+  });
+
+  it('returns the confirmed language for a code game (S-042 TS-14)', () => {
+    const def = makeCodeDefinition();
+    const r = def.applyMove(
+      { answer: 'o_n_log_n' },
+      {},
+      { language: 'go', option: 'o_n_log_n' },
+      NOW,
+      CTX,
+    );
+    if ('error' in r) throw new Error('expected a state');
+    expect(r).toEqual({ state: { language: 'go', option: 'o_n_log_n' }, feedback: null });
+    expect(def.isFinished(r.state)).toBe(true);
+    expect(def.codeLanguage(r.state)).toBe('go');
+  });
+
+  it('returns null before the Play is confirmed (S-042 TS-15)', () => {
+    const def = makeCodeDefinition();
+    const state = def.initState({ answer: 'o_1' }, NOW);
+    expect(state).toEqual({});
+    expect(def.codeLanguage(state)).toBeNull();
+  });
+
+  it('is generic through the registry (S-042 TS-16)', () => {
+    const reg = createGameRegistry([makeDefinition('devdle'), makeCodeDefinition()]);
+    expect(reg.get('devdle').codeLanguage({ attempts: 6 })).toBeNull();
+    expect(reg.get('big-o').codeLanguage({ language: 'java', option: 'o_n' })).toBe('java');
+    expectTypeOf<
+      ReturnType<AnyGameDefinition['codeLanguage']>
+    >().toEqualTypeOf<CodeLanguage | null>();
+  });
+
+  it('exposes a public view without the answer (S-042 TS-17)', () => {
+    const def = makeCodeDefinition();
+    const view = def.toPublic({ answer: 'o_n2' }, 'es');
+    expect(view).toEqual({
+      options: ['o_1', 'o_log_n', 'o_n', 'o_n_log_n', 'o_n2', 'o_n3', 'o_2n', 'o_n_fact'],
+    });
+    expect(Object.keys(view)).toEqual(['options']);
+    expect(def.toPublic({ answer: 'o_1' }, 'es').options).toEqual(view.options);
+  });
+
+  it('rejects a second move (S-042 TS-18)', () => {
+    const r = makeCodeDefinition().applyMove(
+      { answer: 'o_1' },
+      { language: 'js', option: 'o_1' },
+      { language: 'go', option: 'o_n' },
+      NOW,
+      { isValidWord: () => true, locale: 'en' },
+    );
+    expect(r).toEqual({ error: 'invalid_move' });
   });
 });

@@ -8,7 +8,7 @@ import type {
   RecentChallenge,
   VerificationLog,
 } from '../src/game-generator';
-import { makeGenerator } from './fixtures/fake-generator';
+import { makeAsyncGenerator, makeGenerator } from './fixtures/fake-generator';
 import type { FakePayload, FakeTerm } from './fixtures/fake-generator';
 
 const SEED_A = Uint8Array.from({ length: 32 }, (_, i) => i);
@@ -60,20 +60,22 @@ describe('GameGenerator contract', () => {
     expectTypeOf(gen.usedBankItems).returns.toEqualTypeOf<string[]>();
   });
 
-  it('returns a failing VerificationLog (TS-12)', () => {
+  it('returns a failing VerificationLog (TS-12)', async () => {
     const gen = makeGenerator();
-    const log = gen.verify({ term_id: 't3', word: 'MERGE', category: 'git' }, history);
+    const log = await gen.verify({ term_id: 't3', word: 'MERGE', category: 'git' }, history);
     expect(log).toEqual({
       ok: false,
       checks: [{ name: 'category_rotation', ok: false }],
       reason: 'category_rotation',
     });
-    expectTypeOf(gen.verify).returns.toEqualTypeOf<VerificationLog>();
+    expectTypeOf<GameGenerator<FakePayload, FakeTerm>['verify']>().returns.toEqualTypeOf<
+      VerificationLog | Promise<VerificationLog>
+    >();
   });
 
-  it('returns a passing, serializable VerificationLog (TS-13)', () => {
+  it('returns a passing, serializable VerificationLog (TS-13)', async () => {
     const gen = makeGenerator();
-    const log = gen.verify(
+    const log = await gen.verify(
       { term_id: 't1', word: 'REACT', category: 'programming_languages' },
       history,
     );
@@ -110,5 +112,101 @@ describe('GameGenerator contract', () => {
     };
     const list: AnyGameGenerator[] = [makeGenerator(), otherGeneratorWithBankNull];
     expect(list).toHaveLength(2);
+  });
+});
+
+const FAIL_PAYLOAD: FakePayload = { term_id: 't3', word: 'MERGE', category: 'git' };
+const OK_PAYLOAD: FakePayload = {
+  term_id: 't1',
+  word: 'REACT',
+  category: 'programming_languages',
+};
+
+describe('async verify (S-042)', () => {
+  it('awaits the log of a synchronous generator (S-042 TS-20)', async () => {
+    const log = await makeGenerator().verify(FAIL_PAYLOAD, history);
+    expect(log).toEqual({
+      ok: false,
+      checks: [{ name: 'category_rotation', ok: false }],
+      reason: 'category_rotation',
+    });
+  });
+
+  it('approves with an async generator (S-042 TS-21)', async () => {
+    const pending = makeAsyncGenerator().verify(OK_PAYLOAD, history);
+    expect(pending instanceof Promise).toBe(true);
+    const log = await pending;
+    expect(log).toEqual({ ok: true, checks: [{ name: 'category_rotation', ok: true }] });
+    expect('reason' in log).toBe(false);
+  });
+
+  it('rejects with the same log as the sync generator (S-042 TS-22)', async () => {
+    const asyncLog = await makeAsyncGenerator().verify(FAIL_PAYLOAD, history);
+    expect(asyncLog).toEqual({
+      ok: false,
+      checks: [{ name: 'category_rotation', ok: false }],
+      reason: 'category_rotation',
+    });
+    expect(asyncLog).toEqual(await makeGenerator().verify(FAIL_PAYLOAD, history));
+  });
+
+  it('accepts sync and async generators in one registry list (S-042 TS-23)', async () => {
+    const other: GameGenerator<{ n: number }> = {
+      historySpec: { bank: null, lastUsedField: '', recentDays: 0 },
+      usedBankItems: () => [],
+      generate: () => ({ n: 1 }),
+      verify: () => ({ ok: true, checks: [] }),
+    };
+    const list: AnyGameGenerator[] = [makeGenerator(), makeAsyncGenerator(), other];
+    expect(list).toHaveLength(3);
+    const logs = await Promise.all([
+      list[0]!.verify(OK_PAYLOAD, history),
+      list[1]!.verify(OK_PAYLOAD, history),
+      list[2]!.verify({ n: 1 }, { bankItems: [], recentChallenges: [] }),
+    ]);
+    for (const log of logs) expect(typeof log.ok).toBe('boolean');
+  });
+
+  it('rejects a verify returning something else (S-042 TS-24)', () => {
+    const g: GameGenerator<{ n: number }> = {
+      historySpec: { bank: null, lastUsedField: '', recentDays: 0 },
+      usedBankItems: () => [],
+      generate: () => ({ n: 1 }),
+      // @ts-expect-error verify must return a VerificationLog
+      verify: async () => ({ ok: 'yes', checks: [] }),
+    };
+    expect(g).toBeDefined();
+  });
+});
+
+describe('aheadDays (S-042)', () => {
+  it('is optional (S-042 TS-25)', () => {
+    expectTypeOf<HistorySpec['aheadDays']>().toEqualTypeOf<number | undefined>();
+    expectTypeOf<keyof HistorySpec>().toEqualTypeOf<
+      'bank' | 'lastUsedField' | 'recentDays' | 'aheadDays'
+    >();
+  });
+
+  it('keeps specs without aheadDays valid (S-042 TS-26)', () => {
+    const spec = makeGenerator().historySpec;
+    expect(spec).toEqual({ bank: 'terms', lastUsedField: 'last_used_devdle', recentDays: 3 });
+    expect('aheadDays' in spec).toBe(false);
+  });
+
+  it('supports a forward window (S-042 TS-27)', () => {
+    const spec: HistorySpec = { bank: null, lastUsedField: '', recentDays: 30, aheadDays: 30 };
+    expect(spec.aheadDays).toBe(30);
+    expect(makeAsyncGenerator().historySpec).toEqual({
+      bank: 'terms',
+      lastUsedField: 'last_used_devdle',
+      recentDays: 3,
+      aheadDays: 2,
+    });
+  });
+
+  it('rejects a non-numeric aheadDays (S-042 TS-28)', () => {
+    // @ts-expect-error aheadDays must be a number
+    const s: HistorySpec = { bank: null, lastUsedField: '', recentDays: 30, aheadDays: '30' };
+    expect(s).toBeDefined();
   });
 });

@@ -4,6 +4,27 @@ export type Locale = (typeof LOCALES)[number];
 export const CODE_LANGUAGES = ['js', 'go', 'java'] as const;
 export type CodeLanguage = (typeof CODE_LANGUAGES)[number];
 
+export const BIG_O_OPTIONS = [
+  'o_1',
+  'o_log_n',
+  'o_n',
+  'o_n_log_n',
+  'o_n2',
+  'o_n3',
+  'o_2n',
+  'o_n_fact',
+] as const;
+export type BigOOption = (typeof BIG_O_OPTIONS)[number];
+
+export const RECIPE_CATEGORIES = [
+  'simple_loops',
+  'nested_loops',
+  'recursion',
+  'divide_and_conquer',
+  'binary_search',
+] as const;
+export type RecipeCategory = (typeof RECIPE_CATEGORIES)[number];
+
 export const TERM_CATEGORIES = [
   'programming_languages',
   'git',

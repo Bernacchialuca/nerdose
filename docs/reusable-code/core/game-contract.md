@@ -10,6 +10,11 @@
 - **Notes:** the api passes `state` to `toPublic` only while the Play is `in_progress`; with a state, only what the player already discovered is revealed. Implementations that do not need it declare fewer parameters.
 - **Usage:** each `packages/games/<id>` exports an object implementing it.
 
+## GameDefinition.codeLanguage
+- **Location:** packages/core/src/game-definition.ts
+- **Signature:** `codeLanguage(s: State): CodeLanguage | null` (required member)
+- **Usage:** the api calls it through the registry when closing a Play: `plays.code_language = def.codeLanguage(state)` and, if not null, `players.preferred_code_language`; also feeds `MoveResponse.play.code_language`. Big O and Bug Hunt return the confirmed language; Devdle, Grep Grid and Timeline return `() => null`.
+
 ## MoveContext and applyMove
 - **Location:** packages/core/src/game-definition.ts
 - **Signature:** `interface MoveContext { isValidWord(word: string): boolean; locale: Locale }`; `applyMove(p, s, m, now, ctx: MoveContext)`
@@ -17,8 +22,8 @@
 
 ## GameGenerator, GeneratorHistory, VerificationLog, AnyGameGenerator
 - **Location:** packages/core/src/game-generator.ts
-- **Signature:** `GameGenerator<Payload, BankItem = unknown> { historySpec: HistorySpec; usedBankItems(p): string[]; generate({ date, seed, history }): Payload; verify(p, history): VerificationLog }`; `GeneratorHistory<Payload, BankItem> = { bankItems, recentChallenges: { date, payload }[] }`; `VerificationLog = { ok, checks: { name, ok, detail? }[], reason? }`; `AnyGameGenerator = GameGenerator<any, any>`
-- **Usage:** `const log = gen.verify(payload, history); if (!log.ok) retry` (log is stored in `challenges.verification`).
+- **Signature:** `GameGenerator<Payload, BankItem = unknown> { historySpec: HistorySpec; usedBankItems(p): string[]; generate({ date, seed, history }): Payload; verify(p, history): VerificationLog | Promise<VerificationLog> }`; `HistorySpec = { bank, lastUsedField, recentDays, aheadDays?: number }` (`aheadDays` default 0 applied by the consumer; the row of D is excluded); `GeneratorHistory<Payload, BankItem> = { bankItems, recentChallenges: { date, payload }[] }`; `VerificationLog = { ok, checks: { name, ok, detail? }[], reason? }`; `AnyGameGenerator = GameGenerator<any, any>`
+- **Usage:** `const log = await gen.verify(payload, history); if (!log.ok) retry` (log is stored in `challenges.verification`).
 
 ## Culprit, CulpritKind and culprits(p)
 - **Location:** packages/core/src/game-definition.ts

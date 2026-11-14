@@ -12,6 +12,18 @@
 - **Signature:** `CODE_LANGUAGES = ['js','go','java'] as const`; `type CodeLanguage = 'js' | 'go' | 'java'`
 - **Usage:** `z.enum(CODE_LANGUAGES)`
 
+## BIG_O_OPTIONS / BigOOption
+- **Location:** packages/core/src/enums.ts
+- **Description:** Fixed-order list of the 8 Big O options the player sees; aligned with `BigOOption` in `api.yaml`. Lives in `challenges.payload` (jsonb), no pgEnum.
+- **Signature:** `BIG_O_OPTIONS = ['o_1','o_log_n','o_n','o_n_log_n','o_n2','o_n3','o_2n','o_n_fact'] as const`; `type BigOOption = (typeof BIG_O_OPTIONS)[number]`
+- **Usage:** `option: z.enum(BIG_O_OPTIONS)`; `toPublic: () => ({ options: BIG_O_OPTIONS })`
+
+## RECIPE_CATEGORIES / RecipeCategory
+- **Location:** packages/core/src/enums.ts
+- **Description:** Initial, extensible set of 5 recipe categories (new ones are appended, never reordered); aligned with `RecipeCategory` in `api.yaml`. No pgEnum.
+- **Signature:** `RECIPE_CATEGORIES = ['simple_loops','nested_loops','recursion','divide_and_conquer','binary_search'] as const`; `type RecipeCategory = (typeof RECIPE_CATEGORIES)[number]`
+- **Usage:** `category: z.enum(RECIPE_CATEGORIES)`
+
 ## TERM_CATEGORIES / TermCategory
 - **Location:** packages/core/src/enums.ts
 - **Description:** Fixed-order list of the 8 term categories; aligned with PG enum `term_category` and `DevdlePublicView.possible_categories`.

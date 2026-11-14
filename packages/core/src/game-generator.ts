@@ -4,6 +4,8 @@ export interface HistorySpec {
   bank: BankName | null;
   lastUsedField: string;
   recentDays: number;
+  /** Days after D also read as history (default 0); the row of D is excluded (REQ-009). */
+  aheadDays?: number;
 }
 
 export interface RecentChallenge<Payload> {
@@ -36,7 +38,10 @@ export interface GameGenerator<Payload, BankItem = unknown> {
     seed: Uint8Array;
     history: GeneratorHistory<Payload, BankItem>;
   }): Payload;
-  verify(p: Payload, history: GeneratorHistory<Payload, BankItem>): VerificationLog;
+  verify(
+    p: Payload,
+    history: GeneratorHistory<Payload, BankItem>,
+  ): VerificationLog | Promise<VerificationLog>;
 }
 
 // Heterogeneous registry: each game has its own Payload and BankItem.

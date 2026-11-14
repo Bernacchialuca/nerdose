@@ -1,5 +1,5 @@
 import type { z } from 'zod';
-import type { Locale } from './enums';
+import type { CodeLanguage, Locale } from './enums';
 import type { BankName } from './game-generator';
 
 export const GAME_IDS = ['devdle', 'grep-grid', 'timeline', 'big-o', 'bug-hunt'] as const;
@@ -58,6 +58,8 @@ export interface GameDefinition<Payload, PublicView, State, Move, Feedback, Resu
 
   initialStats(): Stats;
   reduceStats(prev: Stats, r: Result): Stats;
+  /** Language the Play was confirmed with (Big O, Bug Hunt); null for games without code (REQ-009). */
+  codeLanguage(s: State): CodeLanguage | null;
   historyLabel(r: Result): string;
   culprits(p: Payload): Culprit[];
 }
