@@ -1,6 +1,6 @@
 # Reusable Code Index - games
 
-Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition`, `./client` and `./generator`, and `@nerdose/game-timeline` (`packages/games/timeline`), entries `./definition`, `./generator` and `./client`. The build script lives in `scripts/` and is never importable from `src/` or other packages.
+Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition`, `./client` and `./generator`, `@nerdose/game-timeline` (`packages/games/timeline`), entries `./definition`, `./generator` and `./client`, and `@nerdose/game-big-o` (`packages/games/big-o`), entry `./definition` (`./generator` and `./client` arrive with S-044/S-045/S-046). The build script lives in `scripts/` and is never importable from `src/` or other packages.
 
 ## Devdle definition (6 items) - see devdle.md
 - **devdle / definition** (packages/games/devdle/src/definition/index.ts) - `GameDefinition` of Devdle (`id: 'devdle'`, `version: 1`); `definition` is an alias; implements `codeLanguage` -> `null`; implements `culprits(p)` (1 `term`, kind/id/label; test in `src/generator/culprits.test.ts`); declares `bankUsage` terms/last_used_devdle/365/1 (checked against `historySpec`/`REUSE_WINDOW_DAYS`/`usedBankItems` in `src/generator/bank-usage.test.ts`)
@@ -108,5 +108,12 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **shuffle / drawOpaqueIds / drawInitialOrder / sameOrder / OPAQUE_ID_ALPHABET / MAX_REDRAWS** (packages/games/timeline/src/generator/opaque.ts) - Seed-driven shuffle and opaque ids
 - **addDays / isValidDate** (packages/games/timeline/src/generator/days.ts) - Clock-free `YYYY-MM-DD` arithmetic in UTC
 
+## Big O shared (1 item) - see big-o.md
+- **OPTION_LABEL / LANGUAGE_LABEL** (packages/games/big-o/src/shared/labels.ts) - Language-neutral labels of the 8 `BigOOption` (`O(n²)`, `O(2ⁿ)`...) and the 3 `CodeLanguage` (`JavaScript`, `Go`, `Java`)
 
-Note: Big O and Bug Hunt packages do not exist yet; when created, their `definition` must declare `bankUsage: null` and, as required members of the contract, `codeLanguage: (s) => s.language ?? null`.
+## Big O definition (6 items) - see big-o.md
+- **bigO / definition** (packages/games/big-o/src/definition/index.ts) - `GameDefinition` of Big O (`id: 'big-o'`, `version: 1`); `definition` is an alias; single-move game with `state = {}` until confirmed; `bankUsage: null`, `codeLanguage: (s) => s.language ?? null`, `culprits: () => []`; `historyLabel` is `✓ O(...)` / `✗`
+- **payloadSchema / moveSchema / stateSchema / publicViewSchema / feedbackSchema / resultSchema / statsSchema / codeByLanguageSchema** (packages/games/big-o/src/definition/schemas.ts) - Zod schemas, snake_case as in `api.yaml`; payload invariants `trap_option !== answer` and no `trap_ops` without `trap_option`; state is "both or none"
+- **MIN_STEPS / MAX_STEPS** (packages/games/big-o/src/definition/schemas.ts) - 2 and 6 explanation steps
+- **BigOPayload / BigOPayloadExplanation / BigOMove / BigOState / BigOPublicView / BigOFeedback / BigOResult / BigOExplanation / BigOStats / CodeByLanguage** (packages/games/big-o/src/definition/schemas.ts) - Types inferred from the schemas
+- **PAYLOAD / PAYLOAD_RECURSION / WON_JAVA / LOST_GO / withAnswer / NOW / CTX_ES / CTX_EN / S0 / CODE_NLOGN** (packages/games/big-o/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry
