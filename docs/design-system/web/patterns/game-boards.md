@@ -1,8 +1,8 @@
 ---
 pattern: game-boards
-version: 1.5.0
+version: 1.6.0
 status: active
-last_updated: 2026-11-13
+last_updated: 2026-11-14
 source: docs/nerdose.html
 related: [card, panel, code-block, button, chip, streak-pill]
 ---
@@ -146,10 +146,17 @@ Grilla `repeat(4, minmax(0, 1fr))`, gap 10; 8 opciones: `O(1)`, `O(log n)`, `O(n
 |---|---|---|---|---|
 | correcta / elegida (`aria-pressed="true"`) | `#3DDC84` | `#06120B`, 800 | 2px solid `#3DDC84` | L970 |
 | no elegida (resultado) | `#0F1318` | `#8D99A6`, 400 | 1px solid `#1E252E` | L970 |
-| jugando: default / hover / foco / elegida | **Pendiente — el prototipo solo muestra la vista de resultado** (`cursor: default`) | | | L970 |
-| elección incorrecta | **Pendiente — el prototipo no lo define** | | | — |
+| jugando: sin elegir (1.6.0) | `#0F1318` (`bg.surface`) | `text.muted`, 400 | 2px solid `#1E252E` (`border.subtle`) | pantallas S-046 |
+| jugando: elegida (1.6.0) | `#0B1522` (`game.big-o.tint`) | `text.primary`, 700, `●` antes del texto | 2px solid `#5EB1FF` (`game.big-o.accent`) | pantallas S-046 |
+| elección incorrecta, resultado (1.6.0) | `#0F1318` | `text.primary` | 2px solid `status.error` (`#FF7B72`), `✗` y etiqueta «tu respuesta»; nunca relleno rojo | pantallas S-046 |
+| correcta y elegida, resultado (1.6.0) | `#3DDC84` | `#06120B`, 800 | 2px solid `#3DDC84`, `✓` y «correcta · tu respuesta» | pantallas S-046 |
+| trampa, preview del admin (1.6.0) | sin relleno (`bg.surface`) | `text.primary` | 2px dashed `game.big-o.muted` (`#7FA7CF`, ≈ 7,4:1), etiqueta «trampa» | D7 |
 
-**Adaptaciones requeridas:** el borde pasa de 1 a 2px y corre el contenido: mantener el borde estable (regla común 2). 4 columnas fijas no entran a 320px ("O(n log n)" necesita ~96px): **Pendiente** cuántas columnas en anchos chicos. Opción correcta: relleno + peso; **Pendiente** confirmar señal no cromática (NFR-U04).
+**Resueltos en 1.6.0 (story S-046):** el borde es de 2px en todos los estados (borde estable, regla común 2). Columnas: **2 en mobile y 4 desde `lg`** (`grid-cols-2 lg:grid-cols-4`). Jugando, el grupo es un `radiogroup` (`role="radio"` con `aria-checked`, roving tabindex, flechas, Home y End); en el resultado es una lista de solo lectura. La señal no cromática de la correcta es `✓` + etiqueta, la de la elegida incorrecta `✗` + etiqueta, y cada opción marcada se anuncia con su etiqueta («O(n²), tu respuesta, incorrecta»).
+
+### `big-o.step` — paso numerado (1.6.0, mapeo de S-046)
+
+`<ol>` sin estilo, gap 16; ítem con el número en un cuadrado 28×28 (`radius.tile`, Mono 700 13) y el texto Inter 15/1,55 `text.body`. Mapeo provisorio mientras `@nerdose/ui` no tiene `tint-strong`/`light` del DS: número `game.big-o.tint-border` (`#1B2E45`) con `--color-game-big-o-light` (`#9ACFFF`, ≈ 8,4:1).
 
 ### Caja "en números" (L914-919)
 
@@ -273,6 +280,9 @@ Cada `client` exporta `Preview` (`{ payload, language }`, REQ-008 decisión 10):
 | Devdle | Tablero de **una fila** con la palabra, todas las celdas `correcta` (glifo `✓`). `aria-label` del tablero: «Solución: {PALABRA}» / «Solution: {WORD}». Debajo, card «// palabra del día» / «// word of the day» (`h3`) con la palabra (`type.title.panel`, `game.devdle.accent`), «Categoría: {categoría}», la definición, «Resumen» + el resumen y «Fuente: Wikipedia (CC BY-SA)». | `devdle.cell` |
 | Grep Grid | Tablero de solo lectura (`role="table"`, como en el resultado), con las celdas de las 8 palabras en estado **solución** (calculadas desde `placements`). `aria-label`: «Grilla con las 8 palabras resaltadas» / «Grid with the 8 words highlighted». Debajo, panel «// palabras del desafío» / «// challenge words» (`h3`) con el dato «8 palabras» / «8 words» (mismo estilo que `grep-grid.counter`) y las 8 filas en estado **solución**, cada una con su definición. | `grep-grid.board`, `grep-grid.cell`, `grep-grid.word` |
 | Tech Timeline | Línea «// consigna: {consigna}» / «// task: {prompt}» (`type.label.comment`, `text.dim`). Debajo, card «// orden correcto» / «// correct order» (`h3`) con `timeline.rail`: los 5 hechos en el orden de `correct_order`, cada uno con fecha por precisión, nombre, categoría y nota. | `timeline.rail` |
+| Big O (1.6.0) | Pregunta como `p` («¿Cuál es la complejidad temporal (peor caso) de f(n)?»). Debajo, `code-block` `readonly` **en texto plano, sin resaltado** con pestañas JavaScript / Go / Java y las líneas de `line_notes` resaltadas con su nota en el idioma de la columna. «// respuesta» (`h3`) con la lista de las 8 opciones: la respuesta «✓ correcta» y la `trap_option` «trampa» (borde punteado, sin relleno). Panel «Paso a paso» (`h3`) con los pasos, «en números» y el consejo, solo cuando existen. | `code-block`, `big-o.option`, `big-o.step`, caja «en números» |
+
+**Excepción de Big O (D8):** las tres pestañas del código son estado de vista local (sin efectos, `fetch` ni storage), la única interacción de la preview; el resto sigue sin botones, hints ni regiones `aria-live`. Prevalece lo específico (story S-046 y `o-02-detalle-desafio`) sobre «sin controles».
 
 **Estado «solución» y no «encontrada»:** en la preview nadie jugó. Por eso la celda dice «parte de la solución» / «part of the solution» en su `aria-label`, y la fila no se tacha y muestra «{n} letras» en lugar de «✓ encontrada».
 
@@ -312,3 +322,4 @@ Cabecera de 150px de la [tarjeta de juego](../components/card.md), `aria-hidden`
 - 2026-11-10 v1.3.0 — Story S-029: se resuelven los «Pendiente» de Tech Timeline (estados de juego de `timeline.row`: default, foco, tomada, destino y bloqueada; medidas a 320px; teclado y botones ↑ ↓; columna de fecha de `timeline.rail`) y se documenta `timeline.hint` con sus anuncios ES/EN.
 - 2026-11-11 v1.4.0 — `grep-grid.counter` pasa de `card` `counter` sobre la grilla a dato `N/8` en el encabezado de la lista (CHANGELOG 1.8.0).
 - 2026-11-13 v1.5.0 — Story S-038: modo solución para la preview del admin (Devdle, Grep Grid y Tech Timeline), estado «solución» de `grep-grid.cell` y `grep-grid.word` y cabecera `//` en `h3` cuando va embebida.
+- 2026-11-14 v1.6.0 — Story S-046: se resuelven los «Pendiente» de Big O (`big-o.option` jugando, elegida, incorrecta, 2/4 columnas y resultado), mapeo de `big-o.step`, trampa de la preview y fila Big O del modo solución con la excepción de las pestañas.

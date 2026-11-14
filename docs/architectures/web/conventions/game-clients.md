@@ -92,3 +92,9 @@ const Client = lazy(clientRegistry[gameId]);
 
 - `GameProps.feedback: unknown | null`: the host passes the last `MoveResponse.feedback` to the `Game` component (`null` until the first move; it comes from `useSubmitMove().data`). The host does not interpret it; `GameRoute`/`GameScreens` forward it as-is.
 - A client that needs it (Grep Grid: `not_a_word` and `already_found` do not change the state, they only exist in `feedback`) validates its shape and discards repeated values by identity, the same pattern as `moveError`. Clients that do not need it ignore it (Devdle).
+
+## Update (REQ-009)
+
+- `ClientBaseProps.codeLanguage: CodeLanguage` is generic (no per-game branch): the host resolves it as `session.preferred_code_language ?? 'js'` and the client reads it when it mounts (Big O, Bug Hunt); the other clients ignore it.
+- `web` writes `MoveResponse.play.code_language` into the `GameToday` cache and, when not null, into the session cache through `rememberCodeLanguage` (no `PATCH`: the `api` already stored it when the game closed).
+- Shiki never appears in `apps/web` (not even in tests); a build guard checks it stays out of the entry chunk.

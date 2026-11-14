@@ -3,6 +3,24 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.10.0] - 2026-11-14
+
+**MINOR.** Big O jugable y preview del admin (story S-046, plan `games`). Ningún token se agrega ni cambia. Los planes de `web` y `admin` de S-046 suman sus ítems a esta misma entrada.
+
+### Agregado
+- `components/code-block.md` 1.1.0: variante con resaltado de sintaxis (tema por variables CSS apuntado a tokens existentes, AA sobre el fondo del bloque, fallback sin color y sin saltos de layout), números de línea `readonly` en `text.dim` (≥ 4,5:1), nota bajo la línea en bloques angostos (container query), pestañas bloqueadas con `aria-disabled` y mapeo provisorio de los tokens Big O ausentes. El «Don't: agregar resaltado de sintaxis» pasa a «solo con tema de tokens AA y fallback sin color».
+- `patterns/game-boards.md` 1.6.0: resueltos los «Pendiente» de `big-o.option` (sin elegir, elegida con `●`, elección incorrecta, 2 / 4 columnas, resultado correcta / tu respuesta / ambas), `big-o.step` con su mapeo, trampa de la preview (borde punteado, sin relleno) y fila **Big O** en «Modo solución — preview del admin» con la excepción de las pestañas de vista (D8).
+
+### Código alineado con el spec
+- `@nerdose/game-big-o/client` (S-046, plan `games`): `Instructions`, `Game`, `Result`, `Preview`, `share`, `i18n` y `HELP_TARGET_ID`; Shiki por `import()` dinámico en `highlight.ts`.
+- `apps/web` (S-046, plan `web`): Big O montado por el registry (`clientRegistry['big-o']`), `codeLanguage` resuelto desde la sesión y guardas de build (CSS y Shiki fuera del chunk de entrada). Sin componentes ni tokens nuevos en `web`.
+
+### Notas para limpiar en otros docs
+- `web`: el aviso de día nuevo dice «… sin **terminar** …» (screen.md de Big O: «sin **confirmar**») y el loader es «$ cargando big-o…» (screen.md: «$ cargando tu partida de big-o…»). Son textos genéricos del host compartidos por los 4 juegos.
+- `@nerdose/ui` no tiene los tokens `game.big-o.light` (`#8CC8FF`; `--color-game-big-o-light` vale `#9ACFFF`, el hover), `tint-strong` (`#11243A`), `line-highlight` (`#0E1D2E`) ni `tab-selected` (`#1D2A3A`): el client usa `tint-border`, `tint` y `light` en su lugar. Candidato a una story de `ui`.
+- Roles tipográficos sin utilidad `text-*` en `@nerdose/ui`: `type.code` (15/2), `type.game.option` (16/400), `type.label.tab`, `type.label.step` y `type.body.explain`; el client usa los roles existentes más cercanos y `tab-size` por `style`.
+- `text.line-number` (`#4F5A66`, 2,7:1) no se usa: los números de línea van en `text.dim`.
+
 ## [1.9.0] - 2026-11-13
 
 **MINOR.** Modo solución de los juegos para la preview del admin (story S-038). Ningún token se agrega ni cambia.

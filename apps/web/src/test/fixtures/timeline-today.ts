@@ -178,7 +178,7 @@ export const timelineNextDay = {
 
 export const tlMove3 = {
   feedback: null,
-  play: { status: 'lost', state: { order: TL_SWAP }, score: 3 },
+  play: { status: 'lost', state: { order: TL_SWAP }, score: 3, code_language: null },
   result: tlResult(TL_SWAP),
   streaks: STREAKS,
   game_stats: timelineLost3.game_stats,
@@ -186,7 +186,7 @@ export const tlMove3 = {
 
 export const tlMove5 = {
   feedback: null,
-  play: { status: 'won', state: { order: TL_CORRECT }, score: 5 },
+  play: { status: 'won', state: { order: TL_CORRECT }, score: 5, code_language: null },
   result: tlResult(TL_CORRECT),
   streaks: STREAKS,
   game_stats: timelineWon.game_stats,

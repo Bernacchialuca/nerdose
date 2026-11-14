@@ -37,6 +37,7 @@ export type PreviewProps = { payload: unknown; language: Locale };
 type PreviewClient = { Preview: ComponentType<PreviewProps> };   // structural copy of the ./client contract
 
 const clientRegistry: Partial<Record<GameId, () => Promise<PreviewClient>>> = {
+  'big-o': () => import('@nerdose/game-big-o/client'),
   devdle: () => import('@nerdose/game-devdle/client'),
   'grep-grid': () => import('@nerdose/game-grep-grid/client'),
   timeline: () => import('@nerdose/game-timeline/client'),
@@ -78,10 +79,11 @@ export function ChallengePreview({ gameId, payload }: ChallengePreviewProps) {
 - Each `Preview` translates its own texts with the game package's i18n resources according to `language`, and sets `lang` on its root. The admin does **not** initialize i18next nor wrap previews in `I18nextProvider`; the admin UI is plain Spanish.
 - Give the drawer's preview a `key={challenge.id}` so a regenerated challenge remounts it (and resets the error boundary).
 - The preview is read-only: it never sends moves, starts plays or calls player endpoints.
+- Big O's `Preview` renders the code as plain text and never triggers loading the syntax highlighter in the admin (checked by a build guard in `src/styles.test.ts`).
 
 ### Fallbacks
 
-- No `Preview` for the game (Big O, Bug Hunt until they ship one) -> `PayloadBilingual`.
+- No `Preview` for the game (Bug Hunt until it ships one) -> `PayloadBilingual`.
 - `Preview` throws (e.g. payload does not match the game's schema) -> `PreviewErrorBoundary` logs the error and shows a warning `Banner` plus `PayloadBilingual`, so the drawer stays usable (regenerate still works).
 
 ## Rules

@@ -1,12 +1,12 @@
 import type { ComponentType, ReactNode } from 'react';
 
-import type { Locale } from '@nerdose/core';
+import type { CodeLanguage, Locale } from '@nerdose/core';
 
 import type { GameStatsView } from './api/game-today';
 
 export type { GameStatsView };
 
-// Copia estructural del contrato de los `./client` (Devdle, Grep Grid): la capa de `web` no importa
+// Copia estructural del contrato de los `./client` (Devdle, Grep Grid, Timeline, Big O): la capa de `web` no importa
 // tipos de ningún juego (solo el registry toca los paquetes).
 export type Translate = (key: string, options?: Record<string, unknown>) => string;
 export type MoveErrorInfo = { code: string; message: string };
@@ -16,6 +16,8 @@ export type ClientBaseProps = {
   locale: Locale;
   t: Translate;
   notices?: ReactNode;
+  /** `session.preferred_code_language ?? 'js'` (REQ-009 decisión 12); los clients que no lo usan lo ignoran. */
+  codeLanguage: CodeLanguage;
 };
 export type InstructionsProps = ClientBaseProps & {
   onStart: () => void;

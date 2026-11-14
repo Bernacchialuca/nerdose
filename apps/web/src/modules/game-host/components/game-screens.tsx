@@ -2,8 +2,10 @@ import { useMemo } from 'react';
 import type { ReactNode, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import type { GameId, Locale } from '@nerdose/core';
+import type { CodeLanguage, GameId, Locale } from '@nerdose/core';
 import { Alert, Banner } from '@nerdose/ui';
+
+import { useSession } from '@/modules/session';
 
 import type { GameView } from '../game-view';
 import type { GameClient, Translate } from '../types';
@@ -12,6 +14,9 @@ import { BackLink } from './back-link';
 import { PhaseFocus } from './phase-focus';
 import { ResultExits } from './result-exits';
 import { RetryButton } from './retry-button';
+
+/** REQ-009 decisión 12: sin preferencia guardada, el código se muestra en JavaScript. */
+export const DEFAULT_CODE_LANGUAGE: CodeLanguage = 'js';
 
 type ClientView = Extract<GameView, { kind: 'instructions' | 'playing' | 'result' }>;
 
@@ -54,6 +59,7 @@ export function GameScreens({
   onRecoverMove,
 }: GameScreensProps & { client: GameClient }) {
   const { t: host } = useTranslation();
+  const codeLanguage = useSession().preferred_code_language ?? DEFAULT_CODE_LANGUAGE;
   const { t: gameT } = useTranslation(client.i18n.namespace);
   const t = useMemo<Translate>(() => (key, options) => String(gameT(key, options)), [gameT]);
   const focus = <PhaseFocus key={view.kind} firstPhaseRef={firstPhaseRef} />;
@@ -87,6 +93,7 @@ export function GameScreens({
           number={view.number}
           locale={locale}
           t={t}
+          codeLanguage={codeLanguage}
           notices={notices}
           onStart={onStart}
           starting={starting}
@@ -120,6 +127,7 @@ export function GameScreens({
           number={view.number}
           locale={locale}
           t={t}
+          codeLanguage={codeLanguage}
           publicView={view.publicView}
           state={view.state}
           feedback={feedback}
@@ -146,6 +154,7 @@ export function GameScreens({
         number={view.number}
         locale={locale}
         t={t}
+        codeLanguage={codeLanguage}
         result={view.result}
         publicView={view.publicView}
         gameStats={view.gameStats}

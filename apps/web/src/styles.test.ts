@@ -4,6 +4,8 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
+import { buildWeb, compiledCss } from './test/vite-build';
+
 const srcDir = fileURLToPath(new URL('.', import.meta.url));
 
 function filesWith(dir: string, extensions: string[]): string[] {
@@ -55,18 +57,7 @@ describe('index.css', () => {
   });
 
   it('TS-3: el CSS compilado incluye las clases del client de Devdle', async () => {
-    const { build } = await import('vite');
-    const output = await build({
-      root: fileURLToPath(new URL('..', import.meta.url)),
-      logLevel: 'silent',
-      build: { write: false },
-    });
-    const outputs = Array.isArray(output) ? output : [output];
-    const compiled = outputs
-      .flatMap((o) => ('output' in o ? o.output : []))
-      .filter((chunk) => chunk.type === 'asset' && chunk.fileName.endsWith('.css'))
-      .map((chunk) => (chunk.type === 'asset' ? String(chunk.source) : ''))
-      .join('\n');
+    const compiled = compiledCss(await buildWeb());
     // Clases y tokens que solo usa el client de Devdle (tablero y teclado).
     for (const used of [
       '--board-cols',
@@ -76,6 +67,45 @@ describe('index.css', () => {
     ]) {
       expect(compiled).toContain(used);
     }
+  }, 60_000);
+
+  it('TS-36: el CSS compilado incluye lo que usa el client de Big O', async () => {
+    const compiled = compiledCss(await buildWeb());
+    for (const used of [
+      '--color-game-big-o-light',
+      '--color-game-big-o-tint',
+      '--color-game-big-o-border',
+      '--color-surface-sunken',
+      '--color-toolbar',
+      '--color-text-body',
+      '@container',
+    ]) {
+      expect(compiled, used).toContain(used);
+    }
+  }, 60_000);
+
+  it('TS-37: el resaltador de código queda fuera del chunk de entrada y es perezoso', async () => {
+    const { chunks } = await buildWeb();
+    const byName = new Map(chunks.map((c) => [c.fileName, c]));
+    const entry = chunks.find((c) => c.isEntry);
+    expect(entry).toBeDefined();
+    const closure = new Set<string>();
+    const queue = [(entry as (typeof chunks)[number]).fileName];
+    while (queue.length > 0) {
+      const name = queue.pop() as string;
+      if (closure.has(name)) continue;
+      closure.add(name);
+      for (const next of byName.get(name)?.imports ?? []) queue.push(next);
+    }
+    const highlighter = new RegExp('[\\\\/](' + 'shi' + 'ki|@' + 'shi' + 'kijs)[\\\\/]');
+    const withHighlighter = chunks.filter((c) => c.moduleIds.some((id) => highlighter.test(id)));
+    expect(withHighlighter.length).toBeGreaterThan(0);
+    for (const c of withHighlighter) expect(closure.has(c.fileName), c.fileName).toBe(false);
+    const gameChunk = chunks.find((c) =>
+      c.moduleIds.some((id) => id.endsWith('packages/games/big-o/src/client/index.ts')),
+    );
+    expect(gameChunk).toBeDefined();
+    expect(closure.has((gameChunk as (typeof chunks)[number]).fileName)).toBe(false);
   }, 60_000);
 
   it('importa solo los pesos del Design System', () => {

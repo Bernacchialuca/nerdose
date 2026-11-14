@@ -2,9 +2,9 @@
 
 ## clientRegistry / hasGameClient
 - **Location:** apps/web/src/modules/game-host/registry.ts
-- **Description:** The only place that lists games: `game_id` to a dynamic `import()` of the package `./client`. Partial on purpose (Devdle, Grep Grid and Tech Timeline).
+- **Description:** The only place that lists games: `game_id` to a dynamic `import()` of the package `./client`. Partial on purpose (Devdle, Grep Grid, Tech Timeline and Big O).
 - **Signature:** `clientRegistry: Partial<Record<GameId, () => Promise<GameClient>>>`; `hasGameClient(id: GameId): boolean`
-- **Usage:** `hasGameClient('big-o') // false`
+- **Usage:** `hasGameClient('bug-hunt') // false`
 
 ## loadGameClient / gameScreens / useLoadedGameClient
 - **Location:** apps/web/src/modules/game-host/load-game-client.ts, lazy-game-screens.tsx, use-loaded-game-client.ts
@@ -14,11 +14,11 @@
 
 ## GameClient and props
 - **Location:** apps/web/src/modules/game-host/types.ts
-- **Description:** Structural copy of the `./client` contract of a game package: `GameClient`, `ClientBaseProps`, `InstructionsProps`, `GameProps`, `ResultProps`, `Translate`, `MoveErrorInfo`, `GameStatsView`. `GameProps.feedback` is the last `MoveResponse.feedback` (`null` until the first move; forwarded untouched, never interpreted by `web`) and `ResultProps.publicView` is `GameToday.public_view` for clients that draw the final board.
+- **Description:** Structural copy of the `./client` contract of a game package: `GameClient`, `ClientBaseProps`, `InstructionsProps`, `GameProps`, `ResultProps`, `Translate`, `MoveErrorInfo`, `GameStatsView`. `GameProps.feedback` is the last `MoveResponse.feedback` (`null` until the first move; forwarded untouched, never interpreted by `web`) and `ResultProps.publicView` is `GameToday.public_view` for clients that draw the final board. `ClientBaseProps.codeLanguage: CodeLanguage` is `session.preferred_code_language ?? 'js'` (resolved by `GameScreens`, `DEFAULT_CODE_LANGUAGE`); Big O reads it when mounting the `Game`, the other clients ignore it. `MoveResponse.play` is a full `PlayView` (with `code_language`).
 
 ## gameTodayKeys / fetchGameToday / useGameToday / useStartPlay / useSubmitMove / withSessionRetry
 - **Location:** apps/web/src/modules/game-host/api/
-- **Description:** TanStack Query layer for `GET .../today`, `POST .../start` and `POST .../move`. `useGameToday` keeps the previous data when the locale changes; the mutations write the response into the cache and `useSubmitMove` invalidates `todayKeys.all` only when the move closed the game. `withSessionRetry` recreates the session once on `no_session`.
+- **Description:** TanStack Query layer for `GET .../today`, `POST .../start` and `POST .../move`. `useGameToday` keeps the previous data when the locale changes; the mutations write the response into the cache and `useSubmitMove` copies `res.play` (with `code_language`) into the `GameToday` cache, calls `useSession().rememberCodeLanguage` when `code_language` is not null (no `PATCH`) and invalidates `todayKeys.all` only when the move closed the game. `withSessionRetry` recreates the session once on `no_session`.
 - **Signature:** `useGameToday(gameId, { enabled? })`; `useStartPlay(gameId).mutate({ challengeNumber })`; `useSubmitMove(gameId).mutate({ challengeNumber, move })`; `withSessionRetry<T>(fn: () => Promise<T>): Promise<T>`
 - **Usage:** `const query = useGameToday('devdle', { enabled: hasGameClient('devdle') })`
 
@@ -51,9 +51,9 @@
 - **Description:** Zod-validated `VITE_PLAUSIBLE_*` (script URL required when there is a domain); `initAnalytics()` calls `injectAnalytics` once from `main.tsx`.
 - **Signature:** `parseEnv(raw: Record<string, unknown>): Env`; `initAnalytics(e?: Env): void`
 
-## gameHandlersFor / grepGridHandlers / timelineHandlers / game fixtures / game-route-helpers (tests)
-- **Location:** apps/web/src/test/msw.ts, apps/web/src/test/fixtures/grep-grid-today.ts, apps/web/src/test/fixtures/timeline-today.ts, apps/web/src/test/dnd-rects.ts, apps/web/src/test/game-route-helpers.ts
-- **Description:** `gameHandlersFor(gameId)` builds the MSW `today` / `start` / `move` handlers of one game (`gameHandlers` = Devdle, `grepGridHandlers` = Grep Grid, `timelineHandlers` = Tech Timeline). The Grep Grid fixtures are the API payloads in `snake_case` (grid, words, played states, results, moves, `todayWithGrepGrid`); the Timeline fixtures (`timeline-today.ts`) follow the same shape (`tlResult`, `timelineInProgress`, `timelineLost3`, `todayWithTimeline`, ...). `stubSortableRects()` (`dnd-rects.ts`) gives `<li>` children of an `<ol>` measurable rects in jsdom so dnd-kit's keyboard sensor works; it returns a `restore()` function. `game-route-helpers` shares `recordCalls`, `countOf`, `errorResponse`, `settle`, `setShare` and `h1` between the route suites.
+## gameHandlersFor / grepGridHandlers / timelineHandlers / bigOHandlers / game fixtures / game-route-helpers / buildWeb (tests)
+- **Location:** apps/web/src/test/msw.ts, apps/web/src/test/fixtures/grep-grid-today.ts, apps/web/src/test/fixtures/timeline-today.ts, apps/web/src/test/fixtures/big-o-today.ts, apps/web/src/test/vite-build.ts, apps/web/src/test/dnd-rects.ts, apps/web/src/test/game-route-helpers.ts
+- **Description:** `gameHandlersFor(gameId)` builds the MSW `today` / `start` / `move` handlers of one game (`gameHandlers` = Devdle, `grepGridHandlers` = Grep Grid, `timelineHandlers` = Tech Timeline, `bigOHandlers` = Big O). The Big O fixtures (`big-o-today.ts`: `boResult`, `boMove`, `bigOInProgress`, `bigOWonJava`, `bigOLostGo`, `todayWithBigO`, ...) follow the same shape. `buildWeb()` (`vite-build.ts`) runs one in-memory Vite build per test file and `compiledCss()` joins its CSS assets (CSS and chunk guards in `styles.test.ts`). The Grep Grid fixtures are the API payloads in `snake_case` (grid, words, played states, results, moves, `todayWithGrepGrid`); the Timeline fixtures (`timeline-today.ts`) follow the same shape (`tlResult`, `timelineInProgress`, `timelineLost3`, `todayWithTimeline`, ...). `stubSortableRects()` (`dnd-rects.ts`) gives `<li>` children of an `<ol>` measurable rects in jsdom so dnd-kit's keyboard sensor works; it returns a `restore()` function. `game-route-helpers` shares `recordCalls`, `countOf`, `errorResponse`, `settle`, `setShare` and `h1` between the route suites.
 - **Usage:** `server.use(grepGridHandlers.today(grepGridInProgress3), grepGridHandlers.move(ggMoveDocker))`
 
 ## useReport / useAcknowledgeVoid

@@ -13,6 +13,7 @@ type PreviewClient = { Preview: ComponentType<PreviewProps> };
  * un detalle; un juego sin entrada acá cae a la vista genérica del payload.
  */
 const clientRegistry: Partial<Record<GameId, () => Promise<PreviewClient>>> = {
+  'big-o': () => import('@nerdose/game-big-o/client'),
   devdle: () => import('@nerdose/game-devdle/client'),
   'grep-grid': () => import('@nerdose/game-grep-grid/client'),
   timeline: () => import('@nerdose/game-timeline/client'),

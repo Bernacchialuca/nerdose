@@ -30,6 +30,10 @@ const ALLOWED: Record<string, { dirs: string[]; externals: string[] }> = {
     dirs: ['src/generator', 'src/shared', 'src/definition'],
     externals: ['@nerdose/core', 'zod', '@nerdose/polyglot'],
   },
+  client: {
+    dirs: ['src/client', 'src/definition/schemas', 'src/shared'],
+    externals: ['@nerdose/core', '@nerdose/ui', 'zod', 'react'],
+  },
 };
 
 describe('game-big-o entry boundaries (TS-2)', () => {
@@ -37,6 +41,7 @@ describe('game-big-o entry boundaries (TS-2)', () => {
     expect(files.filter((f) => f.file.startsWith('shared/')).length).toBeGreaterThan(0);
     expect(files.filter((f) => f.file.startsWith('definition/')).length).toBeGreaterThan(0);
     expect(files.filter((f) => f.file.startsWith('generator/')).length).toBeGreaterThan(0);
+    expect(files.filter((f) => f.file.startsWith('client/')).length).toBeGreaterThan(0);
   });
 
   it.each(Object.keys(ALLOWED))('%s only imports allowed modules', (entry) => {
@@ -56,8 +61,32 @@ describe('game-big-o entry boundaries (TS-2)', () => {
     }
   });
 
-  it('no entry imports the client', () => {
+  it('client contains no storage, analytics, game imports nor tracking (TS-2)', () => {
+    for (const { file, text } of files.filter((f) => f.file.startsWith('client/'))) {
+      for (const forbidden of [
+        '@nerdose/polyglot',
+        '@nerdose/game-',
+        'localStorage',
+        'sessionStorage',
+        'window.plausible',
+        'track(',
+      ]) {
+        expect(text.includes(forbidden), `${file} contains ${forbidden}`).toBe(false);
+      }
+    }
+  });
+
+  it('shiki is only loaded dynamically from client/highlight.ts', () => {
+    const withDynamic: string[] = [];
     for (const { file, text } of files) {
+      expect(/from\s+'shiki/.test(text), `${file} imports shiki statically`).toBe(false);
+      if (text.includes("import('shiki/")) withDynamic.push(file);
+    }
+    expect(withDynamic.every((f) => f === 'client/highlight.ts')).toBe(true);
+  });
+
+  it('no entry imports the client', () => {
+    for (const { file, text } of files.filter((f) => !f.file.startsWith('client/'))) {
       for (const spec of importsOf(text)) {
         if (spec.startsWith('.')) {
           expect(resolveRelative(file, spec).startsWith('src/client'), `${file} -> ${spec}`).toBe(

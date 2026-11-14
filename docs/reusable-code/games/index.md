@@ -1,6 +1,6 @@
 # Reusable Code Index - games
 
-Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition`, `./client` and `./generator`, `@nerdose/game-timeline` (`packages/games/timeline`), entries `./definition`, `./generator` and `./client`, and `@nerdose/game-big-o` (`packages/games/big-o`), entries `./definition` and `./generator` (`./client` arrives with S-046). The build script lives in `scripts/` and is never importable from `src/` or other packages.
+Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition`, `./client` and `./generator`, `@nerdose/game-timeline` (`packages/games/timeline`), entries `./definition`, `./generator` and `./client`, and `@nerdose/game-big-o` (`packages/games/big-o`), entries `./definition`, `./client` and `./generator`. The build script lives in `scripts/` and is never importable from `src/` or other packages.
 
 ## Devdle definition (6 items) - see devdle.md
 - **devdle / definition** (packages/games/devdle/src/definition/index.ts) - `GameDefinition` of Devdle (`id: 'devdle'`, `version: 1`); `definition` is an alias; implements `codeLanguage` -> `null`; implements `culprits(p)` (1 `term`, kind/id/label; test in `src/generator/culprits.test.ts`); declares `bankUsage` terms/last_used_devdle/365/1 (checked against `historySpec`/`REUSE_WINDOW_DAYS`/`usedBankItems` in `src/generator/bank-usage.test.ts`)
@@ -117,6 +117,21 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **MIN_STEPS / MAX_STEPS** (packages/games/big-o/src/definition/schemas.ts) - 2 and 6 explanation steps
 - **BigOPayload / BigOPayloadExplanation / BigOMove / BigOState / BigOPublicView / BigOFeedback / BigOResult / BigOExplanation / BigOStats / CodeByLanguage** (packages/games/big-o/src/definition/schemas.ts) - Types inferred from the schemas
 - **PAYLOAD / PAYLOAD_RECURSION / WON_JAVA / LOST_GO / withAnswer / NOW / CTX_ES / CTX_EN / S0 / CODE_NLOGN** (packages/games/big-o/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry
+
+## Big O client (13 items) - see big-o.md
+- **Instructions / Game / Result** (packages/games/big-o/src/client/{instructions,game,result}.tsx) - Screens: once-per-attempt "Start"; code tabs + 8-option radiogroup + confirm (`moveSchema.parse` then `onMove`); verdict, code with line notes, marked options and step-by-step panel
+- **Preview / translatorFor** (packages/games/big-o/src/client/{preview.tsx,translate.ts}) - Read-only plain-text solution mode `{ payload, language }` for the admin (answer and `trap_option` marked, `h3` headings, root `lang`)
+- **share** (packages/games/big-o/src/client/share.ts) - `🧮 Big O #N` / `🟩|🟥 <Language>` / `nerdose.dev`, spoiler-free
+- **i18n / HELP_TARGET_ID / parse* / contract types** (packages/games/big-o/src/client/{i18n/index.ts,help-target.ts,parse.ts,types.ts}) - Namespace `big-o`, help anchor, schema parsers and props types (`codeLanguage?` optional)
+- **CodeBlock** (packages/games/big-o/src/client/code-block.tsx) - Read-only tabbed code block with numbered lines, per-line notes (container query) and optional Shiki color with plain fallback
+- **loadTokenizer / SHIKI_VARS / useTokenizer** (packages/games/big-o/src/client/{highlight.ts,shiki-vars.ts,use-tokenizer.ts}) - Dynamic memoised Shiki loader, `css-variables` theme mapped to DS tokens, tokenizer hook
+- **OptionsGroup / Question** (packages/games/big-o/src/client/{options-group.tsx,question.tsx}) - Radiogroup of the 8 options with roving tabindex; fixed question with `f(n)` accent
+- **ResultOptions / Explanation** (packages/games/big-o/src/client/{result-options.tsx,explanation.tsx}) - Marked read-only options and "Paso a paso" panel shared by result and preview
+- **resultMarks / previewMarks** (packages/games/big-o/src/client/options.ts) - Per-option marks in fixed order
+- **formatCount / moveRadio / codeLines / notesByLine** (packages/games/big-o/src/client/{format,radio,lines}.ts) - Locale number format, APG radio navigation, code line splitting and notes by line
+- **ConsoleHint / SectionPanel** (packages/games/big-o/src/client/{console-hint,section-panel}.tsx) - Copies of Timeline's hint line and panel
+- **makeT / test fixtures** (packages/games/big-o/src/client/{test-utils,test-fixtures}.ts) - Test-only helpers
+- **contrast / styles guards** (packages/games/big-o/src/client/{contrast.test.ts,client-styles.test.ts}) - Tests: AA of every color pair against `@nerdose/ui/tokens.css` and the styling static check
 
 ## Big O generator (11 items) - see big-o.md
 - **generate / historySpec / usedBankItems / TRAP_RATE** (packages/games/big-o/src/generator/generate.ts) - Deterministic `generate({ date, seed, history })` (rng order: trap draw, recipe pick over the `id`-sorted group, parameters), `historySpec` `{ bank: null, lastUsedField: '', recentDays: 30, aheadDays: 30 }`, `usedBankItems` `[]`, `TRAP_RATE = 0.35`.

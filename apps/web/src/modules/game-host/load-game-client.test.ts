@@ -50,7 +50,22 @@ describe('loadGameClient', () => {
     expect(i18n.t('game.confirm', { ns: 'timeline' })).toBe('Confirmar orden');
   });
 
+  it('TS-2: carga el client de Big O y registra su i18n', async () => {
+    const first = loadGameClient('big-o');
+    expect(loadGameClient('big-o')).toBe(first);
+    const client = await first;
+    expect(typeof client.Instructions).toBe('function');
+    expect(typeof client.Game).toBe('function');
+    expect(typeof client.Result).toBe('function');
+    expect(typeof client.share).toBe('function');
+    expect(client.i18n.namespace).toBe('big-o');
+    expect(client.HELP_TARGET_ID).toBe('game-help');
+    expect(i18n.hasResourceBundle('es', 'big-o')).toBe(true);
+    expect(i18n.hasResourceBundle('en', 'big-o')).toBe(true);
+    expect(i18n.t('game.confirm', { ns: 'big-o' })).toBe('Confirmar respuesta');
+  });
+
   it('rechaza si el juego no tiene client', async () => {
-    await expect(loadGameClient('big-o')).rejects.toThrow('big-o');
+    await expect(loadGameClient('bug-hunt')).rejects.toThrow('bug-hunt');
   });
 });

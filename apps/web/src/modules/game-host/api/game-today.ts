@@ -1,4 +1,4 @@
-import type { GameId, Locale, ReportReason } from '@nerdose/core';
+import type { CodeLanguage, GameId, Locale, ReportReason } from '@nerdose/core';
 
 import { api } from '@/lib/api-client';
 import type { PlayStatus } from '@/modules/catalog';
@@ -17,7 +17,7 @@ export type PlayView = {
   status: PlayStatus;
   state: unknown;
   score: number | null;
-  code_language: 'js' | 'go' | 'java' | null;
+  code_language: CodeLanguage | null;
 };
 
 export type GameToday = {
@@ -41,7 +41,7 @@ export type Streaks = {
 
 export type MoveResponse = {
   feedback: unknown;
-  play: Omit<PlayView, 'code_language'>;
+  play: PlayView;
   result: unknown;
   streaks: Streaks | null;
   game_stats: GameStatsView | null;

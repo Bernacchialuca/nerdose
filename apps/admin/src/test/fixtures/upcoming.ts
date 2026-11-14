@@ -127,7 +127,102 @@ export const VERIFICATION = {
   ],
 };
 
+export const BIG_O_PAYLOAD = {
+  recipe: 'nest(linear,doubling)',
+  recipe_category: 'nested_loops',
+  code: {
+    js: [
+      'function f(n) {',
+      '  let ops = 0;',
+      '  for (let i = 0; i < n; i++) {',
+      '    for (let j = 1; j < n; j *= 2) {',
+      '      ops++;',
+      '    }',
+      '  }',
+      '  return ops;',
+      '}',
+    ].join('\n'),
+    go: [
+      'func f(n int) int {',
+      '\tops := 0',
+      '\tfor i := 0; i < n; i++ {',
+      '\t\tfor j := 1; j < n; j *= 2 {',
+      '\t\t\tops++',
+      '\t\t}',
+      '\t}',
+      '\treturn ops',
+      '}',
+    ].join('\n'),
+    java: [
+      'static int f(int n) {',
+      '    int ops = 0;',
+      '    for (int i = 0; i < n; i++) {',
+      '        for (int j = 1; j < n; j *= 2) {',
+      '            ops++;',
+      '        }',
+      '    }',
+      '    return ops;',
+      '}',
+    ].join('\n'),
+  },
+  answer: 'o_n_log_n',
+  trap_option: 'o_n2',
+  explanation: {
+    steps: [
+      { es: 'El loop externo corre n veces.', en: 'The outer loop runs n times.' },
+      {
+        es: 'El interno duplica j: log₂ n vueltas.',
+        en: 'The inner loop doubles j: log₂ n iterations.',
+      },
+      {
+        es: 'Anidados se multiplican: n × log n. Simplificado: O(n log n).',
+        en: 'Nested loops multiply: n × log n. Simplified: O(n log n).',
+      },
+    ],
+    line_notes: [
+      { line: 3, text: { es: 'n veces', en: 'n times' } },
+      { line: 4, text: { es: 'log n veces', en: 'log n times' } },
+    ],
+    tip: {
+      es: 'Un loop interno que duplica su variable no es n.',
+      en: 'An inner loop that doubles its variable is not n.',
+    },
+    example: { n: 1024, ops: 10240, trap_ops: 1048576 },
+  },
+};
+
+// Valores de fixture con los formatos de `verify` (S-045); el log genérico no los interpreta.
+export const BIG_O_VERIFICATION = {
+  ok: true,
+  checks: [
+    { name: 'texts_bilingual', ok: true },
+    { name: 'code_shape', ok: true },
+    { name: 'variety_recipe', ok: true },
+    { name: 'variety_answer', ok: true },
+    { name: 'run_js', ok: true, detail: '120 ms' },
+    { name: 'run_go', ok: true, detail: '310 ms' },
+    { name: 'run_java', ok: true, detail: '540 ms' },
+    { name: 'counts_agree', ok: true, detail: 'n=64,128,256,512,1024 counts=384,896,2048,4608,10240' },
+    { name: 'counts_in_range', ok: true },
+    { name: 'example_matches_run', ok: true, detail: 'n=1024 ops=10240' },
+    { name: 'fit_quality', ok: true, detail: 'best=o_n_log_n cv=0.000' },
+    { name: 'fit_unambiguous', ok: true, detail: 'best=o_n_log_n next=o_n ratio=12.4' },
+    { name: 'fit_matches_answer', ok: true, detail: 'best=o_n_log_n answer=o_n_log_n' },
+  ],
+};
+
+export const BUG_HUNT_STUB_PAYLOAD = {
+  fix: 'i <= n',
+  explanation: { es: 'el límite del loop se pasa por uno', en: 'the loop bound is off by one' },
+};
+
+const VERIFICATIONS: Partial<Record<GameId, Record<string, unknown>>> = {
+  'big-o': BIG_O_VERIFICATION,
+};
+
 const PAYLOADS: Partial<Record<GameId, Record<string, unknown>>> = {
+  'big-o': BIG_O_PAYLOAD,
+  'bug-hunt': BUG_HUNT_STUB_PAYLOAD,
   devdle: DEVDLE_PAYLOAD,
   'grep-grid': GREP_GRID_PAYLOAD,
   timeline: TIMELINE_PAYLOAD,
@@ -138,6 +233,7 @@ const ID_OF: Partial<Record<GameId, (dd: string) => string>> = {
   'grep-grid': GG,
   timeline: TL,
   'big-o': (dd) => `b0000000-0000-4000-8000-0000000012${dd}`,
+  'bug-hunt': (dd) => `c1000000-0000-4000-8000-0000000012${dd}`,
 };
 
 export function approved(
@@ -152,7 +248,7 @@ export function approved(
       id: (ID_OF[gameId] as (dd: string) => string)(dd),
       status: 'approved',
       payload: { ...(PAYLOADS[gameId] ?? {}), date },
-      verification: VERIFICATION,
+      verification: VERIFICATIONS[gameId] ?? VERIFICATION,
       generator_version: '1.4.0',
       attempt: 0,
       rejected_items: [],
@@ -253,20 +349,19 @@ export const UPCOMING_REJECTED_ITEM = (() => {
   return base;
 })();
 
-export const UPCOMING_BIG_O = (() => {
+export const UPCOMING_BIG_O = upcoming({}, { games: ['devdle', 'grep-grid', 'timeline', 'big-o'] });
+
+export const UPCOMING_BIG_O_BAD_PAYLOAD = (() => {
   const base = upcoming({}, { games: ['devdle', 'grep-grid', 'timeline', 'big-o'] });
-  for (const day of base.days) {
-    const g = day.games.find((x) => x.game_id === 'big-o');
-    if (g?.challenge) {
-      g.challenge.payload = {
-        answer: 'O(n log n)',
-        explanation: { es: 'ordena con mezcla', en: 'merge sort' },
-        date: day.date,
-      };
-    }
-  }
+  const g = base.days.find((d) => d.date === '2026-12-02')?.games.find((x) => x.game_id === 'big-o');
+  if (g?.challenge) g.challenge.payload = { ...g.challenge.payload, trap_option: 'o_n_log_n' };
   return base;
 })();
+
+export const UPCOMING_BUG_HUNT = upcoming(
+  {},
+  { games: ['devdle', 'grep-grid', 'timeline', 'bug-hunt'] },
+);
 
 export const UPCOMING_BAD_PAYLOAD = (() => {
   const base = upcoming();

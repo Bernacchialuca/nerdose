@@ -10,6 +10,8 @@ export type SessionContextValue = {
   locale: Locale;
   preferred_code_language: CodeLanguage | null;
   changeLocale: (locale: Locale) => Promise<void>;
+  /** Refleja en la cache de sesión el lenguaje con el que la `api` cerró una partida (sin `PATCH`). */
+  rememberCodeLanguage: (language: CodeLanguage) => void;
 };
 
 export const SessionContext = createContext<SessionContextValue | null>(null);

@@ -8,12 +8,12 @@ App `apps/web` (not a package; imported through the `@/` alias).
 
 ## Testing utils (2 items) - see api-client.md, game-host.md
 - **renderWithProviders** (apps/web/src/test/render.tsx) - Renders routes in a memory router with a fresh QueryClient and i18n in `es`
-- **gameHandlersFor / grepGridHandlers / timelineHandlers / game fixtures / stubSortableRects / game-route-helpers** (apps/web/src/test/) - Per-game MSW handlers, Grep Grid and Timeline API fixtures, dnd-kit rect stub and shared route-test helpers
+- **gameHandlersFor / grepGridHandlers / timelineHandlers / bigOHandlers / game fixtures / stubSortableRects / game-route-helpers** (apps/web/src/test/) - Per-game MSW handlers, Grep Grid, Timeline and Big O API fixtures, dnd-kit rect stub and shared route-test helpers
 
 ## Game host (14 items) - see game-host.md
-- **clientRegistry / hasGameClient** (apps/web/src/modules/game-host/registry.ts) - Only place that lists games (partial registry of dynamic `import()`s)
+- **clientRegistry / hasGameClient** (apps/web/src/modules/game-host/registry.ts) - Only place that lists games (partial registry of dynamic `import()`s: Devdle, Grep Grid, Timeline, Big O)
 - **loadGameClient / gameScreens / useLoadedGameClient** (apps/web/src/modules/game-host/) - Memoized client loading with i18n registration and the per-game `React.lazy` screens
-- **GameClient and props** (apps/web/src/modules/game-host/types.ts) - Structural copy of the `./client` contract
+- **GameClient and props** (apps/web/src/modules/game-host/types.ts) - Structural copy of the `./client` contract (incl. `codeLanguage`)
 - **gameTodayKeys / fetchGameToday / useGameToday / useStartPlay / useSubmitMove / withSessionRetry** (apps/web/src/modules/game-host/api/) - Query/mutation layer for a game's day
 - **deriveGameView / toMoveError** (apps/web/src/modules/game-host/game-view.ts) - Pure screen selector and error mapping
 - **GameHostHeader** (apps/web/src/modules/game-host/components/game-host-header.tsx) - `GameHeader` for the game screens

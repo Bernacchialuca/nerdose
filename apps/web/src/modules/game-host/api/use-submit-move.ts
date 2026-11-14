@@ -12,7 +12,7 @@ import { withSessionRetry } from './with-session-retry';
 
 export function useSubmitMove(gameId: GameId) {
   const queryClient = useQueryClient();
-  const { locale } = useSession();
+  const { locale, rememberCodeLanguage } = useSession();
   return useMutation({
     mutationFn: ({ challengeNumber, move }: { challengeNumber: number; move: unknown }) =>
       withSessionRetry(() =>
@@ -27,10 +27,11 @@ export function useSubmitMove(gameId: GameId) {
         (old) =>
           old && {
             ...old,
-            play: { ...res.play, code_language: old.play?.code_language ?? null },
+            play: res.play,
             ...(res.result !== null && { result: res.result, game_stats: res.game_stats }),
           },
       );
+      if (res.play.code_language !== null) rememberCodeLanguage(res.play.code_language);
       // `MoveResponse` solo trae el estado nuevo del juego: la home y la racha global quedan viejas.
       if (res.result !== null) void queryClient.invalidateQueries({ queryKey: todayKeys.all });
     },
