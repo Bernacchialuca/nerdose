@@ -119,3 +119,12 @@ Each game has a test that serializes `toPublic(payload)` and every pre-result re
 - Both changes are additive: games that do not need them keep compiling and behave the same.
 - A move may be valid and leave the state unchanged (Grep Grid: `not_a_word`, `already_found`): `applyMove` returns the same state with a `feedback`, the `api` answers `200` and the idempotent `UPDATE plays SET state` still runs.
 - The anti-spoiler contract test of a game that uses `state` covers `toPublic` with no state, with the initial state and with intermediate states.
+
+## Update (REQ-007)
+
+- `GameDefinition.culprits(p): Culprit[]` (`Culprit = { kind: 'term' | 'timeline_fact'; id; label }`) lists the bank items a challenge references, so the admin can pick the culprit when voiding it. Games with no bank return `[]`. The `api` calls it generically through the registry.
+
+## Update (REQ-008)
+
+- `GameDefinition.bankUsage: BankUsage | null`, with `BankUsage = { bank: 'terms' | 'timeline_facts'; lastUsedField: string; windowDays: number; itemsPerChallenge: number }`. Values: Devdle `terms`/`last_used_devdle`/365/1, Grep Grid `terms`/`last_used_grep`/30/8, Timeline `timeline_facts`/`last_used`/90/5, Big O and Bug Hunt `null`.
+- The `api` builds the content stock (`GET /api/admin/content/stock`) from `bankUsage` through the registry, with no per-game constants. A test in each game package asserts that `bankUsage` matches the generator's `historySpec`.

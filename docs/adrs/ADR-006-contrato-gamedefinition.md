@@ -1,7 +1,7 @@
 # ADR-006: Contrato `GameDefinition` y juegos como paquetes enchufables
 
 **Estado:** Accepted
-**Fecha:** 2026-11-03
+**Fecha:** 2026-11-03 (actualizado 2026-11-14: `culprits`, `bankUsage`, `Preview`)
 **Decisores:** Responsable de nerdose
 **Etiquetas:** juegos, contrato, extensibilidad, anti-spoiler
 
@@ -21,6 +21,7 @@ export interface GameDefinition<Payload, PublicView, State, Move, Feedback, Resu
   id: GameId;                       // 'devdle' | 'grep-grid' | 'timeline' | 'big-o' | 'bug-hunt'
   version: number;                  // versión del schema de Payload
   moveSchema: z.ZodType<Move>;
+  bankUsage: BankUsage | null;      // banco que consume y su ventana; la api arma el stock con esto (REQ-008)
 
   toPublic(p: Payload, locale: Locale, state?: State): PublicView;   // sin solución; state solo con la Play in_progress (REQ-005)
   initState(p: Payload, now: Date): State;
@@ -34,6 +35,15 @@ export interface GameDefinition<Payload, PublicView, State, Move, Feedback, Resu
   initialStats(): Stats;
   reduceStats(prev: Stats, r: Result): Stats;
   historyLabel(r: Result): string;  // "✓ 4/6", "8/8", "3/5", "✓ O(n log n)", "✗ L7"
+  culprits(p: Payload): Culprit[];  // ítems de banco que referencia el desafío; el admin elige el culpable al anular (REQ-007)
+}
+
+export interface Culprit { kind: 'term' | 'timeline_fact'; id: string; label: string }
+export interface BankUsage {
+  bank: 'terms' | 'timeline_facts';
+  lastUsedField: string;            // last_used_devdle, last_used_grep, last_used
+  windowDays: number;               // ventana de no repetición
+  itemsPerChallenge: number;
 }
 
 // entrada ./generator
@@ -49,6 +59,7 @@ export interface GameGenerator<Payload> {
 
 // entrada ./client
 //   Instructions, Game, Result (componentes React) y share(result, number): string
+//   Preview({ payload, language }) — solo lectura, el tablero con la solución, para el admin (REQ-008)
 ```
 
 Hay un **registry** en `api`, en `web`/`admin` y en `generator` que mapea `game_id` → la entrada correspondiente. Las rutas de la `api` (`/api/games/{game_id}/today/*`) son genéricas sobre el registry.
@@ -65,6 +76,9 @@ Hay un **registry** en `api`, en `web`/`admin` y en `generator` que mapea `game_
 - Cada juego MUST tener un test de contrato anti-spoiler: se serializa `toPublic(payload)` (sin estado y con estados intermedios, si el juego usa `state`) y toda respuesta pre-resultado, y se verifica que no contienen ningún valor de la solución.
 - `moveSchema` MUST usarse tanto en `web` (antes de enviar) como en la `api` (`@hono/zod-validator`). Si el parse falla, la respuesta es `422 invalid_move`.
 - `share(result, number)` MUST NOT incluir la solución y MUST terminar en `nerdose.dev`.
+- `bankUsage` MUST coincidir con `historySpec` del generator del mismo juego (banco y campo `last_used_*`); un test del paquete lo verifica. Los juegos sin banco declaran `null` (REQ-008).
+- `culprits(p)` MUST devolver solo ítems de banco presentes en el payload; un juego sin banco devuelve `[]` (REQ-007).
+- `Preview` MUST ser de solo lectura: valida `payload` con el schema del juego, traduce con los recursos del propio paquete según `language`, y no hace `fetch`, no usa storage ni estado de partida. `web` MUST NOT montarla (necesita el `payload` completo, que solo devuelve `/api/admin/*`). El admin la monta en ES y EN lado a lado; un juego sin `Preview` cae a la vista genérica del payload (REQ-008).
 - `generate` MUST ser determinista: el mismo `{ date, seed, history }` da el mismo `Payload`. MUST NOT usar `Math.random()` ni la hora actual.
 - `Payload` MUST incluir todos los textos que lee el jugador como `{ es, en }`. `verify` MUST fallar si falta algún idioma.
 - Sumar un juego MUST requerir solo crear su paquete y registrarlo en los tres registries, sin cambiar rutas, tablas ni lógica de rachas.
@@ -74,7 +88,8 @@ Hay un **registry** en `api`, en `web`/`admin` y en `generator` que mapea `game_
 ### Positivas
 - Agregar un juego no toca la `api`, el shell ni las rachas.
 - El anti-spoiler queda en un único punto por juego (`toPublic`/`result`), fácil de testear.
-- El admin reutiliza los componentes `client` para la preview con la solución.
+- El admin reutiliza el paquete `client` de cada juego (`Preview`) para la preview con la solución, sin lógica por juego.
+- El stock de contenido y la elección del culpable al anular son genéricos sobre el registry (`bankUsage`, `culprits`).
 
 ### Negativas
 - El contrato genérico obliga a modelar juegos de una sola jugada (Big O, Bug Hunt, Timeline) con un `State` casi vacío.

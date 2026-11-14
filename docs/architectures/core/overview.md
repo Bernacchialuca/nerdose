@@ -33,3 +33,9 @@ Library en node (TypeScript estricto, Node.js 24 LTS). Vive en `packages/core` y
 - `GameDefinition.culprits(p): Culprit[]` (types `Culprit` and `CulpritKind` in `game-definition.ts`).
 - `invalid_culprit` (422) in `ERROR_CATALOG`.
 - `REPORT_REASONS` and `REPORT_STATUSES` in `enums.ts`.
+
+## Update (REQ-008)
+
+- `BankUsage` and `GameDefinition.bankUsage: BankUsage | null` (`game-definition.ts`): which bank a game consumes, its `last_used_*` field, its reuse window and the items per challenge. The `api` builds the content stock from it (convention `game-registry`).
+- `GENERATION_REQUEST_STATUSES` (`pending`, `done`, `failed`, `cancelled`) and `GenerationRequestStatus` in `enums.ts`: the status of the regeneration queue (`generation_requests`).
+- The `./client` entry of every game adds `Preview({ payload, language })` (ADR-006). It lives in the game packages, not in `core`; the admin keeps its own structural `PreviewProps` type.

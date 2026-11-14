@@ -80,7 +80,8 @@ sequenceDiagram
 
 **Operación de BD:**
 - **Tabla:** `generation_requests`
-- **Operación:** INSERT (`challenge_id`) ON CONFLICT ON CONSTRAINT `uq_generation_requests_pending` DO NOTHING RETURNING; si no devuelve fila, SELECT del pendiente existente. Todo en la misma transacción que lee el challenge
+- **Operación:** INSERT (`challenge_id`) ON CONFLICT (`challenge_id`) WHERE `status = 'pending'` DO NOTHING RETURNING; si no devuelve fila, SELECT del pendiente existente. Todo en la misma transacción que lee el challenge
+  - `uq_generation_requests_pending` es un **índice** único parcial, no una constraint: `ON CONFLICT ON CONSTRAINT` falla con `42704`. El árbitro se infiere con la columna y el mismo predicado del índice (en Drizzle: `.onConflictDoNothing({ target: generationRequests.challengeId, where: sql\`status = 'pending'\` })`)
 - **Operación:** `SELECT pg_notify('generation_requests', <id>)`
 
 **Response (éxito):**
