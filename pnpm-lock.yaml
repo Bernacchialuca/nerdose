@@ -123,6 +123,9 @@ importers:
       '@nerdose/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@nerdose/game-big-o':
+        specifier: workspace:*
+        version: link:../../packages/games/big-o
       '@nerdose/game-devdle':
         specifier: workspace:*
         version: link:../../packages/games/devdle

@@ -262,6 +262,23 @@ paths:
                       code_language: null
                     result: null
                     game_stats: null
+                big_o_en_curso:
+                  summary: Big O en curso (`state` vacío hasta confirmar; el código llega en los 3 lenguajes y las 8 opciones en orden fijo)
+                  value:
+                    game_id: big-o
+                    date: '2026-11-03'
+                    number: 128
+                    challenge_status: published
+                    public_view:
+                      code:
+                        js: "function f(n) {\n  let ops = 0;\n  for (let i = 0; i < n; i++) {\n    for (let j = 1; j < n; j *= 2) {\n      ops++;\n    }\n  }\n  return ops;\n}"
+                        go: "func f(n int) int {\n\tops := 0\n\tfor i := 0; i < n; i++ {\n\t\tfor j := 1; j < n; j *= 2 {\n\t\t\tops++\n\t\t}\n\t}\n\treturn ops\n}"
+                        java: "static int f(int n) {\n    int ops = 0;\n    for (int i = 0; i < n; i++) {\n        for (int j = 1; j < n; j *= 2) {\n            ops++;\n        }\n    }\n    return ops;\n}"
+                      options: [o_1, o_log_n, o_n, o_n_log_n, o_n2, o_n3, o_2n, o_n_fact]
+                    play: { status: in_progress, state: {}, score: null, code_language: null }
+                    result: null
+                    game_stats: null
+                    reported: false
                 grep_grid_una_encontrada:
                   summary: Grep Grid en curso con 1 palabra encontrada (solo ella trae `definition`; la grilla y la lista están abreviadas)
                   value:
@@ -515,7 +532,7 @@ paths:
                       answer: o_n_log_n
                       chosen_option: o_n_log_n
                       code_language: go
-                      recipe_category: divide_and_conquer
+                      recipe_category: nested_loops
                       trap_option: o_n2
                       explanation:
                         steps:
@@ -526,6 +543,14 @@ paths:
                         tip: 'Un loop interno que duplica su variable no es n.'
                         example: { n: 1024, ops: 10240, trap_ops: 1048576 }
                     streaks: { game: { current: 4, max: 9 }, global: { current: 6, max: 12 } }
+                    game_stats:
+                      game_id: big-o
+                      current_streak: 4
+                      max_streak: 9
+                      played: 12
+                      wins: 8
+                      win_rate: 0.67
+                      extra: { by_category: { nested_loops: { played: 7, correct: 5 }, recursion: { played: 5, correct: 3 } } }
         '401': { $ref: '#/components/responses/NoSession' }
         '403': { $ref: '#/components/responses/ForbiddenOrigin' }
         '404':
