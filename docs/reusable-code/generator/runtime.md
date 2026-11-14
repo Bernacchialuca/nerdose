@@ -8,8 +8,8 @@
 
 ## createShutdownHandler / ShutdownDeps
 - **Location:** apps/generator/src/shared/shutdown.ts
-- **Signature:** `createShutdownHandler({ logger, controller: AbortController, scheduler: Pick<Scheduler, 'stop'>, tracker?: Pick<JobTracker, 'idle'>, sql: { end(opts?) }, exit = process.exit }): () => Promise<void>`
-- **Description:** runs once (repeated signals reuse the same promise): `controller.abort()` → `scheduler.stop()` → `await tracker.idle()` → `sql.end({ timeout: 5 })` (errors logged, not rethrown) → logs "Shutdown complete" → `exit(0)`
+- **Signature:** `createShutdownHandler({ logger, controller: AbortController, scheduler: Pick<Scheduler, 'stop'>, queue?: { stop(): Promise<void> | void }, tracker?: Pick<JobTracker, 'idle'>, sql: { end(opts?) }, exit = process.exit }): () => Promise<void>`
+- **Description:** runs once (repeated signals reuse the same promise): `controller.abort()` → `scheduler.stop()` → `await queue.stop()` (errors logged) → `await tracker.idle()` → `sql.end({ timeout: 5 })` (errors logged, not rethrown) → logs "Shutdown complete" → `exit(0)`
 - **Usage:** long-running work should listen to `controller.signal`; tests inject `exit: vi.fn()`
 
 ## verifyDbRole
@@ -37,9 +37,9 @@
 
 ## runStartup / buildScheduledJobs / FILL_PATTERN
 - **Location:** apps/generator/src/startup.ts
-- **Signature:** `runStartup(deps): Promise<Scheduler | undefined>`; `buildScheduledJobs(runFill): ScheduledJob[]`; `FILL_PATTERN = '10 * * * *'`
-- **Description:** runs `sync_banks`, then `fill` (even if `sync_banks` failed), then starts the scheduler unless the signal is aborted.
-- **Usage:** `scheduler = await runStartup({ sql, db, logger, clock, signal, tracker, env, registry })`
+- **Signature:** `runStartup(deps): Promise<{ scheduler: Scheduler; queue: QueueListener } | undefined>`; `buildScheduledJobs(runFill): ScheduledJob[]`; `FILL_PATTERN = '10 * * * *'`
+- **Description:** runs `sync_banks`, then `fill` (even if `sync_banks` failed), then starts the scheduler and the queue listener (initial drain included) unless the signal is aborted.
+- **Usage:** `running = await runStartup({ sql, db, logger, clock, signal, tracker, env, registry })`
 
 ## syncBanksJob / fillJob
 - **Location:** apps/generator/src/scheduler/jobs/sync-banks.job.ts, fill.job.ts

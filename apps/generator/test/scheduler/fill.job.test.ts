@@ -60,6 +60,7 @@ function makeRepo(repo: ChallengePublishingRepository) {
     insertDraft: repo.insertDraft.bind(repo),
     approve: repo.approve.bind(repo),
     reject: repo.reject.bind(repo),
+    upsertGenerationFailure: repo.upsertGenerationFailure.bind(repo),
   };
 }
 

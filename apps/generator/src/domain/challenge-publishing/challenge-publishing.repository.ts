@@ -5,8 +5,14 @@ import type {
   RecentChallenge,
   VerificationLog,
 } from '@nerdose/core';
-import { challenges, terms, timelineFacts } from '@nerdose/db';
-import type { Db } from '@nerdose/db';
+import {
+  challenges,
+  generationFailures,
+  generationRequests,
+  terms,
+  timelineFacts,
+} from '@nerdose/db';
+import type { Db, Tx } from '@nerdose/db';
 import { and, asc, between, eq, inArray, sql } from 'drizzle-orm';
 import type { PgColumn } from 'drizzle-orm/pg-core';
 import type { z } from 'zod';
@@ -58,8 +64,145 @@ export type ApproveOptions = {
   date: string;
 };
 
+export type VerifiedCandidate = {
+  id: string;
+  verification: VerificationLog;
+  itemIds: string[];
+  bank: BankName | null;
+  lastUsedField: string;
+};
+
+export type ChallengeRef = { id: string; gameId: GameId; date: string; status: string };
+
+async function touchLastUsed(
+  orm: Db | Tx,
+  bank: BankName | null,
+  lastUsedField: string,
+  itemIds: string[],
+  date: string,
+) {
+  if (bank === null || itemIds.length === 0) return;
+  const target = lastUsedColumn(bank, lastUsedField);
+  // GREATEST: no retrocede la fecha al rellenar un hueco anterior.
+  const set = { [target.key]: sql`GREATEST(${target.column}, ${date}::date)` };
+  if (bank === 'timeline_facts') {
+    await orm.update(timelineFacts).set(set).where(inArray(timelineFacts.id, itemIds));
+  } else {
+    await orm.update(terms).set(set).where(inArray(terms.id, itemIds));
+  }
+}
+
 export class ChallengePublishingRepository {
-  constructor(private readonly orm: Db) {}
+  constructor(private readonly orm: Db | Tx) {}
+
+  async maxAttempt(gameId: GameId, date: string): Promise<number | null> {
+    const [row] = await this.orm
+      .select({ max: sql<number | null>`max(${challenges.attempt})` })
+      .from(challenges)
+      .where(and(eq(challenges.gameId, gameId), eq(challenges.date, date)));
+    return row?.max ?? null;
+  }
+
+  async upsertGenerationFailure(failure: {
+    gameId: GameId;
+    date: string;
+    attempts: number;
+    lastReason: string | null;
+  }): Promise<void> {
+    // updated_at lo mantiene el trigger set_updated_at.
+    await this.orm
+      .insert(generationFailures)
+      .values(failure)
+      .onConflictDoUpdate({
+        target: [generationFailures.gameId, generationFailures.date],
+        set: { attempts: failure.attempts, lastReason: failure.lastReason },
+      });
+  }
+
+  async takePendingRequest(): Promise<{ id: string; challengeId: string } | null> {
+    const [row] = await this.orm
+      .select({ id: generationRequests.id, challengeId: generationRequests.challengeId })
+      .from(generationRequests)
+      .where(eq(generationRequests.status, 'pending'))
+      .orderBy(asc(generationRequests.requestedAt))
+      .limit(1)
+      .for('update', { skipLocked: true });
+    return row ?? null;
+  }
+
+  async findChallenge(id: string): Promise<ChallengeRef | null> {
+    const [row] = await this.orm
+      .select({
+        id: challenges.id,
+        gameId: challenges.gameId,
+        date: challenges.date,
+        status: challenges.status,
+      })
+      .from(challenges)
+      .where(eq(challenges.id, id));
+    return row ?? null;
+  }
+
+  async lockChallenge(id: string): Promise<ChallengeRef | null> {
+    const [row] = await this.orm
+      .select({
+        id: challenges.id,
+        gameId: challenges.gameId,
+        date: challenges.date,
+        status: challenges.status,
+      })
+      .from(challenges)
+      .where(eq(challenges.id, id))
+      .for('update');
+    return row ?? null;
+  }
+
+  async finishRequest(
+    id: string,
+    result: { status: 'failed' | 'cancelled'; error?: string },
+  ): Promise<void> {
+    await this.orm
+      .update(generationRequests)
+      .set({ status: result.status, error: result.error ?? null, processedAt: sql`now()` })
+      .where(eq(generationRequests.id, id));
+  }
+
+  /** Reemplazo atómico; el orden viejo -> nuevo respeta uq_challenges_active_game_date. */
+  async replaceChallenge(input: {
+    requestId: string;
+    oldId: string;
+    candidate: VerifiedCandidate;
+    date: string;
+  }): Promise<void> {
+    const { requestId, oldId, candidate, date } = input;
+    await this.orm
+      .update(challenges)
+      .set({
+        status: 'rejected',
+        verification: sql`${challenges.verification} || '{"reason":"regenerated"}'::jsonb`,
+      })
+      .where(and(eq(challenges.id, oldId), eq(challenges.status, 'approved')));
+    await this.orm
+      .update(challenges)
+      .set({ status: 'approved', verification: candidate.verification })
+      .where(and(eq(challenges.id, candidate.id), eq(challenges.status, 'draft')));
+    await touchLastUsed(this.orm, candidate.bank, candidate.lastUsedField, candidate.itemIds, date);
+    await this.orm
+      .update(generationRequests)
+      .set({ status: 'done', newChallengeId: candidate.id, processedAt: sql`now()` })
+      .where(eq(generationRequests.id, requestId));
+  }
+
+  async cancelCandidate(requestId: string, candidate: VerifiedCandidate): Promise<void> {
+    await this.orm
+      .update(challenges)
+      .set({
+        status: 'rejected',
+        verification: { ...candidate.verification, reason: 'request_cancelled' },
+      })
+      .where(eq(challenges.id, candidate.id));
+    await this.finishRequest(requestId, { status: 'cancelled' });
+  }
 
   async coveredDates(gameId: GameId, from: string, to: string): Promise<Set<string>> {
     const rows = await this.orm
@@ -141,26 +284,14 @@ export class ChallengePublishingRepository {
     options: ApproveOptions,
   ): Promise<'approved' | 'duplicate'> {
     // Se resuelve antes de abrir la transacción: una combinación inválida no escribe nada.
-    const target =
-      options.bank === null ? null : lastUsedColumn(options.bank, options.lastUsedField);
+    if (options.bank !== null) lastUsedColumn(options.bank, options.lastUsedField);
     try {
       await this.orm.transaction(async (tx) => {
         await tx
           .update(challenges)
           .set({ status: 'approved', verification: log })
           .where(and(eq(challenges.id, id), eq(challenges.status, 'draft')));
-        if (options.bank !== null && target && options.itemIds.length > 0) {
-          // GREATEST: no retrocede la fecha al rellenar un hueco anterior.
-          const set = { [target.key]: sql`GREATEST(${target.column}, ${options.date}::date)` };
-          if (options.bank === 'timeline_facts') {
-            await tx
-              .update(timelineFacts)
-              .set(set)
-              .where(inArray(timelineFacts.id, options.itemIds));
-          } else {
-            await tx.update(terms).set(set).where(inArray(terms.id, options.itemIds));
-          }
-        }
+        await touchLastUsed(tx, options.bank, options.lastUsedField, options.itemIds, options.date);
       });
       return 'approved';
     } catch (err) {

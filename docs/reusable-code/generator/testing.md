@@ -57,3 +57,9 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 - **Location:** apps/generator/test/fixtures/datasets/{v1,v2,invalid,invalid-facts,dup-rejected,conflict}
 - **Description:** valid `manifest.json` + `terms.json` + `timeline_facts.json` sets (`invalid-facts` has an invalid fact) for `sync_banks` scenarios, loadable with `loadDataset(dir)`.
 - **Usage:** `loadDataset(fileURLToPath(new URL('../fixtures/datasets/v1/', import.meta.url)))`
+
+## approveOld / requestFor / D / ENV / NOW / SECRET
+- **Location:** apps/generator/test/helpers/regeneration.ts
+- **Signature:** `approveOld(svc: Db, date = D, env = ENV): Promise<GenerateResult>`; `requestFor(owner: Db, challengeId, requestedAt?): Promise<GenerationRequest>`; constants `D = '2026-12-05'`, `NOW`, `SECRET`, `ENV`
+- **Description:** regeneration fixtures. `approveOld` creates the old approved devdle challenge with the real `fill`-mode pipeline (so `last_used_devdle` is real); `requestFor` inserts a `pending` `generation_requests` row with the owner role.
+- **Usage:** `await approveOld(t.svc.db); const req = await requestFor(t.owner.db, old.id)`

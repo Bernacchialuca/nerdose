@@ -23,7 +23,13 @@ export type FillDeps = {
   registry: GeneratorRegistry;
   repo?: Pick<
     ChallengePublishingRepository,
-    'coveredDates' | 'bankItems' | 'recentChallenges' | 'insertDraft' | 'approve' | 'reject'
+    | 'coveredDates'
+    | 'bankItems'
+    | 'recentChallenges'
+    | 'insertDraft'
+    | 'approve'
+    | 'reject'
+    | 'upsertGenerationFailure'
   >;
 };
 
@@ -69,6 +75,7 @@ async function fillDates(ctx: FillCtx, deps: FillDeps, range: string[]): Promise
   let failed = false;
   const first = range[0];
   const last = range.at(-1);
+  const tomorrow = addDays(today(ctx.now), 1);
 
   if (first && last) {
     for (const gameId of deps.registry.ids()) {
@@ -84,7 +91,18 @@ async function fillDates(ctx: FillCtx, deps: FillDeps, range: string[]): Promise
           summary.generated += result.generated;
           summary.approved += result.approved;
           summary.rejected += result.rejected;
-          if (result.outcome === 'missing') summary.missing++;
+          if (result.outcome === 'missing') {
+            summary.missing++;
+            // La falla de mañana es la alerta del admin (ADR-017); fechas posteriores no alertan.
+            if (date === tomorrow) {
+              await repo.upsertGenerationFailure({
+                gameId,
+                date,
+                attempts: deps.env.GENERATION_MAX_ATTEMPTS,
+                lastReason: result.lastReason,
+              });
+            }
+          }
         } catch (err) {
           failed = true;
           log.error({ game_id: gameId, date, err }, 'Gap generation failed');

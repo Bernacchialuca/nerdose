@@ -3,11 +3,10 @@ import { createDatabase } from '@/infra/database/db';
 import { verifyDbRole } from '@/infra/database/verify-role';
 import { generatorRegistry } from '@/games/registry';
 import { createJobTracker } from '@/scheduler/job-tracker';
-import type { Scheduler } from '@/scheduler/scheduler';
 import { systemClock } from '@/shared/clock';
 import { createLogger } from '@/shared/logger';
 import { createShutdownHandler } from '@/shared/shutdown';
-import { runStartup } from '@/startup';
+import { runStartup, type Running } from '@/startup';
 
 loadLocalEnvFile();
 
@@ -35,17 +34,24 @@ if (env) {
   if (dbReady) {
     const controller = new AbortController();
     const tracker = createJobTracker();
-    const running: { scheduler?: Scheduler } = {};
     const shutdown = createShutdownHandler({
       logger,
       controller,
-      scheduler: { stop: () => running.scheduler?.stop() },
+      scheduler: { stop: () => void startup.then((running) => running?.scheduler.stop()) },
+      // Espera al arranque en curso: así el LISTEN nunca queda abierto tras cerrar la base.
+      queue: {
+        stop: async () => {
+          const running = await startup;
+          running?.scheduler.stop();
+          await running?.queue.stop();
+        },
+      },
       tracker,
       sql,
     });
     process.on('SIGTERM', () => void shutdown());
     process.on('SIGINT', () => void shutdown());
-    running.scheduler = await runStartup({
+    const startup: Promise<Running | undefined> = runStartup({
       sql,
       db,
       logger,
@@ -55,5 +61,6 @@ if (env) {
       env,
       registry: generatorRegistry,
     });
+    await startup;
   }
 }

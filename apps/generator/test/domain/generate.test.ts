@@ -53,7 +53,7 @@ describe('generateForDate', () => {
     await insertTerms(t.owner.db, BANK16);
     const { deps } = setup();
     const result = await generateForDate({ entry, date: '2026-12-02' }, deps);
-    expect(result).toEqual({ outcome: 'approved', generated: 1, approved: 1, rejected: 0 });
+    expect(result).toMatchObject({ outcome: 'approved', generated: 1, approved: 1, rejected: 0 });
     const [row] = await rowsFor('2026-12-02');
     expect(row).toMatchObject({
       gameId: 'devdle',
@@ -97,7 +97,7 @@ describe('generateForDate', () => {
     ]);
     const { deps, lines } = setup(3);
     const result = await generateForDate({ entry, date: '2026-12-02' }, deps);
-    expect(result).toEqual({ outcome: 'missing', generated: 3, approved: 0, rejected: 3 });
+    expect(result).toMatchObject({ outcome: 'missing', generated: 3, approved: 0, rejected: 3 });
     const rows = await rowsFor('2026-12-02');
     expect(rows.map((r) => r.attempt)).toEqual([0, 1, 2]);
     rows.forEach((r, a) => {
@@ -174,7 +174,7 @@ describe('generateForDate', () => {
       },
     };
     const result = await generateForDate({ entry, date: '2026-12-02' }, wrapped);
-    expect(result).toEqual({ outcome: 'covered', generated: 1, approved: 0, rejected: 1 });
+    expect(result).toMatchObject({ outcome: 'covered', generated: 1, approved: 0, rejected: 1 });
     const rows = await rowsFor('2026-12-02');
     expect(rows.filter((r) => r.status === 'approved')).toHaveLength(1);
     const candidate = rows.find((r) => r.status === 'rejected')!;
@@ -194,12 +194,90 @@ describe('generateForDate', () => {
       { entry, date: '2026-12-02' },
       setup(20, { signal: controller.signal }).deps,
     );
-    expect(result).toEqual({ outcome: 'aborted', generated: 0, approved: 0, rejected: 0 });
+    expect(result).toMatchObject({ outcome: 'aborted', generated: 0, approved: 0, rejected: 0 });
     expect(await rowsFor('2026-12-02')).toHaveLength(0);
   });
 
   it('con el banco vacío rechaza con un error y no deja filas', async () => {
     await expect(generateForDate({ entry, date: '2026-12-02' }, setup().deps)).rejects.toThrow();
     expect(await rowsFor('2026-12-02')).toHaveLength(0);
+  });
+});
+
+describe('generateForDate: firstAttempt y modo regenerate', () => {
+  it('sin opciones mantiene el comportamiento (lastReason null)', async () => {
+    await insertTerms(t.owner.db, BANK16);
+    const result = await generateForDate({ entry, date: '2026-12-05' }, setup().deps);
+    expect(result).toMatchObject({
+      outcome: 'approved',
+      generated: 1,
+      approved: 1,
+      rejected: 0,
+      lastReason: null,
+    });
+    expect((await rowsFor('2026-12-05'))[0]).toMatchObject({ attempt: 0, status: 'approved' });
+  });
+
+  it('firstAttempt desplaza los intentos y el seed; regenerate deja el candidato en draft', async () => {
+    await insertTerms(t.owner.db, BANK16);
+    const result = await generateForDate(
+      { entry, date: '2026-12-05', firstAttempt: 7, mode: 'regenerate' },
+      setup().deps,
+    );
+    const [row] = await rowsFor('2026-12-05');
+    expect(row).toMatchObject({ attempt: 7, status: 'draft', seed: seedHex('2026-12-05', 7) });
+    expect(result.outcome).toBe('verified');
+    expect(result.candidate).toMatchObject({
+      id: row!.id,
+      bank: 'terms',
+      lastUsedField: 'last_used_devdle',
+      itemIds: [(row!.payload as { term_id: string }).term_id],
+      verification: { ok: true },
+    });
+    const used = await t.owner.db
+      .select()
+      .from(terms)
+      .where(eq(terms.lastUsedDevdle, '2026-12-05'));
+    expect(used).toHaveLength(0);
+  });
+
+  it('regenerate agota los intentos sin loguear ChallengeGenerationFailed', async () => {
+    await insertTerms(t.owner.db, [
+      { term: 'REACT', category: 'programming_languages', lastUsedDevdle: '2026-12-05' },
+    ]);
+    const { deps, lines } = setup(3);
+    const result = await generateForDate(
+      { entry, date: '2026-12-05', firstAttempt: 1, mode: 'regenerate' },
+      deps,
+    );
+    expect(result).toMatchObject({
+      outcome: 'missing',
+      generated: 3,
+      rejected: 3,
+      lastReason: 'not_used_365',
+    });
+    expect((await rowsFor('2026-12-05')).map((r) => [r.attempt, r.status])).toEqual([
+      [1, 'rejected'],
+      [2, 'rejected'],
+      [3, 'rejected'],
+    ]);
+    expect(lines().some((l) => l.msg === 'ChallengeGenerationFailed')).toBe(false);
+  });
+
+  it('en modo fill loguea ChallengeGenerationFailed y devuelve lastReason', async () => {
+    await insertTerms(t.owner.db, [
+      { term: 'REACT', category: 'programming_languages', lastUsedDevdle: '2026-12-05' },
+    ]);
+    const { deps, lines } = setup(3);
+    const result = await generateForDate({ entry, date: '2026-12-15' }, deps);
+    expect(result).toMatchObject({ outcome: 'missing', lastReason: 'not_used_365' });
+    expect(lines()).toContainEqual(
+      expect.objectContaining({
+        msg: 'ChallengeGenerationFailed',
+        game_id: 'devdle',
+        date: '2026-12-15',
+        attempts: 3,
+      }),
+    );
   });
 });

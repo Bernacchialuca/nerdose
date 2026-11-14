@@ -7,19 +7,25 @@ export type ShutdownDeps = {
   logger: Logger;
   controller: AbortController;
   scheduler: Pick<Scheduler, 'stop'>;
+  queue?: { stop(): Promise<void> | void };
   tracker?: Pick<JobTracker, 'idle'>;
   sql: { end(options?: { timeout?: number }): Promise<void> };
   exit?: (code: number) => void;
 };
 
 export function createShutdownHandler(deps: ShutdownDeps): () => Promise<void> {
-  const { logger, controller, scheduler, tracker, sql, exit = process.exit } = deps;
+  const { logger, controller, scheduler, queue, tracker, sql, exit = process.exit } = deps;
   let running: Promise<void> | undefined;
 
   return () => {
     running ??= (async () => {
       controller.abort();
       scheduler.stop();
+      try {
+        await queue?.stop();
+      } catch (err) {
+        logger.error({ err }, 'Queue listener stop failed');
+      }
       await tracker?.idle();
       try {
         await sql.end({ timeout: 5 });
