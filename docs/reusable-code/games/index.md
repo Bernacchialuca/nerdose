@@ -10,7 +10,8 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **DevdlePayload / DevdleMove / DevdleGuess / DevdleFeedback / DevdleState / DevdlePublicView / DevdleResult / DevdleStats / LetterMark** (packages/games/devdle/src/definition/schemas.ts) - Types inferred from the schemas
 - **PAYLOAD_REACT / PAYLOAD_MERGE / ALL_VALID / NONE_VALID / NOW** (packages/games/devdle/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry; `ALL_VALID` / `NONE_VALID` carry `locale: 'es'` (required by `MoveContext`)
 
-## Devdle client (9 items) - see devdle.md
+## Devdle client (11 items) - see devdle.md
+- **Preview / PreviewProps / translatorFor** (packages/games/devdle/src/client/{preview.tsx,types.ts,translate.ts}) - Read-only solution-mode preview `{ payload: unknown; language: Locale }` for the admin (one solved `Board` row + `WordCard`, `h3` headings, root `lang`); parses with `payloadSchema`; `translatorFor(language)` is the production translator (returns the key if missing). `SectionPanel` gained `headingLevel?: 2 | 3`; `WordCard` takes `Pick<DevdleResult, 'word'|'category'|'definition'|'summary'>` and `headingLevel?`
 - **Instructions / Game / Result** (packages/games/devdle/src/client/{instructions,game,result}.tsx) - React screens of the `./client` entry; game data props are `unknown` and parsed with the definition schemas
 - **share** (packages/games/devdle/src/client/share.ts) - `share(result, number)`: `🟩 Devdle #N · k/6`, one emoji row per try, `nerdose.dev`; never the solution
 - **i18n** (packages/games/devdle/src/client/i18n/index.ts) - `{ namespace: 'devdle', resources: { es, en } }` for web to register
@@ -45,7 +46,9 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **GrepGridPayload / GrepGridWord / GrepGridPlacement / GrepGridMove / GrepGridState / GrepGridPublicView / GrepGridFeedback / GrepGridResult / GrepGridStats** (packages/games/grep-grid/src/definition/schemas.ts) - Types inferred from the schemas
 - **PAYLOAD / GRID_DUPLICATE / ID / NOW / CTX_ES / CTX_EN / S0 / select / selectWord / cellsOf / playAll** (packages/games/grep-grid/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry
 
-## Grep Grid client (13 items) - see grep-grid.md
+## Grep Grid client (15 items) - see grep-grid.md
+- **Preview / PreviewProps / translatorFor** (packages/games/grep-grid/src/client/{preview.tsx,types.ts,translate.ts}) - Read-only solution-mode preview `{ payload: unknown; language: Locale }` for the admin (`Board mode="result"` with `solution` cells + `WordList mode="preview"`, `h3` headings, root `lang`); `translatorFor(language)` returns the key if missing
+- **solutionKeys / previewCells** (packages/games/grep-grid/src/client/cells.ts) - `solutionKeys(payload)` walks `placements` with `DIRECTION_STEPS` (throws on an unknown `term_id`); `previewCells(grid, keys)` builds the 144 cells (`solution` / `free`). `CellState` and `WordRow.status` gained `solution`; `WordListMode = 'play' | 'result' | 'preview'`; `SectionPanel` gained `headingLevel`
 - **Instructions / Game / Result** (packages/games/grep-grid/src/client/{instructions,game,result}.tsx) - React screens of the `./client` entry; data props are `unknown` and parsed with the definition schemas; `Game` also takes `feedback` (last `MoveResponse.feedback`, processed by identity after mount); `Result` takes an optional `publicView` for the 144 letters
 - **share** (packages/games/grep-grid/src/client/share.ts) - `share(result, number)`: `🔎 Grep Grid #N` / `S/8` / `nerdose.dev`; never words nor surrender
 - **i18n** (packages/games/grep-grid/src/client/i18n/index.ts) - `{ namespace: 'grep-grid', resources: { es, en } }` for web to register
@@ -80,7 +83,8 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **ITEMS_COUNT / OPAQUE_ID_PATTERN** (packages/games/timeline/src/definition/schemas.ts) - 5 and `/^[a-z0-9]{6}$/`
 - **TimelinePayload / TimelineItem / TimelineMove / TimelineState / TimelinePublicView / TimelineFeedback / TimelineResult / TimelineStats** (packages/games/timeline/src/definition/schemas.ts) - Types inferred from the schemas
 
-## Timeline client (13 items) - see timeline.md
+## Timeline client (14 items) - see timeline.md
+- **Preview / PreviewProps / translatorFor** (packages/games/timeline/src/client/{preview.tsx,types.ts,translate.ts}) - Read-only solution-mode preview `{ payload: unknown; language: Locale }` for the admin (`// consigna` line + `Rail` in `correct_order`, `h3` heading, root `lang`; throws on an unknown `opaque_id`); `translatorFor(language)` returns the key if missing. `SectionPanel` gained `headingLevel?: 2 | 3`
 - **Instructions** (packages/games/timeline/src/client/instructions.tsx) - Instructions screen with a once-per-attempt "Start"
 - **Game** (packages/games/timeline/src/client/game.tsx) - Playing screen with the dnd-kit sortable list, hint and confirmation
 - **Result** (packages/games/timeline/src/client/result.tsx) - Verdict, score, "your order" and "correct order" rail

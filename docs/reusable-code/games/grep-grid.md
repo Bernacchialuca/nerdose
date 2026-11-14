@@ -88,3 +88,9 @@ Package `@nerdose/game-grep-grid` (`packages/games/grep-grid`). Entries: `./defi
 - `PUBLIC_VIEW_0`, `PUBLIC_VIEW_3`, `STATE_0/3/4`, `FEEDBACK_*`, `RESULT_WIN`, `RESULT_GAVE_UP_5/0` in `src/client/test-fixtures.ts`; `makeT` in `src/client/test-utils.ts`.
 - `PAYLOAD`, `GRID_DUPLICATE`, `ID`, `S0`, `NOW`, `CTX_ES`, `CTX_EN`, `select`, `selectWord`, `cellsOf`, `playAll` in `src/definition/test-fixtures.ts`.
 - `BANK`, `BANK_FIXTURE`, `DATE`, `seed(n)`, `mk`, `history` in `src/generator/test-fixtures.ts`.
+
+## client Preview
+- **Location:** packages/games/grep-grid/src/client/{preview.tsx,translate.ts,cells.ts,word-list.tsx}
+- **Description:** `Preview({ payload, language })` admin solution-mode preview: `Board mode="result"` over `previewCells(grid, solutionKeys(payload))` (`solution` cells look like `found`, `aria-label` "part of the solution") and `WordList mode="preview"` (no strike-through, `h3`). Parses with `payloadSchema`; never uses the selection helpers (the server decides in play, NFR-S02).
+- **Signature:** `Preview(props: PreviewProps)`, `solutionKeys(p: GrepGridPayload): Set<string>`, `previewCells(grid: string[][], keys: ReadonlySet<string>): BoardCell[]`, `translatorFor(language: Locale): Translate`
+- **Usage:** `const { Preview } = await import('@nerdose/game-grep-grid/client')`

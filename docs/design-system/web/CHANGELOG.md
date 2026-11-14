@@ -3,6 +3,23 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.9.0] - 2026-11-13
+
+**MINOR.** Modo solución de los juegos para la preview del admin (story S-038). Ningún token se agrega ni cambia.
+
+### Agregado
+- `patterns/game-boards.md` 1.5.0: sección «Modo solución — preview del admin» (composición de `Preview` en Devdle, Grep Grid y Tech Timeline). Estado **solución** de `grep-grid.cell` (mismos valores que encontrada, `aria-label` «parte de la solución») y de `grep-grid.word` (estilo de encontrada sin tachado, tag «{n} letras» y definición). Cabecera `//` en `h3` cuando va embebida. Cierra el DS Gap nuevo del plan `games` de S-038.
+
+### Código alineado con el spec
+- `@nerdose/game-devdle/client`, `@nerdose/game-grep-grid/client` y `@nerdose/game-timeline/client` (S-038, plan `games`): `Preview` con `{ payload, language }`, `SectionPanel` con `headingLevel`, estado `solution` en `CellState` y `WordRow` de Grep Grid.
+- `@nerdose/ui` (S-038, plan `ui`): sin tokens ni componentes nuevos. `test/tokens.test.ts`, `test/tailwind-build.test.ts` y `test/cn.test.ts` fijan los tokens, las utilidades y las combinaciones de `cn` que usa la preview.
+
+### Notas para limpiar en otros docs
+- Devdle: la card de la preview dice «palabra del día» / «word of the day» (reutiliza `result.wordTitle` del resultado), aunque la fecha es futura. Grep Grid sí usa «palabras del desafío».
+- `SectionPanel` está copiado en los tres clients porque `Panel` de `@nerdose/ui` renderiza la etiqueta como `<p>`. Es candidato a `@nerdose/ui` con `headingLevel`; no se promueve en S-038.
+- ADR-006 (bloque `// entrada ./client`) no menciona `Preview`; la convención `game-clients` de `games` sí.
+- `apps/admin/src/index.css` no tiene el `@source` de los clients de juego ni `@fontsource/jetbrains-mono/800.css`; los necesita S-039 para que la preview tenga estilos y Mono 800.
+
 ## [1.8.0] - 2026-11-11
 
 **MINOR.** Resultado y partida más compactos (pedido del usuario). Ningún token cambia.

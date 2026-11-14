@@ -59,3 +59,9 @@ export type ResultProps = ClientBaseProps & {
   /** Slot at the bottom of the main column (web's exits bar). */
   footer?: ReactNode;
 };
+export type PreviewProps = {
+  /** Full `{es,en}` payload (only reachable through /api/admin/*). */
+  payload: unknown;
+  /** Picks the text of every localized field. */
+  language: Locale;
+};

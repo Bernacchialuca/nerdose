@@ -3,9 +3,15 @@ import type { DevdleResult } from '../definition/schemas';
 import { SectionPanel } from './section-panel';
 import type { Translate } from './types';
 
-export function WordCard({ result, t }: { result: DevdleResult; t: Translate }) {
+type WordCardProps = {
+  result: Pick<DevdleResult, 'word' | 'category' | 'definition' | 'summary'>;
+  t: Translate;
+  headingLevel?: 2 | 3;
+};
+
+export function WordCard({ result, t, headingLevel }: WordCardProps) {
   return (
-    <SectionPanel title={t('result.wordTitle')}>
+    <SectionPanel title={t('result.wordTitle')} headingLevel={headingLevel}>
       <p className="font-mono text-title-panel text-game-devdle">{result.word}</p>
       <p className="font-mono text-label-comment text-text-muted">
         {t('result.category', { category: t(`category.${result.category}`) })}

@@ -33,6 +33,8 @@ const CELL_CLASS: Record<CellState, string> = {
     'border-2 border-game-grep-grid bg-game-grep-grid-selected-bg font-bold text-game-grep-grid-light',
   found: 'border-2 border-game-grep-grid bg-game-grep-grid font-extrabold text-game-grep-grid-on',
   revealed: 'border-2 border-dashed border-game-grep-grid font-bold text-game-grep-grid-light',
+  solution:
+    'border-2 border-game-grep-grid bg-game-grep-grid font-extrabold text-game-grep-grid-on',
 };
 
 const CELL_BASE =

@@ -7,6 +7,7 @@ describe('client entry (TS-2)', () => {
     expect(typeof client.Instructions).toBe('function');
     expect(typeof client.Game).toBe('function');
     expect(typeof client.Result).toBe('function');
+    expect(typeof client.Preview).toBe('function');
     expect(typeof client.share).toBe('function');
     expect(client.i18n.namespace).toBe('devdle');
     expect(client.HELP_TARGET_ID).toBe('game-help');

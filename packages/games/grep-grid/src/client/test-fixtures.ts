@@ -70,3 +70,5 @@ export const resultGaveUp5En = {
   words: resultWords(GAVE_UP_5_FOUND, 'definition of'),
 };
 export const RESULT_GAVE_UP_0 = { win: false, score: 0, gave_up: true, words: resultWords([]) };
+
+export { PAYLOAD as PREVIEW_PAYLOAD } from '../definition/test-fixtures';

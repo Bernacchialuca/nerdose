@@ -83,6 +83,9 @@ export const es = {
     summaryLabel: 'Resumen',
     source: 'Fuente: Wikipedia (CC BY-SA)',
   },
+  preview: {
+    boardLabel: 'Solución: {{word}}',
+  },
   distribution: {
     title: 'tus intentos',
     streak: 'racha {{count}}',

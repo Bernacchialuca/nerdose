@@ -69,10 +69,13 @@ const Client = lazy(clientRegistry[gameId]);
 ### Admin preview
 
 - Each `client` also exports `Preview` with props `{ payload, language }` (REQ-008): read-only, shows the board with the solution overlaid, no API calls and no play state. `payload` is the full `{es,en}` payload and `language` picks the text. Games without `Preview` fall back to `PayloadView` in the admin.
+- Contract: `Preview(props: { payload: unknown; language: Locale })`. It (a) parses `payload` with the game's own `payloadSchema` and lets the error propagate if it is invalid, (b) translates its texts with the package's own `i18n` resources according to `language` (it needs neither react-i18next nor the host's `t`), (c) uses `h3` headings and a root `<div lang={language}>` with no landmark of its own, (d) has no controls or effects (no `fetch`, no storage, no play state).
+- What each game draws: Devdle, one solved row plus the word card (category, definition, summary); Grep Grid, the grid with the 8 words in `solution` state (same look as `found`, labelled "part of the solution") plus the word list with definitions; Timeline, the prompt plus the facts in `correct_order` with date and note.
 - `admin` mounts `Preview` (and previously the same `Game`/`Result` components in **solution mode**) with the full `payload` returned by `/api/admin/*`, in Spanish and in English side by side. The admin renders the preview inside a container that makes it read-only (no moves are sent).
 
 ## Rules
 
+- `web` never mounts `Preview`: it needs the full `payload`, which only `/api/admin/*` returns.
 - Import only `@nerdose/game-<game_id>/client`. Never `./definition` or `./generator`, and never `@nerdose/polyglot`.
 - The registry is the only place that lists games. No `if (gameId === ...)` or `switch` by game anywhere in `apps/*`.
 - Each game is loaded with a dynamic `import()` so it is its own chunk.

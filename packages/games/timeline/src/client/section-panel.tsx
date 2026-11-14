@@ -8,11 +8,21 @@ type SectionPanelProps = {
   id?: string;
   className?: string;
   children: ReactNode;
+  /** `h3` when embedded under another heading (admin preview). */
+  headingLevel?: 2 | 3;
 };
 
 /** Panel with a `//` header that is a real `h2` (ui `Panel` renders a `p`). */
-export function SectionPanel({ title, datum, id, className, children }: SectionPanelProps) {
+export function SectionPanel({
+  title,
+  datum,
+  id,
+  className,
+  children,
+  headingLevel = 2,
+}: SectionPanelProps) {
   const headingId = useId();
+  const Heading = headingLevel === 3 ? 'h3' : 'h2';
   return (
     <section
       id={id}
@@ -23,10 +33,10 @@ export function SectionPanel({ title, datum, id, className, children }: SectionP
       )}
     >
       <div className="flex items-baseline justify-between gap-3">
-        <h2 id={headingId} className="font-mono text-label-comment text-text-dim">
+        <Heading id={headingId} className="font-mono text-label-comment text-text-dim">
           <span aria-hidden="true">// </span>
           {title}
-        </h2>
+        </Heading>
         {datum ? <span className="font-mono text-label-comment text-streak">{datum}</span> : null}
       </div>
       {children}

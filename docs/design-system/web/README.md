@@ -1,6 +1,6 @@
 ---
-version: 1.7.0
-last_updated: 2026-11-10
+version: 1.9.0
+last_updated: 2026-11-13
 status: defined
 source: docs/nerdose.html
 ---
@@ -10,10 +10,10 @@ source: docs/nerdose.html
 ## Estado actual
 
 - **Surface:** `web`
-- **Versión:** `1.4.1`
+- **Versión:** `1.9.0`
 - **Estado:** definido desde el prototipo
 - **Fuente de verdad visual:** [`docs/nerdose.html`](../../nerdose.html). Ante una duda de estética gana el prototipo; en datos, reglas y accesibilidad gana el PRD (ver [`governance.md`](governance.md)).
-- **Código:** `@nerdose/ui` está alineado desde S-011 (v1.2.0). `apps/web` tiene alineados el shell, "Acerca de" y la 404 (S-012), la home (S-013) desde la v1.4.0 y las tres pantallas de Devdle (S-021, v1.5.0); ver [`CHANGELOG.md`](CHANGELOG.md) → "Desalineaciones conocidas en código".
+- **Código:** `@nerdose/ui` está alineado desde S-011 (v1.2.0). `apps/web` tiene alineados el shell, "Acerca de" y la 404 (S-012), la home (S-013) desde la v1.4.0 y las tres pantallas de Devdle (S-021, v1.5.0); los `Preview` (modo solución) de Devdle, Grep Grid y Tech Timeline para el admin siguen `game-boards` 1.5.0 (S-038, v1.9.0); ver [`CHANGELOG.md`](CHANGELOG.md) → "Desalineaciones conocidas en código".
 
 ## Identidad en una línea
 
@@ -110,3 +110,5 @@ Semver independiente del surface `admin`. MAJOR = cambio de valor o rename de to
 - 2026-11-09 v1.5.0 — S-021: piezas de juego en `@nerdose/ui` (tokens, `GameHeader`, íconos, `Banner`, `buttonClass`, `Badge`, `track`/`injectAnalytics`); ver CHANGELOG 1.5.0.
 - 2026-11-10 v1.6.0 — Grep Grid jugable (S-024): `@nerdose/ui` alineado con `selected-bg`, `found-bg` y `type.numeric.lg`.
 - 2026-11-10 v1.7.0 — Tech Timeline jugable (S-029): `game-boards` 1.3.0 resuelve los «Pendiente» de Timeline.
+- 2026-11-11 v1.8.0 — Resultado y partida más compactos: `grep-grid.counter` como dato `N/8`, confeti al ganar y card de cierre; ver CHANGELOG 1.8.0.
+- 2026-11-13 v1.9.0 — S-038: modo solución para la preview del admin (`game-boards` 1.5.0); ver CHANGELOG 1.9.0.

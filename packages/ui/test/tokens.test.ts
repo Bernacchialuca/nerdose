@@ -289,6 +289,58 @@ describe('tokens.css', () => {
     expectTokens(EXISTING);
   });
 
+  it('declares the tokens the solution previews rely on (S-038 TS-1..TS-4)', () => {
+    // Devdle: celda correcta + palabra de la card
+    expectTokens({
+      '--color-game-devdle': '#3DDC84',
+      '--color-game-devdle-on': '#06120B',
+      '--radius-tile': '8px',
+      '--text-title-panel': '20px',
+      '--text-title-panel--font-weight': '700',
+    });
+    // Grep Grid: celda y fila «solución» (= encontrada), tablero y lista
+    expectTokens({
+      '--color-game-grep-grid': '#F472B6',
+      '--color-game-grep-grid-on': '#24081A',
+      '--color-game-grep-grid-light': '#F9A8D4',
+      '--color-game-grep-grid-featured': '#5B2147',
+      '--color-game-grep-grid-found-bg': '#1F0D19',
+      '--color-surface-sunken': '#0D1116',
+      '--color-surface-inset': '#141920',
+      '--radius-feature': '16px',
+      '--radius-control': '10px',
+      '--text-mono-unit-compact': '15px',
+      '--text-mono-body': '14px',
+      '--text-meta': '12px',
+      '--text-caption': '13px',
+      '--text-caption--line-height': '1.5',
+    });
+    // Timeline: riel, fecha, nombre y nota
+    expectTokens({
+      '--color-game-timeline': '#C39BFF',
+      '--color-game-timeline-rail': '#3C2E60',
+      '--text-numeric-year': '18px',
+      '--text-numeric-year--font-weight': '800',
+      '--text-game-item': '16px',
+      '--text-game-item--font-weight': '700',
+      '--text-body-sm': '14px',
+      '--text-body-sm--line-height': '1.5',
+      '--color-text-lede': '#A9B4BF',
+    });
+    // Panel `//` compartido
+    expectTokens({
+      '--color-surface': '#0F1318',
+      '--color-border': '#222A33',
+      '--radius-panel': '14px',
+      '--text-label-comment': '13px',
+      '--text-label-comment--line-height': 'normal',
+      '--text-label-comment--font-weight': '400',
+      '--color-text-dim': '#8D99A6',
+      '--color-text-body': '#C3CCD5',
+      '--color-text-muted': '#9AA6B2',
+    });
+  });
+
   it('has only @source and texture-dots outside @theme (TS-8)', () => {
     expect(tokensCss.match(/@theme\s*\{/g)).toHaveLength(1);
     expect(tokensRaw.split('@source "./components";')).toHaveLength(2);
