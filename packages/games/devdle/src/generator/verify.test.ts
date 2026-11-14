@@ -4,11 +4,12 @@ import { describe, expect, it } from 'vitest';
 import type { DevdlePayload } from '../definition';
 import { generator } from './index';
 import type { DevdleTerm } from './index';
+import { verifyPayload } from './verify';
 import { BANK, T_OAUTH, T_REACT, T_REDIS, payloadFrom } from './test-fixtures';
 
 const h: GeneratorHistory<DevdlePayload, DevdleTerm> = { bankItems: BANK, recentChallenges: [] };
 const p = payloadFrom(T_REACT);
-const verify = (payload: DevdlePayload, history = h) => generator.verify(payload, history);
+const verify = (payload: DevdlePayload, history = h) => verifyPayload(payload, history);
 
 describe('generator.verify', () => {
   it('approves a valid candidate (TS-43)', () => {
@@ -92,5 +93,13 @@ describe('generator.verify', () => {
       'category_rotation',
     ]);
     expect(log.reason).toBe('word_shape');
+  });
+
+  it('generator.verify is verifyPayload and works under await (S-042 TS-4)', async () => {
+    expect(generator.verify).toBe(verifyPayload);
+    const history = { bankItems: [T_REACT, T_REDIS], recentChallenges: [] };
+    const log = await generator.verify(p, history);
+    expect(log).toEqual(verify(p, history));
+    expect(log.ok).toBe(true);
   });
 });

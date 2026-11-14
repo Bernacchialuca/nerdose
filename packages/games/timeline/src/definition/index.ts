@@ -96,6 +96,7 @@ export const timeline: GameDefinition<
     return { by_category: byCategory };
   },
 
+  codeLanguage: () => null,
   historyLabel: (r) => `${r.score}/${ITEMS_COUNT}`,
   culprits: (p) => p.items.map((i) => ({ kind: 'timeline_fact', id: i.fact_id, label: i.label })),
 };

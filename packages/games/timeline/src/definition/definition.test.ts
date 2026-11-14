@@ -1,5 +1,5 @@
 import { createGameRegistry } from '@nerdose/core';
-import type { Culprit } from '@nerdose/core';
+import type { CodeLanguage, Culprit } from '@nerdose/core';
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import { definition, timeline } from './index';
@@ -287,5 +287,39 @@ describe('timeline culprits', () => {
 
   it('is typed as Culprit[] (TS-21)', () => {
     expectTypeOf(timeline.culprits).returns.toEqualTypeOf<Culprit[]>();
+  });
+});
+
+describe('timeline codeLanguage', () => {
+  const closed = () => {
+    const r = timeline.applyMove(PAYLOAD, S0, move(CORRECT), NOW, CTX_ES);
+    if (!('state' in r)) throw new Error('expected a state');
+    return r.state;
+  };
+
+  it('is null for the initial state (S-042 TS-13)', () => {
+    expect(timeline.codeLanguage(S0)).toBeNull();
+  });
+
+  it('is null for a closed Play (S-042 TS-14)', () => {
+    const s = closed();
+    expect(timeline.isFinished(s)).toBe(true);
+    expect(timeline.codeLanguage(s)).toBeNull();
+  });
+
+  it('is visible through the registry and typed (S-042 TS-15)', () => {
+    expect(
+      createGameRegistry([timeline]).get('timeline').codeLanguage({ order: CORRECT }),
+    ).toBeNull();
+    expectTypeOf(timeline.codeLanguage).returns.toEqualTypeOf<CodeLanguage | null>();
+  });
+
+  it('is pure and does not depend on the state (S-042 TS-19)', () => {
+    for (const s of [S0, closed()]) {
+      const before = structuredClone(s);
+      expect(timeline.codeLanguage(s)).toBeNull();
+      expect(timeline.codeLanguage(s)).toBeNull();
+      expect(s).toEqual(before);
+    }
   });
 });

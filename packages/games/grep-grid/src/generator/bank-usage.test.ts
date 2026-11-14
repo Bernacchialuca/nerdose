@@ -47,4 +47,14 @@ describe('grep-grid bankUsage vs generator', () => {
   it('lastUsedField is a column of the bank item (TS-11)', () => {
     expect(usage().lastUsedField in BANK[0]!).toBe(true);
   });
+
+  it('historySpec has no aheadDays: default 0 window (S-042 TS-12)', () => {
+    expect('aheadDays' in generator.historySpec).toBe(false);
+    expect(generator.historySpec.aheadDays ?? 0).toBe(0);
+    expect(generator.historySpec).toEqual({
+      bank: 'terms',
+      lastUsedField: 'last_used_grep',
+      recentDays: 30,
+    });
+  });
 });

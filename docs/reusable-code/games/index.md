@@ -3,7 +3,7 @@
 Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition`, `./client` and `./generator`, and `@nerdose/game-timeline` (`packages/games/timeline`), entries `./definition`, `./generator` and `./client`. The build script lives in `scripts/` and is never importable from `src/` or other packages.
 
 ## Devdle definition (6 items) - see devdle.md
-- **devdle / definition** (packages/games/devdle/src/definition/index.ts) - `GameDefinition` of Devdle (`id: 'devdle'`, `version: 1`); `definition` is an alias; implements `culprits(p)` (1 `term`, kind/id/label; test in `src/generator/culprits.test.ts`); declares `bankUsage` terms/last_used_devdle/365/1 (checked against `historySpec`/`REUSE_WINDOW_DAYS`/`usedBankItems` in `src/generator/bank-usage.test.ts`)
+- **devdle / definition** (packages/games/devdle/src/definition/index.ts) - `GameDefinition` of Devdle (`id: 'devdle'`, `version: 1`); `definition` is an alias; implements `codeLanguage` -> `null`; implements `culprits(p)` (1 `term`, kind/id/label; test in `src/generator/culprits.test.ts`); declares `bankUsage` terms/last_used_devdle/365/1 (checked against `historySpec`/`REUSE_WINDOW_DAYS`/`usedBankItems` in `src/generator/bank-usage.test.ts`)
 - **scoreGuess** (packages/games/devdle/src/definition/feedback.ts) - Pure per-letter feedback with repeated-letter handling (`correct` first, then left-to-right `present`)
 - **payloadSchema / moveSchema / guessSchema / stateSchema / publicViewSchema / resultSchema / statsSchema / letterMarkSchema** (packages/games/devdle/src/definition/schemas.ts) - Zod schemas, snake_case as in `api.yaml`
 - **WORD_PATTERN / MAX_GUESSES** (packages/games/devdle/src/definition/schemas.ts) - `/^[A-Z]{4,12}$/` and 6
@@ -23,7 +23,7 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **keyStates / isFinished / MARK_EMOJI / MARK_GLYPH** (packages/games/devdle/src/client/marks.ts) - Pure helpers
 
 ## Devdle generator (5 items) - see devdle.md
-- **generator / DevdleTerm** (packages/games/devdle/src/generator/index.ts) - `GameGenerator<DevdlePayload, DevdleTerm>` with `historySpec`, `usedBankItems`, `generate`, `verify`
+- **generator / DevdleTerm** (packages/games/devdle/src/generator/index.ts) - `GameGenerator<DevdlePayload, DevdleTerm>` with `historySpec`, `usedBankItems`, `generate`, `verify` (`verify` is the synchronous `verifyPayload`, typed `VerificationLog | Promise<VerificationLog>` by the contract: tests use `verifyPayload` for checks and `await generator.verify` through the contract; no `aheadDays`)
 - **verifyPayload** (packages/games/devdle/src/generator/verify.ts) - Five ordered checks returning a `VerificationLog`
 - **eligibleTerms / sortByTerm / isReusable / REUSE_WINDOW_DAYS / RECENT_DAYS** (packages/games/devdle/src/generator/eligibility.ts) - 365-day and category-rotation filter, ordinal ordering by `term`
 - **addDays / isValidDate** (packages/games/devdle/src/generator/dates.ts) - Clock-free `YYYY-MM-DD` arithmetic in UTC
@@ -40,7 +40,7 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **GRID_SIZE / DIRECTIONS / DIRECTION_STEPS / Cell / Direction / inGrid / sameCell / directionOf / lineCells** (packages/games/grep-grid/src/shared/geometry.ts) - Pure geometry of the 12x12 grid and the 4 forward directions; `lineCells` returns `null` for invalid lines
 
 ## Grep Grid definition (5 items) - see grep-grid.md
-- **grepGrid / definition** (packages/games/grep-grid/src/definition/index.ts) - `GameDefinition` of Grep Grid (`id: 'grep-grid'`, `version: 1`); `definition` is an alias; implements `culprits(p)` (8 `term` in `words` order; test in `src/generator/culprits.test.ts`); declares `bankUsage` terms/last_used_grep/30/8 (checked against `historySpec`/`REUSE_WINDOW_DAYS`/`usedBankItems` in `src/generator/bank-usage.test.ts`)
+- **grepGrid / definition** (packages/games/grep-grid/src/definition/index.ts) - `GameDefinition` of Grep Grid (`id: 'grep-grid'`, `version: 1`); `definition` is an alias; implements `codeLanguage` -> `null`; implements `culprits(p)` (8 `term` in `words` order; test in `src/generator/culprits.test.ts`); declares `bankUsage` terms/last_used_grep/30/8 (checked against `historySpec`/`REUSE_WINDOW_DAYS`/`usedBankItems` in `src/generator/bank-usage.test.ts`)
 - **payloadSchema / moveSchema / stateSchema / publicViewSchema / feedbackSchema / feedbackFoundSchema / feedbackNotFoundSchema / resultSchema / statsSchema / cellSchema** (packages/games/grep-grid/src/definition/schemas.ts) - Zod schemas, snake_case as in `api.yaml`
 - **WORD_PATTERN / WORDS_COUNT** (packages/games/grep-grid/src/definition/schemas.ts) - `/^[A-Z]{4,12}$/` and 8
 - **GrepGridPayload / GrepGridWord / GrepGridPlacement / GrepGridMove / GrepGridState / GrepGridPublicView / GrepGridFeedback / GrepGridResult / GrepGridStats** (packages/games/grep-grid/src/definition/schemas.ts) - Types inferred from the schemas
@@ -63,7 +63,7 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **makeT / client fixtures** (packages/games/grep-grid/src/client/{test-utils,test-fixtures}.ts) - Test-only helpers, not exported from the entry
 
 ## Grep Grid generator (8 items) - see grep-grid.md
-- **generator / GrepGridTerm** (packages/games/grep-grid/src/generator/index.ts) - `GameGenerator<GrepGridPayload, GrepGridTerm>` with `historySpec`, `usedBankItems`, `generate`, `verify`
+- **generator / GrepGridTerm** (packages/games/grep-grid/src/generator/index.ts) - `GameGenerator<GrepGridPayload, GrepGridTerm>` with `historySpec`, `usedBankItems`, `generate`, `verify` (`verify` is the synchronous `verifyPayload`, typed `VerificationLog | Promise<VerificationLog>` by the contract: tests use `verifyPayload` for checks and `await generator.verify` through the contract; no `aheadDays`)
 - **verifyPayload** (packages/games/grep-grid/src/generator/verify.ts) - Nine ordered checks returning a `VerificationLog`; never throws
 - **eligibleTerms / sortByTerm / isReusable / related / REUSE_WINDOW_DAYS** (packages/games/grep-grid/src/generator/eligibility.ts) - 30-day filter (excluding recent challenges), ordinal ordering, substring relation
 - **chooseTerms** (packages/games/grep-grid/src/generator/choose.ts) - Picks 8 terms without substring relations, completing with ineligible ones when needed
@@ -78,7 +78,7 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **formatEventDate** (packages/games/timeline/src/shared/format-date.ts) - UTC date formatting by precision
 
 ## Timeline definition (4 items) - see timeline.md
-- **timeline / definition** (packages/games/timeline/src/definition/index.ts) - `GameDefinition` of Timeline (`id: 'timeline'`, `version: 1`); `definition` is an alias; implements `culprits(p)` (5 `timeline_fact` by `fact_id` in `items` order; test in `src/generator/culprits.test.ts`); declares `bankUsage` timeline_facts/last_used/90/5 (checked against `historySpec`/`REUSE_WINDOW_DAYS`/`usedBankItems` in `src/generator/bank-usage.test.ts`)
+- **timeline / definition** (packages/games/timeline/src/definition/index.ts) - `GameDefinition` of Timeline (`id: 'timeline'`, `version: 1`); `definition` is an alias; implements `codeLanguage` -> `null`; implements `culprits(p)` (5 `timeline_fact` by `fact_id` in `items` order; test in `src/generator/culprits.test.ts`); declares `bankUsage` timeline_facts/last_used/90/5 (checked against `historySpec`/`REUSE_WINDOW_DAYS`/`usedBankItems` in `src/generator/bank-usage.test.ts`)
 - **payloadSchema / moveSchema / stateSchema / publicViewSchema / feedbackSchema / resultSchema / statsSchema** (packages/games/timeline/src/definition/schemas.ts) - Zod schemas, snake_case as in `api.yaml`
 - **ITEMS_COUNT / OPAQUE_ID_PATTERN** (packages/games/timeline/src/definition/schemas.ts) - 5 and `/^[a-z0-9]{6}$/`
 - **TimelinePayload / TimelineItem / TimelineMove / TimelineState / TimelinePublicView / TimelineFeedback / TimelineResult / TimelineStats** (packages/games/timeline/src/definition/schemas.ts) - Types inferred from the schemas
@@ -101,7 +101,7 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **makeT / test fixtures** (packages/games/timeline/src/client/test-utils.ts, test-fixtures.ts) - Test-only helpers
 
 ## Timeline generator (6 items) - see timeline.md
-- **generator / TimelineFact** (packages/games/timeline/src/generator/index.ts) - `GameGenerator<TimelinePayload, TimelineFact>`; `TimelineFact` is the `bankItems` contract for S-028
+- **generator / TimelineFact** (packages/games/timeline/src/generator/index.ts) - `GameGenerator<TimelinePayload, TimelineFact>`; `TimelineFact` is the `bankItems` contract for S-028; `verify` is the synchronous `verifyPayload`, typed `VerificationLog | Promise<VerificationLog>` by the contract (tests use `verifyPayload` for checks and `await generator.verify` through the contract); no `aheadDays`
 - **verifyPayload** (packages/games/timeline/src/generator/verify.ts) - Nine ordered checks returning a `VerificationLog`
 - **eligibleFacts / sortById / isReusable / REUSE_WINDOW_DAYS** (packages/games/timeline/src/generator/eligibility.ts) - 90-day window and recent-challenge exclusion
 - **chooseFacts** (packages/games/timeline/src/generator/choose.ts) - Greedy distinguishable selection from the whole bank (mixed categories)
@@ -109,4 +109,4 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **addDays / isValidDate** (packages/games/timeline/src/generator/days.ts) - Clock-free `YYYY-MM-DD` arithmetic in UTC
 
 
-Note: Big O and Bug Hunt packages do not exist yet; when created, their `definition` must declare `bankUsage: null`.
+Note: Big O and Bug Hunt packages do not exist yet; when created, their `definition` must declare `bankUsage: null` and, as required members of the contract, `codeLanguage: (s) => s.language ?? null`.

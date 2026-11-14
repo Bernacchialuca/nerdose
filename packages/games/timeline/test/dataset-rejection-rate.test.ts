@@ -13,7 +13,7 @@ const TIMEOUT_MS = 60_000;
 describe('timeline rejection rate on the real dataset (TS-68)', () => {
   it(
     `passes verify in at least ${MIN_RATE * 100}% of ${SEEDS} candidates`,
-    () => {
+    async () => {
       const bankItems: TimelineFact[] = loadDataset()
         .timelineFacts.filter((f) => f.status === 'approved')
         .map((f) => ({
@@ -35,7 +35,7 @@ describe('timeline rejection rate on the real dataset (TS-68)', () => {
         const inChallenge = new Set(p.items.map((i) => i.category));
         for (const c of inChallenge) categories.add(c);
         if (inChallenge.size > 1) mixed++;
-        const v = generator.verify(p, history);
+        const v = await generator.verify(p, history);
         if (v.ok) ok++;
         else reasons.push(v.reason ?? '?');
       }

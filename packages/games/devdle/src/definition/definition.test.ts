@@ -1,5 +1,5 @@
 import { createGameRegistry } from '@nerdose/core';
-import type { Culprit } from '@nerdose/core';
+import type { CodeLanguage, Culprit } from '@nerdose/core';
 import { describe, expect, expectTypeOf, it, vi } from 'vitest';
 
 import { definition, devdle, payloadSchema, resultSchema, stateSchema } from './index';
@@ -284,5 +284,37 @@ describe('devdle culprits', () => {
 
   it('is typed as Culprit[] (TS-21)', () => {
     expectTypeOf(devdle.culprits).returns.toEqualTypeOf<Culprit[]>();
+  });
+});
+
+describe('devdle codeLanguage', () => {
+  const lost = () => play(['CACHE', 'REDIS', 'TRACE', 'CRATE', 'CARET', 'GRACE']);
+
+  it('is null for the initial state (S-042 TS-1)', () => {
+    expect(devdle.codeLanguage(devdle.initState(PAYLOAD_REACT, NOW))).toBeNull();
+  });
+
+  it('is null for a closed Play, won or lost (S-042 TS-2)', () => {
+    const won = devdle.applyMove(PAYLOAD_REACT, S0, { guess: 'REACT' }, NOW, ALL_VALID);
+    if (!('state' in won)) throw new Error('expected a state');
+    expect(devdle.isFinished(won.state)).toBe(true);
+    expect(devdle.codeLanguage(won.state)).toBeNull();
+    const l = lost();
+    expect(devdle.isFinished(l)).toBe(true);
+    expect(devdle.codeLanguage(l)).toBeNull();
+  });
+
+  it('is visible through the registry and typed (S-042 TS-3)', () => {
+    expect(createGameRegistry([devdle]).get('devdle').codeLanguage({ guesses: [] })).toBeNull();
+    expectTypeOf(devdle.codeLanguage).returns.toEqualTypeOf<CodeLanguage | null>();
+  });
+
+  it('is pure and does not depend on the state (S-042 TS-19)', () => {
+    for (const s of [S0, lost()]) {
+      const before = structuredClone(s);
+      expect(devdle.codeLanguage(s)).toBeNull();
+      expect(devdle.codeLanguage(s)).toBeNull();
+      expect(s).toEqual(before);
+    }
   });
 });
