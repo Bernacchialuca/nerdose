@@ -95,6 +95,7 @@ describe('GameplayRepository (escrituras)', () => {
       result: { win: true },
       score: 4,
       finishedAt,
+      codeLanguage: null,
     });
     expect(closed).toMatchObject({
       status: 'won',
@@ -135,5 +136,72 @@ describe('GameplayRepository (escrituras)', () => {
     ).rejects.toThrow('boom');
     expect(await count('plays')).toBe(1);
     expect(challenge.id).not.toBe(other.id);
+  });
+});
+
+describe('GameplayRepository.closePlay con codeLanguage', () => {
+  const finishedAt = new Date('2026-12-01T10:00:00Z');
+
+  it('TS-10 persiste codeLanguage en una Play big-o (S-042 TS-10)', async () => {
+    const player = await dbs.insertPlayer();
+    const challenge = await dbs.insertChallenge({
+      gameId: 'big-o',
+      date: '2026-12-01',
+      number: 8,
+      payload: { answer: 'o_n' },
+    });
+    const play = await dbs.insertPlay({
+      playerId: player.id,
+      challengeId: challenge.id,
+      gameId: 'big-o',
+      date: '2026-12-01',
+      state: {},
+    });
+    const row = await repo().closePlay(play.id, {
+      state: { language: 'go', option: 'o_n' },
+      status: 'won',
+      result: { win: true, score: 1 },
+      score: 1,
+      finishedAt,
+      codeLanguage: 'go',
+    });
+    expect(row).toMatchObject({ codeLanguage: 'go', status: 'won', score: 1 });
+    const [db] = await dbs.owner.sql`SELECT code_language FROM plays WHERE id = ${play.id}`;
+    expect(db!.code_language).toBe('go');
+  });
+
+  it('TS-11 codeLanguage null deja code_language en NULL (S-042 TS-11)', async () => {
+    const { play } = await seed();
+    const row = await repo().closePlay(play.id, {
+      state: { guesses: [] },
+      status: 'won',
+      result: { win: true, score: 1 },
+      score: 1,
+      finishedAt,
+      codeLanguage: null,
+    });
+    expect(row.codeLanguage).toBeNull();
+    const [db] = await dbs.owner.sql`SELECT code_language FROM plays WHERE id = ${play.id}`;
+    expect(db!.code_language).toBeNull();
+  });
+
+  it('TS-12 moveTransaction expone identity y revierte si fn lanza (S-042 TS-12)', async () => {
+    const player = await dbs.insertPlayer({ preferredCodeLanguage: 'js' });
+    const pref = async () =>
+      (
+        await dbs.owner
+          .sql`SELECT preferred_code_language AS p FROM players WHERE id = ${player.id}`
+      )[0]!.p;
+    await expect(
+      moveTransaction(dbs.api.db)(async ({ identity }) => {
+        await identity.updatePreferences(player.id, { preferredCodeLanguage: 'go' });
+        throw new Error('x');
+      }),
+    ).rejects.toThrow('x');
+    expect(await pref()).toBe('js');
+    await moveTransaction(dbs.api.db)(async ({ identity }) => {
+      await identity.updatePreferences(player.id, { preferredCodeLanguage: 'go' });
+    });
+    expect(await pref()).toBe('go');
   });
 });

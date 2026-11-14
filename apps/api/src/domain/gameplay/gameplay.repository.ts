@@ -1,8 +1,9 @@
-import type { GameId } from '@nerdose/core';
+import type { CodeLanguage, GameId } from '@nerdose/core';
 import { challenges, plays, rejectedGuesses } from '@nerdose/db';
 import type { Db, Play, Tx } from '@nerdose/db';
 import { and, eq } from 'drizzle-orm';
 
+import { IdentityRepository } from '@/domain/identity/identity.repository';
 import { ProgressRepository } from '@/domain/progress/progress.repository';
 
 import type { MoveTx } from './gameplay.types';
@@ -69,6 +70,7 @@ export class GameplayRepository {
       result: unknown;
       score: number;
       finishedAt: Date;
+      codeLanguage: CodeLanguage | null;
     },
   ): Promise<Play> {
     const [row] = await this.db
@@ -79,6 +81,7 @@ export class GameplayRepository {
         result: v.result,
         score: v.score,
         finishedAt: v.finishedAt,
+        codeLanguage: v.codeLanguage,
       })
       .where(eq(plays.id, playId))
       .returning();
@@ -121,5 +124,9 @@ export const moveTransaction =
   (db: Db): MoveTx =>
   (fn) =>
     db.transaction((tx) =>
-      fn({ plays: new GameplayRepository(tx), progress: new ProgressRepository(tx) }),
+      fn({
+        plays: new GameplayRepository(tx),
+        progress: new ProgressRepository(tx),
+        identity: new IdentityRepository(tx),
+      }),
     );

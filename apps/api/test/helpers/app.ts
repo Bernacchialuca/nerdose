@@ -2,6 +2,7 @@ import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
+import type { GameRegistry } from '@nerdose/core';
 import type { Db } from '@nerdose/db';
 import type { Logger } from 'pino';
 
@@ -30,7 +31,7 @@ import {
   RegenerationService,
   type RegenerationRepo,
 } from '@/domain/publishing/regeneration.service';
-import { games } from '@/games/registry';
+import { games as defaultGames } from '@/games/registry';
 import { buildApp } from '@/http/app';
 import type { AppDeps } from '@/http/types';
 import { TodayCache } from '@/infra/cache/today-cache';
@@ -95,6 +96,7 @@ const emptyRepos = {
 
 /** Servicios en memoria que no tocan la base (cache vacía, repos vacíos). */
 export function buildMemoryServices(opts: { clock?: Clock; logger: Logger }) {
+  const games = defaultGames;
   const clock = opts.clock ?? systemClock;
   const cache = new TodayCache(emptyRepos.read);
   const gameplayRepo = {
@@ -153,6 +155,11 @@ export function buildMemoryServices(opts: { clock?: Clock; logger: Logger }) {
           },
           saveGameStats: async () => undefined,
           savePlayerStats: async () => undefined,
+        },
+        identity: {
+          updatePreferences: async () => {
+            throw new Error('sin base en este test');
+          },
         },
       }),
     wordList: { has: () => true },
@@ -251,8 +258,11 @@ export async function buildDbServices(
     wrapVoidRepos?: (r: VoidTxRepos) => VoidTxRepos;
     /** Envuelve el repo de la transacción de regeneración (p. ej. para que `notify` lance). */
     wrapRegenerationRepo?: (r: RegenerationRepo) => RegenerationRepo;
+    /** Registry de juegos (por defecto el real); permite inyectar un juego de prueba. */
+    games?: GameRegistry;
   },
 ) {
+  const games = opts.games ?? defaultGames;
   const clock = opts.clock ?? systemClock;
   const publishingRepo = new PublishingRepository(dbs.api.db);
   const cache = new TodayCache(publishingRepo);

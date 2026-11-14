@@ -135,7 +135,7 @@ describe('Timeline: confirmar', () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({
       feedback: null,
-      play: { status: 'lost', state: { order: SWAP }, score: 3 },
+      play: { status: 'lost', state: { order: SWAP }, score: 3, code_language: null },
       result: tlResult(SWAP, 'es'),
       streaks: { game: { current: 1, max: 1 }, global: { current: 1, max: 1 } },
       game_stats: {
@@ -181,7 +181,12 @@ describe('Timeline: confirmar', () => {
     const res = await tlMove(app, REVERSED, player);
     expect(res.status).toBe(200);
     const json = await res.json();
-    expect(json.play).toEqual({ status: 'lost', state: { order: REVERSED }, score: 1 });
+    expect(json.play).toEqual({
+      status: 'lost',
+      state: { order: REVERSED },
+      score: 1,
+      code_language: null,
+    });
     expect(json.result).toMatchObject({ score: 1, win: false, submitted_order: REVERSED });
     expect(json.game_stats.extra).toEqual(stats(REVERSED));
   });
@@ -192,7 +197,12 @@ describe('Timeline: confirmar', () => {
     const res = await tlMove(app, ROTATED, player);
     expect(res.status).toBe(200);
     const json = await res.json();
-    expect(json.play).toEqual({ status: 'lost', state: { order: ROTATED }, score: 0 });
+    expect(json.play).toEqual({
+      status: 'lost',
+      state: { order: ROTATED },
+      score: 0,
+      code_language: null,
+    });
     expect(json.result).toMatchObject({ score: 0, win: false });
     expect(json.streaks.game.current).toBe(1);
     expect(json.game_stats.extra).toEqual(stats(ROTATED));
@@ -207,7 +217,7 @@ describe('Timeline: confirmar', () => {
     const json = await res.json();
     expect(json).toEqual({
       feedback: null,
-      play: { status: 'won', state: { order: CORRECT }, score: 5 },
+      play: { status: 'won', state: { order: CORRECT }, score: 5, code_language: null },
       result: tlResult(CORRECT, 'en'),
       streaks: { game: { current: 1, max: 1 }, global: { current: 1, max: 1 } },
       game_stats: {
@@ -364,6 +374,7 @@ describe('Timeline: confirmaciones inválidas', () => {
       status: 'lost',
       state: { order: SWAP },
       score: 3,
+      code_language: null,
     });
   });
 });
