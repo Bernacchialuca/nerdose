@@ -58,3 +58,9 @@
 - **Signature:** `recompute(repo: ProgressRecomputeRepo, { playerIds, game }): Promise<{ players }>`; `activeDays()`, `completedPlays(playerIds)`
 - **Description:** rebuilds one game's `player_game_stats` and the global `player_stats` from `plays` with `replayStreak` / `rebuildGameStats`; locks players in ascending id order (game stats then player stats) and reads once per batch
 - **Usage:** `await progress.recompute(new ProgressRepository(tx), { playerIds, game })`
+
+## RegenerationService
+- **Location:** apps/api/src/domain/publishing/regeneration.service.ts
+- **Signature:** `new RegenerationService({ runInTx, clock })`; `regenerate(challengeId, log): Promise<{ request_id, status: 'pending', requested_at }>`
+- **Description:** inside one transaction validates the challenge (`not_found`, `not_regenerable` if not `approved` or `date <= today`), inserts the pending request with `ON CONFLICT (challenge_id) WHERE status = 'pending' DO NOTHING` (returns the existing one if any) and runs `pg_notify('generation_requests', request_id)`. Logs `ChallengeRegenerationRequested` after COMMIT. Repository methods live in `PublishingRepository` (`findChallengeStatus`, `insertPendingRequest`, `findPendingRequest`, `notify`).
+- **Usage:** `POST /api/admin/challenges/{challenge_id}/regenerate` → `deps.regeneration.regenerate(id, c.var.logger)`

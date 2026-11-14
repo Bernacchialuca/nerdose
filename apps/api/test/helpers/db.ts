@@ -3,10 +3,14 @@ import { randomUUID } from 'node:crypto';
 import {
   challengeReports,
   challenges,
+  generationFailures,
+  generationRequests,
+  jobRuns,
   plays,
   playerGameStats,
   playerStats,
   players,
+  rejectedGuesses,
   terms,
   timelineFacts,
 } from '@nerdose/db';
@@ -111,6 +115,28 @@ export function useDatabases() {
           ...values,
         })
         .returning();
+      return row!;
+    },
+    insertGenerationRequest: async (
+      values: Pick<typeof generationRequests.$inferInsert, 'challengeId'> &
+        Partial<typeof generationRequests.$inferInsert>,
+    ) => {
+      const [row] = await owner.db
+        .insert(generationRequests)
+        .values({ status: 'pending', ...values })
+        .returning();
+      return row!;
+    },
+    insertGenerationFailure: async (values: typeof generationFailures.$inferInsert) => {
+      const [row] = await owner.db.insert(generationFailures).values(values).returning();
+      return row!;
+    },
+    insertJobRun: async (values: typeof jobRuns.$inferInsert) => {
+      const [row] = await owner.db.insert(jobRuns).values(values).returning();
+      return row!;
+    },
+    insertRejectedGuess: async (values: typeof rejectedGuesses.$inferInsert) => {
+      const [row] = await owner.db.insert(rejectedGuesses).values(values).returning();
       return row!;
     },
     insertTimelineFact: async (

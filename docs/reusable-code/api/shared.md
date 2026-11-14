@@ -34,3 +34,9 @@
 - **Signature:** `type Clock = { now(): Date }`; `systemClock: Clock`
 - **Description:** injectable clock; domain code never calls `new Date()` directly.
 - **Usage:** `const day = today(clock.now())`
+
+## shiftDay
+- **Location:** apps/api/src/shared/day.ts
+- **Signature:** `shiftDay(day: string, n: number): string`
+- **Description:** adds `n` days (negative allowed) to a `YYYY-MM-DD` day in UTC; does not read the clock
+- **Usage:** `shiftDay(today(clock.now()), -365)`

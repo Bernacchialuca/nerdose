@@ -50,3 +50,9 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 - **Signature:** `adminToken(nowSeconds?): Promise<string>`; `adminAuth(nowSeconds?): Promise<{ Authorization }>`
 - **Description:** `ADMIN_HEADERS` carries the admin `Origin` and JSON content type; tokens are signed with `TEST_ADMIN_JWT_SECRET`; `TEST_CONFIG.ADMIN_PASSWORD_HASH` is generated with `hashPassword(TEST_ADMIN_PASSWORD)`
 - **Usage:** `app.request(url, { method: 'POST', headers: { ...ADMIN_HEADERS, ...(await adminAuth()) }, body })`
+
+## useDatabases (S-037 fixtures)
+- **Location:** apps/api/test/helpers/db.ts
+- **Signature:** `insertGenerationRequest({ challengeId, ... })` (default `status: 'pending'`), `insertGenerationFailure(values)`, `insertJobRun(values)`, `insertRejectedGuess({ word, playerId })`; each inserts as owner and returns the row
+- **Description:** pass `processedAt` when the request is not `pending` (and `newChallengeId` for `done`) to satisfy the table checks
+- **Usage:** `await dbs.insertGenerationRequest({ challengeId: c.id, status: 'failed', error: 'x', processedAt: new Date() })`
