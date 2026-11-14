@@ -71,6 +71,24 @@ describe('frontends (web and admin)', () => {
   });
 });
 
+describe('polyglot and the frontends', () => {
+  it('web does not import polyglot', async () => {
+    await expectBoundary(
+      "import { emit } from '@nerdose/polyglot';\n",
+      'apps/web/src/modules/play/x.ts',
+      'Frontends import only ./client.',
+    );
+  });
+
+  it('admin does not import polyglot', async () => {
+    await expectBoundary(
+      "import { emit } from '@nerdose/polyglot';\n",
+      'apps/admin/src/main.tsx',
+      'Frontends import only ./client.',
+    );
+  });
+});
+
 describe('apps never import from other apps', () => {
   it('web does not import api (relative)', async () => {
     await expectBoundary(
@@ -164,6 +182,21 @@ describe('game entries', () => {
     await expectBoundary(
       "import { gen } from '@nerdose/game-big-o/generator';\n",
       'packages/games/devdle/src/client/index.ts',
+    );
+  });
+
+  it('the generator app can use polyglot', async () => {
+    await expectNoBoundary(
+      "import { runInLanguage } from '@nerdose/polyglot';\n",
+      'apps/generator/src/jobs/x.ts',
+    );
+  });
+
+  it('the client entry of a game never imports polyglot', async () => {
+    await expectBoundary(
+      "import { emit } from '@nerdose/polyglot';\n",
+      'packages/games/devdle/src/client/index.ts',
+      'definition and client never import code that executes.',
     );
   });
 
