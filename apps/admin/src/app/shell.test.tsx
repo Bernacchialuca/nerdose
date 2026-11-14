@@ -2,6 +2,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { axe } from 'vitest-axe';
 
+import { STOCK_OK } from '@/test/fixtures/content-stock';
 import { renderWithProviders } from '@/test/render';
 import { OPEN_GROUPS, SESSION, SESSION_KEY } from '@/test/fixtures/reports';
 import { FAILURES_NONE, FAILURES_ONE } from '@/test/fixtures/upcoming';
@@ -15,10 +16,11 @@ describe('Shell', () => {
     const link = await within(nav).findByRole('link', { name: /3 grupos de reportes abiertos/ });
     expect(link).toHaveTextContent('Reportes (3)');
     expect(link).toHaveAttribute('aria-current', 'page');
-    expect(within(nav).getAllByRole('link')).toHaveLength(2);
+    expect(within(nav).getAllByRole('link')).toHaveLength(3);
     expect(within(nav).getAllByRole('button')).toHaveLength(1);
     expect(within(nav).getByRole('button', { name: 'Cerrar sesión' })).toBeInTheDocument();
-    expect(screen.queryByText(/Stock|Métricas/)).toBeNull();
+    expect(within(nav).getByRole('link', { name: 'Stock' })).not.toHaveAttribute('aria-current');
+    expect(screen.queryByText(/Métricas/)).toBeNull();
     expect(container.firstElementChild).toHaveClass('bg-bg', 'text-text', 'font-mono');
     expect(screen.getByRole('banner')).toBeInTheDocument();
     expect(screen.getAllByRole('main')).toHaveLength(1);
@@ -38,7 +40,7 @@ describe('Shell', () => {
     expect(items[0]).toHaveTextContent(/^Reportes/);
     expect(items[1]).toBe(link);
     expect(nav.lastElementChild).toBe(within(nav).getByRole('button', { name: 'Cerrar sesión' }));
-    expect(screen.queryByText(/Stock|Métricas/)).toBeNull();
+    expect(screen.queryByText(/Métricas/)).toBeNull();
   });
 
   it('sin fallas o si el contador falla, Próximos va sin número (TS-14)', async () => {
@@ -62,6 +64,27 @@ describe('Shell', () => {
     });
     expect(link).toHaveTextContent(/^Próximos$/);
     expect(link).toHaveAttribute('aria-current', 'page');
+  });
+
+  it('encabezado con Stock entre Próximos y Cerrar sesión (TS-7)', async () => {
+    server.use(
+      adminHandlers.contentStock(STOCK_OK),
+      adminHandlers.reports('open', OPEN_GROUPS),
+      adminHandlers.generationFailures(FAILURES_ONE),
+    );
+    renderWithProviders({ route: '/content', session: SESSION });
+    const nav = await screen.findByRole('navigation', { name: 'Secciones' });
+    await within(nav).findByRole('link', { name: /1 falla de generación activa/ });
+    await within(nav).findByRole('link', { name: /3 grupos de reportes abiertos/ });
+    const links = within(nav).getAllByRole('link');
+    expect(links).toHaveLength(3);
+    expect(links[0]).toHaveTextContent(/^Reportes \(3\)/);
+    expect(links[1]).toHaveTextContent(/^Próximos \(1\)/);
+    expect(links[2]).toBe(within(nav).getByRole('link', { name: 'Stock' }));
+    expect(links[2]).toHaveAttribute('href', '/content');
+    expect(links[2]).toHaveAttribute('aria-current', 'page');
+    expect(nav.lastElementChild).toBe(within(nav).getByRole('button', { name: 'Cerrar sesión' }));
+    expect(screen.queryByText(/Métricas/)).toBeNull();
   });
 
   it('Cerrar sesión descarta el token solo en el cliente (TS-22)', async () => {
