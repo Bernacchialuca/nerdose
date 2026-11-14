@@ -6,6 +6,13 @@ import { isIgnored, listRepoFiles, REPO_ROOT } from './helpers/repo';
 
 const readme = (): string => readFileSync(join(REPO_ROOT, 'README.md'), 'utf8');
 
+const section = (text: string, heading: string): string => {
+  const start = text.indexOf(`\n## ${heading}\n`);
+  if (start === -1) throw new Error(`README has no "## ${heading}" section`);
+  const end = text.indexOf('\n## ', start + 1);
+  return text.slice(start, end === -1 ? undefined : end);
+};
+
 describe('README.md', () => {
   it('exists and is versionable', () => {
     expect(listRepoFiles()).toContain('README.md');
@@ -77,5 +84,80 @@ describe('README.md', () => {
     expect(text).not.toMatch(/(?<![\w-])npm install/);
     expect(text).not.toMatch(/(?<![\w-])yarn /);
     expect(text).not.toMatch(/(?<![\w-])bun /);
+  });
+
+  it('has exactly one Requisitos section', () => {
+    expect(readme().match(/^## Requisitos$/gm)).toHaveLength(1);
+  });
+
+  it('keeps the section the polyglot toolchain errors point to', () => {
+    const helper = readFileSync(
+      join(REPO_ROOT, 'packages/polyglot/test/integration/toolchains.ts'),
+      'utf8',
+    );
+    const match = /README "([^"]+)"/.exec(helper);
+    expect(match, 'README hint in polyglot toolchains helper').not.toBeNull();
+    expect(readme()).toMatch(new RegExp(`^## ${match?.[1]}$`, 'm'));
+  });
+
+  it('documents the Go and JDK toolchains in Requisitos', () => {
+    const text = section(readme(), 'Requisitos');
+    for (const literal of [
+      'Node.js 24',
+      'Go >= 1.25',
+      'JDK 21',
+      'go version',
+      'java -version',
+      'PATH',
+    ]) {
+      expect(text, literal).toContain(literal);
+    }
+  });
+
+  it('explains the toolchain errors of the integration tests', () => {
+    const text = section(readme(), 'Requisitos');
+    expect(text).toContain('Missing toolchain');
+    expect(text).toContain('Wrong toolchain version');
+  });
+
+  it('documents the non-root rule of the runner', () => {
+    const text = section(readme(), 'Requisitos');
+    for (const literal of ['RUNNER_UID', 'RUNNER_GID', 'runner_requires_non_root']) {
+      expect(text, literal).toContain(literal);
+    }
+  });
+
+  it('documents how to check the toolchains without the turbo cache', () => {
+    expect(section(readme(), 'Requisitos')).toContain('pnpm --filter @nerdose/polyglot test');
+  });
+
+  it('keeps start-up commands out of Requisitos', () => {
+    const text = section(readme(), 'Requisitos');
+    expect(text).not.toContain('docker compose up -d');
+    expect(text).not.toContain('pnpm --filter @nerdose/db db:migrate');
+  });
+
+  it('lists polyglot in the packages tree', () => {
+    const text = readme();
+    expect(text).toMatch(/^(├|└)── polyglot\/\s+# \S/m);
+    expect(text.split('\n').find((line) => line.includes('packages/{'))).toContain(
+      'packages/{core,db,ui,polyglot}',
+    );
+  });
+
+  it('warns that pnpm test needs the toolchains', () => {
+    const line = readme()
+      .split('\n')
+      .find((l) => l.startsWith('- `pnpm test`'));
+    expect(line).toContain('Docker');
+    expect(line).toContain('Requisitos');
+  });
+
+  it('covers a missing toolchain in common problems', () => {
+    const text = readme();
+    const start = text.indexOf('## Problemas comunes');
+    const end = text.indexOf('Hosting, CI/CD y despliegue: fuera de alcance por ahora.');
+    expect(start).toBeGreaterThanOrEqual(0);
+    expect(text.slice(start, end)).toContain('Missing toolchain');
   });
 });

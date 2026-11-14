@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { listRepoFiles, REPO_ROOT } from './helpers/repo';
+import { turboDryRun } from './helpers/turbo';
 
 const readText = (file: string): string => readFileSync(join(REPO_ROOT, file), 'utf8');
 const readJson = (file: string): Record<string, unknown> =>
@@ -85,5 +86,15 @@ describe('tsconfig.base.json', () => {
       skipLibCheck: true,
       noEmit: true,
     });
+  });
+});
+
+describe('workspace packages', () => {
+  it('registers @nerdose/polyglot in the turbo tasks', () => {
+    const expected = { test: 'vitest run', lint: 'eslint .', typecheck: 'tsc --noEmit' };
+    for (const [task, command] of Object.entries(expected)) {
+      const found = turboDryRun(task).tasks.find((t) => t.taskId === `@nerdose/polyglot#${task}`);
+      expect(found?.command, `@nerdose/polyglot#${task}`).toBe(command);
+    }
   });
 });

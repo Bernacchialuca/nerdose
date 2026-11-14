@@ -44,7 +44,7 @@ tsx                   # runs TypeScript scripts (db:migrate)
 ├── compose.yaml              # PostgreSQL 16 for local development
 ├── .env.example              # root variables (POSTGRES_PASSWORD), no values
 ├── .gitignore
-├── README.md                 # start-up guide
+├── README.md                 # start-up guide (requirements: Node 24, Go >= 1.25, JDK 21)
 ├── apps/{web,admin,api,generator}/
 └── packages/{core,db,ui,polyglot,content}/ and packages/games/<game_id>/
 ```
@@ -180,6 +180,7 @@ The image is the same one Testcontainers uses in tests.
 - Copy each `.env.example` to `.env.local` (and the root one to `.env` for Compose) and fill the values. Real values are never committed.
 - Add a workspace by creating its folder under `apps/`, `packages/` or `packages/games/`; it must define `lint`, `typecheck` and `test` scripts so Turborepo picks it up.
 - Run a single package: `pnpm --filter @nerdose/<name> <script>`.
+- The toolchains Node 24, Go >= 1.25 and JDK 21 must be on the `PATH` (README "Requisitos"). The `@nerdose/polyglot` integration tests fail with a message naming the missing toolchain; `pnpm --filter @nerdose/polyglot test` checks them without the Turborepo cache.
 
 ## Rules
 
@@ -201,3 +202,6 @@ The image is the same one Testcontainers uses in tests.
 - **orm**: `db:migrate` is the single migration command and reads `DATABASE_URL_OWNER`.
 - **accessibility** (web/admin): `eslint-plugin-jsx-a11y` is wired here.
 - **game-package**: the three entries of each game are protected by the boundaries above.
+- **code-runner**: `@nerdose/polyglot` runs Node, Go and Java; the README documents the toolchains and the non-root rule (`RUNNER_UID`/`RUNNER_GID`), and its tests that run toolchains fail without them.
+
+Actualizado por REQ-009 (S-041).
