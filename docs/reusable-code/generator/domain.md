@@ -12,10 +12,16 @@
 - **Description:** `HMAC-SHA256(secret, "{game_id}:{date}:{attempt}")`, 32 bytes; hex is stored in `challenges.seed`.
 - **Usage:** `seedToHex(seedFor(env.GENERATOR_SECRET, 'devdle', '2026-12-02', 0))`
 
+## historyWindow
+- **Location:** apps/generator/src/domain/challenge-publishing/generate.ts
+- **Signature:** `historyWindow(date: string, spec: HistorySpec): { from: string; to: string; exclude: string }`
+- **Description:** pure; `from = D - recentDays`, `to = D + (aheadDays ?? 0)`, `exclude = D`. Without `aheadDays` it equals `[D - recentDays, D - 1]`. Excluding D keeps the old approved row of D from counting against its replacement.
+- **Usage:** `historyWindow('2027-01-10', { ..., recentDays: 30, aheadDays: 30 }) // { from: '2026-12-11', to: '2027-02-09', exclude: '2027-01-10' }`
+
 ## generateForDate
 - **Location:** apps/generator/src/domain/challenge-publishing/generate.ts
 - **Signature:** `generateForDate({ entry, date, firstAttempt = 0, mode = 'fill' }, { repo, env, log, signal }): Promise<{ outcome: 'approved' | 'verified' | 'covered' | 'missing' | 'aborted'; generated; approved; rejected; lastReason: string | null; candidate?: VerifiedCandidate }>`
-- **Description:** builds the history once, then per attempt: generate, insert draft, verify, approve (with `last_used_*` in one transaction) or reject. A unique-index collision on approve yields `covered`. Attempts run from `firstAttempt` to `firstAttempt + GENERATION_MAX_ATTEMPTS - 1`. In `'regenerate'` mode a verified candidate is NOT approved: it stays `draft` and is returned as `outcome: 'verified'` with `candidate = { id, verification, itemIds, bank, lastUsedField }`. `lastReason` is the last rejection `verification.reason`. Exhausted attempts log `ChallengeGenerationFailed` only in `'fill'` mode.
+- **Description:** builds the history once (`[D - recentDays, D + (historySpec.aheadDays ?? 0)]` without the row of D, `status IN ('approved','published','voided')`), then per attempt: generate, insert draft, `await` verify (sync or async generators), approve (with `last_used_*` in one transaction) or reject. A unique-index collision on approve yields `covered`. Attempts run from `firstAttempt` to `firstAttempt + GENERATION_MAX_ATTEMPTS - 1`. In `'regenerate'` mode a verified candidate is NOT approved: it stays `draft` and is returned as `outcome: 'verified'` with `candidate = { id, verification, itemIds, bank, lastUsedField }`. `lastReason` is the last rejection `verification.reason`. Exhausted attempts log `ChallengeGenerationFailed` only in `'fill'` mode.
 - **Usage:** `await generateForDate({ entry: registry.get('devdle'), date, firstAttempt: 5, mode: 'regenerate' }, deps)`
 
 ## fillRange / runFill
@@ -26,7 +32,7 @@
 
 ## ChallengePublishingRepository
 - **Location:** apps/generator/src/domain/challenge-publishing/challenge-publishing.repository.ts
-- **Signature:** `coveredDates`, `bankItems(spec)` (per bank: `terms` rows, or `TimelineFact` shape with snake_case keys for `timeline_facts`), `recentChallenges(gameId, from, to, payloadSchema)`, `insertDraft`, `approve(id, log, { bank, lastUsedField, itemIds, date }): 'approved' | 'duplicate'`, `reject(id, log)`, `maxAttempt(gameId, date): number | null`, `upsertGenerationFailure({ gameId, date, attempts, lastReason })`, queue methods `takePendingRequest()` (`FOR UPDATE SKIP LOCKED`), `findChallenge(id)`, `lockChallenge(id)` (`FOR UPDATE`), `finishRequest(id, { status: 'failed' | 'cancelled', error? })`, `replaceChallenge({ requestId, oldId, candidate, date })` and `cancelCandidate(requestId, candidate)`. The constructor takes `Db | Tx`.
+- **Signature:** `coveredDates`, `bankItems(spec)` (per bank: `terms` rows, or `TimelineFact` shape with snake_case keys for `timeline_facts`), `recentChallenges(gameId, from, to, payloadSchema, excludeDate?)`, `insertDraft`, `approve(id, log, { bank, lastUsedField, itemIds, date }): 'approved' | 'duplicate'`, `reject(id, log)`, `maxAttempt(gameId, date): number | null`, `upsertGenerationFailure({ gameId, date, attempts, lastReason })`, queue methods `takePendingRequest()` (`FOR UPDATE SKIP LOCKED`), `findChallenge(id)`, `lockChallenge(id)` (`FOR UPDATE`), `finishRequest(id, { status: 'failed' | 'cancelled', error? })`, `replaceChallenge({ requestId, oldId, candidate, date })` and `cancelCandidate(requestId, candidate)`. The constructor takes `Db | Tx`.
 - **Description:** The `BANKS` map (`terms` -> `last_used_devdle`/`last_used_grep`; `timeline_facts` -> `last_used`) is the only source of allowed `(bank, lastUsedField)` pairs; others throw `Unknown last_used field` before any write. `bank: null` approves without touching any bank. `approve` writes `last_used_* = GREATEST(last_used_*, date)` only in the spec's bank table, in the same transaction as `status = 'approved'`; it turns `uq_challenges_active_game_date` collisions into a `rejected` row with `reason: 'duplicate_active'`.
 - **Usage:** `new ChallengePublishingRepository(db).coveredDates('devdle', from, to)`
 

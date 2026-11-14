@@ -13,7 +13,7 @@ import {
   timelineFacts,
 } from '@nerdose/db';
 import type { Db, Tx } from '@nerdose/db';
-import { and, asc, between, eq, inArray, sql } from 'drizzle-orm';
+import { and, asc, between, eq, inArray, ne, sql } from 'drizzle-orm';
 import type { PgColumn } from 'drizzle-orm/pg-core';
 import type { z } from 'zod';
 
@@ -255,6 +255,7 @@ export class ChallengePublishingRepository {
     from: string,
     to: string,
     payloadSchema: z.ZodType<unknown>,
+    excludeDate?: string,
   ): Promise<RecentChallenge<unknown>[]> {
     const rows = await this.orm
       .select({ date: challenges.date, payload: challenges.payload })
@@ -264,6 +265,7 @@ export class ChallengePublishingRepository {
           eq(challenges.gameId, gameId),
           between(challenges.date, from, to),
           inArray(challenges.status, [...ACTIVE_STATUSES]),
+          excludeDate === undefined ? undefined : ne(challenges.date, excludeDate),
         ),
       )
       .orderBy(asc(challenges.date));

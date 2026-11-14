@@ -12,7 +12,9 @@ import { generatorRegistry } from '@/games/registry';
 
 import { BANK16, insertTerms } from '../helpers/bank';
 import { setupTestDb } from '../helpers/db';
+import { seedDevdle } from '../helpers/challenges';
 import { captureLogger } from '../helpers/logger';
+import { withGenerator } from '../helpers/registry';
 
 const SECRET = 'test-secret-0123456789abcdef0123456789';
 const seedHex = (date: string, attempt: number) =>
@@ -279,5 +281,224 @@ describe('generateForDate: firstAttempt y modo regenerate', () => {
         attempts: 3,
       }),
     );
+  });
+});
+
+const asyncOk = async () => {
+  await new Promise((r) => setTimeout(r, 10));
+  return { ok: true, checks: [{ name: 'async_check', ok: true }] };
+};
+const asyncFail = async () => ({ ok: false, checks: [], reason: 'async_forced' });
+
+describe('generateForDate: verify asíncrono', () => {
+  it('verify asíncrono que aprueba guarda el log resuelto (S-042 TS-11)', async () => {
+    await insertTerms(t.owner.db, BANK16);
+    const result = await generateForDate(
+      { entry: withGenerator(entry, { verify: asyncOk }), date: '2026-12-02' },
+      setup().deps,
+    );
+    expect(result).toMatchObject({
+      outcome: 'approved',
+      generated: 1,
+      approved: 1,
+      rejected: 0,
+      lastReason: null,
+    });
+    const [row] = await rowsFor('2026-12-02');
+    expect(row).toMatchObject({ status: 'approved', attempt: 0 });
+    expect(row!.verification).toEqual({ ok: true, checks: [{ name: 'async_check', ok: true }] });
+    const used = await t.owner.db
+      .select()
+      .from(terms)
+      .where(eq(terms.lastUsedDevdle, '2026-12-02'));
+    expect(used.map((u) => u.id)).toEqual([(row!.payload as { term_id: string }).term_id]);
+  });
+
+  it('rechaza y después aprueba con el seed siguiente (S-042 TS-12)', async () => {
+    await insertTerms(t.owner.db, BANK16);
+    let calls = 0;
+    const flaky = withGenerator(entry, {
+      verify: async (p: never, h: never) =>
+        calls++ === 0
+          ? { ok: false, checks: [], reason: 'async_forced' }
+          : entry.generator.verify(p, h),
+    });
+    const result = await generateForDate({ entry: flaky, date: '2026-12-02' }, setup().deps);
+    expect(result).toMatchObject({ outcome: 'approved', generated: 2, approved: 1, rejected: 1 });
+    const rows = await rowsFor('2026-12-02');
+    expect(rows[0]).toMatchObject({
+      attempt: 0,
+      status: 'rejected',
+      seed: seedHex('2026-12-02', 0),
+      verification: { ok: false, reason: 'async_forced' },
+    });
+    expect(rows[1]).toMatchObject({
+      attempt: 1,
+      status: 'approved',
+      seed: seedHex('2026-12-02', 1),
+    });
+  });
+
+  it('rechazo asíncrono permanente agota los intentos (S-042 TS-13)', async () => {
+    await insertTerms(t.owner.db, BANK16);
+    const { deps, lines } = setup(3);
+    const result = await generateForDate(
+      { entry: withGenerator(entry, { verify: asyncFail }), date: '2026-12-02' },
+      deps,
+    );
+    expect(result).toMatchObject({
+      outcome: 'missing',
+      generated: 3,
+      approved: 0,
+      rejected: 3,
+      lastReason: 'async_forced',
+    });
+    const rows = await rowsFor('2026-12-02');
+    expect(rows.map((r) => [r.attempt, r.status])).toEqual([
+      [0, 'rejected'],
+      [1, 'rejected'],
+      [2, 'rejected'],
+    ]);
+    for (const r of rows) expect(r.verification).toMatchObject({ reason: 'async_forced' });
+    expect(lines()).toContainEqual(
+      expect.objectContaining({
+        level: 'warn',
+        msg: 'ChallengeGenerationFailed',
+        game_id: 'devdle',
+        date: '2026-12-02',
+        attempts: 3,
+      }),
+    );
+    expect(
+      await t.owner.db.select().from(terms).where(eq(terms.lastUsedDevdle, '2026-12-02')),
+    ).toHaveLength(0);
+  });
+
+  it('en modo regenerate devuelve el log resuelto (S-042 TS-14)', async () => {
+    await insertTerms(t.owner.db, BANK16);
+    const result = await generateForDate(
+      {
+        entry: withGenerator(entry, { verify: asyncOk }),
+        date: '2026-12-05',
+        firstAttempt: 7,
+        mode: 'regenerate',
+      },
+      setup().deps,
+    );
+    expect(result.outcome).toBe('verified');
+    expect(result.candidate!.verification).toEqual({
+      ok: true,
+      checks: [{ name: 'async_check', ok: true }],
+    });
+    expect(result.candidate!.verification).not.toBeInstanceOf(Promise);
+    const [row] = await rowsFor('2026-12-05');
+    expect(result.candidate).toMatchObject({
+      bank: 'terms',
+      lastUsedField: 'last_used_devdle',
+      itemIds: [(row!.payload as { term_id: string }).term_id],
+    });
+    expect(row).toMatchObject({ attempt: 7, status: 'draft', seed: seedHex('2026-12-05', 7) });
+    expect(
+      await t.owner.db.select().from(terms).where(eq(terms.lastUsedDevdle, '2026-12-05')),
+    ).toHaveLength(0);
+  });
+
+  it('la promesa de verify que rechaza se propaga (S-042 TS-15)', async () => {
+    await insertTerms(t.owner.db, BANK16);
+    const { deps, lines } = setup();
+    const boom = withGenerator(entry, {
+      verify: async () => {
+        throw new Error('verify_boom');
+      },
+    });
+    await expect(generateForDate({ entry: boom, date: '2026-12-02' }, deps)).rejects.toThrow(
+      'verify_boom',
+    );
+    const rows = await rowsFor('2026-12-02');
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ attempt: 0, status: 'draft' });
+    expect(
+      lines().some((l) => l.msg === 'ChallengeApproved' || l.msg === 'ChallengeRejected'),
+    ).toBe(false);
+  });
+});
+
+describe('generateForDate: ventana de historia', () => {
+  const seedWindow = async () => {
+    await insertTerms(t.owner.db, BANK16);
+    const rows: [string, 'approved' | 'published' | 'voided' | 'rejected' | 'draft'][] = [
+      ['2026-12-10', 'approved'],
+      ['2026-12-11', 'approved'],
+      ['2027-01-09', 'published'],
+      ['2027-01-10', 'approved'],
+      ['2027-01-11', 'voided'],
+      ['2027-01-20', 'rejected'],
+      ['2027-01-21', 'draft'],
+      ['2027-02-09', 'approved'],
+      ['2027-02-10', 'approved'],
+    ];
+    for (const [date, status] of rows) await seedDevdle(t.owner.db, date, status);
+  };
+  const run = async (historySpec: typeof entry.generator.historySpec) => {
+    let captured: string[] = [];
+    const result = await generateForDate(
+      {
+        entry: withGenerator(entry, {
+          historySpec,
+          verify: (_p: never, h: { recentChallenges: readonly { date: string }[] }) => {
+            captured = h.recentChallenges.map((c) => c.date);
+            return { ok: true, checks: [] };
+          },
+        }),
+        date: '2027-01-10',
+        mode: 'regenerate',
+      },
+      setup().deps,
+    );
+    return { result, captured };
+  };
+  const spec = entry.generator.historySpec;
+
+  it('pide [D-30, D+30] sin la fila de D (S-042 TS-7)', async () => {
+    await seedWindow();
+    const { result, captured } = await run({ ...spec, recentDays: 30, aheadDays: 30 });
+    expect(result.outcome).toBe('verified');
+    expect(captured).toEqual(['2026-12-11', '2027-01-09', '2027-01-11', '2027-02-09']);
+    const rows = await rowsFor('2027-01-10');
+    expect(rows.map((r) => r.status).sort()).toEqual(['approved', 'draft']);
+  });
+
+  it('sin aheadDays solo mira hacia atrás (S-042 TS-8)', async () => {
+    await seedWindow();
+    const { result, captured } = await run({ ...spec, recentDays: 30 });
+    expect(result.outcome).toBe('verified');
+    expect(captured).toEqual(['2026-12-11', '2027-01-09']);
+  });
+
+  it('aheadDays 0 explícito equivale a ausente (S-042 TS-9)', async () => {
+    await seedWindow();
+    const { captured } = await run({ ...spec, recentDays: 30, aheadDays: 0 });
+    expect(captured).toEqual(['2026-12-11', '2027-01-09']);
+  });
+
+  it('Devdle real no ve los aprobados futuros (S-042 TS-10)', async () => {
+    await insertTerms(t.owner.db, BANK16);
+    for (const d of ['2026-11-28', '2026-11-29', '2026-12-01', '2026-12-03'])
+      await seedDevdle(t.owner.db, d, 'approved');
+    let captured: string[] = [];
+    const result = await generateForDate(
+      {
+        entry: withGenerator(entry, {
+          generate: (input) => {
+            captured = input.history.recentChallenges.map((c) => c.date);
+            return entry.generator.generate(input);
+          },
+        }),
+        date: '2026-12-02',
+      },
+      setup().deps,
+    );
+    expect(result.outcome).toBe('approved');
+    expect(captured).toEqual(['2026-11-29', '2026-12-01']);
   });
 });

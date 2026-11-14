@@ -1,5 +1,5 @@
 import { challengeNumber } from '@nerdose/core';
-import type { GeneratorHistory } from '@nerdose/core';
+import type { GeneratorHistory, HistorySpec } from '@nerdose/core';
 import type { Logger } from 'pino';
 
 import type { GeneratorEntry } from '@/games/registry';
@@ -40,6 +40,19 @@ export type GenerateResult = {
   candidate?: VerifiedCandidate;
 };
 
+/**
+ * Ventana de historia del juego para la fecha D: [D - recentDays, D + aheadDays] sin la fila de D.
+ * Sin aheadDays equivale a [D - recentDays, D - 1]. En una regeneración, el approved viejo de D
+ * no cuenta contra su reemplazo (REQ-009).
+ */
+export function historyWindow(date: string, spec: HistorySpec) {
+  return {
+    from: addDays(date, -spec.recentDays),
+    to: addDays(date, spec.aheadDays ?? 0),
+    exclude: date,
+  };
+}
+
 export async function generateForDate(
   input: { entry: GeneratorEntry; date: string; firstAttempt?: number; mode?: GenerateMode },
   deps: GenerateDeps,
@@ -52,13 +65,15 @@ export async function generateForDate(
   const number = challengeNumber(date, env.LAUNCH_DATE);
   if (number === null) throw new Error(`Date ${date} is before LAUNCH_DATE`);
 
+  const window = historyWindow(date, spec);
   const history: GeneratorHistory = {
     bankItems: await repo.bankItems(spec),
     recentChallenges: await repo.recentChallenges(
       gameId,
-      addDays(date, -spec.recentDays),
-      addDays(date, -1),
+      window.from,
+      window.to,
       payloadSchema,
+      window.exclude,
     ),
   };
 
@@ -92,7 +107,8 @@ export async function generateForDate(
     result.generated++;
     log.info('ChallengeGenerated');
 
-    const verification = generator.verify(payload, history);
+    // verify puede ser asíncrono (juegos de código, REQ-009); await de un valor síncrono no cambia nada.
+    const verification = await generator.verify(payload, history);
     if (verification.ok && mode === 'regenerate') {
       // La cola hace el reemplazo atómico: el candidato queda en draft.
       return {

@@ -20,10 +20,11 @@ App `apps/generator` (not a package; imported through the `@/` alias → `src/`)
 - **withTimeout** (apps/generator/src/shared/with-timeout.ts) - Races a promise against a timer and always clears it
 - **createDatabase / Sql** (apps/generator/src/infra/database/db.ts) - Wraps `createDb` from `@nerdose/db`
 
-## Domain (9 items) - see domain.md
+## Domain (10 items) - see domain.md
 - **generatorRegistry / createGeneratorRegistry / GeneratorEntry** (apps/generator/src/games/registry.ts) - `game_id` -> `{ generator, payloadSchema, version }`; one entry per game (Devdle, Grep Grid, Timeline)
 - **seedFor / seedToHex** (apps/generator/src/domain/challenge-publishing/seed.ts) - HMAC-SHA256 seed per `{game_id}:{date}:{attempt}`
-- **generateForDate** (apps/generator/src/domain/challenge-publishing/generate.ts) - Draft -> verify -> approved/rejected pipeline for one game and date; `firstAttempt` and `'regenerate'` mode (returns the verified draft)
+- **generateForDate** (apps/generator/src/domain/challenge-publishing/generate.ts) - Draft -> `await verify` (sync or async) -> approved/rejected pipeline for one game and date; history window from `historyWindow`; `firstAttempt` and `'regenerate'` mode (returns the verified draft)
+- **historyWindow** (apps/generator/src/domain/challenge-publishing/generate.ts) - Pure `[D - recentDays, D + (aheadDays ?? 0)]` window excluding D, used to read game history
 - **fillRange / runFill** (apps/generator/src/domain/challenge-publishing/fill.service.ts) - Computes `[max(today+1, LAUNCH_DATE), today+14]` and fills the gaps
 - **ChallengePublishingRepository** (apps/generator/src/domain/challenge-publishing/challenge-publishing.repository.ts) - Multi-bank (`BANKS`: `terms`, `timeline_facts`) covered dates, history, queue/failure/replacement methods, draft/approve (`last_used_* = GREATEST`)/reject with `duplicate_active` handling
 - **processNextRequest** (apps/generator/src/domain/challenge-publishing/queue/process-request.ts) - Takes a regeneration request (`SKIP LOCKED`), generates candidates and replaces the old challenge atomically, or marks `failed` / `cancelled`
@@ -31,7 +32,7 @@ App `apps/generator` (not a package; imported through the `@/` alias → `src/`)
 - **syncBanks** (apps/generator/src/domain/content-banks/sync-banks.service.ts) - Loads `terms` and `timeline_facts` from the dataset in one transaction with the ADR-016 UPSERT rules; summary with totals and `by_bank`; exports `sameFactContent` and `isStorableDate`
 - **ContentBanksRepository** (apps/generator/src/domain/content-banks/content-banks.repository.ts) - `listTerms`/`upsertTerm` and `listTimelineFacts`/`upsertTimelineFact` (never touches `rejected` rows or `last_used_*`)
 
-## Testing utils (11 items) - see testing.md
+## Testing utils (13 items) - see testing.md
 - **setupTestDb** (apps/generator/test/helpers/db.ts) - Owner and generator-role connections plus `reset()` / `cleanup()`
 - **insertTerms / BANK16** (apps/generator/test/helpers/bank.ts) - Inserts `terms` fixtures; `BANK16` is 16 approved terms, 2 per category; `TermSpec.lastUsedGrep`
 - **devdleOnlyRegistry** (apps/generator/test/helpers/registry.ts) - Registry with only Devdle for Devdle-specific tests
