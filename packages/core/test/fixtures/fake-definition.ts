@@ -17,6 +17,7 @@ export function makeDefinition(id: GameId): FakeDefinition {
     id,
     version: 1,
     moveSchema: z.object({ guess: z.string() }),
+    bankUsage: null,
     toPublic: (p) => ({ length: p.word.length }),
     initState: () => ({ attempts: 0 }),
     applyMove: (p, s, m) => ({
@@ -59,6 +60,12 @@ export function makeLocalizedDefinition(): LocalizedDefinition {
     id: 'grep-grid',
     version: 1,
     moveSchema: z.object({ guess: z.string() }),
+    bankUsage: {
+      bank: 'terms',
+      lastUsedField: 'last_used_grep',
+      windowDays: 30,
+      itemsPerChallenge: 8,
+    },
     toPublic: (p, locale, state) =>
       state?.found
         ? { length: p.word.length, definition: p.definition[locale] }

@@ -19,6 +19,7 @@ export { AppError, ERROR_CATALOG, type ErrorCode } from './errors';
 export {
   GAME_IDS,
   isGameId,
+  type BankUsage,
   type Culprit,
   type CulpritKind,
   type GameDefinition,

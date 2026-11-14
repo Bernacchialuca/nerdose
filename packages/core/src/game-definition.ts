@@ -1,5 +1,6 @@
 import type { z } from 'zod';
 import type { Locale } from './enums';
+import type { BankName } from './game-generator';
 
 export const GAME_IDS = ['devdle', 'grep-grid', 'timeline', 'big-o', 'bug-hunt'] as const;
 
@@ -27,10 +28,19 @@ export interface Culprit {
   label: string;
 }
 
+/** Bank a game consumes and its reuse window; the api builds the content stock from it (REQ-008). */
+export interface BankUsage {
+  bank: BankName;
+  lastUsedField: string;
+  windowDays: number;
+  itemsPerChallenge: number;
+}
+
 export interface GameDefinition<Payload, PublicView, State, Move, Feedback, Result, Stats> {
   id: GameId;
   version: number;
   moveSchema: z.ZodType<Move>;
+  bankUsage: BankUsage | null;
 
   toPublic(p: Payload, locale: Locale, state?: State): PublicView;
   initState(p: Payload, now: Date): State;
