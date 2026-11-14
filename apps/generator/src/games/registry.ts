@@ -1,6 +1,11 @@
 import { AppError, isGameId } from '@nerdose/core';
 import type { AnyGameGenerator, GameId } from '@nerdose/core';
 import {
+  definition as bigODefinition,
+  payloadSchema as bigOPayloadSchema,
+} from '@nerdose/game-big-o/definition';
+import { generator as bigOGenerator } from '@nerdose/game-big-o/generator';
+import {
   definition as devdleDefinition,
   payloadSchema as devdlePayloadSchema,
 } from '@nerdose/game-devdle/definition';
@@ -62,5 +67,11 @@ export const generatorRegistry = createGeneratorRegistry([
     generator: timelineGenerator,
     payloadSchema: timelinePayloadSchema,
     version: `timeline@${timelineDefinition.version}`,
+  },
+  {
+    gameId: 'big-o',
+    generator: bigOGenerator,
+    payloadSchema: bigOPayloadSchema,
+    version: `big-o@${bigODefinition.version}`,
   },
 ]);

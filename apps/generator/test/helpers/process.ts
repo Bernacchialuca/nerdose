@@ -3,10 +3,26 @@ import { fileURLToPath } from 'node:url';
 
 const CWD = fileURLToPath(new URL('../..', import.meta.url));
 
+// Go necesita HOME o GOCACHE para compilar; polyglot se los pasa al hijo solo si el proceso los tiene.
+function toolchainEnv(): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const key of ['HOME', 'GOCACHE', 'GOPATH', 'TMPDIR']) {
+    const value = process.env[key];
+    if (value) out[key] = value;
+  }
+  return out;
+}
+
 export function startGenerator(env: Record<string, string>) {
   const child = spawn(process.execPath, ['--import', 'tsx', 'src/index.ts'], {
     cwd: CWD,
-    env: { PATH: process.env.PATH, NODE_ENV: 'test', LOG_LEVEL: 'info', ...env },
+    env: {
+      PATH: process.env.PATH,
+      ...toolchainEnv(),
+      NODE_ENV: 'test',
+      LOG_LEVEL: 'info',
+      ...env,
+    },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
 

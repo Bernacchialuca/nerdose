@@ -1,10 +1,12 @@
 import type { Dataset } from '@nerdose/content';
 import type { Db } from '@nerdose/db';
+import type { ToolchainReport } from '@nerdose/polyglot';
 import type { Logger } from 'pino';
 
 import type { GeneratorEnv } from '@/config/env';
 import type { GeneratorRegistry } from '@/games/registry';
 import type { Sql } from '@/infra/database/db';
+import { warnMissingToolchains } from '@/infra/toolchains/warn-missing-toolchains';
 import { fillJob } from '@/scheduler/jobs/fill.job';
 import { syncBanksJob } from '@/scheduler/jobs/sync-banks.job';
 import type { JobTracker } from '@/scheduler/job-tracker';
@@ -28,6 +30,7 @@ export type StartupDeps = {
   env: Pick<GeneratorEnv, 'LAUNCH_DATE' | 'GENERATOR_SECRET' | 'GENERATION_MAX_ATTEMPTS'>;
   registry: GeneratorRegistry;
   loadDataset?: () => Dataset;
+  checkToolchains?: () => Promise<ToolchainReport>;
 };
 
 export function buildScheduledJobs(runFill: () => Promise<void> | void): ScheduledJob[] {
@@ -42,6 +45,8 @@ export async function runStartup(deps: StartupDeps): Promise<Running | undefined
   const runFill = async () => {
     await runJob('fill', fillJob({ db, env, registry }), jobDeps);
   };
+
+  await warnMissingToolchains(logger, deps.checkToolchains);
 
   // fill corre aunque sync_banks falle: trabaja con lo que ya hay en la base.
   await runJob('sync_banks', syncBanksJob({ db, loadDataset: deps.loadDataset }), jobDeps);

@@ -178,6 +178,9 @@ importers:
       '@nerdose/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@nerdose/game-big-o':
+        specifier: workspace:*
+        version: link:../../packages/games/big-o
       '@nerdose/game-devdle':
         specifier: workspace:*
         version: link:../../packages/games/devdle
@@ -187,6 +190,9 @@ importers:
       '@nerdose/game-timeline':
         specifier: workspace:*
         version: link:../../packages/games/timeline
+      '@nerdose/polyglot':
+        specifier: workspace:*
+        version: link:../../packages/polyglot
       '@t3-oss/env-core':
         specifier: ^0.13.11
         version: 0.13.11(typescript@6.0.3)(zod@4.6.7)
