@@ -101,6 +101,22 @@ export const adminHandlers = {
       await delay('infinite');
       return HttpResponse.json({ days: [], active_failures: 0 });
     }),
+  contentStock: (body: unknown, init?: ResponseInit) =>
+    http.get('/api/admin/content/stock', async ({ request }) => {
+      await record(request);
+      return HttpResponse.json(body as object, init);
+    }),
+  contentStockPending: () =>
+    http.get('/api/admin/content/stock', async ({ request }) => {
+      await record(request);
+      await delay('infinite');
+      return HttpResponse.json({ banks: [], last_sync: null, top_rejected_guesses: [] });
+    }),
+  contentStockNetworkError: () =>
+    http.get('/api/admin/content/stock', async ({ request }) => {
+      await record(request);
+      return HttpResponse.error();
+    }),
   regenerate: (id: string, body: unknown, init?: ResponseInit) =>
     http.post(`/api/admin/challenges/${id}/regenerate`, async ({ request }) => {
       await record(request);

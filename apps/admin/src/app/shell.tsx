@@ -46,6 +46,9 @@ export function Shell() {
                 </>
               ) : null}
             </NavLink>
+            <NavLink to="/content" className={({ isActive }) => navItemClass({ active: isActive })}>
+              Stock
+            </NavLink>
             <button type="button" onClick={signOut} className={navItemClass({ active: false })}>
               Cerrar sesión
             </button>

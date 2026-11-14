@@ -108,4 +108,15 @@ describe('guardas estáticas del código de producción', () => {
       expect(content, file).not.toMatch(/=== '(devdle|grep-grid|timeline)'/);
     }
   });
+
+  it('el módulo content-stock no importa juegos ni ramifica por juego o banco (TS-31)', () => {
+    const own = files.filter((f) => f.includes('modules/content-stock/') && !f.includes('.test.'));
+    expect(own.length).toBeGreaterThan(0);
+    for (const file of own) {
+      const content = readFileSync(file, 'utf8');
+      expect(content, file).not.toContain('@nerdose/game-');
+      expect(content, file).not.toContain('switch (');
+      expect(content, file).not.toMatch(/=== '(devdle|grep-grid|timeline|terms|timeline_facts)'/);
+    }
+  });
 });

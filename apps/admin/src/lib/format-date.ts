@@ -33,3 +33,21 @@ const TIME = new Intl.DateTimeFormat('es', {
 export function formatTime(iso: string): string {
   return TIME.format(new Date(iso));
 }
+
+// timeZone fijo: la fecha de la última carga se muestra en UTC sin depender del navegador.
+const INSTANT_UTC = new Intl.DateTimeFormat('es', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+  timeZone: 'UTC',
+});
+
+export function formatInstantUtc(iso: string): string {
+  const part = Object.fromEntries(
+    INSTANT_UTC.formatToParts(new Date(iso)).map((p) => [p.type, p.value]),
+  );
+  return `${part.year}-${part.month}-${part.day} ${part.hour}:${part.minute} UTC`;
+}
