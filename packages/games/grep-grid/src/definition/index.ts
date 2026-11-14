@@ -27,6 +27,12 @@ export const grepGrid: GameDefinition<
   id: 'grep-grid',
   version: 1,
   moveSchema,
+  bankUsage: {
+    bank: 'terms',
+    lastUsedField: 'last_used_grep',
+    windowDays: 30,
+    itemsPerChallenge: WORDS_COUNT,
+  },
 
   toPublic: (p, locale, state) => ({
     grid: p.grid.map((row) => [...row]),

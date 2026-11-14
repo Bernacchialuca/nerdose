@@ -25,6 +25,18 @@ describe('devdle definition', () => {
     expect(definition).toBe(devdle);
     expect(devdle.id).toBe('devdle');
     expect(devdle.version).toBe(1);
+    expect(devdle.bankUsage).toEqual({
+      bank: 'terms',
+      lastUsedField: 'last_used_devdle',
+      windowDays: 365,
+      itemsPerChallenge: 1,
+    });
+    expect(createGameRegistry([devdle]).get('devdle').bankUsage).toEqual({
+      bank: 'terms',
+      lastUsedField: 'last_used_devdle',
+      windowDays: 365,
+      itemsPerChallenge: 1,
+    });
     expect(createGameRegistry([devdle]).ids()).toEqual(['devdle']);
   });
 

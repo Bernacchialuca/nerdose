@@ -2,7 +2,7 @@ import type { AdminReport, ReportGroup } from '@/modules/reports/api/types';
 
 export const SESSION = {
   token: 'eyJhbGciOiJIUzI1NiJ9.test.sig',
-  expires_at: '2026-11-11T20:00:00Z',
+  expires_at: '2099-01-01T00:00:00Z',
 };
 
 export const SESSION_KEY = 'nerdose_admin_session';

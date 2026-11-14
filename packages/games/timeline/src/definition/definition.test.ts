@@ -34,6 +34,13 @@ describe('timeline definition', () => {
     expect(definition).toBe(timeline);
     expect(timeline.id).toBe('timeline');
     expect(timeline.version).toBe(1);
+    expect(timeline.bankUsage).toEqual({
+      bank: 'timeline_facts',
+      lastUsedField: 'last_used',
+      windowDays: 90,
+      itemsPerChallenge: 5,
+    });
+    expect(createGameRegistry([timeline]).get('timeline').bankUsage).toEqual(timeline.bankUsage);
   });
 
   it('toPublic in es (TS-19)', () => {

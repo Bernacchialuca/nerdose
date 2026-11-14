@@ -35,6 +35,12 @@ export const devdle: GameDefinition<
   id: 'devdle',
   version: 1,
   moveSchema,
+  bankUsage: {
+    bank: 'terms',
+    lastUsedField: 'last_used_devdle',
+    windowDays: 365,
+    itemsPerChallenge: 1,
+  },
 
   toPublic: (p) => ({
     length: p.word.length,
