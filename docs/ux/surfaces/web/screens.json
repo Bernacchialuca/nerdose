@@ -3685,73 +3685,67 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose / Big O · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose / Big O     ./juegos   ./stats   ./about     #8     ES | EN"
-            }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
+          "content": "> nerdose / big-o · desafío del 30/10 · [?] [stats] [Compartir] ES|EN · 🔥 4",
+          "annotation": "`game-header` variant `playing` (REQ-009, como Devdle, Grep Grid y Tech Timeline): `big-o` en el acento del juego (`#5EB1FF`) y «desafío del dd/mm» (se oculta si el servidor no lo informa). Sin categoría de receta en el metadato (CA 18). «Cómo se juega» → reglas de esta pantalla · «Estadísticas» → estadisticas · Compartir deshabilitado («disponible al terminar la partida») · ES|EN inline · racha global. Sin nav global ni `nav-movil`: en mobile las acciones envuelven a su propia fila"
         },
         {
           "name": "titulo",
           "type": "heading",
           "category": "content",
-          "content": "Big O",
-          "level": "h1"
+          "level": "h1",
+          "content": "Big O"
         },
         {
           "name": "meta",
           "type": "paragraph",
           "category": "content",
-          "content": "Desafío #8 · ~1 min · una partida por día",
           "level": "caption",
+          "content": "Desafío #8 · ~1 min · una partida por día",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ]
         },
         {
+          "name": "aviso-dia-nuevo",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "info",
+          "icon": "info",
+          "content": "Empezó el desafío #9. La partida de ayer quedó sin confirmar y no cuenta para tu racha.",
+          "visible_only_in_states": [
+            "día nuevo"
+          ],
+          "annotation": "llega desde `big-o-partida` por `challenge_expired` o al detectar el cambio de día; se descarta al tocar «Empezar» o al salir. `banner` info del DS"
+        },
+        {
           "name": "alerta-sin-desafio",
           "type": "alert",
           "category": "feedback",
-          "content": "Hoy no hay desafío de Big O. Es un día neutro: no suma ni corta tu racha.",
           "kind": "info",
+          "content": "Hoy no hay desafío de Big O. Es un día neutro: no suma ni corta tu racha.",
           "visible_only_in_states": [
             "sin desafío hoy"
-          ]
+          ],
+          "annotation": "también el día del despliegue: Big O se juega desde el día siguiente (REQ-009, decisión 11)"
         },
         {
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "kind": "warning",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "visible_only_in_states": [
             "anulado"
           ],
-          "annotation": "el modal O-02 se abre solo al entrar en este estado"
+          "annotation": "el modal O-02 se abre solo al entrar en este estado; también si «Empezar» responde `challenge_voided` (CA 20)"
         },
         {
           "name": "reglas-titulo",
           "type": "heading",
           "category": "content",
-          "content": "Cómo se juega",
           "level": "h2",
+          "content": "// cómo se juega",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
@@ -3764,20 +3758,21 @@
           "type": "card",
           "category": "content",
           "content": "1 · Leé el código",
-          "paragraph": "Podés verlo en JS, Go o Java: es solo una vista, no cambia la respuesta.",
+          "paragraph": "Es una función f(n) que cuenta sus propias operaciones. Arranca en tu lenguaje preferido y la podés ver en JavaScript, Go o Java cuando quieras: es el mismo algoritmo.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "`card` variant `step`. Lenguaje inicial = `preferred_code_language` (JS por defecto); cambiarlo no hace requests (C-26, RF 3)"
         },
         {
           "name": "paso-2",
           "type": "card",
           "category": "content",
           "content": "2 · Pensá en el peor caso",
-          "paragraph": "¿Cuánto crece el tiempo de ejecución cuando n crece?",
+          "paragraph": "¿Cómo crece la cantidad de operaciones cuando n crece? Fijate cómo avanza cada variable.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
@@ -3789,27 +3784,29 @@
           "name": "paso-3",
           "type": "card",
           "category": "content",
-          "content": "3 · Elegí una de 8 opciones",
-          "paragraph": "Tenés un solo intento: seleccioná una complejidad y confirmá.",
+          "content": "3 · Elegí y confirmá",
+          "paragraph": "Hay 8 opciones, de O(1) a O(n!), y un solo intento. Al confirmar ves la respuesta y la explicación paso a paso, y el lenguaje con el que confirmaste queda como tu preferido.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "sin reintento (C-27); se guarda la preferencia de lenguaje (RF 5)"
         },
         {
           "name": "aviso-conteo",
-          "type": "alert",
-          "category": "feedback",
-          "content": "La partida no cuenta hasta que la completes.",
-          "kind": "info",
+          "type": "paragraph",
+          "category": "content",
+          "level": "caption",
+          "content": "La partida no cuenta hasta que confirmes. Si salís antes, al volver no vas a tener ninguna opción marcada, pero conservás tu intento.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "la opción elegida vive solo en la pantalla (CA 8)"
         },
         {
           "name": "btn-empezar",
@@ -3824,10 +3821,11 @@
             "loading",
             "error de sistema"
           ],
+          "annotation": "crea la Play (idempotente, CA 2)",
           "state_overrides": {
             "sin sesión": {
               "variant": "disabled",
-              "annotation": "deshabilitado mientras no hay sesión (O-03)"
+              "annotation": "deshabilitado mientras no hay sesión (O-03, `no_session`); no se crea ninguna Play"
             }
           }
         },
@@ -3835,11 +3833,13 @@
           "name": "banner-cookies",
           "type": "alert",
           "category": "feedback",
-          "content": "Activá las cookies para poder jugar",
           "kind": "warning",
+          "icon": "warning",
+          "content": "Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».",
           "visible_only_in_states": [
             "sin sesión"
-          ]
+          ],
+          "annotation": "banner `warning` del shell (O-03); también si «Empezar» responde `no_session`"
         },
         {
           "name": "link-volver",
@@ -3852,7 +3852,7 @@
           "name": "loader",
           "type": "loader",
           "category": "feedback",
-          "content": "Cargando Big O…",
+          "content": "$ cargando big-o…",
           "visible_only_in_states": [
             "loading"
           ]
@@ -3861,8 +3861,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos cargar el desafío de Big O. Revisá tu conexión e intentá de nuevo.",
           "kind": "error",
+          "content": "No pudimos cargar el desafío de Big O. Revisá tu conexión e intentá de nuevo.",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -3875,34 +3875,40 @@
           "variant": "secondary",
           "icon": "refresh",
           "visible_only_in_states": [
-            "error de sistema"
-          ]
+            "error de sistema",
+            "sin sesión"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "annotation": "recrea la sesión y reintenta «Empezar»"
+            }
+          }
         },
         {
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · exit 0",
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
           "banner-cookies",
           "titulo",
           "meta",
+          "aviso-dia-nuevo",
           "alerta-sin-desafio",
           "alerta-anulado",
           "loader",
           "alerta-sistema",
-          "btn-reintentar",
           "reglas-titulo",
           "paso-1",
           "paso-2",
           "paso-3",
           "aviso-conteo",
           "btn-empezar",
+          "btn-reintentar",
           "link-volver"
         ],
         "desktop": [
@@ -3919,11 +3925,11 @@
                 "stack": [
                   "titulo",
                   "meta",
+                  "aviso-dia-nuevo",
                   "alerta-sin-desafio",
                   "alerta-anulado",
                   "loader",
                   "alerta-sistema",
-                  "btn-reintentar",
                   "reglas-titulo",
                   {
                     "row": "pasos",
@@ -3955,7 +3961,8 @@
                       {
                         "w": 6,
                         "stack": [
-                          "btn-empezar"
+                          "btn-empezar",
+                          "btn-reintentar"
                         ]
                       },
                       {
@@ -3982,16 +3989,24 @@
           "applies": true
         },
         {
+          "name": "día nuevo",
+          "applies": true,
+          "parent_state": "default"
+        },
+        {
           "name": "sin desafío hoy",
-          "applies": true
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "anulado",
-          "applies": true
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "sin sesión",
-          "applies": true
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "loading",
@@ -4014,93 +4029,92 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose / Big O · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose / Big O     ./juegos   ./stats   ./about     #8     ES | EN"
-            }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
-        },
-        {
-          "name": "titulo",
-          "type": "heading",
-          "category": "content",
-          "content": "Big O",
-          "level": "h1",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
+          "content": "> nerdose / big-o · desafío del 30/10 · [?] [stats] [Compartir] ES|EN · 🔥 4",
+          "annotation": "`game-header` variant `playing` (REQ-009): «Cómo se juega» → card-reglas de esta pantalla · «Estadísticas» → estadisticas · Compartir deshabilitado («disponible al terminar la partida») · ES|EN cambia la interfaz sin perder la opción elegida ni el lenguaje visible (CA 22) · racha global. Sin categoría de receta (CA 18). Sin nav global ni `nav-movil`"
         },
         {
           "name": "consigna",
           "type": "paragraph",
           "category": "content",
-          "content": "Leé el código y elegí la complejidad.",
-          "level": "body",
+          "level": "caption",
+          "content": "// peor caso · un solo intento",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ]
+        },
+        {
+          "name": "titulo",
+          "type": "heading",
+          "category": "content",
+          "level": "h1",
+          "content": "¿Cuál es la complejidad temporal (peor caso) de f(n)?",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "el `h1` es la pregunta (como `tpl-BigO`), con `f(n)` en el acento `#5EB1FF`; el nombre del juego queda en el breadcrumb. A 320 px envuelve en 2-3 líneas"
+        },
+        {
+          "name": "alerta-anulado",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "warning",
+          "icon": "warning",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "visible_only_in_states": [
+            "anulado"
+          ],
+          "annotation": "si «Confirmar respuesta» responde `challenge_voided` (CA 20); queda «Reportar un problema»"
+        },
+        {
+          "name": "banner-cookies",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "warning",
+          "icon": "warning",
+          "content": "Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».",
+          "visible_only_in_states": [
+            "sin sesión"
+          ],
+          "annotation": "O-03 (`no_session`); la opción elegida y el lenguaje visible se conservan para reintentar"
         },
         {
           "name": "tabs-lenguaje",
           "type": "tabs",
           "category": "navigation",
           "labels": [
-            "JS",
+            "JavaScript",
             "Go",
             "Java"
           ],
           "active": 0,
           "hidden_in_states": [
             "loading",
-            "error de sistema"
-          ]
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "barra del `code-block` (`f.js` · `f.go` · `F.java` a la derecha). Arranca en el lenguaje preferido (JS por defecto); cambiar es local, sin requests, y no borra la opción elegida (C-26, CA 3). Se envía el visible al confirmar"
         },
         {
           "name": "codigo",
           "type": "image",
           "category": "content",
-          "content": "Código con numeración de líneas",
+          "content": "function f(n) {  // 1\n  let ops = 0\n  for (let i = 0; i < n; i++)\n    for (let j = 1; j < n; j *= 2)\n      ops++\n  return ops\n}",
           "aspect_ratio": "4:3",
           "h": 220,
           "hidden_in_states": [
             "loading",
-            "error de sistema"
+            "error de sistema",
+            "anulado"
           ],
-          "annotation": "a 320 px el código scrollea en horizontal"
-        },
-        {
-          "name": "pregunta",
-          "type": "heading",
-          "category": "content",
-          "content": "¿Cuál es la complejidad temporal (peor caso) de f(n)?",
-          "level": "h2",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
+          "annotation": "`code-block` `readonly` sin líneas resaltadas ni notas (serían la respuesta). Resaltado Shiki con fallback sin color, sin saltos de layout. Scroll horizontal propio con teclado (`tabindex=0`); la página nunca scrollea en horizontal (CA 21)"
         },
         {
           "name": "opciones",
           "type": "chips",
-          "category": "content",
+          "category": "input",
+          "content": "// tu respuesta",
           "items": [
             "O(1)",
             "O(log n)",
@@ -4113,23 +4127,104 @@
           ],
           "hidden_in_states": [
             "loading",
-            "error de sistema"
+            "error de sistema",
+            "anulado"
           ],
-          "annotation": "selección única; las 8 opciones son siempre las mismas"
+          "annotation": "pattern `big-o.option` como `radiogroup` «Complejidad temporal de f(n)»: siempre las 8, en este orden; 2 columnas en mobile, 4 en desktop (`min-height` 56). Sin elegir: borde `#1E252E`, texto `text.muted`",
+          "state_overrides": {
+            "selección hecha": {
+              "items": [
+                "O(1)",
+                "O(log n)",
+                "O(n)",
+                "O(n log n)",
+                "● O(n²)",
+                "O(n³)",
+                "O(2ⁿ)",
+                "O(n!)"
+              ],
+              "annotation": "O(n²) elegida: fondo `#0B1522`, borde 2px `#5EB1FF`, `●` y `aria-checked=true`; nunca verde (NFR-U04)"
+            },
+            "confirmando": {
+              "items": [
+                "O(1)",
+                "O(log n)",
+                "O(n)",
+                "O(n log n)",
+                "● O(n²)",
+                "O(n³)",
+                "O(2ⁿ)",
+                "O(n!)"
+              ],
+              "annotation": "bloqueadas mientras responde el servidor"
+            },
+            "error de validación": {
+              "items": [
+                "O(1)",
+                "O(log n)",
+                "O(n)",
+                "O(n log n)",
+                "● O(n²)",
+                "O(n³)",
+                "O(2ⁿ)",
+                "O(n!)"
+              ]
+            },
+            "límite de jugadas": {
+              "items": [
+                "O(1)",
+                "O(log n)",
+                "O(n)",
+                "O(n log n)",
+                "● O(n²)",
+                "O(n³)",
+                "O(2ⁿ)",
+                "O(n!)"
+              ]
+            },
+            "sin sesión": {
+              "items": [
+                "O(1)",
+                "O(log n)",
+                "O(n)",
+                "O(n log n)",
+                "● O(n²)",
+                "O(n³)",
+                "O(2ⁿ)",
+                "O(n!)"
+              ]
+            }
+          }
         },
         {
           "name": "seleccion",
           "type": "paragraph",
-          "category": "content",
-          "content": "Ninguna opción elegida",
+          "category": "feedback",
           "level": "caption",
+          "content": "> elegí una de las 8 opciones",
           "hidden_in_states": [
             "loading",
-            "error de sistema"
+            "error de sistema",
+            "anulado"
           ],
+          "annotation": "línea de aviso del juego, siempre montada (`min-height`), espejo de la región `aria-live` polite. Sin rojo ni shake: un rechazo no consume el intento",
           "state_overrides": {
             "selección hecha": {
-              "content": "Elegiste: O(n²)"
+              "content": "> elegiste O(n²). Podés cambiarla hasta confirmar."
+            },
+            "confirmando": {
+              "content": "> elegiste O(n²). Podés cambiarla hasta confirmar."
+            },
+            "sin sesión": {
+              "content": "> elegiste O(n²). Podés cambiarla hasta confirmar."
+            },
+            "error de validación": {
+              "content": "> no pudimos registrar tu respuesta. Elegí una opción y confirmá de nuevo: no perdiste tu intento.",
+              "annotation": "`422 invalid_move`; la Play sigue en curso y no se guarda ninguna preferencia (CA 7)"
+            },
+            "límite de jugadas": {
+              "content": "> vas muy rápido. Esperá unos segundos y probá de nuevo.",
+              "annotation": "HTTP 429 genérico; la confirmación no se procesa"
             }
           }
         },
@@ -4138,16 +4233,42 @@
           "type": "button",
           "category": "input",
           "content": "Confirmar respuesta",
-          "variant": "disabled",
+          "variant": "primary",
+          "icon": "check",
           "hidden_in_states": [
             "loading",
-            "error de sistema"
+            "error de sistema",
+            "anulado"
           ],
+          "annotation": "`button` `accent` de Big O (`#5EB1FF` / `#06121F`), `lg`, ancho completo en mobile. Envía `{ language, option }` una sola vez; sin diálogo (decisión #26)",
           "state_overrides": {
-            "selección hecha": {
-              "variant": "primary"
+            "default": {
+              "variant": "disabled",
+              "annotation": "deshabilitado hasta elegir una opción (`aria-disabled`: «Elegí una opción para confirmar»)"
+            },
+            "ya reportado": {
+              "variant": "disabled",
+              "annotation": "deshabilitado hasta elegir una opción"
+            },
+            "confirmando": {
+              "content": "Confirmando…",
+              "variant": "disabled",
+              "annotation": "`aria-disabled` mientras viaja la jugada; opciones y pestañas bloqueadas"
             }
           }
+        },
+        {
+          "name": "card-reglas",
+          "type": "card",
+          "category": "content",
+          "content": "// reglas",
+          "paragraph": "01 · Peor caso: cómo crecen las operaciones cuando n crece. · 02 · Un solo intento: elegí y confirmá. · 03 · El lenguaje es solo una vista: el que tengas abierto al confirmar queda como tu preferido. — Con teclado: flechas ← → para cambiar de lenguaje, Tab hasta las opciones, flechas para elegir y Enter en «Confirmar respuesta».",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "destino de «Cómo se juega» del header (`#game-help`), como la card «// reglas» de Tech Timeline"
         },
         {
           "name": "link-reportar",
@@ -4155,17 +4276,25 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) con el aviso de no incluir la respuesta; el contexto incluye el lenguaje visible. Visible también en `anulado`",
+          "state_overrides": {
+            "ya reportado": {
+              "content": "Ya reportaste este desafío",
+              "state": "disabled",
+              "icon": "check",
+              "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
+            }
+          }
         },
         {
           "name": "loader",
           "type": "loader",
           "category": "feedback",
-          "content": "Cargando tu partida de Big O…",
+          "content": "$ cargando tu partida de big-o…",
           "visible_only_in_states": [
             "loading"
           ]
@@ -4174,8 +4303,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.",
           "kind": "error",
+          "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: conservás tu intento.",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -4188,55 +4317,64 @@
           "variant": "secondary",
           "icon": "refresh",
           "visible_only_in_states": [
-            "error de sistema"
-          ]
+            "error de sistema",
+            "sin sesión"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "annotation": "recrea la sesión y vuelve a enviar la respuesta elegida"
+            }
+          }
         },
         {
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · exit 0",
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
+          "banner-cookies",
+          "consigna",
           "titulo",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
-          "consigna",
+          "alerta-anulado",
           "tabs-lenguaje",
           "codigo",
-          "pregunta",
           "opciones",
           "seleccion",
           "btn-confirmar",
+          "card-reglas",
           "link-reportar"
         ],
         "desktop": [
+          "banner-cookies",
+          "consigna",
           "titulo",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
+          "alerta-anulado",
           {
             "row": "juego",
             "cols": [
               {
                 "w": 7,
                 "stack": [
-                  "consigna",
                   "tabs-lenguaje",
-                  "codigo"
+                  "codigo",
+                  "opciones",
+                  "seleccion"
                 ]
               },
               {
                 "w": 5,
                 "stack": [
-                  "pregunta",
-                  "opciones",
-                  "seleccion",
+                  "card-reglas",
                   "btn-confirmar",
                   "link-reportar"
                 ]
@@ -4252,7 +4390,37 @@
         },
         {
           "name": "selección hecha",
+          "applies": true,
+          "parent_state": "default"
+        },
+        {
+          "name": "confirmando",
+          "applies": true,
+          "parent_state": "selección hecha"
+        },
+        {
+          "name": "error de validación",
+          "applies": true,
+          "parent_state": "selección hecha"
+        },
+        {
+          "name": "límite de jugadas",
+          "applies": true,
+          "parent_state": "selección hecha"
+        },
+        {
+          "name": "anulado",
           "applies": true
+        },
+        {
+          "name": "sin sesión",
+          "applies": true,
+          "parent_state": "selección hecha"
+        },
+        {
+          "name": "ya reportado",
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "loading",
@@ -4275,44 +4443,49 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose / Big O · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose / Big O     ./juegos   ./stats   ./about     #8     ES | EN"
+          "content": "> nerdose / big-o · desafío del 30/10 · [stats] [Compartir] ES|EN · 🔥 17",
+          "annotation": "`game-header` variant `finished` (REQ-009): Compartir activo con el acento del juego (`#5EB1FF` / `#06121F`), único botón de compartir. Texto: «🧮 Big O #8» / «🟩 Java» (🟥 si perdió) / «nerdose.dev», nunca la opción elegida ni la correcta (CA 10) · «Estadísticas» → estadisticas · ES|EN cambia veredicto, pasos, notas, «en números» y consejo · racha global actualizada. Sin «Cómo se juega» ni `nav-movil`",
+          "state_overrides": {
+            "success": {
+              "content": "> nerdose / big-o · desafío del 30/10 · [stats] [✓ Copiado] ES|EN · 🔥 17",
+              "annotation": "✓ Copiado: pegalo donde quieras. — confirmación en el mismo botón Compartir (`role=status`) durante unos segundos; vuelve a «Compartir»"
+            },
+            "anulado": {
+              "content": "> nerdose / big-o · desafío del 30/10 · [stats] ES|EN · 🔥 17",
+              "annotation": "`game-header` variant `finished`: Compartir no se muestra en este estado"
+            },
+            "loading": {
+              "content": "> nerdose / big-o · desafío del 30/10 · [stats] ES|EN · 🔥 17",
+              "annotation": "`game-header` variant `finished`: Compartir no se muestra en este estado"
+            },
+            "error de sistema": {
+              "content": "> nerdose / big-o · desafío del 30/10 · [stats] ES|EN · 🔥 17",
+              "annotation": "`game-header` variant `finished`: Compartir no se muestra en este estado"
             }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
+          }
         },
         {
           "name": "veredicto",
           "type": "heading",
           "category": "content",
-          "content": "Respuesta correcta",
           "level": "h1",
+          "content": "Correcto: O(n log n)",
+          "icon": "check",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
+          "annotation": "al ganar: confeti azul y `h1` `sr-only` (como Devdle, Grep Grid y Tech Timeline); la señal visible con ícono y texto es la grilla de opciones. Sin animación con `prefers-reduced-motion`",
           "state_overrides": {
             "perdió": {
-              "content": "No era esa complejidad"
+              "content": "Incorrecto: era O(n log n)",
+              "icon": "x",
+              "annotation": "banner `failure` del DS, sin drama; subtítulo «Elegiste O(n²) en Go. Abajo, paso a paso por qué.»; sin confeti. Perder también suma a la racha"
             },
             "anulado": {
-              "content": "Desafío anulado"
+              "content": "Desafío anulado",
+              "icon": null,
+              "annotation": "`h1` visible, sin banner ni confeti"
             }
           }
         },
@@ -4320,49 +4493,119 @@
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "kind": "warning",
+          "icon": "warning",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "visible_only_in_states": [
             "anulado"
-          ]
+          ],
+          "annotation": "`banner` `warning` del DS; Play `voided`: `result` y `public_view` nulos (REQ-007). Variante mínima: aviso + rachas"
         },
         {
-          "name": "card-respuesta",
-          "type": "card",
+          "name": "pregunta",
+          "type": "heading",
           "category": "content",
-          "content": "Respuesta correcta: O(n log n)",
-          "paragraph": "Elegiste O(n²), confirmaste con Go.",
+          "level": "h2",
+          "content": "¿Cuál es la complejidad temporal (peor caso) de f(n)?",
           "hidden_in_states": [
             "loading",
-            "error de sistema"
-          ]
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "Mono 30 en desktop (26 en mobile) con `f(n)` en el acento; `h2` porque el `h1` es el veredicto"
         },
         {
           "name": "tabs-lenguaje",
           "type": "tabs",
           "category": "navigation",
           "labels": [
-            "JS",
+            "JavaScript",
             "Go",
             "Java"
           ],
-          "active": 1,
+          "active": 2,
           "hidden_in_states": [
             "loading",
-            "error de sistema"
-          ]
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "arranca en `result.code_language` (el lenguaje con el que confirmó); solo vista, no cambia la preferencia. Las notas valen para los 3 lenguajes",
+          "state_overrides": {
+            "perdió": {
+              "active": 1
+            }
+          }
         },
         {
           "name": "codigo",
           "type": "image",
           "category": "content",
-          "content": "Código analizado",
+          "content": "function f(n) {\n  let ops = 0\n  for (let i = 0; i < n; i++)          ← n veces\n    for (let j = 1; j < n; j *= 2)     ← log n veces\n      ops++\n  return ops\n}",
           "aspect_ratio": "4:3",
-          "h": 180,
+          "h": 220,
           "hidden_in_states": [
             "loading",
-            "error de sistema"
-          ]
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "`code-block` `readonly`: líneas de `line_notes` con fondo `#0E1D2E` + barra 3px `#5EB1FF` y la nota en `#8CC8FF` (Mono 12) al margen derecho, en el idioma activo. Scroll horizontal dentro del bloque (CA 21)",
+          "viewport_overrides": {
+            "mobile": {
+              "content": "function f(n) {\n  let ops = 0\n  for (let i = 0; i < n; i++)\n    ↳ n veces\n  for (let j = 1; j < n; j *= 2)\n    ↳ log n veces\n      ops++\n  return ops\n}",
+              "annotation": "en mobile la nota baja a una segunda fila bajo su línea, alineada con el código, para que no quede fuera de la vista dentro del scroll horizontal"
+            }
+          }
+        },
+        {
+          "name": "opciones-resultado",
+          "type": "chips",
+          "category": "content",
+          "content": "// tu respuesta · confirmada en Java",
+          "items": [
+            "O(1)",
+            "O(log n)",
+            "O(n)",
+            "✓ O(n log n) · correcta · tu respuesta",
+            "O(n²)",
+            "O(n³)",
+            "O(2ⁿ)",
+            "O(n!)"
+          ],
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "pattern `big-o.option` en modo resultado, solo lectura (lista); mismo orden y grilla que la partida (2 col mobile, 4 desktop). Correcta: relleno `#3DDC84` + ✓ «correcta». Elegida e incorrecta: borde 2px `#FF7B72` + ✗ «tu respuesta», nunca relleno rojo. Resto apagadas (CA 5, 21, NFR-U04)",
+          "state_overrides": {
+            "perdió": {
+              "content": "// tu respuesta · confirmada en Go",
+              "items": [
+                "O(1)",
+                "O(log n)",
+                "O(n)",
+                "✓ O(n log n) · correcta",
+                "✗ O(n²) · tu respuesta",
+                "O(n³)",
+                "O(2ⁿ)",
+                "O(n!)"
+              ],
+              "annotation": "O(n log n) ✓ correcta (relleno verde) · O(n²) ✗ tu respuesta (borde 2px de error, sin relleno) (CA 5)"
+            }
+          }
+        },
+        {
+          "name": "explicacion-titulo",
+          "type": "heading",
+          "category": "content",
+          "level": "h2",
+          "content": "// por qué · Paso a paso",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "cabecera del `panel` de explicación (`#0F1318` / `#222A33`), como el `aside` del prototipo: `// por qué` (Mono 13 `text.dim`) sobre el `h2` «Paso a paso» (Mono 22)"
         },
         {
           "name": "lista-pasos",
@@ -4370,92 +4613,68 @@
           "category": "content",
           "hidden_in_states": [
             "loading",
-            "error de sistema"
+            "error de sistema",
+            "anulado"
           ],
           "items": [
             {
-              "title": "1 · Orden inicial",
-              "subtitle": "ordenar el arreglo cuesta n log n"
+              "title": "1 · Loop externo",
+              "subtitle": "i avanza de a 1 hasta n: el cuerpo se ejecuta n veces."
             },
             {
-              "title": "2 · Recorrido",
-              "subtitle": "un bucle de n pasos cuesta n"
+              "title": "2 · Loop interno",
+              "subtitle": "j se duplica en cada vuelta hasta llegar a n: log n veces."
             },
             {
-              "title": "3 · Simplificación",
-              "subtitle": "n log n + n se simplifica a n log n"
+              "title": "3 · Anidados se multiplican",
+              "subtitle": "n vueltas de un loop de log n: n · log n operaciones."
+            },
+            {
+              "title": "4 · Simplificación",
+              "subtitle": "Descartamos constantes y términos menores: O(n log n)."
             }
-          ]
+          ],
+          "annotation": "pattern `big-o.step` (número en cuadrado 28×28 `#11243A` / `#8CC8FF`); 2 a 6 pasos de `explanation.steps`, ya resueltos en el locale por el servidor (ADR-015)"
+        },
+        {
+          "name": "caja-numeros",
+          "type": "card",
+          "category": "content",
+          "content": "// en números, con n = 1024",
+          "paragraph": "f(1024) cuenta 10.240 operaciones · con O(n²) serían 1.048.576",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado",
+            "sin ejemplo"
+          ],
+          "annotation": "`explanation.example`: `ops` comprobado por ejecución; la segunda línea solo con trampa (`trap_ops`). Separador de miles del idioma activo"
+        },
+        {
+          "name": "consejo",
+          "type": "paragraph",
+          "category": "content",
+          "level": "body",
+          "content": "La trampa más común es ver dos for y responder O(n²). Mirá siempre cómo avanza cada variable.",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado",
+            "sin ejemplo"
+          ],
+          "annotation": "`explanation.tip`, solo en recetas con trampa; si es `null`, no se muestra"
         },
         {
           "name": "card-rachas",
           "type": "card",
           "category": "content",
           "content": "Rachas",
-          "paragraph": "Big O: 3 días · Global: 4 días",
+          "paragraph": "Big O: 9 días · Global: 17 días · récord Big O: 12",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
-        },
-        {
-          "name": "btn-compartir",
-          "type": "button",
-          "category": "input",
-          "content": "Compartir",
-          "variant": "primary",
-          "icon": "share",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
           ],
-          "annotation": "share nativo del sistema; si no está disponible copia al portapapeles"
-        },
-        {
-          "name": "toast-copiado",
-          "type": "toast",
-          "category": "feedback",
-          "content": "Copiado",
-          "kind": "success",
-          "visible_only_in_states": [
-            "success"
-          ]
-        },
-        {
-          "name": "link-reportar",
-          "type": "link",
-          "category": "navigation",
-          "content": "Reportar un problema",
-          "icon": "warning",
-          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
-          "name": "cuenta-regresiva",
-          "type": "paragraph",
-          "category": "content",
-          "content": "Próximo desafío en 05:42:10",
-          "level": "caption",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
-          "name": "btn-siguiente",
-          "type": "button",
-          "category": "input",
-          "content": "Siguiente juego",
-          "variant": "secondary",
-          "icon": "arrow-right",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
+          "annotation": "`h2` `sr-only`; rachas que devuelve el cierre, perder también suma (CA 9). Stats por categoría de receta en estadisticas (FG-10)"
         },
         {
           "name": "link-stats",
@@ -4467,6 +4686,52 @@
             "loading",
             "error de sistema"
           ]
+        },
+        {
+          "name": "link-reportar",
+          "type": "link",
+          "category": "navigation",
+          "content": "Reportar un problema",
+          "icon": "warning",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) sin el aviso de spoilers; visible también en `anulado`",
+          "state_overrides": {
+            "ya reportado": {
+              "content": "Ya reportaste este desafío",
+              "state": "disabled",
+              "icon": "check",
+              "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
+            }
+          }
+        },
+        {
+          "name": "cuenta-regresiva",
+          "type": "paragraph",
+          "category": "content",
+          "level": "caption",
+          "content": "Próximo desafío en 05:42:10",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "al llegar a 0 recarga el día (vuelve a instrucciones del desafío nuevo)"
+        },
+        {
+          "name": "btn-siguiente",
+          "type": "button",
+          "category": "input",
+          "content": "Siguiente juego",
+          "variant": "primary",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "sin juegos pendientes"
+          ],
+          "annotation": "solo si queda un juego con desafío sin completar"
         },
         {
           "name": "link-volver",
@@ -4483,7 +4748,7 @@
           "name": "loader",
           "type": "loader",
           "category": "feedback",
-          "content": "Cargando tu resultado de Big O…",
+          "content": "$ cargando tu resultado de big-o…",
           "visible_only_in_states": [
             "loading"
           ]
@@ -4492,8 +4757,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
           "kind": "error",
+          "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -4513,30 +4778,31 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · exit 0",
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
           "veredicto",
           "alerta-anulado",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
-          "card-respuesta",
+          "pregunta",
           "tabs-lenguaje",
           "codigo",
+          "opciones-resultado",
+          "explicacion-titulo",
           "lista-pasos",
+          "caja-numeros",
+          "consejo",
           "card-rachas",
-          "btn-compartir",
-          "toast-copiado",
-          "link-reportar",
+          "link-stats",
           "cuenta-regresiva",
           "btn-siguiente",
-          "link-stats",
-          "link-volver"
+          "link-volver",
+          "link-reportar"
         ],
         "desktop": [
           "veredicto",
@@ -4550,43 +4816,77 @@
               {
                 "w": 7,
                 "stack": [
-                  "card-respuesta",
+                  "pregunta",
                   "tabs-lenguaje",
-                  "codigo"
+                  "codigo",
+                  "opciones-resultado",
+                  {
+                    "row": "cierre",
+                    "card": true,
+                    "cols": [
+                      {
+                        "w": 12,
+                        "stack": [
+                          {
+                            "row": "rachas",
+                            "cols": [
+                              {
+                                "w": 8,
+                                "stack": [
+                                  "card-rachas"
+                                ]
+                              },
+                              {
+                                "w": 4,
+                                "stack": [
+                                  "link-stats"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "row": "salida",
+                            "cols": [
+                              {
+                                "w": 6,
+                                "stack": [
+                                  "cuenta-regresiva"
+                                ]
+                              },
+                              {
+                                "w": 6,
+                                "stack": [
+                                  "btn-siguiente",
+                                  "link-volver"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
                 ]
               },
               {
                 "w": 5,
                 "stack": [
-                  "lista-pasos",
-                  "card-rachas",
-                  "btn-compartir",
-                  "toast-copiado",
+                  {
+                    "row": "explicacion",
+                    "card": true,
+                    "cols": [
+                      {
+                        "w": 12,
+                        "stack": [
+                          "explicacion-titulo",
+                          "lista-pasos",
+                          "caja-numeros",
+                          "consejo"
+                        ]
+                      }
+                    ]
+                  },
                   "link-reportar"
-                ]
-              }
-            ]
-          },
-          {
-            "row": "salida",
-            "cols": [
-              {
-                "w": 4,
-                "stack": [
-                  "cuenta-regresiva"
-                ]
-              },
-              {
-                "w": 4,
-                "stack": [
-                  "btn-siguiente"
-                ]
-              },
-              {
-                "w": 4,
-                "stack": [
-                  "link-stats",
-                  "link-volver"
                 ]
               }
             ]
@@ -4600,15 +4900,33 @@
         },
         {
           "name": "perdió",
-          "applies": true
+          "applies": true,
+          "parent_state": "default"
+        },
+        {
+          "name": "sin ejemplo",
+          "applies": true,
+          "parent_state": "default"
+        },
+        {
+          "name": "sin juegos pendientes",
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "anulado",
-          "applies": true
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "success",
-          "applies": true
+          "applies": true,
+          "parent_state": "default"
+        },
+        {
+          "name": "ya reportado",
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "loading",
@@ -7728,6 +8046,14 @@
     },
     {
       "src": "big-o-instrucciones",
+      "srcState": "día nuevo",
+      "srcBlock": "btn-empezar",
+      "dst": "big-o-partida",
+      "trigger": "Empezar",
+      "automatic": false
+    },
+    {
+      "src": "big-o-instrucciones",
       "srcState": "default",
       "srcBlock": "link-volver",
       "dst": "home",
@@ -7744,6 +8070,14 @@
     },
     {
       "src": "big-o-partida",
+      "srcState": "selección hecha",
+      "srcBlock": "btn-confirmar",
+      "dst": "big-o-resultado",
+      "trigger": "Confirmar respuesta",
+      "automatic": false
+    },
+    {
+      "src": "big-o-partida",
       "srcState": "default",
       "srcBlock": "link-reportar",
       "dst": "o-01-reportar",
@@ -7753,10 +8087,16 @@
     {
       "src": "big-o-partida",
       "srcState": "default",
-      "srcBlock": "btn-confirmar",
       "dst": "big-o-resultado",
-      "trigger": "fin de partida",
-      "automatic": false
+      "trigger": "game_finished",
+      "automatic": true
+    },
+    {
+      "src": "big-o-partida",
+      "srcState": "default",
+      "dst": "big-o-instrucciones",
+      "trigger": "challenge_expired (día nuevo)",
+      "automatic": true
     },
     {
       "src": "big-o-resultado",
@@ -7789,6 +8129,13 @@
       "dst": "timeline-instrucciones",
       "trigger": "Siguiente juego",
       "automatic": false
+    },
+    {
+      "src": "big-o-resultado",
+      "srcState": "default",
+      "dst": "big-o-instrucciones",
+      "trigger": "cuenta regresiva en 0",
+      "automatic": true
     },
     {
       "src": "timeline-instrucciones",

@@ -52,7 +52,7 @@ sequenceDiagram
         A->>DB: UPDATE plays SET status, result, score, code_language, finished_at
         A->>DB: SELECT max(date) FROM challenges (prev_active_day)
         A->>DB: UPSERT player_game_stats; UPSERT player_stats
-        A->>DB: UPDATE players SET preferred_code_language (big-o / bug-hunt)
+        A->>DB: UPDATE players SET preferred_code_language (cuando `codeLanguage(state)` no es null: big-o / bug-hunt)
         A->>DB: COMMIT
         A-->>W: 200 { feedback, play, result, streaks }
     end
@@ -136,7 +136,7 @@ En Grep Grid, `isFinished(state) = state.gave_up || state.found_words.length ===
 - **Tabla:** `player_stats` — INSERT … ON CONFLICT (`player_id`) DO UPDATE: `global_streak`, `max_global_streak`, `last_active_date = D`, `total_completed + 1`
 
 **Operación de BD (preferencia):**
-- **Tabla:** `players` — UPDATE `preferred_code_language = move.language` (solo big-o y bug-hunt)
+- **Tabla:** `players` — UPDATE `preferred_code_language = codeLanguage(state)` (solo cuando no es null: big-o y bug-hunt)
 
 **Eventos de dominio:** `PlayFinished`, `StreaksUpdated`, solo en los logs.
 
@@ -192,7 +192,7 @@ En Grep Grid, `isFinished(state) = state.gave_up || state.found_words.length ===
 **Estado final:**
 - Play: `status` `won` o `lost`, con `result`, `score`, `finished_at` (y `code_language` en big-o / bug-hunt).
 - PlayerGameStats / PlayerStats: rachas y contadores actualizados en la misma transacción.
-- Player: `preferred_code_language` actualizado (big-o / bug-hunt).
+- Player: `preferred_code_language` actualizado (cuando `codeLanguage(state)` no es null: big-o / bug-hunt).
 
 ## Notas
 

@@ -652,8 +652,8 @@
      "type": "paragraph",
      "category": "content",
      "level": "caption",
-     "content": "Del 2026-12-02 al 2026-12-15 (UTC) · 3 juegos · hoy no se muestra",
-     "annotation": "ventana de mañana a hoy + 14; juegos del registry (Big O y Bug Hunt se suman solos)"
+     "content": "Del 2026-12-02 al 2026-12-15 (UTC) · 4 juegos · hoy no se muestra",
+     "annotation": "la ventana va de mañana a hoy + 14; los juegos son los registrados (con REQ-009 se suma Big O; Bug Hunt se suma solo al registrarse)"
     },
     {
      "name": "leyenda",
@@ -752,11 +752,16 @@
       {
        "label": "Tech Timeline",
        "width": 3
+      },
+      {
+       "label": "Big O",
+       "width": 3
       }
      ],
      "rows": [
       [
        "02/12 #32",
+       "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado"
@@ -765,10 +770,12 @@
        "03/12 #33",
        "badge:Aprobado",
        "badge:Aprobado",
+       "badge:Aprobado",
        "badge:Aprobado"
       ],
       [
        "04/12 #34",
+       "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado"
@@ -777,10 +784,12 @@
        "05/12 #35",
        "badge:Usa un ítem rechazado: CAP theorem",
        "badge:Aprobado",
+       "badge:Aprobado",
        "badge:Aprobado"
       ],
       [
        "06/12 #36",
+       "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado"
@@ -789,10 +798,12 @@
        "07/12 #37",
        "badge:Aprobado",
        "badge:Aprobado",
+       "badge:Aprobado",
        "badge:Aprobado"
       ],
       [
        "08/12 #38",
+       "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado"
@@ -801,10 +812,12 @@
        "09/12 #39",
        "badge:Aprobado",
        "badge:Aprobado",
+       "badge:Aprobado",
        "badge:Aprobado"
       ],
       [
        "10/12 #40",
+       "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado"
@@ -813,10 +826,12 @@
        "11/12 #41",
        "badge:Aprobado",
        "badge:Aprobado",
+       "badge:Aprobado",
        "badge:Aprobado"
       ],
       [
        "12/12 #42",
+       "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado"
@@ -825,16 +840,19 @@
        "13/12 #43",
        "badge:Aprobado",
        "badge:Aprobado",
+       "badge:Aprobado",
        "badge:Aprobado"
       ],
       [
        "14/12 #44",
        "badge:Aprobado",
        "badge:Aprobado",
+       "badge:Aprobado",
        "badge:Aprobado"
       ],
       [
        "15/12 #45",
+       "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado",
        "badge:Aprobado"
@@ -851,10 +869,12 @@
          "02/12 #32",
          "badge:Sin desafío · Falla de generación · 20 intentos · no_valid_term",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "03/12 #33",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -863,16 +883,19 @@
          "04/12 #34",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "05/12 #35",
          "badge:Usa un ítem rechazado: CAP theorem",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "06/12 #36",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -881,10 +904,12 @@
          "07/12 #37",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "08/12 #38",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -893,10 +918,12 @@
          "09/12 #39",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "10/12 #40",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -905,10 +932,12 @@
          "11/12 #41",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "12/12 #42",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -917,16 +946,19 @@
          "13/12 #43",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "14/12 #44",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "15/12 #45",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -939,10 +971,12 @@
          "02/12 #32",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "03/12 #33",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -951,16 +985,19 @@
          "04/12 #34",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "05/12 #35",
          "badge:Usa un ítem rechazado: CAP theorem",
          "badge:Regenerando…",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "06/12 #36",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -969,10 +1006,12 @@
          "07/12 #37",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "08/12 #38",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -981,10 +1020,12 @@
          "09/12 #39",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "10/12 #40",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -993,10 +1034,12 @@
          "11/12 #41",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "12/12 #42",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -1005,16 +1048,19 @@
          "13/12 #43",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "14/12 #44",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "15/12 #45",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -1027,10 +1073,12 @@
          "02/12 #32",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "03/12 #33",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -1039,16 +1087,19 @@
          "04/12 #34",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "05/12 #35",
          "badge:Usa un ítem rechazado: CAP theorem",
          "badge:Aprobado · Regeneración fallida",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "06/12 #36",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -1057,10 +1108,12 @@
          "07/12 #37",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "08/12 #38",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -1069,10 +1122,12 @@
          "09/12 #39",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "10/12 #40",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -1081,10 +1136,12 @@
          "11/12 #41",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "12/12 #42",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -1093,16 +1150,19 @@
          "13/12 #43",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "14/12 #44",
          "badge:Aprobado",
          "badge:Aprobado",
+         "badge:Aprobado",
          "badge:Aprobado"
         ],
         [
          "15/12 #45",
+         "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado",
          "badge:Aprobado"
@@ -2756,7 +2816,7 @@
        "paragraph": "CAP theorem · sistemas distribuidos · Definición: no se pueden garantizar a la vez consistencia, disponibilidad y tolerancia a particiones…"
       }
      },
-     "annotation": "`Preview` del `client` en modo solución, solo lectura; sin `Preview` cae a `PayloadView`"
+     "annotation": "`Preview` del `client` en modo solución, solo lectura. Big O (REQ-009): código con pestañas JS / Go / Java en texto plano, sin resaltado, con las líneas de `line_notes` y su nota; respuesta «✓ correcta» y `trap_option` marcada «trampa»; pasos, «en números» y consejo. Sin `Preview` cae a `PayloadView`"
     },
     {
      "name": "preview-en",
@@ -2890,7 +2950,7 @@
        "icon": "check"
       }
      ],
-     "annotation": "`verification` del desafío"
+     "annotation": "`verification` del desafío, legible; el seed no se muestra. Big O (REQ-009) suma checks con su `detail` (ejecución en JS, Go y Java o su motivo, conteos, «en números», ajuste por modelo): el log genérico los lista en orden, el `detail` largo como texto plano monoespaciado"
     },
     {
      "name": "lista-reportes",

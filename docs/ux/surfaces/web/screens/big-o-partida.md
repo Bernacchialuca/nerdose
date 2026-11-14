@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.0"
-date: 2026-11-03
+version: "2.0"
+date: 2026-11-14
 ---
 
 # Pantalla: Big O · Partida
@@ -18,195 +18,253 @@ date: 2026-11-03
 ## Identidad
 
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
-- **JTBD / Propósito:** Leer el código, elegir una de 8 complejidades y confirmar (un intento).
+- **JTBD / Propósito:** Leer la función `f(n)` en el lenguaje que prefiera (JavaScript, Go o Java, solo una vista), elegir una de las 8 complejidades fijas y confirmar en un solo intento. Antes del cierre el jugador solo recibe el código en los 3 lenguajes y las 8 opciones: la respuesta, la explicación y la receta llegan recién al confirmar.
 - **Viewports:**
-  - **mobile** — código, pregunta y las 8 opciones apiladas; «Confirmar respuesta» al final.
-  - **desktop** — código a la izquierda (7/12), pregunta, opciones y confirmación a la derecha (5/12).
+  - **mobile** — consigna y pregunta arriba; pestañas y código a ancho completo (el código scrollea en horizontal dentro de su bloque, nunca la página); las 8 opciones en 2 columnas; «Confirmar respuesta» alcanzable con el pulgar y las reglas al final. Sin scroll horizontal de página desde 320 px.
+  - **desktop** — consigna y pregunta a ancho completo; código y opciones (4 columnas, como el prototipo) a la izquierda (7/12); reglas, «Confirmar respuesta» y el reporte a la derecha (5/12), a la vista sin scroll.
 
 ## Entrada y salida
 
 **Entradas:**
 - `big-o-instrucciones` · «Empezar» (crea la Play)
-- `home` · tarjeta «en curso» (retoma en el estado exacto, C-10)
+- `home` · tarjeta «en curso» (retoma la Play: código y 8 opciones sin selección y con el intento intacto, CA 8)
+- URL directa `/big-o` con una Play `in_progress`
 
 **Salidas user-driven:**
-- A O-01 · «Reportar un problema»
-- A `big-o-resultado` · fin de partida
-- A `home` · marca o `./juegos` (la partida queda en curso)
+- A `home` · marca `> nerdose` del header (la partida queda en curso, sin la opción elegida)
+- A `estadisticas` · botón «Estadísticas» del header (ídem)
+- A O-01 · «Reportar un problema» (`link-reportar`, salvo en `ya reportado`)
 
 **Salidas automáticas:**
-- A `big-o-resultado` · al cerrarse la Play como ganada o perdida (el servidor decide)
-- A `big-o-instrucciones` · `challenge_expired` (cambio de día con la partida abierta)
+- A `big-o-resultado` · al confirmar una respuesta válida: el servidor cierra la Play como `won` o `lost`, guarda el lenguaje con el que se confirmó como preferido y devuelve el resultado
+- A `big-o-resultado` · `game_finished` (la Play ya se cerró, por ejemplo desde otra pestaña, CA 6)
+- A `big-o-instrucciones` · `challenge_expired` (cambio de día con la partida abierta; llega con el aviso «día nuevo»)
 
 ## Estructura
 
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
-| 1 | header | header | — | layout | ambos | viewport_overrides: desktop | Marca, #número del desafío del día e idioma |
-| 2 | nav-movil | nav-bar | — | navigation | solo mobile | — | Navegación principal compacta en mobile (en desktop va en el header) |
-| 3 | titulo | heading | h1 | content | ambos | hidden_in_states: loading, error de sistema | Nombre del juego |
-| 4 | consigna | paragraph | body | content | ambos | hidden_in_states: loading, error de sistema | Consigna |
-| 5 | tabs-lenguaje | tabs | active=0 | navigation | ambos | hidden_in_states: loading, error de sistema | Selector de lenguaje de código (solo vista, C-26) |
-| 6 | codigo | image | — | content | ambos | hidden_in_states: loading, error de sistema | Código del desafío |
-| 7 | pregunta | heading | h2 | content | ambos | hidden_in_states: loading, error de sistema | Pregunta fija del juego |
-| 8 | opciones | chips | — | content | ambos | hidden_in_states: loading, error de sistema | 8 opciones fijas de complejidad |
-| 9 | seleccion | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: selección hecha | Opción elegida antes de confirmar |
-| 10 | btn-confirmar | button | disabled | input | ambos | hidden_in_states: loading, error de sistema; state_overrides: selección hecha | Segundo paso: confirma la selección (decisión #26) |
-| 11 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Abre O-01 para avisar que el desafío está mal |
-| 12 | loader | loader | — | feedback | ambos | visible_only_in_states: loading | Indicador de carga |
-| 13 | alerta-sistema | alert | error | feedback | ambos | visible_only_in_states: error de sistema | Error de carga con causa y salida |
-| 14 | btn-reintentar | button | secondary | input | ambos | visible_only_in_states: error de sistema | Reintentar la carga |
-| 15 | footer | footer | — | layout | ambos | — | Lema y `exit 0` (`site-footer`) |
+| 1 | header | header | game-header · playing | layout | ambos | — | Breadcrumb `> nerdose / big-o`, «desafío del dd/mm», acciones de juego, idioma y racha |
+| 2 | consigna | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Comentario de consigna: peor caso y un solo intento |
+| 3 | titulo | heading | h1 | content | ambos | hidden_in_states: loading, error de sistema | La pregunta fija del juego, con `f(n)` en el acento |
+| 4 | alerta-anulado | alert | warning | feedback | ambos | visible_only_in_states: anulado | Aviso de desafío anulado durante la partida |
+| 5 | banner-cookies | alert | warning | feedback | ambos | visible_only_in_states: sin sesión | Explica que hace falta la cookie funcional (`no_session`) |
+| 6 | tabs-lenguaje | tabs | code-block · tablist | navigation | ambos | hidden_in_states: loading, error de sistema, anulado | Pestañas JavaScript / Go / Java del bloque de código (solo vista, C-26) |
+| 7 | codigo | image | code-block · readonly | content | ambos | hidden_in_states: loading, error de sistema, anulado | La función `f(n)` con numeración de líneas y resaltado de sintaxis, sin anotaciones |
+| 8 | opciones | chips | big-o.option · radiogroup | input | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: selección hecha, confirmando | Las 8 complejidades fijas, de selección única |
+| 9 | seleccion | paragraph | caption | feedback | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: selección hecha, error de validación, límite de jugadas | Línea de aviso del juego: la opción elegida y los rechazos del servidor, sin penalizar |
+| 10 | btn-confirmar | button | accent | input | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: default, confirmando | Segundo paso: envía la opción elegida y el lenguaje visible (un solo intento, decisión #26) |
+| 11 | card-reglas | card | — | content | ambos | hidden_in_states: loading, error de sistema, anulado | «// reglas»: tres reglas cortas y la ayuda de teclado; destino de «Cómo se juega» |
+| 12 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema; state_overrides: ya reportado | Abre O-01 para avisar que el desafío está mal (C-36); deshabilitado si el jugador ya reportó este desafío |
+| 13 | loader | loader | — | feedback | ambos | visible_only_in_states: loading | Indicador de carga |
+| 14 | alerta-sistema | alert | error | feedback | ambos | visible_only_in_states: error de sistema | Error de carga con causa y salida |
+| 15 | btn-reintentar | button | secondary | input | ambos | visible_only_in_states: error de sistema, sin sesión; state_overrides: sin sesión | Reintentar la carga o recrear la sesión |
+| 16 | footer | footer | — | layout | ambos | — | Lema y `exit 0` (`site-footer`) |
 
 ## Layout por viewport
 
 ### mobile · 400px
-- nav-movil
+- banner-cookies
+- consigna
 - titulo
 - loader
 - alerta-sistema
 - btn-reintentar
-- consigna
+- alerta-anulado
 - tabs-lenguaje
 - codigo
-- pregunta
 - opciones
 - seleccion
 - btn-confirmar
+- card-reglas
 - link-reportar
 
 ### desktop · 1200px
+- banner-cookies
+- consigna
 - titulo
 - loader
 - alerta-sistema
 - btn-reintentar
+- alerta-anulado
 - row `juego`
-  - col 7/12: consigna, tabs-lenguaje, codigo
-  - col 5/12: pregunta, opciones, seleccion, btn-confirmar, link-reportar
+  - col 7/12: tabs-lenguaje, codigo, opciones, seleccion
+  - col 5/12: card-reglas, btn-confirmar, link-reportar
 
 ## Contenido
 
 ### header
-- Texto/label: > nerdose / Big O · #8 · ES|EN
+- Texto/label: > nerdose / big-o · desafío del 30/10 · [?] [stats] [Compartir] ES|EN · 🔥 4
 - Icono: nada
-- Override desktop: content="> nerdose / Big O     ./juegos   ./stats   ./about     #8     ES | EN"
-- Annotation: #número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline
-
-### nav-movil
-- Texto/label: —
-- Etiquetas: ./juegos · ./stats · ./about
-- Icono: nada
-- Annotation: nada
-
-### titulo
-- Texto/label: Big O
-- Icono: nada
-- Annotation: nada
+- Annotation: `game-header` variant `playing` (REQ-009): «Cómo se juega» lleva a `card-reglas` de esta misma pantalla (con la Play en curso el servidor no vuelve a mostrar las instrucciones); «Estadísticas» → `estadisticas`; Compartir deshabilitado («disponible al terminar la partida»); ES|EN cambia la interfaz sin perder la opción elegida ni el lenguaje visible (CA 22); píldora con la racha global. Sin categoría de receta en el metadato (CA 18). Sin nav global ni `nav-movil`
 
 ### consigna
-- Texto/label: Leé el código y elegí la complejidad.
+- Texto/label: // peor caso · un solo intento
 - Icono: nada
-- Annotation: nada
+- Annotation: comentario `//` del prototipo (Mono 13 `text.dim`)
+
+### titulo
+- Texto/label: ¿Cuál es la complejidad temporal (peor caso) de f(n)?
+- Icono: nada
+- Annotation: como en el prototipo (`tpl-BigO`), el `h1` es la pregunta y no el nombre del juego, que ya está en el breadcrumb. Mono 30 con tracking negativo y `f(n)` en el acento `#5EB1FF`; a 320 px envuelve en 2 o 3 líneas. Fija para todos los días
+
+### alerta-anulado
+- Texto/label: Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.
+- Icono: warning
+- Annotation: `banner` `warning` del DS; aparece si «Confirmar respuesta» responde `challenge_voided` (CA 20). El código, las opciones y la confirmación se ocultan; queda «Reportar un problema»
+
+### banner-cookies
+- Texto/label: Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».
+- Icono: warning
+- Annotation: banner `warning` (O-03); aparece si la confirmación responde `no_session`. La opción elegida y el lenguaje visible se conservan en pantalla para reintentar
 
 ### tabs-lenguaje
 - Texto/label: —
-- Etiquetas: JS · Go · Java
+- Etiquetas: JavaScript · Go · Java (nombre de archivo a la derecha: `f.js` · `f.go` · `F.java`)
 - Icono: nada
-- Annotation: nada
+- Annotation: barra de pestañas del `code-block` (pestaña activa con el fondo `game.big-o.tab-selected`, como el prototipo). Arranca en el lenguaje preferido de la sesión (`codeLanguage`, JavaScript por defecto) y, al retomar, vuelve a ese lenguaje. Cambiar de pestaña es estado local: no hace requests, no cambia la Play ni la preferencia y **no borra la opción elegida** (C-26, CA 3). El lenguaje visible al tocar «Confirmar respuesta» es el que se envía
 
 ### codigo
-- Texto/label: Código con numeración de líneas
-- Asset: placeholder 4:3
+- Texto/label: function f(n) { … } · código del desafío con numeración de líneas
+- Asset: placeholder 4:3 (hasta ~15 líneas)
 - Icono: nada
-- Annotation: a 320 px el código scrollea en horizontal
-
-### pregunta
-- Texto/label: ¿Cuál es la complejidad temporal (peor caso) de f(n)?
-- Icono: nada
-- Annotation: nada
+- Annotation: `code-block` `readonly` sin líneas resaltadas ni anotaciones (las notas «n veces» son del resultado: durante la partida serían la respuesta). Texto seleccionable, Mono 15/2, sin ligaduras; resaltado de sintaxis con Shiki cargado en el chunk de `/big-o` (ADR-002) y un tema que sale de los tokens del DS con contraste AA sobre `bg.surface.sunken`; mientras carga, o si falla, se muestra el mismo código sin color, sin saltos de layout (ver «Design System» en la Revisión UX de REQ-009). Números de línea con contraste ≥ 4,5:1. El cuerpo tiene scroll horizontal propio, alcanzable con teclado (`tabindex="0"` y nombre «Código de f(n) en {lenguaje}»); la página nunca scrollea en horizontal (CA 21, 320 px). El código no lleva comentarios
 
 ### opciones
-- Texto/label: —
+- Texto/label: // tu respuesta
 - Etiquetas: O(1) · O(log n) · O(n) · O(n log n) · O(n²) · O(n³) · O(2ⁿ) · O(n!)
 - Icono: nada
-- Annotation: selección única; las 8 opciones son siempre las mismas
+- Annotation: pattern `big-o.option` (botón Mono 16, `min-height: 56px`, `radius.control`, borde 2px estable). Siempre las mismas 8 en este orden, nunca dependiente de la respuesta. Grilla de 4 columnas en desktop y de 2 columnas en mobile (4 filas): «O(n log n)» entra sin cortar a 320 px. Grupo `role="radiogroup"` con nombre «Complejidad temporal de f(n)»; cada opción es un `role="radio"` con `aria-checked`. **Jugando** (el prototipo solo define el resultado; se deriva de la escala de Big O): sin elegir, fondo `#0F1318` y borde `#1E252E`, texto `text.muted`; elegida, fondo `#0B1522`, borde 2px `#5EB1FF`, texto `text.primary` 700 y un `●` antes del texto, para que la elección no dependa solo del color (NFR-U04). El verde queda reservado a la respuesta correcta del resultado. Tocar otra opción cambia la elección; ninguna opción se envía hasta confirmar
 
 ### seleccion
-- Texto/label: Ninguna opción elegida
+- Texto/label: > elegí una de las 8 opciones
 - Icono: nada
-- Annotation: nada
+- Annotation: línea de aviso del juego (Mono 13), siempre montada con `min-height` para no mover el layout; repite el último anuncio de la región viva `sr-only` (`aria-live="polite"`). Sin rojo ni shake: un rechazo no consume el intento. Textos: «> elegiste O(n²). Podés cambiarla hasta confirmar.», «> no pudimos registrar tu respuesta. Elegí una opción y confirmá de nuevo: no perdiste tu intento.» (`invalid_move`, CA 7), «> vas muy rápido. Esperá unos segundos y probá de nuevo.» (429)
 
 ### btn-confirmar
 - Texto/label: Confirmar respuesta
+- Icono: check
+- Annotation: `button` `accent` de Big O (`#5EB1FF` / `#06121F`), tamaño `lg`, ancho completo en mobile. Deshabilitado hasta elegir una opción (`aria-disabled` con el motivo «Elegí una opción para confirmar»). Al tocarlo se valida `{ language, option }` y se envía una sola vez; mientras responde pasa a «Confirmando…» y las opciones y las pestañas quedan bloqueadas. Sin diálogo de confirmación: la selección y la confirmación ya son dos pasos (decisión #26)
+
+### card-reglas
+- Texto/label: // reglas
+- Texto secundario: 01 · Peor caso: cómo crecen las operaciones cuando n crece. · 02 · Un solo intento: elegí y confirmá. · 03 · El lenguaje es solo una vista: el que tengas abierto al confirmar queda como tu preferido. — Con teclado: flechas ← → para cambiar de lenguaje, Tab hasta las opciones, flechas para elegir y Enter en «Confirmar respuesta».
 - Icono: nada
-- Annotation: nada
+- Annotation: `card` con cabecera `//`, como la card «// reglas» de Tech Timeline; es el destino de «Cómo se juega» del header (`#game-help`). Inter 14 `text.body`; las reglas numeradas en Mono
 
 ### link-reportar
 - Texto/label: Reportar un problema
 - Icono: warning
-- Annotation: si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)
+- Annotation: abre O-01 (bottom-sheet en mobile, modal en desktop) con el aviso «No incluyas la respuesta si todavía estás jugando»; el contexto del reporte incluye el lenguaje visible (`code_language`). Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007)
 
 ### loader
-- Texto/label: Cargando tu partida de Big O…
+- Texto/label: $ cargando tu partida de big-o…
 - Icono: nada
 - Annotation: nada
 
 ### alerta-sistema
-- Texto/label: No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.
+- Texto/label: No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: conservás tu intento.
 - Icono: nada
 - Annotation: nada
 
 ### btn-reintentar
 - Texto/label: Reintentar
 - Icono: refresh
-- Annotation: nada
+- Annotation: en `error de sistema` recarga la partida; en `sin sesión` recrea la sesión y vuelve a enviar la respuesta elegida
 
 ### footer
-- Texto/label: > nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0
+- Texto/label: > nerdose — una plataforma, múltiples desafíos. · exit 0
 - Icono: nada
-- Annotation: `site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)
+- Annotation: `site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)
 
 ## Estados
 
 ### default
 - Aplica: Sí
-- Mensaje: Sin selección: «Confirmar respuesta» está deshabilitado.
-- Cambios: ninguno respecto de default.
+- Mensaje: > elegí una de las 8 opciones. «Confirmar respuesta» está deshabilitado.
+- Cambios:
+  - btn-confirmar: variant="disabled", annotation="deshabilitado hasta elegir una opción" (state_override)
 
 ### selección hecha
 - Aplica: Sí (sub-estado de default)
-- Mensaje: Elegiste: O(n²). «Confirmar respuesta» habilitado (paso 2 de 2).
+- Mensaje: > elegiste O(n²). Podés cambiarla hasta confirmar.
 - Cambios:
-  - seleccion: content="Elegiste: O(n²)" (state_override)
-  - btn-confirmar: variant="primary" (state_override)
+  - opciones: annotation="O(n²) elegida: fondo `#0B1522`, borde 2px `#5EB1FF`, `●` y `aria-checked=true`" (state_override)
+  - seleccion: content="> elegiste O(n²). Podés cambiarla hasta confirmar." (state_override)
+  - btn-confirmar: variant="accent" (habilitado)
 
-### loading
-- Aplica: Sí
-- Mensaje: Cargando tu partida de Big O…
+### confirmando
+- Aplica: Sí (sub-estado de selección hecha)
+- Mensaje: Confirmando…
 - Cambios:
-  - titulo: oculto en este estado (hidden_in_states)
-  - consigna: oculto en este estado (hidden_in_states)
+  - btn-confirmar: content="Confirmando…", variant="disabled" (state_override)
+  - opciones: annotation="bloqueadas mientras responde el servidor" (state_override)
+
+### error de validación
+- Aplica: Sí (sub-estado de selección hecha)
+- Mensaje: > no pudimos registrar tu respuesta. Elegí una opción y confirmá de nuevo: no perdiste tu intento.
+- Cambios:
+  - seleccion: content="> no pudimos registrar tu respuesta. Elegí una opción y confirmá de nuevo: no perdiste tu intento." (state_override)
+  - Nota: `422 invalid_move` (opción o lenguaje fuera de los enums; no debería pasar desde la interfaz). La Play sigue `in_progress` y no se guarda ninguna preferencia (CA 7)
+
+### límite de jugadas
+- Aplica: Sí (sub-estado de selección hecha)
+- Mensaje: > vas muy rápido. Esperá unos segundos y probá de nuevo.
+- Cambios:
+  - seleccion: content="> vas muy rápido. Esperá unos segundos y probá de nuevo." (state_override)
+
+### anulado
+- Aplica: Sí
+- Mensaje: Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.
+- Cambios:
+  - alerta-anulado: solo visible en este estado (visible_only_in_states)
   - tabs-lenguaje: oculto en este estado (hidden_in_states)
   - codigo: oculto en este estado (hidden_in_states)
-  - pregunta: oculto en este estado (hidden_in_states)
   - opciones: oculto en este estado (hidden_in_states)
   - seleccion: oculto en este estado (hidden_in_states)
   - btn-confirmar: oculto en este estado (hidden_in_states)
+  - card-reglas: oculto en este estado (hidden_in_states)
+
+### sin sesión
+- Aplica: Sí (sub-estado de selección hecha)
+- Mensaje: Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».
+- Cambios:
+  - banner-cookies: solo visible en este estado (visible_only_in_states)
+  - btn-reintentar: visible en este estado, annotation="recrea la sesión y vuelve a enviar la respuesta elegida" (state_override)
+
+### ya reportado
+- Aplica: Sí (sub-estado de default; se combina con cualquier otro sub-estado)
+- Mensaje: Ya reportaste este desafío.
+- Cambios:
+  - link-reportar: content="Ya reportaste este desafío", state="disabled", icon="check" (state_override)
+
+### loading
+- Aplica: Sí
+- Mensaje: $ cargando tu partida de big-o…
+- Cambios:
+  - consigna: oculto en este estado (hidden_in_states)
+  - titulo: oculto en este estado (hidden_in_states)
+  - tabs-lenguaje: oculto en este estado (hidden_in_states)
+  - codigo: oculto en este estado (hidden_in_states)
+  - opciones: oculto en este estado (hidden_in_states)
+  - seleccion: oculto en este estado (hidden_in_states)
+  - btn-confirmar: oculto en este estado (hidden_in_states)
+  - card-reglas: oculto en este estado (hidden_in_states)
   - link-reportar: oculto en este estado (hidden_in_states)
   - loader: solo visible en este estado (visible_only_in_states)
 
 ### error de sistema
 - Aplica: Sí
-- Mensaje: No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.
+- Mensaje: No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: conservás tu intento.
 - Cambios:
-  - titulo: oculto en este estado (hidden_in_states)
   - consigna: oculto en este estado (hidden_in_states)
+  - titulo: oculto en este estado (hidden_in_states)
   - tabs-lenguaje: oculto en este estado (hidden_in_states)
   - codigo: oculto en este estado (hidden_in_states)
-  - pregunta: oculto en este estado (hidden_in_states)
   - opciones: oculto en este estado (hidden_in_states)
   - seleccion: oculto en este estado (hidden_in_states)
   - btn-confirmar: oculto en este estado (hidden_in_states)
+  - card-reglas: oculto en este estado (hidden_in_states)
   - link-reportar: oculto en este estado (hidden_in_states)
   - alerta-sistema: solo visible en este estado (visible_only_in_states)
   - btn-reintentar: solo visible en este estado (visible_only_in_states)
@@ -214,37 +272,51 @@ date: 2026-11-03
 ## Interacciones
 
 **Eventos:**
-- opciones · tocar chip → selecciona esa complejidad
-- btn-confirmar · on click → envía la respuesta (un solo intento)
+- tabs-lenguaje · tocar pestaña o flechas ← → → muestra el mismo algoritmo en ese lenguaje; sin requests; la opción elegida se mantiene (CA 3)
+- opciones · tocar una opción o flechas dentro del grupo → la elige (reemplaza la anterior); `seleccion` lo anuncia
+- btn-confirmar · on click → envía `{ language: <pestaña visible>, option }` una sola vez → `big-o-resultado` (CA 4, 5)
+- btn-confirmar · respuesta `invalid_move` → estado `error de validación`; 429 → `límite de jugadas`; `no_session` → `sin sesión`; `challenge_voided` → `anulado`; `game_finished` → `big-o-resultado`; `challenge_expired` → `big-o-instrucciones` con el aviso «día nuevo»
 - link-reportar · on click → abre O-01 (bottom-sheet en mobile, modal en desktop)
+- ES|EN del header → cambia la interfaz; el código, la opción elegida y el lenguaje visible no cambian
 
 **Validaciones:**
 - btn-confirmar · sin opción elegida → deshabilitado
+- `{ language, option }` se valida en el cliente antes de enviar; el servidor vuelve a validar (NFR-S02)
 
 **Feedback:**
-- Las jugadas inválidas muestran un aviso sin consumir el intento (cuando corresponde).
+- La elección y los rechazos se anuncian en `seleccion` (región viva), sin consumir el intento.
 
 ## Accesibilidad
 
-- **Orden de foco:** titulo → consigna → elementos del juego → acción de confirmar → link-reportar.
-- **Landmarks y jerarquía:** `h1` con el nombre del juego; sin otros encabezados salvo la pregunta (`h2`) o el contador (`h2`). Landmarks: header, nav, main, footer.
-- **Foco y teclado:** O-01/O-04 atrapan el foco y lo devuelven al disparador al cerrarse.
-- **Propio de esta composición:** El feedback de cada jugada se anuncia en una región `aria-live=polite`; el estado nunca depende solo del color (NFR-U04).
+- **Orden de foco:** header → titulo → pestañas de lenguaje → cuerpo del código (si desborda) → grupo de opciones → btn-confirmar → card-reglas (lectura) → link-reportar. En desktop el orden del DOM sigue el visual: columna izquierda y luego derecha.
+- **Landmarks y jerarquía:** `h1` es la pregunta; «tu respuesta» y «reglas» son `h2` (la cabecera `//` de cada bloque). Landmarks: header (breadcrumb como `nav` con nombre), main, footer.
+- **Foco y teclado:** pestañas con el patrón `tablist`/`tab`/`tabpanel` (flechas ← →, `aria-selected`, foco visible). Opciones como `radiogroup`: Tab entra y sale del grupo, las flechas mueven la elección (roving tabindex). Enter o Espacio en «Confirmar respuesta» envía. O-01 atrapa el foco y lo devuelve a `link-reportar`. Toda la partida se completa sin mouse (RF 15, CA 21).
+- **Propio de esta composición:** la opción elegida se distingue con borde, peso y `●`, no solo con color (NFR-U04). El código es texto real, seleccionable y legible por lector de pantalla línea a línea; los números de línea son `aria-hidden`.
 
 ## Decisiones y descartes
 
 **Decisiones tomadas:**
 - Una pantalla por fase por juego: la partida de Big O difiere por completo de la de los otros.
-- El acceso «Reportar un problema» está en todas las partidas (O-01), con el aviso de no incluir la respuesta.
-- El `#número` del desafío está en el header, no en el cuerpo.
-- Selección y confirmación en dos pasos (decisión #26).
+- Selección y confirmación en dos pasos (decisión #26), sin diálogo adicional.
+- REQ-009: header `game-header` (`playing`) en lugar del header de plataforma y la tira `nav-movil`, como los otros tres juegos ya diseñados. En mobile desaparece la fila de `nav-movil`.
+- REQ-009: el `h1` es la pregunta del prototipo con `f(n)` en el acento, y la consigna pasa a comentario `//` arriba, como en Tech Timeline; se elimina el `h2` «pregunta» aparte.
+- REQ-009: las opciones son un `radiogroup` (y no botones `aria-pressed`): es selección única, las flechas recorren las 8 sin 8 paradas de Tab, y es el mismo patrón que las líneas elegibles de Bug Hunt (decisión 13 del diseño técnico la dejaba a esta revisión).
+- REQ-009: 2 columnas de opciones en mobile y 4 en desktop. Resuelve el «Pendiente» del pattern `big-o.option` (4 columnas fijas no entran a 320 px). El estado «elegida» se deriva de la escala de Big O (tinte + borde 2px del acento + `●`) y no usa verde, que en el resultado significa «correcta».
+- REQ-009: el lenguaje inicial es el preferido de la sesión y cambiar de pestaña no borra la opción elegida (CA 3). El lenguaje que se envía es el de la pestaña visible al confirmar (RF 5); por eso `card-reglas` lo dice explícitamente.
+- REQ-009: durante la partida el código no muestra líneas resaltadas ni notas «n veces»: el prototipo las tiene porque es la vista de resultado, y acá serían la respuesta.
+- REQ-009: el código lleva resaltado de sintaxis (Shiki, ADR-002 y supuesto «Accesibilidad / UX» del REQ) con fallback sin color; el DS de `code-block` hoy lo desaconseja, gap anotado en la Revisión UX.
+- REQ-009: se suma `card-reglas` como destino de «Cómo se juega» del header (como la card «// reglas» de Tech Timeline), con la ayuda de teclado. En desktop ocupa la columna derecha sobre «Confirmar respuesta»; en mobile va después de confirmar para no empujar el código hacia abajo.
+- REQ-009: estados `confirmando`, `error de validación` (`invalid_move`, CA 7), `límite de jugadas`, `anulado` (`challenge_voided`, CA 20), `sin sesión` y `ya reportado`, como en los otros juegos. La opción elegida no se guarda en el servidor: al retomar se ve el código sin selección (CA 8).
 
 **Alternativas descartadas:**
 - Tabs de lenguaje como overlay: es una vista inline (C-26).
+- Opciones como `chips` en una sola fila con wrap: el ancho variable de cada opción mueve las posiciones al cambiar de ancho y dificulta encontrar una opción por posición.
+- Guardar la opción elegida al cambiar de pestaña o al salir: el REQ fija que solo la confirmación crea la jugada (supuesto «Partida / estado»).
+- Un diálogo «¿Confirmás O(n²)?»: los dos pasos ya evitan el toque accidental y un tercer paso alarga una partida de 1 minuto.
 
 **Preguntas abiertas:**
 - Ninguna propia de esta pantalla.
 
 ## Trazabilidad
 
-- F-07, C-27, C-26, C-36 · flujo 1 de `user-flows.md`.
+- F-07, C-26, C-27, C-36, C-10, C-11 · REQ-009 (RF 2-5, 8, 15; CA 2, 3, 6-8, 18, 20-22) · flujos 1, 2 y 4 de `user-flows.md`.

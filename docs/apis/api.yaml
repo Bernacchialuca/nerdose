@@ -346,7 +346,7 @@ paths:
 
         Si la jugada cierra la partida: `plays.status = won|lost`, `result`, `score`, `code_language`,
         `finished_at`; se actualizan `player_game_stats` y `player_stats` en la misma transacción (rachas con
-        días neutros, ADR-011). En Big O y Bug Hunt además se guarda `players.preferred_code_language = move.language`.
+        días neutros, ADR-011). `code_language = codeLanguage(state)` del juego (Big O y Bug Hunt; `null` en los demás) y, cuando no es null, se actualiza `players.preferred_code_language` en la misma transacción.
 
         Devdle: un intento fuera de la lista válida responde `422 not_in_word_list`, se registra en
         `rejected_guesses` y **no** consume intento.
@@ -508,7 +508,7 @@ paths:
                 big_o_cierre:
                   value:
                     feedback: null
-                    play: { status: won, state: {}, score: 1 }
+                    play: { status: won, state: { language: go, option: o_n_log_n }, score: 1, code_language: go }
                     result:
                       win: true
                       score: 1
@@ -516,7 +516,15 @@ paths:
                       chosen_option: o_n_log_n
                       code_language: go
                       recipe_category: divide_and_conquer
-                      explanation: 'El bucle externo divide n a la mitad en cada paso…'
+                      trap_option: o_n2
+                      explanation:
+                        steps:
+                          - 'El loop externo corre n veces.'
+                          - 'El interno duplica j: log2 n vueltas.'
+                          - 'Anidados se multiplican: n x log n. Simplificado: O(n log n).'
+                        line_notes: [ { line: 3, text: 'n veces' }, { line: 4, text: 'log n veces' } ]
+                        tip: 'Un loop interno que duplica su variable no es n.'
+                        example: { n: 1024, ops: 10240, trap_ops: 1048576 }
                     streaks: { game: { current: 4, max: 9 }, global: { current: 6, max: 12 } }
         '401': { $ref: '#/components/responses/NoSession' }
         '403': { $ref: '#/components/responses/ForbiddenOrigin' }
@@ -1462,7 +1470,7 @@ components:
 
     EmptyState:
       type: object
-      description: Big O y Bug Hunt (una sola confirmación) no tienen estado intermedio
+      description: Bug Hunt (una sola confirmación) no tiene estado intermedio
       additionalProperties: false
 
     TimelineState:
@@ -1476,11 +1484,20 @@ components:
           maxItems: 5
           items: { type: string }
 
+    BigOState:
+      type: object
+      description: Vacío mientras la Play está in_progress; guarda el lenguaje y la opción confirmados al cerrar
+      additionalProperties: false
+      properties:
+        language: { $ref: '#/components/schemas/CodeLanguage' }
+        option: { $ref: '#/components/schemas/BigOOption' }
+
     PlayState:
       oneOf:
         - $ref: '#/components/schemas/DevdleState'
         - $ref: '#/components/schemas/GrepGridState'
         - $ref: '#/components/schemas/TimelineState'
+        - $ref: '#/components/schemas/BigOState'
         - $ref: '#/components/schemas/EmptyState'
 
     PlayView:
@@ -1668,7 +1685,7 @@ components:
 
     BigOResult:
       type: object
-      required: [win, score, answer, chosen_option, code_language, recipe_category, explanation]
+      required: [win, score, answer, chosen_option, code_language, recipe_category, trap_option, explanation]
       properties:
         win: { type: boolean }
         score: { type: integer, enum: [0, 1] }
@@ -1676,7 +1693,40 @@ components:
         chosen_option: { $ref: '#/components/schemas/BigOOption' }
         code_language: { $ref: '#/components/schemas/CodeLanguage' }
         recipe_category: { $ref: '#/components/schemas/RecipeCategory' }
-        explanation: { type: string }
+        trap_option:
+          allOf: [ { $ref: '#/components/schemas/BigOOption' } ]
+          nullable: true
+          description: Respuesta equivocada típica de la receta (recuadro "en números"); null si no hay trampa
+        explanation: { $ref: '#/components/schemas/BigOExplanation' }
+
+    BigOExplanation:
+      type: object
+      description: Explicación paso a paso en el locale resuelto
+      required: [steps, line_notes, tip, example]
+      properties:
+        steps:
+          type: array
+          minItems: 2
+          maxItems: 6
+          items: { type: string }
+          description: Costo de cada bloque, reglas de anidamiento y secuencia, simplificación final
+        line_notes:
+          type: array
+          items:
+            type: object
+            required: [line, text]
+            properties:
+              line: { type: integer, minimum: 1, description: Línea (1-based), igual en los 3 lenguajes }
+              text: { type: string }
+        tip: { type: string, nullable: true }
+        example:
+          type: object
+          nullable: true
+          required: [n, ops, trap_ops]
+          properties:
+            n: { type: integer, minimum: 1 }
+            ops: { type: integer, minimum: 1, description: Operaciones de f(n) en ese n (comprobado por ejecución) }
+            trap_ops: { type: integer, nullable: true, description: Lo que daría trap_option en ese n }
 
     BugHuntResult:
       type: object
@@ -1757,11 +1807,15 @@ components:
         feedback: { $ref: '#/components/schemas/Feedback' }
         play:
           type: object
-          required: [status, state, score]
+          required: [status, state, score, code_language]
           properties:
             status: { $ref: '#/components/schemas/PlayStatus' }
             state: { $ref: '#/components/schemas/PlayState' }
             score: { type: integer, nullable: true }
+            code_language:
+              allOf: [ { $ref: '#/components/schemas/CodeLanguage' } ]
+              nullable: true
+              description: Solo big-o y bug-hunt al cerrar; null en los demás casos (igual que PlayView)
         result:
           allOf: [ { $ref: '#/components/schemas/Result' } ]
           nullable: true
@@ -1821,7 +1875,7 @@ components:
             devdle = distribución de intentos (1–6 y derrotas);
             grep-grid = `{ words_found: { "0": n, …, "8": n } }` (partidas por cantidad de palabras encontradas;
             de ahí salen el promedio de palabras y el % de 8/8);
-            timeline = `{ by_category: { <category>: { played, correct } } }`, acumulado por hito: cada uno de los 5 items suma `played` a la categoría de su hecho y `correct` si quedó en su lugar (acierto = `correct / played`; mejor categoría = mayor promedio); big-o = aciertos por `recipe_category`;
+            timeline = `{ by_category: { <category>: { played, correct } } }`, acumulado por hito: cada uno de los 5 items suma `played` a la categoría de su hecho y `correct` si quedó en su lugar (acierto = `correct / played`; mejor categoría = mayor promedio); big-o = `{ by_category: { <recipe_category>: { played, correct } } }`;
             bug-hunt = aciertos por `code_language` y por `bug_type`.
 
     MyStats:

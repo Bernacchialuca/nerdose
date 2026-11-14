@@ -1,7 +1,7 @@
 # ADR-006: Contrato `GameDefinition` y juegos como paquetes enchufables
 
 **Estado:** Accepted
-**Fecha:** 2026-11-03 (actualizado 2026-11-14: `culprits`, `bankUsage`, `Preview`)
+**Fecha:** 2026-11-03 (actualizado 2026-11-14: `culprits`, `bankUsage`, `Preview`, `codeLanguage`, `verify` asíncrono, `aheadDays`)
 **Decisores:** Responsable de nerdose
 **Etiquetas:** juegos, contrato, extensibilidad, anti-spoiler
 
@@ -34,6 +34,7 @@ export interface GameDefinition<Payload, PublicView, State, Move, Feedback, Resu
 
   initialStats(): Stats;
   reduceStats(prev: Stats, r: Result): Stats;
+  codeLanguage(s: State): CodeLanguage | null;   // lenguaje con el que se confirmó (Big O, Bug Hunt); null en los demás (REQ-009)
   historyLabel(r: Result): string;  // "✓ 4/6", "8/8", "3/5", "✓ O(n log n)", "✗ L7"
   culprits(p: Payload): Culprit[];  // ítems de banco que referencia el desafío; el admin elige el culpable al anular (REQ-007)
 }
@@ -50,12 +51,12 @@ export interface BankUsage {
 export interface MoveContext { isValidWord(word: string): boolean; locale: Locale }   // lo arma la api (WordList.has y el locale resuelto, REQ-005); los juegos que no lo usan lo ignoran
 
 export interface GameGenerator<Payload> {
-  historySpec: { bank: 'terms' | 'timeline_facts' | null; lastUsedField: string; recentDays: number };
+  historySpec: { bank: 'terms' | 'timeline_facts' | null; lastUsedField: string; recentDays: number; aheadDays?: number };   // aheadDays default 0 (REQ-009)
   usedBankItems(p: Payload): string[];                       // ids del banco que consume el payload
   generate(input: { date: string; seed: Uint8Array; history: GeneratorHistory }): Payload;
-  verify(p: Payload, history: GeneratorHistory): VerificationLog;   // { ok, checks[], reason? }
+  verify(p: Payload, history: GeneratorHistory): VerificationLog | Promise<VerificationLog>;   // { ok, checks[], reason? }
 }
-// GeneratorHistory = { bankItems (ítems approved con su last_used_*), recentChallenges (no rejected, [D - recentDays, D - 1]) }
+// GeneratorHistory = { bankItems (ítems approved con su last_used_*), recentChallenges (no rejected, [D - recentDays, D + aheadDays] sin la fila de D) }
 
 // entrada ./client
 //   Instructions, Game, Result (componentes React) y share(result, number): string
@@ -65,6 +66,9 @@ export interface GameGenerator<Payload> {
 Hay un **registry** en `api`, en `web`/`admin` y en `generator` que mapea `game_id` → la entrada correspondiente. Las rutas de la `api` (`/api/games/{game_id}/today/*`) son genéricas sobre el registry.
 
 ## Reglas de Implementación
+
+- La `api` MUST guardar `plays.code_language = codeLanguage(state)` al cerrar la Play y, si no es `null`, actualizar `players.preferred_code_language` en la misma transacción, sin ramificar por `game_id` (REQ-009).
+- `generateForDate` MUST hacer `await` de `verify`; los generadores síncronos siguen siendo válidos.
 
 - Cada juego MUST vivir en `packages/games/<game_id>`, con `game_id` ∈ `devdle | grep-grid | timeline | big-o | bug-hunt`.
 - La entrada `./definition` MUST exportar un objeto que implemente `GameDefinition` de `@nerdose/core`, con todos los métodos de la interfaz.

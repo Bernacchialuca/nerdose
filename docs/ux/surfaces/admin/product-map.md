@@ -1,8 +1,8 @@
 ---
 document: UX Product Map
 surface: admin
-version: "1.2"
-date: 2026-11-13
+version: "1.3"
+date: 2026-11-14
 status: Draft - Punto de partida para discusión
 audiences: [responsable]
 ---
@@ -26,7 +26,7 @@ Viewport: `desktop` (único). No hay caso mobile relevado (ver pregunta abierta 
 |---|----------|-------------|-----------|---------------------|-----------|----------------|
 | P-01 | Login | `login` · `/login` | Ingresar con la contraseña única; muestra el motivo si volvió por sesión vencida o por límite de intentos (con los minutos de espera) | responsable | solo desktop | C-38, NFR-S07, REQ-007 |
 | P-02 | Reportes | `reportes` · `/reports` | Cola de reportes agrupados por desafío (alertados primero, luego más reportados, luego más recientes; sin paginación en v1), filtro por estado (abiertos / resueltos / descartados; default `open`), acceso al detalle y a anular; aviso de anulación confirmada | responsable | solo desktop | C-37, C-39, C-40, C-41, REQ-007 |
-| P-03 | Próximos desafíos | `proximos-desafios` · `/upcoming` | Grilla de mañana a +14 días × juegos registrados (hoy 3; Big O y Bug Hunt se suman solos) con estado por celda: aprobado, sin desafío con su falla de generación (intentos y motivo), regeneración pendiente, regeneración fallida con su motivo, usa un ítem rechazado. Acceso al detalle y a regenerar; aviso de fallas activas | responsable | solo desktop | C-43, C-44, C-49, REQ-008 |
+| P-03 | Próximos desafíos | `proximos-desafios` · `/upcoming` | Grilla de mañana a +14 días × juegos registrados (4 con Big O, REQ-009; Bug Hunt se suma solo) con estado por celda: aprobado, sin desafío con su falla de generación (intentos y motivo), regeneración pendiente, regeneración fallida con su motivo, usa un ítem rechazado. Acceso al detalle y a regenerar; aviso de fallas activas | responsable | solo desktop | C-43, C-44, C-49, REQ-008 |
 | P-04 | Stock de contenido | `stock-contenido` · `/content` | Salud de los bancos (términos desglosado por Devdle y Grep Grid, y hechos): disponibles, totales, rechazados con motivo, días de stock y si alcanza para ciclar; última carga del dataset (fecha, versión, insertados, actualizados) y top 50 de palabras rechazadas en Devdle por jugadores distintos; estados vacíos; solo lectura | responsable | solo desktop | C-45, REQ-008 |
 | P-05 | Métricas | `metricas` · `/metrics` | Rango de fechas, cifras resumen y tablas: jugadores únicos, retención D1/D7, distribución de rachas, calidad por desafío | responsable | solo desktop | C-46 |
 

@@ -110,7 +110,9 @@ Each game has a test that serializes `toPublic(payload)` and every pre-result re
 ## Update (REQ-004)
 
 - `applyMove(p, s, m, now, ctx: MoveContext)`: `ctx = { isValidWord(word) }` is built by the `api` from `WordList.has`; games that do not need it ignore it.
-- `GameGenerator` declares `historySpec = { bank, lastUsedField, recentDays }` and `usedBankItems(payload)`; the `generator` builds a generic history `{ bankItems, recentChallenges }`, with no per-game logic.
+- `GameDefinition.codeLanguage(state): CodeLanguage | null` (REQ-009): the language the Play was confirmed with (Big O, Bug Hunt) or `null` (Devdle, Grep Grid, Timeline). On close the `api` stores `plays.code_language` and, when not null, `players.preferred_code_language`, with no per-game branching.
+- `GameGenerator.verify` may return a `Promise` (the `generator` awaits it) and `historySpec` accepts an optional `aheadDays` (default 0): history is read over `[D - recentDays, D + aheadDays]` excluding the row of `D`.
+- `GameGenerator` declares `historySpec = { bank, lastUsedField, recentDays, aheadDays? }` and `usedBankItems(payload)`; the `generator` builds a generic history `{ bankItems, recentChallenges }`, with no per-game logic.
 
 ## Update (REQ-005)
 

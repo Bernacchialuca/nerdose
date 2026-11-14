@@ -52,7 +52,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
   | devdle | term_id, word, category, definition `{es,en}`, summary `{es,en}` | length, possible_categories |
   | grep-grid | grid (12×12), words (8: term_id, word, definition `{es,en}`), placements (posición y dirección de cada palabra) | grid, words (term_id, word; definition solo de las ya encontradas por la Play en curso) |
   | timeline | prompt `{es,en}` (consigna única), items (5: fact_id, opaque_id, label, category, event_date, date_precision, note `{es,en}`), correct_order (opaque_ids) | prompt, items mezclados (opaque_id, label, category) |
-  | big-o | recipe, recipe_category, code `{js,go,java}`, answer (enum big_o_option), explanation `{es,en}` | code, options (las 8 `big_o_option`) |
+  | big-o | recipe (id estable de la receta), recipe_category, code `{js,go,java}` (función `f(n)` que cuenta sus operaciones y devuelve `ops`; misma línea por sentencia en los 3), answer (enum big_o_option), trap_option (big_o_option o null: la respuesta equivocada típica), explanation (steps `[{es,en}]`, line_notes `[{ line, text {es,en} }]`, tip `{es,en}` o null, example `{ n, ops, trap_ops }` o null) — REQ-009 | code, options (las 8 `big_o_option`, en orden fijo) |
   | bug-hunt | template, params, tree, bug_node_id, bug_type, mutation, fix (diff), spec `{es,en}`, code `{js,go,java}`, line_of `{js,go,java}`, pickable_lines, visible_tests, failing_test, explanation `{es,en}` | spec, code, pickable_lines, visible_tests |
 
 ### Play
@@ -70,7 +70,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
   | devdle | guesses (con feedback por letra) | adivina o 6 intentos válidos | intentos usados (1–6) | adivinó | "✓ 4/6" / "✗ X/6" |
   | grep-grid | found_words, gave_up | 8 encontradas o se rinde | palabras encontradas (0–8) | 8/8 | "8/8" / "5/8" |
   | timeline | order (vacío hasta confirmar; los 5 opaque_id confirmados) | 1 confirmación | posiciones correctas (0–5) | 5/5 | "3/5" |
-  | big-o | — | 1 confirmación | 1/0 | opción correcta | "✓ O(n log n)" / "✗" |
+  | big-o | vacío hasta confirmar; `{ language, option }` confirmados (REQ-009) | 1 confirmación | 1/0 | opción correcta | "✓ O(n log n)" / "✗" |
   | bug-hunt | — | 1 confirmación | 1/0 | línea correcta | "✓ L7" / "✗ L7" |
 
 ### PlayerGameStats
@@ -80,7 +80,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
   - devdle: distribución de intentos (1–6 y derrotas);
   - grep-grid: distribución de palabras encontradas por partida (0–8), de la que salen el promedio de palabras encontradas y el porcentaje de 8/8;
   - timeline: por categoría y **por hito**, hitos jugados y hitos en su lugar (`{ by_category: { <category>: { played, correct } } }`): cada uno de los 5 items de la partida suma `played += 1` a la categoría de su hecho y `correct += 1` si quedó en su posición correcta. De ahí sale el porcentaje de acierto por categoría (`correct / played`); la mejor categoría es la de mayor promedio;
-  - big-o: aciertos por `recipe_category`;
+  - big-o: aciertos por `recipe_category` (`{ by_category: { <recipe_category>: { played, correct } } }`, una partida suma `played += 1` a la categoría de su receta y `correct += 1` si ganó; REQ-009);
   - bug-hunt: aciertos por `code_language` y por `bug_type`.
 
 ### PlayerStats
