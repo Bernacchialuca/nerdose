@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatInstant, formatRelative } from './format-date';
+import { formatInstant, formatRelative, formatTime } from './format-date';
 
 const now = new Date('2026-11-11T12:00:00Z');
 
@@ -14,5 +14,9 @@ describe('format-date', () => {
 
   it('formatInstant (TS-66)', () => {
     expect(formatInstant('2026-11-08T14:32:00Z')).toBe('2026-11-08 14:32');
+  });
+
+  it('formatTime (TS-4)', () => {
+    expect(formatTime('2026-12-01T14:02:00Z')).toBe('14:02');
   });
 });

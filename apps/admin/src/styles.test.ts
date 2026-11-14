@@ -23,11 +23,13 @@ describe('index.css', () => {
     const imports = [
       "@import 'tailwindcss';",
       "@import '@nerdose/ui/tokens.css';",
+      '@source "../../../packages/games/*/src/client/**/*.{ts,tsx}";',
       "@import '@fontsource/jetbrains-mono/400.css';",
       "@import '@fontsource/jetbrains-mono/500.css';",
       "@import '@fontsource/inter/400.css';",
       "@import '@fontsource/inter/700.css';",
       "@import '@fontsource/jetbrains-mono/700.css';",
+      "@import '@fontsource/jetbrains-mono/800.css';",
     ];
     const positions = imports.map((i) => css.indexOf(i));
     expect(positions.every((p) => p >= 0)).toBe(true);
@@ -76,7 +78,34 @@ describe('guardas estáticas del código de producción', () => {
   it('no importa paquetes ni apps prohibidos', () => {
     for (const file of files) {
       const content = readFileSync(file, 'utf8');
-      expect(content, file).not.toMatch(/from '(@nerdose\/db|@nerdose\/game-|[^']*apps\/web)/);
+      expect(content, file).not.toMatch(/from '(@nerdose\/db|[^']*apps\/web)/);
+    }
+  });
+
+  it('de los juegos solo se importa ./client, dinámico y desde el registry', () => {
+    const registry = 'modules/upcoming/registry.ts';
+    for (const file of files) {
+      const content = readFileSync(file, 'utf8');
+      expect(content, file).not.toMatch(/@nerdose\/game-[a-z-]+\/(definition|generator)/);
+      expect(content, file).not.toMatch(/from '@nerdose\/game-/);
+      if (!content.includes('@nerdose/game-')) continue;
+      expect(file.endsWith(registry), file).toBe(true);
+      const all = content.match(/@nerdose\/game-[a-z-]+\/[a-z]+/g) ?? [];
+      expect(all.sort()).toEqual([
+        '@nerdose/game-devdle/client',
+        '@nerdose/game-grep-grid/client',
+        '@nerdose/game-timeline/client',
+      ]);
+      const dynamic = content.match(/import\('@nerdose\/game-[a-z-]+\/client'\)/g) ?? [];
+      expect(dynamic).toHaveLength(3);
+    }
+  });
+
+  it('el módulo upcoming no ramifica por game_id', () => {
+    for (const file of tsx.filter((f) => f.includes('modules/upcoming/'))) {
+      const content = readFileSync(file, 'utf8');
+      expect(content, file).not.toContain('switch (');
+      expect(content, file).not.toMatch(/=== '(devdle|grep-grid|timeline)'/);
     }
   });
 });

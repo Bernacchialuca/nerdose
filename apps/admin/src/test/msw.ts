@@ -12,7 +12,13 @@ export type RecordedRequest = {
 
 export const requests: RecordedRequest[] = [];
 
-export const server = setupServer();
+// Handler por defecto del contador del shell: no se registra en `requests`
+// para no ensuciar las aserciones de los tests que no lo usan.
+const defaultGenerationFailures = http.get('/api/admin/generation-failures', () =>
+  HttpResponse.json({ failures: [] }),
+);
+
+export const server = setupServer(defaultGenerationFailures);
 
 async function record(request: Request): Promise<void> {
   const url = new URL(request.url);
@@ -75,6 +81,46 @@ export const adminHandlers = {
     http.post(`/api/admin/challenges/${id}/void`, async ({ request }) => {
       await record(request);
       return HttpResponse.error();
+    }),
+  upcoming: (body: unknown, init?: ResponseInit) =>
+    http.get('/api/admin/challenges/upcoming', async ({ request }) => {
+      await record(request);
+      return HttpResponse.json(body as object, init);
+    }),
+  upcomingSequence: (bodies: unknown[]) => {
+    let i = 0;
+    return http.get('/api/admin/challenges/upcoming', async ({ request }) => {
+      await record(request);
+      const body = bodies[Math.min(i++, bodies.length - 1)];
+      return HttpResponse.json(body as object);
+    });
+  },
+  upcomingPending: () =>
+    http.get('/api/admin/challenges/upcoming', async ({ request }) => {
+      await record(request);
+      await delay('infinite');
+      return HttpResponse.json({ days: [], active_failures: 0 });
+    }),
+  regenerate: (id: string, body: unknown, init?: ResponseInit) =>
+    http.post(`/api/admin/challenges/${id}/regenerate`, async ({ request }) => {
+      await record(request);
+      return HttpResponse.json(body as object, init);
+    }),
+  regeneratePending: (id: string) =>
+    http.post(`/api/admin/challenges/${id}/regenerate`, async ({ request }) => {
+      await record(request);
+      await delay('infinite');
+      return HttpResponse.json({});
+    }),
+  regenerateNetworkError: (id: string) =>
+    http.post(`/api/admin/challenges/${id}/regenerate`, async ({ request }) => {
+      await record(request);
+      return HttpResponse.error();
+    }),
+  generationFailures: (body: unknown, init?: ResponseInit) =>
+    http.get('/api/admin/generation-failures', async ({ request }) => {
+      await record(request);
+      return HttpResponse.json(body as object, init);
     }),
   login: (body: unknown, init?: ResponseInit) =>
     http.post('/api/admin/login', async ({ request }) => {

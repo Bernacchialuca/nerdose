@@ -4,11 +4,14 @@ import { AppHeader, BrandMark, navItemClass } from '@nerdose/ui';
 
 import { useAuth } from '@/modules/auth';
 import { useReportGroups } from '@/modules/reports';
+import { useGenerationFailures } from '@/modules/upcoming';
 
 export function Shell() {
   const { signOut } = useAuth();
   const open = useReportGroups('open');
   const count = open.data?.groups.length;
+  const failures = useGenerationFailures();
+  const failureCount = failures.data?.failures.length ?? 0;
   return (
     <div className="min-h-dvh bg-bg font-mono text-text">
       <AppHeader
@@ -25,6 +28,23 @@ export function Shell() {
                   </span>
                 </>
               )}
+            </NavLink>
+            <NavLink
+              to="/upcoming"
+              className={({ isActive }) => navItemClass({ active: isActive })}
+            >
+              Próximos
+              {failureCount > 0 ? (
+                <>
+                  <span aria-hidden="true">&nbsp;({failureCount})</span>
+                  <span className="sr-only">
+                    , {failureCount}{' '}
+                    {failureCount === 1
+                      ? 'falla de generación activa'
+                      : 'fallas de generación activas'}
+                  </span>
+                </>
+              ) : null}
             </NavLink>
             <button type="button" onClick={signOut} className={navItemClass({ active: false })}>
               Cerrar sesión

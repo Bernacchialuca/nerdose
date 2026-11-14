@@ -6,3 +6,8 @@ export function useFixedClock() {
   vi.useFakeTimers({ shouldAdvanceTime: true });
   vi.setSystemTime(NOW);
 }
+
+export function useUpcomingClock() {
+  vi.useFakeTimers({ shouldAdvanceTime: true });
+  vi.setSystemTime(new Date('2026-12-01T14:10:00Z'));
+}
