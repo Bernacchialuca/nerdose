@@ -131,9 +131,7 @@ function recursiveCost(shape: Shape): ((n: number) => number) | null {
     }
     case 'permutations': {
       const own = shape.work === 'inc' ? 1 : shape.work === 'constant' ? (shape.k ?? 0) : 0;
-      const cost: (n: number) => number = memoize((n) =>
-        n <= 1 ? 1 : n * (own + cost(n - 1)),
-      );
+      const cost: (n: number) => number = memoize((n) => (n <= 1 ? 1 : n * (own + cost(n - 1))));
       return cost;
     }
     default:

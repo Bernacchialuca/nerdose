@@ -8,10 +8,7 @@ export const MAX_RECURSION_DEPTH = 20;
 const INDENT: Record<CodeLanguage, string> = { js: '  ', go: '\t', java: '    ' };
 
 /** Measures indentation (the emitter indents one level per block); it does not parse. */
-export function measureCode(
-  code: string,
-  lang: CodeLanguage,
-): { lines: number; nesting: number } {
+export function measureCode(code: string, lang: CodeLanguage): { lines: number; nesting: number } {
   const unit = INDENT[lang];
   const lines = code.split('\n');
   let deepest = 0;

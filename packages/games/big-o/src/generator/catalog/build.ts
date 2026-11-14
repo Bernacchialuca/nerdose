@@ -2,7 +2,15 @@ import { createTreeBuilder, emit, type Expr, type NodeId, type Stmt } from '@ner
 
 import { costFn } from './cost';
 import { bindParams } from './params';
-import type { BuiltRecipe, CompositionPart, LoopKind, LoopPart, Params, Recipe, Shape } from './types';
+import type {
+  BuiltRecipe,
+  CompositionPart,
+  LoopKind,
+  LoopPart,
+  Params,
+  Recipe,
+  Shape,
+} from './types';
 
 const LOOP_NAMES = ['i', 'j', 'k'] as const;
 
@@ -213,16 +221,17 @@ export function buildRecipe(recipe: Recipe, params: Params): BuiltRecipe {
       case 'double_recursion': {
         const secondMinus = shape.variant === 'n-1,n-2' ? 2 : 1;
         const calling = b.bin('+', recurseOn(1), recurseOn(secondMinus));
-        const base = baseCase(shape.variant === 'n-1,n-2' ? '<' : '<=', shape.variant === 'n-1,n-2' ? 2 : 1);
+        const base = baseCase(
+          shape.variant === 'n-1,n-2' ? '<' : '<=',
+          shape.variant === 'n-1,n-2' ? 2 : 1,
+        );
         if (shape.work === 'none') {
           const ret = b.return(calling);
           calls.push(ret.id);
           return [base, ret];
         }
         const workStmts = iterative({ kind: 'constant', k: shape.k ?? 0 }, rootScope(), null);
-        const ret = b.return(
-          b.bin('+', b.bin('+', ops(), recurseOn(1)), recurseOn(secondMinus)),
-        );
+        const ret = b.return(b.bin('+', b.bin('+', ops(), recurseOn(1)), recurseOn(secondMinus)));
         calls.push(ret.id);
         return [base, b.let('ops', num(0)), ...workStmts, ret];
       }
@@ -239,11 +248,7 @@ export function buildRecipe(recipe: Recipe, params: Params): BuiltRecipe {
         return [baseCase('<=', 1), b.let('ops', num(0)), ...loopStmts, b.return(ops())];
       }
       default:
-        return [
-          b.let('ops', num(0)),
-          ...iterative(shape, rootScope(), null),
-          b.return(ops()),
-        ];
+        return [b.let('ops', num(0)), ...iterative(shape, rootScope(), null), b.return(ops())];
     }
   };
 

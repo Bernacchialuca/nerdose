@@ -27,10 +27,13 @@ describe('catalog cost', () => {
             ? SMALL_N.o_n_fact
             : SMALL_N.other;
       const label = `${recipe.id} ${params.join(',')}`;
-      for (const n of ns) expect(interpret(built.func, n).value, `${label} n=${n}`).toBe(built.cost(n));
+      for (const n of ns)
+        expect(interpret(built.func, n).value, `${label} n=${n}`).toBe(built.cost(n));
       const example = EXAMPLE_N[recipe.answer];
       if (built.cost(example) <= 200_000) {
-        expect(interpret(built.func, example).value, `${label} n=${example}`).toBe(built.cost(example));
+        expect(interpret(built.func, example).value, `${label} n=${example}`).toBe(
+          built.cost(example),
+        );
       }
     }
   });
@@ -47,7 +50,9 @@ describe('catalog cost', () => {
       expect(total, `${recipe.id} ${params.join(',')}`).toBeLessThanOrEqual(SCALE_WORK_BUDGET);
     }
     const bounded = RECIPES.find((r) => r.id === 'nest(linear,nest(constant,linear))');
-    expect(paramCombos(bounded!).every((p) => p.includes(10) && !p.includes(50) && !p.includes(100))).toBe(true);
+    expect(
+      paramCombos(bounded!).every((p) => p.includes(10) && !p.includes(50) && !p.includes(100)),
+    ).toBe(true);
   });
 
   it('grows like its declared class (TS-17)', () => {

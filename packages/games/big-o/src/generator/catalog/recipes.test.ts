@@ -18,7 +18,10 @@ describe('RECIPES', () => {
     }
     expect(RECIPES.filter((r) => r.trap !== null).length).toBeGreaterThanOrEqual(12);
     for (const t of ['sequential_loops', 'constant_bound', 'doubling_inner'] as TrapKind[]) {
-      expect(RECIPES.some((r) => r.trap === t), t).toBe(true);
+      expect(
+        RECIPES.some((r) => r.trap === t),
+        t,
+      ).toBe(true);
     }
     const ids = RECIPES.map((r) => r.id);
     expect(new Set(ids).size).toBe(ids.length);
@@ -30,7 +33,9 @@ describe('RECIPES', () => {
       expect(r.trap === null, r.id).toBe(r.trapOption === null);
       expect(r.trapOption, r.id).not.toBe(r.answer);
       if (r.trapOption !== null) {
-        expect(Number.isSafeInteger(classValue(r.trapOption, EXAMPLE_N[r.answer])), r.id).toBe(true);
+        expect(Number.isSafeInteger(classValue(r.trapOption, EXAMPLE_N[r.answer])), r.id).toBe(
+          true,
+        );
       }
     }
   });

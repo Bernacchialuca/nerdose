@@ -236,7 +236,9 @@ describe('result', () => {
   });
 
   it('throws on an unconfirmed state (TS-23)', () => {
-    expect(() => bigO.result(PAYLOAD, {}, 'es')).toThrow('big-o: result requires a confirmed state');
+    expect(() => bigO.result(PAYLOAD, {}, 'es')).toThrow(
+      'big-o: result requires a confirmed state',
+    );
   });
 
   it('shares no references with the payload (TS-24)', () => {
@@ -296,7 +298,8 @@ describe('stats', () => {
       return { date, status: result.win ? 'won' : 'lost', result };
     });
     let expected: BigOStats = bigO.initialStats();
-    for (const p of plays) if (p.status !== 'voided') expected = bigO.reduceStats(expected, p.result!);
+    for (const p of plays)
+      if (p.status !== 'voided') expected = bigO.reduceStats(expected, p.result!);
     const rebuilt = rebuildGameStats(bigO, plays);
     expect(rebuilt.extra).toEqual(expected);
     expect(rebuilt.played).toBe(10);

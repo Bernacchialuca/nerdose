@@ -21,7 +21,10 @@ describe('120 days with accumulated history', () => {
         seed: seedFrom(family, d),
         history: { bankItems: [], recentChallenges: rc },
       });
-      expect(eligibleRecipes(date, rc).map((r) => r.id), `${family} ${date}`).toContain(payload.recipe);
+      expect(
+        eligibleRecipes(date, rc).map((r) => r.id),
+        `${family} ${date}`,
+      ).toContain(payload.recipe);
       days.push({ date, payload });
     }
     days.forEach((day, i) => {

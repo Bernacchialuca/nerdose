@@ -38,7 +38,9 @@ describe('catalog shape', () => {
     const exprReads = (e: Expr, read: Set<string>, scopes: Set<string>[]): void => {
       switch (e.kind) {
         case 'var':
-          expect(scopes.some((s) => s.has(e.name)) || e.name === 'n', `unbound ${e.name}`).toBe(true);
+          expect(scopes.some((s) => s.has(e.name)) || e.name === 'n', `unbound ${e.name}`).toBe(
+            true,
+          );
           read.add(e.name);
           break;
         case 'bin':
@@ -57,7 +59,11 @@ describe('catalog shape', () => {
     const check = (func: FuncNode, id: string): void => {
       const visible = (scopes: Set<string>[], name: string) =>
         name === 'n' || scopes.some((s) => s.has(name));
-      const block = (body: readonly Stmt[], scopes: Set<string>[], pending: Map<string, boolean>[]) => {
+      const block = (
+        body: readonly Stmt[],
+        scopes: Set<string>[],
+        pending: Map<string, boolean>[],
+      ) => {
         const here = new Set<string>();
         const mine = new Map<string, boolean>();
         const inner = [...scopes, here];
@@ -108,7 +114,8 @@ describe('catalog shape', () => {
               };
               readFor(s.cond);
               block(s.body, withFor, [...innerPending, forPending]);
-              for (const [name, wasRead] of forPending) expect(wasRead, `${id}: ${name} unread`).toBe(true);
+              for (const [name, wasRead] of forPending)
+                expect(wasRead, `${id}: ${name} unread`).toBe(true);
               break;
             }
             case 'while':
@@ -131,7 +138,8 @@ describe('catalog shape', () => {
       block(func.body, [], []);
       expect(func.body.at(-1)?.kind, `${id}: last statement`).toBe('return');
     };
-    for (const { recipe, params, built } of ALL) check(built.func, `${recipe.id} ${params.join(',')}`);
+    for (const { recipe, params, built } of ALL)
+      check(built.func, `${recipe.id} ${params.join(',')}`);
   });
 
   it('uses neutral identifiers and no comments (TS-14)', () => {

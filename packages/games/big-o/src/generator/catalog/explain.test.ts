@@ -115,7 +115,11 @@ describe('buildPayload', () => {
       { line: 3, text: { es: 'n veces', en: 'n times' } },
       { line: 4, text: { es: 'log n veces', en: 'log n times' } },
     ]);
-    expect(p.explanation.tip?.es.startsWith('La trampa más común es ver dos loops anidados y responder O(n²)')).toBe(true);
+    expect(
+      p.explanation.tip?.es.startsWith(
+        'La trampa más común es ver dos loops anidados y responder O(n²)',
+      ),
+    ).toBe(true);
     expect(p.explanation.example).toEqual({ n: 1024, ops: 10240, trap_ops: 1048576 });
     expect(p).toMatchObject({ trap_option: 'o_n2', recipe_category: 'nested_loops' });
     expect(p.code).toEqual(CODE_NLOGN);

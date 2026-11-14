@@ -84,7 +84,9 @@ export const NOTE = {
   logOuter: t('log i veces', 'log i times'),
   twoCalls: t('dos llamadas por nivel', 'two calls per level'),
   halfCalls: (c: number) =>
-    c === 1 ? t('una llamada con n/2', 'one call with n/2') : t(`${c} llamadas con n/2`, `${c} calls with n/2`),
+    c === 1
+      ? t('una llamada con n/2', 'one call with n/2')
+      : t(`${c} llamadas con n/2`, `${c} calls with n/2`),
   nCalls: t('n llamadas con n − 1', 'n calls with n − 1'),
 };
 

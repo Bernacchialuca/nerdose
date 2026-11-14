@@ -26,11 +26,11 @@ export function recipesUsedNear(date: string, recent: Recent): Set<string> {
 export function answerWouldRepeat(answer: BigOOption, date: string, recent: Recent): boolean {
   const has = (offset: number): boolean => {
     const day = addDays(date, offset);
-    return recent.some((row) => row.date === day && row.date !== date && row.payload.answer === answer);
+    return recent.some(
+      (row) => row.date === day && row.date !== date && row.payload.answer === answer,
+    );
   };
-  return (
-    (has(-2) && has(-1)) || (has(-1) && has(1)) || (has(1) && has(2))
-  );
+  return (has(-2) && has(-1)) || (has(-1) && has(1)) || (has(1) && has(2));
 }
 
 /** Recipes allowed on `D`, ordered by `id`. */

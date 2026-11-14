@@ -18,13 +18,24 @@ export type Shape =
   | { kind: 'halving'; bound?: 'n' | 'outer' }
   | { kind: 'binary_search'; branch?: Branch }
   | { kind: 'divide_and_conquer'; calls: 1 | 2 | 4; work: DcWork; k?: number }
-  | { kind: 'double_recursion'; variant: 'n-1,n-2' | 'n-1,n-1'; work: 'none' | 'constant'; k?: number }
+  | {
+      kind: 'double_recursion';
+      variant: 'n-1,n-2' | 'n-1,n-1';
+      work: 'none' | 'constant';
+      k?: number;
+    }
   | { kind: 'permutations'; work: 'none' | 'inc' | 'constant'; k?: number }
   | { kind: 'nest'; outer: Shape; inner: Shape }
   | { kind: 'seq'; parts: readonly Shape[] };
 
 export type BlockKind = Exclude<Shape['kind'], 'nest' | 'seq'>;
-export type LoopKind = 'constant' | 'linear' | 'dependent' | 'doubling' | 'halving' | 'binary_search';
+export type LoopKind =
+  | 'constant'
+  | 'linear'
+  | 'dependent'
+  | 'doubling'
+  | 'halving'
+  | 'binary_search';
 
 export interface Recipe {
   id: string;

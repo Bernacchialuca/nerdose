@@ -2,14 +2,7 @@ import { BIG_O_OPTIONS } from '@nerdose/core';
 import { describe, expect, it } from 'vitest';
 
 import { bigO } from './index';
-import {
-  CTX_ES,
-  NOW,
-  PAYLOAD,
-  PAYLOAD_RECURSION,
-  WON_JAVA,
-  withAnswer,
-} from './test-fixtures';
+import { CTX_ES, NOW, PAYLOAD, PAYLOAD_RECURSION, WON_JAVA, withAnswer } from './test-fixtures';
 
 const FORBIDDEN_KEYS = [
   '"answer"',

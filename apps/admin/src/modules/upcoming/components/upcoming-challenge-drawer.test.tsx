@@ -425,9 +425,7 @@ describe('Big O desde Próximos (S-046)', () => {
       'true',
     );
     expect(within(EN).getByRole('tabpanel', { name: 'Code of f(n) in JavaScript' })).toBeVisible();
-    expect(requests.filter((r) => r.pathname !== '/api/admin/challenges/upcoming')).toHaveLength(
-      0,
-    );
+    expect(requests.filter((r) => r.pathname !== '/api/admin/challenges/upcoming')).toHaveLength(0);
   });
 
   it('pestañas con teclado (TS-15)', async () => {
@@ -487,9 +485,7 @@ describe('Big O desde Próximos (S-046)', () => {
     names.forEach((n, i) => expect(items[i]).toHaveTextContent(n));
     expect(log).toHaveTextContent(/run_go\s*·\s*310 ms/);
     expect(log).toHaveTextContent(/example_matches_run\s*·\s*n=1024 ops=10240/);
-    expect(log).toHaveTextContent(
-      /fit_matches_answer\s*·\s*best=o_n_log_n answer=o_n_log_n/,
-    );
+    expect(log).toHaveTextContent(/fit_matches_answer\s*·\s*best=o_n_log_n answer=o_n_log_n/);
     expect(within(log).getAllByText(/verificación correcta/).length).toBeGreaterThan(0);
     expect(dialog.textContent).not.toMatch(/seed/i);
   });
@@ -509,9 +505,7 @@ describe('Big O desde Próximos (S-046)', () => {
     );
     expect(within(dialog).getByRole('region', { name: 'EN' })).toBeInTheDocument();
     expect(within(dialog).getByRole('region', { name: 'Datos del desafío' })).toBeInTheDocument();
-    expect(
-      within(dialog).getByRole('region', { name: 'Log de verificación' }),
-    ).toBeInTheDocument();
+    expect(within(dialog).getByRole('region', { name: 'Log de verificación' })).toBeInTheDocument();
     expect(within(dialog).getByRole('button', { name: 'Regenerar' })).toBeInTheDocument();
     expect(screen.getByRole('dialog')).toBe(dialog);
     expect(

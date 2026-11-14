@@ -36,7 +36,8 @@ function classOf(shape: Shape): ComplexityClass {
       return { degree: 0, log: 1 };
     case 'divide_and_conquer': {
       const cls = DC_CLASS[`${shape.calls}-${shape.work}`];
-      if (cls === undefined) throw new Error(`big-o: unsupported_class dc(${shape.calls},${shape.work})`);
+      if (cls === undefined)
+        throw new Error(`big-o: unsupported_class dc(${shape.calls},${shape.work})`);
       return cls;
     }
     case 'double_recursion':
@@ -50,7 +51,9 @@ function classOf(shape: Shape): ComplexityClass {
     case 'seq':
       return shape.parts
         .map(classOf)
-        .reduce((a, b) => (b.degree > a.degree || (b.degree === a.degree && b.log > a.log) ? b : a));
+        .reduce((a, b) =>
+          b.degree > a.degree || (b.degree === a.degree && b.log > a.log) ? b : a,
+        );
   }
 }
 

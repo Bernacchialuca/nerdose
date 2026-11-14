@@ -171,7 +171,10 @@ describe('build del admin (D4)', () => {
   it('polyglot nunca entra al bundle (TS-26)', async () => {
     const { chunks } = await buildAdmin();
     for (const c of chunks) {
-      expect(c.moduleIds.some((id) => id.includes('packages/polyglot/')), c.fileName).toBe(false);
+      expect(
+        c.moduleIds.some((id) => id.includes('packages/polyglot/')),
+        c.fileName,
+      ).toBe(false);
     }
   }, 60_000);
 

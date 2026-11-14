@@ -202,7 +202,11 @@ export const BIG_O_VERIFICATION = {
     { name: 'run_js', ok: true, detail: '120 ms' },
     { name: 'run_go', ok: true, detail: '310 ms' },
     { name: 'run_java', ok: true, detail: '540 ms' },
-    { name: 'counts_agree', ok: true, detail: 'n=64,128,256,512,1024 counts=384,896,2048,4608,10240' },
+    {
+      name: 'counts_agree',
+      ok: true,
+      detail: 'n=64,128,256,512,1024 counts=384,896,2048,4608,10240',
+    },
     { name: 'counts_in_range', ok: true },
     { name: 'example_matches_run', ok: true, detail: 'n=1024 ops=10240' },
     { name: 'fit_quality', ok: true, detail: 'best=o_n_log_n cv=0.000' },
@@ -353,7 +357,9 @@ export const UPCOMING_BIG_O = upcoming({}, { games: ['devdle', 'grep-grid', 'tim
 
 export const UPCOMING_BIG_O_BAD_PAYLOAD = (() => {
   const base = upcoming({}, { games: ['devdle', 'grep-grid', 'timeline', 'big-o'] });
-  const g = base.days.find((d) => d.date === '2026-12-02')?.games.find((x) => x.game_id === 'big-o');
+  const g = base.days
+    .find((d) => d.date === '2026-12-02')
+    ?.games.find((x) => x.game_id === 'big-o');
   if (g?.challenge) g.challenge.payload = { ...g.challenge.payload, trap_option: 'o_n_log_n' };
   return base;
 })();

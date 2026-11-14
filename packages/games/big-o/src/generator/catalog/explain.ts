@@ -72,7 +72,9 @@ function recursiveSteps(recipe: Recipe, built: BuiltRecipe): Localized[] {
     case 'double_recursion': {
       const second = shape.variant === 'n-1,n-2' ? 'n - 2' : 'n - 1';
       const extra =
-        shape.work === 'constant' ? [RECURSION_STEP.extraWork(lines[0] ?? 0, loops[0]?.k ?? 0)] : [];
+        shape.work === 'constant'
+          ? [RECURSION_STEP.extraWork(lines[0] ?? 0, loops[0]?.k ?? 0)]
+          : [];
       return [
         RECURSION_STEP.doubleCalls(callLine, second),
         ...extra,
@@ -106,9 +108,7 @@ function lineNotes(recipe: Recipe, built: BuiltRecipe): BigOPayloadExplanation['
           : NOTE.twoCalls,
     );
   }
-  return [...notes.entries()]
-    .sort(([a], [b]) => a - b)
-    .map(([line, text]) => ({ line, text }));
+  return [...notes.entries()].sort(([a], [b]) => a - b).map(([line, text]) => ({ line, text }));
 }
 
 export function buildExplanation(recipe: Recipe, built: BuiltRecipe): BigOPayloadExplanation {

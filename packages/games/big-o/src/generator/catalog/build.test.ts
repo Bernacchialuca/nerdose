@@ -47,7 +47,10 @@ describe('buildRecipe', () => {
 
   it('uses assign when a block repeats a function-level declaration', () => {
     const built = buildRecipe(
-      { ...recipe('binary_search'), shape: { kind: 'seq', parts: [{ kind: 'binary_search' }, { kind: 'binary_search' }] } },
+      {
+        ...recipe('binary_search'),
+        shape: { kind: 'seq', parts: [{ kind: 'binary_search' }, { kind: 'binary_search' }] },
+      },
       ['left', 'right'],
     );
     expect(built.code.js).toContain('  lo = 0;');
@@ -74,16 +77,20 @@ describe('interpret', () => {
   it('computes fib with the base case n < 2 (fib(10) = 89)', () => {
     const b = createTreeBuilder();
     const n = () => b.var('n');
-    const func = b.func('f', ['n'], [
-      b.if(b.bin('<', n(), b.num(2)), [b.return(b.num(1))]),
-      b.return(
-        b.bin(
-          '+',
-          b.call('f', [b.bin('-', n(), b.num(1))]),
-          b.call('f', [b.bin('-', n(), b.num(2))]),
+    const func = b.func(
+      'f',
+      ['n'],
+      [
+        b.if(b.bin('<', n(), b.num(2)), [b.return(b.num(1))]),
+        b.return(
+          b.bin(
+            '+',
+            b.call('f', [b.bin('-', n(), b.num(1))]),
+            b.call('f', [b.bin('-', n(), b.num(2))]),
+          ),
         ),
-      ),
-    ]);
+      ],
+    );
     const { value, maxDepth } = interpret(func, 10);
     expect(value).toBe(89);
     expect(maxDepth).toBe(10);
@@ -91,19 +98,21 @@ describe('interpret', () => {
 
   it('throws on overflow', () => {
     const b = createTreeBuilder();
-    const func = b.func('f', ['n'], [
-      b.let('x', b.bin('*', b.var('n'), b.num(2))),
-      b.return(b.var('x')),
-    ]);
+    const func = b.func(
+      'f',
+      ['n'],
+      [b.let('x', b.bin('*', b.var('n'), b.num(2))), b.return(b.var('x'))],
+    );
     expect(() => interpret(func, 2 ** 31 - 1)).toThrow('interpret: overflow');
   });
 
   it('throws when the step limit is exceeded', () => {
     const b = createTreeBuilder();
-    const func = b.func('f', ['n'], [
-      b.while(b.bin('<', b.num(0), b.num(1)), [b.inc('n')]),
-      b.return(b.num(1)),
-    ]);
+    const func = b.func(
+      'f',
+      ['n'],
+      [b.while(b.bin('<', b.num(0), b.num(1)), [b.inc('n')]), b.return(b.num(1))],
+    );
     expect(() => interpret(func, 0)).toThrow(/interpret: (step limit|overflow)/);
   });
 });
