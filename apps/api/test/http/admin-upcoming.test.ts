@@ -1,6 +1,7 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { adminAuth, buildDbApp } from '../helpers/app';
+import { BO_PAYLOAD } from '../helpers/big-o';
 import { PAYLOAD, useDatabases } from '../helpers/db';
 import { TL_ID, TL_PAYLOAD } from '../helpers/timeline';
 
@@ -15,8 +16,8 @@ afterEach(() => vi.useRealTimers());
 afterAll(() => dbs.close());
 
 type Json = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-type Game = 'devdle' | 'grep-grid' | 'timeline';
-const GAMES: Game[] = ['devdle', 'grep-grid', 'timeline'];
+type Game = 'devdle' | 'grep-grid' | 'timeline' | 'big-o';
+const GAMES: Game[] = ['devdle', 'grep-grid', 'timeline', 'big-o'];
 
 const upcoming = async (query = '') => {
   const { app } = await buildDbApp(dbs);
@@ -28,9 +29,10 @@ const dayStr = (i: number) => new Date(Date.UTC(2026, 11, 1 + i)).toISOString().
 
 async function seedWindow() {
   for (const gameId of GAMES) {
-    await dbs.insertChallenge({ gameId, date: '2026-12-01', status: 'published' });
+    const payload = gameId === 'big-o' ? { payload: BO_PAYLOAD } : {};
+    await dbs.insertChallenge({ gameId, date: '2026-12-01', status: 'published', ...payload });
     for (let i = 1; i <= 14; i++) {
-      await dbs.insertChallenge({ gameId, date: dayStr(i), status: 'approved' });
+      await dbs.insertChallenge({ gameId, date: dayStr(i), status: 'approved', ...payload });
     }
   }
 }
@@ -309,12 +311,12 @@ describe('GET /api/admin/challenges/upcoming', () => {
   });
 
   it('TS-13 juego fuera del registry', async () => {
-    await dbs.insertChallenge({ gameId: 'big-o', date: '2026-12-02', status: 'approved' });
+    await dbs.insertChallenge({ gameId: 'bug-hunt', date: '2026-12-02', status: 'approved' });
     const res = await upcoming();
     expect(res.status).toBe(200);
     const body = (await res.json()) as Json;
-    expect(body.days[0].games).toHaveLength(3);
-    expect(body.days[0].games.some((g: Json) => g.game_id === 'big-o')).toBe(false);
+    expect(body.days[0].games).toHaveLength(4);
+    expect(body.days[0].games.some((g: Json) => g.game_id === 'bug-hunt')).toBe(false);
   });
 
   it('TS-14 antes del lanzamiento', async () => {

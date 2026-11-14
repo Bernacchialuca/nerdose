@@ -129,7 +129,7 @@ describe('GET /api/admin/reports', () => {
 
   it('juego sin definición registrada: culprits vacío sin fallar', async () => {
     const c = await dbs.insertChallenge({
-      gameId: 'big-o',
+      gameId: 'bug-hunt',
       date: '2026-11-28',
       number: 5,
       payload: {},

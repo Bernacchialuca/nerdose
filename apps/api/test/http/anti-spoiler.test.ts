@@ -3,6 +3,15 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 import { scoreGuess } from '@nerdose/game-devdle/definition';
 
 import { buildDbApp, MUTATION_HEADERS } from '../helpers/app';
+import {
+  BO_FORBIDDEN,
+  WON_JAVA,
+  boGet,
+  boMove,
+  boPost,
+  seedBigO,
+  seedBigOPlay,
+} from '../helpers/big-o';
 import { CATS, PAYLOAD, useDatabases } from '../helpers/db';
 import {
   GG_WORDS,
@@ -413,6 +422,119 @@ describe('anti-spoiler de la api (Timeline)', () => {
       expect(finished[0]).not.toHaveProperty(k);
     }
     expect(finished[0]).toMatchObject({ challenge_id: challenge.id, game_id: 'timeline' });
+  });
+});
+
+describe('anti-spoiler de la api (Big O)', () => {
+  const LANGS = ['?lang=es', '?lang=en'];
+  const INVALID: unknown[] = [
+    { language: 'go', option: 'o_n4' },
+    { language: 'rust', option: 'o_n' },
+    { language: 'GO', option: 'o_n' },
+    { language: 'go', option: 'O_N' },
+    { language: 'go' },
+    { option: 'o_n' },
+    {},
+    { language: 'go', option: 'o_n', extra: 1 },
+    { guess: 'REACT' },
+    { language: 'go', option: 3 },
+  ];
+
+  function assertNoBigOSpoiler(raw: string) {
+    for (const bad of BO_FORBIDDEN) expect(raw).not.toContain(bad);
+  }
+
+  it('TS-33 today, start y /api/today no contienen la solución', async () => {
+    await seedBigO(dbs);
+    const b = await dbs.insertPlayer();
+    const { app } = await buildDbApp(dbs);
+    const bodies: string[] = [];
+    const grab = async (res: Response | Promise<Response>) => {
+      const r = await res;
+      expect(r.status).toBe(200);
+      bodies.push(await r.text());
+    };
+    for (const q of LANGS) {
+      await grab(boGet(app, undefined, q));
+      await grab(boGet(app, b, q));
+    }
+    await grab(boPost(app, 'start', { challenge_number: 8 }, b));
+    for (const q of LANGS) await grab(boGet(app, b, q));
+    await grab(app.request('/api/today', { headers: { Cookie: `nd_pid=${b.id}` } }));
+    expect(bodies.length).toBeGreaterThan(0);
+    for (const raw of bodies) assertNoBigOSpoiler(raw);
+  });
+
+  it('TS-34 las respuestas de move previas al cierre no contienen la solución', async () => {
+    const challenge = await seedBigO(dbs);
+    const b = await dbs.insertPlayer();
+    await seedBigOPlay(dbs, challenge.id, b.id, {});
+    const { app } = await buildDbApp(dbs);
+    const bodies: string[] = [];
+    for (const q of LANGS) {
+      for (const move of INVALID) {
+        const res = await boMove(app, move, b, q);
+        expect(res.status).toBe(422);
+        bodies.push(await res.text());
+      }
+      const late = await boMove(app, WON_JAVA, b, q, 7);
+      expect(late.status).toBe(409);
+      expect((await late.clone().json()).error.code).toBe('challenge_expired');
+      bodies.push(await late.text());
+      const anon = await boMove(app, WON_JAVA, undefined, q);
+      expect(anon.status).toBe(401);
+      bodies.push(await anon.text());
+    }
+    for (const raw of bodies) assertNoBigOSpoiler(raw);
+    const [p] = await dbs.owner.sql`SELECT status, state FROM plays`;
+    expect(p).toEqual({ status: 'in_progress', state: {} });
+  });
+
+  it('TS-35 desafío anulado no filtra la solución', async () => {
+    await seedBigO(dbs, {
+      status: 'voided',
+      voidReason: 'wrong_answer',
+      voidedAt: new Date('2026-12-01T09:00:00Z'),
+    });
+    const b = await dbs.insertPlayer();
+    const { app } = await buildDbApp(dbs);
+    for (const res of [
+      await boGet(app, b),
+      await boPost(app, 'start', { challenge_number: 8 }, b),
+      await boMove(app, WON_JAVA, b),
+    ]) {
+      assertNoBigOSpoiler(await res.text());
+    }
+  });
+
+  it('TS-36 los logs no contienen la solución', async () => {
+    const challenge = await seedBigO(dbs);
+    const b = await dbs.insertPlayer();
+    const { app, lines } = await buildDbApp(dbs);
+    await boPost(app, 'start', { challenge_number: 8 }, b);
+    await boMove(app, { language: 'rust', option: 'o_n' }, b);
+    await boMove(app, {}, b);
+    expect((await boMove(app, WON_JAVA, b)).status).toBe(200);
+    const logs = JSON.stringify(lines());
+    for (const bad of [
+      'El loop externo',
+      'The outer loop',
+      'nest(linear,doubling)',
+      'nested_loops',
+      '"explanation"',
+      '"result"',
+    ]) {
+      expect(logs).not.toContain(bad);
+    }
+    const finished = lines().filter((l) => l.event === 'PlayFinished');
+    expect(finished).toHaveLength(1);
+    for (const k of ['play_id', 'player_id', 'challenge_id', 'game_id', 'status', 'score']) {
+      expect(finished[0]).toHaveProperty(k);
+    }
+    for (const k of ['result', 'state', 'option', 'payload']) {
+      expect(finished[0]).not.toHaveProperty(k);
+    }
+    expect(finished[0]).toMatchObject({ challenge_id: challenge.id, game_id: 'big-o' });
   });
 });
 

@@ -28,6 +28,7 @@ describe('AdminContentService.upcoming', () => {
       { game_id: 'devdle', challenge: null, regeneration: null, failure: null },
       { game_id: 'grep-grid', challenge: null, regeneration: null, failure: null },
       { game_id: 'timeline', challenge: null, regeneration: null, failure: null },
+      { game_id: 'big-o', challenge: null, regeneration: null, failure: null },
     ]);
   });
 

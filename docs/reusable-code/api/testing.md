@@ -45,6 +45,12 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 - **Description:** fixed Tech Timeline fixture for 2026-12-01 (challenge number 8), copied from the S-027 package fixtures (not exported by the package); `TL_FORBIDDEN` lists the keys and values that must never appear in a response or log before the Play closes
 - **Usage:** `const c = await seedTimeline(dbs); await seedTimelinePlay(dbs, c.id, player.id, {}); await tlMove(app, SWAP, player)`
 
+## BO_PAYLOAD / BO_PAYLOAD_RECURSION / BO_PUBLIC / WON_JAVA / LOST_GO / boResult / boStats / BO_FORBIDDEN / seedBigO / seedBigOPlay / boGet / boPost / boMove / MOVE
+- **Location:** apps/api/test/helpers/big-o.ts
+- **Signature:** `BO_PAYLOAD: BigOPayload` (`o_n_log_n`, trap `o_n2`); `BO_PAYLOAD_RECURSION` (no trap, `tip`/`example` null); `WON_JAVA`, `LOST_GO` states; `boResult(state, locale)`, `boStats(win)`; `seedBigO(dbs, opts?)`, `seedBigOPlay(dbs, challengeId, playerId, state, extra?)`; `boGet/boPost/boMove(app, ..., player?, query?)`; `MOVE(language, option, challengeNumber?)`
+- **Description:** fixed Big O fixture for 2026-12-01 (challenge number 8) validated with `payloadSchema` on import, expected `BigOResult` per locale, and `BO_FORBIDDEN` listing the keys and values that must never appear in a response or log before the Play closes (`o_n_log_n` is not listed: it is always in `options`)
+- **Usage:** `const c = await seedBigO(dbs); await seedBigOPlay(dbs, c.id, player.id, {}); await boMove(app, WON_JAVA, player)`
+
 ## ADMIN_HEADERS / adminToken / adminAuth / TEST_ADMIN_PASSWORD / TEST_ADMIN_JWT_SECRET
 - **Location:** apps/api/test/helpers/app.ts
 - **Signature:** `adminToken(nowSeconds?): Promise<string>`; `adminAuth(nowSeconds?): Promise<{ Authorization }>`

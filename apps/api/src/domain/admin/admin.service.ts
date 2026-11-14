@@ -53,7 +53,7 @@ export class AdminService {
 
   private toAdminChallenge(row: ChallengeRow): AdminChallenge {
     const { games } = this.deps;
-    // Juegos sin paquete todavía (big-o, bug-hunt): sin culpables en vez de fallar.
+    // Juegos sin paquete todavía (bug-hunt): sin culpables en vez de fallar.
     const culprits = games.ids().includes(row.gameId)
       ? games.get(row.gameId).culprits(row.payload)
       : [];

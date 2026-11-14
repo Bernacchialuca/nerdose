@@ -175,7 +175,11 @@ describe('PublishingService.getToday', () => {
   it('refleja la cache de juegos registrados; el resto queda en none', async () => {
     const { service, cache } = build({
       clock: at('2026-12-01T10:00:00Z'),
-      rows: [challenge('devdle', 'published'), challenge('big-o', 'voided')],
+      rows: [
+        challenge('devdle', 'published'),
+        challenge('big-o', 'voided'),
+        challenge('bug-hunt', 'voided'),
+      ],
     });
     await cache.reload('2026-12-01');
     const res = await service.getToday(guest);
@@ -186,12 +190,12 @@ describe('PublishingService.getToday', () => {
       'big-o',
       'bug-hunt',
     ]);
-    // big-o no está registrado en el registry: none aunque la cache lo tenga.
+    // bug-hunt no está registrado en el registry: none aunque la cache lo tenga.
     expect(res.games.map((g) => g.challenge_status)).toEqual([
       'published',
       'none',
       'none',
-      'none',
+      'voided',
       'none',
     ]);
   });

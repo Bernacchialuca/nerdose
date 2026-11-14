@@ -142,7 +142,7 @@ describe('GameplayService.start', () => {
     await expect(service.start('devdle', player, 8, log)).rejects.toMatchObject({
       code: 'no_challenge_today',
     });
-    await expect(service.start('big-o', player, 7, log)).rejects.toMatchObject({
+    await expect(service.start('bug-hunt', player, 7, log)).rejects.toMatchObject({
       code: 'not_found',
     });
     await expect(service.start('devdle', player, 7, log)).rejects.toBeInstanceOf(AppError);
