@@ -1,4 +1,5 @@
 import { AppError } from '@nerdose/core';
+import { bigO } from '@nerdose/game-big-o/definition';
 import { describe, expect, it } from 'vitest';
 
 import { games } from '@/games/registry';
@@ -9,7 +10,8 @@ describe('games registry', () => {
     expect(games.get('devdle').id).toBe('devdle');
     expect(games.get('grep-grid').id).toBe('grep-grid');
     expect(games.get('timeline').id).toBe('timeline');
-    expect(games.get('big-o').id).toBe('big-o');
+    expect(games.get('big-o')).toBe(bigO);
+    expect(games.get('big-o')).toMatchObject({ id: 'big-o', bankUsage: null });
     try {
       games.get('bug-hunt');
       expect.unreachable();

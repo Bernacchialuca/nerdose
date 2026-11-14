@@ -55,6 +55,14 @@ describe('GET /api/admin/challenges/upcoming', () => {
         expect(g.failure).toBeNull();
       }
     }
+    const bigOCell = cell(body, '2026-12-02', 'big-o');
+    expect(bigOCell.challenge.payload).toEqual(BO_PAYLOAD);
+    expect(bigOCell.challenge.payload.answer).toBe('o_n_log_n');
+    expect(bigOCell.challenge.payload.explanation.steps[0]).toEqual({
+      es: 'El loop externo corre n veces.',
+      en: 'The outer loop runs n times.',
+    });
+    expect(bigOCell.challenge.rejected_items).toEqual([]);
     expect(body.active_failures).toBe(0);
   });
 
