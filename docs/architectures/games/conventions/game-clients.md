@@ -96,3 +96,9 @@ const Client = lazy(clientRegistry[gameId]);
 
 - `GameProps.feedback: unknown | null`: the host passes the last `MoveResponse.feedback` to the `Game` component (`null` until the first move; it comes from `useSubmitMove().data`). The host does not interpret it; `GameRoute`/`GameScreens` forward it as-is.
 - A client that needs it (Grep Grid: `not_a_word` and `already_found` do not change the state, they only exist in `feedback`) validates its shape and discards repeated values by identity, the same pattern as `moveError`. Clients that do not need it ignore it (Devdle).
+
+## Update (REQ-009)
+
+- `ClientBaseProps.codeLanguage: CodeLanguage` (generic: Big O and Bug Hunt use it, the other games ignore it) is `session.preferred_code_language ?? 'js'`. In a game package it is optional with default `'js'`, so a client is assignable to the host's component type whether or not the host already passes it. The `Game` reads it only on mount and when the challenge changes; switching the code tab is local state: no request, no persistence, and the chosen option survives it.
+- Shiki (Big O, Bug Hunt) is loaded only through dynamic `import('shiki/…')` inside the game package (`highlight.ts`, own chunk), with the JS regex engine and the `css-variables` theme. The theme's `--shiki-*` variables are defined with `style` on the code block and point to DS tokens: no hex, no CSS file, no Shiki markup. While loading, or if loading fails, the same code is shown without color and with the same structure (no layout shift).
+- Big O's `Preview` shows the code in plain text (it never loads Shiki, so the admin never pays for it) with local-view language tabs (CA-6: no effects, no fetch, no storage, no play state). The tabs are the only controls; the options are a read-only list, with the answer ("correcta") and the `trap_option` ("trampa") marked.

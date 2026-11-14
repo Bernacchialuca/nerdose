@@ -1,8 +1,8 @@
 ---
 component: code-block
-version: 1.0.0
+version: 1.1.0
 status: active
-last_updated: 2026-11-05
+last_updated: 2026-11-14
 source: docs/nerdose.html
 related: [panel, terminal-window]
 ---
@@ -81,7 +81,7 @@ Caja `radius.inset` (12), `bg.surface.sunken`, borde `border.default`, `overflow
 - **Pestañas:** patrón `tablist` / `tab` / `tabpanel` con `aria-selected` y flechas izquierda/derecha. El prototipo solo declara `role="tablist"`.
 - **Líneas seleccionables:** `role="radiogroup"` + `role="radio"` con `aria-checked`; navegación con flechas; nombre accesible que incluya el número de línea.
 - **Scroll horizontal:** el cuerpo con `overflow-x: auto` tiene que ser alcanzable con teclado (`tabindex="0"` + nombre) cuando desborda.
-- **Contraste:** código `#E6EDF3`/`#0D1116` 16,0:1; nombre de archivo 6,3:1; pestaña inactiva `#9AA6B2`/`#11161C` 7,3:1; anotación 9,6:1; diff 11,0 y 13,4:1. **Números de línea `#4F5A66`/`#0D1116` 2,7:1: adaptación requerida** (≥ 4,5:1; tono **Pendiente**, ver `foundations/color.md`).
+- **Contraste:** código `#E6EDF3`/`#0D1116` 16,0:1; nombre de archivo 6,3:1; pestaña inactiva `#9AA6B2`/`#11161C` 7,3:1; anotación 9,6:1; diff 11,0 y 13,4:1. **Números de línea `#4F5A66`/`#0D1116` 2,7:1: adaptación requerida** (≥ 4,5:1; **1.1.0:** en `readonly` usan `text.dim` `#8D99A6`, ≈ 6,4:1).
 - **Zoom/reflow:** el código no envuelve; su scroll horizontal es interno al bloque (excepción WCAG 1.4.10 para código).
 
 ## Guidelines de contenido
@@ -92,7 +92,16 @@ Caja `radius.inset` (12), `bg.surface.sunken`, borde `border.default`, `overflow
 
 ## Do's & don'ts
 
-**Do:** desactivar ligaduras; usar la barra `inset` para resaltar. **Don't:** agregar resaltado de sintaxis; usar `border-left`.
+**Do:** desactivar ligaduras; usar la barra `inset` para resaltar. **Don't:** agregar resaltado de sintaxis salvo con tema desde tokens del DS (AA sobre `bg.surface.sunken`) y fallback sin color; usar `border-left`.
+
+## Variante con resaltado de sintaxis (1.1.0, `readonly` de Big O)
+
+- **Tema desde tokens:** el resaltado usa Shiki con un tema por variables CSS (`--shiki-*`) definidas en el propio bloque y apuntadas a tokens existentes: palabra clave `game.big-o.accent`, función y enlace `game.big-o.light`, constante `game.big-o.muted`, texto y parámetro `text.primary`, cadenas `text.body`, comentarios `text.dim`, puntuación `text.muted`. Todo par cumple ≥ 4,5:1 sobre `bg.surface.sunken` y sobre la línea resaltada. Sin hex ni CSS propio.
+- **Fallback sin color:** mientras carga el resaltado, o si falla, se muestra el mismo código con la misma estructura (sin saltos de layout).
+- **Nota bajo la línea en bloques angostos:** la anotación va al margen derecho cuando el bloque mide ≥ 32rem y baja a una segunda fila bajo su línea, alineada con el código, cuando mide menos (container query del bloque, sin breakpoint global).
+- **Pestañas bloqueadas:** mientras hay una jugada en curso, las pestañas quedan con `aria-disabled="true"` e ignoran clic y teclado.
+- **Mapeo provisorio (D3, S-046):** los tokens `game.big-o.tab-selected` (`#1D2A3A`), `line-highlight` (`#0E1D2E`), `tint-strong` (`#11243A`) y `light` (`#8CC8FF`) no están en `@nerdose/ui`. Se usan: pestaña activa `game.big-o.tint-border` (`#1B2E45`), línea resaltada `game.big-o.tint` (`#0B1522`) + barra `inset 3px` `game.big-o.accent`, nota `--color-game-big-o-light` (`#9ACFFF`). Pendiente de una story de `ui`.
+- **Preview del admin:** el mismo bloque con `highlight` apagado (texto plano) y las pestañas como vista local.
 
 ## API
 
@@ -112,3 +121,4 @@ Caja `radius.inset` (12), `bg.surface.sunken`, borde `border.default`, `overflow
 ## Historial
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: tab-bar con pestañas y nombre de archivo, líneas Mono 15/2 con número de 30px, barra `inset 3px`, anotaciones al margen y diff con fondos tintados.
+- 2026-11-14 v1.1.0 — Story S-046: variante de resaltado con tema desde tokens y fallback sin color, números de línea en `text.dim`, nota bajo la línea en bloques angostos, pestañas bloqueadas y mapeo provisorio de los tokens Big O ausentes en `@nerdose/ui`.

@@ -1,12 +1,12 @@
 # Reusable Code - games / Big O
 
-Package `@nerdose/game-big-o` (`packages/games/big-o`). Entries: `./definition` and `./generator` (`./client` arrives with S-046).
+Package `@nerdose/game-big-o` (`packages/games/big-o`). Entries: `./definition`, `./client` and `./generator`.
 
 ## Shared
 
 ### OPTION_LABEL / LANGUAGE_LABEL
 - **Location:** packages/games/big-o/src/shared/labels.ts
-- **Description:** Language-neutral labels. `OPTION_LABEL` maps each `BigOOption` to `O(1)`, `O(log n)`, `O(n)`, `O(n log n)`, `O(n²)`, `O(n³)`, `O(2ⁿ)`, `O(n!)` (Unicode superscripts). `LANGUAGE_LABEL` maps `CodeLanguage` to `JavaScript`, `Go`, `Java`. Not re-exported by `./definition`: the future `./client` imports them from `../shared/labels`.
+- **Description:** Language-neutral labels. `OPTION_LABEL` maps each `BigOOption` to `O(1)`, `O(log n)`, `O(n)`, `O(n log n)`, `O(n²)`, `O(n³)`, `O(2ⁿ)`, `O(n!)` (Unicode superscripts). `LANGUAGE_LABEL` maps `CodeLanguage` to `JavaScript`, `Go`, `Java`. Not re-exported by `./definition`: the `./client` imports them from `../shared/labels`.
 - **Signature:** `OPTION_LABEL: Record<BigOOption, string>`; `LANGUAGE_LABEL: Record<CodeLanguage, string>`
 - **Usage:** `OPTION_LABEL.o_n_log_n` is `O(n log n)`.
 
@@ -26,6 +26,72 @@ Package `@nerdose/game-big-o` (`packages/games/big-o`). Entries: `./definition` 
 ### Test fixtures
 - **Location:** packages/games/big-o/src/definition/test-fixtures.ts
 - **Description:** `PAYLOAD` (nested loops, trap `o_n2`), `PAYLOAD_RECURSION` (no trap, tip or example), `WON_JAVA`, `LOST_GO`, `withAnswer(answer)` (keeps `trap_option !== answer`), `CODE_NLOGN`, `NOW`, `CTX_ES`, `CTX_EN`, `S0`. Not exported by the entry: copy them in other packages' tests.
+
+## Client
+
+Entry `./client` (React 19, Shiki loaded dynamically). Same props contract as Timeline plus the optional `codeLanguage`; it imports only the schemas of `../definition/schemas` (never `../definition/index`, which carries the solution) and never `@nerdose/polyglot`.
+
+### Instructions
+- **Location:** packages/games/big-o/src/client/instructions.tsx
+- **Description:** Instructions screen: `h1` in the game accent, meta, three `Card` `step`s (read the code, worst case, pick and confirm), count notice and a "Start" button that calls `onStart` once per attempt (re-armed when `starting` returns to `false`). Slots `notices` and `actions`; the rules section has `id={HELP_TARGET_ID}`. It shows neither the recipe category nor any code.
+- **Signature:** `Instructions(props: InstructionsProps)`
+
+### Game
+- **Location:** packages/games/big-o/src/client/game.tsx
+- **Description:** Playing screen: `// peor caso` line, question `h1`, `CodeBlock` starting at `codeLanguage ?? 'js'`, "// tu respuesta" with the 8 options as a radiogroup, hint line with a polite live region, "Confirmar respuesta" and the "// reglas" card (`#game-help`). Selection and visible language are local state that survives a tab or language change and restarts when the code changes. `onMove(moveSchema.parse({ language, option }))` once per attempt (`submittedRef`, re-armed on `pending` end or `moveError`). `pending` locks the options, the tabs and the button; `locked` keeps only the question and the host slots. DOM in mobile order, desktop placed with `lg:` classes (D5).
+- **Signature:** `Game(props: GameProps)`
+
+### Result
+- **Location:** packages/games/big-o/src/client/result.tsx
+- **Description:** Verdict (`sr-only` `h1` on a win, `Banner` `failure` otherwise), question `h2`, `CodeBlock` at `result.code_language` with the line notes (the code comes from `publicView.code`; without `publicView` the question and code are omitted), the 8 marked options and the "Paso a paso" `aside`. Slots `notices`, `footer` and `aside`.
+- **Signature:** `Result(props: ResultProps)`
+
+### Preview
+- **Location:** packages/games/big-o/src/client/preview.tsx
+- **Description:** Read-only solution mode for the admin: parses the full payload, translates with `translatorFor(language)`, plain-text `CodeBlock` (`highlight={false}`, never loads Shiki, local view tabs, D8), options with the answer ("✓ correcta") and the `trap_option` ("trampa", dashed border) and the explanation in `language` under `h3` headings. Root `<div lang>`, no landmark, no controls beyond the tabs.
+- **Signature:** `Preview(props: { payload: unknown; language: Locale })`
+
+### share
+- **Location:** packages/games/big-o/src/client/share.ts
+- **Description:** `🧮 Big O #N` / `🟩|🟥 <Language>` / `nerdose.dev`, identical in es and en, never the chosen option or the answer. Throws `ZodError` on an invalid result.
+- **Signature:** `share(result: unknown, number: number): string`
+
+### i18n / HELP_TARGET_ID / contract types / parsers
+- **Location:** packages/games/big-o/src/client/{i18n/index.ts,help-target.ts,types.ts,parse.ts}
+- **Description:** Namespace `big-o` (es/en), help anchor `game-help`, the props types (`ClientBaseProps` adds the optional `codeLanguage?: CodeLanguage`, default `'js'`; `PreviewProps`) and the parsers `parsePublicView`, `parseState`, `parseResult`, `parsePayload`.
+
+### CodeBlock
+- **Location:** packages/games/big-o/src/client/code-block.tsx
+- **Description:** Read-only code block: `tablist` of JavaScript / Go / Java (arrows, Home, End; `aria-disabled` when locked), file name, keyboard-reachable `tabpanel` with its own horizontal scroll, `aria-hidden` line numbers, highlighted lines with their note (below the line in blocks narrower than 32rem and at the right margin from there, by container query, D12). Same tree with or without color: Shiki tokens are drawn as `<span style={{ color }}>` once the tokenizer loads; while loading, on failure or when the line count differs the plain text is shown (D11). The root sets `SHIKI_VARS` (D2). Resets the tab when `initialLanguage` or `code` change.
+- **Signature:** `CodeBlock({ code, initialLanguage, t, notes?, highlight?, disabled?, onLanguageChange?, className? })`
+
+### loadTokenizer / SHIKI_VARS / useTokenizer
+- **Location:** packages/games/big-o/src/client/{highlight.ts,shiki-vars.ts,use-tokenizer.ts}
+- **Description:** `loadTokenizer()` imports Shiki only with `import()` (core, JS regex engine, js/go/java grammars, `css-variables` theme `nerdose-big-o`), memoises the promise and clears it on rejection. `SHIKI_VARS` maps the `--shiki-*` variables to DS tokens (no hex). `useTokenizer(enabled)` returns the tokenizer or `null`. Not exported by the entry.
+- **Signature:** `loadTokenizer(): Promise<Tokenizer>`; `type Tokenizer = (code, language) => { content: string; color: string | null }[][]`; `useTokenizer(enabled: boolean): Tokenizer | null`
+
+### OptionsGroup / Question
+- **Location:** packages/games/big-o/src/client/{options-group.tsx,question.tsx}
+- **Description:** `OptionsGroup` is the single-choice `radiogroup` of the 8 options (roving tabindex, arrows and Home/End move focus and selection, stable 2px border, `●` on the chosen one, 2 columns on mobile and 4 from `lg`). `Question` renders the fixed question with `f(n)` in the game accent as `h1`, `h2` or `p`.
+- **Signature:** `OptionsGroup({ options, selected, onSelect, disabled, t })`; `Question({ t, as, className? })`
+
+### ResultOptions / Explanation
+- **Location:** packages/games/big-o/src/client/{result-options.tsx,explanation.tsx}
+- **Description:** Shared by `Result` and `Preview`. `ResultOptions` is the read-only list of 8 options marked with icon and text (correct, chosen wrong, preview trap, `sr-only` label per item). `Explanation` is the "Paso a paso" panel (`aside` at level 2, `section` at level 3): numbered steps, the "en números" box (`ops` and `trap_ops` formatted by locale, trap line only with a trap) and the tip.
+- **Signature:** `ResultOptions({ marks, title, headingLevel, t })`; `Explanation({ steps, tip, example, trapLabel, locale, t, headingLevel })`
+
+### resultMarks / previewMarks / formatCount / moveRadio / codeLines / notesByLine
+- **Location:** packages/games/big-o/src/client/{options.ts,format.ts,radio.ts,lines.ts}
+- **Description:** Pure helpers. `resultMarks(r)` and `previewMarks(p)` give the 8 options in `BIG_O_OPTIONS` order with `correct` and `chosen` / `trap`; `formatCount(value, locale)` uses `Intl.NumberFormat`; `moveRadio(index, key, count)` is the APG radio navigation (wrap, Home, End, `null` for other keys); `codeLines(code)` splits lines and `notesByLine(notes)` indexes notes by 1-based line.
+- **Signature:** `resultMarks(r: BigOResult): ResultMark[]`; `previewMarks(p: BigOPayload): PreviewMark[]`; `formatCount(value: number, locale: Locale): string`; `moveRadio(index: number, key: string, count: number): number | null`
+
+### ConsoleHint / SectionPanel / translatorFor
+- **Location:** packages/games/big-o/src/client/{console-hint.tsx,section-panel.tsx,translate.ts}
+- **Description:** Copies of Timeline's (imports between games are forbidden): silent hint line with a polite live region, panel with an `h2`/`h3` `//` header, and the production translator for `Preview` (returns the key when missing).
+
+### makeT / test fixtures
+- **Location:** packages/games/big-o/src/client/{test-utils.ts,test-fixtures.ts}
+- **Description:** Test-only: `makeT(locale)` (throws on a missing key) and the client fixtures (`CODE`, `PUBLIC_VIEW`, `PUBLIC_VIEW_OTHER`, `RESULT_WON_JAVA_ES/EN`, `RESULT_LOST_GO_ES`, `RESULT_PLAIN_ES`, `RESULT_NO_TRAP_EXAMPLE_ES`, `PREVIEW_PAYLOAD`, `PREVIEW_PAYLOAD_PLAIN`).
 
 ## Generator
 
