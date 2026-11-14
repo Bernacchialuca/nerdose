@@ -37,6 +37,7 @@ export const en: Resources = {
     start: 'start',
     found: 'found',
     revealed: 'revealed',
+    solution: 'part of the solution',
   },
   hint: {
     idle: '> tap the first letter of a word',
@@ -64,6 +65,11 @@ export const en: Resources = {
     keepPlaying: 'Keep playing',
     confirm: 'Yes, give up',
     closing: 'Closing…',
+  },
+  preview: {
+    boardLabel: 'Grid with the {{total}} words highlighted',
+    wordsTitle: 'challenge words',
+    wordsCount: '{{total}} words',
   },
   result: {
     won: '{{total}}/{{total}}: you found them all',

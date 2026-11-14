@@ -70,6 +70,9 @@ export const en: Shape<typeof es> = {
     rateLimited: '> you are going too fast. Wait a few seconds and try again',
     message: '> {{message}}',
   },
+  preview: {
+    prompt: 'task: {{prompt}}',
+  },
   result: {
     comment: 'task: from oldest to newest',
     won: 'Perfect order',

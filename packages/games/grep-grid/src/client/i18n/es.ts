@@ -35,6 +35,7 @@ export const es = {
     start: 'inicio',
     found: 'encontrada',
     revealed: 'revelada',
+    solution: 'parte de la solución',
   },
   hint: {
     idle: '> tocá la primera letra de una palabra',
@@ -62,6 +63,11 @@ export const es = {
     keepPlaying: 'Seguir jugando',
     confirm: 'Sí, rendirme',
     closing: 'Cerrando…',
+  },
+  preview: {
+    boardLabel: 'Grilla con las {{total}} palabras resaltadas',
+    wordsTitle: 'palabras del desafío',
+    wordsCount: '{{total}} palabras',
   },
   result: {
     won: '{{total}}/{{total}}: las encontraste todas',

@@ -1,6 +1,7 @@
 export { Instructions } from './instructions';
 export { Game } from './game';
 export { Result } from './result';
+export { Preview } from './preview';
 export { share } from './share';
 export { i18n } from './i18n';
 export { HELP_TARGET_ID } from './help-target';
@@ -10,6 +11,7 @@ export type {
   GameStatsView,
   InstructionsProps,
   MoveErrorInfo,
+  PreviewProps,
   ResultProps,
   Translate,
 } from './types';

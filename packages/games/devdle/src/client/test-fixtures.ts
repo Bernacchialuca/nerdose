@@ -58,3 +58,18 @@ export const GAME_STATS = {
   win_rate: 0.9166,
   extra: { guesses: { '1': 0, '2': 1, '3': 4, '4': 3, '5': 2, '6': 1 }, losses: 1 },
 };
+
+export const PREVIEW_PAYLOAD = {
+  term_id: '0b7e6f1c-3a52-4c1e-9f0a-1d2e3f4a5b6c',
+  word: 'REACT',
+  category: 'programming_languages',
+  definition: {
+    es: 'biblioteca de JavaScript para construir interfaces de usuario',
+    en: 'JavaScript library for building user interfaces',
+  },
+  summary: {
+    es: 'React es una biblioteca de código abierto mantenida por Meta.',
+    en: 'React is a free and open-source front-end JavaScript library maintained by Meta.',
+  },
+  date: '2026-12-02',
+};

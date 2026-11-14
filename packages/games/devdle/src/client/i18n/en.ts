@@ -86,6 +86,9 @@ export const en: Resources = {
     summaryLabel: 'Summary',
     source: 'Source: Wikipedia (CC BY-SA)',
   },
+  preview: {
+    boardLabel: 'Solution: {{word}}',
+  },
   distribution: {
     title: 'your tries',
     streak: 'streak {{count}}',

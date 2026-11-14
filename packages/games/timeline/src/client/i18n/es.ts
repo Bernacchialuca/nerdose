@@ -66,6 +66,9 @@ export const es = {
     rateLimited: '> vas muy rápido. Esperá unos segundos y probá de nuevo',
     message: '> {{message}}',
   },
+  preview: {
+    prompt: 'consigna: {{prompt}}',
+  },
   result: {
     comment: 'consigna: del más antiguo al más reciente',
     won: 'Orden perfecto',

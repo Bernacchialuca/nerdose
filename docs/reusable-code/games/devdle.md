@@ -22,6 +22,8 @@
 - **Usage:** `const { Game, i18n } = await import('@nerdose/game-devdle/client')`
 
 ## Devdle client internals (reference for other games)
+- **Preview** (`preview.tsx`): `({ payload, language })` admin solution-mode preview; `translatorFor(language)` (`translate.ts`) resolves `i18n.resources[language]` and returns the key when missing. `PreviewProps` in `types.ts`.
+- **SectionPanel** gains `headingLevel?: 2 | 3` (default 2); **WordCard** takes `result: Pick<DevdleResult, 'word'|'category'|'definition'|'summary'>` and `headingLevel?`.
 - **SectionPanel** (`section-panel.tsx`): `({ title, datum?, id?, children })` panel with `// title` as `h2`.
 - **Board** (`board.tsx`): `({ length, guesses, draft?, rows?, label, t })` grid scaled with CSS variables (`--board-cols`, `--board-max`, `--tile-font`).
 - **useDevdleInput** (`use-devdle-input.ts`): `({ enabled, onLetter, onBackspace, onSubmit, onInvalid })` window keydown handler; ignores modifiers and leaves Enter/Space to focused buttons.

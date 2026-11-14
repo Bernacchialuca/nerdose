@@ -101,3 +101,5 @@ export const RESULT_3_ES = result('es', SWAP);
 export const RESULT_3_EN = result('en', SWAP);
 export const RESULT_5_ES = result('es', CORRECT);
 export const RESULT_0_ES = result('es', ROTATED);
+
+export { PAYLOAD as PREVIEW_PAYLOAD } from '../definition/test-fixtures';

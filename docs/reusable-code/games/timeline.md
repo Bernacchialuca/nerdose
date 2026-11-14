@@ -143,3 +143,9 @@ Entry `./client` (React 19, dnd-kit). Same props contract as Devdle and Grep Gri
 ### Test fixtures
 - **Location:** packages/games/timeline/src/generator/test-fixtures.ts
 - **Description:** Test-only: `DATE`, `DATE_V`, `seed(n)` (SHA-256 digest), `mk`, `BID`, `BANK_FIXTURE`, `BANK`, `BANK_TIGHT`, `history`.
+
+## client Preview
+- **Location:** packages/games/timeline/src/client/{preview.tsx,translate.ts}
+- **Description:** `Preview({ payload, language })` admin solution-mode preview: `// consigna: ...` line and a `SectionPanel` (`h3`) with the `Rail` over the facts in `correct_order` (throws if an id is not in `items`). Parses with `payloadSchema`; no dnd-kit.
+- **Signature:** `Preview(props: PreviewProps)`, `translatorFor(language: Locale): Translate`; `SectionPanel` gained `headingLevel?: 2 | 3`
+- **Usage:** `const { Preview } = await import('@nerdose/game-timeline/client')`
