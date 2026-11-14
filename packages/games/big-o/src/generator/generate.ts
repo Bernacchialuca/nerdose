@@ -35,7 +35,8 @@ export const historySpec: HistorySpec = {
 export const usedBankItems = (): string[] => [];
 
 /**
- * Deterministic: the rng is consumed in a fixed order (trap draw, recipe, then the parameters in
+ * The payload carries its `date` (first key) because `verify` has no date argument and the variety
+ * checks need it. Deterministic: the rng is consumed in a fixed order (trap draw, recipe, then the parameters in
  * traversal order of the shape). With nothing eligible it still picks a recipe; `verify` rejects it
  * for variety and the rule is not relaxed.
  */
@@ -49,5 +50,5 @@ export const generate: GameGenerator<BigOPayload>['generate'] = ({ date, seed, h
   const preferred = wantTrap ? withTrap : without;
   const group = preferred.length > 0 ? preferred : wantTrap ? without : withTrap;
   const chosen = rng.pick(group);
-  return buildPayload(chosen, drawParams(chosen, rng));
+  return { date, ...buildPayload(chosen, drawParams(chosen, rng)) };
 };

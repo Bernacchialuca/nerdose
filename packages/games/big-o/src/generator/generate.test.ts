@@ -32,11 +32,14 @@ describe('generate', () => {
     for (const s of SEEDS(300)) {
       expect(generate({ date: D, seed: s, history }).recipe).not.toBe('nest(linear,doubling)');
       expect(
-        generate({ date: D, seed: s, history: on([r('2027-03-25', 'nest(linear,doubling)')]) }).recipe,
+        generate({ date: D, seed: s, history: on([r('2027-03-25', 'nest(linear,doubling)')]) })
+          .recipe,
       ).not.toBe('nest(linear,doubling)');
     }
     const seen = (h: typeof empty) =>
-      SEEDS(300).some((s) => generate({ date: D, seed: s, history: h }).recipe === 'nest(linear,doubling)');
+      SEEDS(300).some(
+        (s) => generate({ date: D, seed: s, history: h }).recipe === 'nest(linear,doubling)',
+      );
     expect(seen(empty)).toBe(true);
     expect(seen(on([r('2027-02-13', 'nest(linear,doubling)')]))).toBe(true);
   });
@@ -53,12 +56,19 @@ describe('generate', () => {
       }
     }
     expect(
-      SEEDS(300).some((s) => generate({ date: D, seed: s, history: on([r('2027-03-14', 'linear')]) }).answer === 'o_n'),
+      SEEDS(300).some(
+        (s) =>
+          generate({ date: D, seed: s, history: on([r('2027-03-14', 'linear')]) }).answer === 'o_n',
+      ),
     ).toBe(true);
   });
 
   it('is deterministic and does not mutate the history (TS-26)', () => {
-    const h = on([1, 2, 3, 4, 5].map((i) => r(`2027-03-${String(15 - i).padStart(2, '0')}`, RECIPES[i * 3]!.id)));
+    const h = on(
+      [1, 2, 3, 4, 5].map((i) =>
+        r(`2027-03-${String(15 - i).padStart(2, '0')}`, RECIPES[i * 3]!.id),
+      ),
+    );
     const h0 = structuredClone(h);
     const recipes = new Set<string>();
     for (let k = 1; k <= 2000; k++) {
@@ -81,7 +91,11 @@ describe('generate', () => {
       if (p.trap_option !== null) traps++;
       seen.add(p.recipe);
       const rec = recipe(p.recipe);
-      expect([p.answer, p.recipe_category, p.trap_option]).toEqual([rec.answer, rec.category, rec.trapOption]);
+      expect([p.answer, p.recipe_category, p.trap_option]).toEqual([
+        rec.answer,
+        rec.category,
+        rec.trapOption,
+      ]);
       for (const lang of ['js', 'go', 'java'] as const) {
         const m = measureCode(p.code[lang], lang);
         expect(m.lines).toBeLessThanOrEqual(15);
@@ -111,6 +125,17 @@ describe('generate', () => {
       expect(() => payloadSchema.parse(p)).not.toThrow();
       expect(RECIPES.some((x) => x.id === p.recipe)).toBe(true);
       expect(generate({ date: D, seed: s, history: on(spread) })).toEqual(p);
+    }
+  });
+});
+
+describe('generate date', () => {
+  it('puts the date as the first key (TS-2)', () => {
+    for (let k = 1; k <= 50; k++) {
+      const p = generate({ date: D, seed: seed(k), history: empty });
+      expect(p.date).toBe(D);
+      expect(Object.keys(p)[0]).toBe('date');
+      expect(payloadSchema.parse(p).date).toBe(D);
     }
   });
 });
