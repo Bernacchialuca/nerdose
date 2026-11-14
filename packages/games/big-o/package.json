@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./definition": "./src/definition/index.ts"
+    "./definition": "./src/definition/index.ts",
+    "./generator": "./src/generator/index.ts"
   },
   "scripts": {
     "lint": "eslint .",
@@ -13,6 +14,7 @@
   },
   "dependencies": {
     "@nerdose/core": "workspace:*",
+    "@nerdose/polyglot": "workspace:*",
     "zod": "^4.6.7"
   }
 }

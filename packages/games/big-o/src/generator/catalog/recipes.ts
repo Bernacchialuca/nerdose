@@ -1,0 +1,56 @@
+import { BS, C, D, DBL, DBL_OUTER, H, H_OUTER, L, dc, doubleRecursion, nest, permutations, seq } from './dsl';
+import type { Recipe } from './types';
+
+const R = (r: Recipe): Recipe => r;
+
+const ONLY_TEN = { k: [10] } as const;
+
+const CATALOG: readonly Recipe[] = [
+  R({ id: 'constant', category: 'simple_loops', answer: 'o_1', trap: 'constant_bound', trapOption: 'o_n', shape: C }),
+  R({ id: 'seq(constant,constant)', category: 'simple_loops', answer: 'o_1', trap: null, trapOption: null, shape: seq(C, C) }),
+  R({ id: 'linear', category: 'simple_loops', answer: 'o_n', trap: null, trapOption: null, shape: L }),
+  R({ id: 'seq(linear,linear)', category: 'simple_loops', answer: 'o_n', trap: 'sequential_loops', trapOption: 'o_n2', shape: seq(L, L) }),
+  R({ id: 'seq(linear,linear,linear)', category: 'simple_loops', answer: 'o_n', trap: 'sequential_loops', trapOption: 'o_n3', shape: seq(L, L, L) }),
+  R({ id: 'halving', category: 'simple_loops', answer: 'o_log_n', trap: null, trapOption: null, shape: H }),
+  R({ id: 'doubling', category: 'simple_loops', answer: 'o_log_n', trap: null, trapOption: null, shape: DBL }),
+  R({ id: 'seq(linear,halving)', category: 'simple_loops', answer: 'o_n', trap: 'sequential_loops', trapOption: 'o_n_log_n', shape: seq(L, H) }),
+  R({ id: 'nest(constant,constant)', category: 'nested_loops', answer: 'o_1', trap: 'constant_bound', trapOption: 'o_n2', shape: nest(C, C) }),
+  R({ id: 'nest(linear,constant)', category: 'nested_loops', answer: 'o_n', trap: 'constant_bound', trapOption: 'o_n2', shape: nest(L, C) }),
+  R({ id: 'nest(constant,linear)', category: 'nested_loops', answer: 'o_n', trap: 'constant_bound', trapOption: 'o_n2', shape: nest(C, L) }),
+  R({ id: 'nest(constant,halving)', category: 'nested_loops', answer: 'o_log_n', trap: 'constant_bound', trapOption: 'o_n_log_n', shape: nest(C, H) }),
+  R({ id: 'nest(linear,doubling)', category: 'nested_loops', answer: 'o_n_log_n', trap: 'doubling_inner', trapOption: 'o_n2', shape: nest(L, DBL) }),
+  R({ id: 'nest(linear,doubling_dependent)', category: 'nested_loops', answer: 'o_n_log_n', trap: 'doubling_inner', trapOption: 'o_n2', shape: nest(L, DBL_OUTER) }),
+  R({ id: 'seq(linear,nest(linear,doubling))', category: 'nested_loops', answer: 'o_n_log_n', trap: 'doubling_inner', trapOption: 'o_n2', shape: seq(L, nest(L, DBL)) }),
+  R({ id: 'nest(linear,halving)', category: 'nested_loops', answer: 'o_n_log_n', trap: null, trapOption: null, shape: nest(L, H) }),
+  R({ id: 'nest(doubling,linear)', category: 'nested_loops', answer: 'o_n_log_n', trap: null, trapOption: null, shape: nest(DBL, L) }),
+  R({ id: 'nest(linear,linear)', category: 'nested_loops', answer: 'o_n2', trap: null, trapOption: null, shape: nest(L, L) }),
+  R({ id: 'nest(linear,dependent)', category: 'nested_loops', answer: 'o_n2', trap: null, trapOption: null, shape: nest(L, D) }),
+  R({ id: 'seq(linear,nest(linear,linear))', category: 'nested_loops', answer: 'o_n2', trap: 'sequential_loops', trapOption: 'o_n3', shape: seq(L, nest(L, L)) }),
+  R({ id: 'nest(linear,nest(constant,linear))', category: 'nested_loops', answer: 'o_n2', trap: 'constant_bound', trapOption: 'o_n3', shape: nest(L, nest(C, L)), paramDomain: ONLY_TEN }),
+  R({ id: 'nest(linear,linear,linear)', category: 'nested_loops', answer: 'o_n3', trap: null, trapOption: null, shape: nest(L, L, L) }),
+  R({ id: 'nest(linear,linear,dependent)', category: 'nested_loops', answer: 'o_n3', trap: null, trapOption: null, shape: nest(L, L, D) }),
+  R({ id: 'nest(linear,dependent,dependent)', category: 'nested_loops', answer: 'o_n3', trap: null, trapOption: null, shape: nest(L, D, D) }),
+  R({ id: 'nest(linear,halving_dependent)', category: 'nested_loops', answer: 'o_n_log_n', trap: null, trapOption: null, shape: nest(L, H_OUTER) }),
+  R({ id: 'binary_search', category: 'binary_search', answer: 'o_log_n', trap: null, trapOption: null, shape: BS }),
+  R({ id: 'nest(constant,binary_search)', category: 'binary_search', answer: 'o_log_n', trap: 'constant_bound', trapOption: 'o_n_log_n', shape: nest(C, BS) }),
+  R({ id: 'nest(binary_search,constant)', category: 'binary_search', answer: 'o_log_n', trap: null, trapOption: null, shape: nest(BS, C) }),
+  R({ id: 'seq(linear,binary_search)', category: 'binary_search', answer: 'o_n', trap: 'sequential_loops', trapOption: 'o_n_log_n', shape: seq(L, BS) }),
+  R({ id: 'nest(linear,binary_search)', category: 'binary_search', answer: 'o_n_log_n', trap: null, trapOption: null, shape: nest(L, BS) }),
+  R({ id: 'halving_recursion', category: 'recursion', answer: 'o_log_n', trap: null, trapOption: null, shape: dc(1, 'unit') }),
+  R({ id: 'double_recursion(n-1,n-2)', category: 'recursion', answer: 'o_2n', trap: null, trapOption: null, shape: doubleRecursion('n-1,n-2') }),
+  R({ id: 'double_recursion(n-1,n-1)', category: 'recursion', answer: 'o_2n', trap: null, trapOption: null, shape: doubleRecursion('n-1,n-1') }),
+  R({ id: 'double_recursion_constant', category: 'recursion', answer: 'o_2n', trap: null, trapOption: null, shape: doubleRecursion('n-1,n-1', 'constant') }),
+  R({ id: 'permutations', category: 'recursion', answer: 'o_n_fact', trap: null, trapOption: null, shape: permutations() }),
+  R({ id: 'permutations_linear', category: 'recursion', answer: 'o_n_fact', trap: null, trapOption: null, shape: permutations('inc') }),
+  R({ id: 'permutations_constant', category: 'recursion', answer: 'o_n_fact', trap: null, trapOption: null, shape: permutations('constant'), paramDomain: ONLY_TEN }),
+  R({ id: 'cubic_halving_recursion', category: 'recursion', answer: 'o_n3', trap: null, trapOption: null, shape: dc(1, 'cubic') }),
+  R({ id: 'dc(2,linear)', category: 'divide_and_conquer', answer: 'o_n_log_n', trap: null, trapOption: null, shape: dc(2, 'linear') }),
+  R({ id: 'dc(2,constant)', category: 'divide_and_conquer', answer: 'o_n', trap: 'constant_bound', trapOption: 'o_n_log_n', shape: dc(2, 'constant') }),
+  R({ id: 'dc(1,linear)', category: 'divide_and_conquer', answer: 'o_n', trap: null, trapOption: null, shape: dc(1, 'linear') }),
+  R({ id: 'dc(4,unit)', category: 'divide_and_conquer', answer: 'o_n2', trap: null, trapOption: null, shape: dc(4, 'unit') }),
+  R({ id: 'dc(2,quadratic)', category: 'divide_and_conquer', answer: 'o_n2', trap: null, trapOption: null, shape: dc(2, 'quadratic') }),
+];
+
+export const RECIPES: readonly Recipe[] = [...CATALOG].sort((a, b) =>
+  a.id < b.id ? -1 : a.id > b.id ? 1 : 0,
+);
