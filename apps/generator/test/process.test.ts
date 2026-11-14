@@ -1,10 +1,10 @@
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { loadDataset } from '@nerdose/content';
-import { challenges, createDb, jobRuns, terms } from '@nerdose/db';
+import { challenges, createDb, generationRequests, jobRuns, terms } from '@nerdose/db';
 import { truncateAll } from '@nerdose/db/testing';
 import { today } from '@nerdose/core';
-import { asc, eq } from 'drizzle-orm';
+import { and, asc, eq } from 'drizzle-orm';
 import { afterAll, afterEach, beforeEach, describe, expect, inject, it } from 'vitest';
 
 import { freePort, silentServer } from './helpers/net';
@@ -112,6 +112,47 @@ describe('proceso del generator', () => {
     expect(raw).not.toContain(SECRET);
     expect(raw).not.toContain(new URL(url).password);
     expect(raw).not.toContain(url);
+  });
+
+  it('regenera por NOTIFY y se apaga limpio sin conexiones LISTEN abiertas', async () => {
+    running = startGenerator(startEnv());
+    await running.waitForLog((l) => l.msg === 'Queue listener started');
+    const all = running.parsed();
+    const iScheduler = all.findIndex(isStarted);
+    const iQueue = all.findIndex((l) => l.msg === 'Queue listener started');
+    expect(iScheduler).toBeGreaterThanOrEqual(0);
+    expect(iScheduler).toBeLessThan(iQueue);
+
+    const target = today(new Date());
+    const day = new Date(`${target}T00:00:00.000Z`);
+    day.setUTCDate(day.getUTCDate() + 3);
+    const date = day.toISOString().slice(0, 10);
+    const [old] = await owner.db
+      .select()
+      .from(challenges)
+      .where(and(eq(challenges.gameId, 'devdle'), eq(challenges.date, date)));
+    const [req] = await owner.db
+      .insert(generationRequests)
+      .values({ challengeId: old!.id })
+      .returning();
+    await owner.sql`SELECT pg_notify('generation_requests', ${req!.id})`;
+    await running.waitForLog((l) => l.msg === 'ChallengeRegenerated', 30_000);
+    const [done] = await owner.db
+      .select()
+      .from(generationRequests)
+      .where(eq(generationRequests.id, req!.id));
+    expect(done?.status).toBe('done');
+    expect(done?.newChallengeId).not.toBeNull();
+    const [oldAfter] = await owner.db.select().from(challenges).where(eq(challenges.id, old!.id));
+    expect(oldAfter).toMatchObject({ status: 'rejected' });
+    expect(oldAfter!.verification).toMatchObject({ reason: 'regenerated' });
+
+    expect(await running.stop('SIGTERM')).toBe(0);
+    expect(running.parsed().some((l) => l.msg === 'Shutdown complete')).toBe(true);
+    const listening = await owner.sql`
+      SELECT 1 FROM pg_stat_activity WHERE usename = 'nerdose_generator' AND query LIKE 'LISTEN%'`;
+    expect(listening).toHaveLength(0);
+    expect(running.lines().join('\n')).not.toContain(SECRET);
   });
 
   it('se apaga con SIGTERM, código 0 y sin locks tomados', async () => {

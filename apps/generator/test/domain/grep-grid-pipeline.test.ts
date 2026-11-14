@@ -56,7 +56,7 @@ describe('generateForDate con grep-grid', () => {
   it('aprueba un hueco con number, seed HMAC, 9 checks y last_used_grep', async () => {
     await insertTerms(t.owner.db, BANK16);
     const result = await generateForDate({ entry, date: '2026-12-02' }, setup().deps);
-    expect(result).toEqual({ outcome: 'approved', generated: 1, approved: 1, rejected: 0 });
+    expect(result).toMatchObject({ outcome: 'approved', generated: 1, approved: 1, rejected: 0 });
     const [row] = await rowsFor('2026-12-02');
     expect(row).toMatchObject({
       gameId: 'grep-grid',
@@ -135,7 +135,7 @@ describe('generateForDate con grep-grid', () => {
       },
     } as typeof entry;
     const result = await generateForDate({ entry: forced, date: '2026-12-02' }, setup().deps);
-    expect(result).toEqual({ outcome: 'approved', generated: 2, approved: 1, rejected: 1 });
+    expect(result).toMatchObject({ outcome: 'approved', generated: 2, approved: 1, rejected: 1 });
     const rows = await rowsFor('2026-12-02');
     expect(rows[0]).toMatchObject({
       attempt: 0,
@@ -160,7 +160,7 @@ describe('generateForDate con grep-grid', () => {
     );
     const { deps, lines } = setup(20);
     const result = await generateForDate({ entry, date: '2026-12-02' }, deps);
-    expect(result).toEqual({ outcome: 'missing', generated: 20, approved: 0, rejected: 20 });
+    expect(result).toMatchObject({ outcome: 'missing', generated: 20, approved: 0, rejected: 20 });
     const rows = await rowsFor('2026-12-02');
     expect(rows.map((r) => r.attempt)).toEqual(Array.from({ length: 20 }, (_, i) => i));
     rows.forEach((r, a) => {

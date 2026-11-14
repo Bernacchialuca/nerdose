@@ -11,8 +11,8 @@ export function startScheduler(deps: SchedulerDeps, jobs: readonly ScheduledJob[
   const crons = jobs.map(
     (job) => new Cron(job.pattern, { name: job.name, timezone: 'UTC', protect: true }, job.run),
   );
-  // Sin jobs ni conexión LISTEN no hay handle activo y Node terminaría solo; la conexión LISTEN
-  // de generation-queue (feature group posterior) reemplazará este timer.
+  // Sin jobs no hay handle activo y Node terminaría solo; el timer es inocuo aunque la conexión
+  // LISTEN de generation-queue ya mantenga el proceso vivo.
   let keepAlive: NodeJS.Timeout | undefined = setInterval(() => {}, KEEP_ALIVE_INTERVAL_MS);
   deps.logger.info({ jobs: jobs.length }, 'Scheduler started');
 

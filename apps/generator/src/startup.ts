@@ -11,6 +11,10 @@ import type { JobTracker } from '@/scheduler/job-tracker';
 import { runJob } from '@/scheduler/run-job';
 import { startScheduler, type ScheduledJob, type Scheduler } from '@/scheduler/scheduler';
 import type { Clock } from '@/shared/clock';
+import {
+  startQueueListener,
+  type QueueListener,
+} from '@/domain/challenge-publishing/queue/queue-listener';
 
 export const FILL_PATTERN = '10 * * * *';
 
@@ -30,7 +34,9 @@ export function buildScheduledJobs(runFill: () => Promise<void> | void): Schedul
   return [{ name: 'fill', pattern: FILL_PATTERN, run: runFill }];
 }
 
-export async function runStartup(deps: StartupDeps): Promise<Scheduler | undefined> {
+export type Running = { scheduler: Scheduler; queue: QueueListener };
+
+export async function runStartup(deps: StartupDeps): Promise<Running | undefined> {
   const { sql, db, logger, clock, signal, tracker, env, registry } = deps;
   const jobDeps = { sql, db, logger, clock, signal, tracker };
   const runFill = async () => {
@@ -42,5 +48,16 @@ export async function runStartup(deps: StartupDeps): Promise<Scheduler | undefin
   await runFill();
 
   if (signal.aborted) return undefined;
-  return startScheduler({ logger }, buildScheduledJobs(runFill));
+  const scheduler = startScheduler({ logger }, buildScheduledJobs(runFill));
+  const queue = await startQueueListener({
+    sql,
+    db,
+    env,
+    registry,
+    clock,
+    logger,
+    signal,
+    tracker,
+  });
+  return { scheduler, queue };
 }

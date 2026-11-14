@@ -92,4 +92,43 @@ describe('createShutdownHandler', () => {
     expect(end).toHaveBeenCalledTimes(1);
     expect(exit).toHaveBeenCalledExactlyOnceWith(0);
   });
+
+  it('detiene la cola después del scheduler y antes de cerrar la base', async () => {
+    const { logger } = captureLogger();
+    const calls: string[] = [];
+    const controller = new AbortController();
+    controller.signal.addEventListener('abort', () => calls.push('abort'));
+    await createShutdownHandler({
+      logger,
+      controller,
+      scheduler: { stop: () => void calls.push('scheduler.stop') },
+      queue: { stop: async () => void calls.push('queue.stop') },
+      tracker: { idle: async () => void calls.push('tracker.idle') },
+      sql: { end: async () => void calls.push('sql.end') },
+      exit: (code) => void calls.push(`exit(${code})`),
+    })();
+    expect(calls).toEqual([
+      'abort',
+      'scheduler.stop',
+      'queue.stop',
+      'tracker.idle',
+      'sql.end',
+      'exit(0)',
+    ]);
+  });
+
+  it('si queue.stop falla, lo loguea y cierra igual', async () => {
+    const { logger, lines } = captureLogger();
+    const exit = vi.fn();
+    await createShutdownHandler({
+      logger,
+      controller: new AbortController(),
+      scheduler: { stop: vi.fn() },
+      queue: { stop: () => Promise.reject(new Error('unlisten failed')) },
+      sql: { end: async () => undefined },
+      exit,
+    })();
+    expect(lines()).toContainEqual(expect.objectContaining({ level: 'error' }));
+    expect(exit).toHaveBeenCalledWith(0);
+  });
 });

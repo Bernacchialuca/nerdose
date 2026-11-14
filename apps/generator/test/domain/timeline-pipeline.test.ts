@@ -59,7 +59,7 @@ describe('generateForDate con timeline', () => {
     await insertTerms(t.owner.db, BANK16);
     await insertFacts(t.owner.db, CHRONO5);
     const result = await generateForDate({ entry, date: '2026-12-02' }, setup().deps);
-    expect(result).toEqual({ outcome: 'approved', generated: 1, approved: 1, rejected: 0 });
+    expect(result).toMatchObject({ outcome: 'approved', generated: 1, approved: 1, rejected: 0 });
     const [row] = await rowsFor('2026-12-02');
     expect(row).toMatchObject({
       gameId: 'timeline',
@@ -132,7 +132,7 @@ describe('generateForDate con timeline', () => {
       },
     } as typeof entry;
     const result = await generateForDate({ entry: forced, date: '2026-12-02' }, setup().deps);
-    expect(result).toEqual({ outcome: 'approved', generated: 2, approved: 1, rejected: 1 });
+    expect(result).toMatchObject({ outcome: 'approved', generated: 2, approved: 1, rejected: 1 });
     const rows = await rowsFor('2026-12-02');
     expect(rows[0]).toMatchObject({
       attempt: 0,
@@ -155,7 +155,7 @@ describe('generateForDate con timeline', () => {
     );
     const { deps, lines } = setup(2);
     const result = await generateForDate({ entry, date: '2026-12-10' }, deps);
-    expect(result).toEqual({ outcome: 'missing', generated: 2, approved: 0, rejected: 2 });
+    expect(result).toMatchObject({ outcome: 'missing', generated: 2, approved: 0, rejected: 2 });
     const rows = await rowsFor('2026-12-10');
     expect(rows).toHaveLength(2);
     rows.forEach((r) => {

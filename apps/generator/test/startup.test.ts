@@ -2,8 +2,8 @@ import { fileURLToPath } from 'node:url';
 
 import { Cron } from 'croner';
 import { loadDataset } from '@nerdose/content';
-import { jobRuns, terms } from '@nerdose/db';
-import { asc } from 'drizzle-orm';
+import { challenges, generationRequests, jobRuns, terms } from '@nerdose/db';
+import { asc, eq } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 
 import { createJobTracker } from '@/scheduler/job-tracker';
@@ -12,6 +12,7 @@ import { buildScheduledJobs, runStartup } from '@/startup';
 import { BANK16, insertTerms } from './helpers/bank';
 import { setupTestDb } from './helpers/db';
 import { captureLogger } from './helpers/logger';
+import { requestFor } from './helpers/regeneration';
 import { devdleOnlyRegistry } from './helpers/registry';
 
 const t = setupTestDb();
@@ -58,13 +59,13 @@ describe('runStartup', () => {
   it('con un dataset inválido sync_banks falla y fill corre igual', async () => {
     await insertTerms(t.owner.db, BANK16);
     const { deps: d } = deps();
-    const scheduler = await runStartup({
+    const running = await runStartup({
       ...d,
       loadDataset: () =>
         loadDataset(fileURLToPath(new URL('./fixtures/datasets/invalid/', import.meta.url))),
     });
     try {
-      expect(scheduler).toBeDefined();
+      expect(running).toBeDefined();
       const runs = await t.owner.db.select().from(jobRuns).orderBy(asc(jobRuns.startedAt));
       expect(runs.map((r) => [r.job, r.status])).toEqual([
         ['sync_banks', 'failed'],
@@ -72,7 +73,33 @@ describe('runStartup', () => {
       ]);
       expect(await t.owner.db.select().from(terms)).toHaveLength(BANK16.length);
     } finally {
-      scheduler?.stop();
+      running?.scheduler.stop();
+      await running?.queue.stop();
+    }
+  });
+
+  it('arranca el listener y deja done un pedido pendiente previo', async () => {
+    await insertTerms(t.owner.db, BANK16);
+    const { deps: d } = deps();
+    await runStartup(d).then(async (first) => {
+      first?.scheduler.stop();
+      await first?.queue.stop();
+    });
+    const [old] = await t.owner.db
+      .select()
+      .from(challenges)
+      .where(eq(challenges.date, '2026-12-05'));
+    const req = await requestFor(t.owner.db, old!.id);
+    const running = await runStartup(d);
+    try {
+      const [row] = await t.owner.db
+        .select()
+        .from(generationRequests)
+        .where(eq(generationRequests.id, req.id));
+      expect(row!.status).toBe('done');
+    } finally {
+      running?.scheduler.stop();
+      await running?.queue.stop();
     }
   });
 
