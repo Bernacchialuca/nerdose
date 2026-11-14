@@ -58,12 +58,17 @@ export function rngFrom(seed: Uint8Array) {
 ### Pipeline per candidate
 
 ```ts
+const spec = generator.historySpec;
+const window = historyWindow(date, spec);                               // [D - recentDays, D + aheadDays], excluding D
+const history = {
+  bankItems: await repo.bankItems(spec),                                // [] when spec.bank is null (big-o)
+  recentChallenges: await repo.recentChallenges(gameId, window.from, window.to, payloadSchema, window.exclude),
+};
 for (let attempt = 0; attempt < env.GENERATION_MAX_ATTEMPTS; attempt++) {
   const seed = seedFor(env.GENERATOR_SECRET, gameId, date, attempt);
-  const gen = generators.get(gameId);
-  const payload = gen.generate({ date, seed, history });                // deterministic
+  const payload = payloadSchema.parse(generator.generate({ date, seed, history }));   // deterministic
   const id = await repo.insertDraft({ gameId, date, number: challengeNumber(date, env.LAUNCH_DATE), payload, seed, generator_version });
-  const log = gen.verify(payload, verifyContext);                       // may run code via polyglot
+  const log = await generator.verify(payload, history);                 // may be async: runs code via polyglot in big-o
   if (log.ok) { await repo.approve(id, log); await banks.touchLastUsed(payload); return id; }
   await repo.reject(id, log);
 }
@@ -73,7 +78,7 @@ return null;
 
 ### `fill` body
 
-For each `game_id` and each date in `[max(today+1, LAUNCH_DATE), today+14]` that has no challenge with `status IN ('approved','published','voided')`, run the pipeline. If tomorrow's date stays empty after all attempts, `UPSERT generation_failures` and claim + send the alert once.
+For each `game_id` and each date in `[max(today+1, LAUNCH_DATE), today+14]` that has no challenge with `status IN ('approved','published','voided')`, run the pipeline. If tomorrow's date stays empty after all attempts, `UPSERT generation_failures` (the row is the alert, ADR-017; nothing is sent).
 
 > REQ-004: if `approve` collides with `uq_challenges_active_game_date`, the candidate becomes `rejected` (`verification.reason = 'duplicate_active'`) and the date counts as covered, with no error. `generation_failures` and the alert (C-49) arrive in FG-7: until then an exhausted date logs `ChallengeGenerationFailed` and counts in `job_runs.summary.missing`.
 
@@ -94,12 +99,15 @@ import { generator as devdle } from '@nerdose/game-devdle/generator';
 - `generate` is deterministic: same `{ date, seed, history }` gives the same payload. A game package never reads clock or randomness by itself.
 - A candidate is inserted as `draft` first, then `verify()` runs. It becomes `approved` only if `verify()` returns `ok: true`; the full log is stored in `challenges.verification`. Otherwise it becomes `rejected`.
 - `verify` fails if any text is missing a language (`{ es, en }`).
+- `verify` may return `VerificationLog` or `Promise<VerificationLog>`; `generateForDate` always `await`s it. A failure of the code runner (timeout, compile error, missing toolchain) is a failed check of the candidate, never an exception of the job.
+- The history of a date `D` is read once, before the attempts: `recentChallenges` are the challenges of the game with `status IN ('approved','published','voided')` and `date` in `[D - recentDays, D + aheadDays]`, **excluding the row of `D`** (`historyWindow` in `generate.ts`). `aheadDays` is optional (default 0). Excluding `D` keeps the old `approved` challenge of a regeneration from counting against its replacement.
 - `challenges.number` is computed with `@nerdose/core` (`date - LAUNCH_DATE + 1`) at insert time. `generator_version` is stored with every challenge.
 - A challenge is never regenerated from its seed: the stored `payload` is the source of truth.
 - Never generate for `today` or past dates. If a day arrives without a challenge the day is neutral.
 - On approval the `last_used_*` of the used bank items are updated in the same transaction with `GREATEST(last_used_*, date)`, so filling an earlier gap never moves a date backwards.
 - If tomorrow's challenge for a game is missing after all attempts: `UPSERT generation_failures` (one row per game and date, with `attempts` and `last_reason`). That row is the alert: the admin shows it in Próximos desafíos; nothing is sent (ADR-017).
 - The `generator` imports only `./generator` (and `./definition` if needed) of the game packages, and makes no HTTP requests to external services.
+- At startup, before the first jobs, the `generator` calls `checkToolchains()` of `@nerdose/polyglot` and logs a `warn` (`Toolchain missing at startup`, with `toolchain` and `required`) for each missing toolchain among Go >= 1.25 and JDK 21. It never refuses to start: a missing toolchain shows up as `run_<lang>: toolchain_missing` in the rejected candidates.
 
 ## Integration with other conventions
 
@@ -119,3 +127,10 @@ import { generator as devdle } from '@nerdose/game-devdle/generator';
 
 - `ChallengePublishingRepository` is multi-bank: a `BANKS` map (`terms`, `timeline_facts`) replaces `LAST_USED_COLUMNS`. `bankItems(spec)` selects the `approved` items of the spec's bank, and `approve` receives `ApproveOptions.bank` and updates `last_used = GREATEST(last_used, D)` only in that bank's table. Approving a Timeline challenge never touches `terms`. **Adopted in S-028.**
 - Timeline: `historySpec = { bank: 'timeline_facts', lastUsedField: 'last_used', recentDays: 90 }`, `version: 'timeline@1'`.
+
+## Update (REQ-009)
+
+- `GameGenerator.verify` may be asynchronous: `generateForDate` does `await generator.verify(payload, history)`. Synchronous generators (Devdle, Grep Grid, Timeline) do not change. **Adopted in S-042.**
+- `HistorySpec.aheadDays?: number` (default 0). `historyWindow(date, spec)` returns `{ from: D - recentDays, to: D + aheadDays, exclude: D }` and `ChallengePublishingRepository.recentChallenges(gameId, from, to, payloadSchema, excludeDate)` applies it. Games with a bank do not need `aheadDays` (`GREATEST(last_used_*, D)` already reflects approved challenges in the future); Big O has no bank and uses it so that filling an intermediate gap or regenerating cannot repeat a recipe approved for a later day. **Adopted in S-042.**
+- Big O registers as `{ gameId: 'big-o', generator, payloadSchema, version: 'big-o@1' }` with `historySpec = { bank: null, lastUsedField: '', recentDays: 30, aheadDays: 30 }` and `usedBankItems = () => []`; `approve` touches no bank. Its payload carries `date` (optional in the schema, always set by `generate`) because `verify` has no date argument and the variety checks need it. The `verify` checks (`texts_bilingual`, `code_shape`, `variety_recipe`, `variety_answer`, `run_js`, `run_go`, `run_java`, `counts_agree`, `counts_in_range`, `example_matches_run`, `fit_quality`, `fit_unambiguous`, `fit_matches_answer`) are listed in the flow `generacion-diaria`. **Adopted in S-045.**
+- Startup `warn` for missing toolchains (`apps/generator/src/infra/toolchains/warn-missing-toolchains.ts`). **Adopted in S-045.**

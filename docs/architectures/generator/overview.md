@@ -26,3 +26,9 @@ Supuestos tomados al generar esta arquitectura sin interacción con el usuario:
 
 **Manifest:** [manifest.yaml](./manifest.yaml)
 **Indice de arquitectura:** [index.md](./index.md)
+
+## Update (REQ-009)
+
+- Registry con Devdle, Grep Grid, Timeline y Big O (`big-o@1`). Big O es el primer juego sin banco (`historySpec.bank = null`, `aheadDays: 30`) y el primero cuyo `verify` es asíncrono y ejecuta código con `@nerdose/polyglot` (convenciones `challenge-generation` y `code-runner`).
+- Al arrancar, antes de `sync_banks` y `fill`, el `generator` corre `checkToolchains()` y loguea un `warn` `Toolchain missing at startup` por cada toolchain que falte (Go >= 1.25, JDK 21). No se niega a arrancar: los candidatos de Big O se rechazan con `run_<lang>: toolchain_missing`.
+- El runner necesita `HOME` (o `GOCACHE`) en el entorno del proceso: el hijo recibe solo `PATH`, `HOME`, `GOCACHE`, `GOPATH` y `TMPDIR`, y sin cache `go build` falla como `compile_error`.

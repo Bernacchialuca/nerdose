@@ -4,8 +4,8 @@ title: Abrir el juego de hoy, empezar y retomar
 type: feature
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-10
-stories: [S-022, S-023, S-024]
+last_updated: 2026-11-14
+stories: [S-022, S-023, S-024, S-043, S-046]
 ---
 
 # Abrir el juego de hoy, empezar y retomar
@@ -13,8 +13,8 @@ stories: [S-022, S-023, S-024]
 **Tipo:** Feature
 **Status:** Draft
 **Creado:** 2026-11-03
-**Última actualización:** 2026-11-10
-**Stories:** S-022, S-023, S-024
+**Última actualización:** 2026-11-14
+**Stories:** S-022, S-023, S-024, S-043, S-046
 
 ## Descripción
 
@@ -95,7 +95,7 @@ sequenceDiagram
 | devdle | `{ length, possible_categories[] }` |
 | grep-grid | `{ grid: string[12][12], words: [{ term_id, word, definition? }] ×8 }` — `definition` solo en las palabras ya encontradas (`term_id` presentes en `plays.state.found_words`), en el locale resuelto; nunca en las no encontradas ni sin Play |
 | timeline | `{ category, prompt, items: [{ opaque_id, label }] ×5 }` (mezclados) |
-| big-o | `{ code: { js, go, java }, options: big_o_option[8] }` |
+| big-o | `{ code: { js, go, java }, options: big_o_option[8] }` — `options` es siempre `BIG_O_OPTIONS` en orden fijo (`o_1 … o_n_fact`), nunca dependiente de la respuesta; `toPublic` ignora `locale` y `state`. Nunca incluye `answer`, `trap_option`, `explanation`, `recipe`, `recipe_category` ni `date` |
 | bug-hunt | `{ spec, code: { js, go, java }, pickable_lines: int[], visible_tests: [{ input, expected }] }` |
 
 **Ref:** `docs/apis/api.yaml` GET /api/games/{game_id}/today (`GameToday`, `PublicView`, `PlayView`, `Result`)
@@ -151,7 +151,9 @@ sequenceDiagram
 **Destino:** (interno)
 **Tipo:** Interno
 
-**Acción:** en Big O y Bug Hunt, `public_view.code` trae `js`, `go` y `java`. Cambiar de lenguaje no hace ningún request ni altera la Play (invariante 17). El lenguaje inicial es `players.preferred_code_language`.
+**Acción:** en Big O y Bug Hunt, `public_view.code` trae `js`, `go` y `java`. El shell le pasa al client del juego `codeLanguage = session.preferred_code_language ?? 'js'` (prop genérica de `ClientBaseProps`; los juegos sin código la ignoran) y el `Game` arranca en ese lenguaje. Cambiar de pestaña es estado local: no hace ningún request, no altera la Play ni persiste la preferencia (invariante 17).
+
+En Big O la opción seleccionada tampoco se guarda en el servidor: `plays.state` sigue `{}` hasta confirmar. La selección sobrevive al cambio de lenguaje y de idioma (el `Game` sigue montado), pero se pierde al salir: al retomar, el jugador ve el código y las 8 opciones sin selección y con su intento intacto.
 
 ## Manejo de Errores
 
@@ -178,3 +180,5 @@ sequenceDiagram
 - La `api` nunca serializa `challenges.payload` al jugador. Antes de terminar, solo `public_view`. Después, `result`.
 - En Grep Grid, al retomar o al cambiar de idioma, las definiciones de las palabras encontradas salen de `public_view.words[].definition`; `plays.state.found_words` guarda solo `{ term_id, cells }` (REQ-005).
 - Si `POST …/move` llega sin una Play creada, la crea igual que `/start` (ver `jugada-y-cierre-de-partida`).
+
+> Actualizado por REQ-009 (stories S-043 y S-046): vista pública de Big O con `options` en orden fijo, lenguaje inicial `codeLanguage` desde la sesión y selección solo en el cliente.

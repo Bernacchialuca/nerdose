@@ -68,9 +68,17 @@ There is no root `.` export: a consumer must pick an entry.
 
 | Entry | Exports | Consumer |
 |---|---|---|
-| `./definition` | `definition`: object implementing `GameDefinition` (`moveSchema`, `toPublic`, `initState`, `applyMove`, `isFinished`, `result`, `isWin`, `score`, `initialStats`, `reduceStats`, `historyLabel`) | `apps/api`, and `./client`/`./generator` for types |
-| `./client` | React components `Instructions`, `Game`, `Result` and `share(result, number)` | `apps/web`, `apps/admin` |
-| `./generator` | `generator`: `GameGenerator` with `generate({ date, seed, history })` and `verify(payload, ctx)` | `apps/generator` |
+| `./definition` | `definition`: object implementing `GameDefinition` (`id`, `version`, `moveSchema`, `bankUsage`, `toPublic`, `initState`, `applyMove`, `isFinished`, `result`, `isWin`, `score`, `initialStats`, `reduceStats`, `codeLanguage`, `historyLabel`, `culprits`), plus the Zod schemas (`payloadSchema`, `moveSchema`, `stateSchema`, `publicViewSchema`, `resultSchema`, `statsSchema`) and their types | `apps/api`; `apps/generator` (`payloadSchema`, `version`); `./client`/`./generator` for types |
+| `./client` | React components `Instructions`, `Game`, `Result`, `Preview({ payload, language })`, `share(result, number)`, `i18n` and `HELP_TARGET_ID` | `apps/web`, `apps/admin` (`Preview` only) |
+| `./generator` | `generator`: `GameGenerator` with `historySpec`, `usedBankItems(payload)`, `generate({ date, seed, history })` and `verify(payload, history)` (returns `VerificationLog` or `Promise<VerificationLog>`) | `apps/generator` |
+
+Members of `GameDefinition` that only some games use are still mandatory and take a neutral value in the others, so the shell never branches by `game_id`:
+
+| Member | Games that use it | Neutral value |
+|---|---|---|
+| `bankUsage: BankUsage \| null` | `devdle`, `grep-grid` (`terms`), `timeline` (`timeline_facts`) | `null` (`big-o`, `bug-hunt`) |
+| `culprits(p): Culprit[]` | games with a bank: the items of the payload that the admin can blame when voiding | `[]` (`big-o`: the culprit of a void is `template`) |
+| `codeLanguage(s): CodeLanguage \| null` | `big-o`, `bug-hunt`: the language the Play was confirmed with (`s.language ?? null`); the `api` stores it in `plays.code_language` and in `players.preferred_code_language` | `null` (`devdle`, `grep-grid`, `timeline`) |
 
 ### What each entry may import
 
@@ -98,6 +106,7 @@ There is no root `.` export: a consumer must pick an entry.
 - `share(result, number)` never includes the solution and ends with `nerdose.dev`.
 - `generate` is deterministic: same `{ date, seed, history }` gives the same payload. It never uses `Math.random()` or the current time; randomness comes from the PRNG built from the seed.
 - Every player-facing text of a `Payload` is `{ es, en }`; `verify` fails if a language is missing.
+- `verify` may be `async` (games that execute code through `@nerdose/polyglot`); the `generator` always `await`s it. It receives no date: a game whose variety checks need `D` carries it in the payload (`date`), as every game does (`big-o` declares it optional and fails `variety_*` without it).
 - `./definition` and `./client` never import `@nerdose/polyglot`, `node:child_process` or anything that executes code (enforced by ESLint, see `monorepo-tooling`).
 - Heavy dependencies (Shiki, dnd-kit) belong to the game package and load in the game's own chunk.
 - Changing the `GameDefinition` interface touches all five packages in the same commit.
@@ -110,3 +119,9 @@ There is no root `.` export: a consumer must pick an entry.
 - **testing**: contract, determinism and unit tests per entry.
 - **styling** / **accessibility** / **testing-unit**: apply to `./client`.
 - **monorepo-tooling**: import boundaries enforced by lint.
+
+## Update (REQ-009)
+
+- `GameDefinition.codeLanguage(s)` joins `bankUsage` and `culprits` as a mandatory member with a neutral value (`null`) in the games without code (see the table above).
+- `GameGenerator.verify` may return a `Promise`; `HistorySpec.aheadDays` is optional (default 0) and lets a game without a bank read approved challenges after `D` (`big-o`: `{ bank: null, lastUsedField: '', recentDays: 30, aheadDays: 30 }`).
+- `big-o` is the first package whose `./generator` imports `@nerdose/polyglot` (`runInLanguage`, `wrapFunction`, the emitters and the tree builder); its `./client` loads Shiki lazily inside the game's chunk.

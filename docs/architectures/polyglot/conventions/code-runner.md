@@ -75,10 +75,13 @@ Every `execFile` uses `timeout`, `killSignal: 'SIGKILL'`, `maxBuffer: 1_048_576`
 - `verify()` compares outputs across languages and against the expected values and records the result in the `VerificationLog`.
 
 ```ts
+// Big O (packages/games/big-o/src/generator/verify.ts): one process per language runs the whole scale.
 const outcomes = await Promise.all(
   LANGUAGES.map((l) => runInLanguage(l, wrapFunction(code[l], l, { entry: 'f', calls }))),
 );
-checks.push({ name: 'same_output_all_languages', ok: outcomes.every((o) => o.ok && o.stdout === expected) });
+// run_js / run_go / run_java: a failed outcome is a failed check (`reason = run_<lang>: <kind>`).
+// counts_agree: the three stdout parse to the same sequence of integers.
+checks.push({ name: 'counts_agree', ok: sameCounts(js, go, java) });
 ```
 
 ## Rules

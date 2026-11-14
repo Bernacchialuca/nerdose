@@ -4,8 +4,8 @@ title: Jugada y cierre de partida con rachas
 type: feature
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-10
-stories: [S-022, S-023, S-024]
+last_updated: 2026-11-14
+stories: [S-022, S-023, S-024, S-042, S-043]
 ---
 
 # Jugada y cierre de partida con rachas
@@ -13,8 +13,8 @@ stories: [S-022, S-023, S-024]
 **Tipo:** Feature
 **Status:** Draft
 **Creado:** 2026-11-03
-**Última actualización:** 2026-11-10
-**Stories:** S-022, S-023, S-024
+**Última actualización:** 2026-11-14
+**Stories:** S-022, S-023, S-024, S-042, S-043
 
 ## Descripción
 
@@ -47,14 +47,14 @@ sequenceDiagram
         A-->>W: 422 invalid_move
     else jugada válida, partida sigue (con o sin cambio de estado)
         A->>DB: UPDATE plays SET state; COMMIT
-        A-->>W: 200 { feedback, play, result: null, streaks: null }
+        A-->>W: 200 { feedback, play, result: null, streaks: null, game_stats: null }
     else jugada cierra la partida
         A->>DB: UPDATE plays SET status, result, score, code_language, finished_at
         A->>DB: SELECT max(date) FROM challenges (prev_active_day)
         A->>DB: UPSERT player_game_stats; UPSERT player_stats
         A->>DB: UPDATE players SET preferred_code_language (cuando `codeLanguage(state)` no es null: big-o / bug-hunt)
         A->>DB: COMMIT
-        A-->>W: 200 { feedback, play, result, streaks }
+        A-->>W: 200 { feedback, play (con code_language), result, streaks, game_stats }
     end
 ```
 
@@ -109,6 +109,8 @@ sequenceDiagram
 - `{ state, feedback }` → **Operación de BD:** `plays` UPDATE `state`.
 - Jugada válida sin cambio de estado (solo Grep Grid): una línea válida hacia adelante que no coincide exactamente con una de las 8 palabras (`feedback.reason = 'not_a_word'`) o una palabra ya encontrada (`feedback.reason = 'already_found'`) devuelven el mismo `state`. No son errores: el UPDATE con el mismo `state` es idempotente y la respuesta es `200`, sin penalización.
 
+Big O: `initState → {}` y el estado sigue vacío mientras la Play está `in_progress` (la opción seleccionada y el lenguaje visible viven solo en el cliente). La primera jugada válida devuelve `{ state: { language, option }, feedback: null }` y cierra la partida (`isFinished(s) = s.option !== undefined`). Si `state.option` ya existe, `applyMove` devuelve `invalid_move` (defensivo: la `api` responde antes `409 game_finished`). Una opción o un lenguaje fuera de los enums falla en `moveSchema` (`422 invalid_move`) antes de abrir la transacción: no crea Play ni toca la preferencia.
+
 Grep Grid, `move.type = 'select'`: si `from` y `to` coinciden exactamente con la primera y la última celda de una palabra no encontrada, se agrega `{ term_id, cells }` al final de `state.found_words` y `feedback.definition` va en `ctx.locale`. `move.type = 'give_up'`: `state.gave_up = true` y `feedback = null`.
 
 **Eventos de dominio:** `GuessRejected` o `MoveApplied`, solo en los logs.
@@ -128,7 +130,11 @@ En Grep Grid, `isFinished(state) = state.gave_up || state.found_words.length ===
 **Operación de BD:**
 - **Tabla:** `plays`
 - **Operación:** UPDATE
-- **Campos:** `status = win ? 'won' : 'lost'`, `result`, `score`, `code_language` (= `move.language` en big-o / bug-hunt; si no, null), `finished_at = now()`
+- **Campos:** `status = win ? 'won' : 'lost'`, `state`, `result`, `score`, `code_language = codeLanguage(state)` del `GameDefinition`, `finished_at = now()`
+
+`codeLanguage(state)` devuelve el lenguaje con el que se confirmó: big-o `state.language ?? null` (bug-hunt lo implementará igual); devdle, grep-grid y timeline `null`. La `api` no lee `move.language` ni ramifica por `game_id` (ADR-006).
+
+Big O: `result = { win: option === answer, score: 1 | 0, answer, chosen_option, code_language, recipe_category, trap_option, explanation: { steps, line_notes, tip, example } }` con los textos en `locale`. `extra` de big-o = `{ by_category: { <recipe_category>: { played, correct } } }`; `reduceStats` suma `played += 1` y `correct += win ? 1 : 0` en la categoría de la receta.
 
 **Operación de BD (rachas, F3.1 / ADR-011):**
 - **Tabla:** `challenges` — SELECT `max(date)` WHERE `game_id` AND `date < D` AND `status IN ('published','voided')` (`prev_active_day`), y lo mismo sin filtrar `game_id` (`prev_active_day_global`)
@@ -136,7 +142,7 @@ En Grep Grid, `isFinished(state) = state.gave_up || state.found_words.length ===
 - **Tabla:** `player_stats` — INSERT … ON CONFLICT (`player_id`) DO UPDATE: `global_streak`, `max_global_streak`, `last_active_date = D`, `total_completed + 1`
 
 **Operación de BD (preferencia):**
-- **Tabla:** `players` — UPDATE `preferred_code_language = codeLanguage(state)` (solo cuando no es null: big-o y bug-hunt)
+- **Tabla:** `players` — UPDATE `preferred_code_language = codeLanguage(state)` WHERE `id = player_id`, solo cuando `codeLanguage(state)` no es null (big-o y bug-hunt), en la misma transacción que la Play y las rachas
 
 **Eventos de dominio:** `PlayFinished`, `StreaksUpdated`, solo en los logs.
 
@@ -154,9 +160,10 @@ En Grep Grid, `isFinished(state) = state.gave_up || state.found_words.length ===
   ```json
   {
     "feedback": "Feedback | null",
-    "play": { "status": "in_progress | won | lost", "state": "PlayState", "score": "integer | null" },
+    "play": { "status": "in_progress | won | lost", "state": "PlayState", "score": "integer | null", "code_language": "js | go | java | null — codeLanguage(state) al cerrar big-o / bug-hunt; null en los demás casos" },
     "result": "Result | null — solo si cerró",
-    "streaks": "null | { game: { current, max }, global: { current, max } } — solo si cerró"
+    "streaks": "null | { game: { current, max }, global: { current, max } } — solo si cerró",
+    "game_stats": "GameStatsView | null — solo si cerró"
   }
   ```
 
@@ -167,6 +174,8 @@ En Grep Grid, `isFinished(state) = state.gave_up || state.found_words.length ===
 | devdle | `{ guess, marks: ("correct" \| "present" \| "absent")[] }` |
 | grep-grid | `{ found: true, term_id, word, definition, cells: [{ row, col }] }` o `{ found: false, reason: "not_a_word" \| "already_found" }`; `null` en `give_up` |
 | timeline, big-o, bug-hunt | `null` (la jugada cierra) |
+
+La web copia `play.code_language` a la Play en su cache y, si no es null, actualiza `preferred_code_language` en la cache de la sesión sin otro request: la próxima partida de big-o o bug-hunt arranca en ese lenguaje (ver `preferencias-y-share`).
 
 **Ref:** `docs/apis/api.yaml` (`MoveResponse`, `Feedback`, `Result`, `Streaks`), `docs/db-schemas/nerdose-db.md` tablas `plays`, `player_game_stats`, `player_stats`, `rejected_guesses`
 
@@ -202,3 +211,5 @@ En Grep Grid, `isFinished(state) = state.gave_up || state.found_words.length ===
 - La lista válida de Devdle está en memoria (ADR-012). `rejected_guesses` solo se usa para el ranking del admin.
 
 > Actualizado por REQ-006 (stories S-025 a S-029): ver el diseño técnico del request para los cambios de Timeline.
+
+> Actualizado por REQ-009 (stories S-042 y S-043): `code_language = codeLanguage(state)` del juego (no `move.language`), preferencia actualizada en la misma transacción, `MoveResponse.play.code_language`, estado, resultado y `extra` de Big O.

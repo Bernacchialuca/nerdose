@@ -83,7 +83,7 @@ Nodes are plain serializable objects with a stable `id` (`n1`, `n2`, ...). Each 
 
 ### Pieces built on the tree (live in the game packages)
 
-- Big O: a catalog of **blocks** (constant, linear, logarithmic, halving, dependent, binary search, divide and conquer, double recursion), each with its cost and explanation in `es` and `en`.
+- Big O: a catalog of **blocks** (`constant`, `linear`, `dependent`, `doubling`, `halving`, `binary_search`, `divide_and_conquer` with 1, 2 or 4 recursive calls, `double_recursion`, `permutations`) composed into **recipes** by nesting (`nest`) and sequence (`seq`), each block with its exact cost and explanation in `es` and `en` (`packages/games/big-o/src/generator/catalog/`).
 - Bug Hunt: **templates** of correct functions with parameters and **mutations** (loop bounds, comparison, operator, wrong variable or index, initialization, inverted condition, misplaced `return`).
 
 ## Rules

@@ -4,8 +4,8 @@ title: Preferencias del jugador y compartir resultado
 type: feature
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-10
-stories: [S-007, S-009, S-024]
+last_updated: 2026-11-14
+stories: [S-007, S-009, S-024, S-046]
 ---
 
 # Preferencias del jugador y compartir resultado
@@ -13,8 +13,8 @@ stories: [S-007, S-009, S-024]
 **Tipo:** Feature
 **Status:** Draft
 **Creado:** 2026-11-03
-**Última actualización:** 2026-11-10
-**Stories:** S-007, S-009, S-024
+**Última actualización:** 2026-11-14
+**Stories:** S-007, S-009, S-024, S-046
 
 ## Descripción
 
@@ -121,6 +121,12 @@ sequenceDiagram
    6/8
    nerdose.dev
    ```
+   Big O (🟩 si acertó, 🟥 si no, y el lenguaje con el que confirmó; sin la opción elegida ni la correcta, idéntico en es y en):
+   ```
+   🧮 Big O #12
+   🟩 Java
+   nerdose.dev
+   ```
 2. `navigator.share({ text })` si está disponible; si no, `navigator.clipboard.writeText(text)` y el aviso "copiado".
 3. `track('share:<game_id>')` de `@nerdose/ui`. Es un no-op si `VITE_PLAUSIBLE_DOMAIN` está vacío.
 
@@ -145,6 +151,8 @@ sequenceDiagram
 
 ## Notas
 
-- `preferred_code_language` también se actualiza solo al confirmar en Big O o Bug Hunt (ver `jugada-y-cierre-de-partida`).
+- `preferred_code_language` también se actualiza solo al confirmar en Big O o Bug Hunt (ver `jugada-y-cierre-de-partida`): la `api` lo guarda con `codeLanguage(state)` en la transacción de cierre y la web lo copia de `MoveResponse.play.code_language` a la cache de la sesión (`sessionKeys.all`) sin otro request, así la próxima partida de Big O o Bug Hunt arranca en ese lenguaje.
 - El cambio de lenguaje de código durante la partida es solo del cliente: no llama a este endpoint hasta que el jugador lo fija como preferencia.
 - Compartir no hace ningún request a la `api`.
+
+> Actualizado por REQ-009 (story S-046): formato de share de Big O y preferencia de lenguaje reflejada en la cache de la sesión al confirmar.

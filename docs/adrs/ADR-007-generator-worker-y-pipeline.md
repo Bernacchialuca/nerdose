@@ -1,7 +1,7 @@
 # ADR-007: Generator como worker siempre activo y pipeline de generación
 
 **Estado:** Accepted
-**Fecha:** 2026-11-03
+**Fecha:** 2026-11-03 (actualizado 2026-11-14: Go con `go build` + binario en el runner)
 **Decisores:** Responsable de nerdose
 **Etiquetas:** generator, scheduler, seed, verificación, contenido
 
@@ -34,7 +34,7 @@ Si para `today+1` un juego sigue sin desafío después de todos los intentos, se
 
 **Nunca se genera para `today`:** si llega el día sin desafío, el día es neutro.
 
-**Runner:** `child_process.execFile` con timeout de 10 s, usuario no root y un `main` por variante y lenguaje que corre todos los inputs. Java en modo source-file (`java Main.java`).
+**Runner:** `child_process.execFile` con timeout de 10 s, usuario no root y un `main` por variante y lenguaje que corre todos los inputs. Java en modo source-file (`java Main.java`). Go se compila con `go build` y se ejecuta el binario, no con `go run`: `go run` lanza el binario como un hijo propio y el `SIGKILL` del timeout lo dejaba huérfano consumiendo CPU; las dos fases comparten el presupuesto de 10 s (actualizado 2026-11-14, REQ-009 / S-041).
 
 ## Reglas de Implementación
 

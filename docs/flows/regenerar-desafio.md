@@ -4,8 +4,8 @@ title: Regenerar un desafío desde el admin
 type: feature
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-13
-stories: [S-035, S-036, S-037, S-038, S-039]
+last_updated: 2026-11-14
+stories: [S-035, S-036, S-037, S-038, S-039, S-045, S-046]
 ---
 
 # Regenerar un desafío desde el admin
@@ -13,8 +13,8 @@ stories: [S-035, S-036, S-037, S-038, S-039]
 **Tipo:** Feature
 **Status:** Draft
 **Creado:** 2026-11-03
-**Última actualización:** 2026-11-03
-**Stories:** —
+**Última actualización:** 2026-11-14
+**Stories:** S-035, S-036, S-037, S-038, S-039, S-045, S-046
 
 ## Descripción
 
@@ -114,7 +114,9 @@ sequenceDiagram
 **Destino:** nerdose-db
 **Tipo:** Interno
 
-**Acción:** igual que `generacion-diaria`, con `attempt` desde `max(attempt) + 1` y hasta `GENERATION_MAX_ATTEMPTS` intentos. `seed = HMAC-SHA256(GENERATOR_SECRET, "{game_id}:{date}:{attempt}")`.
+**Acción:** igual que `generacion-diaria`, con `attempt` desde `max(attempt) + 1` y hasta `GENERATION_MAX_ATTEMPTS` intentos. `seed = HMAC-SHA256(GENERATOR_SECRET, "{game_id}:{date}:{attempt}")`. La historia excluye la fila de `date`, así el `approved` viejo que se reemplaza no cuenta contra su reemplazo (ventana `[D - recentDays, D + aheadDays]` sin `D`).
+
+En big-o, `verify` ejecuta el código en JS, Go y Java (ver `generacion-diaria`, paso 3): cada candidato tarda unos segundos más que en los otros juegos. El polling de 5 s del admin ya lo cubre; los pasos no cambian.
 
 **Operación de BD (por candidato):**
 - **Tabla:** `challenges` — INSERT (`game_id`, `date`, `number`, `payload`, `status = 'draft'`, `generator_version`, `seed`, `attempt`, `verification`)
@@ -181,3 +183,6 @@ El orden 1 → 2 respeta el índice único parcial `uq_challenges_active_game_da
 - Regenerar nunca deja un día sin desafío: el viejo sigue vigente hasta el reemplazo.
 - El `NOTIFY` es fire-and-forget. El `202` no depende de que el `generator` esté vivo.
 - Un `published` (hoy) nunca se regenera (invariante 6). Si tiene errores, se anula (`anulacion-de-desafio`).
+- Big O no tiene banco (`culprits = []`, `bankUsage = null`): el paso 4.3 no toca ninguna tabla y `rejected_items` va vacío. El admin muestra el desafío con la `Preview` de big-o (código en los 3 lenguajes, respuesta, trampa y explicación) y el `VerificationLog` con los checks y el detalle del ajuste.
+
+> Actualizado por REQ-009 (stories S-045 y S-046): historia sin la fila de `D` en la regeneración, verificación por ejecución de Big O y su preview en el admin.
