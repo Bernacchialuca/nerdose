@@ -13,8 +13,10 @@ y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Código alineado con el spec
 - `@nerdose/game-big-o/client` (S-046, plan `games`): `Instructions`, `Game`, `Result`, `Preview`, `share`, `i18n` y `HELP_TARGET_ID`; Shiki por `import()` dinámico en `highlight.ts`.
+- `apps/web` (S-046, plan `web`): Big O montado por el registry (`clientRegistry['big-o']`), `codeLanguage` resuelto desde la sesión y guardas de build (CSS y Shiki fuera del chunk de entrada). Sin componentes ni tokens nuevos en `web`.
 
 ### Notas para limpiar en otros docs
+- `web`: el aviso de día nuevo dice «… sin **terminar** …» (screen.md de Big O: «sin **confirmar**») y el loader es «$ cargando big-o…» (screen.md: «$ cargando tu partida de big-o…»). Son textos genéricos del host compartidos por los 4 juegos.
 - `@nerdose/ui` no tiene los tokens `game.big-o.light` (`#8CC8FF`; `--color-game-big-o-light` vale `#9ACFFF`, el hover), `tint-strong` (`#11243A`), `line-highlight` (`#0E1D2E`) ni `tab-selected` (`#1D2A3A`): el client usa `tint-border`, `tint` y `light` en su lugar. Candidato a una story de `ui`.
 - Roles tipográficos sin utilidad `text-*` en `@nerdose/ui`: `type.code` (15/2), `type.game.option` (16/400), `type.label.tab`, `type.label.step` y `type.body.explain`; el client usa los roles existentes más cercanos y `tab-size` por `style`.
 - `text.line-number` (`#4F5A66`, 2,7:1) no se usa: los números de línea van en `text.dim`.

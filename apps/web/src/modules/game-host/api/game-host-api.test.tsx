@@ -6,7 +6,9 @@ import { I18nextProvider } from 'react-i18next';
 import { describe, expect, it, vi } from 'vitest';
 
 import i18n from '@/i18n';
-import { SessionProvider } from '@/modules/session';
+import { SessionProvider, useSession } from '@/modules/session';
+import { BO_STATS, bigOInProgress, boMove, boResult } from '@/test/fixtures/big-o-today';
+import { recordCalls } from '@/test/game-route-helpers';
 import {
   acknowledgeVoidOk,
   gameTodayInProgress,
@@ -125,6 +127,73 @@ describe('useSubmitMove', () => {
     expect(data?.result).toEqual(moveWon.result);
     expect(data?.game_stats).toEqual(moveWon.game_stats);
     expect(invalidate).toHaveBeenCalledWith({ queryKey: ['today'] });
+  });
+
+  it('TS-6: cerrar Big O actualiza la Play y la preferencia en cache, sin PATCH', async () => {
+    const calls = recordCalls();
+    server.use(
+      http.post('/api/games/big-o/today/move', () =>
+        HttpResponse.json(boMove('o_n_log_n', 'java')),
+      ),
+    );
+    const { wrapper, queryClient } = setup();
+    queryClient.setQueryData(gameTodayKeys.detail('big-o', 'es'), bigOInProgress);
+    const invalidate = vi.spyOn(queryClient, 'invalidateQueries');
+    const { result } = renderHook(() => ({ move: useSubmitMove('big-o'), session: useSession() }), {
+      wrapper,
+    });
+    await waitFor(() => expect(result.current.session.status).toBe('active'));
+    await act(() =>
+      result.current.move.mutateAsync({
+        challengeNumber: 128,
+        move: { language: 'java', option: 'o_n_log_n' },
+      }),
+    );
+    const data = queryClient.getQueryData<GameToday>(gameTodayKeys.detail('big-o', 'es'));
+    expect(data?.play).toEqual({
+      status: 'won',
+      state: { language: 'java', option: 'o_n_log_n' },
+      score: 1,
+      code_language: 'java',
+    });
+    expect(data?.result).toEqual(boResult('o_n_log_n', 'java'));
+    expect(data?.game_stats).toEqual(BO_STATS);
+    expect(
+      (queryClient.getQueryData(['session']) as { preferred_code_language: string })
+        .preferred_code_language,
+    ).toBe('java');
+    expect(result.current.session.preferred_code_language).toBe('java');
+    expect(calls.filter((c) => c.method === 'PATCH')).toEqual([]);
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ['today'] });
+  });
+
+  it('TS-7: un juego sin code_language no toca la preferencia', async () => {
+    server.use(gameHandlers.move(moveInProgress));
+    const { wrapper, queryClient } = setup();
+    queryClient.setQueryData(gameTodayKeys.detail('devdle', 'es'), gameTodayInProgress);
+    const { result } = renderHook(
+      () => ({ move: useSubmitMove('devdle'), session: useSession() }),
+      {
+        wrapper,
+      },
+    );
+    await waitFor(() => expect(result.current.session.status).toBe('active'));
+    await act(() =>
+      result.current.move.mutateAsync({ challengeNumber: 128, move: { guess: 'SCRIPT' } }),
+    );
+    const open = queryClient.getQueryData<GameToday>(gameTodayKeys.detail('devdle', 'es'));
+    expect(open?.play?.code_language).toBeNull();
+    expect(open?.result).toBeNull();
+    server.use(gameHandlers.move(moveWon));
+    await act(() =>
+      result.current.move.mutateAsync({ challengeNumber: 128, move: { guess: 'PARSER' } }),
+    );
+    const closed = queryClient.getQueryData<GameToday>(gameTodayKeys.detail('devdle', 'es'));
+    expect(closed?.play?.code_language).toBeNull();
+    expect(
+      (queryClient.getQueryData(['session']) as { preferred_code_language: string })
+        .preferred_code_language,
+    ).toBe('js');
   });
 
   it('TS-23: ante no_session recrea la sesión una vez y reintenta', async () => {

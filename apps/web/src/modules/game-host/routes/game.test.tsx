@@ -532,14 +532,16 @@ describe('estados sin client', () => {
 
   it('TS-30: un juego válido sin client no llama a la api', async () => {
     const calls = recordCalls();
-    view('/big-o');
-    expect(await h1('Big O')).toBeInTheDocument();
+    view('/bug-hunt');
+    expect(await h1('Bug Hunt')).toBeInTheDocument();
     expect(
-      screen.getByText('Hoy no hay desafío de Big O. Es un día neutro: no suma ni corta tu racha.'),
+      screen.getByText(
+        'Hoy no hay desafío de Bug Hunt. Es un día neutro: no suma ni corta tu racha.',
+      ),
     ).toBeInTheDocument();
-    expect(calls.filter((c) => c.path.startsWith('/api/games/big-o'))).toEqual([]);
+    expect(calls.filter((c) => c.path.startsWith('/api/games/bug-hunt'))).toEqual([]);
     const nav = within(screen.getByRole('banner')).getByRole('navigation', { name: 'Ruta' });
-    expect(within(nav).getByText('big-o')).toBeInTheDocument();
+    expect(within(nav).getByText('bug-hunt')).toBeInTheDocument();
   });
 
   it('TS-32: anulado sin Play abre O-02 sobre el aviso, sin poder empezar', async () => {
@@ -953,8 +955,8 @@ describe('axe', () => {
   });
 
   it('TS-53: juego sin client y partida anulada', async () => {
-    const a = view('/big-o');
-    await h1('Big O');
+    const a = view('/bug-hunt');
+    await h1('Bug Hunt');
     expect(await axe(a.container)).toHaveNoViolations();
     a.unmount();
     server.use(gameHandlers.today(gameTodayInProgress));

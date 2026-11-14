@@ -4,7 +4,7 @@ import type { PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { LOCALES } from '@nerdose/core';
-import type { Locale } from '@nerdose/core';
+import type { CodeLanguage, Locale } from '@nerdose/core';
 
 import { ApiError } from '@/lib/api-client';
 import { fetchToday, todayKeys } from '@/modules/catalog';
@@ -89,6 +89,16 @@ export function SessionProvider({ children }: PropsWithChildren) {
     [i18n, locale, queryClient, status],
   );
 
+  const rememberCodeLanguage = useCallback(
+    (language: CodeLanguage) => {
+      queryClient.setQueryData<SessionResponse>(
+        sessionKeys.all,
+        (old) => old && { ...old, preferred_code_language: language },
+      );
+    },
+    [queryClient],
+  );
+
   const preferredCodeLanguage = bootstrap.data?.preferred_code_language ?? null;
   const value = useMemo<SessionContextValue>(
     () => ({
@@ -97,8 +107,9 @@ export function SessionProvider({ children }: PropsWithChildren) {
       locale,
       preferred_code_language: preferredCodeLanguage,
       changeLocale,
+      rememberCodeLanguage,
     }),
-    [status, locale, preferredCodeLanguage, changeLocale],
+    [status, locale, preferredCodeLanguage, changeLocale, rememberCodeLanguage],
   );
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;

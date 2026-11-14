@@ -3,8 +3,8 @@
 ## SessionProvider / useSession
 - **Location:** apps/web/src/modules/session/session-provider.tsx, use-session.ts
 - **Description:** Calls `POST /api/session` once per load, applies the returned `locale` with i18next, refetches `GET /api/today?lang=` after the session and derives `status`.
-- **Signature:** `useSession(): { status: 'loading' | 'active' | 'cookies_blocked' | 'unavailable'; canPlay: boolean; locale: Locale; preferred_code_language: CodeLanguage | null; changeLocale(locale: Locale): Promise<void> }` (throws outside the provider)
-- **Usage:** `const { canPlay } = useSession();`
+- **Signature:** `useSession(): { status: 'loading' | 'active' | 'cookies_blocked' | 'unavailable'; canPlay: boolean; locale: Locale; preferred_code_language: CodeLanguage | null; changeLocale(locale: Locale): Promise<void>; rememberCodeLanguage(language: CodeLanguage): void }` (throws outside the provider)
+- **Usage:** `const { canPlay } = useSession();`. `rememberCodeLanguage` writes `preferred_code_language` into the session cache (no-op without session data, no `PATCH`); `useSubmitMove` calls it when a closed game returns `play.code_language`.
 
 ## LanguageSelector
 - **Location:** apps/web/src/modules/session/components/language-selector.tsx

@@ -14,6 +14,7 @@ function sources(dir: string): string[] {
 }
 
 const DND = '@dnd' + '-kit';
+const HIGHLIGHTER = 'shi' + 'ki';
 
 describe('game-host boundaries', () => {
   const files = sources(ROOT);
@@ -25,6 +26,7 @@ describe('game-host boundaries', () => {
       'modules/game-host/registry.ts',
     ]);
     const text = readFileSync(withGame[0] as string, 'utf8');
+    expect(text).toContain("import('@nerdose/game-big-o/client')");
     expect(text).toContain("import('@nerdose/game-devdle/client')");
     expect(text).toContain("import('@nerdose/game-grep-grid/client')");
     expect(text).toContain("import('@nerdose/game-timeline/client')");
@@ -41,6 +43,39 @@ describe('game-host boundaries', () => {
         return /\.tsx?$/.test(name) ? [path] : [];
       });
     for (const file of all(ROOT)) expect(readFileSync(file, 'utf8'), file).not.toContain(DND);
+  });
+
+  it('TS-3: ningún archivo de src/ (ni tests) menciona el resaltador de código', () => {
+    const all = (dir: string): string[] =>
+      readdirSync(dir).flatMap((name) => {
+        const path = join(dir, name);
+        if (statSync(path).isDirectory()) return all(path);
+        return /\.tsx?$/.test(name) ? [path] : [];
+      });
+    for (const file of all(ROOT)) {
+      expect(readFileSync(file, 'utf8').toLowerCase(), file).not.toContain(HIGHLIGHTER);
+    }
+  });
+
+  it('TS-3: sin lógica por juego para Big O ni lectura de campos suyos', () => {
+    const allowed = [
+      'modules/game-host/registry.ts',
+      'modules/catalog/games.ts',
+      'modules/catalog/components/how-it-works.tsx',
+      'i18n/es.ts',
+      'i18n/en.ts',
+    ];
+    const rels = files.map((f) => f.slice(ROOT.length + 1)).filter((f) => !f.startsWith('test/'));
+    for (const file of rels.filter((f) =>
+      readFileSync(join(ROOT, f), 'utf8').includes("'big-o'"),
+    )) {
+      expect(allowed, file).toContain(file);
+    }
+    for (const file of rels) {
+      expect(readFileSync(join(ROOT, file), 'utf8'), file).not.toMatch(
+        /chosen_option|trap_option|recipe_category|line_notes|public_view\.code/,
+      );
+    }
   });
 
   it('TS-43: sin lógica por juego para Timeline ni lectura de campos suyos', () => {

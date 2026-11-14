@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { act, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { StrictMode } from 'react';
@@ -382,5 +382,24 @@ describe('SessionProvider', () => {
 
   it('TS-50 useSession fuera del provider lanza', () => {
     expect(() => render(<Probe />)).toThrow('useSession must be used within SessionProvider');
+  });
+});
+
+describe('rememberCodeLanguage', () => {
+  it('TS-8: sin datos de sesión es no-op', async () => {
+    server.use(http.post('/api/session', () => new Promise<Response>(() => undefined)));
+    client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const { result } = renderHook(() => useSession(), {
+      wrapper: ({ children }) => (
+        <QueryClientProvider client={client}>
+          <I18nextProvider i18n={i18n}>
+            <SessionProvider>{children}</SessionProvider>
+          </I18nextProvider>
+        </QueryClientProvider>
+      ),
+    });
+    act(() => result.current.rememberCodeLanguage('go'));
+    expect(client.getQueryData(['session'])).toBeUndefined();
+    expect(result.current.preferred_code_language).toBeNull();
   });
 });

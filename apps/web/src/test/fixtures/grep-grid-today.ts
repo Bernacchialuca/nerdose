@@ -249,7 +249,12 @@ const STREAKS = { game: { current: 3, max: 4 }, global: { current: 6, max: 12 } 
 
 export const ggMoveDocker = {
   feedback: FB_DOCKER,
-  play: { status: 'in_progress', state: ggState([...FOUND_3, 'DOCKER']), score: null },
+  play: {
+    status: 'in_progress',
+    state: ggState([...FOUND_3, 'DOCKER']),
+    score: null,
+    code_language: null,
+  },
   result: null,
   streaks: null,
   game_stats: null,
@@ -257,7 +262,7 @@ export const ggMoveDocker = {
 
 export const ggMoveNotAWord = {
   feedback: FB_NOT_A_WORD,
-  play: { status: 'in_progress', state: ggState(FOUND_3), score: null },
+  play: { status: 'in_progress', state: ggState(FOUND_3), score: null, code_language: null },
   result: null,
   streaks: null,
   game_stats: null,
@@ -267,7 +272,7 @@ export const ggMoveAlready = { ...ggMoveNotAWord, feedback: FB_ALREADY } satisfi
 
 export const ggMoveGiveUp3 = {
   feedback: null,
-  play: { status: 'lost', state: ggState(FOUND_3, true), score: 3 },
+  play: { status: 'lost', state: ggState(FOUND_3, true), score: 3, code_language: null },
   result: ggResult(FOUND_3),
   streaks: STREAKS,
   game_stats: { ...GG_STATS, current_streak: 3, played: 6 },
@@ -281,7 +286,7 @@ export const ggMoveWinRedis = {
     definition: 'definición de REDIS',
     cells: CELLS.REDIS,
   },
-  play: { status: 'won', state: ggState(GG_WORDS), score: 8 },
+  play: { status: 'won', state: ggState(GG_WORDS), score: 8, code_language: null },
   result: ggResult(GG_WORDS),
   streaks: STREAKS,
   game_stats: grepGridWon.game_stats,

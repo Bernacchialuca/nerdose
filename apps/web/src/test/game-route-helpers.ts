@@ -12,7 +12,7 @@ export function recordCalls(): Call[] {
     const url = new URL(request.url);
     const call: Call = { method: request.method, path: url.pathname + url.search };
     calls.push(call);
-    if (request.method === 'POST') {
+    if (request.method === 'POST' || request.method === 'PATCH') {
       void request
         .clone()
         .json()
