@@ -103,6 +103,37 @@ describe('cn with theme roles', () => {
     expect(TEXT_ROLES).toHaveLength(40);
   });
 
+  it('keeps the solution-preview roles next to their game accents (S-038 TS-6, TS-7)', () => {
+    expect(cn('font-mono text-title-panel text-game-devdle')).toBe(
+      'font-mono text-title-panel text-game-devdle',
+    );
+    expect(cn('font-mono text-label-comment text-text-dim')).toBe(
+      'font-mono text-label-comment text-text-dim',
+    );
+    expect(cn('font-mono text-mono-unit-compact font-bold', 'text-game-grep-grid-light')).toBe(
+      'font-mono text-mono-unit-compact font-bold text-game-grep-grid-light',
+    );
+    expect(cn('font-mono text-numeric-year text-game-timeline')).toBe(
+      'font-mono text-numeric-year text-game-timeline',
+    );
+    expect(
+      cn('border-2 border-game-grep-grid bg-game-grep-grid font-extrabold text-game-grep-grid-on'),
+    ).toBe(
+      'border-2 border-game-grep-grid bg-game-grep-grid font-extrabold text-game-grep-grid-on',
+    );
+    expect(cn('font-mono text-mono-body font-bold text-game-grep-grid')).toBe(
+      'font-mono text-mono-body font-bold text-game-grep-grid',
+    );
+    // Conflictos: la fila solución cede ante la inset; el rol de panel cede ante el título
+    expect(
+      cn(
+        'border-game-grep-grid-featured bg-game-grep-grid-found-bg',
+        'border-surface-inset bg-surface-inset',
+      ),
+    ).toBe('border-surface-inset bg-surface-inset');
+    expect(cn('text-label-comment', 'text-title-panel')).toBe('text-title-panel');
+  });
+
   it('resolves role, radius and shadow conflicts (TS-11)', () => {
     expect(cn('text-meta', 'text-mono-body')).toBe('text-mono-body');
     expect(cn('rounded-control', 'rounded-panel')).toBe('rounded-panel');

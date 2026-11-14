@@ -1,8 +1,8 @@
 ---
 pattern: game-boards
-version: 1.4.0
+version: 1.5.0
 status: active
-last_updated: 2026-11-11
+last_updated: 2026-11-13
 source: docs/nerdose.html
 related: [card, panel, code-block, button, chip, streak-pill]
 ---
@@ -76,7 +76,7 @@ Tecla: alto 54, `radius.tile` (8), sin borde, `type.game.key` (Mono 700 15); let
 
 ### Cabecera `//` de panel (1.1.0)
 
-En las pantallas de Devdle las cabeceras `// …` de pistas, palabra y distribución son `h2` (Mono 13 `text.dim`, el `//` `aria-hidden`), con dato opcional en `text.streak`.
+En las pantallas de Devdle las cabeceras `// …` de pistas, palabra y distribución son `h2` (Mono 13 `text.dim`, el `//` `aria-hidden`), con dato opcional en `text.streak`. **1.5.0:** embebida en la preview del admin (bajo el título `h2` del drawer O-02), la cabecera es `h3` con el mismo estilo (`SectionPanel` con `headingLevel={3}`).
 
 ### `devdle.distribution` — tus intentos (L501-514, L575-581)
 
@@ -222,8 +222,9 @@ Grilla `grid grid-cols-12 gap-1 rounded-feature border border-border bg-surface-
 | revelada (solo resultado) | sin relleno | `#F9A8D4` | 2px dashed `#F472B6` | borde punteado + glifo `○` |
 | foco (partida) | — | — | outline 2px `#F472B6`, offset 2 | outline |
 | bloqueada (`locked` / enviando) | sin cambio visual | | | `aria-disabled` en el `grid` |
+| solución (preview del admin, 1.5.0) | `#F472B6` | `#24081A` | 2px solid `#F472B6` | glifo `✓` + peso 800 (mismos valores que encontrada) |
 
-`aria-label`: «{letra}, fila {r+1}, columna {c+1}, {libre|inicio|encontrada|revelada}». Interacción: primer toque (o Enter/Espacio) marca el inicio; segundo toque envía `{ from, to }`; tocar de nuevo el inicio o Escape lo desmarca sin enviar. Navegación por flechas, Home y End con roving tabindex (una sola parada de tabulación).
+`aria-label`: «{letra}, fila {r+1}, columna {c+1}, {libre|inicio|encontrada|revelada|parte de la solución}». Interacción: primer toque (o Enter/Espacio) marca el inicio; segundo toque envía `{ from, to }`; tocar de nuevo el inicio o Escape lo desmarca sin enviar. Navegación por flechas, Home y End con roving tabindex (una sola parada de tabulación).
 
 ### `grep-grid.hint` — línea de consola (L1123, L1221)
 
@@ -239,8 +240,9 @@ Panel `SectionPanel` "// palabras de hoy" (`h2`); lista gap 8 en orden fijo. Fil
 | encontrada (partida) | `#1F0D19` | 1px solid `#5B2147` | `#F9A8D4` tachado | "✓" `#F472B6` 800 + «encontrada» solo para lectores de pantalla |
 | encontrada (resultado) | igual | igual | igual | "✓ encontrada" `#F472B6` 800 |
 | revelada (resultado) | estilo pendiente | igual | `text.primary` | "○ no la encontraste" `text.dim` |
+| solución (preview del admin, 1.5.0) | `#1F0D19` | 1px solid `#5B2147` | `#F9A8D4` **sin tachado** | "{n} letras" `text.dim` |
 
-Encontrada y revelada suman la **definición** (Inter 13/1.5 `text.body`, rol `text-caption`; el prototipo dice 1.45): el momento de aprendizaje.
+Encontrada, revelada y solución suman la **definición** (Inter 13/1.5 `text.body`, rol `text-caption`; el prototipo dice 1.45): el momento de aprendizaje.
 
 ### `grep-grid.counter` — dato `N/8` en el encabezado de la lista (1.4.0)
 
@@ -253,6 +255,28 @@ El contador es el dato a la derecha de «// palabras de hoy» en `grep-grid.word
 ### `grep-grid.surrender-dialog` — O-04 «¿Rendirte?» (1.2.0)
 
 Gap de DS aceptado en REQ-005: el DS no define modales; se deriva de `panel` + `button` según la guía de identidad. Overlay `fixed inset-0 z-50 flex items-center justify-center bg-header px-4` (clic en el overlay = «Seguir jugando»); panel `role="alertdialog" aria-modal="true"` `flex w-full max-w-xl flex-col gap-4 rounded-panel border border-border bg-surface p-6`; cabecera con `h2` Mono `text-title-panel` y botón cerrar `buttonClass({ variant: 'icon' })`; texto `font-sans text-body text-text-body`; acciones `flex flex-wrap gap-3` con cada botón `grow basis-50` («Seguir jugando» `primary` primero; «Sí, rendirme» `outline-tinted`). Foco inicial en «Seguir jugando» (nunca en la destructiva), trampa de foco, Escape / cerrar / overlay cierran salvo en `loading` («Cerrando…», ambos botones `aria-disabled`), el foco vuelve a «Rendirse» y el contenido de la partida queda `inert`. Sin animación.
+
+## Modo solución — preview del admin (1.5.0)
+
+Cada `client` exporta `Preview` (`{ payload, language }`, REQ-008 decisión 10): el tablero del juego con la solución superpuesta. El admin lo muestra en el drawer O-02 desde Próximos, en ES y EN lado a lado (dos cards de 6/12, solo desktop). Se arma con las mismas piezas de la partida y del resultado, con el acento del juego, y no suma tokens.
+
+**Reglas comunes:**
+- **Solo lectura:** sin botones, sin roving tabindex, sin hint ni regiones `aria-live`. No se juega ni se crea una partida.
+- **Raíz `<div lang={language}>`** sin rol ni landmark: el admin ya envuelve cada panel en una `section` con `aria-label` («Español» / «English»).
+- **Cabeceras `//` en `h3`:** van bajo el `h2` del drawer. Nunca `h1` ni `h2`.
+- **Textos del `payload` según `language`** (`{ es, en }`). Los rótulos propios de la preview existen en los dos idiomas.
+- **Escala al ancho del panel:** los tableros de Devdle y Grep Grid ya escalan con `@container`; todo va en una sola columna.
+- **Solo admin:** el `payload` completo trae la solución y llega solo por `/api/admin/*`. `web` nunca monta `Preview`.
+
+| Juego | Contenido (de arriba abajo) | Piezas |
+|---|---|---|
+| Devdle | Tablero de **una fila** con la palabra, todas las celdas `correcta` (glifo `✓`). `aria-label` del tablero: «Solución: {PALABRA}» / «Solution: {WORD}». Debajo, card «// palabra del día» / «// word of the day» (`h3`) con la palabra (`type.title.panel`, `game.devdle.accent`), «Categoría: {categoría}», la definición, «Resumen» + el resumen y «Fuente: Wikipedia (CC BY-SA)». | `devdle.cell` |
+| Grep Grid | Tablero de solo lectura (`role="table"`, como en el resultado), con las celdas de las 8 palabras en estado **solución** (calculadas desde `placements`). `aria-label`: «Grilla con las 8 palabras resaltadas» / «Grid with the 8 words highlighted». Debajo, panel «// palabras del desafío» / «// challenge words» (`h3`) con el dato «8 palabras» / «8 words» (mismo estilo que `grep-grid.counter`) y las 8 filas en estado **solución**, cada una con su definición. | `grep-grid.board`, `grep-grid.cell`, `grep-grid.word` |
+| Tech Timeline | Línea «// consigna: {consigna}» / «// task: {prompt}» (`type.label.comment`, `text.dim`). Debajo, card «// orden correcto» / «// correct order» (`h3`) con `timeline.rail`: los 5 hechos en el orden de `correct_order`, cada uno con fecha por precisión, nombre, categoría y nota. | `timeline.rail` |
+
+**Estado «solución» y no «encontrada»:** en la preview nadie jugó. Por eso la celda dice «parte de la solución» / «part of the solution» en su `aria-label`, y la fila no se tacha y muestra «{n} letras» en lugar de «✓ encontrada».
+
+**Contraste (verificado en S-038):** el único par nuevo es el tag «{n} letras» (`text.dim` `#8D99A6`) sobre la fila solución (`#1F0D19`): 6,41:1. El resto repite pares de «encontrada» (`#24081A` sobre `#F472B6`, 7,05:1; `#F9A8D4` sobre `#1F0D19`, 10,25:1) y de `devdle.cell` correcta (`#06120B` sobre `#3DDC84`, 10,71:1).
 
 ## Miniaturas de tarjeta
 
@@ -272,6 +296,7 @@ Cabecera de 150px de la [tarjeta de juego](../components/card.md), `aria-hidden`
 - Mantener borde de 2px estable en todas las piezas.
 - Acompañar cada estado de juego con glifo, patrón o texto además del color.
 - Usar `aria-label` por celda con letra/posición y estado.
+- En la preview del admin, usar el estado «solución» (no «encontrada»): nadie jugó.
 
 **Don't:**
 - No animar celdas ni filas.
@@ -285,3 +310,5 @@ Cabecera de 150px de la [tarjeta de juego](../components/card.md), `aria-hidden`
 - 2026-11-09 v1.1.0 — Story S-021: se resuelven los «Pendiente» de Devdle (glifo no cromático, escalado a 320px, tecla presente, descartada ≥ 4,5:1, borde estable, hover/foco/deshabilitado, ancho de tecla a 320px) y se documentan el aviso de jugada y la cabecera `//` como `h2`.
 - 2026-11-10 v1.2.0 — Story S-024: se resuelven los «Pendiente» de Grep Grid (tablero escalado a 320px, estados revelada/hover/foco/bloqueada de la celda, `<div role="gridcell">` + `<button>`, textos y anuncio del hint, estado revelada de la palabra, `outline-tinted` de error) y se documentan el contador sin reloj y O-04 «¿Rendirte?».
 - 2026-11-10 v1.3.0 — Story S-029: se resuelven los «Pendiente» de Tech Timeline (estados de juego de `timeline.row`: default, foco, tomada, destino y bloqueada; medidas a 320px; teclado y botones ↑ ↓; columna de fecha de `timeline.rail`) y se documenta `timeline.hint` con sus anuncios ES/EN.
+- 2026-11-11 v1.4.0 — `grep-grid.counter` pasa de `card` `counter` sobre la grilla a dato `N/8` en el encabezado de la lista (CHANGELOG 1.8.0).
+- 2026-11-13 v1.5.0 — Story S-038: modo solución para la preview del admin (Devdle, Grep Grid y Tech Timeline), estado «solución» de `grep-grid.cell` y `grep-grid.word` y cabecera `//` en `h3` cuando va embebida.
