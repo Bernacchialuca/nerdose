@@ -1,7 +1,7 @@
 import type { GameId } from '@nerdose/core';
-import { challenges, terms } from '@nerdose/db';
+import { challenges, generationRequests, terms } from '@nerdose/db';
 import type { Db, Tx } from '@nerdose/db';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 
 import type { CachedChallenge } from './publishing.types';
 
@@ -63,5 +63,57 @@ export class PublishingRepository
 
   async findApprovedTerms(): Promise<Array<{ term: string }>> {
     return this.db.select({ term: terms.term }).from(terms).where(eq(terms.status, 'approved'));
+  }
+
+  /** Sin lock: la api no cambia el challenge salvo la publicación de hoy (decisión 5). */
+  async findChallengeStatus(
+    id: string,
+  ): Promise<{ id: string; status: string; date: string } | null> {
+    const [row] = await this.db
+      .select({ id: challenges.id, status: challenges.status, date: challenges.date })
+      .from(challenges)
+      .where(eq(challenges.id, id))
+      .limit(1);
+    return row ?? null;
+  }
+
+  async insertPendingRequest(
+    challengeId: string,
+  ): Promise<{ id: string; status: 'pending'; requestedAt: Date } | null> {
+    const [row] = await this.db
+      .insert(generationRequests)
+      .values({ challengeId })
+      // uq_generation_requests_pending es un índice parcial: inferencia por columna + predicado.
+      .onConflictDoNothing({
+        target: generationRequests.challengeId,
+        where: sql`${generationRequests.status} = 'pending'`,
+      })
+      .returning({
+        id: generationRequests.id,
+        status: generationRequests.status,
+        requestedAt: generationRequests.requestedAt,
+      });
+    return row ? { id: row.id, status: 'pending', requestedAt: row.requestedAt } : null;
+  }
+
+  async findPendingRequest(
+    challengeId: string,
+  ): Promise<{ id: string; status: 'pending'; requestedAt: Date } | null> {
+    const [row] = await this.db
+      .select({ id: generationRequests.id, requestedAt: generationRequests.requestedAt })
+      .from(generationRequests)
+      .where(
+        and(
+          eq(generationRequests.challengeId, challengeId),
+          eq(generationRequests.status, 'pending'),
+        ),
+      )
+      .limit(1);
+    return row ? { id: row.id, status: 'pending', requestedAt: row.requestedAt } : null;
+  }
+
+  /** SQL crudo: Drizzle no expresa pg_notify (ADR-005). */
+  async notify(requestId: string): Promise<void> {
+    await this.db.execute(sql`SELECT pg_notify('generation_requests', ${requestId})`);
   }
 }

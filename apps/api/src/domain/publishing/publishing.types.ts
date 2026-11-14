@@ -31,3 +31,9 @@ export type Today = {
   completed_today: number;
   games: TodayGame[];
 };
+
+export type RegenerationAccepted = {
+  request_id: string;
+  status: 'pending';
+  requested_at: string;
+};

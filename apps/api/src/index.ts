@@ -1,6 +1,7 @@
 import { serve } from '@hono/node-server';
 
 import { loadEnv, loadLocalEnvFile } from '@/config/env';
+import { AdminContentService } from '@/domain/admin/admin-content.service';
 import { AdminRepository } from '@/domain/admin/admin.repository';
 import { AdminService } from '@/domain/admin/admin.service';
 import { IdentityRepository } from '@/domain/identity/identity.repository';
@@ -14,6 +15,7 @@ import { QualityService } from '@/domain/quality/quality.service';
 import { VoidService } from '@/domain/quality/void.service';
 import { PublishingRepository } from '@/domain/publishing/publishing.repository';
 import { PublishingService } from '@/domain/publishing/publishing.service';
+import { RegenerationService } from '@/domain/publishing/regeneration.service';
 import { games } from '@/games/registry';
 import { TodayCache } from '@/infra/cache/today-cache';
 import { WordList, resolveWordlistPath } from '@/infra/cache/word-list';
@@ -118,6 +120,16 @@ if (env) {
         clock,
         repo: new AdminRepository(db),
         games,
+      }),
+      adminContent: new AdminContentService({
+        repo: new AdminRepository(db),
+        games,
+        clock,
+        launchDate: env.LAUNCH_DATE,
+      }),
+      regeneration: new RegenerationService({
+        runInTx: (fn) => db.transaction((tx) => fn(new PublishingRepository(tx))),
+        clock,
       }),
       voids: new VoidService({
         games,

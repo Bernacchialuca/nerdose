@@ -6,6 +6,7 @@ import type { Db } from '@nerdose/db';
 import type { Logger } from 'pino';
 
 import { hashPassword, signAdminToken } from '@/domain/admin/admin-auth';
+import { AdminContentService } from '@/domain/admin/admin-content.service';
 import { AdminRepository } from '@/domain/admin/admin.repository';
 import { AdminService } from '@/domain/admin/admin.service';
 import { GameplayRepository, moveTransaction } from '@/domain/gameplay/gameplay.repository';
@@ -25,6 +26,10 @@ import {
   type TermsReadRepository,
 } from '@/domain/publishing/publishing.repository';
 import { PublishingService } from '@/domain/publishing/publishing.service';
+import {
+  RegenerationService,
+  type RegenerationRepo,
+} from '@/domain/publishing/regeneration.service';
 import { games } from '@/games/registry';
 import { buildApp } from '@/http/app';
 import type { AppDeps } from '@/http/types';
@@ -177,7 +182,46 @@ export function buildMemoryServices(opts: { clock?: Clock; logger: Logger }) {
       throw new Error('sin base en este test');
     },
   };
-  return { publishing, gameplay, cache, progress, quality, admin, voids };
+  const adminContent = new AdminContentService({
+    repo: {
+      findActiveFailures: async () => [],
+      findApprovedBetween: async () => [],
+      findLatestRequests: async () => [],
+      findRejectedBankItems: async () => [],
+      countBank: async () => ({
+        approvedTotal: 0,
+        rejectedTotal: 0,
+        available: [],
+        availableAll: 0,
+      }),
+      findRejections: async () => [],
+      findLastSuccessfulSync: async () => null,
+      topRejectedGuesses: async () => [],
+    },
+    games,
+    clock,
+    launchDate: TEST_CONFIG.LAUNCH_DATE,
+  });
+  const regeneration = {
+    regenerate: async (): Promise<{
+      request_id: string;
+      status: 'pending';
+      requested_at: string;
+    }> => {
+      throw new Error('sin base en este test');
+    },
+  };
+  return {
+    publishing,
+    gameplay,
+    cache,
+    progress,
+    quality,
+    admin,
+    voids,
+    adminContent,
+    regeneration,
+  };
 }
 
 export async function tempWordList(words: string[] = ['CACHE', 'REACT']) {
@@ -205,6 +249,8 @@ export async function buildDbServices(
     thresholds?: AlertThresholds;
     /** Envuelve los repos de la transacción de la anulación (p. ej. para forzar una falla). */
     wrapVoidRepos?: (r: VoidTxRepos) => VoidTxRepos;
+    /** Envuelve el repo de la transacción de regeneración (p. ej. para que `notify` lance). */
+    wrapRegenerationRepo?: (r: RegenerationRepo) => RegenerationRepo;
   },
 ) {
   const clock = opts.clock ?? systemClock;
@@ -267,6 +313,21 @@ export async function buildDbServices(
     progress,
     clock,
   });
+  const wrapRegen = opts.wrapRegenerationRepo;
+  const adminContent = new AdminContentService({
+    repo: new AdminRepository(db),
+    games,
+    clock,
+    launchDate: TEST_CONFIG.LAUNCH_DATE,
+  });
+  const regeneration = new RegenerationService({
+    runInTx: (fn) =>
+      db.transaction((tx) => {
+        const repo = new PublishingRepository(tx);
+        return fn(wrapRegen ? wrapRegen(repo) : repo);
+      }),
+    clock,
+  });
   return {
     identity: dbs.identity(),
     publishing,
@@ -277,6 +338,8 @@ export async function buildDbServices(
     wordList,
     admin,
     voids,
+    adminContent,
+    regeneration,
   };
 }
 
@@ -296,6 +359,8 @@ export function buildTestApp(
     quality: overrides.quality ?? memory.quality,
     admin: overrides.admin ?? memory.admin,
     voids: overrides.voids ?? memory.voids,
+    adminContent: overrides.adminContent ?? memory.adminContent,
+    regeneration: overrides.regeneration ?? memory.regeneration,
   });
   return { app, lines: captured.lines };
 }
@@ -317,6 +382,8 @@ export async function buildDbApp(
     quality: services.quality,
     admin: services.admin,
     voids: services.voids,
+    adminContent: services.adminContent,
+    regeneration: services.regeneration,
   });
   return { app, lines: captured.lines, ...services };
 }

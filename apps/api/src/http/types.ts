@@ -3,12 +3,14 @@ import type { Player } from '@nerdose/db';
 import type { Logger } from 'pino';
 
 import type { ApiEnv } from '@/config/env';
+import type { AdminContentService } from '@/domain/admin/admin-content.service';
 import type { AdminService } from '@/domain/admin/admin.service';
 import type { GameplayService } from '@/domain/gameplay/gameplay.service';
 import type { IdentityService } from '@/domain/identity/identity.service';
 import type { QualityService } from '@/domain/quality/quality.service';
 import type { VoidService } from '@/domain/quality/void.service';
 import type { PublishingService } from '@/domain/publishing/publishing.service';
+import type { RegenerationService } from '@/domain/publishing/regeneration.service';
 import type { Health } from '@/infra/database/health';
 
 export type AppDeps = {
@@ -29,6 +31,8 @@ export type AppDeps = {
   quality: Pick<QualityService, 'report'>;
   admin: Pick<AdminService, 'login' | 'listReportGroups' | 'updateReport'>;
   voids: Pick<VoidService, 'void'>;
+  adminContent: Pick<AdminContentService, 'upcoming' | 'generationFailures' | 'stock'>;
+  regeneration: Pick<RegenerationService, 'regenerate'>;
 };
 
 export type AppEnv = {

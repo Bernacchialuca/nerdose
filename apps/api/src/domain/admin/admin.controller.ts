@@ -10,6 +10,7 @@ import {
   reportParamSchema,
   reportPatchSchema,
   reportsQuerySchema,
+  upcomingQuerySchema,
 } from './admin.schema';
 
 const factory = createFactory<AppEnv>();
@@ -40,3 +41,14 @@ export const updateReport = (deps: AppDeps) =>
         ),
       ),
   );
+
+export const listUpcoming = (deps: AppDeps) =>
+  factory.createHandlers(zValidator('query', upcomingQuerySchema, validationHook), async (c) =>
+    c.json(await deps.adminContent.upcoming(c.req.valid('query').days)),
+  );
+
+export const listGenerationFailures = (deps: AppDeps) =>
+  factory.createHandlers(async (c) => c.json(await deps.adminContent.generationFailures()));
+
+export const getContentStock = (deps: AppDeps) =>
+  factory.createHandlers(async (c) => c.json(await deps.adminContent.stock()));

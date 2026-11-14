@@ -90,3 +90,9 @@
 - **Signature:** `login(password, log)`, `listReportGroups(status)`, `updateReport(reportId, status, log)`; `playerRef(playerId)`
 - **Description:** report groups are ordered alerted first, `report_count` desc, `challenge.date` desc; `player_ref` is the first 8 hex of `sha256(player_id)`; games without a registered definition yield `culprits: []`
 - **Usage:** `const { groups } = await deps.admin.listReportGroups('open')`
+
+## AdminContentService / BANK_COLUMNS / resolveBankConsumers / buildBankStock
+- **Location:** apps/api/src/domain/admin/admin-content.service.ts, bank-columns.ts, bank-stock.ts
+- **Signature:** `new AdminContentService({ repo, games, clock, launchDate })` with `upcoming(days)`, `generationFailures()`, `stock()`; `resolveBankConsumers(games): Array<{ bank, consumers: Array<{ gameId, usage, column }> }>`; `buildBankStock({ bank, approvedTotal, rejectedTotal, available, availableAll, consumers })`
+- **Description:** admin reads that never use `TodayCache`. `BANK_COLUMNS` maps each bank (not each game) to its Drizzle table, label and `last_used_*` columns; `resolveBankConsumers` throws `Unknown bank usage: <bank>.<field>` at construction. `buildBankStock` is pure (per-consumer `days_of_stock`/`cycle_ok`, bank-level min/all).
+- **Usage:** `deps.adminContent.upcoming(14)`; routes `GET /api/admin/challenges/upcoming`, `/generation-failures`, `/content/stock`
