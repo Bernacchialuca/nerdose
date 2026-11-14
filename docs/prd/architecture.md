@@ -67,7 +67,7 @@ No hay Redis ni bus de mensajes: las caches y el rate limit viven en la memoria 
 - **api → generator** (PostgreSQL `pg_notify('generation_requests', request_id)`, asíncrono, fire-and-forget)
   - Pedido de regeneración desde el admin. Es el único mensaje entre backends. El generator toma el pedido de la tabla `generation_requests` con `FOR UPDATE SKIP LOCKED`, y además hace un poll cada 60 s como respaldo.
 
-- **generator → toolchains locales** (subprocesos `node`, `go run`, `java`, locales)
+- **generator → toolchains locales** (subprocesos `node`, `go build` + binario, `java`, locales)
   - Verificación ejecutando de Big O y Bug Hunt, con timeout de 10 s y usuario no root.
 
 ### Integraciones Externas
