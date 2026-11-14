@@ -4,12 +4,13 @@ import type { GrepGridPayload } from '../definition';
 import { GRID_DUPLICATE, ID, PAYLOAD } from '../definition/test-fixtures';
 import { BANK_FIXTURE, history, mk } from './test-fixtures';
 import { generator } from './index';
+import { verifyPayload } from './verify';
 
 const verify = (
   p: unknown,
   bank = BANK_FIXTURE,
   recent: { date: string; payload: GrepGridPayload }[] = [],
-) => generator.verify(p as GrepGridPayload, history(bank, recent));
+) => verifyPayload(p as GrepGridPayload, history(bank, recent));
 const reason = (p: unknown, bank = BANK_FIXTURE) => {
   const v = verify(p, bank);
   expect(v.ok).toBe(false);
@@ -149,5 +150,12 @@ describe('verifyPayload', () => {
     );
     expect(v.checks.find((c) => c.name === 'exactly_once')?.detail).toBe('grid_shape failed');
     expect(() => verify({ date: 'x' })).not.toThrow();
+  });
+
+  it('generator.verify is verifyPayload and works under await (S-042 TS-10)', async () => {
+    expect(generator.verify).toBe(verifyPayload);
+    const v = await generator.verify(PAYLOAD, history(BANK_FIXTURE));
+    expect(v.ok).toBe(true);
+    expect(v.reason).toBeUndefined();
   });
 });

@@ -63,3 +63,15 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 - **Signature:** `approveOld(svc: Db, date = D, env = ENV): Promise<GenerateResult>`; `requestFor(owner: Db, challengeId, requestedAt?): Promise<GenerationRequest>`; constants `D = '2026-12-05'`, `NOW`, `SECRET`, `ENV`
 - **Description:** regeneration fixtures. `approveOld` creates the old approved devdle challenge with the real `fill`-mode pipeline (so `last_used_devdle` is real); `requestFor` inserts a `pending` `generation_requests` row with the owner role.
 - **Usage:** `await approveOld(t.svc.db); const req = await requestFor(t.owner.db, old.id)`
+
+## withGenerator
+- **Location:** apps/generator/test/helpers/registry.ts
+- **Signature:** `withGenerator(entry: GeneratorEntry, overrides: Partial<AnyGameGenerator>): GeneratorEntry`
+- **Description:** registry entry with parts of its generator replaced (forced `verify`, test `historySpec`).
+- **Usage:** `withGenerator(entry, { verify: async () => ({ ok: true, checks: [] }) })`
+
+## devdlePayload / seedDevdle
+- **Location:** apps/generator/test/helpers/challenges.ts
+- **Signature:** `devdlePayload(date, category = 'git')`; `seedDevdle(owner: Db, date, status, launchDate = '2026-11-20')`
+- **Description:** valid Devdle payload and a seeded Devdle challenge with that payload (`recentChallenges` parses each payload). `voided` rows get `voidReason`/`voidedAt`.
+- **Usage:** `await seedDevdle(t.owner.db, '2027-01-10', 'approved')`

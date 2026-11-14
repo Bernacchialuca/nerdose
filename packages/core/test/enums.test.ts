@@ -1,10 +1,14 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
+import { z } from 'zod';
+
 import {
+  BIG_O_OPTIONS,
   CODE_LANGUAGES,
   DATE_PRECISIONS,
   GENERATION_REQUEST_STATUSES,
   LOCALES,
+  RECIPE_CATEGORIES,
   REPORT_REASONS,
   REPORT_STATUSES,
   TERM_CATEGORIES,
@@ -12,11 +16,13 @@ import {
   isGameId,
 } from '../src/index';
 import type {
+  BigOOption,
   CodeLanguage,
   DatePrecision,
   GameId,
   GenerationRequestStatus,
   Locale,
+  RecipeCategory,
   ReportReason,
   ReportStatus,
   TermCategory,
@@ -201,5 +207,78 @@ describe('GENERATION_REQUEST_STATUSES', () => {
     const r: GenerationRequestStatus = 'running';
     expect(s).toBe('cancelled');
     expect(r).toBe('running');
+  });
+});
+
+describe('Big O enums (S-042)', () => {
+  it('lists BIG_O_OPTIONS in fixed order (S-042 TS-1)', () => {
+    expect(BIG_O_OPTIONS).toEqual([
+      'o_1',
+      'o_log_n',
+      'o_n',
+      'o_n_log_n',
+      'o_n2',
+      'o_n3',
+      'o_2n',
+      'o_n_fact',
+    ]);
+    expect(BIG_O_OPTIONS).toHaveLength(8);
+  });
+
+  it('derives BigOOption (S-042 TS-2)', () => {
+    expectTypeOf<BigOOption>().toEqualTypeOf<
+      'o_1' | 'o_log_n' | 'o_n' | 'o_n_log_n' | 'o_n2' | 'o_n3' | 'o_2n' | 'o_n_fact'
+    >();
+  });
+
+  it('keeps BIG_O_OPTIONS read-only (S-042 TS-3)', () => {
+    const mutate = (): void => {
+      // @ts-expect-error BIG_O_OPTIONS is readonly
+      BIG_O_OPTIONS.push('o_n4');
+    };
+    expectTypeOf(mutate).toBeFunction();
+  });
+
+  it('rejects invented BigOOption values (S-042 TS-4)', () => {
+    const ok: BigOOption = 'o_n_log_n';
+    // @ts-expect-error 'o_n4' is not a BigOOption
+    const bad: BigOOption = 'o_n4';
+    expect(ok).toBe('o_n_log_n');
+    expect(bad).toBe('o_n4');
+  });
+
+  it('lists RECIPE_CATEGORIES in fixed order (S-042 TS-5)', () => {
+    expect(RECIPE_CATEGORIES).toEqual([
+      'simple_loops',
+      'nested_loops',
+      'recursion',
+      'divide_and_conquer',
+      'binary_search',
+    ]);
+    expect(RECIPE_CATEGORIES).toHaveLength(5);
+  });
+
+  it('derives RecipeCategory and keeps the list read-only (S-042 TS-6)', () => {
+    expectTypeOf<RecipeCategory>().toEqualTypeOf<
+      'simple_loops' | 'nested_loops' | 'recursion' | 'divide_and_conquer' | 'binary_search'
+    >();
+    const mutate = (): void => {
+      // @ts-expect-error RECIPE_CATEGORIES is readonly
+      RECIPE_CATEGORIES.push('graphs');
+    };
+    expectTypeOf(mutate).toBeFunction();
+  });
+
+  it('works with z.enum for the Big O moveSchema (S-042 TS-7)', () => {
+    const schema = z.strictObject({
+      language: z.enum(CODE_LANGUAGES),
+      option: z.enum(BIG_O_OPTIONS),
+    });
+    const good = schema.safeParse({ language: 'go', option: 'o_n_log_n' });
+    expect(good.success).toBe(true);
+    expect(good.data).toEqual({ language: 'go', option: 'o_n_log_n' });
+    expect(schema.safeParse({ language: 'go', option: 'o_n4' }).success).toBe(false);
+    expect(schema.safeParse({ language: 'rust', option: 'o_1' }).success).toBe(false);
+    expect(schema.safeParse({ language: 'js', option: 'o_1', extra: 1 }).success).toBe(false);
   });
 });

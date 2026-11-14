@@ -103,6 +103,7 @@ export const grepGrid: GameDefinition<
     return { words_found: { ...prev.words_found, [key]: prev.words_found[key] + 1 } };
   },
 
+  codeLanguage: () => null,
   historyLabel: (r) => `${r.score}/${WORDS_COUNT}`,
   culprits: (p) => p.words.map((w) => ({ kind: 'term', id: w.term_id, label: w.word })),
 };

@@ -111,7 +111,12 @@ describe('POST /api/games/{game_id}/today/move', () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({
       feedback: G_REACT,
-      play: { status: 'in_progress', state: { guesses: [G_REACT] }, score: null },
+      play: {
+        status: 'in_progress',
+        state: { guesses: [G_REACT] },
+        score: null,
+        code_language: null,
+      },
       result: null,
       streaks: null,
       game_stats: null,
@@ -138,7 +143,12 @@ describe('POST /api/games/{game_id}/today/move', () => {
     const res = await post(app, body('CACHE'), player);
     expect(await res.json()).toEqual({
       feedback: G_CACHE,
-      play: { status: 'in_progress', state: { guesses: [G_REACT, G_CACHE] }, score: null },
+      play: {
+        status: 'in_progress',
+        state: { guesses: [G_REACT, G_CACHE] },
+        score: null,
+        code_language: null,
+      },
       result: null,
       streaks: null,
       game_stats: null,
@@ -247,7 +257,7 @@ describe('POST /api/games/{game_id}/today/move', () => {
     };
     expect(await res.json()).toEqual({
       feedback: G_MERGE,
-      play: { status: 'won', state: { guesses }, score: 4 },
+      play: { status: 'won', state: { guesses }, score: 4, code_language: null },
       result,
       streaks: { game: { current: 1, max: 1 }, global: { current: 1, max: 1 } },
       game_stats: gameStats,
@@ -330,6 +340,7 @@ describe('POST /api/games/{game_id}/today/move', () => {
       status: 'lost',
       state: { guesses: [...five, G_CACHE] },
       score: 6,
+      code_language: null,
     });
     expect(json.result).toMatchObject({ win: false, score: 6, word: 'MERGE' });
     expect(json.streaks).toEqual({

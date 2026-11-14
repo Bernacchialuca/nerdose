@@ -56,3 +56,9 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 - **Signature:** `insertGenerationRequest({ challengeId, ... })` (default `status: 'pending'`), `insertGenerationFailure(values)`, `insertJobRun(values)`, `insertRejectedGuess({ word, playerId })`; each inserts as owner and returns the row
 - **Description:** pass `processedAt` when the request is not `pending` (and `newChallengeId` for `done`) to satisfy the table checks
 - **Usage:** `await dbs.insertGenerationRequest({ challengeId: c.id, status: 'failed', error: 'x', processedAt: new Date() })`
+
+## CODE_PAYLOAD / codeGame / codeGameNull / codeRegistry / codeNullRegistry
+- **Location:** apps/api/test/helpers/code-game.ts
+- **Signature:** `CODE_PAYLOAD = { answer: 'o_n_log_n' }`; `codeGame: GameDefinition` (`id: 'big-o'`, move `{ language, option }`, `codeLanguage(s) = s.language ?? null`); `codeGameNull` (same, `codeLanguage: () => null`); `codeRegistry` / `codeNullRegistry = createGameRegistry([devdle, grepGrid, timeline, codeGame | codeGameNull])`
+- **Description:** test game that exercises closing a Play with a code language (the DB check `ck_plays_code_language_game` requires `big-o`/`bug-hunt`); `buildDbServices(dbs, { games })` / `buildDbApp(dbs, { games })` inject the registry
+- **Usage:** `const { app } = await buildDbApp(dbs, { games: codeRegistry }); await post(app, 'big-o', { challenge_number: 8, move: { language: 'go', option: 'o_n_log_n' } }, player)`

@@ -1,5 +1,5 @@
 import { createGameRegistry } from '@nerdose/core';
-import type { Culprit } from '@nerdose/core';
+import type { CodeLanguage, Culprit } from '@nerdose/core';
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import { definition, grepGrid } from './index';
@@ -328,5 +328,33 @@ describe('grepGrid culprits', () => {
 
   it('is typed as Culprit[] (TS-21)', () => {
     expectTypeOf(grepGrid.culprits).returns.toEqualTypeOf<Culprit[]>();
+  });
+});
+
+describe('grepGrid codeLanguage', () => {
+  const GAVE_UP = { found_words: [], gave_up: true };
+
+  it('is null for the initial state and after give_up (S-042 TS-7)', () => {
+    expect(grepGrid.codeLanguage(S0)).toBeNull();
+    expect(grepGrid.codeLanguage(GAVE_UP)).toBeNull();
+  });
+
+  it('is null for a Play closed 8/8 (S-042 TS-8)', () => {
+    expect(grepGrid.isFinished(S8)).toBe(true);
+    expect(grepGrid.codeLanguage(S8)).toBeNull();
+  });
+
+  it('is visible through the registry and typed (S-042 TS-9)', () => {
+    expect(createGameRegistry([grepGrid]).get('grep-grid').codeLanguage(S0)).toBeNull();
+    expectTypeOf(grepGrid.codeLanguage).returns.toEqualTypeOf<CodeLanguage | null>();
+  });
+
+  it('is pure and does not depend on the state (S-042 TS-19)', () => {
+    for (const s of [S0, S8]) {
+      const before = structuredClone(s);
+      expect(grepGrid.codeLanguage(s)).toBeNull();
+      expect(grepGrid.codeLanguage(s)).toBeNull();
+      expect(s).toEqual(before);
+    }
   });
 });

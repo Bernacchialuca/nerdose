@@ -14,7 +14,7 @@ Package `@nerdose/game-grep-grid` (`packages/games/grep-grid`). Entries: `./defi
 
 ### grepGrid / definition
 - **Location:** packages/games/grep-grid/src/definition/index.ts
-- **Description:** `GameDefinition` of Grep Grid. `applyMove` handles `select` and `give_up`; "not a word" and "already found" are valid moves that keep the state. `toPublic(p, locale, state?)` reveals `definition` only for found words. `culprits(p)` returns the 8 `words` as `term` culprits (`term_id`, `word`) in `words` order; admin-only, matches `generator.usedBankItems` (checked in `src/generator/culprits.test.ts`). Declares `bankUsage` (`terms`, `last_used_grep`, 30 days, `WORDS_COUNT` items per challenge); `src/generator/bank-usage.test.ts` ties it to `historySpec`, `REUSE_WINDOW_DAYS` and `usedBankItems`.
+- **Description:** `GameDefinition` of Grep Grid. `applyMove` handles `select` and `give_up`; "not a word" and "already found" are valid moves that keep the state. `toPublic(p, locale, state?)` reveals `definition` only for found words. `culprits(p)` returns the 8 `words` as `term` culprits (`term_id`, `word`) in `words` order; admin-only, matches `generator.usedBankItems` (checked in `src/generator/culprits.test.ts`). Declares `bankUsage` (`terms`, `last_used_grep`, 30 days, `WORDS_COUNT` items per challenge); `src/generator/bank-usage.test.ts` ties it to `historySpec`, `REUSE_WINDOW_DAYS` and `usedBankItems`. Implements `codeLanguage: () => null` (no code in this game; the `plays.code_language` CHECK only allows big-o and bug-hunt); tests in `src/definition/definition.test.ts` (initial and closed state, registry, type, purity).
 - **Signature:** `GameDefinition<GrepGridPayload, GrepGridPublicView, GrepGridState, GrepGridMove, GrepGridFeedback, GrepGridResult, GrepGridStats>`
 - **Usage:** `createGameRegistry([grepGrid])`
 
@@ -54,7 +54,7 @@ Package `@nerdose/game-grep-grid` (`packages/games/grep-grid`). Entries: `./defi
 
 ### generator / GrepGridTerm
 - **Location:** packages/games/grep-grid/src/generator/index.ts
-- **Description:** `GameGenerator` with `historySpec = { bank: 'terms', lastUsedField: 'last_used_grep', recentDays: 30 }`. `generate` throws `RangeError` with fewer than 8 bank terms.
+- **Description:** `GameGenerator` with `historySpec = { bank: 'terms', lastUsedField: 'last_used_grep', recentDays: 30 }`. `generate` throws `RangeError` with fewer than 8 bank terms. `verify` is the synchronous `verifyPayload`; the core contract types it `VerificationLog | Promise<VerificationLog>`, so unit tests of the checks call `verifyPayload` and tests that go through the contract use `await generator.verify(...)`. `historySpec` declares no `aheadDays` (default 0), fixed by a test in `src/generator/bank-usage.test.ts`.
 - **Signature:** `generator: GameGenerator<GrepGridPayload, GrepGridTerm>`; `GrepGridTerm = { id; term; category; definition; summary; last_used_grep }`
 
 ### verifyPayload

@@ -13,12 +13,15 @@ Package `@nerdose/core` (`packages/core`), isomorphic entry `.`.
 - **MoveContext** (packages/core/src/game-definition.ts) - `{ isValidWord(word), locale }` built by the api from `WordList.has` and the resolved locale
 - **BankUsage / GameDefinition.bankUsage** (packages/core/src/game-definition.ts) - Bank a game consumes, `last_used_*` column, reuse window and items per challenge (`null` if none); the api builds the stock from the registry (REQ-008)
 - **Culprit / CulpritKind / GameDefinition.culprits** (packages/core/src/game-definition.ts) - Bank item a challenge references (`term` | `timeline_fact`); `culprits(p)` returns them for the admin void flow (REQ-007)
-- **GameGenerator / AnyGameGenerator** (packages/core/src/game-generator.ts) - Generator contract with `historySpec`, `usedBankItems`, `generate`, `verify`
+- **GameDefinition.codeLanguage** (packages/core/src/game-definition.ts) - Required member `codeLanguage(s): CodeLanguage | null`; language the Play was confirmed with (Big O, Bug Hunt), `null` in games without code (REQ-009)
+- **GameGenerator / AnyGameGenerator** (packages/core/src/game-generator.ts) - Generator contract with `historySpec`, `usedBankItems`, `generate`, `verify`; `verify` may return a `Promise` and `historySpec.aheadDays` is optional (REQ-009)
 - **GeneratorHistory / RecentChallenge / HistorySpec / BankName / VerificationLog / VerificationCheck** (packages/core/src/game-generator.ts) - Generic history and verification log types
 
-## Shared enums (8 items) - see enums.md
+## Shared enums (10 items) - see enums.md
 - **LOCALES / Locale** (packages/core/src/enums.ts) - Supported locales `es`, `en`
 - **CODE_LANGUAGES / CodeLanguage** (packages/core/src/enums.ts) - Code languages `js`, `go`, `java`
+- **BIG_O_OPTIONS / BigOOption** (packages/core/src/enums.ts) - The 8 Big O options in fixed order, aligned with `BigOOption` in `api.yaml`
+- **RECIPE_CATEGORIES / RecipeCategory** (packages/core/src/enums.ts) - The 5 recipe categories (initial, extensible set), aligned with `RecipeCategory` in `api.yaml`; no pgEnum
 - **TERM_CATEGORIES / TermCategory** (packages/core/src/enums.ts) - Eight term categories in fixed order (aligned with PG enum `term_category`)
 - **TIMELINE_CATEGORIES / TimelineCategory** (packages/core/src/enums.ts) - Eight timeline fact categories in fixed order (aligned with PG enum `timeline_category`)
 - **DATE_PRECISIONS / DatePrecision** (packages/core/src/enums.ts) - Date precisions `year`, `month`, `day` (aligned with PG enum `date_precision`)
@@ -38,8 +41,10 @@ Package `@nerdose/core` (`packages/core`), isomorphic entry `.`.
 ## Game registry (1 item) - see game-registry.md
 - **createGameRegistry** (packages/core/src/game-registry.ts) - Validated registry of game definitions with `ids()` and `get(id)`
 
-## Test fixtures (4 items)
+## Test fixtures (6 items)
 - **makeDefinition** (packages/core/test/fixtures/fake-definition.ts) - Complete fake `GameDefinition` for tests
 - **makeWordDefinition** (packages/core/test/fixtures/fake-definition.ts) - Fake `GameDefinition` whose `applyMove` uses `ctx.isValidWord`
 - **makeLocalizedDefinition** (packages/core/test/fixtures/fake-definition.ts) - Fake `GameDefinition` that uses `ctx.locale` in the `Feedback` and `state` in `toPublic`
 - **makeGenerator** (packages/core/test/fixtures/fake-generator.ts) - Fake `GameGenerator` with Devdle `historySpec`
+- **makeCodeDefinition** (packages/core/test/fixtures/fake-definition.ts) - Fake Big O-shaped code game with `codeLanguage = s.language ?? null`
+- **makeAsyncGenerator** (packages/core/test/fixtures/fake-generator.ts) - `makeGenerator()` with async `verify` and `historySpec.aheadDays: 2`

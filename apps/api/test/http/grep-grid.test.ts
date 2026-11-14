@@ -124,7 +124,7 @@ describe('Grep Grid: selecciones', () => {
         definition: 'definición de DOCKER',
         cells: cellsOf('DOCKER'),
       },
-      play: { status: 'in_progress', state: found('DOCKER'), score: null },
+      play: { status: 'in_progress', state: found('DOCKER'), score: null, code_language: null },
       result: null,
       streaks: null,
       game_stats: null,
@@ -174,7 +174,12 @@ describe('Grep Grid: selecciones', () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({
       feedback: { found: false, reason: 'not_a_word' },
-      play: { status: 'in_progress', state: { found_words: [], gave_up: false }, score: null },
+      play: {
+        status: 'in_progress',
+        state: { found_words: [], gave_up: false },
+        score: null,
+        code_language: null,
+      },
       result: null,
       streaks: null,
       game_stats: null,
@@ -192,7 +197,7 @@ describe('Grep Grid: selecciones', () => {
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({
       feedback: { found: false, reason: 'already_found' },
-      play: { status: 'in_progress', state: found('DOCKER'), score: null },
+      play: { status: 'in_progress', state: found('DOCKER'), score: null, code_language: null },
       result: null,
       streaks: null,
       game_stats: null,
@@ -280,7 +285,7 @@ describe('Grep Grid: cierre', () => {
         definition: defEs('PYTHON'),
         cells: cellsOf('PYTHON'),
       },
-      play: { status: 'won', state: found(...SEVEN, 'PYTHON'), score: 8 },
+      play: { status: 'won', state: found(...SEVEN, 'PYTHON'), score: 8, code_language: null },
       result,
       streaks: { game: { current: 1, max: 1 }, global: { current: 1, max: 1 } },
       game_stats: gameStats,
@@ -334,6 +339,7 @@ describe('Grep Grid: cierre', () => {
         status: 'lost',
         state: { ...found(...five), gave_up: true },
         score: 5,
+        code_language: null,
       },
       result: { win: false, score: 5, gave_up: true, words: ggResultWords('es', [...five]) },
       streaks: { game: { current: 1, max: 1 }, global: { current: 1, max: 1 } },
@@ -360,6 +366,7 @@ describe('Grep Grid: cierre', () => {
       status: 'lost',
       state: { found_words: [], gave_up: true },
       score: 0,
+      code_language: null,
     });
     expect(json.result).toMatchObject({ score: 0, gave_up: true });
     expect(json.result.words.every((w: { found: boolean }) => !w.found)).toBe(true);

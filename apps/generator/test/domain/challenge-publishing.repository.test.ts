@@ -1,10 +1,12 @@
 import { challenges, terms, timelineFacts } from '@nerdose/db';
 import { makeChallenge } from '@nerdose/db/testing';
+import { payloadSchema } from '@nerdose/game-devdle/definition';
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 
 import { ChallengePublishingRepository } from '@/domain/challenge-publishing/challenge-publishing.repository';
 
+import { seedDevdle } from '../helpers/challenges';
 import { FACT_ID, CHRONO5, insertFacts } from '../helpers/facts';
 import { insertTerms, type TermSpec } from '../helpers/bank';
 import { setupTestDb } from '../helpers/db';
@@ -294,5 +296,41 @@ describe('ChallengePublishingRepository.approve (timeline_facts)', () => {
     const [c2] = await t.owner.db.select().from(challenges).where(eq(challenges.id, d2.id));
     expect(c2!.status).toBe('approved');
     for (const f of CHRONO5) expect((await factRow(f.id!)).lastUsed).toBeNull();
+  });
+});
+
+describe('ChallengePublishingRepository.recentChallenges', () => {
+  const repo = () => new ChallengePublishingRepository(t.svc.db);
+  const seedRows = async () => {
+    await seedDevdle(t.owner.db, '2027-01-09', 'approved');
+    await seedDevdle(t.owner.db, '2027-01-10', 'approved');
+    await seedDevdle(t.owner.db, '2027-01-11', 'voided');
+    await seedDevdle(t.owner.db, '2027-01-12', 'published');
+    await seedDevdle(t.owner.db, '2027-01-13', 'rejected');
+    await seedDevdle(t.owner.db, '2027-01-14', 'draft');
+  };
+
+  it('con excludeDate excluye D y los estados no activos (S-042 TS-5)', async () => {
+    await seedRows();
+    const rows = await repo().recentChallenges(
+      'devdle',
+      '2027-01-09',
+      '2027-01-14',
+      payloadSchema,
+      '2027-01-10',
+    );
+    expect(rows.map((c) => c.date)).toEqual(['2027-01-09', '2027-01-11', '2027-01-12']);
+    for (const c of rows) expect((c.payload as { date: string }).date).toBe(c.date);
+  });
+
+  it('sin excludeDate mantiene el comportamiento actual (S-042 TS-6)', async () => {
+    await seedRows();
+    const rows = await repo().recentChallenges('devdle', '2027-01-09', '2027-01-14', payloadSchema);
+    expect(rows.map((c) => c.date)).toEqual([
+      '2027-01-09',
+      '2027-01-10',
+      '2027-01-11',
+      '2027-01-12',
+    ]);
   });
 });

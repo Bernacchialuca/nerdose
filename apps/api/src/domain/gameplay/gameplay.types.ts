@@ -1,5 +1,6 @@
 import type { CodeLanguage, GameId } from '@nerdose/core';
 
+import type { IdentityRepository } from '@/domain/identity/identity.repository';
 import type { GameStatsView, ProgressWriteRepo, Streaks } from '@/domain/progress/progress.types';
 import type { PlayStatus, PublicChallengeStatus } from '@/domain/publishing/publishing.types';
 
@@ -31,7 +32,7 @@ export type AcknowledgeVoidResponse = {
 
 export type MoveResponse = {
   feedback: unknown;
-  play: { status: PlayStatus; state: unknown; score: number | null };
+  play: PlayView;
   result: unknown;
   streaks: Streaks | null;
   game_stats: GameStatsView | null;
@@ -49,6 +50,7 @@ export type MoveTxRepos = {
     | 'insertVoidedPlayIfAbsent'
   >;
   progress: ProgressWriteRepo;
+  identity: Pick<IdentityRepository, 'updatePreferences'>;
 };
 
 /** Ejecuta `fn` en una transacción: si lanza, ROLLBACK y relanza. */

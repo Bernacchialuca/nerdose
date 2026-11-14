@@ -80,18 +80,18 @@ describe('generator.generate', () => {
     expect(() => payloadSchema.parse(p)).not.toThrow();
   });
 
-  it('accepts the exact D-365 boundary (TS-40)', () => {
+  it('accepts the exact D-365 boundary (TS-40)', async () => {
     const h = history([T_KERNEL]);
     const p = generator.generate({ date: DATE, seed: seed(1), history: h });
     expect(p.word).toBe('KERNEL');
-    expect(generator.verify(p, h).ok).toBe(true);
+    expect((await generator.verify(p, h)).ok).toBe(true);
   });
 
-  it('picks anyway without eligibles and verify rejects (TS-41)', () => {
+  it('picks anyway without eligibles and verify rejects (TS-41)', async () => {
     const h = history([T_REDIS]);
     const p = generator.generate({ date: DATE, seed: seed(1), history: h });
     expect(p.word).toBe('REDIS');
-    const log = generator.verify(p, h);
+    const log = await generator.verify(p, h);
     expect(log.ok).toBe(false);
     expect(log.reason).toBe('not_used_365');
   });

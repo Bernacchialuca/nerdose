@@ -3,6 +3,8 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 import * as core from '../src/index';
 import type {
   AnyGameGenerator,
+  BigOOption,
+  RecipeCategory,
   BankName,
   BankUsage,
   CodeLanguage,
@@ -38,12 +40,14 @@ describe('public API of the "." entry', () => {
   it('exports exactly the in-scope runtime values (S-006 TS-27)', () => {
     expect(Object.keys(core).sort()).toEqual([
       'AppError',
+      'BIG_O_OPTIONS',
       'CODE_LANGUAGES',
       'DATE_PRECISIONS',
       'ERROR_CATALOG',
       'GAME_IDS',
       'GENERATION_REQUEST_STATUSES',
       'LOCALES',
+      'RECIPE_CATEGORIES',
       'REPORT_REASONS',
       'REPORT_STATUSES',
       'TERM_CATEGORIES',
@@ -98,6 +102,8 @@ describe('public API of the "." entry', () => {
     expectTypeOf<RebuiltGameStats<1>>().not.toBeNever();
     expectTypeOf<ReportReason>().not.toBeNever();
     expectTypeOf<ReportStatus>().not.toBeNever();
+    expectTypeOf<BigOOption>().not.toBeNever();
+    expectTypeOf<RecipeCategory>().not.toBeNever();
     expectTypeOf(core.replayStreak).toEqualTypeOf<
       (completedDays: readonly string[], activeDays: readonly string[]) => ReplayedStreak
     >();

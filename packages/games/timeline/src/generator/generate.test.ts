@@ -40,10 +40,10 @@ describe('generator.generate', () => {
     expect(ps.every((p) => !factIds(p).includes(BID('05')))).toBe(true);
   });
 
-  it('candidates are valid and never mix Go with Node.js (TS-45)', () => {
+  it('candidates are valid and never mix Go with Node.js (TS-45)', async () => {
     for (const n of range(50)) {
       const p = payloadSchema.parse(gen(n));
-      expect(generator.verify(p, history(BANK)).ok).toBe(true);
+      expect((await generator.verify(p, history(BANK))).ok).toBe(true);
       const ids = factIds(p);
       expect(ids.includes(BID('03')) && ids.includes(BID('04'))).toBe(false);
       expect(new Set(ids).size).toBe(5);
@@ -109,22 +109,25 @@ describe('generator.generate', () => {
     }
   });
 
-  it('a tight bank yields an indistinguishable candidate that verify rejects (TS-52)', () => {
+  it('a tight bank yields an indistinguishable candidate that verify rejects (TS-52)', async () => {
     const h = history(BANK_TIGHT);
     const p = payloadSchema.parse(generator.generate({ date: DATE, seed: seed(1), history: h }));
     expect(factIds(p).sort()).toEqual(BANK_TIGHT.map((f) => f.id).sort());
-    const v = generator.verify(p, h);
+    const v = await generator.verify(p, h);
     expect(v).toMatchObject({ ok: false, reason: 'distinguishable' });
     const detail = v.checks.find((c) => c.name === 'distinguishable')?.detail ?? '';
     expect(detail).toContain('Go');
     expect(detail).toContain('Node.js');
   });
 
-  it('with fewer than 5 eligible facts it picks anyway and verify rejects (TS-53)', () => {
+  it('with fewer than 5 eligible facts it picks anyway and verify rejects (TS-53)', async () => {
     const bank = BANK.map((f) => (f.id === BID('21') ? f : { ...f, last_used: '2026-12-01' }));
     const p = gen(1, DATE, bank);
     expect(factIds(p)).toContain(BID('21'));
-    expect(generator.verify(p, history(bank))).toMatchObject({ ok: false, reason: 'not_used_90' });
+    expect(await generator.verify(p, history(bank))).toMatchObject({
+      ok: false,
+      reason: 'not_used_90',
+    });
   });
 
   it('throws when the bank has fewer than 5 facts (TS-54)', () => {
@@ -135,7 +138,7 @@ describe('generator.generate', () => {
     );
   });
 
-  it('mixes categories: picks from the whole pool, whatever the category (TS-55)', () => {
+  it('mixes categories: picks from the whole pool, whatever the category (TS-55)', async () => {
     const ps = range(50).map((n) => gen(n));
     const mixed = ps.filter((p) => new Set(p.items.map((i) => i.category)).size > 1);
     expect(mixed.length).toBeGreaterThan(0);
@@ -145,7 +148,7 @@ describe('generator.generate', () => {
     const fourAndOne = [...BANK.filter((f) => f.category === 'frameworks'), BANK[0]!];
     const p = gen(1, DATE, fourAndOne);
     expect(factIds(p).sort()).toEqual(fourAndOne.map((f) => f.id).sort());
-    expect(generator.verify(p, history(fourAndOne)).ok).toBe(true);
+    expect((await generator.verify(p, history(fourAndOne))).ok).toBe(true);
   });
 
   it('completes with non-eligible facts when needed (TS-53 variant)', () => {

@@ -13,7 +13,7 @@ const TIMEOUT_MS = 60_000;
 describe('grep-grid rejection rate on the real dataset (TS-73)', () => {
   it(
     `passes verify in at least ${MIN_RATE * 100}% of ${SEEDS} candidates`,
-    () => {
+    async () => {
       const bankItems: GrepGridTerm[] = loadDataset()
         .terms.filter((t) => t.status === 'approved')
         .map((t) => ({
@@ -29,7 +29,7 @@ describe('grep-grid rejection rate on the real dataset (TS-73)', () => {
       let ok = 0;
       for (let n = 1; n <= SEEDS; n++) {
         const p = payloadSchema.parse(generator.generate({ date: DATE, seed: seed(n), history }));
-        const v = generator.verify(p, history);
+        const v = await generator.verify(p, history);
         if (v.ok) ok++;
         else reasons.push(v.reason ?? '?');
       }

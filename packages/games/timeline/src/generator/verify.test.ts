@@ -5,6 +5,7 @@ import type { TimelinePayload } from '../definition';
 import { CORRECT, ID, OID, PAYLOAD } from '../definition/test-fixtures';
 import { generator } from './index';
 import { BANK_FIXTURE, history } from './test-fixtures';
+import { verifyPayload } from './verify';
 
 const H = history(BANK_FIXTURE);
 const mutate = (fn: (p: any) => void): TimelinePayload => {
@@ -12,7 +13,7 @@ const mutate = (fn: (p: any) => void): TimelinePayload => {
   fn(p);
   return p;
 };
-const verify = (p: TimelinePayload, h = H) => generator.verify(p, h);
+const verify = (p: TimelinePayload, h = H) => verifyPayload(p, h);
 const NAMES = [
   'items_count',
   'facts_in_bank',
@@ -144,5 +145,13 @@ describe('verifyPayload', () => {
     expect(b.reason).toBe('correct_order_consistent');
     expect(a.checks).toHaveLength(9);
     expect(b.checks).toHaveLength(9);
+  });
+
+  it('generator.verify is verifyPayload and works under await (S-042 TS-16)', async () => {
+    expect(generator.verify).toBe(verifyPayload);
+    const v = await generator.verify(PAYLOAD, history(BANK_FIXTURE));
+    expect(v.ok).toBe(true);
+    expect(v.reason).toBeUndefined();
+    expect(v.checks.map((c) => c.name)).toEqual(NAMES);
   });
 });

@@ -52,23 +52,23 @@ describe('generate', () => {
     }
   });
 
-  it('excludes terms of recent challenges (TS-49)', () => {
+  it('excludes terms of recent challenges (TS-49)', async () => {
     const h = history(BANK, [{ date: '2026-11-02', payload: PAYLOAD }]);
     const p = gen(1, BANK, [{ date: '2026-11-02', payload: PAYLOAD }]);
     expect(wordsOf(p)).toEqual(expect.arrayContaining(['ROUTER', 'LINUX']));
-    const v = generator.verify(p, h);
+    const v = await generator.verify(p, h);
     expect(v.ok).toBe(false);
     expect(v.reason).toBe('not_used_30');
   });
 
-  it('chooses anyway without 8 eligible terms and verify rejects (TS-50)', () => {
+  it('chooses anyway without 8 eligible terms and verify rejects (TS-50)', async () => {
     const bank = BANK_FIXTURE.map((t) =>
       t.term === 'MERGE' ? { ...t, last_used_grep: '2026-12-01' } : t,
     );
     const p = gen(1, bank);
     expect(() => payloadSchema.parse(p)).not.toThrow();
     expect(wordsOf(p)).toContain('MERGE');
-    const v = generator.verify(p, history(bank));
+    const v = await generator.verify(p, history(bank));
     expect(v.ok).toBe(false);
     expect(v.reason).toBe('not_used_30');
   });
@@ -129,9 +129,9 @@ describe('generate', () => {
     expect([...used].sort()).toEqual(['down', 'down_right', 'right', 'up_right']);
   });
 
-  it('generate then verify is ok (TS-57)', () => {
+  it('generate then verify is ok (TS-57)', async () => {
     for (const p of fifty) {
-      const v = generator.verify(p, history(BANK));
+      const v = await generator.verify(p, history(BANK));
       expect(v.ok, JSON.stringify(v)).toBe(true);
       expect(v.reason).toBeUndefined();
       expect(v.checks.map((c) => c.name)).toEqual([

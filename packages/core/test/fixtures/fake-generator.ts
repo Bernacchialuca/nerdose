@@ -37,3 +37,12 @@ export function makeGenerator(): GameGenerator<FakePayload, FakeTerm> {
     },
   };
 }
+
+export function makeAsyncGenerator(): GameGenerator<FakePayload, FakeTerm> {
+  const base = makeGenerator();
+  return {
+    ...base,
+    historySpec: { ...base.historySpec, aheadDays: 2 },
+    verify: async (p, history) => base.verify(p, history),
+  };
+}

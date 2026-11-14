@@ -86,6 +86,7 @@ export const devdle: GameDefinition<
     return { guesses: { ...prev.guesses, [key]: prev.guesses[key] + 1 }, losses: prev.losses };
   },
 
+  codeLanguage: () => null,
   historyLabel: (r) => (r.win ? `✓ ${r.score}/${MAX_GUESSES}` : `✗ X/${MAX_GUESSES}`),
   culprits: (p) => [{ kind: 'term', id: p.term_id, label: p.word }],
 };

@@ -191,7 +191,7 @@ export class GameplayService {
     const events: Array<() => void> = [];
     let response: MoveResponse;
     try {
-      response = await runInTx(async ({ plays, progress: pRepo }) => {
+      response = await runInTx(async ({ plays, progress: pRepo, identity }) => {
         // El estado real del challenge manda sobre la cache (anulación concurrente).
         const locked = await plays.lockChallenge(challenge.id);
         if (locked?.status === 'voided') throw new AppError('challenge_voided');
@@ -227,7 +227,7 @@ export class GameplayService {
           events.push(() => log.debug({ event: 'MoveApplied', play_id: play.id }, 'Move applied'));
           return {
             feedback: r.feedback as unknown,
-            play: { status: updated.status, state: updated.state, score: null },
+            play: toPlayView(updated),
             result: null,
             streaks: null,
             game_stats: null,
@@ -237,12 +237,14 @@ export class GameplayService {
         const result = game.result(challenge.payload, r.state, locale) as unknown;
         const win = game.isWin(result as never);
         const score = game.score(result as never);
+        const codeLanguage = game.codeLanguage(r.state);
         const closed = await plays.closePlay(play.id, {
           state: r.state as unknown,
           status: win ? 'won' : 'lost',
           result,
           score,
           finishedAt: now,
+          codeLanguage,
         });
         const { streaks, gameStats } = await progress.applyResult(pRepo, {
           playerId: player.id,
@@ -250,6 +252,9 @@ export class GameplayService {
           date: challenge.date,
           outcome: { status: closed.status as 'won' | 'lost', result },
         });
+        if (codeLanguage !== null) {
+          await identity.updatePreferences(player.id, { preferredCodeLanguage: codeLanguage });
+        }
         events.push(
           () =>
             log.info(
@@ -280,7 +285,7 @@ export class GameplayService {
         );
         return {
           feedback: r.feedback as unknown,
-          play: { status: closed.status, state: closed.state, score: closed.score },
+          play: toPlayView(closed),
           result,
           streaks,
           game_stats: gameStats,

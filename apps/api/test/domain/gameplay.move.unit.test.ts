@@ -7,6 +7,7 @@ import { GameplayService } from '@/domain/gameplay/gameplay.service';
 import type { MoveTx, MoveTxRepos } from '@/domain/gameplay/gameplay.types';
 import { games } from '@/games/registry';
 
+import { CODE_PAYLOAD, codeRegistry } from '../helpers/code-game';
 import { PAYLOAD } from '../helpers/db';
 import { GG_PAYLOAD, found, selectWord } from '../helpers/grep-grid';
 
@@ -23,6 +24,7 @@ function setup(
     insertRejected?: () => Promise<void>;
     inserted?: boolean;
     challengeStatus?: string;
+    games?: typeof games;
   } = {},
 ) {
   const calls = {
@@ -30,12 +32,16 @@ function setup(
     updateState: vi.fn(async (_id: string, state: unknown) => ({
       status: 'in_progress',
       state,
+      score: null,
+      codeLanguage: null,
     })),
     closePlay: vi.fn(async (_id: string, v: Record<string, unknown>) => ({
       status: v.status,
       state: v.state,
       score: v.score,
+      codeLanguage: v.codeLanguage,
     })),
+    updatePreferences: vi.fn(async () => null),
     applyResult: vi.fn(async () => ({
       streaks: { game: { current: 1, max: 1 }, global: { current: 1, max: 1 } },
       gameStats: { game_id: 'devdle' },
@@ -60,6 +66,7 @@ function setup(
       closePlay: calls.closePlay,
     },
     progress: {} as never,
+    identity: { updatePreferences: calls.updatePreferences },
   } as unknown as MoveTxRepos;
   const runInTx: MoveTx = opts.runInTx
     ? opts.runInTx(repos)
@@ -69,7 +76,7 @@ function setup(
       }) as MoveTx);
   const rejected = { insertRejectedGuess: vi.fn(opts.insertRejected ?? (async () => undefined)) };
   const service = new GameplayService({
-    games,
+    games: opts.games ?? games,
     cache: (opts.cache ?? {
       get: () => ({
         id: 'c1',
@@ -251,5 +258,66 @@ describe('GameplayService.move (unit)', () => {
       code: 'challenge_voided',
     });
     expect(s.calls.updateState).not.toHaveBeenCalled();
+  });
+
+  it('TS-13 cierre con codeLanguage: closePlay con lenguaje y updatePreferences después de applyResult (S-042 TS-13)', async () => {
+    const s = setup({
+      games: codeRegistry,
+      play: { state: {} },
+      cache: {
+        get: () => ({
+          id: 'c1',
+          game_id: 'big-o',
+          date: '2026-12-01',
+          number: 8,
+          status: 'published',
+          payload: CODE_PAYLOAD,
+        }),
+      },
+    });
+    const res = await s.service.move(
+      'big-o',
+      player,
+      { challenge_number: 8, move: { language: 'java', option: 'o_n_log_n' } },
+      'es',
+      s.log as never,
+    );
+    expect(s.calls.closePlay).toHaveBeenCalledWith(
+      'play-1',
+      expect.objectContaining({ status: 'won', score: 1, codeLanguage: 'java' }),
+    );
+    expect(s.calls.updatePreferences).toHaveBeenCalledOnce();
+    expect(s.calls.updatePreferences).toHaveBeenCalledWith('player-1', {
+      preferredCodeLanguage: 'java',
+    });
+    expect(s.calls.updatePreferences.mock.invocationCallOrder[0]!).toBeGreaterThan(
+      s.calls.applyResult.mock.invocationCallOrder[0]!,
+    );
+    expect(res.play.code_language).toBe('java');
+  });
+
+  it('TS-14 cierre de Devdle: codeLanguage null y sin updatePreferences (S-042 TS-14)', async () => {
+    const s = setup();
+    const res = await s.run('devdle', 8, { guess: 'MERGE' });
+    expect(s.calls.closePlay).toHaveBeenCalledWith(
+      'play-1',
+      expect.objectContaining({ codeLanguage: null }),
+    );
+    expect(s.calls.updatePreferences).not.toHaveBeenCalled();
+    expect(res.play.code_language).toBeNull();
+  });
+
+  it('TS-15 jugada que no cierra: sin closePlay ni updatePreferences, code_language null (S-042 TS-15)', async () => {
+    const s = setup();
+    const res = await s.run('devdle', 8, { guess: 'REACT' });
+    expect(s.calls.updateState).toHaveBeenCalled();
+    expect(s.calls.closePlay).not.toHaveBeenCalled();
+    expect(s.calls.updatePreferences).not.toHaveBeenCalled();
+    expect(res.play).toEqual({
+      status: 'in_progress',
+      state: { guesses: [G('REACT'), G('CACHE'), G('REACT'), G('REACT')] },
+      score: null,
+      code_language: null,
+    });
   });
 });
