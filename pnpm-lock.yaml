@@ -47,6 +47,9 @@ importers:
       '@nerdose/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@nerdose/game-big-o':
+        specifier: workspace:*
+        version: link:../../packages/games/big-o
       '@nerdose/game-devdle':
         specifier: workspace:*
         version: link:../../packages/games/devdle

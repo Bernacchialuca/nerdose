@@ -13,7 +13,7 @@
 ## registry
 - **Location:** apps/admin/src/modules/upcoming/registry.ts
 - **Signature:** `hasPreview(gameId)`, `previewComponent(gameId)` (memoized `React.lazy`)
-- **Description:** the only file that lists games; a game without entry falls back to `PayloadBilingual`.
+- **Description:** the only file that lists games (`big-o`, `devdle`, `grep-grid`, `timeline`); a game without entry falls back to `PayloadBilingual`.
 
 ## ChallengePreview / PreviewErrorBoundary
 - **Location:** apps/admin/src/modules/upcoming/components/challenge-preview.tsx, preview-error-boundary.tsx

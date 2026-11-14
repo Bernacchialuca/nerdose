@@ -3,6 +3,8 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
+import { buildAdmin, compiledCss } from './test/vite-build';
+
 const srcDir = fileURLToPath(new URL('.', import.meta.url));
 
 function sourceFiles(dir: string, exts: string[]): string[] {
@@ -92,12 +94,13 @@ describe('guardas estáticas del código de producción', () => {
       expect(file.endsWith(registry), file).toBe(true);
       const all = content.match(/@nerdose\/game-[a-z-]+\/[a-z]+/g) ?? [];
       expect(all.sort()).toEqual([
+        '@nerdose/game-big-o/client',
         '@nerdose/game-devdle/client',
         '@nerdose/game-grep-grid/client',
         '@nerdose/game-timeline/client',
       ]);
       const dynamic = content.match(/import\('@nerdose\/game-[a-z-]+\/client'\)/g) ?? [];
-      expect(dynamic).toHaveLength(3);
+      expect(dynamic).toHaveLength(4);
     }
   });
 
@@ -105,7 +108,7 @@ describe('guardas estáticas del código de producción', () => {
     for (const file of tsx.filter((f) => f.includes('modules/upcoming/'))) {
       const content = readFileSync(file, 'utf8');
       expect(content, file).not.toContain('switch (');
-      expect(content, file).not.toMatch(/=== '(devdle|grep-grid|timeline)'/);
+      expect(content, file).not.toMatch(/=== '(devdle|grep-grid|timeline|big-o|bug-hunt)'/);
     }
   });
 
@@ -117,6 +120,64 @@ describe('guardas estáticas del código de producción', () => {
       expect(content, file).not.toContain('@nerdose/game-');
       expect(content, file).not.toContain('switch (');
       expect(content, file).not.toMatch(/=== '(devdle|grep-grid|timeline|terms|timeline_facts)'/);
+    }
+  });
+});
+
+describe('build del admin (D4)', () => {
+  const highlighter = 'shi' + 'ki';
+
+  it('el CSS compilado incluye lo que usa el Preview de Big O (TS-24)', async () => {
+    const css = compiledCss(await buildAdmin());
+    for (const needle of [
+      '--color-game-big-o-muted',
+      '--color-game-big-o-tint',
+      '--color-game-big-o-light',
+      '--color-game-big-o-border',
+      '--color-surface-sunken',
+      '--color-toolbar',
+      '--color-text-body',
+      '@container',
+      'dashed',
+    ]) {
+      expect(css, needle).toContain(needle);
+    }
+  }, 60_000);
+
+  it('el resaltador y el client de Big O quedan fuera del chunk de entrada (TS-25)', async () => {
+    const { chunks } = await buildAdmin();
+    const entry = chunks.find((c) => c.isEntry);
+    expect(entry).toBeDefined();
+    const byName = new Map(chunks.map((c) => [c.fileName, c]));
+    const closure = new Set<string>();
+    const queue = [(entry as (typeof chunks)[number]).fileName];
+    while (queue.length > 0) {
+      const name = queue.shift() as string;
+      if (closure.has(name)) continue;
+      closure.add(name);
+      for (const imp of byName.get(name)?.imports ?? []) queue.push(imp);
+    }
+    const hl = new RegExp('[\\\\/](' + highlighter + '|@' + highlighter + 'js)[\\\\/]');
+    const hlChunks = chunks.filter((c) => c.moduleIds.some((id) => hl.test(id)));
+    expect(hlChunks.length).toBeGreaterThan(0);
+    for (const c of hlChunks) expect(closure.has(c.fileName), c.fileName).toBe(false);
+    const client = chunks.find((c) =>
+      c.moduleIds.some((id) => id.endsWith('packages/games/big-o/src/client/index.ts')),
+    );
+    expect(client).toBeDefined();
+    expect(closure.has((client as (typeof chunks)[number]).fileName)).toBe(false);
+  }, 60_000);
+
+  it('polyglot nunca entra al bundle (TS-26)', async () => {
+    const { chunks } = await buildAdmin();
+    for (const c of chunks) {
+      expect(c.moduleIds.some((id) => id.includes('packages/polyglot/')), c.fileName).toBe(false);
+    }
+  }, 60_000);
+
+  it('ningún archivo del admin menciona el resaltador (TS-27)', () => {
+    for (const file of sourceFiles(srcDir, ['.ts', '.tsx'])) {
+      expect(readFileSync(file, 'utf8'), file).not.toContain(highlighter);
     }
   });
 });

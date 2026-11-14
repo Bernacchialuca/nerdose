@@ -122,6 +122,10 @@ describe('P-03 · grilla', () => {
       'Big O',
     ]);
     expect(screen.getByText(/· 4 juegos ·/)).toBeInTheDocument();
+    // TS-22: el client de Big O no se baja hasta abrir un detalle
+    expect(document.querySelector('[lang="en"]')).toBeNull();
+    expect(screen.queryByText('Cargando preview…')).toBeNull();
+    expect(screen.queryByRole('tabpanel')).toBeNull();
   });
 
   it('la leyenda lista los seis estados (TS-19)', async () => {
