@@ -3,7 +3,7 @@
 ## generatorRegistry / createGeneratorRegistry / GeneratorEntry
 - **Location:** apps/generator/src/games/registry.ts
 - **Signature:** `createGeneratorRegistry(entries: GeneratorEntry[])` -> `{ ids(), get(id) }`; `GeneratorEntry = { gameId, generator, payloadSchema, version }`
-- **Description:** `get` throws `AppError('not_found')` for unknown games; duplicate or unknown ids throw `Error`. `generatorRegistry` holds Devdle (`devdle@1`), Grep Grid (`grep-grid@1`) and Timeline (`timeline@1`).
+- **Description:** `get` throws `AppError('not_found')` for unknown games; duplicate or unknown ids throw `Error`. `generatorRegistry` holds Devdle (`devdle@1`), Grep Grid (`grep-grid@1`) and Timeline (`timeline@1`) and Big O (`big-o@1`, last).
 - **Usage:** `generatorRegistry.get('devdle').generator.generate({ date, seed, history })`
 
 ## seedFor / seedToHex

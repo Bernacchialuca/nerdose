@@ -133,7 +133,11 @@ describe('fill con Timeline y el dataset real', () => {
       await run({
         now: '2026-12-01T12:00:00.000Z',
         launch: '2026-11-20',
-        registry: generatorRegistry,
+        registry: createGeneratorRegistry([
+          generatorRegistry.get('devdle'),
+          generatorRegistry.get('grep-grid'),
+          generatorRegistry.get('timeline'),
+        ]),
       }),
     ).toBe('success');
     const devdle = await approved('devdle');

@@ -32,6 +32,13 @@ afterEach(async () => {
   await Promise.all(closers.splice(0).map((close) => close()));
 });
 
+const GAME_IDS = ['devdle', 'grep-grid', 'timeline', 'big-o'];
+const plusDays = (days: number) => {
+  const day = new Date(`${today(new Date())}T00:00:00.000Z`);
+  day.setUTCDate(day.getUTCDate() + days);
+  return day.toISOString().slice(0, 10);
+};
+
 const isStarted = (line: Record<string, unknown>) => line.msg === 'Scheduler started';
 
 describe('proceso del generator', () => {
@@ -67,7 +74,7 @@ describe('proceso del generator', () => {
   it('arranca en orden: rol, sync_banks, fill y scheduler', async () => {
     const url = inject('generatorUrl');
     running = startGenerator(startEnv());
-    const started = await running.waitForLog(isStarted);
+    const started = await running.waitForLog(isStarted, 90_000);
     expect(started.jobs).toBe(1);
     const all = running.parsed();
     const indexOf = (predicate: (line: Record<string, unknown>) => boolean) =>
@@ -103,30 +110,28 @@ describe('proceso del generator', () => {
       .from(challenges)
       .where(eq(challenges.status, 'approved'))
       .orderBy(asc(challenges.date));
-    for (const gameId of ['devdle', 'grep-grid', 'timeline']) {
+    for (const gameId of GAME_IDS) {
       expect(rows.filter((r) => r.gameId === gameId).map((r) => r.date)).toEqual(expected);
     }
-    expect(rows).toHaveLength(expected.length * 3);
+    expect(rows).toHaveLength(expected.length * GAME_IDS.length);
+    expect(all.some((l) => l.msg === 'Toolchain missing at startup')).toBe(false);
 
     const raw = running.lines().join('\n');
     expect(raw).not.toContain(SECRET);
     expect(raw).not.toContain(new URL(url).password);
     expect(raw).not.toContain(url);
-  });
+  }, 120_000);
 
   it('regenera por NOTIFY y se apaga limpio sin conexiones LISTEN abiertas', async () => {
     running = startGenerator(startEnv());
-    await running.waitForLog((l) => l.msg === 'Queue listener started');
+    await running.waitForLog((l) => l.msg === 'Queue listener started', 90_000);
     const all = running.parsed();
     const iScheduler = all.findIndex(isStarted);
     const iQueue = all.findIndex((l) => l.msg === 'Queue listener started');
     expect(iScheduler).toBeGreaterThanOrEqual(0);
     expect(iScheduler).toBeLessThan(iQueue);
 
-    const target = today(new Date());
-    const day = new Date(`${target}T00:00:00.000Z`);
-    day.setUTCDate(day.getUTCDate() + 3);
-    const date = day.toISOString().slice(0, 10);
+    const date = plusDays(3);
     const [old] = await owner.db
       .select()
       .from(challenges)
@@ -153,10 +158,10 @@ describe('proceso del generator', () => {
       SELECT 1 FROM pg_stat_activity WHERE usename = 'nerdose_generator' AND query LIKE 'LISTEN%'`;
     expect(listening).toHaveLength(0);
     expect(running.lines().join('\n')).not.toContain(SECRET);
-  });
+  }, 120_000);
 
   it('se apaga con SIGTERM, código 0 y sin locks tomados', async () => {
-    running = startGenerator(startEnv());
+    running = startGenerator(startEnv({ LAUNCH_DATE: plusDays(14) }));
     await running.waitForLog(isStarted);
     expect(await running.stop('SIGTERM')).toBe(0);
     expect(running.parsed().filter((l) => l.msg === 'Shutdown complete')).toHaveLength(1);
@@ -173,7 +178,7 @@ describe('proceso del generator', () => {
   });
 
   it('un SIGTERM repetido no reinicia el apagado', async () => {
-    running = startGenerator(startEnv());
+    running = startGenerator(startEnv({ LAUNCH_DATE: plusDays(14) }));
     await running.waitForLog(isStarted);
     running.kill('SIGTERM');
     running.kill('SIGTERM');

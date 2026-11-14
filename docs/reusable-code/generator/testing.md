@@ -15,8 +15,14 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 ## startGenerator
 - **Location:** apps/generator/test/helpers/process.ts
 - **Signature:** `startGenerator(env: Record<string, string>): { lines(); parsed(); waitForLog(predicate, timeoutMs = 30000); exited: Promise<number | null>; kill(signal = 'SIGTERM'): boolean; stop(signal = 'SIGTERM') }`
-- **Description:** runs `node --import tsx src/index.ts` with a clean env (`PATH`, `NODE_ENV=test`, `LOG_LEVEL=info` + given vars). `kill` sends a signal without waiting (useful for double-signal tests).
+- **Description:** runs `node --import tsx src/index.ts` with a clean env (`PATH`, `HOME` and, if defined, `GOCACHE`/`GOPATH`/`TMPDIR` so Go can compile, `NODE_ENV=test`, `LOG_LEVEL=info` + given vars). `kill` sends a signal without waiting (useful for double-signal tests).
 - **Usage:** `const p = startGenerator({ DATABASE_URL: inject('generatorUrl') }); await p.waitForLog((l) => l.msg === 'Scheduler started'); expect(await p.stop()).toBe(0)`
+
+## bigO / bigOOnly / forcedRecipe / withRunner / scriptedRunner / approveBigO / TIMEOUT / AMBIG / CHECKS13
+- **Location:** apps/generator/test/helpers/big-o.ts
+- **Signature:** `forcedRecipe(entry, id, params, { dropExample? })`; `withRunner(entry, run: Runner)`; `scriptedRunner(script: ({ round, lang, real }) => RunOutcome | Promise<RunOutcome> | undefined): Runner`; `approveBigO(svc: Db, date, env = ENV)`; `recipe(id)`; `bigO`, `bigOOnly`, `TIMEOUT`, `AMBIG`, `CHECKS13`
+- **Description:** Big O pipeline helpers. `forcedRecipe` pins the recipe instead of the seeded one; `withRunner` swaps `verify` for `createVerify({ run })`; `scriptedRunner` numbers calls per round (3 per verify: js, go, java) and falls back to the real toolchain when the script returns `undefined`; `approveBigO` approves a day with the real pipeline.
+- **Usage:** `withRunner(bigO, scriptedRunner(({ round, lang }) => round === 0 && lang === 'go' ? TIMEOUT : undefined))`
 
 ## global-setup (ownerUrl / generatorUrl)
 - **Location:** apps/generator/test/global-setup.ts

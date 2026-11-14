@@ -43,6 +43,18 @@ describe('payloadSchema', () => {
   });
 });
 
+describe('payloadSchema date', () => {
+  it('is optional and kept when present (TS-1)', () => {
+    expect('date' in payloadSchema.parse(PAYLOAD)).toBe(false);
+    expect(payloadSchema.parse({ ...PAYLOAD, date: '2027-03-15' }).date).toBe('2027-03-15');
+    for (const date of ['2027-3-15', 20270315]) {
+      const r = payloadSchema.safeParse({ ...PAYLOAD, date });
+      expect(r.success).toBe(false);
+      expect(r.error?.issues[0]?.path).toEqual(['date']);
+    }
+  });
+});
+
 describe('moveSchema', () => {
   it('accepts every valid move (TS-7)', () => {
     for (const language of CODE_LANGUAGES) {

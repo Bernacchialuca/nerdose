@@ -38,8 +38,14 @@
 ## runStartup / buildScheduledJobs / FILL_PATTERN
 - **Location:** apps/generator/src/startup.ts
 - **Signature:** `runStartup(deps): Promise<{ scheduler: Scheduler; queue: QueueListener } | undefined>`; `buildScheduledJobs(runFill): ScheduledJob[]`; `FILL_PATTERN = '10 * * * *'`
-- **Description:** runs `sync_banks`, then `fill` (even if `sync_banks` failed), then starts the scheduler and the queue listener (initial drain included) unless the signal is aborted.
+- **Description:** first calls `warnMissingToolchains` (optional `checkToolchains` dep), then runs `sync_banks`, then `fill` (even if `sync_banks` failed), then starts the scheduler and the queue listener (initial drain included) unless the signal is aborted.
 - **Usage:** `running = await runStartup({ sql, db, logger, clock, signal, tracker, env, registry })`
+
+## warnMissingToolchains
+- **Location:** apps/generator/src/infra/toolchains/warn-missing-toolchains.ts
+- **Signature:** `warnMissingToolchains(log: Logger, check: () => Promise<ToolchainReport> = checkToolchains): Promise<void>`
+- **Description:** logs `warn` `Toolchain missing at startup` with `{ toolchain, required }` for `go` (`Go >= 1.25`) then `java` (`JDK 21`) when `ok` is false; ignores `js`. If `check` rejects it logs `Toolchain check failed` and resolves. Never rejects.
+- **Usage:** `await warnMissingToolchains(logger)`
 
 ## syncBanksJob / fillJob
 - **Location:** apps/generator/src/scheduler/jobs/sync-banks.job.ts, fill.job.ts

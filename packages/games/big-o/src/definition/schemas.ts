@@ -9,6 +9,7 @@ const option = z.enum(BIG_O_OPTIONS);
 const language = z.enum(CODE_LANGUAGES);
 const category = z.enum(RECIPE_CATEGORIES);
 const posInt = z.number().int().min(1);
+const day = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
 export const codeByLanguageSchema = z.object({
   js: z.string().min(1),
@@ -18,6 +19,7 @@ export const codeByLanguageSchema = z.object({
 
 export const payloadSchema = z
   .object({
+    date: day.optional(),
     recipe: z.string().min(1),
     recipe_category: category,
     code: codeByLanguageSchema,

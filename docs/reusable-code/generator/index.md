@@ -2,11 +2,12 @@
 
 App `apps/generator` (not a package; imported through the `@/` alias → `src/`). Node worker, no HTTP port.
 
-## Runtime (8 items) - see runtime.md
+## Runtime (9 items) - see runtime.md
 - **runJob / LOCK_KEYS / JobBody / JobName** (apps/generator/src/scheduler/run-job.ts) - Wraps a job: advisory lock on a reserved connection, `job_runs` record, never rejects (`success | failed | skipped`)
 - **JobRunsRepository** (apps/generator/src/scheduler/job-runs.repository.ts) - `start(job)` / `finish(id, status, summary)` over `job_runs`
 - **createJobTracker / JobTracker** (apps/generator/src/scheduler/job-tracker.ts) - Tracks running jobs so shutdown can wait for them (`idle()`)
-- **runStartup / buildScheduledJobs / FILL_PATTERN** (apps/generator/src/startup.ts) - Startup sequence `sync_banks` -> `fill` -> scheduler -> queue listener with `fill` at `10 * * * *` UTC
+- **runStartup / buildScheduledJobs / FILL_PATTERN** (apps/generator/src/startup.ts) - Startup sequence `sync_banks` -> `fill` -> scheduler -> queue listener with `fill` at `10 * * * *` UTC; optional `checkToolchains` dep
+- **warnMissingToolchains** (apps/generator/src/infra/toolchains/warn-missing-toolchains.ts) - First startup step: `warn` per missing Go/JDK toolchain, never throws or stops startup
 - **syncBanksJob / fillJob** (apps/generator/src/scheduler/jobs/) - `JobBody` factories for the two jobs
 - **startScheduler / ScheduledJob / Scheduler** (apps/generator/src/scheduler/scheduler.ts) - Starts croner jobs in UTC with overrun protection; keeps the process alive
 - **createShutdownHandler / ShutdownDeps** (apps/generator/src/shared/shutdown.ts) - Idempotent SIGTERM/SIGINT handler: abort, stop scheduler and queue listener, close DB, exit 0
@@ -21,7 +22,7 @@ App `apps/generator` (not a package; imported through the `@/` alias → `src/`)
 - **createDatabase / Sql** (apps/generator/src/infra/database/db.ts) - Wraps `createDb` from `@nerdose/db`
 
 ## Domain (10 items) - see domain.md
-- **generatorRegistry / createGeneratorRegistry / GeneratorEntry** (apps/generator/src/games/registry.ts) - `game_id` -> `{ generator, payloadSchema, version }`; one entry per game (Devdle, Grep Grid, Timeline)
+- **generatorRegistry / createGeneratorRegistry / GeneratorEntry** (apps/generator/src/games/registry.ts) - `game_id` -> `{ generator, payloadSchema, version }`; one entry per game (Devdle, Grep Grid, Timeline, Big O)
 - **seedFor / seedToHex** (apps/generator/src/domain/challenge-publishing/seed.ts) - HMAC-SHA256 seed per `{game_id}:{date}:{attempt}`
 - **generateForDate** (apps/generator/src/domain/challenge-publishing/generate.ts) - Draft -> `await verify` (sync or async) -> approved/rejected pipeline for one game and date; history window from `historyWindow`; `firstAttempt` and `'regenerate'` mode (returns the verified draft)
 - **historyWindow** (apps/generator/src/domain/challenge-publishing/generate.ts) - Pure `[D - recentDays, D + (aheadDays ?? 0)]` window excluding D, used to read game history
@@ -32,7 +33,7 @@ App `apps/generator` (not a package; imported through the `@/` alias → `src/`)
 - **syncBanks** (apps/generator/src/domain/content-banks/sync-banks.service.ts) - Loads `terms` and `timeline_facts` from the dataset in one transaction with the ADR-016 UPSERT rules; summary with totals and `by_bank`; exports `sameFactContent` and `isStorableDate`
 - **ContentBanksRepository** (apps/generator/src/domain/content-banks/content-banks.repository.ts) - `listTerms`/`upsertTerm` and `listTimelineFacts`/`upsertTimelineFact` (never touches `rejected` rows or `last_used_*`)
 
-## Testing utils (13 items) - see testing.md
+## Testing utils (14 items) - see testing.md
 - **setupTestDb** (apps/generator/test/helpers/db.ts) - Owner and generator-role connections plus `reset()` / `cleanup()`
 - **insertTerms / BANK16** (apps/generator/test/helpers/bank.ts) - Inserts `terms` fixtures; `BANK16` is 16 approved terms, 2 per category; `TermSpec.lastUsedGrep`
 - **devdleOnlyRegistry** (apps/generator/test/helpers/registry.ts) - Registry with only Devdle for Devdle-specific tests
@@ -42,5 +43,6 @@ App `apps/generator` (not a package; imported through the `@/` alias → `src/`)
 - **captureLogger** (apps/generator/test/helpers/logger.ts) - Real logger writing to memory; `lines()` returns parsed JSON entries
 - **freePort** (apps/generator/test/helpers/net.ts) - Returns a free local TCP port
 - **silentServer** (apps/generator/test/helpers/net.ts) - TCP server that accepts and never answers (simulates a hung DB)
-- **startGenerator** (apps/generator/test/helpers/process.ts) - Spawns `src/index.ts` as a child process with `waitForLog` / `kill` / `stop`
+- **startGenerator** (apps/generator/test/helpers/process.ts) - Spawns `src/index.ts` as a child process with `waitForLog` / `kill` / `stop`; passes `HOME`/`GOCACHE`/`GOPATH`/`TMPDIR` so Go can compile
+- **bigO / bigOOnly / forcedRecipe / withRunner / scriptedRunner / approveBigO / TIMEOUT / AMBIG / CHECKS13** (apps/generator/test/helpers/big-o.ts) - Big O pipeline test helpers: forced recipes, injectable and scripted runners over real toolchains, approve a Big O day
 - **global-setup (ownerUrl / generatorUrl)** (apps/generator/test/global-setup.ts) - Testcontainers Postgres with roles and migrations, provided via `inject()`

@@ -20,7 +20,7 @@ Package `@nerdose/game-big-o` (`packages/games/big-o`). Entries: `./definition` 
 
 ### Schemas and types
 - **Location:** packages/games/big-o/src/definition/schemas.ts
-- **Description:** `payloadSchema` (invariants: `trap_option !== answer`; `trap_option === null` implies no `example.trap_ops`), `moveSchema` (strict), `stateSchema` (strict, `language` and `option` both or none), `publicViewSchema` (strict, 8 options), `feedbackSchema` (`null`), `resultSchema` (strict, localized strings), `statsSchema`, `codeByLanguageSchema`, `MIN_STEPS = 2`, `MAX_STEPS = 6`, and the inferred types `BigOPayload`, `BigOPayloadExplanation`, `BigOMove`, `BigOState`, `BigOPublicView`, `BigOFeedback`, `BigOResult`, `BigOExplanation`, `BigOStats`, `CodeByLanguage`.
+- **Description:** `payloadSchema` (optional `date`, `YYYY-MM-DD`, first key, never public; invariants: `trap_option !== answer`; `trap_option === null` implies no `example.trap_ops`), `moveSchema` (strict), `stateSchema` (strict, `language` and `option` both or none), `publicViewSchema` (strict, 8 options), `feedbackSchema` (`null`), `resultSchema` (strict, localized strings), `statsSchema`, `codeByLanguageSchema`, `MIN_STEPS = 2`, `MAX_STEPS = 6`, and the inferred types `BigOPayload`, `BigOPayloadExplanation`, `BigOMove`, `BigOState`, `BigOPublicView`, `BigOFeedback`, `BigOResult`, `BigOExplanation`, `BigOStats`, `CodeByLanguage`.
 - **Usage:** `moveSchema.safeParse(body)`; a failure is `422 invalid_move`.
 
 ### Test fixtures
@@ -29,13 +29,32 @@ Package `@nerdose/game-big-o` (`packages/games/big-o`). Entries: `./definition` 
 
 ## Generator
 
-Entry `./generator` (`packages/games/big-o/src/generator/index.ts`). It does not export the `generator` object yet: `GameGenerator` requires `verify`, which arrives with S-045, that will compose `{ historySpec, usedBankItems, generate, verify }` from these pieces.
+Entry `./generator` (`packages/games/big-o/src/generator/index.ts`). It exports the `generator` object, `{ historySpec, usedBankItems, generate, verify }`, which `apps/generator` consumes.
+
+### generator
+- **Location:** packages/games/big-o/src/generator/index.ts
+- **Description:** The `GameGenerator<BigOPayload>` of Big O. `verify` is the async one from `verify.ts`; `generate`, `historySpec` and `usedBankItems` come from `generate.ts`.
+- **Signature:** `generator: GameGenerator<BigOPayload>`
+- **Usage:** `import { generator } from '@nerdose/game-big-o/generator'; await generator.verify(payload, history)`
 
 ### generate / historySpec / usedBankItems / TRAP_RATE
 - **Location:** packages/games/big-o/src/generator/generate.ts
 - **Description:** `generate` is deterministic and never mutates `history`. It consumes the rng in a fixed order: (1) the trap draw `rng.int(1, 100) <= 35`; (2) `rng.pick` over the eligible recipes of the chosen group (with trap or without), sorted by `id`, falling back to the other group when empty; (3) the recipe parameters in traversal order. With no eligible recipe it applies the same logic over the whole catalog and leaves the rejection to `verify`. `historySpec` is `{ bank: null, lastUsedField: '', recentDays: 30, aheadDays: 30 }` and `usedBankItems` returns `[]`.
 - **Signature:** `generate: GameGenerator<BigOPayload>['generate']`; `historySpec: HistorySpec`; `usedBankItems(): string[]`; `TRAP_RATE = 0.35`
 - **Usage:** `generate({ date: '2027-03-15', seed, history: { bankItems: [], recentChallenges } })`
+- **Note:** the returned payload carries `date` as its first key, because `verify` has no date argument and the variety checks need it.
+
+### verify / createVerify / VERIFY_CHECKS
+- **Location:** packages/games/big-o/src/generator/verify.ts
+- **Description:** Async verification by execution. Always returns the 13 checks of `VERIFY_CHECKS` in this order: `texts_bilingual`, `code_shape`, `variety_recipe`, `variety_answer`, `run_js`, `run_go`, `run_java`, `counts_agree`, `counts_in_range`, `example_matches_run`, `fit_quality`, `fit_unambiguous`, `fit_matches_answer`. A check is `{ ok: false, detail: 'skipped' }` only when its input is missing: checks 1-4 failing skips 5-13 (nothing runs), any `run_*` failing skips 8-13, `counts_agree` failing skips 9-13, `counts_in_range` failing skips 11-13. The 3 languages run in parallel with `wrapFunction(code[lang], lang, { entry: 'f', calls })` over `SCALE[answer]`. `reason` is the name of the first failed check, or `run_<lang>: <kind>` (`timeout`, `compile_error`, `runtime_error`, `toolchain_missing`, `output_too_large`, `invalid_output`). `run_*` detail is `<kind> (<ms> ms): <first stderr line>` (the `# command-line-arguments` header of `go build` is skipped). A payload without `date` always fails the variety checks (`missing date`). Never throws for a payload or snippet problem.
+- **Signature:** `createVerify(deps?: { run?: Runner; timeoutMs?: number }): (p: BigOPayload, history: GeneratorHistory<BigOPayload>) => Promise<VerificationLog>`; `verify = createVerify()`; `type Runner = (lang, source, options?) => Promise<RunOutcome>`
+- **Usage:** `await createVerify({ run: fakeRunner({ js: counts, go: counts, java: counts }).run })(payload, history)`
+
+### fitCounts / formatFit / fit constants
+- **Location:** packages/games/big-o/src/generator/fit.ts
+- **Description:** Pure fit of measured counts against the 8 classes, in log space: `lr = ln c - ln g(n)`, normalized by `max(lr)`, `CV = population std / mean`; the exponential model uses the least-squares base of `ln c` against `n`, clamped to `[EXP_BASE_MIN, EXP_BASE_MAX]` = `[1.55, 2.05]`. Models are sorted by CV (ties by `BIG_O_OPTIONS` order). Verdict `poor_fit` if `best.cv > FIT_MAX_CV` (0.1), `ambiguous_fit` if `second.cv < max(FIT_MIN_SEPARATION * best.cv, FIT_MIN_SECOND_CV)` (2 and 0.1), else `ok`. It does not use `classValue`, which throws for the log of a non power of two and overflows with `n!`. Throws `RangeError` (`big-o: fit_length_mismatch`, `fit_too_few_points`, `fit_non_positive`).
+- **Signature:** `fitCounts(ns: readonly number[], counts: readonly number[]): FitResult`; `formatFit(fit): string`; `FitResult = { models, best, second, base, verdict }`
+- **Usage:** `fitCounts(SCALE.o_n, counts).best.option`
 
 ### RECIPES / buildRecipe / buildPayload
 - **Location:** packages/games/big-o/src/generator/catalog/{recipes,build,explain,texts,params,complexity,cost,dsl,types}.ts, src/generator/generate.ts
@@ -54,4 +73,4 @@ Entry `./generator` (`packages/games/big-o/src/generator/index.ts`). It does not
 
 ### Test utilities
 - **Location:** packages/games/big-o/src/generator/{test-fixtures,test-utils}.ts
-- **Description:** `seed(n)` / `seedFrom(prefix, n)` (SHA-256 seeds: uniform seeds collapse to a zero state in `rngFrom`), `D = '2027-03-15'`, `recipe(id)`, `recent(date, id, params?)`. `interpret(func, n)` evaluates the tree with the integer semantics of the portable subset (test only: it never runs emitted code, which belongs to S-045's runner).
+- **Description:** `seed(n)` / `seedFrom(prefix, n)` (SHA-256 seeds: uniform seeds collapse to a zero state in `rngFrom`), `D = '2027-03-15'`, `recipe(id)`, `recent(date, id, params?)`, `fakeRunner(outputs)` (returns `{ run, calls }`; a number array is the printed counts, a string is the literal stdout, a `RunOutcome` is returned as is), `allLanguages(counts)`, `emptyHistory`, `withDate(p)` and `noExample(p, answer)`. `requireToolchains()` (packages/games/big-o/test/integration/toolchains.ts, copy of polyglot's) fails, never skips, when Node 24, Go >= 1.25 or JDK 21 is missing. `interpret(func, n)` evaluates the tree with the integer semantics of the portable subset (test only: it never runs emitted code, which belongs to S-045's runner).
