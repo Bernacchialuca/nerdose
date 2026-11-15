@@ -69,7 +69,7 @@ There is no root `.` export: a consumer must pick an entry.
 | Entry | Exports | Consumer |
 |---|---|---|
 | `./definition` | `definition`: object implementing `GameDefinition` (`id`, `version`, `moveSchema`, `bankUsage`, `toPublic`, `initState`, `applyMove`, `isFinished`, `result`, `isWin`, `score`, `initialStats`, `reduceStats`, `codeLanguage`, `historyLabel`, `culprits`), plus the Zod schemas (`payloadSchema`, `moveSchema`, `stateSchema`, `publicViewSchema`, `resultSchema`, `statsSchema`) and their types | `apps/api`; `apps/generator` (`payloadSchema`, `version`); `./client`/`./generator` for types |
-| `./client` | React components `Instructions`, `Game`, `Result`, `Preview({ payload, language })`, `share(result, number, locale)`, `i18n` and `HELP_TARGET_ID` | `apps/web`, `apps/admin` (`Preview` only) |
+| `./client` | React components `Instructions`, `Game`, `Result`, `Preview({ payload, language })`, `StatsSummary({ extra, locale, t })`, `share(result, number, locale)`, `i18n` and `HELP_TARGET_ID` | `apps/web`, `apps/admin` (`Preview` only) |
 | `./generator` | `generator`: `GameGenerator` with `historySpec`, `usedBankItems(payload)`, `generate({ date, seed, history })` and `verify(payload, history)` (returns `VerificationLog` or `Promise<VerificationLog>`) | `apps/generator` |
 
 Members of `GameDefinition` that only some games use are still mandatory and take a neutral value in the others, so the shell never branches by `game_id`:
@@ -131,3 +131,11 @@ Members of `GameDefinition` that only some games use are still mandatory and tak
 - `./client` exports `share(result, number, locale)` (the host passes the active language; `locale` defaults to `'es'` in the package so the client is assignable before and after the host changes its type). `bug-hunt` is the first game whose share text is localized (`🟩 bug encontrado` / `🟩 bug found`).
 - The Shiki infrastructure (`highlight.ts`, `shiki-vars.ts`, `use-tokenizer.ts`, the `radio` helper) is duplicated between `big-o` and `bug-hunt`: game packages do not import each other and Shiki cannot live in `@nerdose/ui` (ADR-002). Accepted duplication; if a third code game appears it is extracted to its own package.
 - `bug-hunt/src/shared/format.ts` (`formatCall`, `formatValue`, `formatArgs`) is used by both `client` and `generator`, so the call the player sees equals the one in the server-side explanation (`generator/format.ts` re-exports it).
+
+## Update (REQ-011)
+
+- `./client` exports `StatsSummary({ extra, locale, t })` as a mandatory member (like `Preview`): it shows the game's own stats from `GameStatsView.extra` (parsed with the game's `statsSchema`).
+- The values are derived by pure functions in `src/client/stats.ts` of each package (no React, no clock, no network, no storage; they do not mutate their input). `formatPercent` is duplicated per package (accepted duplication, ADR-002).
+- `StatsSummary` never imports the board: `test/stats-summary-boundaries.test.ts` walks the relative import graph of `src/client/stats-summary.tsx` and fails if it reaches the board, Shiki or dnd-kit.
+- The `streak` progress bar is drawn by `src/client/stat-bar.tsx`, duplicated in `timeline`, `big-o` and `bug-hunt` (D2) until `@nerdose/ui` implements the `streak` variant. Devdle extracts its bars to `distribution-bars.tsx`, shared by `Distribution` and `StatsSummary`.
+- A game with no games played renders only `stats.none` (D1).

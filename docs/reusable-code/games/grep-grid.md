@@ -94,3 +94,10 @@ Package `@nerdose/game-grep-grid` (`packages/games/grep-grid`). Entries: `./defi
 - **Description:** `Preview({ payload, language })` admin solution-mode preview: `Board mode="result"` over `previewCells(grid, solutionKeys(payload))` (`solution` cells look like `found`, `aria-label` "part of the solution") and `WordList mode="preview"` (no strike-through, `h3`). Parses with `payloadSchema`; never uses the selection helpers (the server decides in play, NFR-S02).
 - **Signature:** `Preview(props: PreviewProps)`, `solutionKeys(p: GrepGridPayload): Set<string>`, `previewCells(grid: string[][], keys: ReadonlySet<string>): BoardCell[]`, `translatorFor(language: Locale): Translate`
 - **Usage:** `const { Preview } = await import('@nerdose/game-grep-grid/client')`
+
+## StatsSummary (REQ-011)
+
+- **Location:** `src/client/stats-summary.tsx`, `src/client/stats.ts`
+- **Description:** Own stats of Grep Grid: average of words found and % of 8/8 derived from `extra.words_found`; `—` without games.
+- **Signature:** `gamesCount(stats)`, `averageWords(stats): number | null`, `perfectRate(stats): number | null`, `formatPercent(rate, locale)`, `formatAverage(value, locale)`
+- **Usage:** `<StatsSummary extra={game.extra} locale="en" t={t} />`

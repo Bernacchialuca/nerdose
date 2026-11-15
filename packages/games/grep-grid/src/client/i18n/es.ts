@@ -74,6 +74,12 @@ export const es = {
     gaveUp: 'Te rendiste con {{score}}/{{total}}',
     gaveUpDetail: 'Estas son las palabras que faltaban.',
   },
+  stats: {
+    title: 'palabras',
+    average: 'promedio {{value}} de {{total}}',
+    perfect: '8/8 en el {{value}} de las partidas',
+    none: 'Todavía no jugaste a este juego.',
+  },
 };
 
 export type Resources = typeof es;

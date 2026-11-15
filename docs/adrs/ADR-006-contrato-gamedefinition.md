@@ -1,7 +1,7 @@
 # ADR-006: Contrato `GameDefinition` y juegos como paquetes enchufables
 
 **Estado:** Accepted
-**Fecha:** 2026-11-03 (actualizado 2026-11-14: `culprits`, `bankUsage`, `Preview`, `codeLanguage`, `verify` asíncrono, `aheadDays`)
+**Fecha:** 2026-11-03 (actualizado 2026-11-15: `culprits`, `bankUsage`, `Preview`, `codeLanguage`, `verify` asíncrono, `aheadDays`, `StatsSummary`)
 **Decisores:** Responsable de nerdose
 **Etiquetas:** juegos, contrato, extensibilidad, anti-spoiler
 
@@ -61,6 +61,7 @@ export interface GameGenerator<Payload> {
 // entrada ./client
 //   Instructions, Game, Result (componentes React) y share(result, number, locale): string
 //   Preview({ payload, language }) — solo lectura, el tablero con la solución, para el admin (REQ-008)
+//   StatsSummary({ extra, locale, t }) — stats propias del juego desde GameStatsView.extra, sin importar el tablero (REQ-011)
 ```
 
 Hay un **registry** en `api`, en `web`/`admin` y en `generator` que mapea `game_id` → la entrada correspondiente. Las rutas de la `api` (`/api/games/{game_id}/today/*`) son genéricas sobre el registry.
@@ -68,6 +69,7 @@ Hay un **registry** en `api`, en `web`/`admin` y en `generator` que mapea `game_
 ## Reglas de Implementación
 
 - La `api` MUST guardar `plays.code_language = codeLanguage(state)` al cerrar la Play y, si no es `null`, actualizar `players.preferred_code_language` en la misma transacción, sin ramificar por `game_id` (REQ-009).
+- `StatsSummary` MUST derivar sus valores con funciones puras del paquete y mostrar `—` para un porcentaje sin partidas; MUST NOT importar el tablero ni hacer `fetch` (REQ-011).
 - `generateForDate` MUST hacer `await` de `verify`; los generadores síncronos siguen siendo válidos.
 
 - Cada juego MUST vivir en `packages/games/<game_id>`, con `game_id` ∈ `devdle | grep-grid | timeline | big-o | bug-hunt`.

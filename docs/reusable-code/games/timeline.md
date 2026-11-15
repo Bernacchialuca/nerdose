@@ -149,3 +149,10 @@ Entry `./client` (React 19, dnd-kit). Same props contract as Devdle and Grep Gri
 - **Description:** `Preview({ payload, language })` admin solution-mode preview: `// consigna: ...` line and a `SectionPanel` (`h3`) with the `Rail` over the facts in `correct_order` (throws if an id is not in `items`). Parses with `payloadSchema`; no dnd-kit.
 - **Signature:** `Preview(props: PreviewProps)`, `translatorFor(language: Locale): Translate`; `SectionPanel` gained `headingLevel?: 2 | 3`
 - **Usage:** `const { Preview } = await import('@nerdose/game-timeline/client')`
+
+## StatsSummary (REQ-011)
+
+- **Location:** `src/client/stats-summary.tsx`, `src/client/stats.ts`, `src/client/stat-bar.tsx`
+- **Description:** Own stats of Tech Timeline: accuracy per category (8 rows in `TIMELINE_CATEGORIES` order) and best category; `StatBar({ rate })` is the decorative `streak` bar (`aria-hidden`).
+- **Signature:** `categoryRates(stats): { category; played; correct; rate: number | null }[]`, `bestCategory(stats): TimelineCategory | null`, `gamesCount(stats)`, `formatPercent(rate, locale)`
+- **Usage:** `<StatsSummary extra={game.extra} locale="es" t={t} />`

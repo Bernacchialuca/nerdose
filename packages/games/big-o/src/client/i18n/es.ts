@@ -76,4 +76,16 @@ export const es = {
       trap: '{{option}}, trampa',
     },
   },
+  stats: {
+    title: 'aciertos por categoría de receta',
+    count: '{{correct}} de {{played}}',
+    none: 'Todavía no jugaste a este juego.',
+    categories: {
+      simple_loops: 'bucles simples',
+      nested_loops: 'bucles anidados',
+      recursion: 'recursión',
+      divide_and_conquer: 'divide y vencerás',
+      binary_search: 'búsqueda binaria',
+    },
+  },
 } as const;

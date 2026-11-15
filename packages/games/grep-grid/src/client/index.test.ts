@@ -8,6 +8,7 @@ describe('client entry (TS-2)', () => {
     expect(typeof client.Game).toBe('function');
     expect(typeof client.Result).toBe('function');
     expect(typeof client.Preview).toBe('function');
+    expect(typeof client.StatsSummary).toBe('function');
     expect(typeof client.share).toBe('function');
     expect(client.i18n.namespace).toBe('grep-grid');
     expect(client.HELP_TARGET_ID).toBe('game-help');

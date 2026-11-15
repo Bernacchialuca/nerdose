@@ -76,4 +76,10 @@ export const es = {
   },
   preview: { bugTag: 'línea del bug', mutation: 'mutación: {{from}} → {{to}}' },
   share: { found: 'bug encontrado', missed: 'se me escapó' },
+  stats: {
+    byLanguage: 'por lenguaje',
+    byBugType: 'por tipo de bug',
+    count: '{{correct}} de {{played}}',
+    none: 'Todavía no jugaste a este juego.',
+  },
 } as const;

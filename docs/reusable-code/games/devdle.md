@@ -40,3 +40,10 @@
 - **Description:** Offline only. Builds `wordlist/words.txt` (ENABLE A-Z 4-12 union English Wikidata labels), committed and exposed as `./wordlist` (data resource read with `node:fs`).
 - **Signature:** `runBuildWordlist({ enable, outPath, contact, classes?, now?, fetch?, sleep?, log? }): Promise<{ enable, wikidata, onlyWikidata, total }>`
 - **Usage:** `pnpm --filter @nerdose/game-devdle build:wordlist --enable <url-or-path>`
+
+## StatsSummary (REQ-011)
+
+- **Location:** `src/client/stats-summary.tsx`, `src/client/stats.ts`, `src/client/distribution-bars.tsx`
+- **Description:** Own stats of Devdle. `StatsSummary({ extra, locale, t })` parses `extra` with `parseStats`, shows the attempts distribution (1..6 and X) with `DistributionBars` or only `stats.none` without games.
+- **Signature:** `distributionRows(stats): { label; count }[]`, `gamesCount(stats): number`, `formatPercent(rate: number | null, locale): string`, `DistributionBars({ rows, highlight?, t })`
+- **Usage:** `<StatsSummary extra={game.extra} locale="es" t={t} />`

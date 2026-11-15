@@ -79,4 +79,16 @@ export const en: Shape<typeof es> = {
       trap: '{{option}}, trap',
     },
   },
+  stats: {
+    title: 'correct by recipe category',
+    count: '{{correct}} of {{played}}',
+    none: "You haven't played this game yet.",
+    categories: {
+      simple_loops: 'simple loops',
+      nested_loops: 'nested loops',
+      recursion: 'recursion',
+      divide_and_conquer: 'divide and conquer',
+      binary_search: 'binary search',
+    },
+  },
 };

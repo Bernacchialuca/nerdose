@@ -72,3 +72,11 @@ export type PreviewProps = {
   /** Picks the text of every localized field. */
   language: Locale;
 };
+export type StatsSummaryProps = {
+  /** GameStatsView.extra (shape of the game's statsSchema); parsed inside. */
+  extra: unknown;
+  /** Active language: number format and labels that do not come from i18n. */
+  locale: Locale;
+  /** `t` of the game namespace. */
+  t: Translate;
+};
