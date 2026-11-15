@@ -12,9 +12,11 @@ y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 - `patterns/game-boards.md` 1.7.0: mapeo de `bug-hunt.line` / `bug-hunt.test` / `bug-hunt.confirm`, fila **Bug Hunt** en «Modo solución — preview del admin» (con la excepción de las pestañas) y «Lo que compartís» / «↺ reiniciar demo» marcados como descartados por las pantallas.
 
 ### Código alineado con el spec
+- `apps/web` (S-051, plan `web`): Bug Hunt montado por el registry (`clientRegistry['bug-hunt']`), Compartir del header con el texto en el idioma activo (`share(result, number, locale)`) y guardas de build extendidas (CSS y chunk de Bug Hunt fuera de la entrada). Sin componentes ni tokens nuevos en `web`.
 - `@nerdose/game-bug-hunt/client` (S-051, plan `games`): `Instructions`, `Game`, `Result`, `Preview`, `share(result, number, locale)`, `i18n` y `HELP_TARGET_ID`; Shiki por `import()` dinámico en `highlight.ts` (copia de Big O).
 
 ### Notas para limpiar en otros docs
+- `web`: el aviso de día nuevo dice «… sin **terminar** …» (screen.md de Bug Hunt: «sin **confirmar**»), el loader es «$ cargando bug-hunt…» (screen.md: «$ cargando tu partida de bug-hunt…» / «$ cargando tu resultado de bug-hunt…») y los errores de jugada y de carga del resultado son los genéricos del host (O2 del plan `web`). Son textos compartidos por los 5 juegos.
 - `@nerdose/ui` no tiene los tokens `game.bug-hunt.tint-hover` (`#15110A`), `game.bug-hunt.disabled.bg` / `.text` (`#2A2416` / `#8A7856`) ni `status.error.diff-text` / `status.success.diff-text` (`#FFB3AD` / `#9EF0C2`): el client usa `surface-3`, el `disabled` de `buttonClass` y `status.*.soft`. Candidato a una story de `ui`.
 - Roles tipográficos sin utilidad `text-*`: `type.code` (15/2), `type.body.statement` (16/1,55), `type.body.explain` (15/1,55), `type.label.tab` y `type.label.step`; el client usa los roles existentes más cercanos.
 - `chip.accent` no tiene componente en `@nerdose/ui` (`Badge` solo tiene `chip` neutral): el chip «tipo: …» usa clases inline con tokens existentes.

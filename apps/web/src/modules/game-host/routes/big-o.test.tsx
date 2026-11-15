@@ -677,18 +677,3 @@ describe('axe', () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 });
-
-describe('Bug Hunt sin client', () => {
-  it('TS-34: no llama a la api y muestra el día neutro', async () => {
-    const calls = recordCalls();
-    const { container } = view('/bug-hunt');
-    expect(await h1('Bug Hunt')).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        'Hoy no hay desafío de Bug Hunt. Es un día neutro: no suma ni corta tu racha.',
-      ),
-    ).toBeInTheDocument();
-    expect(calls.filter((c) => c.path.startsWith('/api/games/bug-hunt'))).toEqual([]);
-    expect(await axe(container)).toHaveNoViolations();
-  });
-});

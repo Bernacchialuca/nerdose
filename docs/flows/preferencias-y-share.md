@@ -46,7 +46,7 @@ sequenceDiagram
         A-->>W: 200 GameToday (textos en el locale nuevo)
     end
     Note over W: al terminar la partida
-    W->>W: text = share(result, number)
+    W->>W: text = share(result, number, locale)
     W->>W: navigator.share({ text }) o clipboard.writeText(text)
     opt VITE_PLAUSIBLE_DOMAIN con valor
         W->>P: track('share:<game_id>')
@@ -107,7 +107,7 @@ sequenceDiagram
 **Tipo:** Interno + Evento (opcional)
 
 **Acción:**
-1. `text = share(result, number)` del `client` del juego. Nunca incluye la solución y termina en `nerdose.dev`. Ejemplo:
+1. `text = share(result, number, locale)` del `client` del juego (el `locale` es el idioma activo de la sesión; solo el share de Bug Hunt tiene texto y lo traduce). Nunca incluye la solución y termina en `nerdose.dev`. Ejemplo:
    ```
    🟩 Devdle #128
    🟩🟨⬛⬛⬛
@@ -127,6 +127,13 @@ sequenceDiagram
    🟩 Java
    nerdose.dev
    ```
+   Bug Hunt (🟩 si encontró el bug, 🟥 si no, y el lenguaje de la pestaña con la que confirmó; sin la línea ni el tipo de bug; el texto sigue el idioma activo):
+   ```
+   🐛 Bug Hunt #12 · JavaScript
+   🟥 se me escapó
+   nerdose.dev
+   ```
+   En inglés, la segunda línea es `🟥 it got away` (y `🟩 bug found` al acertar).
 2. `navigator.share({ text })` si está disponible; si no, `navigator.clipboard.writeText(text)` y el aviso "copiado".
 3. `track('share:<game_id>')` de `@nerdose/ui`. Es un no-op si `VITE_PLAUSIBLE_DOMAIN` está vacío.
 

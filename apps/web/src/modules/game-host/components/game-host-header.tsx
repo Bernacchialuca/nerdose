@@ -56,7 +56,7 @@ function scrollToHelp(gameId: GameId) {
  */
 export function GameHostHeader({ gameId }: { gameId: GameId }) {
   const { t, i18n } = useTranslation();
-  const { status } = useSession();
+  const { status, locale } = useSession();
   const hasClient = hasGameClient(gameId);
   const query = useGameToday(gameId, { enabled: hasClient });
   const today = useToday();
@@ -115,6 +115,7 @@ export function GameHostHeader({ gameId }: { gameId: GameId }) {
             variant="header"
             result={view.result}
             number={view.number}
+            locale={locale}
           />
         </Suspense>
       ) : (

@@ -84,6 +84,24 @@ describe('index.css', () => {
     }
   }, 60_000);
 
+  it('TS-35: el CSS compilado incluye lo que usa el client de Bug Hunt', async () => {
+    const compiled = compiledCss(await buildWeb());
+    for (const used of [
+      '--color-game-bug-hunt-tint',
+      '--color-game-bug-hunt-tint-strong',
+      '--color-game-bug-hunt-featured',
+      '--color-game-bug-hunt-light',
+      '--shadow-bar-bug-hunt',
+      '--color-status-error-soft',
+      '--color-status-success-soft',
+      '--color-streak-surface',
+      '--color-surface-inset',
+      '@container',
+    ]) {
+      expect(compiled, used).toContain(used);
+    }
+  }, 60_000);
+
   it('TS-37: el resaltador de código queda fuera del chunk de entrada y es perezoso', async () => {
     const { chunks } = await buildWeb();
     const byName = new Map(chunks.map((c) => [c.fileName, c]));
@@ -101,11 +119,13 @@ describe('index.css', () => {
     const withHighlighter = chunks.filter((c) => c.moduleIds.some((id) => highlighter.test(id)));
     expect(withHighlighter.length).toBeGreaterThan(0);
     for (const c of withHighlighter) expect(closure.has(c.fileName), c.fileName).toBe(false);
-    const gameChunk = chunks.find((c) =>
-      c.moduleIds.some((id) => id.endsWith('packages/games/big-o/src/client/index.ts')),
-    );
-    expect(gameChunk).toBeDefined();
-    expect(closure.has((gameChunk as (typeof chunks)[number]).fileName)).toBe(false);
+    for (const game of ['big-o', 'bug-hunt']) {
+      const gameChunk = chunks.find((c) =>
+        c.moduleIds.some((id) => id.endsWith(`packages/games/${game}/src/client/index.ts`)),
+      );
+      expect(gameChunk, game).toBeDefined();
+      expect(closure.has((gameChunk as (typeof chunks)[number]).fileName), game).toBe(false);
+    }
   }, 60_000);
 
   it('importa solo los pesos del Design System', () => {

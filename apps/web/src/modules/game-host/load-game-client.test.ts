@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import type { GameId } from '@nerdose/core';
+
 import i18n from '@/i18n';
 
 import { loadGameClient } from './load-game-client';
@@ -65,7 +67,22 @@ describe('loadGameClient', () => {
     expect(i18n.t('game.confirm', { ns: 'big-o' })).toBe('Confirmar respuesta');
   });
 
+  it('TS-2: carga el client de Bug Hunt y registra su i18n', async () => {
+    const first = loadGameClient('bug-hunt');
+    expect(loadGameClient('bug-hunt')).toBe(first);
+    const client = await first;
+    expect(typeof client.Instructions).toBe('function');
+    expect(typeof client.Game).toBe('function');
+    expect(typeof client.Result).toBe('function');
+    expect(typeof client.share).toBe('function');
+    expect(client.i18n.namespace).toBe('bug-hunt');
+    expect(client.HELP_TARGET_ID).toBe('game-help');
+    expect(i18n.hasResourceBundle('es', 'bug-hunt')).toBe(true);
+    expect(i18n.hasResourceBundle('en', 'bug-hunt')).toBe(true);
+    expect(i18n.t('game.confirmIdle', { ns: 'bug-hunt' })).toBe('Elegí una línea');
+  });
+
   it('rechaza si el juego no tiene client', async () => {
-    await expect(loadGameClient('bug-hunt')).rejects.toThrow('bug-hunt');
+    await expect(loadGameClient('unknown-game' as GameId)).rejects.toThrow('unknown-game');
   });
 });

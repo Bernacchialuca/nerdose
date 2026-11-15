@@ -6,6 +6,7 @@ import type { Locale } from '@nerdose/core';
 import type { GameId } from '@nerdose/core';
 
 import { bigONotStarted } from './fixtures/big-o-today';
+import { bugHuntNotStarted } from './fixtures/bug-hunt-today';
 import { gameTodayNotStarted } from './fixtures/game-today';
 import { grepGridNotStarted } from './fixtures/grep-grid-today';
 import { sessionFixture } from './fixtures/session';
@@ -16,6 +17,7 @@ export const defaultHandlers = [
   http.post('/api/session', () => HttpResponse.json(sessionFixture)),
   http.get('/api/today', () => HttpResponse.json(todayFixture)),
   http.get('/api/games/big-o/today', () => HttpResponse.json(bigONotStarted)),
+  http.get('/api/games/bug-hunt/today', () => HttpResponse.json(bugHuntNotStarted)),
   http.get('/api/games/devdle/today', () => HttpResponse.json(gameTodayNotStarted)),
   http.get('/api/games/grep-grid/today', () => HttpResponse.json(grepGridNotStarted)),
   http.get('/api/games/timeline/today', () => HttpResponse.json(timelineNotStarted)),
@@ -47,6 +49,7 @@ export const gameHandlers = gameHandlersFor('devdle');
 export const grepGridHandlers = gameHandlersFor('grep-grid');
 export const timelineHandlers = gameHandlersFor('timeline');
 export const bigOHandlers = gameHandlersFor('big-o');
+export const bugHuntHandlers = gameHandlersFor('bug-hunt');
 
 export const apiError = (code: string, message: string) => ({ error: { code, message } });
 
