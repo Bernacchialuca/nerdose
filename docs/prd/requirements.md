@@ -1,6 +1,6 @@
 ---
 created: 2026-11-03
-last_updated: 2026-11-03
+last_updated: 2026-11-14
 status: "Draft - In Definition"
 ---
 
@@ -53,7 +53,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
   | grep-grid | grid (12×12), words (8: term_id, word, definition `{es,en}`), placements (posición y dirección de cada palabra) | grid, words (term_id, word; definition solo de las ya encontradas por la Play en curso) |
   | timeline | prompt `{es,en}` (consigna única), items (5: fact_id, opaque_id, label, category, event_date, date_precision, note `{es,en}`), correct_order (opaque_ids) | prompt, items mezclados (opaque_id, label, category) |
   | big-o | date (`YYYY-MM-DD`, la fecha del desafío; opcional en el schema, `generate` siempre la pone: `verify` la usa para las reglas de variedad y sin ella rechaza el candidato), recipe (id estable de la receta), recipe_category, code `{js,go,java}` (función `f(n)` que cuenta sus operaciones y devuelve `ops`; misma línea por sentencia en los 3), answer (enum big_o_option), trap_option (big_o_option o null: la respuesta equivocada típica), explanation (steps `[{es,en}]`, line_notes `[{ line, text {es,en} }]`, tip `{es,en}` o null, example `{ n, ops, trap_ops }` o null) — REQ-009 | code, options (las 8 `big_o_option`, en orden fijo) |
-  | bug-hunt | template, params, tree, bug_node_id, bug_type, mutation, fix (diff), spec `{es,en}`, code `{js,go,java}`, line_of `{js,go,java}`, pickable_lines, visible_tests, failing_test, explanation `{es,en}` | spec, code, pickable_lines, visible_tests |
+  | bug-hunt | date (`YYYY-MM-DD`, como en big-o: `verify` la usa para la variedad), template (id estable de la plantilla), params (parámetros sorteados), function_name, bug_type, mutation `{ operator, node, from, to }` (operador del catálogo, nodo mutado del árbol de la plantilla y tokens antes/después), spec `{es,en}`, code `{js,go,java}` (la versión **con el bug**, la que ve el jugador; misma línea por sentencia en los 3), bug_line (igual en los 3), fix `{js,go,java}` (texto correcto de la línea `bug_line` en cada lenguaje), pickable_lines (líneas con una sentencia: sin la firma ni las líneas de solo llaves), tests `[{ input, expected, actual }]` (el conjunto generado: `expected` de la versión correcta, `actual` de la mutada), visible_tests `[{ input, expected }]` (2–3 que pasan con el bug), failing_test `{ input, expected, actual }` (el más chico que falla), explanation (steps `[{es,en}]`, 2–4) — REQ-010. No guarda el árbol: lo que se verifica es el código guardado | function_name, spec, code, pickable_lines, visible_tests |
 
 ### Play
 - **Key attributes:** id (uuid, req), player_id (uuid, req), challenge_id (uuid, req), game_id (enum game_id, req, denormalizado), date (date UTC, req, denormalizado), state (json, req, estado propio del juego), status (enum: in_progress/won/lost/voided, default: in_progress), result (json, opt, req si status ∈ won/lost), code_language (enum code_language, opt, solo bug-hunt y big-o: lenguaje con el que confirmó), score (int, opt), started_at (timestamp, req), finished_at (timestamp, opt, req si status ≠ in_progress)
@@ -71,7 +71,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
   | grep-grid | found_words, gave_up | 8 encontradas o se rinde | palabras encontradas (0–8) | 8/8 | "8/8" / "5/8" |
   | timeline | order (vacío hasta confirmar; los 5 opaque_id confirmados) | 1 confirmación | posiciones correctas (0–5) | 5/5 | "3/5" |
   | big-o | vacío hasta confirmar; `{ language, option }` confirmados (REQ-009) | 1 confirmación | 1/0 | opción correcta | "✓ O(n log n)" / "✗" |
-  | bug-hunt | — | 1 confirmación | 1/0 | línea correcta | "✓ L7" / "✗ L7" |
+  | bug-hunt | vacío hasta confirmar; `{ language, line }` confirmados (REQ-010) | 1 confirmación | 1/0 | línea correcta | "✓ L7" / "✗ L7" (`L` = línea del bug) |
 
 ### PlayerGameStats
 - **Key attributes:** player_id (uuid, req), game_id (enum game_id, req), current_streak (int, req, default: 0), max_streak (int, req, default: 0), played (int, req, default: 0), wins (int, req, default: 0), last_completed_date (date, opt), extra (json, req, stats propias del juego)
@@ -81,7 +81,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
   - grep-grid: distribución de palabras encontradas por partida (0–8), de la que salen el promedio de palabras encontradas y el porcentaje de 8/8;
   - timeline: por categoría y **por hito**, hitos jugados y hitos en su lugar (`{ by_category: { <category>: { played, correct } } }`): cada uno de los 5 items de la partida suma `played += 1` a la categoría de su hecho y `correct += 1` si quedó en su posición correcta. De ahí sale el porcentaje de acierto por categoría (`correct / played`); la mejor categoría es la de mayor promedio;
   - big-o: aciertos por `recipe_category` (`{ by_category: { <recipe_category>: { played, correct } } }`, una partida suma `played += 1` a la categoría de su receta y `correct += 1` si ganó; REQ-009);
-  - bug-hunt: aciertos por `code_language` y por `bug_type`.
+  - bug-hunt: aciertos por `code_language` y por `bug_type` (`{ by_language: { <code_language>: { played, correct } }, by_bug_type: { <bug_type>: { played, correct } } }`, una partida suma `played += 1` en su lenguaje y en su tipo de bug, y `correct += 1` en ambos si ganó; REQ-010).
 
 ### PlayerStats
 - **Key attributes:** player_id (uuid, req), global_streak (int, req, default: 0), max_global_streak (int, req, default: 0), last_active_date (date, opt), total_completed (int, req, default: 0)

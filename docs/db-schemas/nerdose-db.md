@@ -231,7 +231,7 @@ Table player_game_stats {
   played integer [not null, default: 0, note: 'Excluye plays voided']
   wins integer [not null, default: 0, note: 'Excluye plays voided']
   last_completed_date date [null]
-  extra jsonb [not null, default: `'{}'::jsonb`, note: 'Stats propias del juego (reduceStats). Excluye voided. Devdle: { guesses: { "1": n, …, "6": n }, losses: n }. Grep Grid: { words_found: { "0": n, …, "8": n } } (partidas por cantidad de palabras encontradas). Timeline: { by_category: { <category>: { played, correct } } }, por hito (cada item suma played a la categoría de su hecho y correct si quedó en su lugar). Big O: { by_category: { <recipe_category>: { played, correct } } }']
+  extra jsonb [not null, default: `'{}'::jsonb`, note: 'Stats propias del juego (reduceStats). Excluye voided. Devdle: { guesses: { "1": n, …, "6": n }, losses: n }. Grep Grid: { words_found: { "0": n, …, "8": n } } (partidas por cantidad de palabras encontradas). Timeline: { by_category: { <category>: { played, correct } } }, por hito (cada item suma played a la categoría de su hecho y correct si quedó en su lugar). Big O: { by_category: { <recipe_category>: { played, correct } } }. Bug Hunt: { by_language: { <code_language>: { played, correct } }, by_bug_type: { <bug_type>: { played, correct } } }']
 
   indexes {
     (player_id, game_id) [pk]

@@ -8,7 +8,7 @@ audiences:
   - responsable
 fidelity: mid
 status: diseñada
-version: "1.3"
+version: "1.4"
 date: 2026-11-14
 overlay: true
 overlay_type: drawer
@@ -153,7 +153,7 @@ triggered_by: reportes
 ### preview-es
 - Texto/label: Grilla 12 × 12 con las 8 palabras resaltadas · Lista: REDIS — almacén de datos en memoria…
 - Icono: nada
-- Annotation: `Preview` del `client` del juego en modo solución, solo lectura (no se juega ni se crea una partida). Devdle: la palabra con su categoría, definición y resumen. Grep Grid: la grilla con las 8 palabras resaltadas y la lista con definiciones. Tech Timeline: la consigna y los 5 hechos en el orden correcto con fecha y nota. Big O (REQ-009): la pregunta, el código con pestañas JavaScript / Go / Java (`code-block` `readonly` **en texto plano, sin resaltado**) con las líneas de `line_notes` resaltadas y su nota, la grilla de 8 opciones con la respuesta marcada («✓ correcta») y la `trap_option` marcada como «trampa» (borde punteado, sin relleno), y el panel con los pasos, «en números» y el consejo en el idioma de la columna; el código es el mismo en las dos columnas y lo que cambia es la explicación. Si el juego no tiene `Preview` en el admin, cae a la vista genérica del `payload`
+- Annotation: `Preview` del `client` del juego en modo solución, solo lectura (no se juega ni se crea una partida). Devdle: la palabra con su categoría, definición y resumen. Grep Grid: la grilla con las 8 palabras resaltadas y la lista con definiciones. Tech Timeline: la consigna y los 5 hechos en el orden correcto con fecha y nota. Big O (REQ-009): la pregunta, el código con pestañas JavaScript / Go / Java (`code-block` `readonly` **en texto plano, sin resaltado**) con las líneas de `line_notes` resaltadas y su nota, la grilla de 8 opciones con la respuesta marcada («✓ correcta») y la `trap_option` marcada como «trampa» (borde punteado, sin relleno), y el panel con los pasos, «en números» y el consejo en el idioma de la columna; el código es el mismo en las dos columnas y lo que cambia es la explicación. Bug Hunt (REQ-010): la especificación, el código con pestañas JavaScript / Go / Java (`code-block` en texto plano, sin resaltado, como Big O) con las líneas no elegibles atenuadas y la línea del bug marcada «🐛 línea del bug», los chips «tipo: comparación» y «mutación: > → >=» (`mutation.from` → `to`; en el admin sí se muestra, porque es lo que se revisa ante un reporte), los tests visibles como llamadas, el test que falla (llamada, esperado y obtenido), el fix como diff de una línea del lenguaje de la pestaña y los pasos de «Por qué falla» en el idioma de la columna; el código, los tests y el fix son iguales en las dos columnas y cambian la especificación, el tipo y la explicación. Si el juego no tiene `Preview` en el admin, cae a la vista genérica del `payload`
 
 ### preview-en
 - Texto/label: 12 × 12 grid with the 8 words highlighted · List: REDIS — in-memory data store…
@@ -178,7 +178,7 @@ triggered_by: reportes
 ### log-verificacion
 - Texto/label: Solución verificada, Traducción ES/EN consistente
 - Icono: check
-- Annotation: `verification` del desafío, legible: cada verificación con su resultado; el seed derivado no se muestra. Big O (REQ-009) trae más checks y su `detail`: textos bilingües, forma del código, variedad de receta y de respuesta, ejecución en JavaScript, Go y Java (duración, o el motivo: `timeout`, `compile_error`, `runtime_error`, `toolchain_missing`, `output_too_large`), conteos que concuerdan y en rango, «en números» comprobado y el ajuste (escala de n, conteos y CV de cada modelo). El log genérico los muestra tal cual, en orden; el `detail` largo del ajuste se lee como texto plano monoespaciado, sin gráfico
+- Annotation: `verification` del desafío, legible: cada verificación con su resultado; el seed derivado no se muestra. Big O (REQ-009) trae más checks y su `detail`: textos bilingües, forma del código, variedad de receta y de respuesta, ejecución en JavaScript, Go y Java (duración, o el motivo: `timeout`, `compile_error`, `runtime_error`, `toolchain_missing`, `output_too_large`), conteos que concuerdan y en rango, «en números» comprobado y el ajuste (escala de n, conteos y CV de cada modelo). El log genérico los muestra tal cual, en orden; el `detail` largo del ajuste se lee como texto plano monoespaciado, sin gráfico. Bug Hunt (REQ-010) lista sus checks con nombre estable y en orden: `texts_bilingual`, `code_shape`, `lines_consistent`, `tests_consistent`, `variety_combo`, `run_correct_{js,go,java}`, `run_mutant_{js,go,java}` (duración, o `kind (duración): primera línea de stderr`), `correct_agrees` y `mutant_agrees`; los que no corrieron porque falló uno anterior muestran `skipped` (CA 18, 19)
 
 ### lista-reportes
 - Texto/label: Respuesta incorrecta · es · hace 2 h · jugador a1b2c3d4 · «dos palabras posibles» · partida en curso, Chrome 130 / Ambiguo · en · hace 5 h · jugador 9f0e1d2c · (sin mensaje) · partida terminada, Safari 18 / Traducción · es · ayer · jugador 77aa01bc · «la definición en inglés dice otra cosa» · partida terminada, Firefox 132
@@ -333,6 +333,7 @@ triggered_by: reportes
 - REQ-008: el estado de la regeneración (pendiente o fallida con su motivo) y el aviso de ítem rechazado viven en la cabecera del drawer, además de la celda.
 - REQ-009: el `Preview` de Big O reutiliza el `code-block` del juego **en texto plano, sin resaltado de sintaxis** (decisión 13 del diseño técnico lo dejaba a la revisión UX): el responsable revisa el código y la explicación, no lo juega, y así el admin no carga Shiki. Marca la respuesta y también la `trap_option` como «trampa», porque es lo que el jugador va a confundir y lo que hay que revisar ante un reporte `ambiguous`. No se agregan bloques: es el mismo `preview-es` / `preview-en`.
 - REQ-009: el log de verificación de Big O no tiene vista propia; el `VerificationLog` genérico ya lista cada check con su `detail` (CA 19). Si el detalle del ajuste resulta ilegible en uso real, se diseña una vista con `/product-ux-wireframes`.
+- REQ-010: el `Preview` de Bug Hunt sigue el criterio de Big O (código en texto plano, sin Shiki) y muestra todo lo que el jugador ve al terminar más la mutación (`from` → `to`), que el jugador no ve: ante un reporte `wrong_answer` o `ambiguous` el responsable necesita la línea, el cambio aplicado, el test que falla y la especificación juntos para decidir si el bug es real o si la especificación es ambigua. No se agregan bloques: es el mismo `preview-es` / `preview-en`, y el log de verificación es el `VerificationLog` genérico (CA 19).
 
 **Alternativas descartadas:**
 - Pestañas ES/EN: obligan a recordar lo que se vio en la otra (relevante solo si hubiera mobile).
@@ -345,4 +346,4 @@ triggered_by: reportes
 
 ## Trazabilidad
 
-- C-39, C-40, C-41, C-43, C-44 · REQ-007 (RF 6, 7; CA 14-16) · REQ-008 (RF 1-3; CA 2, 3, 6, 10) · REQ-009 (RF 14; CA 19) · flujos 2, 3 y 4 de `user-flows.md`.
+- C-39, C-40, C-41, C-43, C-44 · REQ-007 (RF 6, 7; CA 14-16) · REQ-008 (RF 1-3; CA 2, 3, 6, 10) · REQ-009 (RF 14; CA 19) · REQ-010 (RF 14; CA 19, 20) · flujos 2, 3 y 4 de `user-flows.md`.

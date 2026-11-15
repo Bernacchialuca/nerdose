@@ -1,24 +1,51 @@
 import { assertIdentifier } from '../tree/identifiers';
-import type { FuncNode } from '../tree/nodes';
+import { describeArg, isInt32 } from '../tree/int32';
+import type { FuncNode, Signature, Type } from '../tree/nodes';
+import { signatureOf } from '../tree/signature';
 import { emit } from './index';
 import type { Language } from './languages';
 
-export type ProgramOptions = { readonly calls: readonly (readonly number[])[] };
-export type WrapOptions = ProgramOptions & { readonly entry: string };
+export type CallArg = number | readonly number[];
+export type ProgramOptions = { readonly calls: readonly (readonly CallArg[])[] };
+export type WrapOptions = ProgramOptions & {
+  readonly entry: string;
+  /** Types of the entry function. Without it every argument is a 32-bit integer. */
+  readonly signature?: Signature;
+};
 
-const MIN_INT = -(2 ** 31);
-const MAX_INT = 2 ** 31 - 1;
+function matchesType(arg: CallArg, type: Type | undefined): boolean {
+  if (type === 'int[]') return Array.isArray(arg) && arg.every(isInt32);
+  return isInt32(arg);
+}
 
-function assertCalls(calls: ProgramOptions['calls']): void {
+function assertCalls(calls: ProgramOptions['calls'], signature?: Signature): void {
   // Go does not compile an unused `import "fmt"`, so at least one call is required.
   if (calls.length === 0) throw new RangeError('calls_empty');
   for (const args of calls) {
-    for (const arg of args) {
-      // Java uses `int`, so every argument must fit in 32 bits.
-      if (!Number.isInteger(arg) || arg < MIN_INT || arg > MAX_INT) {
-        throw new RangeError(`invalid_argument: ${arg}`);
-      }
+    if (signature && args.length !== signature.params.length) {
+      throw new RangeError(
+        `arity_mismatch: expected ${signature.params.length}, got ${args.length}`,
+      );
     }
+    args.forEach((arg, i) => {
+      // Java uses `int`, so every argument must fit in 32 bits.
+      if (!matchesType(arg, signature?.params[i])) {
+        throw new RangeError(`invalid_argument: ${describeArg(arg)}`);
+      }
+    });
+  }
+}
+
+function literal(arg: CallArg, lang: Language): string {
+  if (typeof arg === 'number') return String(arg);
+  const items = arg.join(', ');
+  switch (lang) {
+    case 'js':
+      return `[${items}]`;
+    case 'go':
+      return `[]int{${items}}`;
+    case 'java':
+      return `new int[]{${items}}`;
   }
 }
 
@@ -28,11 +55,13 @@ function assertCalls(calls: ProgramOptions['calls']): void {
  */
 export function wrapFunction(code: string, lang: Language, options: WrapOptions): string {
   assertIdentifier(options.entry);
-  assertCalls(options.calls);
-  const invocations = options.calls.map((args) => `${options.entry}(${args.join(', ')})`);
+  assertCalls(options.calls, options.signature);
+  const invocations = options.calls.map(
+    (args) => `${options.entry}(${args.map((a) => literal(a, lang)).join(', ')})`,
+  );
   switch (lang) {
     case 'js':
-      return `${code}\n\n${invocations.map((c) => `console.log(${c});\n`).join('')}`;
+      return `${code}\n\n${invocations.map((c) => (options.signature ? `console.log(String(${c}));\n` : `console.log(${c});\n`)).join('')}`;
     case 'go':
       return (
         `package main\n\nimport "fmt"\n\n${code}\n\nfunc main() {\n` +
@@ -49,11 +78,19 @@ export function wrapFunction(code: string, lang: Language, options: WrapOptions)
 }
 
 export function emitProgram(func: FuncNode, lang: Language, options: ProgramOptions): string {
+  const code = emit(func, lang).code;
+  if (func.paramTypes || func.returns) {
+    return wrapFunction(code, lang, {
+      entry: func.name,
+      calls: options.calls,
+      signature: signatureOf(func),
+    });
+  }
   assertCalls(options.calls);
   for (const args of options.calls) {
     if (args.length !== func.params.length) {
       throw new RangeError(`arity_mismatch: expected ${func.params.length}, got ${args.length}`);
     }
   }
-  return wrapFunction(emit(func, lang).code, lang, { entry: func.name, calls: options.calls });
+  return wrapFunction(code, lang, { entry: func.name, calls: options.calls });
 }

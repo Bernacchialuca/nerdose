@@ -5,7 +5,7 @@ type: feature
 status: Draft
 created: 2026-11-03
 last_updated: 2026-11-14
-stories: [S-043]
+stories: [S-043, S-048]
 ---
 
 # Estadísticas del jugador

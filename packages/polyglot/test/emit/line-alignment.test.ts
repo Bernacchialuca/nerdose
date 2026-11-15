@@ -13,6 +13,10 @@ function allIds(func: FuncNode): NodeId[] {
       expr(e.right);
     } else if (e.kind === 'half') expr(e.expr);
     else if (e.kind === 'call') e.args.forEach(expr);
+    else if (e.kind === 'index') {
+      expr(e.array);
+      expr(e.index);
+    } else if (e.kind === 'len') expr(e.array);
   };
   const stmt = (s: Stmt): void => {
     ids.push(s.id);
@@ -35,7 +39,7 @@ function allIds(func: FuncNode): NodeId[] {
   return ids;
 }
 
-describe('line alignment across languages (TS-11)', () => {
+describe('line alignment across languages (S-047 TS-10)', () => {
   for (const [name, tree] of Object.entries(allTrees())) {
     it(`tree ${name}: same lines and same lineOf in js, go and java`, () => {
       const [js, go, java] = LANGUAGES.map((l) => emit(tree, l)) as [

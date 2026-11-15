@@ -59,7 +59,7 @@ export interface GameGenerator<Payload> {
 // GeneratorHistory = { bankItems (ítems approved con su last_used_*), recentChallenges (no rejected, [D - recentDays, D + aheadDays] sin la fila de D) }
 
 // entrada ./client
-//   Instructions, Game, Result (componentes React) y share(result, number): string
+//   Instructions, Game, Result (componentes React) y share(result, number, locale): string
 //   Preview({ payload, language }) — solo lectura, el tablero con la solución, para el admin (REQ-008)
 ```
 
@@ -76,10 +76,10 @@ Hay un **registry** en `api`, en `web`/`admin` y en `generator` que mapea `game_
 - La `api` MUST NOT serializar `challenges.payload` en ninguna respuesta de jugador. Antes de terminar la Play solo puede responder `toPublic(payload, locale, state?)`; después, `result(payload, state)`.
 - La `api` MUST pasar `state` a `toPublic` solo si la Play está `in_progress` (sin Play o con la Play terminada, `undefined`). Con `state`, `toPublic` MAY revelar únicamente lo que el jugador ya descubrió en esa Play (Grep Grid: `words[].definition` de los `term_id` presentes en `found_words`); MUST NOT revelar nada de lo no descubierto (REQ-005).
 - `Feedback` MUST ir en el locale del jugador (`ctx.locale`), nunca como `{ es, en }` (ADR-015).
-- `toPublic` MUST NOT incluir: la palabra de Devdle, `placements` de Grep Grid, `correct_order`/`event_date`/`fact_id` de Timeline, `answer` de Big O, ni `bug_node_id`/`failing_test`/`fix`/`line_of`/`mutation` de Bug Hunt.
+- `toPublic` MUST NOT incluir: la palabra de Devdle, `placements` de Grep Grid, `correct_order`/`event_date`/`fact_id` de Timeline, `answer` de Big O, ni `bug_line`/`bug_type`/`mutation`/`fix`/`failing_test`/`tests`/`template`/`params`/`explanation` de Bug Hunt.
 - Cada juego MUST tener un test de contrato anti-spoiler: se serializa `toPublic(payload)` (sin estado y con estados intermedios, si el juego usa `state`) y toda respuesta pre-resultado, y se verifica que no contienen ningún valor de la solución.
 - `moveSchema` MUST usarse tanto en `web` (antes de enviar) como en la `api` (`@hono/zod-validator`). Si el parse falla, la respuesta es `422 invalid_move`.
-- `share(result, number)` MUST NOT incluir la solución y MUST terminar en `nerdose.dev`.
+- `share(result, number, locale)` MUST NOT incluir la solución y MUST terminar en `nerdose.dev`.
 - `bankUsage` MUST coincidir con `historySpec` del generator del mismo juego (banco y campo `last_used_*`); un test del paquete lo verifica. Los juegos sin banco declaran `null` (REQ-008).
 - `culprits(p)` MUST devolver solo ítems de banco presentes en el payload; un juego sin banco devuelve `[]` (REQ-007).
 - `Preview` MUST ser de solo lectura: valida `payload` con el schema del juego, traduce con los recursos del propio paquete según `language`, y no hace `fetch`, no usa storage ni estado de partida. `web` MUST NOT montarla (necesita el `payload` completo, que solo devuelve `/api/admin/*`). El admin la monta en ES y EN lado a lado; un juego sin `Preview` cae a la vista genérica del payload (REQ-008).
