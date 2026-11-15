@@ -26,12 +26,17 @@ const resolveRelative = (file: string, spec: string): string =>
 const ALLOWED: Record<string, { dirs: string[]; externals: string[] }> = {
   shared: { dirs: ['src/shared'], externals: ['@nerdose/core'] },
   definition: { dirs: ['src/definition', 'src/shared'], externals: ['@nerdose/core', 'zod'] },
+  generator: {
+    dirs: ['src/generator', 'src/shared', 'src/definition'],
+    externals: ['@nerdose/core', 'zod', '@nerdose/polyglot'],
+  },
 };
 
 describe('game-bug-hunt entry boundaries (TS-4)', () => {
   it('has source files to check', () => {
     expect(files.filter((f) => f.file.startsWith('shared/')).length).toBeGreaterThan(0);
     expect(files.filter((f) => f.file.startsWith('definition/')).length).toBeGreaterThan(0);
+    expect(files.filter((f) => f.file.startsWith('generator/')).length).toBeGreaterThan(0);
   });
 
   it.each(Object.keys(ALLOWED))('%s only imports allowed modules', (entry) => {
@@ -63,17 +68,23 @@ describe('game-bug-hunt entry boundaries (TS-4)', () => {
     }
   });
 
-  it('src never touches node:, clock, randomness, network nor polyglot', () => {
+  it('only generator imports polyglot', () => {
+    for (const { file, text } of files.filter((f) => !f.file.startsWith('generator/'))) {
+      expect(text.includes('@nerdose/polyglot'), `${file} imports polyglot`).toBe(false);
+    }
+  });
+
+  it('src never touches node:, clock, randomness nor network', () => {
     for (const { file, text } of files) {
       for (const forbidden of [
-        "from 'node:",
-        "import('node:",
+        "'node:",
+        '"node:',
+        '`node:',
         'Math.random(',
         'Date.now(',
         'new Date()',
         'fetch(',
         'child_process',
-        '@nerdose/polyglot',
       ]) {
         expect(text.includes(forbidden), `${file} contains ${forbidden}`).toBe(false);
       }

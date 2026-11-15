@@ -11,13 +11,20 @@ describe('@nerdose/game-bug-hunt package manifest', () => {
     expect(pkg.name).toBe('@nerdose/game-bug-hunt');
     expect(pkg.private).toBe(true);
     expect(pkg.type).toBe('module');
-    expect(pkg.exports).toEqual({ './definition': './src/definition/index.ts' });
+    expect(pkg.exports).toEqual({
+      './definition': './src/definition/index.ts',
+      './generator': './src/generator/index.ts',
+    });
     expect(pkg.scripts).toEqual({
       lint: 'eslint .',
       typecheck: 'tsc --noEmit',
       test: 'vitest run',
     });
-    expect(pkg.dependencies).toEqual({ '@nerdose/core': 'workspace:*', zod: '^4.6.7' });
+    expect(pkg.dependencies).toEqual({
+      '@nerdose/core': 'workspace:*',
+      '@nerdose/polyglot': 'workspace:*',
+      zod: '^4.6.7',
+    });
     expect(pkg.peerDependencies).toBeUndefined();
     expect(pkg.devDependencies).toBeUndefined();
   });
