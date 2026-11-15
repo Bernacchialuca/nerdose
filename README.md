@@ -1,6 +1,6 @@
 # Nerdose
 
-Plataforma de juegos diarios para nerds. Monorepo pnpm + Turborepo con `apps/{web,admin,api,generator}` y `packages/{core,db,ui,polyglot}`.
+Plataforma de juegos diarios para nerds. Monorepo pnpm + Turborepo con `apps/{web,admin,api,generator}`, `packages/{core,db,ui,polyglot}` y un paquete por juego en `packages/games/*`.
 
 ## Estructura
 
@@ -20,6 +20,7 @@ apps/
 packages/
 ├── core/           # tipos y contratos compartidos (isomorfo)
 ├── db/             # base de datos (Drizzle)
+├── games/          # un paquete por juego: devdle, grep-grid, timeline, big-o, bug-hunt
 ├── polyglot/       # árbol de código, emisores JS/Go/Java y runner
 └── ui/             # identidad visual compartida
 ```
@@ -44,7 +45,7 @@ packages/
 - Node.js 24 (`engines.node` `>=24 <25`).
 - pnpm `11.6.0`, fijado en `packageManager` (`corepack enable`).
 - Docker con Docker Compose v2.
-- Go >= 1.25 y JDK 21, con `go` y `java` en el `PATH`. Los usa `@nerdose/polyglot` para ejecutar el código emitido en Go y en Java (Java en modo source-file, `java Main.java`); JavaScript corre con el mismo Node.js 24.
+- Go >= 1.25 y JDK 21, con `go` y `java` en el `PATH`. Los usa `@nerdose/polyglot` para ejecutar el código emitido en Go y en Java (Java en modo source-file, `java Main.java`); JavaScript corre con el mismo Node.js 24. Lo necesitan el `generator` (verifica por ejecución los desafíos de Big O y Bug Hunt) y los tests de integración de `@nerdose/polyglot`, `@nerdose/game-big-o` y `@nerdose/game-bug-hunt`.
 
 Para verificarlos:
 
@@ -54,7 +55,7 @@ go version       # go1.25 o superior
 java -version    # openjdk version "21.x"
 ```
 
-Los tests de integración de `@nerdose/polyglot` ejecutan los tres toolchains y fallan (no se saltean) si falta uno o la versión no es la pedida, con `Missing toolchain: …` o `Wrong toolchain version: …`. Las versiones no se sustituyen. Para verificarlos sin la cache de Turborepo: `pnpm --filter @nerdose/polyglot test`.
+Los tests de integración de `@nerdose/polyglot`, `@nerdose/game-big-o` y `@nerdose/game-bug-hunt` ejecutan los tres toolchains y fallan (no se saltean) si falta uno o la versión no es la pedida, con `Missing toolchain: …` o `Wrong toolchain version: …`. Las versiones no se sustituyen. Para verificarlos sin la cache de Turborepo: `pnpm --filter @nerdose/polyglot --filter @nerdose/game-big-o --filter @nerdose/game-bug-hunt test`.
 
 **Usuario no root:** el runner de `@nerdose/polyglot` nunca ejecuta código como root. Si el proceso corre como root, exige `RUNNER_UID` y `RUNNER_GID` (enteros mayores que 0: el usuario y el grupo no root con los que corre cada programa) y, si faltan, no ejecuta nada y devuelve `runner_requires_non_root`. En local, corriendo como usuario normal, no hacen falta.
 
@@ -152,7 +153,7 @@ curl -i http://localhost:5174/api/health
 
 - `pnpm lint`
 - `pnpm typecheck`
-- `pnpm test` (requiere Docker: los tests de integración usan Testcontainers; y los toolchains de "Requisitos": los de `@nerdose/polyglot` ejecutan Go y Java)
+- `pnpm test` (requiere Docker: los tests de integración usan Testcontainers; y los toolchains de "Requisitos": los de `@nerdose/polyglot`, `@nerdose/game-big-o` y `@nerdose/game-bug-hunt` ejecutan Go y Java)
 - `pnpm --filter <paquete> <script>` para correr un script de un solo paquete.
 
 ## Base de datos
@@ -167,6 +168,6 @@ curl -i http://localhost:5174/api/health
 - **`502`/`504` en `/api/...` desde `web` o `admin`:** la `api` no está corriendo.
 - **Puerto ocupado:** `5173` y `5174` usan `strictPort` y fallan en lugar de cambiar de puerto.
 - **`password authentication failed for user "nerdose_api"`:** las contraseñas de los `.env.local` no coinciden. Corregirlas y volver a correr `db:migrate`.
-- **`Missing toolchain` o `Wrong toolchain version` en los tests de `@nerdose/polyglot`:** falta Go o JDK, o la versión no es la pedida. Instalar Go >= 1.25 y JDK 21, dejarlos en el `PATH` y verificar con `go version` y `java -version` (ver "Requisitos").
+- **`Missing toolchain` o `Wrong toolchain version` en los tests de `@nerdose/polyglot`, `@nerdose/game-big-o` o `@nerdose/game-bug-hunt`:** falta Go o JDK, o la versión no es la pedida. Instalar Go >= 1.25 y JDK 21, dejarlos en el `PATH` y verificar con `go version` y `java -version` (ver "Requisitos").
 
 Hosting, CI/CD y despliegue: fuera de alcance por ahora.

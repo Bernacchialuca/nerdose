@@ -70,7 +70,7 @@ Every `execFile` uses `timeout`, `killSignal: 'SIGKILL'`, `maxBuffer: 1_048_576`
 
 ## How to use
 
-- `emitProgram` / `wrapFunction` build one `main` per variant and language that runs **all** the inputs and prints one integer per line, so one process verifies every case.
+- `emitProgram` / `wrapFunction` build one `main` per variant and language that runs **all** the inputs and prints one result per line, so one process verifies every case. Without `signature` the arguments and results are integers (Big O); with `signature = { params: Type[], returns }` they can be `int`, `int[]` or `bool` (Bug Hunt) and booleans print as `true`/`false` in the three languages.
 - The code is written to a unique temporary directory per run and removed afterwards.
 - `verify()` compares outputs across languages and against the expected values and records the result in the `VerificationLog`.
 
@@ -82,6 +82,10 @@ const outcomes = await Promise.all(
 // run_js / run_go / run_java: a failed outcome is a failed check (`reason = run_<lang>: <kind>`).
 // counts_agree: the three stdout parse to the same sequence of integers.
 checks.push({ name: 'counts_agree', ok: sameCounts(js, go, java) });
+
+// Bug Hunt (packages/games/bug-hunt/src/generator/verify.ts): per language, the correct and the mutated
+// function run in sequence, each in one process with every test input (typed `signature`).
+// run_correct_<lang> / run_mutant_<lang>, then correct_agrees / mutant_agrees: the three outputs match.
 ```
 
 ## Rules

@@ -42,8 +42,13 @@ Library en node (TypeScript estricto, Node.js 24 LTS). Vive en `packages/core` y
 
 ## Update (REQ-009)
 
-- `GameDefinition.codeLanguage(s: State): CodeLanguage | null` (`game-definition.ts`): the language the Play was confirmed with. Big O returns `s.language ?? null` (Bug Hunt will do the same); Devdle, Grep Grid and Timeline return `null`. The `api` stores it in `plays.code_language` when closing the Play and, if it is not `null`, updates `players.preferred_code_language` in the same transaction, without branching by `game_id` (ADR-006). Same pattern as `culprits` and `bankUsage`: a mandatory member with a neutral value in the games that do not use it.
+- `GameDefinition.codeLanguage(s: State): CodeLanguage | null` (`game-definition.ts`): the language the Play was confirmed with. Big O and Bug Hunt return `s.language ?? null`; Devdle, Grep Grid and Timeline return `null`. The `api` stores it in `plays.code_language` when closing the Play and, if it is not `null`, updates `players.preferred_code_language` in the same transaction, without branching by `game_id` (ADR-006). Same pattern as `culprits` and `bankUsage`: a mandatory member with a neutral value in the games that do not use it.
 - `GameGenerator.verify(p, history): VerificationLog | Promise<VerificationLog>` (`game-generator.ts`): games that execute code (Big O, Bug Hunt) are asynchronous; `generateForDate` always `await`s it, so the synchronous generators do not change.
 - `HistorySpec.aheadDays?: number` (default 0): days after `D` also read as history. The `generator` reads `recentChallenges` in `[D - recentDays, D + aheadDays]` excluding the row of `D`. Big O: `{ bank: null, lastUsedField: '', recentDays: 30, aheadDays: 30 }`.
 - `BIG_O_OPTIONS` (`o_1`, `o_log_n`, `o_n`, `o_n_log_n`, `o_n2`, `o_n3`, `o_2n`, `o_n_fact`, in this fixed order) with `BigOOption`, and `RECIPE_CATEGORIES` (`simple_loops`, `nested_loops`, `recursion`, `divide_and_conquer`, `binary_search`) with `RecipeCategory`, in `enums.ts` next to `CODE_LANGUAGES`. The order of `BIG_O_OPTIONS` is the order of `public_view.options` (never dependent on the answer).
 - `core` does not import `@nerdose/polyglot` nor execute code: the toolchain check at startup (`warn` if Go >= 1.25 or JDK 21 are missing) lives in `apps/generator` and uses `checkToolchains()` of `@nerdose/polyglot`.
+
+## Update (REQ-010)
+
+- `BUG_TYPES` (`off_by_one`, `comparison`, `wrong_operator`, `wrong_variable`, `bad_initialization`, `misplaced_return`, `inverted_condition`, in this fixed order) with `BugType`, in `enums.ts` after `RECIPE_CATEGORIES`. Bug Hunt uses it in its payload and its result, and in the per-`bug_type` stats; it never appears in a public view (ADR-006). No pgEnum: the values live in `jsonb`.
+- Bug Hunt implements `codeLanguage` as `s.language ?? null`, like Big O, and its `verify` is asynchronous (it runs code through `@nerdose/polyglot`).
