@@ -1,6 +1,6 @@
 ---
-version: 1.10.0
-last_updated: 2026-11-14
+version: 1.11.0
+last_updated: 2026-11-15
 status: defined
 source: docs/nerdose.html
 ---
@@ -10,7 +10,7 @@ source: docs/nerdose.html
 ## Estado actual
 
 - **Surface:** `web`
-- **Versión:** `1.10.0`
+- **Versión:** `1.11.0`
 - **Estado:** definido desde el prototipo
 - **Fuente de verdad visual:** [`docs/nerdose.html`](../../nerdose.html). Ante una duda de estética gana el prototipo; en datos, reglas y accesibilidad gana el PRD (ver [`governance.md`](governance.md)).
 - **Código:** `@nerdose/ui` está alineado desde S-011 (v1.2.0). `apps/web` tiene alineados el shell, "Acerca de" y la 404 (S-012), la home (S-013) desde la v1.4.0 y las tres pantallas de Devdle (S-021, v1.5.0); los `Preview` (modo solución) de Devdle, Grep Grid y Tech Timeline para el admin siguen `game-boards` 1.5.0 (S-038, v1.9.0); ver [`CHANGELOG.md`](CHANGELOG.md) → "Desalineaciones conocidas en código".

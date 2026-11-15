@@ -69,7 +69,7 @@ There is no root `.` export: a consumer must pick an entry.
 | Entry | Exports | Consumer |
 |---|---|---|
 | `./definition` | `definition`: object implementing `GameDefinition` (`id`, `version`, `moveSchema`, `bankUsage`, `toPublic`, `initState`, `applyMove`, `isFinished`, `result`, `isWin`, `score`, `initialStats`, `reduceStats`, `codeLanguage`, `historyLabel`, `culprits`), plus the Zod schemas (`payloadSchema`, `moveSchema`, `stateSchema`, `publicViewSchema`, `resultSchema`, `statsSchema`) and their types | `apps/api`; `apps/generator` (`payloadSchema`, `version`); `./client`/`./generator` for types |
-| `./client` | React components `Instructions`, `Game`, `Result`, `Preview({ payload, language })`, `share(result, number)`, `i18n` and `HELP_TARGET_ID` | `apps/web`, `apps/admin` (`Preview` only) |
+| `./client` | React components `Instructions`, `Game`, `Result`, `Preview({ payload, language })`, `share(result, number, locale)`, `i18n` and `HELP_TARGET_ID` | `apps/web`, `apps/admin` (`Preview` only) |
 | `./generator` | `generator`: `GameGenerator` with `historySpec`, `usedBankItems(payload)`, `generate({ date, seed, history })` and `verify(payload, history)` (returns `VerificationLog` or `Promise<VerificationLog>`) | `apps/generator` |
 
 Members of `GameDefinition` that only some games use are still mandatory and take a neutral value in the others, so the shell never branches by `game_id`:
@@ -103,7 +103,7 @@ Members of `GameDefinition` that only some games use are still mandatory and tak
 - `./definition` implements every method of `GameDefinition`; `toPublic` never includes the solution (per-game list in ADR-006).
 - Every game has an anti-spoiler contract test: serialize `toPublic(payload)` and every pre-result response and verify none contains a solution value.
 - `moveSchema` is the single schema used by `web` (before sending) and by `api` (validation); a parse failure is `422 invalid_move`.
-- `share(result, number)` never includes the solution and ends with `nerdose.dev`.
+- `share(result, number, locale)` never includes the solution and ends with `nerdose.dev`; `locale` is optional in the game package (default `'es'`), so games without localized share text ignore it.
 - `generate` is deterministic: same `{ date, seed, history }` gives the same payload. It never uses `Math.random()` or the current time; randomness comes from the PRNG built from the seed.
 - Every player-facing text of a `Payload` is `{ es, en }`; `verify` fails if a language is missing.
 - `verify` may be `async` (games that execute code through `@nerdose/polyglot`); the `generator` always `await`s it. It receives no date: a game whose variety checks need `D` carries it in the payload (`date`), as every game does (`big-o` declares it optional and fails `variety_*` without it).
@@ -125,3 +125,9 @@ Members of `GameDefinition` that only some games use are still mandatory and tak
 - `GameDefinition.codeLanguage(s)` joins `bankUsage` and `culprits` as a mandatory member with a neutral value (`null`) in the games without code (see the table above).
 - `GameGenerator.verify` may return a `Promise`; `HistorySpec.aheadDays` is optional (default 0) and lets a game without a bank read approved challenges after `D` (`big-o`: `{ bank: null, lastUsedField: '', recentDays: 30, aheadDays: 30 }`).
 - `big-o` is the first package whose `./generator` imports `@nerdose/polyglot` (`runInLanguage`, `wrapFunction`, the emitters and the tree builder); its `./client` loads Shiki lazily inside the game's chunk.
+
+## Update (REQ-010)
+
+- `./client` exports `share(result, number, locale)` (the host passes the active language; `locale` defaults to `'es'` in the package so the client is assignable before and after the host changes its type). `bug-hunt` is the first game whose share text is localized (`🟩 bug encontrado` / `🟩 bug found`).
+- The Shiki infrastructure (`highlight.ts`, `shiki-vars.ts`, `use-tokenizer.ts`, the `radio` helper) is duplicated between `big-o` and `bug-hunt`: game packages do not import each other and Shiki cannot live in `@nerdose/ui` (ADR-002). Accepted duplication; if a third code game appears it is extracted to its own package.
+- `bug-hunt/src/shared/format.ts` (`formatCall`, `formatValue`, `formatArgs`) is used by both `client` and `generator`, so the call the player sees equals the one in the server-side explanation (`generator/format.ts` re-exports it).

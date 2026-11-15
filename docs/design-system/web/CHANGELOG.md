@@ -3,6 +3,22 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.11.0] - 2026-11-15
+
+**MINOR.** Bug Hunt jugable y preview del admin (story S-051, plan `games`). Ningún token se agrega ni cambia. Los planes de `web` y `admin` de S-051 suman sus ítems a esta misma entrada.
+
+### Agregado
+- `components/code-block.md` 1.2.0: resaltado en `selectable` y modo resultado de Bug Hunt (tema desde tokens de Bug Hunt con AA sobre los fondos de línea elegida, acierto y error; no elegibles sin color), glifo `◀` fijo en bloques angostos, números de línea en `text.dim`, teclado de las líneas y mapeo provisorio del diff.
+- `patterns/game-boards.md` 1.7.0: mapeo de `bug-hunt.line` / `bug-hunt.test` / `bug-hunt.confirm`, fila **Bug Hunt** en «Modo solución — preview del admin» (con la excepción de las pestañas) y «Lo que compartís» / «↺ reiniciar demo» marcados como descartados por las pantallas.
+
+### Código alineado con el spec
+- `@nerdose/game-bug-hunt/client` (S-051, plan `games`): `Instructions`, `Game`, `Result`, `Preview`, `share(result, number, locale)`, `i18n` y `HELP_TARGET_ID`; Shiki por `import()` dinámico en `highlight.ts` (copia de Big O).
+
+### Notas para limpiar en otros docs
+- `@nerdose/ui` no tiene los tokens `game.bug-hunt.tint-hover` (`#15110A`), `game.bug-hunt.disabled.bg` / `.text` (`#2A2416` / `#8A7856`) ni `status.error.diff-text` / `status.success.diff-text` (`#FFB3AD` / `#9EF0C2`): el client usa `surface-3`, el `disabled` de `buttonClass` y `status.*.soft`. Candidato a una story de `ui`.
+- Roles tipográficos sin utilidad `text-*`: `type.code` (15/2), `type.body.statement` (16/1,55), `type.body.explain` (15/1,55), `type.label.tab` y `type.label.step`; el client usa los roles existentes más cercanos.
+- `chip.accent` no tiene componente en `@nerdose/ui` (`Badge` solo tiene `chip` neutral): el chip «tipo: …» usa clases inline con tokens existentes.
+
 ## [1.10.0] - 2026-11-14
 
 **MINOR.** Big O jugable y preview del admin (story S-046, plan `games`). Ningún token se agrega ni cambia. Los planes de `web` y `admin` de S-046 suman sus ítems a esta misma entrada.

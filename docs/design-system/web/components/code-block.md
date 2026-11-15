@@ -1,6 +1,6 @@
 ---
 component: code-block
-version: 1.1.0
+version: 1.2.0
 status: active
 last_updated: 2026-11-14
 source: docs/nerdose.html
@@ -103,6 +103,16 @@ Caja `radius.inset` (12), `bg.surface.sunken`, borde `border.default`, `overflow
 - **Mapeo provisorio (D3, S-046):** los tokens `game.big-o.tab-selected` (`#1D2A3A`), `line-highlight` (`#0E1D2E`), `tint-strong` (`#11243A`) y `light` (`#8CC8FF`) no están en `@nerdose/ui`. Se usan: pestaña activa `game.big-o.tint-border` (`#1B2E45`), línea resaltada `game.big-o.tint` (`#0B1522`) + barra `inset 3px` `game.big-o.accent`, nota `--color-game-big-o-light` (`#9ACFFF`). Pendiente de una story de `ui`.
 - **Preview del admin:** el mismo bloque con `highlight` apagado (texto plano) y las pestañas como vista local.
 
+## Variante `selectable` y resultado con resaltado (1.2.0, Bug Hunt)
+
+- **Tema de Bug Hunt:** mismas variables `--shiki-*` apuntadas a tokens de Bug Hunt: palabra clave `game.bug-hunt.accent`, función y enlace `game.bug-hunt.light`, constante `text.lede`, texto y parámetro `text.primary`, cadenas `text.body`, comentarios `text.dim`, puntuación `text.muted`. AA ≥ 4,5:1 verificado sobre `bg.surface.sunken` y sobre los fondos de línea elegida/bug (`game.bug-hunt.tint`), acierto (`status.success.bg`) y error (`status.error.bg`). `game.bug-hunt.muted` (≈ 3:1) no sirve para texto.
+- **Resaltado en `selectable`:** solo las líneas elegibles se colorean; las no elegibles son texto plano `text.dim` fuera de los radios (no radios `disabled`), sin hover y no enfocables. En el resultado todas las líneas se resaltan igual.
+- **Números de línea:** Mono 12 `text.dim` (≈ 6,4:1), `aria-hidden`, columna fija alineada a la derecha; se distinguen del texto de las líneas no elegibles por tamaño y posición, no por color.
+- **Teclado de `selectable`:** una sola parada de Tab (roving tabindex entre elegibles); ↑ ↓ con wrap, Home y End mueven solo el foco; Espacio o clic eligen; Enter no actúa sobre una línea. ← → quedan para cambiar de pestaña y para el scroll horizontal.
+- **Tag de la línea elegida:** glifo `◀` fijo al borde visible del bloque (`position: sticky`) cuando mide menos de 32rem; con ≥ 32rem suma el texto «tu elección». El estado accesible lo dan `aria-checked`, la línea de aviso y el botón de confirmar.
+- **Modo resultado:** marcas acierto / bug / elección errónea con barra `inset 3px`, glifo y texto; el tag baja bajo su línea con menos de 32rem y va al margen desde 32rem; cada línea marcada apunta a su tag con `aria-describedby`.
+- **Diff (mapeo provisorio):** `status.error.diff-text` (`#FFB3AD`) y `status.success.diff-text` (`#9EF0C2`) no están en `@nerdose/ui`: `-` usa `status.error.soft` sobre `status.error.bg` y `+` `status.success.soft` sobre `status.success.bg`. Pendiente de una story de `ui`.
+
 ## API
 
 | Prop | Tipo | Default | Descripción |
@@ -122,3 +132,4 @@ Caja `radius.inset` (12), `bg.surface.sunken`, borde `border.default`, `overflow
 
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: tab-bar con pestañas y nombre de archivo, líneas Mono 15/2 con número de 30px, barra `inset 3px`, anotaciones al margen y diff con fondos tintados.
 - 2026-11-14 v1.1.0 — Story S-046: variante de resaltado con tema desde tokens y fallback sin color, números de línea en `text.dim`, nota bajo la línea en bloques angostos, pestañas bloqueadas y mapeo provisorio de los tokens Big O ausentes en `@nerdose/ui`.
+- 2026-11-15 v1.2.0 — Story S-051: resaltado en `selectable` y modo resultado de Bug Hunt (tema desde tokens de Bug Hunt con AA sobre los cuatro fondos de línea, no elegibles sin color), glifo `◀` fijo en bloques angostos, números de línea en `text.dim`, teclado de las líneas y mapeo provisorio del diff.

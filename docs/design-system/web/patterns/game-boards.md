@@ -1,8 +1,8 @@
 ---
 pattern: game-boards
-version: 1.6.0
+version: 1.7.0
 status: active
-last_updated: 2026-11-14
+last_updated: 2026-11-15
 source: docs/nerdose.html
 related: [card, panel, code-block, button, chip, streak-pill]
 ---
@@ -127,12 +127,18 @@ Cabecera del panel: "// tests" + "input → esperado" (Mono 12). Nota al pie Int
 - **Test que falla:** caja `error` (radio 12, padding 14 16, Mono 14): llamada + "esperado **0** · obtenido **2**" (verde / rojo en `<b>`).
 - **Fix:** [code-block](../components/code-block.md) `diff`.
 - **Por qué falla:** `h2` 20px + pasos numerados (abajo) + chips "tipo: comparación" (`chip.accent`) y "mutación: > → >=" (`chip.neutral`).
-- **Lo que compartís:** caja `neutral` Mono 14/1.7, `pre-line`: "🐛 Bug Hunt #128 · JavaScript / 🟩 bug encontrado / nerdose.dev".
-- **↺ reiniciar demo:** [button](../components/button.md) `ghost` (es del prototipo como demo; en producto **Pendiente** si existe).
+- **Lo que compartís** (descartado por las pantallas de S-051: el texto lo arma el host con `share()`): caja `neutral` Mono 14/1.7, `pre-line`: "🐛 Bug Hunt #128 · JavaScript / 🟩 bug encontrado / nerdose.dev".
+- **↺ reiniciar demo** (descartado por las pantallas de S-051): [button](../components/button.md) `ghost` (es del prototipo como demo; en producto **Pendiente** si existe).
 
 ### `{juego}.step` — pasos numerados (Bug Hunt L728-731, Big O L908-912)
 
 `<ol>` sin estilo, gap 14 (BH) / 16 (Big O); ítem `grid-template-columns: 32px 1fr; gap: 12px`. Número: cuadrado 28×28, `radius.tile` (8), `type.label.step` (Mono 700 13), centrado — Bug Hunt `#2A1F0B` / `#FFB547`; Big O `#11243A` / `#8CC8FF`. Texto `type.body.explain` (Inter 15/1.55) `text.body`; `<code>` Mono `text.primary` sin fondo; `<b>` `text.primary` (o acento si es la respuesta, L912).
+
+### Bug Hunt — mapeo de S-051 (1.7.0)
+
+- **`bug-hunt.line`:** el hover de la línea elegible usa `surface-3` (`#141920`, neutro, para no confundirse con la elegida `#1A140A`) hasta que exista `game.bug-hunt.tint-hover`. Las líneas no elegibles no son interactivas (texto plano `text.dim`, no radios `disabled`). El tag de la elegida es el glifo `◀` en bloques < 32rem y «◀ tu elección» desde 32rem; en el resultado los tags bajan bajo su línea en < 32rem.
+- **`bug-hunt.test`:** cada test es una llamada con `function_name` (`maxIndex([3, 7, 2]) → 1`), sintaxis neutra igual en las tres pestañas; texto accesible «maxIndex de [3, 7, 2] da 1, pasa». La fila del oculto es «1 test oculto falla» (punteada, sin su entrada).
+- **`bug-hunt.confirm`:** deshabilitado con la etiqueta «Elegí una línea» y el `disabled` de `buttonClass`, hasta que existan `game.bug-hunt.disabled.*`.
 
 ## Big O
 
@@ -282,7 +288,9 @@ Cada `client` exporta `Preview` (`{ payload, language }`, REQ-008 decisión 10):
 | Tech Timeline | Línea «// consigna: {consigna}» / «// task: {prompt}» (`type.label.comment`, `text.dim`). Debajo, card «// orden correcto» / «// correct order» (`h3`) con `timeline.rail`: los 5 hechos en el orden de `correct_order`, cada uno con fecha por precisión, nombre, categoría y nota. | `timeline.rail` |
 | Big O (1.6.0) | Pregunta como `p` («¿Cuál es la complejidad temporal (peor caso) de f(n)?»). Debajo, `code-block` `readonly` **en texto plano, sin resaltado** con pestañas JavaScript / Go / Java y las líneas de `line_notes` resaltadas con su nota en el idioma de la columna. «// respuesta» (`h3`) con la lista de las 8 opciones: la respuesta «✓ correcta» y la `trap_option` «trampa» (borde punteado, sin relleno). Panel «Paso a paso» (`h3`) con los pasos, «en números» y el consejo, solo cuando existen. | `code-block`, `big-o.option`, `big-o.step`, caja «en números» |
 
-**Excepción de Big O (D8):** las tres pestañas del código son estado de vista local (sin efectos, `fetch` ni storage), la única interacción de la preview; el resto sigue sin botones, hints ni regiones `aria-live`. Prevalece lo específico (story S-046 y `o-02-detalle-desafio`) sobre «sin controles».
+| Bug Hunt (1.7.0) | Especificación (`Statement`, `h3`), `code-block` en texto plano con pestañas, las no elegibles en `text.dim` y la línea del bug marcada «🐛 línea del bug»; chips «tipo: …» (`chip.accent`) y «mutación: from → to» (`chip.neutral`); tests visibles como llamadas (sin la fila del oculto); test que falla, fix (`-`/`+` de la pestaña activa) y «Por qué falla» con los pasos, todo en `h3` y en el idioma de la columna. | `code-block`, `bug-hunt.statement`, `bug-hunt.test`, `bug-hunt.step`, `chip` |
+
+**Excepción de Big O (D8), también de Bug Hunt:** las tres pestañas del código son estado de vista local (sin efectos, `fetch` ni storage), la única interacción de la preview; el resto sigue sin botones, hints ni regiones `aria-live`. Prevalece lo específico (story S-046 y `o-02-detalle-desafio`) sobre «sin controles».
 
 **Estado «solución» y no «encontrada»:** en la preview nadie jugó. Por eso la celda dice «parte de la solución» / «part of the solution» en su `aria-label`, y la fila no se tacha y muestra «{n} letras» en lugar de «✓ encontrada».
 
@@ -323,3 +331,4 @@ Cabecera de 150px de la [tarjeta de juego](../components/card.md), `aria-hidden`
 - 2026-11-11 v1.4.0 — `grep-grid.counter` pasa de `card` `counter` sobre la grilla a dato `N/8` en el encabezado de la lista (CHANGELOG 1.8.0).
 - 2026-11-13 v1.5.0 — Story S-038: modo solución para la preview del admin (Devdle, Grep Grid y Tech Timeline), estado «solución» de `grep-grid.cell` y `grep-grid.word` y cabecera `//` en `h3` cuando va embebida.
 - 2026-11-14 v1.6.0 — Story S-046: se resuelven los «Pendiente» de Big O (`big-o.option` jugando, elegida, incorrecta, 2/4 columnas y resultado), mapeo de `big-o.step`, trampa de la preview y fila Big O del modo solución con la excepción de las pestañas.
+- 2026-11-15 v1.7.0 — Story S-051: mapeo de `bug-hunt.line` / `bug-hunt.test` / `bug-hunt.confirm` a tokens existentes, tags responsivos, fila Bug Hunt del modo solución con la excepción de las pestañas y «Lo que compartís» / «↺ reiniciar demo» marcados como descartados.
