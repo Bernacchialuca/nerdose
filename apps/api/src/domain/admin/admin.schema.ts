@@ -1,4 +1,4 @@
-import { REPORT_STATUSES } from '@nerdose/core';
+import { REPORT_STATUSES, validateMetricsRange } from '@nerdose/core';
 import { z } from 'zod';
 
 export const loginBodySchema = z.object({ password: z.string().min(1) });
@@ -25,3 +25,9 @@ export const syncSummarySchema = z.object({
   unchanged: z.number().int().min(0),
   kept_rejected: z.number().int().min(0),
 });
+
+/** El rango se valida con el día de la plataforma de la api (REQ-011, decisión 5). */
+export const metricsQuerySchema = (currentDay: () => string) =>
+  z
+    .object({ from: z.iso.date(), to: z.iso.date() })
+    .refine((q) => validateMetricsRange(q.from, q.to, currentDay()) === 'ok');

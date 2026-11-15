@@ -4,6 +4,7 @@ import type { Logger } from 'pino';
 
 import type { ApiEnv } from '@/config/env';
 import type { AdminContentService } from '@/domain/admin/admin-content.service';
+import type { AdminMetricsService } from '@/domain/admin/admin-metrics.service';
 import type { AdminService } from '@/domain/admin/admin.service';
 import type { GameplayService } from '@/domain/gameplay/gameplay.service';
 import type { IdentityService } from '@/domain/identity/identity.service';
@@ -32,6 +33,7 @@ export type AppDeps = {
   admin: Pick<AdminService, 'login' | 'listReportGroups' | 'updateReport'>;
   voids: Pick<VoidService, 'void'>;
   adminContent: Pick<AdminContentService, 'upcoming' | 'generationFailures' | 'stock'>;
+  adminMetrics: Pick<AdminMetricsService, 'currentDay' | 'metrics'>;
   regeneration: Pick<RegenerationService, 'regenerate'>;
 };
 
