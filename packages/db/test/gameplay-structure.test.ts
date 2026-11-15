@@ -28,9 +28,9 @@ const columns = async (table: string) => {
 };
 
 describe('gameplay and banks structure', () => {
-  it('S015-TS-1: migrations up to 0007_generation_queue_and_failures are registered', async () => {
+  it('S015-TS-1: migrations up to 0008_metrics_views are registered', async () => {
     const [row] = await owner`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`;
-    expect(row!.n).toBe(8);
+    expect(row!.n).toBe(9);
   });
 
   it('S015-TS-2: game_id enum equals GAME_IDS', async () => {

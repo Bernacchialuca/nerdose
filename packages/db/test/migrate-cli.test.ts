@@ -47,7 +47,7 @@ describe('db:migrate CLI', () => {
     const sql = connectAs(owner);
     try {
       const [row] = await sql`SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations`;
-      expect(row!.n).toBe(8);
+      expect(row!.n).toBe(9);
     } finally {
       await sql.end();
     }
