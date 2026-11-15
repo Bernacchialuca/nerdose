@@ -6,6 +6,11 @@ import {
 } from '@nerdose/game-big-o/definition';
 import { generator as bigOGenerator } from '@nerdose/game-big-o/generator';
 import {
+  definition as bugHuntDefinition,
+  payloadSchema as bugHuntPayloadSchema,
+} from '@nerdose/game-bug-hunt/definition';
+import { generator as bugHuntGenerator } from '@nerdose/game-bug-hunt/generator';
+import {
   definition as devdleDefinition,
   payloadSchema as devdlePayloadSchema,
 } from '@nerdose/game-devdle/definition';
@@ -73,5 +78,11 @@ export const generatorRegistry = createGeneratorRegistry([
     generator: bigOGenerator,
     payloadSchema: bigOPayloadSchema,
     version: `big-o@${bigODefinition.version}`,
+  },
+  {
+    gameId: 'bug-hunt',
+    generator: bugHuntGenerator,
+    payloadSchema: bugHuntPayloadSchema,
+    version: `bug-hunt@${bugHuntDefinition.version}`,
   },
 ]);

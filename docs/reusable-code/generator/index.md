@@ -22,7 +22,7 @@ App `apps/generator` (not a package; imported through the `@/` alias → `src/`)
 - **createDatabase / Sql** (apps/generator/src/infra/database/db.ts) - Wraps `createDb` from `@nerdose/db`
 
 ## Domain (10 items) - see domain.md
-- **generatorRegistry / createGeneratorRegistry / GeneratorEntry** (apps/generator/src/games/registry.ts) - `game_id` -> `{ generator, payloadSchema, version }`; one entry per game (Devdle, Grep Grid, Timeline, Big O)
+- **generatorRegistry / createGeneratorRegistry / GeneratorEntry** (apps/generator/src/games/registry.ts) - `game_id` -> `{ generator, payloadSchema, version }`; one entry per game (Devdle, Grep Grid, Timeline, Big O, Bug Hunt)
 - **seedFor / seedToHex** (apps/generator/src/domain/challenge-publishing/seed.ts) - HMAC-SHA256 seed per `{game_id}:{date}:{attempt}`
 - **generateForDate** (apps/generator/src/domain/challenge-publishing/generate.ts) - Draft -> `await verify` (sync or async) -> approved/rejected pipeline for one game and date; history window from `historyWindow`; `firstAttempt` and `'regenerate'` mode (returns the verified draft)
 - **historyWindow** (apps/generator/src/domain/challenge-publishing/generate.ts) - Pure `[D - recentDays, D + (aheadDays ?? 0)]` window excluding D, used to read game history
@@ -33,7 +33,7 @@ App `apps/generator` (not a package; imported through the `@/` alias → `src/`)
 - **syncBanks** (apps/generator/src/domain/content-banks/sync-banks.service.ts) - Loads `terms` and `timeline_facts` from the dataset in one transaction with the ADR-016 UPSERT rules; summary with totals and `by_bank`; exports `sameFactContent` and `isStorableDate`
 - **ContentBanksRepository** (apps/generator/src/domain/content-banks/content-banks.repository.ts) - `listTerms`/`upsertTerm` and `listTimelineFacts`/`upsertTimelineFact` (never touches `rejected` rows or `last_used_*`)
 
-## Testing utils (14 items) - see testing.md
+## Testing utils (15 items) - see testing.md
 - **setupTestDb** (apps/generator/test/helpers/db.ts) - Owner and generator-role connections plus `reset()` / `cleanup()`
 - **insertTerms / BANK16** (apps/generator/test/helpers/bank.ts) - Inserts `terms` fixtures; `BANK16` is 16 approved terms, 2 per category; `TermSpec.lastUsedGrep`
 - **devdleOnlyRegistry** (apps/generator/test/helpers/registry.ts) - Registry with only Devdle for Devdle-specific tests
@@ -45,4 +45,5 @@ App `apps/generator` (not a package; imported through the `@/` alias → `src/`)
 - **silentServer** (apps/generator/test/helpers/net.ts) - TCP server that accepts and never answers (simulates a hung DB)
 - **startGenerator** (apps/generator/test/helpers/process.ts) - Spawns `src/index.ts` as a child process with `waitForLog` / `kill` / `stop`; passes `HOME`/`GOCACHE`/`GOPATH`/`TMPDIR` so Go can compile
 - **bigO / bigOOnly / forcedRecipe / withRunner / scriptedRunner / approveBigO / TIMEOUT / AMBIG / CHECKS13** (apps/generator/test/helpers/big-o.ts) - Big O pipeline test helpers: forced recipes, injectable and scripted runners over real toolchains, approve a Big O day
+- **bugHunt / bugHuntOnly / BH_CHECKS / withBugHuntRunner / scriptedBugHuntRunner / countingRunner / firstCandidate / equivalentOf / onePassingOf / bump / approveBugHunt** (apps/generator/test/helpers/bug-hunt.ts) - Bug Hunt pipeline test helpers: per-language scripted runner over real toolchains, call counter, forced in-memory rejections on the first candidate, approve a Bug Hunt day
 - **global-setup (ownerUrl / generatorUrl)** (apps/generator/test/global-setup.ts) - Testcontainers Postgres with roles and migrations, provided via `inject()`

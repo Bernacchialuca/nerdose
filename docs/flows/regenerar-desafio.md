@@ -116,7 +116,7 @@ sequenceDiagram
 
 **Acción:** igual que `generacion-diaria`, con `attempt` desde `max(attempt) + 1` y hasta `GENERATION_MAX_ATTEMPTS` intentos. `seed = HMAC-SHA256(GENERATOR_SECRET, "{game_id}:{date}:{attempt}")`. La historia excluye la fila de `date`, así el `approved` viejo que se reemplaza no cuenta contra su reemplazo (ventana `[D - recentDays, D + aheadDays]` sin `D`).
 
-En big-o, `verify` ejecuta el código en JS, Go y Java (ver `generacion-diaria`, paso 3): cada candidato tarda unos segundos más que en los otros juegos. El polling de 5 s del admin ya lo cubre; los pasos no cambian.
+En big-o y bug-hunt, `verify` ejecuta el código en JS, Go y Java (ver `generacion-diaria`, paso 3): cada candidato tarda unos segundos más que en los otros juegos (bug-hunt: 6 ejecuciones, la correcta y la mutada por lenguaje). El polling de 5 s del admin ya lo cubre; los pasos no cambian.
 
 **Operación de BD (por candidato):**
 - **Tabla:** `challenges` — INSERT (`game_id`, `date`, `number`, `payload`, `status = 'draft'`, `generator_version`, `seed`, `attempt`, `verification`)
@@ -184,5 +184,8 @@ El orden 1 → 2 respeta el índice único parcial `uq_challenges_active_game_da
 - El `NOTIFY` es fire-and-forget. El `202` no depende de que el `generator` esté vivo.
 - Un `published` (hoy) nunca se regenera (invariante 6). Si tiene errores, se anula (`anulacion-de-desafio`).
 - Big O no tiene banco (`culprits = []`, `bankUsage = null`): el paso 4.3 no toca ninguna tabla y `rejected_items` va vacío. El admin muestra el desafío con la `Preview` de big-o (código en los 3 lenguajes, respuesta, trampa y explicación) y el `VerificationLog` con los checks y el detalle del ajuste.
+- Bug Hunt tampoco tiene banco (`culprits = []`, `bankUsage = null`): el paso 4.3 no toca ninguna tabla y `rejected_items` va vacío.
 
 > Actualizado por REQ-009 (stories S-045 y S-046): historia sin la fila de `D` en la regeneración, verificación por ejecución de Big O y su preview en el admin.
+
+> Actualizado por REQ-010 (story S-050): verificación por ejecución de Bug Hunt en la regeneración.
