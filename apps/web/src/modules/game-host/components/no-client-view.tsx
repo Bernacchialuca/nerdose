@@ -16,7 +16,10 @@ export function NoChallengeView({ gameId, dayChangedNumber }: Props) {
       <h1 className="font-mono text-title-game break-words text-text">{game}</h1>
       {dayChangedNumber !== null ? (
         <Banner variant="neutral" announce>
-          {t('gameHost.notice.dayChanged', { number: dayChangedNumber })}
+          {t('gameHost.notice.dayChanged', {
+            number: dayChangedNumber,
+            unfinished: t(`games.${gameId}.unfinished`),
+          })}
         </Banner>
       ) : null}
       <Banner variant="neutral" announce>

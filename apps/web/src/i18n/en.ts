@@ -178,6 +178,8 @@ export const en: Resources = {
   gameHost: {
     documentTitle: '{{game}} · nerdose',
     loading: '$ loading {{slug}}…',
+    loadingPlay: '$ loading your {{slug}} game…',
+    loadingResult: '$ loading your {{slug}} result…',
     header: {
       nav: 'Breadcrumb',
       challengeDate: 'challenge of {{date}}',
@@ -190,7 +192,7 @@ export const en: Resources = {
     },
     notice: {
       dayChanged:
-        "Challenge #{{number}} has started. Yesterday's game was left unfinished and doesn't count toward your streak.",
+        "Challenge #{{number}} has started. Yesterday's game was left {{unfinished}} and doesn't count toward your streak.",
       noChallenge:
         "There's no {{game}} challenge today. It's a neutral day: it doesn't add to or break your streak.",
       voided: 'This challenge had an error and was voided. Your streak is not affected.',
@@ -200,7 +202,7 @@ export const en: Resources = {
     },
     error: {
       load: "We couldn't load the {{game}} challenge. Check your connection and try again.",
-      move: "We couldn't load your game. Check your connection and try again: you'll pick up where you left off.",
+      move: "We couldn't load your game. Check your connection and try again{{recovery}}.",
     },
     report: {
       link: 'Report a problem',
@@ -262,10 +264,35 @@ export const en: Resources = {
     },
   },
   games: {
-    devdle: { name: 'Devdle', description: 'Guess the tech term in 6 tries' },
-    'grep-grid': { name: 'Grep Grid', description: 'Find 8 words in the grid' },
-    timeline: { name: 'Tech Timeline', description: 'Put 5 tech milestones in order' },
-    'big-o': { name: 'Big O', description: 'Pick the time complexity' },
-    'bug-hunt': { name: 'Bug Hunt', description: 'Find the line with the bug' },
+    devdle: {
+      name: 'Devdle',
+      description: 'Guess the tech term in 6 tries',
+      unfinished: 'unfinished',
+      moveRecovery: ": you'll pick up where you left off",
+    },
+    'grep-grid': {
+      name: 'Grep Grid',
+      description: 'Find 8 words in the grid',
+      unfinished: 'unfinished',
+      moveRecovery: ": you'll pick up where you left off",
+    },
+    timeline: {
+      name: 'Tech Timeline',
+      description: 'Put 5 tech milestones in order',
+      unfinished: 'unconfirmed',
+      moveRecovery: '',
+    },
+    'big-o': {
+      name: 'Big O',
+      description: 'Pick the time complexity',
+      unfinished: 'unconfirmed',
+      moveRecovery: ': you keep your attempt',
+    },
+    'bug-hunt': {
+      name: 'Bug Hunt',
+      description: 'Find the line with the bug',
+      unfinished: 'unconfirmed',
+      moveRecovery: ': you keep your attempt',
+    },
   },
 };

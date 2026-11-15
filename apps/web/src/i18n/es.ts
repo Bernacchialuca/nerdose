@@ -173,6 +173,8 @@ export const es = {
   gameHost: {
     documentTitle: '{{game}} · nerdose',
     loading: '$ cargando {{slug}}…',
+    loadingPlay: '$ cargando tu partida de {{slug}}…',
+    loadingResult: '$ cargando tu resultado de {{slug}}…',
     header: {
       nav: 'Ruta',
       challengeDate: 'desafío del {{date}}',
@@ -185,7 +187,7 @@ export const es = {
     },
     notice: {
       dayChanged:
-        'Empezó el desafío #{{number}}. La partida de ayer quedó sin terminar y no cuenta para tu racha.',
+        'Empezó el desafío #{{number}}. La partida de ayer quedó {{unfinished}} y no cuenta para tu racha.',
       noChallenge: 'Hoy no hay desafío de {{game}}. Es un día neutro: no suma ni corta tu racha.',
       voided: 'Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.',
       voidedTitle: 'Desafío anulado',
@@ -194,7 +196,7 @@ export const es = {
     },
     error: {
       load: 'No pudimos cargar el desafío de {{game}}. Revisá tu conexión e intentá de nuevo.',
-      move: 'No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.',
+      move: 'No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo{{recovery}}.',
     },
     report: {
       link: 'Reportar un problema',
@@ -256,10 +258,37 @@ export const es = {
     },
   },
   games: {
-    devdle: { name: 'Devdle', description: 'Adiviná el término tech en 6 intentos' },
-    'grep-grid': { name: 'Grep Grid', description: 'Encontrá 8 palabras en la grilla' },
-    timeline: { name: 'Tech Timeline', description: 'Ordená 5 hitos de la tecnología' },
-    'big-o': { name: 'Big O', description: 'Elegí la complejidad temporal' },
-    'bug-hunt': { name: 'Bug Hunt', description: 'Encontrá la línea con el bug' },
+    // `unfinished` y `moveRecovery` completan los avisos del host según cómo se juega cada uno
+    // (pantallas de UX): varios intentos («sin terminar») o una sola confirmación («sin confirmar»).
+    devdle: {
+      name: 'Devdle',
+      description: 'Adiviná el término tech en 6 intentos',
+      unfinished: 'sin terminar',
+      moveRecovery: ': retomás desde donde estabas',
+    },
+    'grep-grid': {
+      name: 'Grep Grid',
+      description: 'Encontrá 8 palabras en la grilla',
+      unfinished: 'sin terminar',
+      moveRecovery: ': retomás desde donde estabas',
+    },
+    timeline: {
+      name: 'Tech Timeline',
+      description: 'Ordená 5 hitos de la tecnología',
+      unfinished: 'sin confirmar',
+      moveRecovery: '',
+    },
+    'big-o': {
+      name: 'Big O',
+      description: 'Elegí la complejidad temporal',
+      unfinished: 'sin confirmar',
+      moveRecovery: ': conservás tu intento',
+    },
+    'bug-hunt': {
+      name: 'Bug Hunt',
+      description: 'Encontrá la línea con el bug',
+      unfinished: 'sin confirmar',
+      moveRecovery: ': conservás tu intento',
+    },
   },
 };

@@ -550,7 +550,7 @@ describe('errores del ciclo común', () => {
     ).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1, name: 'Tech Timeline' })).toBeInTheDocument();
     const notice = screen.getByText(
-      'Empezó el desafío #129. La partida de ayer quedó sin terminar y no cuenta para tu racha.',
+      'Empezó el desafío #129. La partida de ayer quedó sin confirmar y no cuenta para tu racha.',
     );
     expect(notice.closest('[role="status"]')).not.toBeNull();
     expect(countOf(calls, 'GET', TODAY)).toBe(2);

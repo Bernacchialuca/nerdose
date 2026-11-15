@@ -437,7 +437,7 @@ describe('errores del ciclo común', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'Big O' })).toBeInTheDocument();
     expect(
       screen.getByText(
-        'Empezó el desafío #129. La partida de ayer quedó sin terminar y no cuenta para tu racha.',
+        'Empezó el desafío #129. La partida de ayer quedó sin confirmar y no cuenta para tu racha.',
       ),
     ).toBeInTheDocument();
   });

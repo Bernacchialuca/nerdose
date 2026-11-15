@@ -70,7 +70,10 @@ export function GameScreens({
         <div className="flex flex-col gap-4">
           {view.dayChanged ? (
             <Banner variant="neutral" announce>
-              {host('gameHost.notice.dayChanged', { number: view.number })}
+              {host('gameHost.notice.dayChanged', {
+                number: view.number,
+                unfinished: host(`games.${gameId}.unfinished`),
+              })}
             </Banner>
           ) : null}
           {startNotice}
@@ -120,7 +123,7 @@ export function GameScreens({
         ) : null}
         {view.moveFailed ? (
           <Alert className="mb-6" action={<RetryButton onClick={onRecoverMove} />}>
-            {host('gameHost.error.move')}
+            {host('gameHost.error.move', { recovery: host(`games.${gameId}.moveRecovery`) })}
           </Alert>
         ) : null}
         <client.Game

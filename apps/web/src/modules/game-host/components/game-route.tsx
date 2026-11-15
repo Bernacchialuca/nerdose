@@ -222,7 +222,7 @@ export function GameRoute({ gameId }: { gameId: GameId }) {
         return (
           <>
             {celebrate ? <Confetti gameId={gameId} /> : null}
-            <Suspense fallback={<GameLoader gameId={gameId} />}>
+            <Suspense fallback={<GameLoader gameId={gameId} phase={view.kind} />}>
               <Screens
                 gameId={gameId}
                 view={view}

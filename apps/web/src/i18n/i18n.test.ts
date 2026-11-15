@@ -215,4 +215,38 @@ describe('i18n', () => {
     expect(i18n.options.fallbackLng).toContain('es');
     expect(i18n.t('errors.retry')).toBe('Reintentar');
   });
+
+  // Textos del host por juego (pantallas de UX): varios intentos vs una sola confirmación.
+  it.each([
+    ['devdle', 'sin terminar', ': retomás desde donde estabas'],
+    ['grep-grid', 'sin terminar', ': retomás desde donde estabas'],
+    ['timeline', 'sin confirmar', ''],
+    ['big-o', 'sin confirmar', ': conservás tu intento'],
+    ['bug-hunt', 'sin confirmar', ': conservás tu intento'],
+  ])('avisos del host para %s', (game, unfinished, recovery) => {
+    const t = i18n.getFixedT('es');
+    expect(
+      t('gameHost.notice.dayChanged', { number: 9, unfinished: t(`games.${game}.unfinished`) }),
+    ).toBe(
+      `Empezó el desafío #9. La partida de ayer quedó ${unfinished} y no cuenta para tu racha.`,
+    );
+    expect(t('gameHost.error.move', { recovery: t(`games.${game}.moveRecovery`) })).toBe(
+      `No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo${recovery}.`,
+    );
+  });
+
+  it('avisos del host en inglés', () => {
+    const t = i18n.getFixedT('en');
+    expect(
+      t('gameHost.notice.dayChanged', { number: 9, unfinished: t('games.bug-hunt.unfinished') }),
+    ).toBe(
+      "Challenge #9 has started. Yesterday's game was left unconfirmed and doesn't count toward your streak.",
+    );
+    expect(t('gameHost.error.move', { recovery: t('games.timeline.moveRecovery') })).toBe(
+      "We couldn't load your game. Check your connection and try again.",
+    );
+    expect(t('gameHost.loadingResult', { slug: 'bug-hunt' })).toBe(
+      '$ loading your bug-hunt result…',
+    );
+  });
 });
