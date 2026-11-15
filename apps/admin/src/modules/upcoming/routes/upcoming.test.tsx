@@ -5,6 +5,7 @@ import { axe } from 'vitest-axe';
 import {
   FAILURES_ONE,
   UPCOMING_BIG_O,
+  UPCOMING_BUG_HUNT,
   UPCOMING_EMPTY_CELL,
   UPCOMING_FAILURE,
   UPCOMING_OK,
@@ -123,6 +124,25 @@ describe('P-03 · grilla', () => {
     ]);
     expect(screen.getByText(/· 4 juegos ·/)).toBeInTheDocument();
     // TS-22: el client de Big O no se baja hasta abrir un detalle
+    expect(document.querySelector('[lang="en"]')).toBeNull();
+    expect(screen.queryByText('Cargando preview…')).toBeNull();
+    expect(screen.queryByRole('tabpanel')).toBeNull();
+  });
+
+  it('la grilla muestra Bug Hunt como quinta columna sin cargar su client (TS-23)', async () => {
+    server.use(adminHandlers.upcoming(UPCOMING_BUG_HUNT));
+    render();
+    await grid();
+    expect(screen.getAllByRole('columnheader').map((h) => h.textContent)).toEqual([
+      'Día',
+      'Devdle',
+      'Grep Grid',
+      'Tech Timeline',
+      'Big O',
+      'Bug Hunt',
+    ]);
+    expect(screen.getByText(/· 5 juegos ·/)).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: /^Regenerar / })).toHaveLength(70);
     expect(document.querySelector('[lang="en"]')).toBeNull();
     expect(screen.queryByText('Cargando preview…')).toBeNull();
     expect(screen.queryByRole('tabpanel')).toBeNull();

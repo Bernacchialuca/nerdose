@@ -42,7 +42,7 @@ describe('package.json', () => {
     expect(pkg.dependencies['@nerdose/ui']).toBe('workspace:*');
     expect(pkg.dependencies['@nerdose/core']).toBe('workspace:*');
     expect(pkg.dependencies['@fontsource/inter']).toBe('^5.3.0');
-    for (const game of ['big-o', 'devdle', 'grep-grid', 'timeline']) {
+    for (const game of ['big-o', 'bug-hunt', 'devdle', 'grep-grid', 'timeline']) {
       expect(pkg.dependencies[`@nerdose/game-${game}`]).toBe('workspace:*');
     }
     expect(pkg.dependencies).not.toHaveProperty('i18next');

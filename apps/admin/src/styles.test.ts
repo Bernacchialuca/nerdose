@@ -95,12 +95,13 @@ describe('guardas estáticas del código de producción', () => {
       const all = content.match(/@nerdose\/game-[a-z-]+\/[a-z]+/g) ?? [];
       expect(all.sort()).toEqual([
         '@nerdose/game-big-o/client',
+        '@nerdose/game-bug-hunt/client',
         '@nerdose/game-devdle/client',
         '@nerdose/game-grep-grid/client',
         '@nerdose/game-timeline/client',
       ]);
       const dynamic = content.match(/import\('@nerdose\/game-[a-z-]+\/client'\)/g) ?? [];
-      expect(dynamic).toHaveLength(4);
+      expect(dynamic).toHaveLength(5);
     }
   });
 
@@ -124,6 +125,24 @@ describe('guardas estáticas del código de producción', () => {
   });
 });
 
+type BuiltChunk = Awaited<ReturnType<typeof buildAdmin>>['chunks'][number];
+
+/** Chunks alcanzables con imports estáticos desde el chunk de entrada. */
+function entryClosure(chunks: BuiltChunk[]): Set<string> {
+  const entry = chunks.find((c) => c.isEntry);
+  expect(entry).toBeDefined();
+  const byName = new Map(chunks.map((c) => [c.fileName, c]));
+  const closure = new Set<string>();
+  const queue = [(entry as BuiltChunk).fileName];
+  while (queue.length > 0) {
+    const name = queue.shift() as string;
+    if (closure.has(name)) continue;
+    closure.add(name);
+    for (const imp of byName.get(name)?.imports ?? []) queue.push(imp);
+  }
+  return closure;
+}
+
 describe('build del admin (D4)', () => {
   const highlighter = 'shi' + 'ki';
 
@@ -144,35 +163,51 @@ describe('build del admin (D4)', () => {
     }
   }, 60_000);
 
-  it('el resaltador y el client de Big O quedan fuera del chunk de entrada (TS-25)', async () => {
-    const { chunks } = await buildAdmin();
-    const entry = chunks.find((c) => c.isEntry);
-    expect(entry).toBeDefined();
-    const byName = new Map(chunks.map((c) => [c.fileName, c]));
-    const closure = new Set<string>();
-    const queue = [(entry as (typeof chunks)[number]).fileName];
-    while (queue.length > 0) {
-      const name = queue.shift() as string;
-      if (closure.has(name)) continue;
-      closure.add(name);
-      for (const imp of byName.get(name)?.imports ?? []) queue.push(imp);
+  it('el CSS compilado incluye lo que usa el Preview de Bug Hunt (TS-25)', async () => {
+    const css = compiledCss(await buildAdmin());
+    for (const needle of [
+      '--color-game-bug-hunt-tint',
+      '--color-game-bug-hunt-tint-strong',
+      '--color-game-bug-hunt-featured',
+      '--shadow-bar-bug-hunt',
+      '--color-streak-surface',
+      '--color-streak-border',
+      '--color-streak-label',
+      '--color-status-error-soft',
+      '--color-status-success-soft',
+      '--color-game-big-o-tint',
+      '@container',
+    ]) {
+      expect(css, needle).toContain(needle);
     }
+  }, 60_000);
+
+  it('el resaltador y los clients de Big O y Bug Hunt quedan fuera del chunk de entrada (TS-26)', async () => {
+    const { chunks } = await buildAdmin();
+    const closure = entryClosure(chunks);
     const hl = new RegExp('[\\\\/](' + highlighter + '|@' + highlighter + 'js)[\\\\/]');
     const hlChunks = chunks.filter((c) => c.moduleIds.some((id) => hl.test(id)));
     expect(hlChunks.length).toBeGreaterThan(0);
     for (const c of hlChunks) expect(closure.has(c.fileName), c.fileName).toBe(false);
-    const client = chunks.find((c) =>
-      c.moduleIds.some((id) => id.endsWith('packages/games/big-o/src/client/index.ts')),
-    );
-    expect(client).toBeDefined();
-    expect(closure.has((client as (typeof chunks)[number]).fileName)).toBe(false);
+    for (const game of ['big-o', 'bug-hunt']) {
+      const client = chunks.find((c) =>
+        c.moduleIds.some((id) => id.endsWith(`packages/games/${game}/src/client/index.ts`)),
+      );
+      expect(client, game).toBeDefined();
+      expect(closure.has((client as BuiltChunk).fileName), game).toBe(false);
+    }
   }, 60_000);
 
-  it('polyglot nunca entra al bundle (TS-26)', async () => {
+  it('ni polyglot ni los generadores entran al bundle (TS-27)', async () => {
     const { chunks } = await buildAdmin();
+    const generator = /packages[\\/]games[\\/][a-z-]+[\\/]src[\\/]generator[\\/]/;
     for (const c of chunks) {
       expect(
         c.moduleIds.some((id) => id.includes('packages/polyglot/')),
+        c.fileName,
+      ).toBe(false);
+      expect(
+        c.moduleIds.some((id) => generator.test(id)),
         c.fileName,
       ).toBe(false);
     }
