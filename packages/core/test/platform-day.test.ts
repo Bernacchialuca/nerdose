@@ -1,6 +1,13 @@
 import { afterEach, describe, expect, expectTypeOf, it, vi } from 'vitest';
 
-import { challengeNumber, nextResetAt, secondsToReset, today } from '../src/platform-day';
+import {
+  challengeNumber,
+  nextResetAt,
+  secondsToReset,
+  today,
+  validateMetricsRange,
+} from '../src/platform-day';
+import type { MetricsRangeReason, MetricsRangeResult } from '../src/platform-day';
 
 afterEach(() => {
   vi.useRealTimers();
@@ -86,5 +93,53 @@ describe('purity', () => {
     expect(nextResetAt(now).toISOString()).toBe('2026-12-02T00:00:00.000Z');
     expect(secondsToReset(now)).toBe(50400);
     expect(now.toISOString()).toBe('2026-12-01T10:00:00.000Z');
+  });
+});
+
+describe('validateMetricsRange (S-052)', () => {
+  it.each([
+    ['default 30-day range (TS-13)', '2026-11-02', '2026-12-01', '2026-12-01', 'ok'],
+    ['a single day (TS-14)', '2026-12-01', '2026-12-01', '2026-12-01', 'ok'],
+    ['from after to (TS-15)', '2026-11-20', '2026-11-10', '2026-12-01', 'from_after_to'],
+    ['to in the future (TS-16)', '2026-11-20', '2026-12-02', '2026-12-01', 'future'],
+    ['366 days inclusive (TS-17)', '2025-12-01', '2026-12-01', '2026-12-01', 'ok'],
+    ['367 days (TS-18)', '2025-11-30', '2026-12-01', '2026-12-01', 'too_long'],
+    ['leap year, 365 day difference (TS-19)', '2027-03-01', '2028-02-29', '2028-03-01', 'ok'],
+    ['leap year, 366 day difference (TS-19)', '2027-02-28', '2028-02-29', '2028-03-01', 'too_long'],
+    [
+      'from_after_to wins over future (TS-20)',
+      '2026-12-10',
+      '2026-12-05',
+      '2026-12-01',
+      'from_after_to',
+    ],
+    ['future wins over too_long (TS-20)', '2025-01-01', '2026-12-31', '2026-12-01', 'future'],
+    [
+      'from_after_to with future dates (TS-20)',
+      '2026-12-05',
+      '2026-12-03',
+      '2026-12-01',
+      'from_after_to',
+    ],
+  ] as const)('%s', (_name, from, to, day, expected) => {
+    expect(validateMetricsRange(from, to, day)).toBe(expected);
+  });
+
+  it('uses the given today, not the system clock (TS-21)', () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2030-06-15T12:00:00Z'));
+    expect(validateMetricsRange('2026-11-02', '2026-12-01', '2026-12-01')).toBe('ok');
+    expect(validateMetricsRange('2026-11-20', '2026-12-02', '2026-12-01')).toBe('future');
+  });
+
+  it('has the documented signature and types (TS-22)', () => {
+    expectTypeOf(validateMetricsRange).toEqualTypeOf<
+      (from: string, to: string, today: string) => MetricsRangeResult
+    >();
+    expectTypeOf<MetricsRangeReason>().toEqualTypeOf<'from_after_to' | 'future' | 'too_long'>();
+    expectTypeOf<MetricsRangeResult>().toEqualTypeOf<'ok' | MetricsRangeReason>();
+    // @ts-expect-error 'empty' is resolved by the admin, not a core reason
+    const reason: MetricsRangeReason = 'empty';
+    expect(reason).toBe('empty');
   });
 });

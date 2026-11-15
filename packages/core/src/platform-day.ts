@@ -21,3 +21,15 @@ export function secondsToReset(now: Date): number {
   // ceil so the counter only reaches 0 at the boundary; the client refetches at 0 and must get the new day.
   return Math.ceil((nextResetAt(now).getTime() - now.getTime()) / 1000);
 }
+
+export type MetricsRangeReason = 'from_after_to' | 'future' | 'too_long';
+export type MetricsRangeResult = 'ok' | MetricsRangeReason;
+
+/** Admin metrics range: `from <= to`, `to <= today`, at most 366 days inclusive. Inputs must be valid `YYYY-MM-DD`. */
+export function validateMetricsRange(from: string, to: string, today: string): MetricsRangeResult {
+  if (from > to) return 'from_after_to';
+  if (to > today) return 'future';
+  const days =
+    (Date.parse(`${to}T00:00:00.000Z`) - Date.parse(`${from}T00:00:00.000Z`)) / MS_PER_DAY;
+  return days > 365 ? 'too_long' : 'ok';
+}
