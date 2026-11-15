@@ -12,6 +12,16 @@ import {
   seedBigO,
   seedBigOPlay,
 } from '../helpers/big-o';
+import {
+  BH_FORBIDDEN,
+  INVALID_SCHEMA,
+  WON_JAVA as BH_WON_JAVA,
+  bhGet,
+  bhMove,
+  bhPost,
+  seedBugHunt,
+  seedBugHuntPlay,
+} from '../helpers/bug-hunt';
 import { CATS, PAYLOAD, useDatabases } from '../helpers/db';
 import {
   GG_WORDS,
@@ -535,6 +545,113 @@ describe('anti-spoiler de la api (Big O)', () => {
       expect(finished[0]).not.toHaveProperty(k);
     }
     expect(finished[0]).toMatchObject({ challenge_id: challenge.id, game_id: 'big-o' });
+  });
+});
+
+describe('anti-spoiler de la api (Bug Hunt)', () => {
+  const LANGS = ['?lang=es', '?lang=en'];
+
+  function assertNoBugHuntSpoiler(raw: string) {
+    for (const bad of BH_FORBIDDEN) expect(raw).not.toContain(bad);
+  }
+
+  it('TS-37 today, start y /api/today no contienen la solución (S-048 TS-37)', async () => {
+    await seedBugHunt(dbs);
+    const b = await dbs.insertPlayer();
+    const { app } = await buildDbApp(dbs);
+    const bodies: string[] = [];
+    const grab = async (res: Response | Promise<Response>) => {
+      const r = await res;
+      expect(r.status).toBe(200);
+      bodies.push(await r.text());
+    };
+    for (const q of LANGS) {
+      await grab(bhGet(app, undefined, q));
+      await grab(bhGet(app, b, q));
+    }
+    await grab(bhPost(app, 'start', { challenge_number: 8 }, b));
+    for (const q of LANGS) await grab(bhGet(app, b, q));
+    await grab(app.request('/api/today', { headers: { Cookie: `nd_pid=${b.id}` } }));
+    expect(bodies.length).toBeGreaterThan(0);
+    for (const raw of bodies) assertNoBugHuntSpoiler(raw);
+  });
+
+  it('TS-38 las respuestas de move previas al cierre no contienen la solución (S-048 TS-38)', async () => {
+    const challenge = await seedBugHunt(dbs);
+    const b = await dbs.insertPlayer();
+    await seedBugHuntPlay(dbs, challenge.id, b.id, {});
+    const { app } = await buildDbApp(dbs);
+    const bodies: string[] = [];
+    for (const q of LANGS) {
+      for (const move of [
+        ...INVALID_SCHEMA,
+        ...[1, 6, 99].map((line) => ({ language: 'java', line })),
+      ]) {
+        const res = await bhMove(app, move, b, q);
+        expect(res.status).toBe(422);
+        bodies.push(await res.text());
+      }
+      const late = await bhMove(app, BH_WON_JAVA, b, q, 7);
+      expect(late.status).toBe(409);
+      expect((await late.clone().json()).error.code).toBe('challenge_expired');
+      bodies.push(await late.text());
+      const anon = await bhMove(app, BH_WON_JAVA, undefined, q);
+      expect(anon.status).toBe(401);
+      bodies.push(await anon.text());
+    }
+    for (const raw of bodies) assertNoBugHuntSpoiler(raw);
+    const [p] = await dbs.owner.sql`SELECT status, state FROM plays`;
+    expect(p).toEqual({ status: 'in_progress', state: {} });
+  });
+
+  it('TS-39 desafío anulado no filtra la solución (S-048 TS-39)', async () => {
+    await seedBugHunt(dbs, {
+      status: 'voided',
+      voidReason: 'wrong_answer',
+      voidedAt: new Date('2026-12-01T09:00:00Z'),
+    });
+    const b = await dbs.insertPlayer();
+    const { app } = await buildDbApp(dbs);
+    for (const res of [
+      await bhGet(app, b),
+      await bhPost(app, 'start', { challenge_number: 8 }, b),
+      await bhMove(app, BH_WON_JAVA, b),
+    ]) {
+      assertNoBugHuntSpoiler(await res.text());
+    }
+  });
+
+  it('TS-40 los logs no contienen la solución (S-048 TS-40)', async () => {
+    const challenge = await seedBugHunt(dbs);
+    const b = await dbs.insertPlayer();
+    const { app, lines } = await buildDbApp(dbs);
+    await bhPost(app, 'start', { challenge_number: 8 }, b);
+    expect((await bhMove(app, { language: 'java', line: 1 }, b)).status).toBe(422);
+    expect((await bhMove(app, {}, b)).status).toBe(422);
+    expect((await bhMove(app, BH_WON_JAVA, b)).status).toBe(200);
+    const logs = JSON.stringify(lines());
+    for (const bad of [
+      'La condición que decide',
+      'The condition that decides',
+      'extreme_index',
+      'relax_comparison',
+      'nums[i] > nums[best]',
+      '[5,1,5]',
+      '"explanation"',
+      '"result"',
+      '"bug_line"',
+    ]) {
+      expect(logs).not.toContain(bad);
+    }
+    const finished = lines().filter((l) => l.event === 'PlayFinished');
+    expect(finished).toHaveLength(1);
+    for (const k of ['play_id', 'player_id', 'challenge_id', 'game_id', 'status', 'score']) {
+      expect(finished[0]).toHaveProperty(k);
+    }
+    for (const k of ['result', 'state', 'line', 'payload']) {
+      expect(finished[0]).not.toHaveProperty(k);
+    }
+    expect(finished[0]).toMatchObject({ challenge_id: challenge.id, game_id: 'bug-hunt' });
   });
 });
 

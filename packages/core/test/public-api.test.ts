@@ -4,6 +4,7 @@ import * as core from '../src/index';
 import type {
   AnyGameGenerator,
   BigOOption,
+  BugType,
   RecipeCategory,
   BankName,
   BankUsage,
@@ -41,6 +42,7 @@ describe('public API of the "." entry', () => {
     expect(Object.keys(core).sort()).toEqual([
       'AppError',
       'BIG_O_OPTIONS',
+      'BUG_TYPES',
       'CODE_LANGUAGES',
       'DATE_PRECISIONS',
       'ERROR_CATALOG',
@@ -104,6 +106,7 @@ describe('public API of the "." entry', () => {
     expectTypeOf<ReportStatus>().not.toBeNever();
     expectTypeOf<BigOOption>().not.toBeNever();
     expectTypeOf<RecipeCategory>().not.toBeNever();
+    expectTypeOf<BugType>().not.toBeNever();
     expectTypeOf(core.replayStreak).toEqualTypeOf<
       (completedDays: readonly string[], activeDays: readonly string[]) => ReplayedStreak
     >();

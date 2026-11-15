@@ -6,6 +6,7 @@ import { scoreGuess } from '@nerdose/game-devdle/definition';
 
 import { buildDbApp } from '../helpers/app';
 import { CATS, PAYLOAD, useDatabases } from '../helpers/db';
+import { registryWithoutBugHunt } from '../helpers/registries';
 
 const dbs = useDatabases();
 beforeAll(() => dbs.reset());
@@ -360,8 +361,12 @@ describe('GET /api/games/{game_id}/today', () => {
   it('TS-25 juego sin paquete y juego inexistente: 404 not_found', async () => {
     await dbs.insertChallenge({ gameId: 'bug-hunt', date: '2026-12-01', status: 'published' });
     const player = await dbs.insertPlayer();
-    const { app } = await buildDbApp(dbs);
-    for (const id of ['bug-hunt', 'foo']) {
+    const apps = {
+      'bug-hunt': (await buildDbApp(dbs, { games: registryWithoutBugHunt })).app,
+      foo: (await buildDbApp(dbs)).app,
+    };
+    for (const id of ['bug-hunt', 'foo'] as const) {
+      const app = apps[id];
       const res = await app.request(`/api/games/${id}/today`, { headers: cookie(player.id) });
       expect(res.status).toBe(404);
       expect(await res.json()).toEqual({

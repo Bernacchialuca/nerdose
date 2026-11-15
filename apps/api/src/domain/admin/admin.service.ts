@@ -53,7 +53,7 @@ export class AdminService {
 
   private toAdminChallenge(row: ChallengeRow): AdminChallenge {
     const { games } = this.deps;
-    // Juegos sin paquete todavía (bug-hunt): sin culpables en vez de fallar.
+    // Defensivo: un game_id del enum fuera del registry (desde S-048 los 5 juegos están registrados).
     const culprits = games.ids().includes(row.gameId)
       ? games.get(row.gameId).culprits(row.payload)
       : [];

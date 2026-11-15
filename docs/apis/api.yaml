@@ -279,6 +279,29 @@ paths:
                     result: null
                     game_stats: null
                     reported: false
+                bug_hunt_en_curso:
+                  summary: Bug Hunt en curso (`state` vacío hasta confirmar; la línea elegida vive solo en el cliente; el código llega en los 3 lenguajes)
+                  value:
+                    game_id: bug-hunt
+                    date: '2026-11-03'
+                    number: 128
+                    challenge_status: published
+                    public_view:
+                      function_name: maxIndex
+                      spec: 'Devuelve el índice del mayor valor de nums; si el máximo se repite, el del primero. Con nums vacío devuelve 0.'
+                      code:
+                        js: "function maxIndex(nums) {\n  let best = 0;\n  for (let i = 1; i < nums.length; i++) {\n    if (nums[i] >= nums[best]) {\n      best = i;\n    }\n  }\n  return best;\n}"
+                        go: "func maxIndex(nums []int) int {\n\tbest := 0\n\tfor i := 1; i < len(nums); i++ {\n\t\tif nums[i] >= nums[best] {\n\t\t\tbest = i\n\t\t}\n\t}\n\treturn best\n}"
+                        java: "static int maxIndex(int[] nums) {\n    int best = 0;\n    for (int i = 1; i < nums.length; i++) {\n        if (nums[i] >= nums[best]) {\n            best = i;\n        }\n    }\n    return best;\n}"
+                      pickable_lines: [2, 3, 4, 5, 8]
+                      visible_tests:
+                        - { input: [[]], expected: 0 }
+                        - { input: [[4]], expected: 0 }
+                        - { input: [[3, 7, 2]], expected: 1 }
+                    play: { status: in_progress, state: {}, score: null, code_language: null }
+                    result: null
+                    game_stats: null
+                    reported: false
                 grep_grid_una_encontrada:
                   summary: Grep Grid en curso con 1 palabra encontrada (solo ella trae `definition`; la grilla y la lista están abreviadas)
                   value:
@@ -398,7 +421,7 @@ paths:
               big_o:
                 value: { challenge_number: 128, move: { language: go, option: o_n_log_n } }
               bug_hunt:
-                value: { challenge_number: 128, move: { language: java, line: 7 } }
+                value: { challenge_number: 128, move: { language: java, line: 4 } }
       responses:
         '200':
           description: Jugada aplicada
@@ -551,6 +574,40 @@ paths:
                       wins: 8
                       win_rate: 0.67
                       extra: { by_category: { nested_loops: { played: 7, correct: 5 }, recursion: { played: 5, correct: 3 } } }
+                bug_hunt_cierre:
+                  summary: Confirmar la línea del bug en Java (cierra la Play como `won`)
+                  value:
+                    feedback: null
+                    play: { status: won, state: { language: java, line: 4 }, score: 1, code_language: java }
+                    result:
+                      win: true
+                      score: 1
+                      chosen_line: 4
+                      code_language: java
+                      bug_line: 4
+                      bug_type: comparison
+                      function_name: maxIndex
+                      failing_test: { input: [[5, 1, 5]], expected: 0, actual: 2 }
+                      fix:
+                        js: { before: '    if (nums[i] >= nums[best]) {', after: '    if (nums[i] > nums[best]) {' }
+                        go: { before: "\t\tif nums[i] >= nums[best] {", after: "\t\tif nums[i] > nums[best] {" }
+                        java: { before: '        if (nums[i] >= nums[best]) {', after: '        if (nums[i] > nums[best]) {' }
+                      explanation:
+                        steps:
+                          - 'La condición que decide si best cambia usa >= en lugar de >: con un empate también se mueve.'
+                          - 'Con [5, 1, 5], al llegar a i = 2 se cumple 5 >= 5 y devuelve 2 en lugar de 0.'
+                          - 'Los tests visibles no repiten el máximo, por eso pasan. El fix: volver a >.'
+                    streaks: { game: { current: 6, max: 9 }, global: { current: 8, max: 12 } }
+                    game_stats:
+                      game_id: bug-hunt
+                      current_streak: 6
+                      max_streak: 9
+                      played: 8
+                      wins: 6
+                      win_rate: 0.75
+                      extra:
+                        by_language: { js: { played: 4, correct: 3 }, go: { played: 3, correct: 2 }, java: { played: 1, correct: 1 } }
+                        by_bug_type: { off_by_one: { played: 4, correct: 3 }, comparison: { played: 4, correct: 3 } }
         '401': { $ref: '#/components/responses/NoSession' }
         '403': { $ref: '#/components/responses/ForbiddenOrigin' }
         '404':
@@ -571,6 +628,9 @@ paths:
               examples:
                 invalid_move:
                   summary: Jugada inválida (por ejemplo faltantes, duplicados o ids ajenos en Timeline)
+                  value: { error: { code: invalid_move, message: 'Jugada inválida.' } }
+                bug_hunt_linea_no_elegible:
+                  summary: Bug Hunt con `line` fuera de `pickable_lines` (la firma o una línea de solo llaves); la Play sigue in_progress y la preferencia no cambia
                   value: { error: { code: invalid_move, message: 'Jugada inválida.' } }
                 not_in_word_list:
                   value: { error: { code: not_in_word_list, message: 'La palabra no está en la lista' } }
@@ -1433,7 +1493,7 @@ components:
         code: { $ref: '#/components/schemas/CodeByLanguage' }
         pickable_lines:
           type: array
-          description: Números de línea elegibles (1-based); iguales en los 3 lenguajes
+          description: Números de línea elegibles (1-based), en orden ascendente; iguales en los 3 lenguajes
           items: { type: integer, minimum: 1 }
         visible_tests:
           type: array
@@ -1445,7 +1505,7 @@ components:
       type: object
       required: [input, expected]
       properties:
-        input: { type: array, description: 'Lista de argumentos del test (p. ej. [[3, 7, 2]] o [[3, 7, 2], 4])' }
+        input: { type: array, items: {}, description: 'Lista de argumentos del test (p. ej. [[3, 7, 2]] o [[3, 7, 2], 4])' }
         expected: { description: Resultado esperado (entero o booleano) }
 
     PublicView:
@@ -1776,9 +1836,9 @@ components:
           type: object
           required: [input, expected, actual]
           properties:
-            input: { description: Argumentos (JSON) }
-            expected: { description: Resultado esperado (JSON) }
-            actual: { description: Resultado de la versión con bug (JSON) }
+            input: { type: array, items: {}, description: Argumentos de la llamada }
+            expected: { description: Resultado esperado (entero o booleano) }
+            actual: { description: Resultado de la versión con bug (entero o booleano) }
         function_name: { type: string }
         fix:
           type: object

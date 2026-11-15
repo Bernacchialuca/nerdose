@@ -4,6 +4,7 @@ import { z } from 'zod';
 
 import {
   BIG_O_OPTIONS,
+  BUG_TYPES,
   CODE_LANGUAGES,
   DATE_PRECISIONS,
   GENERATION_REQUEST_STATUSES,
@@ -17,6 +18,7 @@ import {
 } from '../src/index';
 import type {
   BigOOption,
+  BugType,
   CodeLanguage,
   DatePrecision,
   GameId,
@@ -280,5 +282,79 @@ describe('Big O enums (S-042)', () => {
     expect(schema.safeParse({ language: 'go', option: 'o_n4' }).success).toBe(false);
     expect(schema.safeParse({ language: 'rust', option: 'o_1' }).success).toBe(false);
     expect(schema.safeParse({ language: 'js', option: 'o_1', extra: 1 }).success).toBe(false);
+  });
+});
+
+describe('Bug Hunt enums (S-048)', () => {
+  it('lists BUG_TYPES in fixed order (S-048 TS-1)', () => {
+    expect(BUG_TYPES).toEqual([
+      'off_by_one',
+      'comparison',
+      'wrong_operator',
+      'wrong_variable',
+      'bad_initialization',
+      'misplaced_return',
+      'inverted_condition',
+    ]);
+    expect(BUG_TYPES).toHaveLength(7);
+  });
+
+  it('derives BugType (S-048 TS-2)', () => {
+    expectTypeOf<BugType>().toEqualTypeOf<
+      | 'off_by_one'
+      | 'comparison'
+      | 'wrong_operator'
+      | 'wrong_variable'
+      | 'bad_initialization'
+      | 'misplaced_return'
+      | 'inverted_condition'
+    >();
+  });
+
+  it('keeps BUG_TYPES read-only (S-048 TS-3)', () => {
+    const mutate = (): void => {
+      // @ts-expect-error BUG_TYPES is readonly
+      BUG_TYPES.push('null_pointer');
+    };
+    expectTypeOf(mutate).toBeFunction();
+  });
+
+  it('rejects invented BugType values (S-048 TS-4)', () => {
+    const ok: BugType = 'misplaced_return';
+    // @ts-expect-error 'null_pointer' is not a BugType
+    const bad: BugType = 'null_pointer';
+    expect(ok).toBe('misplaced_return');
+    expect(bad).toBe('null_pointer');
+  });
+
+  it('works with z.enum for the payload and result schemas (S-048 TS-5)', () => {
+    const schema = z.strictObject({ bug_type: z.enum(BUG_TYPES) });
+    const good = schema.safeParse({ bug_type: 'off_by_one' });
+    expect(good.success).toBe(true);
+    expect(good.data).toEqual({ bug_type: 'off_by_one' });
+    expect(schema.safeParse({ bug_type: 'null_pointer' }).success).toBe(false);
+    expect(schema.safeParse({ bug_type: 'OFF_BY_ONE' }).success).toBe(false);
+    expect(schema.safeParse({ bug_type: '' }).success).toBe(false);
+    expect(schema.safeParse({}).success).toBe(false);
+  });
+
+  it('keys extra.by_bug_type stats by BugType (S-048 TS-6)', () => {
+    const byBugType: Partial<Record<BugType, { played: number; correct: number }>> = {
+      comparison: { played: 2, correct: 1 },
+      off_by_one: { played: 1, correct: 0 },
+    };
+    const badStats: Partial<Record<BugType, { played: number; correct: number }>> = {
+      // @ts-expect-error 'null_pointer' is not a BugType
+      null_pointer: { played: 1, correct: 1 },
+    };
+    expectTypeOf<keyof Record<BugType, number>>().toEqualTypeOf<BugType>();
+    expect(byBugType.comparison).toEqual({ played: 2, correct: 1 });
+    expect(byBugType.wrong_operator).toBeUndefined();
+    expect(badStats).toBeDefined();
+  });
+
+  it('uses unique snake_case values (S-048 TS-7)', () => {
+    expect(BUG_TYPES.every((t) => /^[a-z]+(_[a-z]+)*$/.test(t))).toBe(true);
+    expect(new Set(BUG_TYPES).size).toBe(7);
   });
 });

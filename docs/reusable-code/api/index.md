@@ -42,9 +42,9 @@ App `apps/api` (not a package; imported through the `@/` alias → `src/`). Hono
 - **withTimeout** (apps/api/src/shared/with-timeout.ts) - Races a promise against a timer and always clears it
 - **shiftDay** (apps/api/src/shared/day.ts) - Adds `n` days to a `YYYY-MM-DD` string (UTC)
 - **Clock / systemClock** (apps/api/src/shared/clock.ts) - Injectable clock (`now(): Date`)
-- **games** (apps/api/src/games/registry.ts) - The api's `GameRegistry` instance (registers `devdle`, `grepGrid`, `timeline` and `bigO`)
+- **games** (apps/api/src/games/registry.ts) - The api's `GameRegistry` instance (registers `devdle`, `grepGrid`, `timeline`, `bigO` and `bugHunt`)
 
-## Testing utils (9 items) - see testing.md
+## Testing utils (11 items) - see testing.md
 - **captureLogger** (apps/api/test/helpers/logger.ts) - Real logger writing to memory; `lines()` returns parsed JSON entries
 - **freePort** (apps/api/test/helpers/net.ts) - Returns a free local TCP port
 - **silentServer** (apps/api/test/helpers/net.ts) - TCP server that accepts and never answers (simulates a hung DB)
@@ -56,5 +56,7 @@ App `apps/api` (not a package; imported through the `@/` alias → `src/`). Hono
 - **useDatabases / parseSetCookie / COOKIE_ATTRS** (apps/api/test/helpers/db.ts) - Owner and api connections, fixtures (`insertChallenge/Play/GameStats/PlayerStats/Term/TimelineFact/Report/GenerationRequest/GenerationFailure/JobRun/RejectedGuess`, `PAYLOAD`, `CATS`) and `Set-Cookie` parsing
 - **TL_PAYLOAD / TL_ID / TL_OID / CORRECT / SWAP / REVERSED / ROTATED / TL_PUBLIC_ES / TL_PUBLIC_EN / tlChrono / tlResult / TL_FORBIDDEN / seedTimeline / seedTimelinePlay / tlGet / tlPost / tlMove** (apps/api/test/helpers/timeline.ts) - Fixed Tech Timeline payload (validated with `payloadSchema` on import), ordering fixtures and helpers to seed challenges/plays and call the generic routes
 - **BO_PAYLOAD / BO_PAYLOAD_RECURSION / BO_PUBLIC / WON_JAVA / LOST_GO / boResult / boStats / BO_FORBIDDEN / seedBigO / seedBigOPlay / boGet / boPost / boMove / MOVE** (apps/api/test/helpers/big-o.ts) - Fixed Big O payload (validated with `payloadSchema` on import), expected results per locale, anti-spoiler forbidden values and helpers to seed challenges/plays and call the generic routes
+- **BH_PAYLOAD / BH_PAYLOAD_BOOL / BH_PUBLIC_ES / BH_PUBLIC_EN / WON_JAVA / LOST_GO / bhResult / bhStats / BH_FORBIDDEN / seedBugHunt / seedBugHuntPlay / bhGet / bhPost / bhMove / MOVE** (apps/api/test/helpers/bug-hunt.ts) - Fixed Bug Hunt fixtures for 2026-12-01 validated with `payloadSchema` on import, expected `BugHuntResult` per locale and `BH_FORBIDDEN` (keys and values that must never appear before the Play closes)
+- **registryWithoutBugHunt** (apps/api/test/helpers/registries.ts) - Game registry without Bug Hunt, to test the defensive branches for an enum `game_id` outside the registry
 - **GG_PAYLOAD / GG_ID / cellsOf / selectWord / found / SEVEN / INITIAL_EXTRA / seedGrepGrid / seedGrepGridPlay / ggGet / ggPost / ggMove** (apps/api/test/helpers/grep-grid.ts) - Fixed Grep Grid payload (validated with `payloadSchema` on import) and helpers to seed challenges/plays and call the generic routes
 - **CODE_PAYLOAD / codeGame / codeGameNull / codeRegistry / codeNullRegistry** (apps/api/test/helpers/code-game.ts) - Test game with `id: 'big-o'` and a code language, plus registries including it; use with the `games` option of `buildDbServices` / `buildDbApp`

@@ -14,7 +14,7 @@ stories: [S-022, S-023, S-024, S-043, S-046, S-048]
 **Status:** Draft
 **Creado:** 2026-11-03
 **Última actualización:** 2026-11-14
-**Stories:** S-022, S-023, S-024, S-043, S-046
+**Stories:** S-022, S-023, S-024, S-043, S-046, S-048
 
 ## Descripción
 
@@ -96,7 +96,7 @@ sequenceDiagram
 | grep-grid | `{ grid: string[12][12], words: [{ term_id, word, definition? }] ×8 }` — `definition` solo en las palabras ya encontradas (`term_id` presentes en `plays.state.found_words`), en el locale resuelto; nunca en las no encontradas ni sin Play |
 | timeline | `{ category, prompt, items: [{ opaque_id, label }] ×5 }` (mezclados) |
 | big-o | `{ code: { js, go, java }, options: big_o_option[8] }` — `options` es siempre `BIG_O_OPTIONS` en orden fijo (`o_1 … o_n_fact`), nunca dependiente de la respuesta; `toPublic` ignora `locale` y `state`. Nunca incluye `answer`, `trap_option`, `explanation`, `recipe`, `recipe_category` ni `date` |
-| bug-hunt | `{ spec, code: { js, go, java }, pickable_lines: int[], visible_tests: [{ input, expected }] }` |
+| bug-hunt | `{ function_name, spec, code: { js, go, java }, pickable_lines: int[], visible_tests: [{ input, expected }] ×2–3 }` — `spec` va en el locale resuelto; `pickable_lines` va en orden ascendente; `input` es la lista de argumentos de la llamada; `toPublic` ignora `state`. Nunca incluye `bug_line`, `bug_type`, `mutation`, `fix`, `failing_test`, `tests`, `template`, `params` ni `explanation` |
 
 **Ref:** `docs/apis/api.yaml` GET /api/games/{game_id}/today (`GameToday`, `PublicView`, `PlayView`, `Result`)
 
@@ -155,6 +155,8 @@ sequenceDiagram
 
 En Big O la opción seleccionada tampoco se guarda en el servidor: `plays.state` sigue `{}` hasta confirmar. La selección sobrevive al cambio de lenguaje y de idioma (el `Game` sigue montado), pero se pierde al salir: al retomar, el jugador ve el código y las 8 opciones sin selección y con su intento intacto.
 
+En Bug Hunt la línea seleccionada tampoco se guarda en el servidor: `plays.state` sigue `{}` hasta confirmar; al retomar no hay selección.
+
 ## Manejo de Errores
 
 | Paso | Error | Código | Response | Comportamiento |
@@ -182,3 +184,5 @@ En Big O la opción seleccionada tampoco se guarda en el servidor: `plays.state`
 - Si `POST …/move` llega sin una Play creada, la crea igual que `/start` (ver `jugada-y-cierre-de-partida`).
 
 > Actualizado por REQ-009 (stories S-043 y S-046): vista pública de Big O con `options` en orden fijo, lenguaje inicial `codeLanguage` desde la sesión y selección solo en el cliente.
+
+> Actualizado por REQ-010 (story S-048): vista pública de Bug Hunt y selección solo en el cliente.

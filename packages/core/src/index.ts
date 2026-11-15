@@ -1,5 +1,6 @@
 export {
   BIG_O_OPTIONS,
+  BUG_TYPES,
   CODE_LANGUAGES,
   DATE_PRECISIONS,
   GENERATION_REQUEST_STATUSES,
@@ -10,6 +11,7 @@ export {
   TERM_CATEGORIES,
   TIMELINE_CATEGORIES,
   type BigOOption,
+  type BugType,
   type CodeLanguage,
   type DatePrecision,
   type GenerationRequestStatus,

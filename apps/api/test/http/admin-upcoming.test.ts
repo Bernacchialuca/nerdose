@@ -1,8 +1,11 @@
+import type { GameRegistry } from '@nerdose/core';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { adminAuth, buildDbApp } from '../helpers/app';
 import { BO_PAYLOAD } from '../helpers/big-o';
+import { BH_PAYLOAD } from '../helpers/bug-hunt';
 import { PAYLOAD, useDatabases } from '../helpers/db';
+import { registryWithoutBugHunt } from '../helpers/registries';
 import { TL_ID, TL_PAYLOAD } from '../helpers/timeline';
 
 const dbs = useDatabases();
@@ -16,11 +19,11 @@ afterEach(() => vi.useRealTimers());
 afterAll(() => dbs.close());
 
 type Json = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
-type Game = 'devdle' | 'grep-grid' | 'timeline' | 'big-o';
-const GAMES: Game[] = ['devdle', 'grep-grid', 'timeline', 'big-o'];
+type Game = 'devdle' | 'grep-grid' | 'timeline' | 'big-o' | 'bug-hunt';
+const GAMES: Game[] = ['devdle', 'grep-grid', 'timeline', 'big-o', 'bug-hunt'];
 
-const upcoming = async (query = '') => {
-  const { app } = await buildDbApp(dbs);
+const upcoming = async (query = '', games?: GameRegistry) => {
+  const { app } = await buildDbApp(dbs, { games });
   return app.request(`/api/admin/challenges/upcoming${query}`, { headers: await adminAuth() });
 };
 const cell = (body: Json, date: string, game: Game): Json =>
@@ -29,7 +32,12 @@ const dayStr = (i: number) => new Date(Date.UTC(2026, 11, 1 + i)).toISOString().
 
 async function seedWindow() {
   for (const gameId of GAMES) {
-    const payload = gameId === 'big-o' ? { payload: BO_PAYLOAD } : {};
+    const payload =
+      gameId === 'big-o'
+        ? { payload: BO_PAYLOAD }
+        : gameId === 'bug-hunt'
+          ? { payload: BH_PAYLOAD }
+          : {};
     await dbs.insertChallenge({ gameId, date: '2026-12-01', status: 'published', ...payload });
     for (let i = 1; i <= 14; i++) {
       await dbs.insertChallenge({ gameId, date: dayStr(i), status: 'approved', ...payload });
@@ -55,6 +63,11 @@ describe('GET /api/admin/challenges/upcoming', () => {
         expect(g.failure).toBeNull();
       }
     }
+    const bhCell = cell(body, '2026-12-02', 'bug-hunt');
+    expect(bhCell.challenge.status).toBe('approved');
+    expect(bhCell.challenge.payload).toEqual(BH_PAYLOAD);
+    expect(bhCell.challenge.payload.bug_line).toBe(4);
+    expect(bhCell.challenge.rejected_items).toEqual([]);
     const bigOCell = cell(body, '2026-12-02', 'big-o');
     expect(bigOCell.challenge.payload).toEqual(BO_PAYLOAD);
     expect(bigOCell.challenge.payload.answer).toBe('o_n_log_n');
@@ -320,7 +333,7 @@ describe('GET /api/admin/challenges/upcoming', () => {
 
   it('TS-13 juego fuera del registry', async () => {
     await dbs.insertChallenge({ gameId: 'bug-hunt', date: '2026-12-02', status: 'approved' });
-    const res = await upcoming();
+    const res = await upcoming('', registryWithoutBugHunt);
     expect(res.status).toBe(200);
     const body = (await res.json()) as Json;
     expect(body.days[0].games).toHaveLength(4);

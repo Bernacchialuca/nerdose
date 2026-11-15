@@ -1,3 +1,4 @@
+import type { GameRegistry } from '@nerdose/core';
 import { describe, expect, it } from 'vitest';
 
 import { PublishingService } from '@/domain/publishing/publishing.service';
@@ -6,6 +7,7 @@ import { games } from '@/games/registry';
 import { TodayCache } from '@/infra/cache/today-cache';
 
 import { captureLogger } from '../helpers/logger';
+import { registryWithoutBugHunt } from '../helpers/registries';
 
 const at = (iso: string) => ({ now: () => new Date(iso) });
 const clockRef = (iso: string) => {
@@ -28,6 +30,7 @@ function build(opts: {
   publishApproved?: (day: string) => Promise<never[]>;
   findTodayVisible?: (day: string) => Promise<CachedChallenge[]>;
   playsFail?: boolean;
+  games?: GameRegistry;
 }) {
   const calls = { publish: [] as string[], visible: [] as string[], terms: 0 };
   const cache = new TodayCache({
@@ -57,7 +60,7 @@ function build(opts: {
     clock: opts.clock,
     launchDate: '2026-11-24',
     logger: captureLogger().logger,
-    games,
+    games: opts.games ?? games,
     gameplay: { findPlaysOfDay: opts.playsFail ? boom : async () => [] },
     progress: {
       todayStreaks: opts.playsFail
@@ -172,32 +175,28 @@ describe('PublishingService.ensureToday', () => {
 describe('PublishingService.getToday', () => {
   const guest = { player: null, locale: 'es' as const };
 
-  it('refleja la cache de juegos registrados; el resto queda en none', async () => {
-    const { service, cache } = build({
-      clock: at('2026-12-01T10:00:00Z'),
-      rows: [
-        challenge('devdle', 'published'),
-        challenge('big-o', 'voided'),
-        challenge('bug-hunt', 'voided'),
-      ],
-    });
-    await cache.reload('2026-12-01');
-    const res = await service.getToday(guest);
-    expect(res.games.map((g) => g.game_id)).toEqual([
-      'devdle',
-      'grep-grid',
-      'timeline',
-      'big-o',
-      'bug-hunt',
-    ]);
-    // bug-hunt no está registrado en el registry: none aunque la cache lo tenga.
-    expect(res.games.map((g) => g.challenge_status)).toEqual([
-      'published',
-      'none',
-      'none',
-      'voided',
-      'none',
-    ]);
+  it('refleja la cache de juegos registrados; el resto queda en none (S-048 TS-5)', async () => {
+    const rows = [
+      challenge('devdle', 'published'),
+      challenge('big-o', 'voided'),
+      challenge('bug-hunt', 'voided'),
+    ];
+    const ids = ['devdle', 'grep-grid', 'timeline', 'big-o', 'bug-hunt'];
+    for (const [registry, expected] of [
+      [undefined, ['published', 'none', 'none', 'voided', 'voided']],
+      // con un registry sin bug-hunt, queda none aunque la cache lo tenga
+      [registryWithoutBugHunt, ['published', 'none', 'none', 'voided', 'none']],
+    ] as const) {
+      const { service, cache } = build({
+        clock: at('2026-12-01T10:00:00Z'),
+        rows,
+        games: registry,
+      });
+      await cache.reload('2026-12-01');
+      const res = await service.getToday(guest);
+      expect(res.games.map((g) => g.game_id)).toEqual(ids);
+      expect(res.games.map((g) => g.challenge_status)).toEqual(expected);
+    }
   });
 
   it('valores del día con cache vacía', async () => {

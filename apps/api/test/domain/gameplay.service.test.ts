@@ -1,4 +1,4 @@
-import { AppError } from '@nerdose/core';
+import { AppError, type GameRegistry } from '@nerdose/core';
 import { grepGrid } from '@nerdose/game-grep-grid/definition';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -15,6 +15,7 @@ import { systemClock } from '@/shared/clock';
 import { captureLogger } from '../helpers/logger';
 import { PAYLOAD, useDatabases } from '../helpers/db';
 import { GG_PAYLOAD, found, seedGrepGrid, seedGrepGridPlay } from '../helpers/grep-grid';
+import { registryWithoutBugHunt } from '../helpers/registries';
 
 const dbs = useDatabases();
 beforeAll(() => dbs.reset());
@@ -29,11 +30,11 @@ afterAll(() => dbs.close());
 const G_REACT = { guess: 'REACT', marks: ['present', 'correct', 'absent', 'absent', 'absent'] };
 const G_MERGE = { guess: 'MERGE', marks: ['correct', 'correct', 'correct', 'correct', 'correct'] };
 
-async function build() {
+async function build(registry: GameRegistry = games) {
   const cache = new TodayCache(new PublishingRepository(dbs.api.db));
   await cache.reload('2026-12-01');
   return new GameplayService({
-    games,
+    games: registry,
     cache,
     repo: new GameplayRepository(dbs.api.db),
     reports: new QualityRepository(dbs.api.db),
@@ -142,7 +143,9 @@ describe('GameplayService.start', () => {
     await expect(service.start('devdle', player, 8, log)).rejects.toMatchObject({
       code: 'no_challenge_today',
     });
-    await expect(service.start('bug-hunt', player, 7, log)).rejects.toMatchObject({
+    await expect(
+      (await build(registryWithoutBugHunt)).start('bug-hunt', player, 7, log),
+    ).rejects.toMatchObject({
       code: 'not_found',
     });
     await expect(service.start('devdle', player, 7, log)).rejects.toBeInstanceOf(AppError);

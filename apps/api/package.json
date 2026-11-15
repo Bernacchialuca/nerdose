@@ -16,6 +16,7 @@
     "@nerdose/core": "workspace:*",
     "@nerdose/db": "workspace:*",
     "@nerdose/game-big-o": "workspace:*",
+    "@nerdose/game-bug-hunt": "workspace:*",
     "@nerdose/game-devdle": "workspace:*",
     "@nerdose/game-grep-grid": "workspace:*",
     "@nerdose/game-timeline": "workspace:*",

@@ -51,6 +51,18 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 - **Description:** fixed Big O fixture for 2026-12-01 (challenge number 8) validated with `payloadSchema` on import, expected `BigOResult` per locale, and `BO_FORBIDDEN` listing the keys and values that must never appear in a response or log before the Play closes (`o_n_log_n` is not listed: it is always in `options`)
 - **Usage:** `const c = await seedBigO(dbs); await seedBigOPlay(dbs, c.id, player.id, {}); await boMove(app, WON_JAVA, player)`
 
+## BH_PAYLOAD / BH_PAYLOAD_BOOL / BH_PUBLIC_ES / BH_PUBLIC_EN / WON_JAVA / LOST_GO / bhResult / bhStats / BH_FORBIDDEN / seedBugHunt / seedBugHuntPlay / bhGet / bhPost / bhMove / MOVE
+- **Location:** apps/api/test/helpers/bug-hunt.ts
+- **Signature:** `BH_PAYLOAD: BugHuntPayload` (`maxIndex`, `comparison`, `bug_line: 4`); `BH_PAYLOAD_BOOL` (`anyAbove`, `bad_initialization`, boolean results); `WON_JAVA`, `LOST_GO` states; `bhResult(state, locale)`, `bhStats(language, win)`; `seedBugHunt(dbs, opts?)`, `seedBugHuntPlay(dbs, challengeId, playerId, state, extra?)`; `bhGet/bhPost/bhMove(app, ..., player?, query?)`; `MOVE(language, line, challengeNumber?)`; `INVALID_SCHEMA`, `NON_PICKABLE`
+- **Description:** fixed Bug Hunt fixture for 2026-12-01 (challenge number 8) validated with `payloadSchema` on import, expected `BugHuntResult` per locale, and `BH_FORBIDDEN` listing the keys and values that must never appear in a response or log before the Play closes (it does not search `4` or `>=`: the bug line is in `pickable_lines` and the code shows it)
+- **Usage:** `const c = await seedBugHunt(dbs); await seedBugHuntPlay(dbs, c.id, player.id, {}); await bhMove(app, WON_JAVA, player)`
+
+## registryWithoutBugHunt
+- **Location:** apps/api/test/helpers/registries.ts
+- **Signature:** `registryWithoutBugHunt: GameRegistry` (`createGameRegistry([devdle, grepGrid, timeline, bigO])`)
+- **Description:** registry without Bug Hunt to test the defensive branches for an enum `game_id` outside the registry (`not_found`, `none` in `/api/today`, empty `culprits`)
+- **Usage:** `const { app } = await buildDbApp(dbs, { games: registryWithoutBugHunt })`
+
 ## ADMIN_HEADERS / adminToken / adminAuth / TEST_ADMIN_PASSWORD / TEST_ADMIN_JWT_SECRET
 - **Location:** apps/api/test/helpers/app.ts
 - **Signature:** `adminToken(nowSeconds?): Promise<string>`; `adminAuth(nowSeconds?): Promise<{ Authorization }>`
