@@ -69,6 +69,10 @@
   --color-game-bug-hunt-featured: #5C4419;
   --color-game-bug-hunt-tint-strong: #2A1F0B;
   --color-game-bug-hunt-muted-bar: #3A2C14;
+  /* DS (S-051): Bug Hunt */
+  --color-game-bug-hunt-tint-hover: #15110A;    /* game.bug-hunt.tint-hover (color.amber.970): hover de línea elegible */
+  --color-game-bug-hunt-disabled-bg: #2A2416;   /* game.bug-hunt.disabled.bg (color.amber.dim.900): confirmar deshabilitado */
+  --color-game-bug-hunt-disabled-text: #8A7856; /* game.bug-hunt.disabled.text (color.amber.dim.600) */
 
   --color-game-big-o-on: #06121F;
   --color-game-big-o-tint: #0B1522;
@@ -102,6 +106,7 @@
   --color-status-success-bg: #0C1A12;
   --color-status-success-border: #1E4A30;
   --color-status-success-soft: #A9C9B5;
+  --color-status-success-diff-text: #9EF0C2; /* status.success.diff-text (color.green.200): línea + del diff */
   --color-status-success-badge: #12301F;
   --color-status-success-badge-text: #7CF0B0;
   --color-status-error: #FF7B72;
@@ -109,6 +114,7 @@
   --color-status-error-bg: #1C0F0E;
   --color-status-error-border: #4A2220;
   --color-status-error-soft: #D9B3AF;
+  --color-status-error-diff-text: #FFB3AD;   /* status.error.diff-text (color.red.300): línea - del diff */
   --color-status-warning: #FFB547;
   --color-status-warning-on: #1A1206;
   --color-status-warning-bg: #140F07;

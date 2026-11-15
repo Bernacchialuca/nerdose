@@ -38,13 +38,13 @@ export function FixDiff({ line, fix, language, t, headingLevel }: FixDiffProps) 
         style={{ tabSize: 4 }}
         className="overflow-x-auto rounded-inset border border-border bg-surface-sunken py-2.5 font-mono text-code-terminal focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-game-bug-hunt"
       >
-        <div className="flex w-max min-w-full bg-status-error-bg px-3.5 text-status-error-soft">
+        <div className="flex w-max min-w-full bg-status-error-bg px-3.5 text-status-error-diff-text">
           <span aria-hidden="true" className="whitespace-pre">
             -{' '}
           </span>
           <span className="whitespace-pre">{fix.before}</span>
         </div>
-        <div className="flex w-max min-w-full bg-status-success-bg px-3.5 text-status-success-soft">
+        <div className="flex w-max min-w-full bg-status-success-bg px-3.5 text-status-success-diff-text">
           <span aria-hidden="true" className="whitespace-pre">
             +{' '}
           </span>

@@ -341,6 +341,16 @@ describe('tokens.css', () => {
     });
   });
 
+  it('declares the Bug Hunt line, confirm and diff tokens (S-051 DS)', () => {
+    expectTokens({
+      '--color-game-bug-hunt-tint-hover': '#15110A',
+      '--color-game-bug-hunt-disabled-bg': '#2A2416',
+      '--color-game-bug-hunt-disabled-text': '#8A7856',
+      '--color-status-error-diff-text': '#FFB3AD',
+      '--color-status-success-diff-text': '#9EF0C2',
+    });
+  });
+
   it('has only @source and texture-dots outside @theme (TS-8)', () => {
     expect(tokensCss.match(/@theme\s*\{/g)).toHaveLength(1);
     expect(tokensRaw.split('@source "./components";')).toHaveLength(2);

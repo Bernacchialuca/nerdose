@@ -44,8 +44,9 @@ describe('client color pairs (TS-17)', () => {
     }
   });
 
-  const BACKGROUNDS = ['status-success-bg', 'status-error-bg'];
-  it('keeps AA on the result line backgrounds too', () => {
+  // Result lines (success/error) and the hover of a pickable line (game.bug-hunt.tint-hover).
+  const BACKGROUNDS = ['status-success-bg', 'status-error-bg', 'game-bug-hunt-tint-hover'];
+  it('keeps AA on the result line and hover backgrounds too', () => {
     for (const v of Object.values(SHIKI_VARS) as string[]) {
       const name = /^var\(--color-([a-z0-9-]+)\)$/.exec(v)?.[1] as string;
       if (name === 'surface-sunken') continue;
@@ -70,8 +71,9 @@ describe('client color pairs (TS-17)', () => {
     ['text-muted', 'surface'],
     ['text', 'surface-inset'],
     ['status-success', 'surface-inset'],
-    ['status-error-soft', 'status-error-bg'],
-    ['status-success-soft', 'status-success-bg'],
+    ['status-error-diff-text', 'status-error-bg'],
+    ['status-success-diff-text', 'status-success-bg'],
+    ['text', 'game-bug-hunt-tint-hover'],
     ['streak-label', 'streak-surface'],
     ['text', 'streak-surface'],
     ['game-bug-hunt', 'surface-sunken'],

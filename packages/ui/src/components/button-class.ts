@@ -29,8 +29,13 @@ export function buttonClass(options: ButtonClassOptions = {}): string {
   const variant = options.variant ?? 'primary';
   const weight = variant === 'secondary' ? 'font-medium' : 'font-bold';
 
+  const gameDisabled =
+    variant === 'accent' ? GAME_CLASSES[(options as { game: UiGameId }).game].disabled : undefined;
+
   let colors: string;
-  if (disabled) {
+  if (disabled && gameDisabled) {
+    colors = gameDisabled;
+  } else if (disabled) {
     colors = 'border border-border-strong bg-control text-text-disabled cursor-not-allowed';
   } else if (variant === 'primary') {
     colors = 'bg-accent text-on-accent hover:bg-accent-hover';

@@ -86,6 +86,21 @@ describe('buttonClass', () => {
     expect(raw).not.toContain('hover:');
   });
 
+  it('uses the Bug Hunt disabled accent when it is defined (S-051 DS)', () => {
+    const raw = buttonClass({ variant: 'accent', game: 'bug-hunt', size: 'lg', disabled: true });
+    const c = classes(raw);
+    for (const k of [
+      'bg-game-bug-hunt-disabled-bg',
+      'text-game-bug-hunt-disabled-text',
+      'cursor-not-allowed',
+      'font-bold',
+    ])
+      expect(c, k).toContain(k);
+    expect(c).not.toContain('bg-game-bug-hunt');
+    expect(c).not.toContain('bg-control');
+    expect(raw).not.toContain('hover:');
+  });
+
   it('requires game for accent at type level', () => {
     const typeOnly = () =>
       // @ts-expect-error accent without game

@@ -10,6 +10,8 @@ export type GameClasses = {
   tintBorder: string;
   featuredBorder: string;
   nextShadow: string;
+  /** `button.accent.disabled.*`: solo definido para Bug Hunt; el resto usa el deshabilitado neutro. */
+  disabled?: string;
 };
 
 // Literales completos: Tailwind solo genera lo que encuentra escrito en src/components.
@@ -35,6 +37,7 @@ export const GAME_CLASSES: Record<UiGameId, GameClasses> = {
     tintBorder: 'border-game-bug-hunt-border',
     featuredBorder: 'border-game-bug-hunt-featured',
     nextShadow: 'shadow-next-bug-hunt',
+    disabled: 'bg-game-bug-hunt-disabled-bg text-game-bug-hunt-disabled-text cursor-not-allowed',
   },
   'big-o': {
     text: 'text-game-big-o',
