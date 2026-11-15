@@ -18,8 +18,13 @@ type FixDiffProps = {
 export function FixDiff({ line, fix, language, t, headingLevel }: FixDiffProps) {
   const titleId = useId();
   const Heading = headingLevel === 3 ? 'h3' : 'h2';
+  // Embedded (h3, admin preview) it is not a landmark: the column around it is (see SectionPanel).
+  const Root = headingLevel === 3 ? 'div' : 'section';
   return (
-    <section aria-labelledby={titleId} className="flex flex-col gap-2">
+    <Root
+      aria-labelledby={headingLevel === 3 ? undefined : titleId}
+      className="flex flex-col gap-2"
+    >
       <Heading id={titleId} className="font-mono text-label-comment text-text-dim">
         <span aria-hidden="true">// </span>
         {t('result.fixTitle', { line })}
@@ -46,6 +51,6 @@ export function FixDiff({ line, fix, language, t, headingLevel }: FixDiffProps) 
           <span className="whitespace-pre">{fix.after}</span>
         </div>
       </div>
-    </section>
+    </Root>
   );
 }

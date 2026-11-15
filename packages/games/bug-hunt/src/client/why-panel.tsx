@@ -19,7 +19,7 @@ type WhyPanelProps = {
   steps: readonly string[];
   chips?: ReactNode;
   t: Translate;
-  /** 2 → `aside` of the result; 3 → `section` embedded in the admin preview. */
+  /** 2 → `aside` of the result; 3 → plain `div` embedded in the admin preview (not a landmark). */
   headingLevel: 2 | 3;
 };
 
@@ -45,11 +45,12 @@ export function WhyPanel({
   headingLevel,
 }: WhyPanelProps) {
   const titleId = useId();
-  const Root = headingLevel === 3 ? 'section' : 'aside';
+  // Embedded (h3, admin preview) it is not a landmark: the column around it is (see SectionPanel).
+  const Root = headingLevel === 3 ? 'div' : 'aside';
   const Heading = headingLevel === 3 ? 'h3' : 'h2';
   return (
     <Root
-      aria-labelledby={titleId}
+      aria-labelledby={headingLevel === 3 ? undefined : titleId}
       className="flex flex-col gap-5 rounded-panel border border-border bg-surface p-6"
     >
       <FailingTest name={name} failing={failing} t={t} headingLevel={headingLevel} />

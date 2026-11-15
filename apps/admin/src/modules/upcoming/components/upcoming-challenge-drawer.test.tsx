@@ -576,8 +576,9 @@ describe('Bug Hunt desde Próximos (S-051)', () => {
     const { ES } = await open();
     expect(within(ES).getByText('tipo: comparación')).toBeInTheDocument();
     expect(within(ES).getByText('mutación: > → >=')).toBeInTheDocument();
-    expect(within(ES).getByRole('heading', { level: 3, name: 'tests' })).toBeInTheDocument();
-    const tests = within(ES).getByRole('region', { name: 'tests' });
+    // Embebidos en la columna, los bloques del preview no son landmarks: se ubican por su h3.
+    const testsHeading = within(ES).getByRole('heading', { level: 3, name: 'tests' });
+    const tests = testsHeading.parentElement?.parentElement as HTMLElement;
     expect(within(tests).getAllByRole('listitem')).toHaveLength(3);
     for (const t of ['maxIndex([]) → 0', 'maxIndex([4]) → 0', 'maxIndex([3, 7, 2]) → 1']) {
       expect(within(tests).getByText(t)).toBeInTheDocument();
@@ -589,7 +590,8 @@ describe('Bug Hunt desde Próximos (S-051)', () => {
 
   it('preview ES: test que falla, fix y «Por qué falla» (TS-12)', async () => {
     const { ES } = await open();
-    const failing = within(ES).getByRole('region', { name: 'el test que falla' });
+    const failing = within(ES).getByRole('heading', { level: 3, name: 'el test que falla' })
+      .parentElement as HTMLElement;
     expect(failing).toHaveTextContent('maxIndex([5, 1, 5])');
     expect(failing).toHaveTextContent('esperado 0 · obtenido 2');
     expect(
@@ -599,7 +601,7 @@ describe('Bug Hunt desde Próximos (S-051)', () => {
     expect(fix).toHaveTextContent('if (nums[i] >= nums[best]) {');
     expect(fix).toHaveTextContent('if (nums[i] > nums[best]) {');
     const why = within(ES).getByRole('heading', { level: 3, name: 'Por qué falla' });
-    const items = within(why.closest('section') as HTMLElement).getAllByRole('listitem');
+    const items = within(why.parentElement as HTMLElement).getAllByRole('listitem');
     expect(items).toHaveLength(3);
     expect(items[0]).toHaveTextContent(
       'La condición que decide si best cambia usa >= en lugar de >: con un empate también se mueve.',
@@ -621,9 +623,9 @@ describe('Bug Hunt desde Próximos (S-051)', () => {
     expect(within(EN).getByText('mutation: > → >=')).toBeInTheDocument();
     expect(within(EN).getByRole('heading', { level: 3, name: 'tests' })).toBeInTheDocument();
     expect(EN).toHaveTextContent('maxIndex of [3, 7, 2] returns 1, passes');
-    expect(within(EN).getByRole('region', { name: 'the failing test' })).toHaveTextContent(
-      'expected 0 · got 2',
-    );
+    expect(
+      within(EN).getByRole('heading', { level: 3, name: 'the failing test' }).parentElement,
+    ).toHaveTextContent('expected 0 · got 2');
     expect(
       within(EN).getByRole('heading', { level: 3, name: /the fix · line 4/ }),
     ).toBeInTheDocument();
@@ -805,11 +807,7 @@ describe('Bug Hunt desde Próximos (S-051)', () => {
     const dialog = await openCell(first.user, '02/12 #32', 'Bug Hunt');
     await previewReady(dialog);
     await within(dialog).findByText('Why it fails');
-    // El título «tests» es igual en ES y EN: con las dos columnas a la vez axe marca landmark-unique
-    // (defecto del paquete games, anotado en el reporte). Cada columna se verifica con todas las reglas.
-    for (const name of ['ES', 'EN']) {
-      expect(await axe(within(dialog).getByRole('region', { name }))).toHaveNoViolations();
-    }
+    expect(await axe(first.container)).toHaveNoViolations();
     first.unmount();
     server.use(adminHandlers.upcoming(UPCOMING_BIG_O));
     const second = render();

@@ -19,8 +19,13 @@ type FailingTestProps = {
 export function FailingTest({ name, failing, t, headingLevel }: FailingTestProps) {
   const titleId = useId();
   const Heading = headingLevel === 3 ? 'h3' : 'h2';
+  // Embedded (h3, admin preview) it is not a landmark: the column around it is (see SectionPanel).
+  const Root = headingLevel === 3 ? 'div' : 'section';
   return (
-    <section aria-labelledby={titleId} className="flex flex-col gap-2">
+    <Root
+      aria-labelledby={headingLevel === 3 ? undefined : titleId}
+      className="flex flex-col gap-2"
+    >
       <Heading id={titleId} className="font-mono text-label-comment text-text-dim">
         <span aria-hidden="true">// </span>
         {t('result.failingTitle')}
@@ -35,6 +40,6 @@ export function FailingTest({ name, failing, t, headingLevel }: FailingTestProps
           <b className="font-bold text-status-error">{formatValue(failing.actual)}</b>
         </p>
       </div>
-    </section>
+    </Root>
   );
 }

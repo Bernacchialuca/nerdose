@@ -23,10 +23,14 @@ export function SectionPanel({
 }: SectionPanelProps) {
   const headingId = useId();
   const Heading = headingLevel === 3 ? 'h3' : 'h2';
+  // Embedded (h3) it sits inside an already-named column (admin ES/EN): not a landmark, or equal
+  // titles across columns («tests») collide (axe landmark-unique).
+  const embedded = headingLevel === 3;
+  const Root = embedded ? 'div' : 'section';
   return (
-    <section
+    <Root
       id={id}
-      aria-labelledby={headingId}
+      aria-labelledby={embedded ? undefined : headingId}
       className={cn(
         'flex flex-col gap-3.5 rounded-panel border border-border bg-surface p-5',
         className,
@@ -40,6 +44,6 @@ export function SectionPanel({
         {datum ? <span className="font-mono text-label-comment text-streak">{datum}</span> : null}
       </div>
       {children}
-    </section>
+    </Root>
   );
 }

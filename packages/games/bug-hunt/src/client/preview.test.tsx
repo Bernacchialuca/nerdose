@@ -54,7 +54,7 @@ describe('Preview (TS-60)', () => {
     expect(fix.textContent).toContain('    if (nums[i] > nums[best]) {');
     expect(
       within(
-        screen.getByRole('heading', { name: /Por qué falla/ }).closest('section') as HTMLElement,
+        screen.getByRole('heading', { name: /Por qué falla/ }).parentElement as HTMLElement,
       ).getAllByRole('listitem'),
     ).toHaveLength(3);
   });
@@ -102,7 +102,7 @@ describe('Preview variants and guards', () => {
     );
     expect(
       within(
-        screen.getByRole('heading', { name: /Por qué falla/ }).closest('section') as HTMLElement,
+        screen.getByRole('heading', { name: /Por qué falla/ }).parentElement as HTMLElement,
       ).getAllByRole('listitem'),
     ).toHaveLength(2);
   });
@@ -131,5 +131,25 @@ describe('Preview variants and guards', () => {
     expect(setItem).not.toHaveBeenCalled();
     expect(await axe(container)).toHaveNoViolations();
     vi.restoreAllMocks();
+  });
+});
+
+describe('Preview ES and EN side by side (admin drawer)', () => {
+  it('has no axe violations: embedded blocks are not landmarks, so equal titles do not collide', async () => {
+    const { container } = render(
+      <div>
+        <section aria-label="ES">
+          <Preview payload={PREVIEW_PAYLOAD} language="es" />
+        </section>
+        <section aria-label="EN">
+          <Preview payload={PREVIEW_PAYLOAD} language="en" />
+        </section>
+      </div>,
+    );
+    expect(screen.getAllByRole('heading', { level: 3, name: /tests/ })).toHaveLength(2);
+    expect(screen.getAllByRole('region').map((r) => r.getAttribute('aria-label'))).not.toContain(
+      null,
+    );
+    expect(await axe(container)).toHaveNoViolations();
   });
 });

@@ -23,9 +23,11 @@ export function Statement({ spec, t, headingLevel, className }: StatementProps) 
     </>
   );
   const Heading = headingLevel === 3 ? 'h3' : 'h2';
+  // Embedded (h3, admin preview) it is not a landmark: the column around it is (see SectionPanel).
+  const Root = headingLevel === 3 ? 'div' : 'section';
   return (
-    <section
-      aria-labelledby={headingLevel === null ? undefined : titleId}
+    <Root
+      aria-labelledby={headingLevel === 2 ? titleId : undefined}
       className={cn(
         'flex flex-col gap-2 rounded-panel border border-streak-border bg-streak-surface p-5',
         className,
@@ -39,6 +41,6 @@ export function Statement({ spec, t, headingLevel, className }: StatementProps) 
         </Heading>
       )}
       <p className="font-sans text-body text-text">{spec}</p>
-    </section>
+    </Root>
   );
 }
