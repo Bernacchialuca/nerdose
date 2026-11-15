@@ -29,13 +29,25 @@ Package `@nerdose/game-bug-hunt` (`packages/games/bug-hunt`). Entries: `./defini
 
 ## Generator
 
-Everything lives in `packages/games/bug-hunt/src/generator/` and is re-exported by `./generator`. Nothing here runs emitted code: tests use `evaluate` of `@nerdose/polyglot`.
+Everything lives in `packages/games/bug-hunt/src/generator/` and is re-exported by `./generator`. `generate` and the catalog never run emitted code (they use `evaluate` of `@nerdose/polyglot`); only `verify` runs it, through an injectable runner.
 
 ### generate / createGenerate / historySpec / usedBankItems / MAX_COMBOS
 - **Location:** packages/games/bug-hunt/src/generator/generate.ts
 - **Description:** `generate` is deterministic with `rngFrom(seed)`: it picks the bug type, then (up to `MAX_COMBOS = 30` attempts) a template that admits it, a parameter combination, the tests and a shuffled list of mutation candidates, and returns the first `ok` payload (`date` is the first key). The bug type does not change between attempts. With no valid candidate it returns the best fallback (only variety fails, then too few passing tests, then equivalent; the last one found wins) so `verify` rejects it; it throws `bug-hunt: no evaluable candidate` only if nothing could be evaluated. `createGenerate(templates)` builds a `generate` over any template list (used with probe templates). `historySpec` is `{ bank: null, lastUsedField: '', recentDays: 60, aheadDays: 60 }`; `usedBankItems` returns `[]`.
 - **Signature:** `createGenerate(templates: readonly Template[]): GameGenerator<BugHuntPayload>['generate']`
-- **Usage:** `generate({ date, seed, history })`; S-050 composes `{ historySpec, usedBankItems, generate, verify }`.
+- **Usage:** `generate({ date, seed, history })`; the `generator` object composes `{ historySpec, usedBankItems, generate, verify }`.
+
+### generator / verify / createVerify / VERIFY_CHECKS / Runner
+- **Location:** packages/games/bug-hunt/src/generator/index.ts, packages/games/bug-hunt/src/generator/verify.ts
+- **Description:** `generator` is the `GameGenerator<BugHuntPayload>` that `apps/generator` consumes. `verify` is async and returns the 13 checks of `VERIFY_CHECKS` in that order (`texts_bilingual`, `code_shape`, `lines_consistent`, `tests_consistent`, `variety_combo`, `run_{correct,mutant}_{js,go,java}`, `correct_agrees`, `mutant_agrees`). The 5 in-memory checks are always all computed; if any fails nothing runs and checks 6-13 are `{ ok: false, detail: 'skipped' }`. Otherwise the 3 languages run in parallel and, inside each, the correct then the mutant version. `correct_agrees` / `mutant_agrees` need the 3 valid outputs of their variant and compare them with each other and with `tests[].expected` / `tests[].actual`. `reason` is the name of the first failing check, except `run_<variant>_<lang>: <kind | invalid_output | harness_error>` and `tests_consistent: equivalent_mutant | not_enough_passing`. `detail` of a run is `<ms> ms` or `<kind> (<ms> ms): <first stderr line>`. It never throws for a bad payload or snippet. `createVerify` injects the runner and the timeout.
+- **Signature:** `createVerify(deps?: { run?: Runner; timeoutMs?: number }): (p: BugHuntPayload, history: GeneratorHistory<BugHuntPayload>) => Promise<VerificationLog>`; `type Runner = (lang: Language, source: string, options?: RunOptions) => Promise<RunOutcome>`
+- **Usage:** `await verify(payload, history)`; in tests `createVerify({ run: fakeRunnerFor(p).run })`.
+
+### correctCode / testSignature / buildSources / parseValues
+- **Location:** packages/games/bug-hunt/src/generator/harness.ts
+- **Description:** Pure pieces of the execution. `correctCode` swaps `bug_line` for `fix[lang]`; `testSignature` derives the `Signature` from the first test; `buildSources` wraps the 6 programs with `wrapFunction` (returns `{ ok: false, error }` instead of throwing); `parseValues` reads one integer or boolean per line and nothing else. `firstStderrLine` is also exported from the file.
+- **Signature:** `buildSources(p: BugHuntPayload): { ok: true; sources: Sources } | { ok: false; error: string }`; `parseValues(stdout: string, expected: number): { values: (number | boolean)[] } | { error: string }`
+- **Usage:** `const r = buildSources(p); if (r.ok) run('go', r.sources.mutant.go)`.
 
 ### TEMPLATES / templateById / bugTypesOf / combosFor / Template
 - **Location:** packages/games/bug-hunt/src/generator/catalog/index.ts, packages/games/bug-hunt/src/generator/types.ts
@@ -79,3 +91,9 @@ Everything lives in `packages/games/bug-hunt/src/generator/` and is re-exported 
 ### Generator test fixtures
 - **Location:** packages/games/bug-hunt/src/generator/test-fixtures.ts, packages/games/bug-hunt/src/generator/test-utils.ts
 - **Description:** `D`, `seed(n)` / `seedFrom(prefix, n)` (SHA-256 digests), `payloadWith`, `recent`, `rowWithKey`, `emptyHistory`, the probe templates `PROBE_EQUIV`, `PROBE_ONLY_EQUIV`, `PROBE_FEW`, `PROBE_FEW_ONLY`, `PROBE_VARIETY` (one combination, random inputs are the edge cases), `assertValidPayload`, `rebuild` and `allCandidates`. Not exported by the entry.
+
+### fakeRunnerFor / catalogPayload / requireToolchains
+- **Location:** packages/games/bug-hunt/src/generator/test-fixtures.ts, packages/games/bug-hunt/src/generator/test-utils.ts, packages/games/bug-hunt/test/integration/toolchains.ts
+- **Description:** `fakeRunnerFor(p, overrides?)` returns `{ run, calls }`, a runner that executes nothing: per language the 1st call is the correct version and the 2nd the mutant, and by default it prints `tests[].expected` / `tests[].actual`; `overrides` (`correct_<lang>` / `mutant_<lang>`) take values, a literal stdout or a `RunOutcome`. `catalogPayload(template, bugType, date?)` is a deterministic payload for each of the 62 template x bug type pairs. `requireToolchains()` (a copy of Big O's) fails, never skips, if Node 24, Go >= 1.25 or JDK 21 is missing. Not exported by the entry.
+- **Signature:** `fakeRunnerFor(p: BugHuntPayload, overrides?: FakeOverrides): { run: Runner; calls: FakeCall[] }`; `catalogPayload(template: Template, bugType: BugType, date?: string): BugHuntPayload`
+- **Usage:** `await createVerify({ run: fakeRunnerFor(p, { mutant_go: [0, 1] }).run })(p, emptyHistory)`.
