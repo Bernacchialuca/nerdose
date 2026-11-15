@@ -3,7 +3,7 @@ import { Panel, cn, dataTableClass } from '@nerdose/ui';
 import { formatCount } from '@/lib/format-number';
 
 import type { RejectedGuess } from '../api/types';
-import { TableRegion } from './table-region';
+import { TableRegion } from '@/components/table-region';
 
 export function TopRejectedPanel({ guesses }: { guesses: RejectedGuess[] }) {
   const c = dataTableClass();

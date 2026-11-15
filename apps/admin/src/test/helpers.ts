@@ -11,3 +11,8 @@ export function useUpcomingClock() {
   vi.useFakeTimers({ shouldAdvanceTime: true });
   vi.setSystemTime(new Date('2026-12-01T14:10:00Z'));
 }
+
+export function useMetricsClock() {
+  vi.useFakeTimers({ shouldAdvanceTime: true });
+  vi.setSystemTime(new Date('2026-12-10T12:00:00Z'));
+}

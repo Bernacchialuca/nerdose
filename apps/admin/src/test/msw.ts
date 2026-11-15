@@ -139,6 +139,37 @@ export const adminHandlers = {
       await record(request);
       return HttpResponse.error();
     }),
+  metrics: (body: unknown, init?: ResponseInit) =>
+    http.get('/api/admin/metrics', async ({ request }) => {
+      await record(request);
+      return HttpResponse.json(body as object, init);
+    }),
+  metricsSequence: (responses: { body: unknown; init?: ResponseInit }[]) => {
+    let i = 0;
+    return http.get('/api/admin/metrics', async ({ request }) => {
+      await record(request);
+      const next = responses[Math.min(i++, responses.length - 1)];
+      return HttpResponse.json((next?.body ?? {}) as object, next?.init);
+    });
+  },
+  metricsByRange: (bodies: Record<string, unknown>) =>
+    http.get('/api/admin/metrics', async ({ request }) => {
+      await record(request);
+      const body = bodies[new URL(request.url).search];
+      if (body === undefined) return HttpResponse.error();
+      return HttpResponse.json(body as object);
+    }),
+  metricsPending: () =>
+    http.get('/api/admin/metrics', async ({ request }) => {
+      await record(request);
+      await delay('infinite');
+      return HttpResponse.json({});
+    }),
+  metricsNetworkError: () =>
+    http.get('/api/admin/metrics', async ({ request }) => {
+      await record(request);
+      return HttpResponse.error();
+    }),
   generationFailures: (body: unknown, init?: ResponseInit) =>
     http.get('/api/admin/generation-failures', async ({ request }) => {
       await record(request);

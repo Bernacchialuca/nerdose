@@ -12,7 +12,7 @@
 
 ## Panels
 - **Location:** apps/admin/src/modules/content-stock/components/
-- **Description:** `StockContent({ data })` composes `StockAlerts`, `LastSyncPanel`, one `BankPanel` per bank, `BankRejectionsPanel` and `TopRejectedPanel`. Helpers: `CycleStatus({ ok })`, `StatList({ pairs })`, `TableRegion({ label, children })`.
+- **Description:** `StockContent({ data })` composes `StockAlerts`, `LastSyncPanel`, one `BankPanel` per bank, `BankRejectionsPanel` and `TopRejectedPanel`. Helpers: `CycleStatus({ ok })`, `StatList({ pairs })`. `TableRegion` now lives in `apps/admin/src/components/table-region.tsx` (see components.md).
 
 ## Test helpers
 - **Location:** apps/admin/src/test/msw.ts, apps/admin/src/test/fixtures/content-stock.ts

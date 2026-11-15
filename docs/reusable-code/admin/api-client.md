@@ -25,7 +25,11 @@ Same implementation as `apps/web` (`docs/reusable-code/web/api-client.md`), copi
 
 ## msw server / adminHandlers / requests
 - **Location:** apps/admin/src/test/msw.ts
-- **Description:** `server.use(adminHandlers.reports('open', body))`, `patchReport(id, body, init?)`, `voidChallenge(id, ...)`, `login(...)`; handlers record each request in `requests` (`requestsTo(method, pathname)`).
+- **Description:** `server.use(adminHandlers.reports('open', body))`, `patchReport(id, body, init?)`, `voidChallenge(id, ...)`, `login(...)`, `metrics(body, init?)`, `metricsSequence([{ body, init? }])`, `metricsByRange({ '?from=…&to=…': body })`, `metricsPending()`, `metricsNetworkError()`; handlers record each request in `requests` (`requestsTo(method, pathname)`).
+
+## metrics fixtures / useMetricsClock
+- **Location:** apps/admin/src/test/fixtures/metrics.ts, apps/admin/src/test/helpers.ts
+- **Description:** `METRICS_OK` (range 2026-12-01..03), `METRICS_EMPTY`, `STREAKS_ZERO`, `metrics(overrides)`; `useMetricsClock()` fixes time at `2026-12-10T12:00:00Z`.
 
 ## fixtures / useFixedClock
 - **Location:** apps/admin/src/test/fixtures/reports.ts, apps/admin/src/test/helpers.ts

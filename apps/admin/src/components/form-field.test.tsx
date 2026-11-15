@@ -26,4 +26,17 @@ describe('form-field', () => {
     expect(screen.getByLabelText('Culpable')).toHaveValue('');
     expect(await axe(container)).toHaveNoViolations();
   });
+
+  it('marca el campo como inválido y lo liga a un aviso externo sin texto propio', () => {
+    render(
+      <>
+        <p id="aviso">Rango inválido</p>
+        <TextField label="Desde" invalid describedBy="aviso" />
+      </>,
+    );
+    const input = screen.getByLabelText('Desde');
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+    expect(input).toHaveAccessibleDescription('Rango inválido');
+    expect(input).toHaveClass('border-error');
+  });
 });

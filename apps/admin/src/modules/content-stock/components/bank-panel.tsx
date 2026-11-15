@@ -7,7 +7,7 @@ import type { BankStock } from '../api/types';
 import { BANK_LABELS, windowLabel } from '../stock-model';
 import { CycleStatus } from './cycle-status';
 import { StatList } from './stat-list';
-import { TableRegion } from './table-region';
+import { TableRegion } from '@/components/table-region';
 
 const COLUMNS = [
   'Juego',
