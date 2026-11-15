@@ -5,7 +5,7 @@ type: feature
 status: Draft
 created: 2026-11-03
 last_updated: 2026-11-14
-stories: [S-022, S-023, S-024, S-042, S-043]
+stories: [S-022, S-023, S-024, S-042, S-043, S-048]
 ---
 
 # Jugada y cierre de partida con rachas
@@ -207,7 +207,7 @@ La web copia `play.code_language` a la Play en su cache y, si no es null, actual
 
 - Las rachas usan `prev_active_day` sobre `challenges` `published`/`voided`: un día sin desafío es neutro, sin jobs (ADR-011).
 - Si `last_completed_date == D` (no debería pasar por la unicidad de Play), la racha no cambia.
-- En Bug Hunt la `api` traduce `line` al nodo con `line_of[language]` y lo compara con `bug_node_id`. Ninguno de los dos sale al cliente antes del resultado.
+- En Bug Hunt la línea es la misma en los 3 lenguajes: `applyMove` valida `line ∈ pickable_lines` y compara `line` con `bug_line`; `bug_line` no sale al cliente antes del resultado (S-048).
 - La lista válida de Devdle está en memoria (ADR-012). `rejected_guesses` solo se usa para el ranking del admin.
 
 > Actualizado por REQ-006 (stories S-025 a S-029): ver el diseño técnico del request para los cambios de Timeline.

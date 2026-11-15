@@ -8,7 +8,7 @@ audiences:
   - responsable
 fidelity: mid
 status: diseñada
-version: "1.2"
+version: "1.3"
 date: 2026-11-14
 ---
 
@@ -128,9 +128,9 @@ date: 2026-11-14
 - Annotation: nada
 
 ### subtitulo
-- Texto/label: Del 2026-12-02 al 2026-12-15 (UTC) · 4 juegos · hoy no se muestra
+- Texto/label: Del 2026-12-02 al 2026-12-15 (UTC) · 5 juegos · hoy no se muestra
 - Icono: nada
-- Annotation: la ventana va de mañana a hoy + 14; los juegos son los registrados (con REQ-009 se suma Big O; Bug Hunt se suma solo al registrarse)
+- Annotation: la ventana va de mañana a hoy + 14; los juegos son los registrados (con REQ-009 se suma Big O y con REQ-010 Bug Hunt: quedan los 5 juegos)
 
 ### leyenda
 - Texto/label: Aprobado, Sin desafío, Falla de generación, Regenerando…, Regeneración fallida, Usa un ítem rechazado
@@ -171,8 +171,8 @@ date: 2026-11-14
 - Texto/label: ver columnas
 - Icono: nada
 - Annotation: una fila por día (mañana a +14) con su número de desafío; una columna por juego registrado, en el orden del registry. Celda con desafío: estado + «Regenerar» (solo `approved`, fecha futura y sin pedido pendiente); clic → detalle. «Sin desafío» no tiene acción y, si hay falla registrada, muestra «20 intentos · <motivo>». «Usa un ítem rechazado: <término o hecho>» marca el desafío para regenerarlo a mano (nunca se regenera solo). Polling cada 5 s solo mientras haya alguna regeneración pendiente
-- Columnas: Día, Devdle, Grep Grid, Tech Timeline, Big O
-- Filas de ejemplo: «02/12 #32 · Aprobado · Aprobado · Aprobado · Aprobado» / «05/12 #35 · Usa un ítem rechazado: CAP theorem · Aprobado · Aprobado · Aprobado» / resto «Aprobado»
+- Columnas: Día, Devdle, Grep Grid, Tech Timeline, Big O, Bug Hunt
+- Filas de ejemplo: «02/12 #32 · Aprobado · Aprobado · Aprobado · Aprobado · Aprobado» / «05/12 #35 · Usa un ítem rechazado: CAP theorem · Aprobado · Aprobado · Aprobado · Aprobado» / «15/12 #45 · Aprobado · Aprobado · Aprobado · Aprobado · Sin desafío — 20 intentos · variety_combo» / resto «Aprobado»
 
 ## Estados
 
@@ -250,6 +250,7 @@ date: 2026-11-14
 - REQ-008: «Usa un ítem rechazado» es solo un aviso; el desafío no se regenera solo (CA 10).
 - REQ-008: polling confirmado en 5 s, solo mientras hay pendientes (decisión 14 del diseño técnico).
 - REQ-009: Big O aparece como cuarta columna sin rediseño. Es el primer juego cuya generación puede fallar por ejecución: el motivo de la falla o de la regeneración fallida se muestra como llega (`ambiguous_fit`, `run_go: timeout`, `variety_recipe`…), igual que en los otros juegos. Su regeneración tarda unos segundos más (ejecuta código en 3 lenguajes por candidato) y el polling de 5 s ya lo cubre: no se agrega un estado nuevo.
+- REQ-010: Bug Hunt aparece como quinta columna sin rediseño; con los 5 juegos la grilla sigue entrando en el ancho de desktop. Sus motivos de falla también se muestran como llegan (`tests_consistent`, `variety_combo`, `run_mutant_java: compile_error`, `correct_agrees`…) y su regeneración ejecuta 6 procesos por candidato, cubierta por el mismo polling (CA 17, 19). Sin estados nuevos.
 
 **Alternativas descartadas:**
 - Lista por día con preview inline: repetiría ES/EN 42 veces (14 × 3) y crecería con cada juego.
@@ -261,4 +262,4 @@ date: 2026-11-14
 
 ## Trazabilidad
 
-- C-43, C-44, C-49 · REQ-008 (RF 1-3, 6; CA 1, 3, 4, 6-10) · flujo 4 de `user-flows.md`.
+- C-43, C-44, C-49 · REQ-008 (RF 1-3, 6; CA 1, 3, 4, 6-10) · REQ-010 (RF 14; CA 17, 19) · flujo 4 de `user-flows.md`.

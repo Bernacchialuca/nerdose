@@ -1,9 +1,15 @@
 export type NodeId = `n${number}`;
-export type BinOp = '+' | '-' | '*' | '<' | '<=' | '>' | '>=' | '==';
-export type CompoundOp = '+=' | '*=';
+export type Type = 'int' | 'int[]' | 'bool';
+export type ScalarType = 'int' | 'bool';
+export type Param = { readonly name: string; readonly type: Type };
+export type Signature = { readonly params: readonly Type[]; readonly returns: ScalarType };
+
+export type BinOp = '+' | '-' | '*' | '%' | '<' | '<=' | '>' | '>=' | '==' | '!=' | '&&' | '||';
+export type CompoundOp = '+=' | '-=' | '*=';
 
 export type NumExpr = { readonly kind: 'num'; readonly id: NodeId; readonly value: number };
 export type VarExpr = { readonly kind: 'var'; readonly id: NodeId; readonly name: string };
+export type BoolExpr = { readonly kind: 'bool'; readonly id: NodeId; readonly value: boolean };
 export type BinExpr = {
   readonly kind: 'bin';
   readonly id: NodeId;
@@ -18,12 +24,28 @@ export type CallExpr = {
   readonly name: string;
   readonly args: readonly Expr[];
 };
-export type Expr = NumExpr | VarExpr | BinExpr | HalfExpr | CallExpr;
+export type IndexExpr = {
+  readonly kind: 'index';
+  readonly id: NodeId;
+  readonly array: Expr;
+  readonly index: Expr;
+};
+export type LenExpr = { readonly kind: 'len'; readonly id: NodeId; readonly array: Expr };
+export type Expr =
+  | NumExpr
+  | VarExpr
+  | BoolExpr
+  | BinExpr
+  | HalfExpr
+  | CallExpr
+  | IndexExpr
+  | LenExpr;
 
 export type LetStmt = {
   readonly kind: 'let';
   readonly id: NodeId;
   readonly name: string;
+  readonly type?: Type;
   readonly expr: Expr;
 };
 export type AssignStmt = {
@@ -77,6 +99,8 @@ export type FuncNode = {
   readonly id: NodeId;
   readonly name: string;
   readonly params: readonly string[];
+  readonly paramTypes?: readonly Type[];
+  readonly returns?: ScalarType;
   readonly body: readonly Stmt[];
 };
 export type TreeNode = FuncNode | Stmt | Expr;

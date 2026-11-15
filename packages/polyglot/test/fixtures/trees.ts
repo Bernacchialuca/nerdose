@@ -77,6 +77,77 @@ export function treeE(): FuncNode {
   return b.func('g', ['lo', 'hi'], [b.return(b.half(b.bin('+', b.var('lo'), b.var('hi'))))]);
 }
 
+/** maxIndex: int[] parameter, `len`, `index`, ids n1..n23 in this exact order. */
+export function maxIndex() {
+  const b = createTreeBuilder();
+  const letBest = b.let('best', b.num(0));
+  const init = b.let('i', b.num(1));
+  const cond = b.bin('<', b.var('i'), b.len(b.var('nums')));
+  const step = b.inc('i');
+  const cmp = b.bin('>', b.index(b.var('nums'), b.var('i')), b.index(b.var('nums'), b.var('best')));
+  const assign = b.assign('best', b.var('i'));
+  const ifStmt = b.if(cmp, [assign]);
+  const loop = b.for(init, cond, step, [ifStmt]);
+  const ret = b.return(b.var('best'));
+  const tree = b.func('maxIndex', [{ name: 'nums', type: 'int[]' }], [letBest, loop, ret], 'int');
+  return { tree, nodes: { letBest, init, cond, step, cmp, assign, ifStmt, loop, ret } };
+}
+
+/** drains: bool, `&&`, `||`, `%`, `!=`, a negative literal, `-=`, `while` and a bool `let`. */
+export function drains() {
+  const b = createTreeBuilder();
+  const found = b.let('found', b.bool(false), 'bool');
+  const rest = b.let('rest', b.var('k'));
+  const last = b.let('i', b.bin('-', b.len(b.var('nums')), b.num(1)));
+  const cond = b.bin(
+    '&&',
+    b.bin('>=', b.var('i'), b.num(0)),
+    b.bin('==', b.var('found'), b.bool(false)),
+  );
+  const odd = b.bin('!=', b.bin('%', b.index(b.var('nums'), b.var('i')), b.num(2)), b.num(0));
+  const low = b.bin('<', b.index(b.var('nums'), b.var('i')), b.num(-1));
+  const take = b.if(b.bin('||', odd, low), [
+    b.compound('rest', '-=', b.index(b.var('nums'), b.var('i'))),
+  ]);
+  const flag = b.if(b.bin('<', b.var('rest'), b.num(0)), [b.assign('found', b.bool(true))]);
+  const loop = b.while(cond, [take, flag, b.compound('i', '-=', b.num(1))]);
+  const tree = b.func(
+    'drains',
+    [
+      { name: 'nums', type: 'int[]' },
+      { name: 'k', type: 'int' },
+    ],
+    [found, rest, last, loop, b.return(b.var('found'))],
+    'bool',
+  );
+  return { tree, nodes: { found, rest, last, loop } };
+}
+
+export function rem(): FuncNode {
+  const b = createTreeBuilder();
+  return b.func('rem', [{ name: 'x', type: 'int' }], [b.return(b.bin('%', b.var('x'), b.num(2)))]);
+}
+
+export function safe(): FuncNode {
+  const b = createTreeBuilder();
+  const both = b.bin(
+    '&&',
+    b.bin('>', b.len(b.var('nums')), b.num(0)),
+    b.bin('>', b.index(b.var('nums'), b.num(0)), b.num(0)),
+  );
+  return b.func('safe', [{ name: 'nums', type: 'int[]' }], [b.return(both)], 'bool');
+}
+
 export function allTrees(): Record<string, FuncNode> {
-  return { A: treeA().tree, B: treeB(), C: treeC().tree, D: treeD(), E: treeE() };
+  return {
+    A: treeA().tree,
+    B: treeB(),
+    C: treeC().tree,
+    D: treeD(),
+    E: treeE(),
+    maxIndex: maxIndex().tree,
+    drains: drains().tree,
+    rem: rem(),
+    safe: safe(),
+  };
 }

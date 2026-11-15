@@ -2718,73 +2718,67 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose / Bug Hunt · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose / Bug Hunt     ./juegos   ./stats   ./about     #8     ES | EN"
-            }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
+          "content": "> nerdose / bug-hunt · desafío del 30/10 · [?] [stats] [Compartir] ES|EN · 🔥 4",
+          "annotation": "`game-header` variant `playing` (REQ-010, como Devdle, Grep Grid, Tech Timeline y Big O): `bug-hunt` en el acento del juego (`#FFB547`) y «desafío del dd/mm» (se oculta si el servidor no lo informa). «Cómo se juega» → reglas de esta pantalla · «Estadísticas» → estadisticas · Compartir deshabilitado («disponible al terminar la partida») · ES|EN inline · racha global. Sin nav global ni `nav-movil`: en mobile las acciones envuelven a su propia fila"
         },
         {
           "name": "titulo",
           "type": "heading",
           "category": "content",
-          "content": "Bug Hunt",
-          "level": "h1"
+          "level": "h1",
+          "content": "Bug Hunt"
         },
         {
           "name": "meta",
           "type": "paragraph",
           "category": "content",
-          "content": "Desafío #8 · ~2 min · una partida por día",
           "level": "caption",
+          "content": "Desafío #8 · ~2 min · una partida por día",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ]
         },
         {
+          "name": "aviso-dia-nuevo",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "info",
+          "icon": "info",
+          "content": "Empezó el desafío #9. La partida de ayer quedó sin confirmar y no cuenta para tu racha.",
+          "visible_only_in_states": [
+            "día nuevo"
+          ],
+          "annotation": "llega desde `bug-hunt-partida` por `challenge_expired` o al detectar el cambio de día; se descarta al tocar «Empezar» o al salir. `banner` info del DS"
+        },
+        {
           "name": "alerta-sin-desafio",
           "type": "alert",
           "category": "feedback",
-          "content": "Hoy no hay desafío de Bug Hunt. Es un día neutro: no suma ni corta tu racha.",
           "kind": "info",
+          "content": "Hoy no hay desafío de Bug Hunt. Es un día neutro: no suma ni corta tu racha.",
           "visible_only_in_states": [
             "sin desafío hoy"
-          ]
+          ],
+          "annotation": "también el día del despliegue: Bug Hunt se juega desde el día siguiente, como Tech Timeline y Big O (REQ-010 CA 24, decisión 11)"
         },
         {
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "kind": "warning",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "visible_only_in_states": [
             "anulado"
           ],
-          "annotation": "el modal O-02 se abre solo al entrar en este estado"
+          "annotation": "el modal O-02 se abre solo al entrar en este estado; también si «Empezar» responde `challenge_voided` (CA 20)"
         },
         {
           "name": "reglas-titulo",
           "type": "heading",
           "category": "content",
-          "content": "Cómo se juega",
           "level": "h2",
+          "content": "// cómo se juega",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
@@ -2796,53 +2790,57 @@
           "name": "paso-1",
           "type": "card",
           "category": "content",
-          "content": "1 · Leé la especificación",
-          "paragraph": "Te contamos qué debería hacer la función y te mostramos el código y los tests visibles.",
+          "content": "1 · Leé qué debería hacer",
+          "paragraph": "Tenés la especificación de una función corta y algunos tests que pasan. Hay un test oculto que falla: el bug está ahí.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "`card` variant `step`. La especificación y los tests visibles llegan con el desafío; el test que falla se revela en el resultado (RF 2, CA 1)"
         },
         {
           "name": "paso-2",
           "type": "card",
           "category": "content",
-          "content": "2 · Encontrá la línea",
-          "paragraph": "Elegí la línea que tiene el bug. Las firmas y las líneas con solo llaves no se pueden elegir.",
+          "content": "2 · Buscá la línea",
+          "paragraph": "El bug está en una sola línea. Podés ver el código en JavaScript, Go o Java cuando quieras: es la misma función y el bug está en la misma línea. La firma y las líneas con solo llaves no cuentan.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "lenguaje inicial = `preferred_code_language` (JS por defecto); cambiarlo no hace requests ni cambia la respuesta (C-26, RF 3, decisión 1). Anticipa las líneas no elegibles (C-30)"
         },
         {
           "name": "paso-3",
           "type": "card",
           "category": "content",
-          "content": "3 · Confirmá",
-          "paragraph": "Tenés un solo intento: elegí una línea y confirmá.",
+          "content": "3 · Elegí y confirmá",
+          "paragraph": "Tenés un solo intento. Al confirmar ves el test que falla, el fix y por qué falla, y el lenguaje con el que confirmaste queda como tu preferido.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "sin reintento (C-30); se guarda la preferencia de lenguaje (RF 5)"
         },
         {
           "name": "aviso-conteo",
-          "type": "alert",
-          "category": "feedback",
-          "content": "La partida no cuenta hasta que la completes.",
-          "kind": "info",
+          "type": "paragraph",
+          "category": "content",
+          "level": "caption",
+          "content": "La partida no cuenta hasta que confirmes. Si salís antes, al volver no vas a tener ninguna línea marcada, pero conservás tu intento.",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "la línea elegida vive solo en la pantalla (CA 8, decisión 8)"
         },
         {
           "name": "btn-empezar",
@@ -2857,10 +2855,11 @@
             "loading",
             "error de sistema"
           ],
+          "annotation": "crea la Play (idempotente, CA 2)",
           "state_overrides": {
             "sin sesión": {
               "variant": "disabled",
-              "annotation": "deshabilitado mientras no hay sesión (O-03)"
+              "annotation": "deshabilitado mientras no hay sesión (O-03, `no_session`); no se crea ninguna Play"
             }
           }
         },
@@ -2868,11 +2867,13 @@
           "name": "banner-cookies",
           "type": "alert",
           "category": "feedback",
-          "content": "Activá las cookies para poder jugar",
           "kind": "warning",
+          "icon": "warning",
+          "content": "Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».",
           "visible_only_in_states": [
             "sin sesión"
-          ]
+          ],
+          "annotation": "banner `warning` del shell (O-03); también si «Empezar» responde `no_session`"
         },
         {
           "name": "link-volver",
@@ -2885,7 +2886,7 @@
           "name": "loader",
           "type": "loader",
           "category": "feedback",
-          "content": "Cargando Bug Hunt…",
+          "content": "$ cargando bug-hunt…",
           "visible_only_in_states": [
             "loading"
           ]
@@ -2894,8 +2895,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos cargar el desafío de Bug Hunt. Revisá tu conexión e intentá de nuevo.",
           "kind": "error",
+          "content": "No pudimos cargar el desafío de Bug Hunt. Revisá tu conexión e intentá de nuevo.",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -2908,34 +2909,40 @@
           "variant": "secondary",
           "icon": "refresh",
           "visible_only_in_states": [
-            "error de sistema"
-          ]
+            "error de sistema",
+            "sin sesión"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "annotation": "recrea la sesión y reintenta «Empezar»"
+            }
+          }
         },
         {
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · exit 0",
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
           "banner-cookies",
           "titulo",
           "meta",
+          "aviso-dia-nuevo",
           "alerta-sin-desafio",
           "alerta-anulado",
           "loader",
           "alerta-sistema",
-          "btn-reintentar",
           "reglas-titulo",
           "paso-1",
           "paso-2",
           "paso-3",
           "aviso-conteo",
           "btn-empezar",
+          "btn-reintentar",
           "link-volver"
         ],
         "desktop": [
@@ -2952,11 +2959,11 @@
                 "stack": [
                   "titulo",
                   "meta",
+                  "aviso-dia-nuevo",
                   "alerta-sin-desafio",
                   "alerta-anulado",
                   "loader",
                   "alerta-sistema",
-                  "btn-reintentar",
                   "reglas-titulo",
                   {
                     "row": "pasos",
@@ -2988,7 +2995,8 @@
                       {
                         "w": 6,
                         "stack": [
-                          "btn-empezar"
+                          "btn-empezar",
+                          "btn-reintentar"
                         ]
                       },
                       {
@@ -3015,16 +3023,24 @@
           "applies": true
         },
         {
+          "name": "día nuevo",
+          "applies": true,
+          "parent_state": "default"
+        },
+        {
           "name": "sin desafío hoy",
-          "applies": true
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "anulado",
-          "applies": true
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "sin sesión",
-          "applies": true
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "loading",
@@ -3047,134 +3063,172 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose / Bug Hunt · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose / Bug Hunt     ./juegos   ./stats   ./about     #8     ES | EN"
-            }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
-        },
-        {
-          "name": "titulo",
-          "type": "heading",
-          "category": "content",
-          "content": "Bug Hunt",
-          "level": "h1",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
+          "content": "> nerdose / bug-hunt · desafío del 30/10 · [?] [stats] [Compartir] ES|EN · 🔥 4",
+          "annotation": "`game-header` variant `playing` (REQ-010): «Cómo se juega» → card-reglas de esta pantalla · «Estadísticas» → estadisticas · Compartir deshabilitado («disponible al terminar la partida») · ES|EN cambia la interfaz y la especificación sin perder la línea elegida ni el lenguaje visible (CA 22) · racha global. Sin nav global ni `nav-movil`"
         },
         {
           "name": "consigna",
           "type": "paragraph",
           "category": "content",
-          "content": "¿Qué línea tiene el bug? Tenés un solo intento.",
-          "level": "body",
+          "level": "caption",
+          "content": "// un solo intento · la firma y las líneas con solo llaves no cuentan",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "comentario `//` del prototipo; suma «la firma» porque C-30 también la excluye"
+        },
+        {
+          "name": "titulo",
+          "type": "heading",
+          "category": "content",
+          "level": "h1",
+          "content": "¿En qué línea está el bug?",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "el `h1` es la pregunta (como `tpl-BugHunt`); el nombre del juego queda en el breadcrumb. Fija para todos los días"
+        },
+        {
+          "name": "alerta-anulado",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "warning",
+          "icon": "warning",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "visible_only_in_states": [
+            "anulado"
+          ],
+          "annotation": "si «Confirmar línea» responde `challenge_voided` (CA 20); queda «Reportar un problema»"
+        },
+        {
+          "name": "banner-cookies",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "warning",
+          "icon": "warning",
+          "content": "Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».",
+          "visible_only_in_states": [
+            "sin sesión"
+          ],
+          "annotation": "O-03 (`no_session`); la línea elegida y el lenguaje visible se conservan para reintentar"
+        },
+        {
+          "name": "especificacion",
+          "type": "card",
+          "category": "content",
+          "content": "// qué debería hacer",
+          "paragraph": "Devuelve el índice del mayor valor del array. Si el máximo se repite, devuelve el primero.",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "pattern `bug-hunt.statement` (`panel` `context` ámbar). `spec` ya resuelto en el idioma activo (ADR-015); cambia con ES|EN"
+        },
+        {
+          "name": "card-tests",
+          "type": "card",
+          "category": "content",
+          "content": "// tests · llamada → esperado",
+          "paragraph": "✓ maxIndex([3, 7, 2]) → 1 · ✓ maxIndex([4]) → 0 · ✓ maxIndex([-2, -5, 9]) → 2 · ✗ 1 test oculto falla — El test que falla se revela al confirmar. Los que pasan te ayudan a descartar líneas.",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "pattern `bug-hunt.test`: 2 o 3 tests visibles que pasan, como llamadas con `function_name` (sintaxis neutra, igual en las 3 pestañas); la fila del oculto es punteada `#4A2220`, nunca su entrada (CA 15, 21)"
         },
         {
           "name": "tabs-lenguaje",
           "type": "tabs",
           "category": "navigation",
           "labels": [
-            "JS",
+            "JavaScript",
             "Go",
             "Java"
           ],
           "active": 0,
           "hidden_in_states": [
             "loading",
-            "error de sistema"
-          ]
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "barra del `code-block` (`max-index.js` · `max_index.go` · `MaxIndex.java` a la derecha). Arranca en el lenguaje preferido (JS por defecto); cambiar es local, sin requests, y no borra la línea elegida: el bug está en el mismo número de línea en los 3 (C-26, CA 3, decisión 1). Se envía el visible al confirmar",
+          "state_overrides": {
+            "confirmando": {
+              "annotation": "pestañas bloqueadas (`aria-disabled`)"
+            }
+          }
         },
         {
           "name": "codigo",
           "type": "image",
-          "category": "content",
-          "content": "Código con numeración de líneas · líneas no elegibles atenuadas",
+          "category": "input",
+          "content": "1  function maxIndex(nums) {\n2    let best = 0\n3    for (let i = 1; i < nums.length; i++) {\n4      if (nums[i] >= nums[best]) {\n5        best = i\n6      }\n7    }\n8    return best\n9  }",
           "aspect_ratio": "4:3",
-          "h": 220,
+          "h": 240,
           "hidden_in_states": [
             "loading",
-            "error de sistema"
+            "error de sistema",
+            "anulado"
           ],
-          "annotation": "a 320 px el código scrollea en horizontal"
-        },
-        {
-          "name": "especificacion",
-          "type": "card",
-          "category": "content",
-          "content": "Qué debería hacer",
-          "paragraph": "sumaPares(nums) devuelve la suma de los elementos pares del arreglo.",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
-          "name": "tests",
-          "type": "card",
-          "category": "content",
-          "content": "Tests visibles",
-          "paragraph": "✓ sumaPares([2, 4]) → 6 · ✓ sumaPares([]) → 0",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
-          "name": "aviso-oculto",
-          "type": "alert",
-          "category": "feedback",
-          "content": "1 test oculto falla.",
-          "kind": "info",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
-          "name": "alerta-linea",
-          "type": "alert",
-          "category": "feedback",
-          "content": "Esa línea no se puede elegir. Elegí otra.",
-          "kind": "warning",
-          "visible_only_in_states": [
-            "error de validación"
-          ]
+          "annotation": "`code-block` `selectable` + pattern `bug-hunt.line`: `radiogroup` «Líneas de maxIndex en {lenguaje}»; solo `pickable_lines` (aquí 2, 3, 4, 5 y 8) son radios de ancho completo y 40 px; firma y llaves en `text.dim`, no enfocables (C-30, CA 6). Elegida: fondo `#1A140A`, barra `inset 3px #FFB547`, «◀ tu elección». Shiki con fallback sin color; scroll horizontal propio, nunca la página (CA 23)",
+          "viewport_overrides": {
+            "mobile": {
+              "annotation": "bloque angosto (< 32rem): el tag «◀ tu elección» se reduce al glifo `◀` fijo al borde derecho visible; el texto completo lo dan `seleccion` y el botón"
+            }
+          },
+          "state_overrides": {
+            "selección hecha": {
+              "content": "1  function maxIndex(nums) {\n2    let best = 0\n3    for (let i = 1; i < nums.length; i++) {\n4      if (nums[i] >= nums[best]) {   ◀ tu elección\n5        best = i\n6      }\n7    }\n8    return best\n9  }",
+              "annotation": "línea 4 elegida: fondo `#1A140A`, barra `inset 3px #FFB547`, «◀ tu elección» (en mobile, glifo `◀` al borde) y `aria-checked=true`"
+            },
+            "confirmando": {
+              "content": "1  function maxIndex(nums) {\n2    let best = 0\n3    for (let i = 1; i < nums.length; i++) {\n4      if (nums[i] >= nums[best]) {   ◀ tu elección\n5        best = i\n6      }\n7    }\n8    return best\n9  }",
+              "annotation": "líneas bloqueadas mientras responde el servidor"
+            },
+            "error de validación": {
+              "content": "1  function maxIndex(nums) {\n2    let best = 0\n3    for (let i = 1; i < nums.length; i++) {\n4      if (nums[i] >= nums[best]) {   ◀ tu elección\n5        best = i\n6      }\n7    }\n8    return best\n9  }"
+            },
+            "límite de jugadas": {
+              "content": "1  function maxIndex(nums) {\n2    let best = 0\n3    for (let i = 1; i < nums.length; i++) {\n4      if (nums[i] >= nums[best]) {   ◀ tu elección\n5        best = i\n6      }\n7    }\n8    return best\n9  }"
+            },
+            "sin sesión": {
+              "content": "1  function maxIndex(nums) {\n2    let best = 0\n3    for (let i = 1; i < nums.length; i++) {\n4      if (nums[i] >= nums[best]) {   ◀ tu elección\n5        best = i\n6      }\n7    }\n8    return best\n9  }"
+            }
+          }
         },
         {
           "name": "seleccion",
           "type": "paragraph",
-          "category": "content",
-          "content": "Ninguna línea seleccionada",
+          "category": "feedback",
           "level": "caption",
+          "content": "> tocá la línea donde creés que está el bug",
           "hidden_in_states": [
             "loading",
-            "error de sistema"
+            "error de sistema",
+            "anulado"
           ],
+          "annotation": "línea de aviso del juego, siempre montada (`min-height`), espejo de la región `aria-live` polite. Sin rojo ni shake: un rechazo no consume el intento",
           "state_overrides": {
             "selección hecha": {
-              "content": "Línea seleccionada: 4"
+              "content": "> elegiste la línea 4. Podés cambiarla hasta confirmar."
+            },
+            "confirmando": {
+              "content": "> elegiste la línea 4. Podés cambiarla hasta confirmar."
+            },
+            "sin sesión": {
+              "content": "> elegiste la línea 4. Podés cambiarla hasta confirmar."
+            },
+            "error de validación": {
+              "content": "> no pudimos registrar esa línea. Elegí una y confirmá de nuevo: no perdiste tu intento.",
+              "annotation": "`422 invalid_move` (no debería pasar desde la interfaz); la Play sigue en curso, la línea se conserva y no se guarda preferencia (CA 6)"
+            },
+            "límite de jugadas": {
+              "content": "> vas muy rápido. Esperá unos segundos y probá de nuevo.",
+              "annotation": "HTTP 429 genérico; la confirmación no se procesa"
             }
           }
         },
@@ -3182,17 +3236,56 @@
           "name": "btn-confirmar",
           "type": "button",
           "category": "input",
-          "content": "Confirmar línea",
-          "variant": "disabled",
+          "content": "Confirmar línea 4 →",
+          "variant": "primary",
           "hidden_in_states": [
             "loading",
-            "error de sistema"
+            "error de sistema",
+            "anulado"
           ],
+          "annotation": "pattern `bug-hunt.confirm`: `button` `accent` de Bug Hunt (`#FFB547` / `#1A1206`), `lg`, ancho completo en mobile. Envía `{ language, line }` una sola vez; sin diálogo (decisión #26)",
           "state_overrides": {
-            "selección hecha": {
-              "variant": "primary"
+            "default": {
+              "content": "Elegí una línea",
+              "variant": "disabled",
+              "annotation": "«Elegí una línea», deshabilitado hasta elegir (`aria-disabled` con el motivo)"
+            },
+            "ya reportado": {
+              "content": "Elegí una línea",
+              "variant": "disabled"
+            },
+            "confirmando": {
+              "content": "Confirmando…",
+              "variant": "disabled",
+              "annotation": "`aria-disabled` mientras viaja la jugada; líneas y pestañas bloqueadas"
             }
           }
+        },
+        {
+          "name": "nota-lenguajes",
+          "type": "paragraph",
+          "category": "content",
+          "level": "caption",
+          "content": "El bug es el mismo en los tres lenguajes: cambiar de pestaña no cambia la respuesta.",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "nota del pattern `bug-hunt.confirm`, junto al botón en desktop y debajo en mobile"
+        },
+        {
+          "name": "card-reglas",
+          "type": "card",
+          "category": "content",
+          "content": "// cómo se juega",
+          "paragraph": "01 · Leé qué debería hacer la función y mirá los tests. · 02 · Tocá la línea donde creés que está el bug. · 03 · Confirmá: tenés un solo intento. El lenguaje que tengas abierto queda como tu preferido. — Con teclado: flechas ← → para cambiar de lenguaje, Tab hasta el código, flechas ↑ ↓ para recorrer las líneas elegibles, Espacio para elegir y Enter en «Confirmar línea».",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "destino de «Cómo se juega» del header (`#game-help`), como la «// reglas» de Big O y Tech Timeline"
         },
         {
           "name": "link-reportar",
@@ -3200,17 +3293,25 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
+          ],
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) con el aviso de no incluir la respuesta; el contexto incluye `code_language`. Visible también en `anulado`",
+          "state_overrides": {
+            "ya reportado": {
+              "content": "Ya reportaste este desafío",
+              "state": "disabled",
+              "icon": "check",
+              "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
+            }
+          }
         },
         {
           "name": "loader",
           "type": "loader",
           "category": "feedback",
-          "content": "Cargando tu partida de Bug Hunt…",
+          "content": "$ cargando tu partida de bug-hunt…",
           "visible_only_in_states": [
             "loading"
           ]
@@ -3219,8 +3320,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.",
           "kind": "error",
+          "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: conservás tu intento.",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -3233,60 +3334,69 @@
           "variant": "secondary",
           "icon": "refresh",
           "visible_only_in_states": [
-            "error de sistema"
-          ]
+            "error de sistema",
+            "sin sesión"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "annotation": "recrea la sesión y vuelve a enviar la línea elegida"
+            }
+          }
         },
         {
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · exit 0",
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
+          "banner-cookies",
+          "consigna",
           "titulo",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
-          "consigna",
+          "alerta-anulado",
           "especificacion",
+          "card-tests",
           "tabs-lenguaje",
           "codigo",
-          "tests",
-          "aviso-oculto",
-          "alerta-linea",
           "seleccion",
           "btn-confirmar",
+          "nota-lenguajes",
+          "card-reglas",
           "link-reportar"
         ],
         "desktop": [
+          "banner-cookies",
+          "consigna",
           "titulo",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
+          "alerta-anulado",
           {
             "row": "juego",
             "cols": [
               {
                 "w": 7,
                 "stack": [
-                  "consigna",
                   "especificacion",
                   "tabs-lenguaje",
-                  "codigo"
+                  "codigo",
+                  "seleccion",
+                  "btn-confirmar",
+                  "nota-lenguajes"
                 ]
               },
               {
                 "w": 5,
                 "stack": [
-                  "tests",
-                  "aviso-oculto",
-                  "alerta-linea",
-                  "seleccion",
-                  "btn-confirmar",
+                  "card-tests",
+                  "card-reglas",
                   "link-reportar"
                 ]
               }
@@ -3301,11 +3411,37 @@
         },
         {
           "name": "selección hecha",
-          "applies": true
+          "applies": true,
+          "parent_state": "default"
+        },
+        {
+          "name": "confirmando",
+          "applies": true,
+          "parent_state": "selección hecha"
         },
         {
           "name": "error de validación",
+          "applies": true,
+          "parent_state": "selección hecha"
+        },
+        {
+          "name": "límite de jugadas",
+          "applies": true,
+          "parent_state": "selección hecha"
+        },
+        {
+          "name": "anulado",
           "applies": true
+        },
+        {
+          "name": "sin sesión",
+          "applies": true,
+          "parent_state": "selección hecha"
+        },
+        {
+          "name": "ya reportado",
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "loading",
@@ -3328,44 +3464,49 @@
           "name": "header",
           "type": "header",
           "category": "layout",
-          "content": "> nerdose / Bug Hunt · #8 · ES|EN",
-          "viewport_overrides": {
-            "desktop": {
-              "content": "> nerdose / Bug Hunt     ./juegos   ./stats   ./about     #8     ES | EN"
+          "content": "> nerdose / bug-hunt · desafío del 30/10 · [stats] [Compartir] ES|EN · 🔥 17",
+          "annotation": "`game-header` variant `finished` (REQ-010): Compartir activo con el acento del juego (`#FFB547` / `#1A1206`), único botón de compartir. Texto en el idioma activo: «🐛 Bug Hunt #8 · JavaScript» / «🟩 bug encontrado» (🟥 «se me escapó»; en inglés «bug found» / «it got away») / «nerdose.dev»; nunca la línea ni el tipo (CA 10) · «Estadísticas» → estadisticas · ES|EN cambia veredicto, especificación, pasos, tipo y tags · racha global actualizada. Sin «Cómo se juega» ni `nav-movil`",
+          "state_overrides": {
+            "success": {
+              "content": "> nerdose / bug-hunt · desafío del 30/10 · [stats] [✓ Copiado] ES|EN · 🔥 17",
+              "annotation": "✓ Copiado: pegalo donde quieras. — confirmación en el mismo botón Compartir (`role=status`) durante unos segundos; vuelve a «Compartir»"
+            },
+            "anulado": {
+              "content": "> nerdose / bug-hunt · desafío del 30/10 · [stats] ES|EN · 🔥 17",
+              "annotation": "`game-header` variant `finished`: Compartir no se muestra en este estado"
+            },
+            "loading": {
+              "content": "> nerdose / bug-hunt · desafío del 30/10 · [stats] ES|EN · 🔥 17",
+              "annotation": "`game-header` variant `finished`: Compartir no se muestra en este estado"
+            },
+            "error de sistema": {
+              "content": "> nerdose / bug-hunt · desafío del 30/10 · [stats] ES|EN · 🔥 17",
+              "annotation": "`game-header` variant `finished`: Compartir no se muestra en este estado"
             }
-          },
-          "annotation": "#número = número de desafío del día, igual para los 5 juegos; ES|EN es un control inline"
-        },
-        {
-          "name": "nav-movil",
-          "type": "nav-bar",
-          "category": "navigation",
-          "visible_only_in_viewports": [
-            "mobile"
-          ],
-          "labels": [
-            "./juegos",
-            "./stats",
-            "./about"
-          ],
-          "active": 0
+          }
         },
         {
           "name": "veredicto",
           "type": "heading",
           "category": "content",
-          "content": "Encontraste el bug",
           "level": "h1",
+          "content": "Bug encontrado en la línea 4",
+          "icon": "check",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
+          "annotation": "al ganar: confeti ámbar y `h1` `sr-only`, como los otros juegos; la señal visible con ícono y texto es el código («✓ acá estaba el bug»). Sin animación con `prefers-reduced-motion`",
           "state_overrides": {
             "perdió": {
-              "content": "No era esa línea"
+              "content": "El bug estaba en la línea 4, no en la 6",
+              "icon": "x",
+              "annotation": "banner `failure` del DS, sin drama; subtítulo «Elegiste la línea 6 en Go. Desafío completado: tus rachas siguen en pie.»; sin confeti. Perder también suma a la racha"
             },
             "anulado": {
-              "content": "Desafío anulado"
+              "content": "Desafío anulado",
+              "icon": null,
+              "annotation": "`h1` visible, sin banner ni confeti"
             }
           }
         },
@@ -3373,141 +3514,170 @@
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "kind": "warning",
+          "icon": "warning",
+          "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
           "visible_only_in_states": [
             "anulado"
-          ]
+          ],
+          "annotation": "`banner` `warning` del DS; Play `voided`: `result` y `public_view` nulos (REQ-007). Variante mínima: aviso + rachas"
+        },
+        {
+          "name": "pregunta",
+          "type": "card",
+          "category": "content",
+          "content": "¿En qué línea está el bug?",
+          "paragraph": "// qué debería hacer — Devuelve el índice del mayor valor del array. Si el máximo se repite, devuelve el primero.",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "`h2` Mono 26 (22 en mobile) con la especificación debajo en `bug-hunt.statement` compacta; `h2` porque el `h1` es el veredicto. Se repite porque el fix y la explicación se leen contra ella"
         },
         {
           "name": "tabs-lenguaje",
           "type": "tabs",
           "category": "navigation",
           "labels": [
-            "JS",
+            "JavaScript",
             "Go",
             "Java"
           ],
           "active": 0,
           "hidden_in_states": [
             "loading",
-            "error de sistema"
-          ]
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "arranca en `result.code_language` (el lenguaje con el que confirmó); solo vista, no cambia la preferencia y también cambia el `fix`. Las marcas de línea valen para los 3 lenguajes",
+          "state_overrides": {
+            "perdió": {
+              "active": 1
+            }
+          }
         },
         {
           "name": "codigo",
           "type": "image",
           "category": "content",
-          "content": "Código con la línea 4 resaltada",
+          "content": "1  function maxIndex(nums) {\n2    let best = 0\n3    for (let i = 1; i < nums.length; i++) {\n4      if (nums[i] >= nums[best]) {   ✓ acá estaba el bug\n5        best = i\n6      }\n7    }\n8    return best\n9  }",
           "aspect_ratio": "4:3",
-          "h": 200,
+          "h": 240,
           "hidden_in_states": [
             "loading",
-            "error de sistema"
-          ]
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "`code-block` `selectable` en modo resultado, solo lectura (sin foco por línea). Acierto: fondo `#0C1A12`, barra `#3DDC84`, «✓ acá estaba el bug». Cada línea marcada se anuncia con su tag: no depende del color (CA 5, 23, NFR-U04). Scroll horizontal dentro del bloque",
+          "viewport_overrides": {
+            "mobile": {
+              "content": "1  function maxIndex(nums) {\n2    let best = 0\n3    for (let i = 1; i < nums.length; i++) {\n4      if (nums[i] >= nums[best]) {\n       ↳ ✓ acá estaba el bug\n5        best = i\n6      }\n7    }\n8    return best\n9  }",
+              "annotation": "bloque angosto (< 32rem): el tag baja a una segunda fila bajo su línea, como las notas de Big O, para que no quede fuera de la vista dentro del scroll"
+            }
+          },
+          "state_overrides": {
+            "perdió": {
+              "content": "1  func maxIndex(nums []int) int {\n2    best := 0\n3    for i := 1; i < len(nums); i++ {\n4      if nums[i] >= nums[best] {     🐛 acá estaba el bug\n5        best = i\n6      }                          ✗ tu elección\n7    }\n8    return best\n9  }",
+              "annotation": "línea 4 «🐛 acá estaba el bug» (fondo `#1A140A`, barra `#FFB547`) y línea 6 «✗ tu elección» (fondo `#1C0F0E`, barra `#FF7B72`); en mobile ambos tags bajo su línea (CA 5)"
+            }
+          }
         },
         {
-          "name": "card-test",
+          "name": "test-falla",
           "type": "card",
           "category": "content",
-          "content": "Test que falla",
-          "paragraph": "sumaPares([1, 2, 3, 4]) · esperado 6 · obtenido 10",
+          "content": "// el test que falla",
+          "paragraph": "maxIndex([5, 1, 5]) · esperado 0 · obtenido 2",
           "hidden_in_states": [
             "loading",
-            "error de sistema"
-          ]
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "caja `error` del pattern de Bug Hunt (`#1C0F0E` / `#4A2220`, Mono 14): «esperado» en verde y «obtenido» en rojo, con su palabra (el color solo acompaña). Sale de `failing_test`, misma sintaxis de llamada que en la partida (CA 4)"
         },
         {
-          "name": "card-fix",
-          "type": "card",
+          "name": "fix",
+          "type": "image",
           "category": "content",
-          "content": "El fix",
-          "paragraph": "línea 4 · - if (n % 2 === 1) · + if (n % 2 === 0)",
+          "content": "// el fix · línea 4\n- if (nums[i] >= nums[best]) {\n+ if (nums[i] > nums[best]) {",
+          "aspect_ratio": "16:5",
+          "h": 90,
           "hidden_in_states": [
             "loading",
-            "error de sistema"
-          ]
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "`code-block` variant `diff`, sin pestañas: prefijos `- ` / `+ ` y fondos `status.error.bg` / `status.success.bg`. Sale de `fix[<pestaña activa>]`: cambia con la pestaña del código. Scroll horizontal propio a 320 px",
+          "state_overrides": {
+            "perdió": {
+              "content": "// el fix · línea 4\n- if nums[i] >= nums[best] {\n+ if nums[i] > nums[best] {"
+            }
+          }
         },
         {
-          "name": "card-explicacion",
-          "type": "card",
+          "name": "explicacion-titulo",
+          "type": "heading",
           "category": "content",
+          "level": "h2",
           "content": "Por qué falla",
-          "paragraph": "La condición suma los impares en lugar de los pares, así que el resultado no coincide con la especificación.",
           "hidden_in_states": [
             "loading",
-            "error de sistema"
-          ]
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "`h2` Mono 20 dentro del `panel` de explicación (`#0F1318` / `#222A33`), como el `aside` del prototipo"
+        },
+        {
+          "name": "lista-pasos",
+          "type": "list",
+          "category": "content",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "items": [
+            {
+              "title": "1",
+              "subtitle": "Con >=, cada valor igual al máximo actual también mueve best hacia la derecha."
+            },
+            {
+              "title": "2",
+              "subtitle": "En [5, 1, 5], al llegar a i = 2 se cumple 5 >= 5 y devuelve el último máximo, no el primero."
+            },
+            {
+              "title": "3",
+              "subtitle": "Los tests visibles no tenían empates, por eso pasaban. Con > solo se actualiza ante un valor estrictamente mayor."
+            }
+          ],
+          "annotation": "pattern `bug-hunt.step` (número en cuadrado 28×28 `#2A1F0B` / `#FFB547`); 2 a 4 pasos de `explanation.steps`, ya resueltos en el locale (ADR-015); tokens de código neutros, válidos en los 3 lenguajes"
+        },
+        {
+          "name": "chip-tipo",
+          "type": "chips",
+          "category": "content",
+          "items": [
+            "tipo: comparación"
+          ],
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ],
+          "annotation": "`chip` `accent` de Bug Hunt (borde `#5C4419`, texto `#FFB547`). Etiqueta de `bug_type` en el idioma activo. Sin chip «mutación» del prototipo: el fix ya muestra el cambio; el tipo nunca va en el share (CA 10)"
         },
         {
           "name": "card-rachas",
           "type": "card",
           "category": "content",
           "content": "Rachas",
-          "paragraph": "Bug Hunt: 3 días · Global: 4 días",
+          "paragraph": "Bug Hunt: 6 días · Global: 17 días · récord Bug Hunt: 9",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ]
-        },
-        {
-          "name": "btn-compartir",
-          "type": "button",
-          "category": "input",
-          "content": "Compartir",
-          "variant": "primary",
-          "icon": "share",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
           ],
-          "annotation": "share nativo del sistema; si no está disponible copia al portapapeles"
-        },
-        {
-          "name": "toast-copiado",
-          "type": "toast",
-          "category": "feedback",
-          "content": "Copiado",
-          "kind": "success",
-          "visible_only_in_states": [
-            "success"
-          ]
-        },
-        {
-          "name": "link-reportar",
-          "type": "link",
-          "category": "navigation",
-          "content": "Reportar un problema",
-          "icon": "warning",
-          "annotation": "si ya reportó este desafío muestra «Ya reportado» y no abre O-01 (already_reported)",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
-          "name": "cuenta-regresiva",
-          "type": "paragraph",
-          "category": "content",
-          "content": "Próximo desafío en 05:42:10",
-          "level": "caption",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
-          "name": "btn-siguiente",
-          "type": "button",
-          "category": "input",
-          "content": "Siguiente juego",
-          "variant": "secondary",
-          "icon": "arrow-right",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
+          "annotation": "`h2` `sr-only`; rachas que devuelve el cierre, perder también suma (CA 9). Stats por lenguaje y tipo de bug en estadisticas (FG-10)"
         },
         {
           "name": "link-stats",
@@ -3519,6 +3689,52 @@
             "loading",
             "error de sistema"
           ]
+        },
+        {
+          "name": "link-reportar",
+          "type": "link",
+          "category": "navigation",
+          "content": "Reportar un problema",
+          "icon": "warning",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) sin el aviso de spoilers; el contexto incluye `code_language`. Visible también en `anulado`",
+          "state_overrides": {
+            "ya reportado": {
+              "content": "Ya reportaste este desafío",
+              "state": "disabled",
+              "icon": "check",
+              "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
+            }
+          }
+        },
+        {
+          "name": "cuenta-regresiva",
+          "type": "paragraph",
+          "category": "content",
+          "level": "caption",
+          "content": "Próximo desafío en 05:42:10",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "annotation": "al llegar a 0 recarga el día (vuelve a instrucciones del desafío nuevo)"
+        },
+        {
+          "name": "btn-siguiente",
+          "type": "button",
+          "category": "input",
+          "content": "Siguiente juego",
+          "variant": "primary",
+          "icon": "arrow-right",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "sin juegos pendientes"
+          ],
+          "annotation": "solo si queda un juego con desafío sin completar"
         },
         {
           "name": "link-volver",
@@ -3535,7 +3751,7 @@
           "name": "loader",
           "type": "loader",
           "category": "feedback",
-          "content": "Cargando tu resultado de Bug Hunt…",
+          "content": "$ cargando tu resultado de bug-hunt…",
           "visible_only_in_states": [
             "loading"
           ]
@@ -3544,8 +3760,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
           "kind": "error",
+          "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -3565,31 +3781,31 @@
           "name": "footer",
           "type": "footer",
           "category": "layout",
-          "content": "> nerdose — una plataforma, múltiples desafíos. · Sin cuenta: una única cookie funcional guarda tu progreso, sin datos personales ni cookies de terceros. · Acerca de · exit 0",
-          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. El aviso de privacidad vive en `acerca-de`. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
+          "content": "> nerdose — una plataforma, múltiples desafíos. · exit 0",
+          "annotation": "`site-footer`: una sola línea, como el prototipo: el lema a la izquierda y `exit 0` a la derecha, en Mono 13 gris. Es del shell e igual en todas las pantallas (REQ-002, C-07; REQ-003)"
         }
       ],
       "layouts": {
         "mobile": [
-          "nav-movil",
           "veredicto",
           "alerta-anulado",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
+          "pregunta",
           "tabs-lenguaje",
           "codigo",
-          "card-test",
-          "card-fix",
-          "card-explicacion",
+          "test-falla",
+          "fix",
+          "explicacion-titulo",
+          "lista-pasos",
+          "chip-tipo",
           "card-rachas",
-          "btn-compartir",
-          "toast-copiado",
-          "link-reportar",
+          "link-stats",
           "cuenta-regresiva",
           "btn-siguiente",
-          "link-stats",
-          "link-volver"
+          "link-volver",
+          "link-reportar"
         ],
         "desktop": [
           "veredicto",
@@ -3603,44 +3819,77 @@
               {
                 "w": 7,
                 "stack": [
+                  "pregunta",
                   "tabs-lenguaje",
                   "codigo",
-                  "card-explicacion"
+                  {
+                    "row": "cierre",
+                    "card": true,
+                    "cols": [
+                      {
+                        "w": 12,
+                        "stack": [
+                          {
+                            "row": "rachas",
+                            "cols": [
+                              {
+                                "w": 8,
+                                "stack": [
+                                  "card-rachas"
+                                ]
+                              },
+                              {
+                                "w": 4,
+                                "stack": [
+                                  "link-stats"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "row": "salida",
+                            "cols": [
+                              {
+                                "w": 6,
+                                "stack": [
+                                  "cuenta-regresiva"
+                                ]
+                              },
+                              {
+                                "w": 6,
+                                "stack": [
+                                  "btn-siguiente",
+                                  "link-volver"
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
                 ]
               },
               {
                 "w": 5,
                 "stack": [
-                  "card-test",
-                  "card-fix",
-                  "card-rachas",
-                  "btn-compartir",
-                  "toast-copiado",
+                  {
+                    "row": "explicacion",
+                    "card": true,
+                    "cols": [
+                      {
+                        "w": 12,
+                        "stack": [
+                          "test-falla",
+                          "fix",
+                          "explicacion-titulo",
+                          "lista-pasos",
+                          "chip-tipo"
+                        ]
+                      }
+                    ]
+                  },
                   "link-reportar"
-                ]
-              }
-            ]
-          },
-          {
-            "row": "salida",
-            "cols": [
-              {
-                "w": 4,
-                "stack": [
-                  "cuenta-regresiva"
-                ]
-              },
-              {
-                "w": 4,
-                "stack": [
-                  "btn-siguiente"
-                ]
-              },
-              {
-                "w": 4,
-                "stack": [
-                  "link-stats",
-                  "link-volver"
                 ]
               }
             ]
@@ -3654,15 +3903,28 @@
         },
         {
           "name": "perdió",
-          "applies": true
+          "applies": true,
+          "parent_state": "default"
+        },
+        {
+          "name": "sin juegos pendientes",
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "anulado",
-          "applies": true
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "success",
-          "applies": true
+          "applies": true,
+          "parent_state": "default"
+        },
+        {
+          "name": "ya reportado",
+          "applies": true,
+          "parent_state": "default"
         },
         {
           "name": "loading",
@@ -7974,6 +8236,14 @@
     },
     {
       "src": "bug-hunt-instrucciones",
+      "srcState": "día nuevo",
+      "srcBlock": "btn-empezar",
+      "dst": "bug-hunt-partida",
+      "trigger": "Empezar",
+      "automatic": false
+    },
+    {
+      "src": "bug-hunt-instrucciones",
       "srcState": "default",
       "srcBlock": "link-volver",
       "dst": "home",
@@ -7990,6 +8260,14 @@
     },
     {
       "src": "bug-hunt-partida",
+      "srcState": "selección hecha",
+      "srcBlock": "btn-confirmar",
+      "dst": "bug-hunt-resultado",
+      "trigger": "Confirmar línea 4 →",
+      "automatic": false
+    },
+    {
+      "src": "bug-hunt-partida",
       "srcState": "default",
       "srcBlock": "link-reportar",
       "dst": "o-01-reportar",
@@ -7999,10 +8277,16 @@
     {
       "src": "bug-hunt-partida",
       "srcState": "default",
-      "srcBlock": "btn-confirmar",
       "dst": "bug-hunt-resultado",
-      "trigger": "fin de partida",
-      "automatic": false
+      "trigger": "game_finished",
+      "automatic": true
+    },
+    {
+      "src": "bug-hunt-partida",
+      "srcState": "default",
+      "dst": "bug-hunt-instrucciones",
+      "trigger": "challenge_expired (día nuevo)",
+      "automatic": true
     },
     {
       "src": "bug-hunt-resultado",
@@ -8035,6 +8319,13 @@
       "dst": "big-o-instrucciones",
       "trigger": "Siguiente juego",
       "automatic": false
+    },
+    {
+      "src": "bug-hunt-resultado",
+      "srcState": "default",
+      "dst": "bug-hunt-instrucciones",
+      "trigger": "cuenta regresiva en 0",
+      "automatic": true
     },
     {
       "src": "big-o-instrucciones",

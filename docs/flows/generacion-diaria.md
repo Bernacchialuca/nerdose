@@ -5,7 +5,7 @@ type: event
 status: Draft
 created: 2026-11-03
 last_updated: 2026-11-14
-stories: [S-022, S-023, S-036, S-042, S-045]
+stories: [S-022, S-023, S-036, S-042, S-045, S-049, S-050]
 ---
 
 # Generación de desafíos (relleno de 14 días) y alerta de falla

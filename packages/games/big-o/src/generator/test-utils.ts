@@ -76,8 +76,12 @@ export function interpret(func: FuncNode, n: number): { value: number; maxDepth:
             return Number(l >= r);
           case '==':
             return Number(l === r);
+          default:
+            throw new Error(`interpret: unsupported ${e.op}`);
         }
       }
+      default:
+        throw new Error(`interpret: unsupported ${e.kind}`);
     }
   };
 

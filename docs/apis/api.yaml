@@ -1426,8 +1426,9 @@ components:
 
     BugHuntPublicView:
       type: object
-      required: [spec, code, pickable_lines, visible_tests]
+      required: [function_name, spec, code, pickable_lines, visible_tests]
       properties:
+        function_name: { type: string, description: 'Nombre de la función (está en la línea 1 del código); el cliente arma los tests como llamadas' }
         spec: { type: string }
         code: { $ref: '#/components/schemas/CodeByLanguage' }
         pickable_lines:
@@ -1436,14 +1437,16 @@ components:
           items: { type: integer, minimum: 1 }
         visible_tests:
           type: array
+          minItems: 2
+          maxItems: 3
           items: { $ref: '#/components/schemas/TestCase' }
 
     TestCase:
       type: object
       required: [input, expected]
       properties:
-        input: { description: Argumentos del test (JSON) }
-        expected: { description: Resultado esperado (JSON) }
+        input: { type: array, description: 'Lista de argumentos del test (p. ej. [[3, 7, 2]] o [[3, 7, 2], 4])' }
+        expected: { description: Resultado esperado (entero o booleano) }
 
     PublicView:
       description: '`toPublic(payload)` del juego, en el locale resuelto. Nunca incluye la solución.'
@@ -1493,10 +1496,13 @@ components:
                 type: array
                 items: { $ref: '#/components/schemas/Cell' }
 
-    EmptyState:
+    BugHuntState:
       type: object
-      description: Bug Hunt (una sola confirmación) no tiene estado intermedio
+      description: Vacío mientras la Play está in_progress (la línea elegida vive solo en el cliente); guarda el lenguaje y la línea confirmados al cerrar
       additionalProperties: false
+      properties:
+        language: { $ref: '#/components/schemas/CodeLanguage' }
+        line: { type: integer, minimum: 1 }
 
     TimelineState:
       type: object
@@ -1523,7 +1529,7 @@ components:
         - $ref: '#/components/schemas/GrepGridState'
         - $ref: '#/components/schemas/TimelineState'
         - $ref: '#/components/schemas/BigOState'
-        - $ref: '#/components/schemas/EmptyState'
+        - $ref: '#/components/schemas/BugHuntState'
 
     PlayView:
       type: object
@@ -1755,7 +1761,7 @@ components:
 
     BugHuntResult:
       type: object
-      required: [win, score, chosen_line, code_language, bug_line, bug_type, failing_test, fix, explanation]
+      required: [win, score, chosen_line, code_language, bug_line, bug_type, function_name, failing_test, fix, explanation]
       properties:
         win: { type: boolean }
         score: { type: integer, enum: [0, 1] }
@@ -1773,15 +1779,33 @@ components:
             input: { description: Argumentos (JSON) }
             expected: { description: Resultado esperado (JSON) }
             actual: { description: Resultado de la versión con bug (JSON) }
+        function_name: { type: string }
         fix:
           type: object
-          description: Diff unificado del fix, por lenguaje
+          description: Fix de la línea `bug_line` por lenguaje (el cliente lo muestra como `-`/`+`)
           required: [js, go, java]
           properties:
-            js: { type: string }
-            go: { type: string }
-            java: { type: string }
-        explanation: { type: string }
+            js: { $ref: '#/components/schemas/LineFix' }
+            go: { $ref: '#/components/schemas/LineFix' }
+            java: { $ref: '#/components/schemas/LineFix' }
+        explanation: { $ref: '#/components/schemas/BugHuntExplanation' }
+
+    LineFix:
+      type: object
+      required: [before, after]
+      properties:
+        before: { type: string, description: 'Línea con el bug, con su indentación' }
+        after: { type: string, description: 'Línea corregida, con su indentación' }
+
+    BugHuntExplanation:
+      type: object
+      required: [steps]
+      properties:
+        steps:
+          type: array
+          minItems: 2
+          maxItems: 4
+          items: { type: string, description: 'Paso en el locale del jugador' }
 
     Result:
       description: '`result(payload, state)` del juego en el locale. Solo cuando la Play terminó.'
@@ -1901,7 +1925,7 @@ components:
             grep-grid = `{ words_found: { "0": n, …, "8": n } }` (partidas por cantidad de palabras encontradas;
             de ahí salen el promedio de palabras y el % de 8/8);
             timeline = `{ by_category: { <category>: { played, correct } } }`, acumulado por hito: cada uno de los 5 items suma `played` a la categoría de su hecho y `correct` si quedó en su lugar (acierto = `correct / played`; mejor categoría = mayor promedio); big-o = `{ by_category: { <recipe_category>: { played, correct } } }`;
-            bug-hunt = aciertos por `code_language` y por `bug_type`.
+            bug-hunt = `{ by_language: { <code_language>: { played, correct } }, by_bug_type: { <bug_type>: { played, correct } } }`.
 
     MyStats:
       type: object

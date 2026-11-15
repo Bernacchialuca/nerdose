@@ -5,7 +5,7 @@ type: feature
 status: Draft
 created: 2026-11-03
 last_updated: 2026-11-14
-stories: [S-035, S-036, S-037, S-038, S-039, S-045, S-046]
+stories: [S-035, S-036, S-037, S-038, S-039, S-045, S-046, S-050]
 ---
 
 # Regenerar un desafío desde el admin
