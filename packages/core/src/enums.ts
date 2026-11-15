@@ -25,6 +25,17 @@ export const RECIPE_CATEGORIES = [
 ] as const;
 export type RecipeCategory = (typeof RECIPE_CATEGORIES)[number];
 
+export const BUG_TYPES = [
+  'off_by_one',
+  'comparison',
+  'wrong_operator',
+  'wrong_variable',
+  'bad_initialization',
+  'misplaced_return',
+  'inverted_condition',
+] as const;
+export type BugType = (typeof BUG_TYPES)[number];
+
 export const TERM_CATEGORIES = [
   'programming_languages',
   'git',

@@ -24,6 +24,12 @@
 - **Signature:** `RECIPE_CATEGORIES = ['simple_loops','nested_loops','recursion','divide_and_conquer','binary_search'] as const`; `type RecipeCategory = (typeof RECIPE_CATEGORIES)[number]`
 - **Usage:** `category: z.enum(RECIPE_CATEGORIES)`
 
+## BUG_TYPES / BugType
+- **Location:** packages/core/src/enums.ts
+- **Description:** Fixed-order list of the 7 Bug Hunt bug types (new ones are appended, never reordered); aligned with `BugType` in `api.yaml`. Lives in `challenges.payload` (jsonb) and as key of `player_game_stats.extra.by_bug_type`; no pgEnum.
+- **Signature:** `BUG_TYPES = ['off_by_one','comparison','wrong_operator','wrong_variable','bad_initialization','misplaced_return','inverted_condition'] as const`; `type BugType = (typeof BUG_TYPES)[number]`
+- **Usage:** `bug_type: z.enum(BUG_TYPES)`; `by_bug_type: Partial<Record<BugType, { played: number; correct: number }>>`
+
 ## TERM_CATEGORIES / TermCategory
 - **Location:** packages/core/src/enums.ts
 - **Description:** Fixed-order list of the 8 term categories; aligned with PG enum `term_category` and `DevdlePublicView.possible_categories`.

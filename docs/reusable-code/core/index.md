@@ -17,11 +17,12 @@ Package `@nerdose/core` (`packages/core`), isomorphic entry `.`.
 - **GameGenerator / AnyGameGenerator** (packages/core/src/game-generator.ts) - Generator contract with `historySpec`, `usedBankItems`, `generate`, `verify`; `verify` may return a `Promise` and `historySpec.aheadDays` is optional (REQ-009)
 - **GeneratorHistory / RecentChallenge / HistorySpec / BankName / VerificationLog / VerificationCheck** (packages/core/src/game-generator.ts) - Generic history and verification log types
 
-## Shared enums (10 items) - see enums.md
+## Shared enums (11 items) - see enums.md
 - **LOCALES / Locale** (packages/core/src/enums.ts) - Supported locales `es`, `en`
 - **CODE_LANGUAGES / CodeLanguage** (packages/core/src/enums.ts) - Code languages `js`, `go`, `java`
 - **BIG_O_OPTIONS / BigOOption** (packages/core/src/enums.ts) - The 8 Big O options in fixed order, aligned with `BigOOption` in `api.yaml`
 - **RECIPE_CATEGORIES / RecipeCategory** (packages/core/src/enums.ts) - The 5 recipe categories (initial, extensible set), aligned with `RecipeCategory` in `api.yaml`; no pgEnum
+- **BUG_TYPES / BugType** (packages/core/src/enums.ts) - The 7 Bug Hunt bug types in fixed order, aligned with `BugType` in `api.yaml`; no pgEnum (lives in `challenges.payload` and `extra.by_bug_type`)
 - **TERM_CATEGORIES / TermCategory** (packages/core/src/enums.ts) - Eight term categories in fixed order (aligned with PG enum `term_category`)
 - **TIMELINE_CATEGORIES / TimelineCategory** (packages/core/src/enums.ts) - Eight timeline fact categories in fixed order (aligned with PG enum `timeline_category`)
 - **DATE_PRECISIONS / DatePrecision** (packages/core/src/enums.ts) - Date precisions `year`, `month`, `day` (aligned with PG enum `date_precision`)
