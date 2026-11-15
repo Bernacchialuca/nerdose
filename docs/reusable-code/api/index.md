@@ -2,7 +2,7 @@
 
 App `apps/api` (not a package; imported through the `@/` alias → `src/`). Hono on Node.
 
-## HTTP (19 items) - see http.md
+## HTTP (20 items) - see http.md
 - **buildApp** (apps/api/src/http/app.ts) - Builds the Hono app: requestId, request logger, secure headers, error handler, JSON 404, routes
 - **AppDeps / AppEnv** (apps/api/src/http/types.ts) - Injected dependencies and Hono context variables (`requestId`, `logger`, `locale`, `player`) plus `config` and `identity` deps
 - **registerRoutes** (apps/api/src/http/routes/index.ts) - Single place where routes are mounted on the app
@@ -21,9 +21,10 @@ App `apps/api` (not a package; imported through the `@/` alias → `src/`). Hono
 - **adminAuth / adminAuthExcept** (apps/api/src/domain/admin/admin-auth.middleware.ts) - JWT middleware for `/api/admin/*` with exact method+path exclusions; any failure becomes `401 unauthorized`
 - **AdminService / AdminRepository** (apps/api/src/domain/admin/) - Admin login, grouped/sorted report listing (`culprits`, `player_ref`) and `PATCH` of reports from `open`; `AdminRepository` also reads the `metrics_*` views and `playsSummary`
 - **AdminContentService / BANK_COLUMNS / resolveBankConsumers / buildBankStock** (apps/api/src/domain/admin/) - Admin content reads: `upcoming`, `generationFailures` and `stock` (per bank and consumer from `GameDefinition.bankUsage`); pure stock formulas
+- **progressRoutes / getMyStats / myStatsQuerySchema** (apps/api/src/domain/progress/) - `GET /api/me/stats` (player cookie required, optional `history_before` `YYYY-MM-DD`)
 - **AdminMetricsService / metricsQuerySchema** (apps/api/src/domain/admin/) - `GET /api/admin/metrics`: `currentDay()` and `metrics(from, to, today)` build the `Metrics` response (d1/d7, live streak buckets, weighted summary); Zod query schema validated with core's `validateMetricsRange`
 
-## Infra (11 items) - see infra.md
+## Infra (13 items) - see infra.md
 - **createDatabase / Sql** (apps/api/src/infra/database/db.ts) - Wraps `createDb` from `@nerdose/db`; `Sql` is the postgres.js client type
 - **createHealthCheck / Health** (apps/api/src/infra/database/health.ts) - `SELECT 1` with timeout → `ok` or `degraded`, never throws
 - **verifyDbRole** (apps/api/src/infra/database/verify-role.ts) - Logs `current_user` at startup; returns `null` (no throw) if the DB is down
@@ -32,7 +33,9 @@ App `apps/api` (not a package; imported through the `@/` alias → `src/`). Hono
 - **PublishingService / PublishingRepository** (apps/api/src/domain/publishing/) - Lazy single-flight `ensureToday()` and real `getToday`
 - **GameplayService / GameplayRepository / moveTransaction** (apps/api/src/domain/gameplay/) - Open today's game, idempotent `start` and `move` (serialized transaction with `FOR SHARE` on the challenge, close, rejected guesses), `acknowledgeVoid`, `lockChallenge`, `insertVoidedPlayIfAbsent`; on close `move` stores `plays.code_language` and `players.preferred_code_language` (via `identity`, exposed by `moveTransaction`) in the same transaction
 - **QualityService / QualityRepository / shouldAlert / REPORT_THRESHOLD_REASONS** (apps/api/src/domain/quality/) - Challenge reports, alert threshold (`alerted_at` once) and `hasReported`
-- **ProgressService / ProgressRepository** (apps/api/src/domain/progress/) - Live streaks, `GameStatsView`, `applyResult` (ADR-011 streaks and counters on completion) and batch `recompute` (with `activeDays` / `completedPlays`) used when voiding a challenge
+- **ProgressService / ProgressRepository** (apps/api/src/domain/progress/) - Live streaks, `GameStatsView`, `applyResult` (ADR-011 streaks and counters on completion), batch `recompute` (with `activeDays` / `completedPlays`) used when voiding a challenge, and the stats reads `heatmap` / `historyPage`
+- **MyStatsService** (apps/api/src/domain/progress/my-stats.service.ts) - Read-only `MyStats` for `GET /api/me/stats`: `currentDay()` and `myStats(playerId, day, locale, historyBefore)`
+- **toGameStatsView / pageByFullDays / HISTORY_PAGE_SIZE / VOIDED_LABEL** (apps/api/src/domain/progress/game-stats-view.ts, history.ts) - Pure `GameStatsView` builder, full-day history pagination, page size 60 and localized voided label
 - **VoidService** (apps/api/src/domain/quality/void.service.ts) - Transactional challenge void: `FOR UPDATE`, culprit check, plays/reports/bank updates, batch recompute, post-COMMIT cache reload and domain events
 - **RegenerationService** (apps/api/src/domain/publishing/regeneration.service.ts) - Idempotent regeneration request: `ON CONFLICT (challenge_id) WHERE status = 'pending' DO NOTHING` plus `pg_notify` in one transaction
 
@@ -45,7 +48,7 @@ App `apps/api` (not a package; imported through the `@/` alias → `src/`). Hono
 - **Clock / systemClock** (apps/api/src/shared/clock.ts) - Injectable clock (`now(): Date`)
 - **games** (apps/api/src/games/registry.ts) - The api's `GameRegistry` instance (registers `devdle`, `grepGrid`, `timeline`, `bigO` and `bugHunt`)
 
-## Testing utils (11 items) - see testing.md
+## Testing utils (12 items) - see testing.md
 - **captureLogger** (apps/api/test/helpers/logger.ts) - Real logger writing to memory; `lines()` returns parsed JSON entries
 - **freePort** (apps/api/test/helpers/net.ts) - Returns a free local TCP port
 - **silentServer** (apps/api/test/helpers/net.ts) - TCP server that accepts and never answers (simulates a hung DB)
@@ -61,3 +64,4 @@ App `apps/api` (not a package; imported through the `@/` alias → `src/`). Hono
 - **registryWithoutBugHunt** (apps/api/test/helpers/registries.ts) - Game registry without Bug Hunt, to test the defensive branches for an enum `game_id` outside the registry
 - **GG_PAYLOAD / GG_ID / cellsOf / selectWord / found / SEVEN / INITIAL_EXTRA / seedGrepGrid / seedGrepGridPlay / ggGet / ggPost / ggMove** (apps/api/test/helpers/grep-grid.ts) - Fixed Grep Grid payload (validated with `payloadSchema` on import) and helpers to seed challenges/plays and call the generic routes
 - **CODE_PAYLOAD / codeGame / codeGameNull / codeRegistry / codeNullRegistry** (apps/api/test/helpers/code-game.ts) - Test game with `id: 'big-o'` and a code language, plus registries including it; use with the `games` option of `buildDbServices` / `buildDbApp`
+- **myStats (test app builders)** (apps/api/test/helpers/app.ts) - `MyStatsService` wired into `buildMemoryServices`, `buildDbServices`, `buildTestApp` and `buildDbApp`

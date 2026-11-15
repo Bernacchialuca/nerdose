@@ -1,7 +1,11 @@
 import type { GameId } from '@nerdose/core';
 import { challenges, playerGameStats, playerStats, plays } from '@nerdose/db';
 import type { Db, PlayerGameStats, PlayerStats, Tx } from '@nerdose/db';
-import { and, eq, inArray, lt, max, ne } from 'drizzle-orm';
+import { and, asc, between, desc, eq, inArray, lt, max, ne, sql } from 'drizzle-orm';
+
+import type { HeatmapDay, HistoryRow } from './progress.types';
+
+const COMPLETED = ['won', 'lost', 'voided'] as const;
 
 /** Lecturas de progreso y escrituras del cierre de partida (siempre dentro de una transacción). */
 export class ProgressRepository {
@@ -44,6 +48,46 @@ export class ProgressRepository {
       if (global === null || r.day > global) global = r.day;
     }
     return { byGame, global };
+  }
+
+  /** Heatmap (REQ-011): Play completadas por día en [from, to]. */
+  async heatmap(playerId: string, from: string, to: string): Promise<HeatmapDay[]> {
+    return this.db
+      .select({ date: plays.date, completed: sql<number>`count(*)::int` })
+      .from(plays)
+      .where(
+        and(
+          eq(plays.playerId, playerId),
+          inArray(plays.status, [...COMPLETED]),
+          between(plays.date, from, to),
+        ),
+      )
+      .groupBy(plays.date)
+      .orderBy(asc(plays.date));
+  }
+
+  /** Historial (REQ-011): Play completadas, más recientes primero y por orden de catálogo dentro del día. */
+  async historyPage(playerId: string, before: string | null, limit: number): Promise<HistoryRow[]> {
+    const rows = await this.db
+      .select({
+        date: plays.date,
+        number: challenges.number,
+        gameId: plays.gameId,
+        status: plays.status,
+        result: plays.result,
+      })
+      .from(plays)
+      .innerJoin(challenges, eq(challenges.id, plays.challengeId))
+      .where(
+        and(
+          eq(plays.playerId, playerId),
+          inArray(plays.status, [...COMPLETED]),
+          before === null ? undefined : lt(plays.date, before),
+        ),
+      )
+      .orderBy(desc(plays.date), asc(plays.gameId))
+      .limit(limit);
+    return rows.map((r) => ({ ...r, status: r.status as HistoryRow['status'] }));
   }
 
   /** Días activos (ADR-011) de todos los juegos: challenges `published`/`voided`. */

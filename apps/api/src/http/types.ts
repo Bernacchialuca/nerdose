@@ -8,6 +8,7 @@ import type { AdminMetricsService } from '@/domain/admin/admin-metrics.service';
 import type { AdminService } from '@/domain/admin/admin.service';
 import type { GameplayService } from '@/domain/gameplay/gameplay.service';
 import type { IdentityService } from '@/domain/identity/identity.service';
+import type { MyStatsService } from '@/domain/progress/my-stats.service';
 import type { QualityService } from '@/domain/quality/quality.service';
 import type { VoidService } from '@/domain/quality/void.service';
 import type { PublishingService } from '@/domain/publishing/publishing.service';
@@ -34,6 +35,7 @@ export type AppDeps = {
   voids: Pick<VoidService, 'void'>;
   adminContent: Pick<AdminContentService, 'upcoming' | 'generationFailures' | 'stock'>;
   adminMetrics: Pick<AdminMetricsService, 'currentDay' | 'metrics'>;
+  myStats: Pick<MyStatsService, 'currentDay' | 'myStats'>;
   regeneration: Pick<RegenerationService, 'regenerate'>;
 };
 
