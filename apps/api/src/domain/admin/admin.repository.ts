@@ -1,10 +1,11 @@
-import type { BankName, ReportStatus } from '@nerdose/core';
+import type { BankName, GameId, ReportStatus } from '@nerdose/core';
 import {
   challengeReports,
   challenges,
   generationFailures,
   generationRequests,
   jobRuns,
+  plays,
   rejectedGuesses,
   terms,
   timelineFacts,
@@ -13,7 +14,29 @@ import type { Db, Tx } from '@nerdose/db';
 import { and, asc, between, desc, eq, inArray, notExists, sql, type SQL } from 'drizzle-orm';
 import type { PgColumn } from 'drizzle-orm/pg-core';
 
+import type { StreakBucket } from './admin.types';
 import { BANK_COLUMNS } from './bank-columns';
+
+export type DailyPlayersRow = { date: string; gameId: GameId | null; players: number };
+export type RetentionRow = {
+  cohortDate: string;
+  cohortSize: number;
+  d1Players: number;
+  d7Players: number;
+};
+export type StreakRow = { bucket: StreakBucket; lastActiveDate: string | null; players: number };
+export type ChallengeQualityRow = {
+  challengeId: string;
+  gameId: GameId;
+  date: string;
+  number: number;
+  started: number;
+  finished: number;
+  completionRate: number | null;
+  winRate: number | null;
+  reports: number;
+  status: 'published' | 'voided';
+};
 
 export type ReportRow = typeof challengeReports.$inferSelect;
 
@@ -259,5 +282,57 @@ export class AdminRepository {
       .groupBy(rejectedGuesses.word)
       .orderBy(desc(distinctPlayers), asc(rejectedGuesses.word))
       .limit(limit);
+  }
+
+  // Las vistas metrics_* no tienen schema Drizzle (migración 0008, SQL manual): se leen con SQL crudo.
+  async metricsDailyPlayers(from: string, to: string): Promise<DailyPlayersRow[]> {
+    const rows = await this.db.execute<DailyPlayersRow>(sql`
+      SELECT date, game_id AS "gameId", players
+      FROM metrics_daily_players
+      WHERE date BETWEEN ${from}::date AND ${to}::date
+      ORDER BY date, game_id NULLS FIRST`);
+    return [...rows];
+  }
+
+  async metricsRetention(from: string, to: string): Promise<RetentionRow[]> {
+    const rows = await this.db.execute<RetentionRow>(sql`
+      SELECT cohort_date AS "cohortDate", cohort_size AS "cohortSize",
+             d1_players AS "d1Players", d7_players AS "d7Players"
+      FROM metrics_retention
+      WHERE cohort_date BETWEEN ${from}::date AND ${to}::date
+      ORDER BY cohort_date`);
+    return [...rows];
+  }
+
+  async metricsStreakDistribution(): Promise<StreakRow[]> {
+    const rows = await this.db.execute<StreakRow>(sql`
+      SELECT bucket, last_active_date AS "lastActiveDate", players
+      FROM metrics_streak_distribution`);
+    return [...rows];
+  }
+
+  async metricsChallengeQuality(from: string, to: string): Promise<ChallengeQualityRow[]> {
+    const rows = await this.db.execute<ChallengeQualityRow>(sql`
+      SELECT challenge_id AS "challengeId", game_id AS "gameId", date, number, started, finished,
+             completion_rate AS "completionRate", win_rate AS "winRate", reports, status
+      FROM metrics_challenge_quality
+      WHERE date BETWEEN ${from}::date AND ${to}::date
+      ORDER BY date DESC, game_id`);
+    return [...rows];
+  }
+
+  /** Usa `idx_plays_date`. */
+  async playsSummary(
+    from: string,
+    to: string,
+  ): Promise<{ uniquePlayers: number; completed: number }> {
+    const [row] = await this.db
+      .select({
+        uniquePlayers: sql<number>`count(DISTINCT ${plays.playerId})::int`,
+        completed: sql<number>`(count(*) FILTER (WHERE ${plays.status} IN ('won','lost','voided')))::int`,
+      })
+      .from(plays)
+      .where(between(plays.date, from, to));
+    return { uniquePlayers: row?.uniquePlayers ?? 0, completed: row?.completed ?? 0 };
   }
 }

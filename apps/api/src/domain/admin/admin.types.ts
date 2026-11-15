@@ -114,3 +114,39 @@ export type ContentStock = {
   last_sync: LastSync | null;
   top_rejected_guesses: Array<{ word: string; distinct_players: number }>;
 };
+
+export type StreakBucket = '0' | '1' | '2-6' | '7-29' | '30+';
+
+export type MetricsSummary = {
+  unique_players: number;
+  completed: number;
+  d1: number | null;
+  d7: number | null;
+};
+export type DailyPlayers = { date: string; game_id: GameId | null; players: number };
+export type RetentionCohort = {
+  cohort_date: string;
+  cohort_size: number;
+  d1: number | null;
+  d7: number | null;
+};
+export type StreakDistribution = { bucket: StreakBucket; players: number };
+export type ChallengeQuality = {
+  challenge_id: string;
+  game_id: GameId;
+  date: string;
+  number: number;
+  started: number;
+  finished: number;
+  completion_rate: number | null;
+  win_rate: number | null;
+  reports: number;
+  status: 'published' | 'voided';
+};
+export type Metrics = {
+  summary: MetricsSummary;
+  daily_players: DailyPlayers[];
+  retention: RetentionCohort[];
+  streak_distribution: StreakDistribution[];
+  challenge_quality: ChallengeQuality[];
+};

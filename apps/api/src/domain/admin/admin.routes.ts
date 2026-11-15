@@ -4,6 +4,7 @@ import type { AppDeps, AppEnv } from '@/http/types';
 
 import {
   getContentStock,
+  getMetrics,
   listGenerationFailures,
   listReports,
   listUpcoming,
@@ -18,4 +19,5 @@ export const adminRoutes = (deps: AppDeps) =>
     .patch('/reports/:report_id', ...updateReport(deps))
     .get('/challenges/upcoming', ...listUpcoming(deps))
     .get('/generation-failures', ...listGenerationFailures(deps))
-    .get('/content/stock', ...getContentStock(deps));
+    .get('/content/stock', ...getContentStock(deps))
+    .get('/metrics', ...getMetrics(deps));

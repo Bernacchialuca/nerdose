@@ -2,7 +2,7 @@
 
 App `apps/api` (not a package; imported through the `@/` alias → `src/`). Hono on Node.
 
-## HTTP (18 items) - see http.md
+## HTTP (19 items) - see http.md
 - **buildApp** (apps/api/src/http/app.ts) - Builds the Hono app: requestId, request logger, secure headers, error handler, JSON 404, routes
 - **AppDeps / AppEnv** (apps/api/src/http/types.ts) - Injected dependencies and Hono context variables (`requestId`, `logger`, `locale`, `player`) plus `config` and `identity` deps
 - **registerRoutes** (apps/api/src/http/routes/index.ts) - Single place where routes are mounted on the app
@@ -19,8 +19,9 @@ App `apps/api` (not a package; imported through the `@/` alias → `src/`). Hono
 - **IdentityService / IdentityRepository / issuePlayerCookie** (apps/api/src/domain/identity/) - Anonymous session, preferences and `nd_pid` cookie
 - **hashPassword / verifyPassword / signAdminToken** (apps/api/src/domain/admin/admin-auth.ts) - scrypt hash (`scrypt$N$r$p$salt$hash`), timing-safe verification and HS256 admin JWT (`sub`, `iat`, `exp = iat + 28800`)
 - **adminAuth / adminAuthExcept** (apps/api/src/domain/admin/admin-auth.middleware.ts) - JWT middleware for `/api/admin/*` with exact method+path exclusions; any failure becomes `401 unauthorized`
-- **AdminService / AdminRepository** (apps/api/src/domain/admin/) - Admin login, grouped/sorted report listing (`culprits`, `player_ref`) and `PATCH` of reports from `open`
+- **AdminService / AdminRepository** (apps/api/src/domain/admin/) - Admin login, grouped/sorted report listing (`culprits`, `player_ref`) and `PATCH` of reports from `open`; `AdminRepository` also reads the `metrics_*` views and `playsSummary`
 - **AdminContentService / BANK_COLUMNS / resolveBankConsumers / buildBankStock** (apps/api/src/domain/admin/) - Admin content reads: `upcoming`, `generationFailures` and `stock` (per bank and consumer from `GameDefinition.bankUsage`); pure stock formulas
+- **AdminMetricsService / metricsQuerySchema** (apps/api/src/domain/admin/) - `GET /api/admin/metrics`: `currentDay()` and `metrics(from, to, today)` build the `Metrics` response (d1/d7, live streak buckets, weighted summary); Zod query schema validated with core's `validateMetricsRange`
 
 ## Infra (11 items) - see infra.md
 - **createDatabase / Sql** (apps/api/src/infra/database/db.ts) - Wraps `createDb` from `@nerdose/db`; `Sql` is the postgres.js client type

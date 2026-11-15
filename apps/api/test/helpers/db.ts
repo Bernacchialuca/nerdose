@@ -66,6 +66,17 @@ export function useDatabases() {
         .returning();
       return row!;
     },
+    insertPlayers: async (n: number) =>
+      owner.db
+        .insert(players)
+        .values(Array.from({ length: n }, () => ({ id: randomUUID() })))
+        .returning(),
+    insertPlays: async (
+      values: Array<
+        Pick<typeof plays.$inferInsert, 'playerId' | 'challengeId' | 'gameId' | 'date' | 'state'> &
+          Partial<typeof plays.$inferInsert>
+      >,
+    ) => (values.length === 0 ? [] : owner.db.insert(plays).values(values).returning()),
     insertChallenge: async (
       values: Pick<typeof challenges.$inferInsert, 'gameId' | 'date'> &
         Partial<typeof challenges.$inferInsert>,

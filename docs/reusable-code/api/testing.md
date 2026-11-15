@@ -30,7 +30,8 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 
 ## useDatabases / parseSetCookie / COOKIE_ATTRS
 - **Location:** apps/api/test/helpers/db.ts
-- **Signature:** `useDatabases(): { owner, api, identity(), reset(), close(), insertPlayer(values?) }`
+- **Description:** `insertPlayers(n)` and `insertPlays(values[])` insert many rows as owner with a single multi-row `INSERT` (large fixtures).
+- **Signature:** `useDatabases(): { owner, api, identity(), reset(), close(), insertPlayer(values?), insertPlayers(n), insertPlays(values[]) }`
 - **Usage:** `const dbs = useDatabases(); beforeAll(dbs.reset); afterAll(dbs.close)`
 
 ## GG_PAYLOAD / GG_ID / cellsOf / selectWord / found / SEVEN / INITIAL_EXTRA / seedGrepGrid / seedGrepGridPlay

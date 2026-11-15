@@ -2,6 +2,7 @@ import { serve } from '@hono/node-server';
 
 import { loadEnv, loadLocalEnvFile } from '@/config/env';
 import { AdminContentService } from '@/domain/admin/admin-content.service';
+import { AdminMetricsService } from '@/domain/admin/admin-metrics.service';
 import { AdminRepository } from '@/domain/admin/admin.repository';
 import { AdminService } from '@/domain/admin/admin.service';
 import { IdentityRepository } from '@/domain/identity/identity.repository';
@@ -126,6 +127,11 @@ if (env) {
         games,
         clock,
         launchDate: env.LAUNCH_DATE,
+      }),
+      adminMetrics: new AdminMetricsService({
+        repo: new AdminRepository(db),
+        activeDays: new ProgressRepository(db),
+        clock,
       }),
       regeneration: new RegenerationService({
         runInTx: (fn) => db.transaction((tx) => fn(new PublishingRepository(tx))),

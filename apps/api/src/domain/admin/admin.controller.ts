@@ -7,6 +7,7 @@ import { validationHook } from '@/http/validation-hook';
 
 import {
   loginBodySchema,
+  metricsQuerySchema,
   reportParamSchema,
   reportPatchSchema,
   reportsQuerySchema,
@@ -52,3 +53,16 @@ export const listGenerationFailures = (deps: AppDeps) =>
 
 export const getContentStock = (deps: AppDeps) =>
   factory.createHandlers(async (c) => c.json(await deps.adminContent.stock()));
+
+export const getMetrics = (deps: AppDeps) =>
+  factory.createHandlers(
+    zValidator(
+      'query',
+      metricsQuerySchema(() => deps.adminMetrics.currentDay()),
+      validationHook,
+    ),
+    async (c) => {
+      const { from, to } = c.req.valid('query');
+      return c.json(await deps.adminMetrics.metrics(from, to, deps.adminMetrics.currentDay()));
+    },
+  );

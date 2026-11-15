@@ -8,6 +8,7 @@ import type { Logger } from 'pino';
 
 import { hashPassword, signAdminToken } from '@/domain/admin/admin-auth';
 import { AdminContentService } from '@/domain/admin/admin-content.service';
+import { AdminMetricsService } from '@/domain/admin/admin-metrics.service';
 import { AdminRepository } from '@/domain/admin/admin.repository';
 import { AdminService } from '@/domain/admin/admin.service';
 import { GameplayRepository, moveTransaction } from '@/domain/gameplay/gameplay.repository';
@@ -209,6 +210,17 @@ export function buildMemoryServices(opts: { clock?: Clock; logger: Logger }) {
     clock,
     launchDate: TEST_CONFIG.LAUNCH_DATE,
   });
+  const adminMetrics = new AdminMetricsService({
+    repo: {
+      metricsDailyPlayers: async () => [],
+      metricsRetention: async () => [],
+      metricsStreakDistribution: async () => [],
+      metricsChallengeQuality: async () => [],
+      playsSummary: async () => ({ uniquePlayers: 0, completed: 0 }),
+    },
+    activeDays: { prevActiveDays: async () => ({ byGame: {}, global: null }) },
+    clock,
+  });
   const regeneration = {
     regenerate: async (): Promise<{
       request_id: string;
@@ -227,6 +239,7 @@ export function buildMemoryServices(opts: { clock?: Clock; logger: Logger }) {
     admin,
     voids,
     adminContent,
+    adminMetrics,
     regeneration,
   };
 }
@@ -330,6 +343,11 @@ export async function buildDbServices(
     clock,
     launchDate: TEST_CONFIG.LAUNCH_DATE,
   });
+  const adminMetrics = new AdminMetricsService({
+    repo: new AdminRepository(db),
+    activeDays: new ProgressRepository(db),
+    clock,
+  });
   const regeneration = new RegenerationService({
     runInTx: (fn) =>
       db.transaction((tx) => {
@@ -349,6 +367,7 @@ export async function buildDbServices(
     admin,
     voids,
     adminContent,
+    adminMetrics,
     regeneration,
   };
 }
@@ -370,6 +389,7 @@ export function buildTestApp(
     admin: overrides.admin ?? memory.admin,
     voids: overrides.voids ?? memory.voids,
     adminContent: overrides.adminContent ?? memory.adminContent,
+    adminMetrics: overrides.adminMetrics ?? memory.adminMetrics,
     regeneration: overrides.regeneration ?? memory.regeneration,
   });
   return { app, lines: captured.lines };
@@ -393,6 +413,7 @@ export async function buildDbApp(
     admin: services.admin,
     voids: services.voids,
     adminContent: services.adminContent,
+    adminMetrics: services.adminMetrics,
     regeneration: services.regeneration,
   });
   return { app, lines: captured.lines, ...services };
