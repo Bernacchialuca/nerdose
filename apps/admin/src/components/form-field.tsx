@@ -9,6 +9,8 @@ const CONTROL =
 type FieldShellProps = {
   label: ReactNode;
   error?: string | undefined;
+  invalid?: boolean | undefined;
+  describedBy?: string | undefined;
   render: (aria: {
     id: string;
     'aria-invalid': true | undefined;
@@ -18,9 +20,10 @@ type FieldShellProps = {
   }) => ReactNode;
 };
 
-function FieldShell({ label, error, render }: FieldShellProps) {
+function FieldShell({ label, error, invalid, describedBy, render }: FieldShellProps) {
   const id = useId();
   const errorId = `${id}-error`;
+  const marked = Boolean(error) || invalid === true;
   return (
     <div className="flex flex-col gap-1.5">
       <label htmlFor={id} className="font-mono text-label-comment text-text-body">
@@ -28,10 +31,10 @@ function FieldShell({ label, error, render }: FieldShellProps) {
       </label>
       {render({
         id,
-        'aria-invalid': error ? true : undefined,
-        'aria-describedby': error ? errorId : undefined,
+        'aria-invalid': marked ? true : undefined,
+        'aria-describedby': error ? errorId : describedBy,
         'aria-required': true,
-        className: cn(CONTROL, error ? 'border-error' : 'border-border-interactive'),
+        className: cn(CONTROL, marked ? 'border-error' : 'border-border-interactive'),
       })}
       {error ? (
         <p id={errorId} className="font-sans text-caption text-error">
@@ -45,14 +48,25 @@ function FieldShell({ label, error, render }: FieldShellProps) {
 type TextFieldProps = Omit<ComponentPropsWithoutRef<'input'>, 'id' | 'className'> & {
   label: ReactNode;
   error?: string | undefined;
+  invalid?: boolean | undefined;
+  describedBy?: string | undefined;
   inputRef?: Ref<HTMLInputElement>;
 };
 
-export function TextField({ label, error, inputRef, ...rest }: TextFieldProps) {
+export function TextField({
+  label,
+  error,
+  invalid,
+  describedBy,
+  inputRef,
+  ...rest
+}: TextFieldProps) {
   return (
     <FieldShell
       label={label}
       error={error}
+      invalid={invalid}
+      describedBy={describedBy}
       render={(aria) => <input ref={inputRef} {...rest} {...aria} />}
     />
   );

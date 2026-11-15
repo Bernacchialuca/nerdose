@@ -32,7 +32,7 @@ Styled with Tailwind utilities from the design tokens (`bg-bg`, `text-text`, `te
 
 ## TextField / TextAreaField / SelectField
 - **Location:** apps/admin/src/components/form-field.tsx
-- **Signature:** `TextField({ label, error?, inputRef?, ...inputProps })` (same for textarea/select with `textareaRef`/`selectRef`)
+- **Signature:** `TextField({ label, error?, invalid?, describedBy?, inputRef?, ...inputProps })` (`invalid` marks the field and `describedBy` links an external alert, without own error text) (same for textarea/select with `textareaRef`/`selectRef`)
 - **Description:** visible label, `aria-invalid`, `aria-describedby` to the error text, `aria-required`.
 
 ## Tabs
@@ -49,6 +49,12 @@ Styled with Tailwind utilities from the design tokens (`bg-bg`, `text-text`, `te
 - **Signature:** `usePageTitle(title, { focusHeading? }) => RefObject<HTMLHeadingElement>`
 - **Usage:** `<h1 ref={usePageTitle('Reportes · Admin · nerdose')} tabIndex={-1}>`
 
-## formatInstant / formatRelative
+## formatInstant / formatRelative / formatDay
 - **Location:** apps/admin/src/lib/format-date.ts
-- **Signature:** `formatInstant(iso)` → `YYYY-MM-DD HH:mm`; `formatRelative(iso, now?)` → `hace 2 h`, `ayer`
+- **Signature:** `formatInstant(iso)` → `YYYY-MM-DD HH:mm`; `formatRelative(iso, now?)` → `hace 2 h`, `ayer`; `formatDay('2026-12-03')` → `03/12/2026`; `formatDayShort('2026-12-03')` → `03/12` (string slicing, no timezone)
+
+## TableRegion
+- **Location:** apps/admin/src/components/table-region.tsx
+- **Signature:** `TableRegion({ label, children })`
+- **Description:** Keyboard-reachable scroll region (`role="region"`, `tabIndex={0}`, `aria-label`) around a data table; shared by `content-stock` and `metrics`.
+- **Usage:** `<TableRegion label="Tabla de retención"><table className={dataTableClass().table}>…</table></TableRegion>`

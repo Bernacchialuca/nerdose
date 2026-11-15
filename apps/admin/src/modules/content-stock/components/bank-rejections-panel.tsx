@@ -1,7 +1,7 @@
 import { Panel, cn, dataTableClass } from '@nerdose/ui';
 
 import type { RejectionRow } from '../stock-model';
-import { TableRegion } from './table-region';
+import { TableRegion } from '@/components/table-region';
 
 export function BankRejectionsPanel({ rows }: { rows: RejectionRow[] }) {
   const c = dataTableClass();

@@ -1,8 +1,10 @@
 import { screen, waitFor, within } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { axe } from 'vitest-axe';
 
 import { STOCK_OK } from '@/test/fixtures/content-stock';
+import { METRICS_OK } from '@/test/fixtures/metrics';
+import { useMetricsClock } from '@/test/helpers';
 import { renderWithProviders } from '@/test/render';
 import { OPEN_GROUPS, SESSION, SESSION_KEY } from '@/test/fixtures/reports';
 import { FAILURES_NONE, FAILURES_ONE } from '@/test/fixtures/upcoming';
@@ -16,11 +18,10 @@ describe('Shell', () => {
     const link = await within(nav).findByRole('link', { name: /3 grupos de reportes abiertos/ });
     expect(link).toHaveTextContent('Reportes (3)');
     expect(link).toHaveAttribute('aria-current', 'page');
-    expect(within(nav).getAllByRole('link')).toHaveLength(3);
+    expect(within(nav).getAllByRole('link')).toHaveLength(4);
     expect(within(nav).getAllByRole('button')).toHaveLength(1);
     expect(within(nav).getByRole('button', { name: 'Cerrar sesión' })).toBeInTheDocument();
     expect(within(nav).getByRole('link', { name: 'Stock' })).not.toHaveAttribute('aria-current');
-    expect(screen.queryByText(/Métricas/)).toBeNull();
     expect(container.firstElementChild).toHaveClass('bg-bg', 'text-text', 'font-mono');
     expect(screen.getByRole('banner')).toBeInTheDocument();
     expect(screen.getAllByRole('main')).toHaveLength(1);
@@ -40,7 +41,6 @@ describe('Shell', () => {
     expect(items[0]).toHaveTextContent(/^Reportes/);
     expect(items[1]).toBe(link);
     expect(nav.lastElementChild).toBe(within(nav).getByRole('button', { name: 'Cerrar sesión' }));
-    expect(screen.queryByText(/Métricas/)).toBeNull();
   });
 
   it('sin fallas o si el contador falla, Próximos va sin número (TS-14)', async () => {
@@ -77,14 +77,50 @@ describe('Shell', () => {
     await within(nav).findByRole('link', { name: /1 falla de generación activa/ });
     await within(nav).findByRole('link', { name: /3 grupos de reportes abiertos/ });
     const links = within(nav).getAllByRole('link');
-    expect(links).toHaveLength(3);
+    expect(links).toHaveLength(4);
     expect(links[0]).toHaveTextContent(/^Reportes \(3\)/);
     expect(links[1]).toHaveTextContent(/^Próximos \(1\)/);
     expect(links[2]).toBe(within(nav).getByRole('link', { name: 'Stock' }));
     expect(links[2]).toHaveAttribute('href', '/content');
     expect(links[2]).toHaveAttribute('aria-current', 'page');
     expect(nav.lastElementChild).toBe(within(nav).getByRole('button', { name: 'Cerrar sesión' }));
-    expect(screen.queryByText(/Métricas/)).toBeNull();
+  });
+
+  it('encabezado con Métricas entre Stock y Cerrar sesión (TS-40)', async () => {
+    useMetricsClock();
+    try {
+      server.use(
+        adminHandlers.metrics(METRICS_OK),
+        adminHandlers.reports('open', OPEN_GROUPS),
+        adminHandlers.generationFailures(FAILURES_ONE),
+      );
+      const first = renderWithProviders({
+        route: '/metrics?from=2026-12-01&to=2026-12-03',
+        session: SESSION,
+      });
+      const nav = await screen.findByRole('navigation', { name: 'Secciones' });
+      await within(nav).findByRole('link', { name: /1 falla de generación activa/ });
+      await within(nav).findByRole('link', { name: /3 grupos de reportes abiertos/ });
+      const links = within(nav).getAllByRole('link');
+      expect(links).toHaveLength(4);
+      expect(links[0]).toHaveTextContent(/^Reportes \(3\)/);
+      expect(links[1]).toHaveTextContent(/^Próximos \(1\)/);
+      expect(links[2]).toHaveTextContent(/^Stock$/);
+      expect(links[3]).toBe(within(nav).getByRole('link', { name: 'Métricas' }));
+      expect(links[3]).toHaveAttribute('href', '/metrics');
+      expect(links[3]).toHaveAttribute('aria-current', 'page');
+      expect(nav.lastElementChild).toBe(within(nav).getByRole('button', { name: 'Cerrar sesión' }));
+      first.unmount();
+
+      renderWithProviders({ route: '/reports', session: SESSION });
+      const other = await screen.findByRole('navigation', { name: 'Secciones' });
+      await within(other).findByRole('link', { name: /3 grupos de reportes abiertos/ });
+      expect(within(other).getByRole('link', { name: 'Métricas' })).not.toHaveAttribute(
+        'aria-current',
+      );
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('Cerrar sesión descarta el token solo en el cliente (TS-22)', async () => {

@@ -20,6 +20,7 @@ export const routes: RouteObject[] = [
       { path: 'reports', lazy: () => import('@/modules/reports/routes/reports') },
       { path: 'upcoming', lazy: () => import('@/modules/upcoming/routes/upcoming') },
       { path: 'content', lazy: () => import('@/modules/content-stock/routes/content') },
+      { path: 'metrics', lazy: () => import('@/modules/metrics/routes/metrics') },
     ],
   },
 ];

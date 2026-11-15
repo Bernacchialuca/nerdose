@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatInstant, formatInstantUtc, formatRelative, formatTime } from './format-date';
+import {
+  formatDay,
+  formatDayShort,
+  formatInstant,
+  formatInstantUtc,
+  formatRelative,
+  formatTime,
+} from './format-date';
 
 const now = new Date('2026-11-11T12:00:00Z');
 
@@ -23,5 +30,13 @@ describe('format-date', () => {
 
   it('formatTime (TS-4)', () => {
     expect(formatTime('2026-12-01T14:02:00Z')).toBe('14:02');
+  });
+});
+
+describe('formatDay / formatDayShort', () => {
+  it('formatea el día sin depender de la zona horaria (TS-8)', () => {
+    expect(formatDay('2026-12-03')).toBe('03/12/2026');
+    expect(formatDayShort('2026-12-03')).toBe('03/12');
+    expect(formatDay('2025-01-09')).toBe('09/01/2025');
   });
 });

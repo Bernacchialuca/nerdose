@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
@@ -122,6 +122,51 @@ describe('guardas estáticas del código de producción', () => {
       expect(content, file).not.toContain('switch (');
       expect(content, file).not.toMatch(/=== '(devdle|grep-grid|timeline|terms|timeline_facts)'/);
     }
+  });
+});
+
+describe('guardas de métricas y analítica (CA-6)', () => {
+  const files = sourceFiles(srcDir, ['.ts', '.tsx']).filter((f) => !isTest(f));
+  const read = (rel: string) => readFileSync(fileURLToPath(new URL(rel, import.meta.url)), 'utf8');
+
+  it('el admin no importa analítica ni librerías de gráficos (TS-41)', () => {
+    for (const file of files) {
+      const content = readFileSync(file, 'utf8');
+      expect(content, file).not.toMatch(/plausible/i);
+      expect(content, file).not.toContain('injectAnalytics');
+      expect(content, file).not.toContain('AnalyticsEvent');
+      expect(content, file).not.toMatch(/import\s*\{[^}]*\btrack\b[^}]*\}\s*from\s*'@nerdose\/ui'/);
+    }
+    expect(read('../index.html').match(/<script/g)).toHaveLength(1);
+    expect(read('../index.html')).toContain('/src/main.tsx');
+    const pkg = JSON.parse(read('../package.json')) as {
+      dependencies?: Record<string, string>;
+      devDependencies?: Record<string, string>;
+    };
+    const names = [
+      ...Object.keys(pkg.dependencies ?? {}),
+      ...Object.keys(pkg.devDependencies ?? {}),
+    ];
+    for (const name of names) {
+      expect(name, name).not.toMatch(
+        /chart|recharts|d3|victory|nivo|echarts|plotly|apexcharts|plausible|analytics|tanstack\/react-table/,
+      );
+    }
+  });
+
+  it('el módulo metrics no importa juegos ni ramifica por juego y TableRegion es compartida (TS-42)', () => {
+    const own = files.filter((f) => f.includes('modules/metrics/'));
+    expect(own.length).toBeGreaterThan(0);
+    for (const file of own) {
+      const content = readFileSync(file, 'utf8');
+      expect(content, file).not.toContain('@nerdose/game-');
+      expect(content, file).not.toContain('switch (');
+      expect(content, file).not.toMatch(/=== '(devdle|grep-grid|timeline|big-o|bug-hunt)'/);
+      expect(content, file).not.toContain('sessionStorage');
+      expect(content, file).not.toContain('localStorage');
+    }
+    expect(existsSync(`${srcDir}modules/content-stock/components/table-region.tsx`)).toBe(false);
+    expect(existsSync(`${srcDir}components/table-region.tsx`)).toBe(true);
   });
 });
 

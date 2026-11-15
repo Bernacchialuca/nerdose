@@ -51,3 +51,12 @@ export function formatInstantUtc(iso: string): string {
   );
   return `${part.year}-${part.month}-${part.day} ${part.hour}:${part.minute} UTC`;
 }
+
+// Fechas de día (`YYYY-MM-DD`, UTC): se cortan como texto, sin `Date`, para no depender de la zona.
+export function formatDay(day: string): string {
+  return `${day.slice(8, 10)}/${day.slice(5, 7)}/${day.slice(0, 4)}`;
+}
+
+export function formatDayShort(day: string): string {
+  return `${day.slice(8, 10)}/${day.slice(5, 7)}`;
+}
