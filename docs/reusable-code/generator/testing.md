@@ -24,6 +24,12 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 - **Description:** Big O pipeline helpers. `forcedRecipe` pins the recipe instead of the seeded one; `withRunner` swaps `verify` for `createVerify({ run })`; `scriptedRunner` numbers calls per round (3 per verify: js, go, java) and falls back to the real toolchain when the script returns `undefined`; `approveBigO` approves a day with the real pipeline.
 - **Usage:** `withRunner(bigO, scriptedRunner(({ round, lang }) => round === 0 && lang === 'go' ? TIMEOUT : undefined))`
 
+## bugHunt / bugHuntOnly / BH_CHECKS / withBugHuntRunner / scriptedBugHuntRunner / countingRunner / firstCandidate / equivalentOf / onePassingOf / bump / approveBugHunt
+- **Location:** apps/generator/test/helpers/bug-hunt.ts
+- **Signature:** `withBugHuntRunner(entry, run: Runner)`; `scriptedBugHuntRunner(script: ({ round, variant, lang, real }) => RunOutcome | Promise<RunOutcome> | undefined): Runner`; `countingRunner(): { run: Runner; calls(): number }`; `firstCandidate(entry, mutate: (p: BugHuntPayload) => BugHuntPayload)`; `equivalentOf(p)`; `onePassingOf(p)`; `bump(o: RunOutcome)`; `approveBugHunt(svc: Db, date, env = ENV)`; `bugHunt`, `bugHuntOnly`, `BH_CHECKS`
+- **Description:** Bug Hunt pipeline helpers. `scriptedBugHuntRunner` counts calls per language (inside a language the correct and mutant variants run in sequence): with `i = calls[lang]++`, `round = floor(i / 2)` and `variant = i % 2 === 0 ? 'correct' : 'mutant'`; it falls back to the real toolchain when the script returns `undefined`. `firstCandidate` applies `mutate` only to the first candidate `generate` returns, so the retry is a real one. `equivalentOf` and `onePassingOf` force the in-memory rejections (`equivalent_mutant`, `not_enough_passing`) on a real payload; `countingRunner` proves no code ran. `bump` adds 1 to the last printed value to force a language disagreement. `BH_CHECKS` is the literal list of the 13 check names.
+- **Usage:** `withBugHuntRunner(bugHunt, scriptedBugHuntRunner(({ round, variant, lang }) => round === 0 && variant === 'mutant' && lang === 'go' ? TIMEOUT : undefined))`
+
 ## global-setup (ownerUrl / generatorUrl)
 - **Location:** apps/generator/test/global-setup.ts
 - **Description:** starts `postgres:16-alpine`, runs `createRoles` + `migrateAsOwner` from `@nerdose/db/testing`, provides `ownerUrl` and `generatorUrl`

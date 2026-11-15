@@ -7,5 +7,7 @@ export default defineConfig({
     root: fileURLToPath(new URL('.', import.meta.url)),
     include: ['src/**/*.test.ts', 'test/**/*.test.ts'],
     environment: 'node',
+    // The integration tests compile and run Go and Java; the default 5 s is not enough.
+    testTimeout: 60_000,
   },
 });

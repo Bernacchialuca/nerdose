@@ -1,6 +1,8 @@
 import { AppError } from '@nerdose/core';
 import { payloadSchema as bigOPayloadSchema } from '@nerdose/game-big-o/definition';
 import { generator as bigOGenerator } from '@nerdose/game-big-o/generator';
+import { payloadSchema as bugHuntPayloadSchema } from '@nerdose/game-bug-hunt/definition';
+import { generator as bugHuntGenerator } from '@nerdose/game-bug-hunt/generator';
 import { generator } from '@nerdose/game-devdle/generator';
 import { generator as grepGridGenerator } from '@nerdose/game-grep-grid/generator';
 import { generator as timelineGenerator } from '@nerdose/game-timeline/generator';
@@ -9,8 +11,14 @@ import { describe, expect, it } from 'vitest';
 import { createGeneratorRegistry, generatorRegistry } from '@/games/registry';
 
 describe('generatorRegistry', () => {
-  it('registra devdle, grep-grid, timeline y big-o', () => {
-    expect(generatorRegistry.ids()).toEqual(['devdle', 'grep-grid', 'timeline', 'big-o']);
+  it('registra devdle, grep-grid, timeline, big-o y bug-hunt', () => {
+    expect(generatorRegistry.ids()).toEqual([
+      'devdle',
+      'grep-grid',
+      'timeline',
+      'big-o',
+      'bug-hunt',
+    ]);
     const entry = generatorRegistry.get('devdle');
     expect(entry).toMatchObject({ gameId: 'devdle', generator, version: 'devdle@1' });
     expect(entry.payloadSchema).toBeDefined();
@@ -32,12 +40,16 @@ describe('generatorRegistry', () => {
     expect(bigO).toMatchObject({ gameId: 'big-o', generator: bigOGenerator, version: 'big-o@1' });
     expect(bigO.generator).toBe(bigOGenerator);
     expect(bigO.payloadSchema).toBe(bigOPayloadSchema);
+    const bugHunt = generatorRegistry.get('bug-hunt');
+    expect(bugHunt).toMatchObject({ gameId: 'bug-hunt', version: 'bug-hunt@1' });
+    expect(bugHunt.generator).toBe(bugHuntGenerator);
+    expect(bugHunt.payloadSchema).toBe(bugHuntPayloadSchema);
   });
 
   it('lanza not_found con un juego no registrado', () => {
     let error: unknown;
     try {
-      generatorRegistry.get('bug-hunt');
+      generatorRegistry.get('nope');
     } catch (e) {
       error = e;
     }

@@ -90,12 +90,12 @@ sequenceDiagram
 
 **Historia (una vez por fecha `D`, antes de los intentos):** `historyWindow(D, historySpec)` de `apps/generator/src/domain/challenge-publishing/generate.ts`.
 - `recentChallenges`: **Tabla** `challenges` — SELECT `date`, `payload` WHERE `game_id` AND `date BETWEEN D - recentDays AND D + aheadDays` AND `date <> D` AND `status IN ('approved','published','voided')` ORDER BY `date`. `aheadDays` es opcional en `HistorySpec` (default 0: la ventana queda `[D - recentDays, D - 1]`). Se excluye la fila de `D` para que, en una regeneración, el `approved` viejo de `D` no cuente contra su reemplazo. Los `voided` sí cuentan; los `rejected` (incluido un regenerado) no.
-- `bankItems`: en devdle, grep-grid y timeline, los ítems `approved` del banco con su `last_used_*`. En big-o (`bank: null`) es `[]`.
-- `historySpec` por juego: devdle `{ bank: 'terms', lastUsedField: 'last_used_devdle', recentDays: 3 }` (los 365 días del término los cubre `last_used_devdle`); grep-grid `{ bank: 'terms', lastUsedField: 'last_used_grep', recentDays: 30 }`; timeline `{ bank: 'timeline_facts', lastUsedField: 'last_used', recentDays: 90 }`; big-o `{ bank: null, lastUsedField: '', recentDays: 30, aheadDays: 30 }`. Los juegos con banco no necesitan `aheadDays`, porque `GREATEST(last_used_*, D)` ya refleja los aprobados a futuro. Big O no tiene banco: sin la ventana hacia adelante, rellenar un hueco intermedio o regenerar podría repetir una receta ya aprobada para días posteriores.
+- `bankItems`: en devdle, grep-grid y timeline, los ítems `approved` del banco con su `last_used_*`. En big-o y bug-hunt (`bank: null`) es `[]`.
+- `historySpec` por juego: devdle `{ bank: 'terms', lastUsedField: 'last_used_devdle', recentDays: 3 }` (los 365 días del término los cubre `last_used_devdle`); grep-grid `{ bank: 'terms', lastUsedField: 'last_used_grep', recentDays: 30 }`; timeline `{ bank: 'timeline_facts', lastUsedField: 'last_used', recentDays: 90 }`; big-o `{ bank: null, lastUsedField: '', recentDays: 30, aheadDays: 30 }`; bug-hunt `{ bank: null, lastUsedField: '', recentDays: 60, aheadDays: 60 }`. Los juegos con banco no necesitan `aheadDays`, porque `GREATEST(last_used_*, D)` ya refleja los aprobados a futuro. Big O y Bug Hunt no tienen banco: sin la ventana hacia adelante, rellenar un hueco intermedio o regenerar podría repetir una receta (big-o) o una combinación (bug-hunt) ya aprobada para días posteriores.
 
 **Acción por intento:**
 - `seed = HMAC-SHA256(GENERATOR_SECRET, "{game_id}:{date}:{attempt}")` → `pure-rand`.
-- `candidate = payloadSchema.parse(games[game_id].generator.generate({ date, seed, history }))`. El payload de big-o lleva `date` (= `D`, primera clave): `verify` no recibe la fecha y los checks de variedad la necesitan.
+- `candidate = payloadSchema.parse(games[game_id].generator.generate({ date, seed, history }))`. El payload de big-o y de bug-hunt lleva `date` (= `D`, primera clave): `verify` no recibe la fecha y los checks de variedad la necesitan.
 
 **Operación de BD:**
 - **Tabla:** `challenges` — INSERT (`game_id`, `date`, `number = date − LAUNCH_DATE + 1`, `payload`, `status = 'draft'`, `generator_version`, `seed`, `attempt`)
@@ -117,7 +117,17 @@ sequenceDiagram
   9. `fit_quality`, `fit_unambiguous`, `fit_matches_answer`: ajuste de los conteos contra las 8 clases por coeficiente de variación de `c(n) / g(n)` (`FIT_MAX_CV = 0.10` → si no, `poor_fit`; segundo mejor con `CV ≥ max(2 × CV_mejor, 0.10)` → si no, `ambiguous_fit`; el mejor modelo tiene que ser `answer` → si no, `fit_mismatch`). El `detail` guarda la escala, los conteos y el CV de cada modelo para el log del admin.
 
   Escala de `n` según `answer` (`SCALE` en `scale.ts`): `o_1`, `o_log_n`, `o_n`, `o_n_log_n` → 2⁸ … 2¹⁶; `o_n2` → 2⁶ … 2¹²; `o_n3` → 2⁴ … 2⁹; `o_2n` → 10 … 20; `o_n_fact` → 4 … 10. `verification.reason` es el `name` del primer check que falla, salvo en los `run_<lang>`, donde es `run_<lang>: <kind>` (p. ej. `run_go: timeout`, `run_java: toolchain_missing`, `run_js: invalid_output`);
-- bug-hunt: `polyglot.run` de la correcta y la mutada en js/go/java; la correcta coincide; la mutada falla ≥ 1 test con el mismo resultado en los 3; ≥ 2 pasan; línea del bug ∈ `pickable_lines`.
+- bug-hunt (`packages/games/bug-hunt/src/generator/verify.ts`): 13 checks en este orden, con `name` estable. Los 5 primeros corren en memoria y se calculan todos; si alguno falla, la ejecución no corre y los checks 6-13 quedan `ok: false` con `detail = 'skipped'`:
+  1. `texts_bilingual`: `spec` y todos los `explanation.steps` con `es` y `en` no vacíos.
+  2. `code_shape`: en cada lenguaje 8-15 líneas y ≤ 3 niveles de anidamiento, la misma cantidad de líneas en los 3 y sin comentarios.
+  3. `lines_consistent`: `pickable_lines` ascendente y sin repetidos, dentro de `[2, líneas − 1]`, ninguna es una línea de solo llaves en ningún lenguaje y contiene `bug_line`; en cada lenguaje la línea `bug_line` de `code` es distinta de `fix[lang]` y tiene la misma indentación.
+  4. `tests_consistent`: `failing_test` y `visible_tests` pertenecen a `tests`; ≥ 1 test con `actual ≠ expected` (si no, `equivalent_mutant`); ≥ 2 con `actual = expected` y 2 ≤ `visible_tests` ≤ 3, todos de esos (si no, `not_enough_passing`); `failing_test` es el más chico que falla y no está entre los visibles.
+  5. `variety_combo`: la clave `template:params:operator@node:to` no aparece en los `recentChallenges` de `[D - 59, D + 59]` sin la fila de `D`. Sin `date` en el payload falla con `missing date`.
+  6. `run_correct_js`, `run_correct_go`, `run_correct_java`, `run_mutant_js`, `run_mutant_go`, `run_mutant_java`: la correcta es `code` con `fix[lang]` en la línea `bug_line`; `wrapFunction(código, lang, { entry: function_name, calls: tests[].input, signature })` arma un `main` por variante y lenguaje con la función tal cual y `runInLanguage` de `@nerdose/polyglot` lo corre. Los lenguajes van en paralelo y, dentro de cada uno, la correcta y después la mutada (6 ejecuciones por candidato; 10 s de timeout, `execFile` sin shell, usuario no root). Falla con `detail` = `kind (duración): primera línea de stderr` si el runner devuelve `toolchain_missing`, `timeout`, `compile_error`, `runtime_error` u `output_too_large`, con `invalid_output` si la salida no es un entero o booleano por test, o con `harness_error` si no se pudo armar el programa.
+  7. `correct_agrees`: los 3 lenguajes dan lo mismo en la correcta y coincide con `tests[].expected`.
+  8. `mutant_agrees`: los 3 lenguajes dan lo mismo en la mutada y coincide con `tests[].actual`.
+
+  `verification.reason` es el `name` del primer check que falla, salvo en `run_<variante>_<lang>` (`run_<variante>_<lang>: <kind>`, p. ej. `run_mutant_go: timeout`, `run_correct_java: compile_error`) y en `tests_consistent` cuando el motivo es `tests_consistent: equivalent_mutant` o `tests_consistent: not_enough_passing`.
 
 **Operación de BD (ok):**
 - **Tabla:** `challenges` — UPDATE `status = 'approved'`, `verification`
@@ -161,9 +171,10 @@ La fila es la alerta (ADR-017): no se envía nada. El admin la ve en Próximos d
 | Paso | Error | Código | Response | Comportamiento |
 |------|-------|--------|----------|---------------|
 | 1 | Otra corrida tiene el lock | — | — | Sale sin hacer nada |
-| 3 | El código emitido no compila o el runner hace timeout (10 s) | — | `verification.ok = false`, `reason = run_<lang>: compile_error \| timeout` | Candidato `rejected`; siguiente `attempt` |
-| 3 | Falta un toolchain (`node`, `go` o `java` no está en el `PATH`) | — | `reason = run_<lang>: toolchain_missing` | Candidato `rejected`, nunca una excepción. El job sigue; si es mañana, termina en el paso 4. Al arrancar, el `generator` loguea un `warn` `Toolchain missing at startup` por cada toolchain que falte (Go ≥ 1.25, JDK 21), pero no se niega a arrancar |
+| 3 | El código emitido no compila o el runner hace timeout (10 s) | — | `verification.ok = false`, `reason = run_<lang>: compile_error \| timeout` (`run_<variante>_<lang>: …` en bug-hunt) | Candidato `rejected`; siguiente `attempt` |
+| 3 | Falta un toolchain (`node`, `go` o `java` no está en el `PATH`) | — | `reason = run_<lang>: toolchain_missing` (`run_<variante>_<lang>: …` en bug-hunt) | Candidato `rejected`, nunca una excepción. El job sigue; si es mañana, termina en el paso 4. Al arrancar, el `generator` loguea un `warn` `Toolchain missing at startup` por cada toolchain que falte (Go ≥ 1.25, JDK 21), pero no se niega a arrancar |
 | 3 | Big O: los lenguajes no concuerdan, el ajuste es ambiguo o no coincide con `answer`, o la receta/respuesta viola la variedad | — | `reason = counts_agree \| fit_unambiguous \| fit_matches_answer \| variety_recipe \| variety_answer …` | Candidato `rejected`; siguiente `attempt` con otro seed. La regla de variedad no se relaja: si el catálogo no alcanza, la falla queda en `generation_failures` |
+| 3 | Bug Hunt: mutante equivalente, menos de 2 tests que pasan, la correcta o la mutada no concuerdan entre lenguajes o con lo guardado, o la combinación viola la variedad | — | `reason = tests_consistent: equivalent_mutant \| tests_consistent: not_enough_passing \| correct_agrees \| mutant_agrees \| variety_combo …` | Candidato `rejected`; siguiente `attempt` con otro seed. Ninguna regla se relaja: si no hay candidato válido, la falla queda en `generation_failures` |
 | 3 | El banco no tiene ítems fuera de la ventana | — | `verification.reason` | Candidatos `rejected`; termina en el paso 4 si es mañana |
 | 3 | Error de BD en un candidato | — | — | Se loguea; sigue con el próximo hueco; `job_runs.status = 'failed'` al final |
 
@@ -182,8 +193,10 @@ La fila es la alerta (ADR-017): no se envía nada. El admin la ve en Próximos d
 - Nunca se genera para `today`: si llega el día sin desafío, el juego muestra "sin desafío hoy" y el día es neutro (ADR-007).
 - Con 14 días de margen, el `generator` puede estar caído hasta 13 días sin dejar un juego sin desafío (NFR-A03).
 - El `payload` y el `seed` quedan inmutables desde `approved` (trigger `challenges_payload_immutable`).
-- La verificación de big-o ejecuta código solo en el `generator`, y solo el código emitido por los emisores de `@nerdose/polyglot` (nunca texto externo). Agrega unos segundos por candidato (arranque de la JVM y `go build`); el margen de 14 días lo absorbe y nunca está en la ruta de una jugada.
+- La verificación de big-o y bug-hunt ejecuta código solo en el `generator`, y solo el código emitido por los emisores de `@nerdose/polyglot` (nunca texto externo). Agrega unos segundos por candidato (arranque de la JVM y `go build`; en bug-hunt son 6 ejecuciones, ~2 s); el margen de 14 días lo absorbe y nunca está en la ruta de una jugada.
 
 > Actualizado por REQ-006 (stories S-025 a S-029): ver el diseño técnico del request para los cambios de Timeline.
 
 > Actualizado por REQ-009 (stories S-042 y S-045): ventana de historia con `aheadDays` sin la fila de `D`, `verify` asíncrono, checks de verificación de Big O con ejecución en JS, Go y Java, y `toolchain_missing`.
+
+> Actualizado por REQ-010 (story S-050): checks de verificación de Bug Hunt con ejecución de la correcta y la mutada en JS, Go y Java, su `historySpec` (60/60 sin la fila de `D`) y Bug Hunt en el registry del `generator`.

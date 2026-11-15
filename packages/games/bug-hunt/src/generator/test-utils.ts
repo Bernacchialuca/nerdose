@@ -1,17 +1,21 @@
-import { BUG_TYPES } from '@nerdose/core';
+import { BUG_TYPES, rngFrom, type BugType } from '@nerdose/core';
 import { createTreeBuilder, evaluate, type FuncNode } from '@nerdose/polyglot';
 import { expect } from 'vitest';
 
 import { payloadSchema, type BugHuntPayload } from '../definition';
 
-import { TEMPLATES, templateById } from './catalog';
+import { combosFor, TEMPLATES, templateById } from './catalog';
+import { evaluateCandidate } from './evaluate-candidate';
 import { mutationsOf, type MutationCandidate } from './mutation/candidates';
+import { buildPayload } from './payload';
 import { MAX_LINES, MAX_NESTING, measureCode, MIN_LINES } from './shape';
-import { EVAL_STEP_LIMIT, selectTests, TEST_COUNT } from './tests';
+import { D, seedFrom } from './test-fixtures';
+import { buildTests, EVAL_STEP_LIMIT, selectTests, TEST_COUNT } from './tests';
+import type { Template } from './types';
 
 const LANGS = ['js', 'go', 'java'] as const;
 
-/** Everything `verify` (S-050) will check about the shape of a payload, minus the runs. */
+/** The in-memory checks of `verify`, minus the runs. */
 export function assertValidPayload(p: BugHuntPayload): void {
   payloadSchema.parse(p);
   expect(p.spec.es.length).toBeGreaterThan(0);
@@ -92,3 +96,37 @@ export function allCandidates(): Pick<BugHuntPayload, 'template' | 'params' | 'm
 
 export const evalOutcome = (func: FuncNode, input: BugHuntPayload['tests'][number]['input']) =>
   evaluate(func, input, { maxSteps: EVAL_STEP_LIMIT });
+
+/**
+ * A deterministic payload for a (template, bug type) pair of the real catalog: the first
+ * combination with a valid candidate, with its own seeded tests and an empty variety window.
+ */
+export function catalogPayload(template: Template, bugType: BugType, date = D): BugHuntPayload {
+  for (const params of combosFor(template, bugType)) {
+    const built = template.build(params, createTreeBuilder());
+    const tests = buildTests(
+      template,
+      params,
+      built.func,
+      rngFrom(seedFrom(`catalog-${template.id}-${bugType}`, 0)),
+    );
+    for (const candidate of mutationsOf(built, bugType)) {
+      const verdict = evaluateCandidate(candidate, tests, new Set(), {
+        template: template.id,
+        params,
+      });
+      if (verdict.verdict === 'ok') {
+        return buildPayload({
+          date,
+          template,
+          params,
+          built,
+          candidate,
+          tests: verdict.tests,
+          selection: verdict.selection,
+        });
+      }
+    }
+  }
+  throw new Error(`catalogPayload: no valid candidate for ${template.id}:${bugType}`);
+}

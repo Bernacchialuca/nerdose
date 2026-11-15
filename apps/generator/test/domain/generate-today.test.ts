@@ -43,7 +43,7 @@ describe('generate:today (solo dev)', () => {
   it('genera y aprueba el desafío de hoy, y nada más', async () => {
     const { summary, failed } = await run();
     expect(failed).toBe(false);
-    expect(summary.approved).toBe(4);
+    expect(summary.approved).toBe(5);
     expect(summary.missing).toBe(0);
     expect(summary.generated).toBe(summary.approved + summary.rejected);
     const rows = await allRows();
@@ -54,6 +54,7 @@ describe('generate:today (solo dev)', () => {
       ['grep-grid', '2026-12-01', 12],
       ['timeline', '2026-12-01', 12],
       ['big-o', '2026-12-01', 12],
+      ['bug-hunt', '2026-12-01', 12],
     ]);
   });
 
@@ -67,6 +68,7 @@ describe('generate:today (solo dev)', () => {
       'grep-grid',
       'timeline',
       'big-o',
+      'bug-hunt',
     ]);
   });
 

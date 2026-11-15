@@ -61,14 +61,14 @@ export function rngFrom(seed: Uint8Array) {
 const spec = generator.historySpec;
 const window = historyWindow(date, spec);                               // [D - recentDays, D + aheadDays], excluding D
 const history = {
-  bankItems: await repo.bankItems(spec),                                // [] when spec.bank is null (big-o)
+  bankItems: await repo.bankItems(spec),                                // [] when spec.bank is null (big-o, bug-hunt)
   recentChallenges: await repo.recentChallenges(gameId, window.from, window.to, payloadSchema, window.exclude),
 };
 for (let attempt = 0; attempt < env.GENERATION_MAX_ATTEMPTS; attempt++) {
   const seed = seedFor(env.GENERATOR_SECRET, gameId, date, attempt);
   const payload = payloadSchema.parse(generator.generate({ date, seed, history }));   // deterministic
   const id = await repo.insertDraft({ gameId, date, number: challengeNumber(date, env.LAUNCH_DATE), payload, seed, generator_version });
-  const log = await generator.verify(payload, history);                 // may be async: runs code via polyglot in big-o
+  const log = await generator.verify(payload, history);                 // may be async: runs code via polyglot in big-o and bug-hunt
   if (log.ok) { await repo.approve(id, log); await banks.touchLastUsed(payload); return id; }
   await repo.reject(id, log);
 }
@@ -134,3 +134,9 @@ import { generator as devdle } from '@nerdose/game-devdle/generator';
 - `HistorySpec.aheadDays?: number` (default 0). `historyWindow(date, spec)` returns `{ from: D - recentDays, to: D + aheadDays, exclude: D }` and `ChallengePublishingRepository.recentChallenges(gameId, from, to, payloadSchema, excludeDate)` applies it. Games with a bank do not need `aheadDays` (`GREATEST(last_used_*, D)` already reflects approved challenges in the future); Big O has no bank and uses it so that filling an intermediate gap or regenerating cannot repeat a recipe approved for a later day. **Adopted in S-042.**
 - Big O registers as `{ gameId: 'big-o', generator, payloadSchema, version: 'big-o@1' }` with `historySpec = { bank: null, lastUsedField: '', recentDays: 30, aheadDays: 30 }` and `usedBankItems = () => []`; `approve` touches no bank. Its payload carries `date` (optional in the schema, always set by `generate`) because `verify` has no date argument and the variety checks need it. The `verify` checks (`texts_bilingual`, `code_shape`, `variety_recipe`, `variety_answer`, `run_js`, `run_go`, `run_java`, `counts_agree`, `counts_in_range`, `example_matches_run`, `fit_quality`, `fit_unambiguous`, `fit_matches_answer`) are listed in the flow `generacion-diaria`. **Adopted in S-045.**
 - Startup `warn` for missing toolchains (`apps/generator/src/infra/toolchains/warn-missing-toolchains.ts`). **Adopted in S-045.**
+
+## Update (REQ-010)
+
+- Bug Hunt registers as `{ gameId: 'bug-hunt', generator, payloadSchema, version: 'bug-hunt@1' }` with `historySpec = { bank: null, lastUsedField: '', recentDays: 60, aheadDays: 60 }` and `usedBankItems = () => []`; `approve` touches no bank. Its payload carries `date` (first key) because `verify` has no date argument and `variety_combo` needs it. **Adopted in S-050.**
+- `verify` runs 5 checks in memory (`texts_bilingual`, `code_shape`, `lines_consistent`, `tests_consistent`, `variety_combo`) and, only if all pass, 6 executions: the correct version (`bug_line` replaced by `fix[lang]`) and the mutant in JS, Go and Java, languages in parallel and the two variants of each language in sequence (at most 3 subprocesses per candidate). Then `correct_agrees` and `mutant_agrees`. The checks are listed in the flow `generacion-diaria`. **Adopted in S-050.**
+- `verification.reason` is the `name` of the first failing check, except `run_<variant>_<lang>: <kind>` (`run_mutant_go: timeout`) and `tests_consistent: equivalent_mutant | not_enough_passing`. When `generate` finds no valid candidate it still returns one so that `verify` rejects it with its reason; after `GENERATION_MAX_ATTEMPTS` the failure is recorded as for any game (ADR-017).

@@ -32,7 +32,7 @@ afterEach(async () => {
   await Promise.all(closers.splice(0).map((close) => close()));
 });
 
-const GAME_IDS = ['devdle', 'grep-grid', 'timeline', 'big-o'];
+const GAME_IDS = ['devdle', 'grep-grid', 'timeline', 'big-o', 'bug-hunt'];
 const plusDays = (days: number) => {
   const day = new Date(`${today(new Date())}T00:00:00.000Z`);
   day.setUTCDate(day.getUTCDate() + days);
@@ -74,7 +74,7 @@ describe('proceso del generator', () => {
   it('arranca en orden: rol, sync_banks, fill y scheduler', async () => {
     const url = inject('generatorUrl');
     running = startGenerator(startEnv());
-    const started = await running.waitForLog(isStarted, 90_000);
+    const started = await running.waitForLog(isStarted, 120_000);
     expect(started.jobs).toBe(1);
     const all = running.parsed();
     const indexOf = (predicate: (line: Record<string, unknown>) => boolean) =>
@@ -120,11 +120,11 @@ describe('proceso del generator', () => {
     expect(raw).not.toContain(SECRET);
     expect(raw).not.toContain(new URL(url).password);
     expect(raw).not.toContain(url);
-  }, 120_000);
+  }, 150_000);
 
   it('regenera por NOTIFY y se apaga limpio sin conexiones LISTEN abiertas', async () => {
     running = startGenerator(startEnv());
-    await running.waitForLog((l) => l.msg === 'Queue listener started', 90_000);
+    await running.waitForLog((l) => l.msg === 'Queue listener started', 120_000);
     const all = running.parsed();
     const iScheduler = all.findIndex(isStarted);
     const iQueue = all.findIndex((l) => l.msg === 'Queue listener started');
@@ -158,7 +158,7 @@ describe('proceso del generator', () => {
       SELECT 1 FROM pg_stat_activity WHERE usename = 'nerdose_generator' AND query LIKE 'LISTEN%'`;
     expect(listening).toHaveLength(0);
     expect(running.lines().join('\n')).not.toContain(SECRET);
-  }, 120_000);
+  }, 150_000);
 
   it('se apaga con SIGTERM, código 0 y sin locks tomados', async () => {
     running = startGenerator(startEnv({ LAUNCH_DATE: plusDays(14) }));

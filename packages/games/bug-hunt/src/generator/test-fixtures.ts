@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 
 import type { GeneratorHistory, RecentChallenge } from '@nerdose/core';
+import type { Language, RunOptions, RunOutcome } from '@nerdose/polyglot';
 
 import type { BugHuntPayload } from '../definition';
 import { PAYLOAD } from '../definition/test-fixtures';
@@ -165,3 +166,34 @@ export const rowWithKey = (
   date: string,
   identity: Pick<BugHuntPayload, 'template' | 'params' | 'mutation'>,
 ): RecentChallenge<BugHuntPayload> => recent(date, payloadWith(date, identity));
+
+export type FakeCall = { lang: Language; source: string; options: RunOptions | undefined };
+export type FakeOverride = readonly (number | boolean)[] | string | RunOutcome;
+export type FakeOverrides = Partial<Record<`${'correct' | 'mutant'}_${Language}`, FakeOverride>>;
+
+const toStdout = (values: readonly (number | boolean)[]): string => `${values.join('\n')}\n`;
+
+/**
+ * A runner that never executes anything: per language the 1st call is the correct version and the
+ * 2nd the mutant; by default it prints the stored `expected` / `actual`.
+ */
+export function fakeRunnerFor(p: BugHuntPayload, overrides: FakeOverrides = {}) {
+  const calls: FakeCall[] = [];
+  const seen: Record<Language, number> = { js: 0, go: 0, java: 0 };
+  const run = (lang: Language, source: string, options?: RunOptions): Promise<RunOutcome> => {
+    calls.push({ lang, source, options });
+    const variant = seen[lang]++ === 0 ? 'correct' : 'mutant';
+    const override = overrides[`${variant}_${lang}`];
+    if (override !== undefined && typeof override === 'object' && !Array.isArray(override)) {
+      return Promise.resolve(override as RunOutcome);
+    }
+    const values =
+      override !== undefined
+        ? override
+        : p.tests.map((t) => (variant === 'correct' ? t.expected : t.actual));
+    const stdout =
+      typeof values === 'string' ? values : toStdout(values as readonly (number | boolean)[]);
+    return Promise.resolve({ ok: true, stdout, durationMs: 120 });
+  };
+  return { run, calls };
+}
