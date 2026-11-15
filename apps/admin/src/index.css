@@ -13,4 +13,9 @@
     @apply bg-bg;
     color-scheme: dark;
   }
+  /* Destinos de foco programático (h1 al navegar, avisos): no son tabulables, así que el
+     anillo del navegador no aporta y se ve como un borde blanco al entrar a la página. */
+  [tabindex='-1']:focus {
+    outline: none;
+  }
 }
