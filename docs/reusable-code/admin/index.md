@@ -46,7 +46,7 @@ App `apps/admin` (not a package; imported through the `@/` alias → `src/`). Vi
 - **renderWithProviders** (apps/admin/src/test/render.tsx) - Renders routes with QueryClient, AuthProvider and the HTTP hooks; returns `{ queryClient, router, user }`
 - **test setup** (apps/admin/src/test/setup.ts) - jest-dom, axe matchers, MSW lifecycle, `TZ=UTC`, session cleanup
 - **msw server / adminHandlers / requests** (apps/admin/src/test/msw.ts) - MSW server with recording handlers for the admin endpoints (reports, void, login, upcoming, regenerate, generation-failures; default unrecorded `generation-failures` handler)
-- **upcoming fixtures** (apps/admin/src/test/fixtures/upcoming.ts) - `upcoming()` builder, `UPCOMING_*` variants, game payloads (`BIG_O_PAYLOAD`, `BIG_O_VERIFICATION`), `UPCOMING_BIG_O_BAD_PAYLOAD`, `UPCOMING_BUG_HUNT`, `FAILURES_*`, `REGEN_202`
+- **upcoming fixtures** (apps/admin/src/test/fixtures/upcoming.ts) - `upcoming()` builder, `UPCOMING_*` variants, game payloads (`BIG_O_PAYLOAD`, `BIG_O_VERIFICATION`, `BUG_HUNT_PAYLOAD`, `BUG_HUNT_VERIFICATION`), `UPCOMING_BIG_O_BAD_PAYLOAD`, `UPCOMING_BUG_HUNT` (5 games), `UPCOMING_BUG_HUNT_BAD_PAYLOAD`, `FAILURES_*`, `REGEN_202`
 - **fixtures** (apps/admin/src/test/fixtures/reports.ts) - `SESSION`, groups and reports fixtures from `api.yaml`
 - **buildAdmin / compiledCss** (apps/admin/src/test/vite-build.ts) - In-memory Vite build of the admin (memoized per test file) and its compiled CSS, for build guards
 - **useFixedClock / useUpcomingClock** (apps/admin/src/test/helpers.ts) - Fake timers fixed at `2026-11-11T12:00:00Z` / `2026-12-01T14:10:00Z`

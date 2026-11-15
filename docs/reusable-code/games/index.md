@@ -1,6 +1,6 @@
 # Reusable Code Index - games
 
-Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition`, `./client` and `./generator`, `@nerdose/game-timeline` (`packages/games/timeline`), entries `./definition`, `./generator` and `./client`, `@nerdose/game-big-o` (`packages/games/big-o`), entries `./definition`, `./client` and `./generator`, and `@nerdose/game-bug-hunt` (`packages/games/bug-hunt`), entries `./definition` and `./generator` (`./client` arrives with S-051). The build script lives in `scripts/` and is never importable from `src/` or other packages.
+Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition`, `./client` and `./generator`, `@nerdose/game-timeline` (`packages/games/timeline`), entries `./definition`, `./generator` and `./client`, `@nerdose/game-big-o` (`packages/games/big-o`), entries `./definition`, `./client` and `./generator`, and `@nerdose/game-bug-hunt` (`packages/games/bug-hunt`), entries `./definition`, `./client` and `./generator`. The build script lives in `scripts/` and is never importable from `src/` or other packages.
 
 ## Devdle definition (6 items) - see devdle.md
 - **devdle / definition** (packages/games/devdle/src/definition/index.ts) - `GameDefinition` of Devdle (`id: 'devdle'`, `version: 1`); `definition` is an alias; implements `codeLanguage` -> `null`; implements `culprits(p)` (1 `term`, kind/id/label; test in `src/generator/culprits.test.ts`); declares `bankUsage` terms/last_used_devdle/365/1 (checked against `historySpec`/`REUSE_WINDOW_DAYS`/`usedBankItems` in `src/generator/bank-usage.test.ts`)
@@ -146,7 +146,8 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **addDays** (packages/games/big-o/src/generator/days.ts) - Clock-free `YYYY-MM-DD` arithmetic in UTC (copy of Timeline's)
 - **seed / seedFrom / recipe / recent / D / fakeRunner / allLanguages / emptyHistory / withDate / noExample / interpret** (packages/games/big-o/src/generator/{test-fixtures.ts,test-utils.ts}) - Test-only: SHA-256 seeds, recipe lookup, `RecentChallenge` builder, a runner double and payload helpers, and a tree interpreter (never runs emitted code)
 
-## Bug Hunt shared (1 item) - see bug-hunt.md
+## Bug Hunt shared (2 items) - see bug-hunt.md
+- **formatCall / formatValue / formatArgs** (packages/games/bug-hunt/src/shared/format.ts) - Pure call formatting (`maxIndex([5, 1, 5])`, `[3, 7, 2], 4`) shared by the client and the generator (`generator/format.ts` re-exports `formatCall` / `formatValue`)
 - **LANGUAGE_LABEL / BUG_TYPE_LABEL** (packages/games/bug-hunt/src/shared/labels.ts) - `JavaScript`/`Go`/`Java` labels and the 7 `bug_type` labels in es and en; not re-exported by `./definition`
 
 ## Bug Hunt definition (6 items) - see bug-hunt.md
@@ -155,6 +156,20 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **MIN_STEPS / MAX_STEPS / MIN_VISIBLE_TESTS / MAX_VISIBLE_TESTS** (packages/games/bug-hunt/src/definition/schemas.ts) - 2, 4, 2, 3
 - **BugHuntPayload / BugHuntMove / BugHuntState / BugHuntPublicView / BugHuntFeedback / BugHuntResult / BugHuntLineFix / BugHuntExplanation / BugHuntStats / BugHuntTestCase / BugHuntVisibleTest / CodeByLanguage** (packages/games/bug-hunt/src/definition/schemas.ts) - Types inferred from the schemas
 - **PAYLOAD / PAYLOAD_BOOL / WON_JAVA / LOST_GO / WON_BOOL_JS / NON_PICKABLE / NOW / CTX_ES / CTX_EN / S0** (packages/games/bug-hunt/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry
+
+## Bug Hunt client (14 items) - see bug-hunt.md
+- **Instructions / Game / Result** (packages/games/bug-hunt/src/client/{instructions,game,result}.tsx) - React screens of the `./client` entry; data props are `unknown` and parsed with the definition schemas; `Game` validates `moveSchema.parse({ language, line })` before `onMove`
+- **Preview / PreviewProps / translatorFor** (packages/games/bug-hunt/src/client/{preview.tsx,types.ts,translate.ts}) - Read-only solution-mode preview `{ payload: unknown; language: Locale }` for the admin (plain-text code with the bug line, type and mutation chips, tests, failing test, fix, steps; `h3` headings, root `lang`)
+- **share** (packages/games/bug-hunt/src/client/share.ts) - `share(result, number, locale = 'es')`: `🐛 Bug Hunt #N · <Language>` / `🟩 bug encontrado | 🟥 se me escapó` / `nerdose.dev`; never the line nor the bug type
+- **i18n / HELP_TARGET_ID** (packages/games/bug-hunt/src/client/{i18n/index.ts,help-target.ts}) - `{ namespace: 'bug-hunt', resources: { es, en } }` and `'game-help'`
+- **Translate / ClientBaseProps / InstructionsProps / GameProps / ResultProps / MoveErrorInfo / GameStatsView** (packages/games/bug-hunt/src/client/types.ts) - Prop contract (`codeLanguage?` optional, default `'js'`)
+- **CodeBlock** (packages/games/bug-hunt/src/client/code-block.tsx) - Tabs plus `select` / `result` / `preview` modes; eligible lines as roving-tabindex radios, marks with glyph + text tags, same tree with or without Shiki color
+- **FixDiff** (packages/games/bug-hunt/src/client/fix-diff.tsx) - One-line `-` / `+` diff of the active tab's language
+- **Statement / TestsCard / FailingTest / WhyPanel / TypeChip / Question** (packages/games/bug-hunt/src/client/{statement,tests-card,failing-test,why-panel,question}.tsx) - Blocks shared by `Game`, `Result` and `Preview`
+- **loadTokenizer / SHIKI_VARS / useTokenizer** (packages/games/bug-hunt/src/client/{highlight,shiki-vars,use-tokenizer}.ts) - Copies of Big O's Shiki infrastructure with the `nerdose-bug-hunt` theme; Shiki only through `import()`
+- **fileNames / resultLineMarks / previewLineMarks / payloadFix / moveRadio / moveLine / codeLines** (packages/games/bug-hunt/src/client/{files,marks,radio,lines}.ts) - Pure helpers
+- **ConsoleHint / SectionPanel** (packages/games/bug-hunt/src/client/{console-hint,section-panel}.tsx) - Copies of Big O's
+- **makeT / client fixtures** (packages/games/bug-hunt/src/client/{test-utils,test-fixtures}.ts) - Test-only helpers, not exported from the entry
 
 ## Bug Hunt generator (13 items) - see bug-hunt.md
 - **generate / createGenerate / historySpec / usedBankItems / MAX_COMBOS** (packages/games/bug-hunt/src/generator/generate.ts) - Deterministic `generate({ date, seed, history })` (rng order: bug type, then per attempt template, parameters, random test inputs, candidate shuffle; up to `MAX_COMBOS = 30` attempts, then the best fallback so `verify` rejects it); `createGenerate(templates)` injects test templates; `historySpec` `{ bank: null, lastUsedField: '', recentDays: 60, aheadDays: 60 }`; `usedBankItems` `[]`.
@@ -165,7 +180,7 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **neutralExpr / neutralStmt** (packages/games/bug-hunt/src/generator/mutation/neutral.ts) - Language-neutral notation for `mutation.from` / `to` (`len(nums)`, `==`, `best = i`)
 - **TEST_COUNT / MAX_TEST_DRAWS / EVAL_STEP_LIMIT / testSize / buildTests / selectTests** (packages/games/bug-hunt/src/generator/tests.ts) - 10 distinct generated tests with `expected` from `evaluate`; hidden test (smallest failing) and visible tests (smallest passing)
 - **evaluateCandidate / CandidateVerdict** (packages/games/bug-hunt/src/generator/evaluate-candidate.ts) - Classifies a mutation as `invalid`, `equivalent`, `not_enough_passing`, `variety` or `ok`
-- **formatCall / formatValue** (packages/games/bug-hunt/src/generator/format.ts) - `maxIndex([5, 1, 5])`, `true`, `-1`
+- **formatCall / formatValue** (packages/games/bug-hunt/src/generator/format.ts) - Re-export of `shared/format.ts`
 - **VARIETY_DAYS / canonicalJson / varietyKey / keysUsedNear** (packages/games/bug-hunt/src/generator/variety.ts) - Variety key and the `[D - 59, D + 59]` window without the row of `D`
 - **MIN_LINES / MAX_LINES / MAX_NESTING / measureCode** (packages/games/bug-hunt/src/generator/shape.ts) - Shape limits and indentation-based measure of emitted code
 - **addDays** (packages/games/bug-hunt/src/generator/days.ts) - Clock-free `YYYY-MM-DD` arithmetic in UTC (copy of Big O's)

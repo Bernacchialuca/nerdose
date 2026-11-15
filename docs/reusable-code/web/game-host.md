@@ -2,19 +2,19 @@
 
 ## clientRegistry / hasGameClient
 - **Location:** apps/web/src/modules/game-host/registry.ts
-- **Description:** The only place that lists games: `game_id` to a dynamic `import()` of the package `./client`. Partial on purpose (Devdle, Grep Grid, Tech Timeline and Big O).
+- **Description:** The only place that lists games: `game_id` to a dynamic `import()` of the package `./client`. The five games have a client (Devdle, Grep Grid, Tech Timeline, Big O and Bug Hunt); it stays `Partial` for future games.
 - **Signature:** `clientRegistry: Partial<Record<GameId, () => Promise<GameClient>>>`; `hasGameClient(id: GameId): boolean`
-- **Usage:** `hasGameClient('bug-hunt') // false`
+- **Usage:** `hasGameClient('bug-hunt') // true`
 
 ## loadGameClient / gameScreens / useLoadedGameClient
 - **Location:** apps/web/src/modules/game-host/load-game-client.ts, lazy-game-screens.tsx, use-loaded-game-client.ts
 - **Description:** `loadGameClient` memoizes the client promise and registers its i18n namespace in the app instance; `gameScreens[gameId]` is the `React.lazy` component created once per game; `useLoadedGameClient` reads the same promise with `use()` (inside `<Suspense>`).
 - **Signature:** `loadGameClient(gameId: GameId): Promise<GameClient>`; `useLoadedGameClient(gameId): GameClient`
-- **Usage:** `const client = useLoadedGameClient('devdle'); client.share(result, number)`
+- **Usage:** `const client = useLoadedGameClient('devdle'); client.share(result, number, locale)`
 
 ## GameClient and props
 - **Location:** apps/web/src/modules/game-host/types.ts
-- **Description:** Structural copy of the `./client` contract of a game package: `GameClient`, `ClientBaseProps`, `InstructionsProps`, `GameProps`, `ResultProps`, `Translate`, `MoveErrorInfo`, `GameStatsView`. `GameProps.feedback` is the last `MoveResponse.feedback` (`null` until the first move; forwarded untouched, never interpreted by `web`) and `ResultProps.publicView` is `GameToday.public_view` for clients that draw the final board. `ClientBaseProps.codeLanguage: CodeLanguage` is `session.preferred_code_language ?? 'js'` (resolved by `GameScreens`, `DEFAULT_CODE_LANGUAGE`); Big O reads it when mounting the `Game`, the other clients ignore it. `MoveResponse.play` is a full `PlayView` (with `code_language`).
+- **Description:** Structural copy of the `./client` contract of a game package: `GameClient` (`share(result, number, locale)`), `ClientBaseProps`, `InstructionsProps`, `GameProps`, `ResultProps`, `Translate`, `MoveErrorInfo`, `GameStatsView`. `GameProps.feedback` is the last `MoveResponse.feedback` (`null` until the first move; forwarded untouched, never interpreted by `web`) and `ResultProps.publicView` is `GameToday.public_view` for clients that draw the final board. `ClientBaseProps.codeLanguage: CodeLanguage` is `session.preferred_code_language ?? 'js'` (resolved by `GameScreens`, `DEFAULT_CODE_LANGUAGE`); Big O reads it when mounting the `Game`, the other clients ignore it. `MoveResponse.play` is a full `PlayView` (with `code_language`).
 
 ## gameTodayKeys / fetchGameToday / useGameToday / useStartPlay / useSubmitMove / withSessionRetry
 - **Location:** apps/web/src/modules/game-host/api/
@@ -35,7 +35,7 @@
 ## ShareButton / ClientShareButton
 - **Location:** apps/web/src/modules/game-host/components/share-button.tsx
 - **Description:** Web Share API with clipboard fallback, `✓ Copiado` for 3 s (`role="status"`) and `track('share:<game_id>')` only after success; `AbortError` is ignored. The text always comes from the game's `share()`.
-- **Signature:** `ShareButton({ gameId, getText, variant: 'body' | 'header' })`; `ClientShareButton({ gameId, result, number, variant })`
+- **Signature:** `ShareButton({ gameId, getText, variant: 'body' | 'header' })`; `ClientShareButton({ gameId, result, number, locale, variant })`; `GameHostHeader` passes `useSession().locale` and the text is built on click, so it follows the active language (only Bug Hunt's share has words; the others ignore the third argument)
 
 ## ResultExits / Confetti
 - **Location:** apps/web/src/modules/game-host/components/{result-exits,confetti}.tsx
@@ -51,9 +51,9 @@
 - **Description:** Zod-validated `VITE_PLAUSIBLE_*` (script URL required when there is a domain); `initAnalytics()` calls `injectAnalytics` once from `main.tsx`.
 - **Signature:** `parseEnv(raw: Record<string, unknown>): Env`; `initAnalytics(e?: Env): void`
 
-## gameHandlersFor / grepGridHandlers / timelineHandlers / bigOHandlers / game fixtures / game-route-helpers / buildWeb (tests)
-- **Location:** apps/web/src/test/msw.ts, apps/web/src/test/fixtures/grep-grid-today.ts, apps/web/src/test/fixtures/timeline-today.ts, apps/web/src/test/fixtures/big-o-today.ts, apps/web/src/test/vite-build.ts, apps/web/src/test/dnd-rects.ts, apps/web/src/test/game-route-helpers.ts
-- **Description:** `gameHandlersFor(gameId)` builds the MSW `today` / `start` / `move` handlers of one game (`gameHandlers` = Devdle, `grepGridHandlers` = Grep Grid, `timelineHandlers` = Tech Timeline, `bigOHandlers` = Big O). The Big O fixtures (`big-o-today.ts`: `boResult`, `boMove`, `bigOInProgress`, `bigOWonJava`, `bigOLostGo`, `todayWithBigO`, ...) follow the same shape. `buildWeb()` (`vite-build.ts`) runs one in-memory Vite build per test file and `compiledCss()` joins its CSS assets (CSS and chunk guards in `styles.test.ts`). The Grep Grid fixtures are the API payloads in `snake_case` (grid, words, played states, results, moves, `todayWithGrepGrid`); the Timeline fixtures (`timeline-today.ts`) follow the same shape (`tlResult`, `timelineInProgress`, `timelineLost3`, `todayWithTimeline`, ...). `stubSortableRects()` (`dnd-rects.ts`) gives `<li>` children of an `<ol>` measurable rects in jsdom so dnd-kit's keyboard sensor works; it returns a `restore()` function. `game-route-helpers` shares `recordCalls`, `countOf`, `errorResponse`, `settle`, `setShare` and `h1` between the route suites.
+## gameHandlersFor / grepGridHandlers / timelineHandlers / bigOHandlers / bugHuntHandlers / game fixtures / game-route-helpers / buildWeb (tests)
+- **Location:** apps/web/src/test/msw.ts, apps/web/src/test/fixtures/grep-grid-today.ts, apps/web/src/test/fixtures/timeline-today.ts, apps/web/src/test/fixtures/big-o-today.ts, apps/web/src/test/fixtures/bug-hunt-today.ts, apps/web/src/test/vite-build.ts, apps/web/src/test/dnd-rects.ts, apps/web/src/test/game-route-helpers.ts
+- **Description:** `gameHandlersFor(gameId)` builds the MSW `today` / `start` / `move` handlers of one game (`gameHandlers` = Devdle, `grepGridHandlers` = Grep Grid, `timelineHandlers` = Tech Timeline, `bigOHandlers` = Big O, `bugHuntHandlers` = Bug Hunt). The Bug Hunt fixtures (`bug-hunt-today.ts`: `bhResult`, `bhMove`, `bugHuntInProgress`, `bugHuntWonJava`, `bugHuntLostGo`, `todayWithBugHunt`, ...) follow the same shape. The Big O fixtures (`big-o-today.ts`: `boResult`, `boMove`, `bigOInProgress`, `bigOWonJava`, `bigOLostGo`, `todayWithBigO`, ...) follow the same shape. `buildWeb()` (`vite-build.ts`) runs one in-memory Vite build per test file and `compiledCss()` joins its CSS assets (CSS and chunk guards in `styles.test.ts`). The Grep Grid fixtures are the API payloads in `snake_case` (grid, words, played states, results, moves, `todayWithGrepGrid`); the Timeline fixtures (`timeline-today.ts`) follow the same shape (`tlResult`, `timelineInProgress`, `timelineLost3`, `todayWithTimeline`, ...). `stubSortableRects()` (`dnd-rects.ts`) gives `<li>` children of an `<ol>` measurable rects in jsdom so dnd-kit's keyboard sensor works; it returns a `restore()` function. `game-route-helpers` shares `recordCalls`, `countOf`, `errorResponse`, `settle`, `setShare` and `h1` between the route suites.
 - **Usage:** `server.use(grepGridHandlers.today(grepGridInProgress3), grepGridHandlers.move(ggMoveDocker))`
 
 ## useReport / useAcknowledgeVoid

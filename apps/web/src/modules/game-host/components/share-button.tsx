@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import type { GameId } from '@nerdose/core';
+import type { GameId, Locale } from '@nerdose/core';
 import { buttonClass, ShareIcon, track } from '@nerdose/ui';
 
 import { useLoadedGameClient } from '../use-loaded-game-client';
@@ -71,15 +71,21 @@ export function ClientShareButton({
   gameId,
   result,
   number,
+  locale,
   variant,
 }: {
   gameId: GameId;
   result: unknown;
   number: number;
+  locale: Locale;
   variant: 'header';
 }) {
   const client = useLoadedGameClient(gameId);
   return (
-    <ShareButton gameId={gameId} variant={variant} getText={() => client.share(result, number)} />
+    <ShareButton
+      gameId={gameId}
+      variant={variant}
+      getText={() => client.share(result, number, locale)}
+    />
   );
 }

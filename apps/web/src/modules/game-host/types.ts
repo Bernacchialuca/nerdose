@@ -6,7 +6,7 @@ import type { GameStatsView } from './api/game-today';
 
 export type { GameStatsView };
 
-// Copia estructural del contrato de los `./client` (Devdle, Grep Grid, Timeline, Big O): la capa de `web` no importa
+// Copia estructural del contrato de los `./client` (Devdle, Grep Grid, Timeline, Big O, Bug Hunt): la capa de `web` no importa
 // tipos de ningún juego (solo el registry toca los paquetes).
 export type Translate = (key: string, options?: Record<string, unknown>) => string;
 export type MoveErrorInfo = { code: string; message: string };
@@ -51,7 +51,7 @@ export type GameClient = {
   Instructions: ComponentType<InstructionsProps>;
   Game: ComponentType<GameProps>;
   Result: ComponentType<ResultProps>;
-  share: (result: unknown, number: number) => string;
+  share: (result: unknown, number: number, locale: Locale) => string;
   i18n: { namespace: string; resources: Record<Locale, Record<string, unknown>> };
   HELP_TARGET_ID: string;
 };

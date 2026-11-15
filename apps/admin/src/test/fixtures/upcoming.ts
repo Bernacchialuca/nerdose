@@ -215,18 +215,120 @@ export const BIG_O_VERIFICATION = {
   ],
 };
 
-export const BUG_HUNT_STUB_PAYLOAD = {
-  fix: 'i <= n',
-  explanation: { es: 'el límite del loop se pasa por uno', en: 'the loop bound is off by one' },
+export const BUG_HUNT_PAYLOAD = {
+  template: 'extreme_index',
+  params: { extreme: 'max', tie: 'first' },
+  function_name: 'maxIndex',
+  bug_type: 'comparison',
+  mutation: { operator: 'relax_comparison', node: 'n16', from: '>', to: '>=' },
+  spec: {
+    es: 'Devuelve el índice del mayor valor de nums; si el máximo se repite, el del primero. Con nums vacío devuelve 0.',
+    en: 'Returns the index of the largest value in nums; if the maximum repeats, the first one. With an empty nums it returns 0.',
+  },
+  code: {
+    js: [
+      'function maxIndex(nums) {',
+      '  let best = 0;',
+      '  for (let i = 1; i < nums.length; i++) {',
+      '    if (nums[i] >= nums[best]) {',
+      '      best = i;',
+      '    }',
+      '  }',
+      '  return best;',
+      '}',
+    ].join('\n'),
+    go: [
+      'func maxIndex(nums []int) int {',
+      '\tbest := 0',
+      '\tfor i := 1; i < len(nums); i++ {',
+      '\t\tif nums[i] >= nums[best] {',
+      '\t\t\tbest = i',
+      '\t\t}',
+      '\t}',
+      '\treturn best',
+      '}',
+    ].join('\n'),
+    java: [
+      'static int maxIndex(int[] nums) {',
+      '    int best = 0;',
+      '    for (int i = 1; i < nums.length; i++) {',
+      '        if (nums[i] >= nums[best]) {',
+      '            best = i;',
+      '        }',
+      '    }',
+      '    return best;',
+      '}',
+    ].join('\n'),
+  },
+  bug_line: 4,
+  fix: {
+    js: '    if (nums[i] > nums[best]) {',
+    go: '\t\tif nums[i] > nums[best] {',
+    java: '        if (nums[i] > nums[best]) {',
+  },
+  pickable_lines: [2, 3, 4, 5, 8],
+  tests: [
+    { input: [[]], expected: 0, actual: 0 },
+    { input: [[4]], expected: 0, actual: 0 },
+    { input: [[3, 7, 2]], expected: 1, actual: 1 },
+    { input: [[5, 1, 5]], expected: 0, actual: 2 },
+    { input: [[1, 2, 3]], expected: 2, actual: 2 },
+    { input: [[-2, -9, -2]], expected: 0, actual: 2 },
+    { input: [[9, 8, 7, 6]], expected: 0, actual: 0 },
+    { input: [[7, 3, 7, 1]], expected: 0, actual: 2 },
+  ],
+  visible_tests: [
+    { input: [[]], expected: 0 },
+    { input: [[4]], expected: 0 },
+    { input: [[3, 7, 2]], expected: 1 },
+  ],
+  failing_test: { input: [[5, 1, 5]], expected: 0, actual: 2 },
+  explanation: {
+    steps: [
+      {
+        es: 'La condición que decide si best cambia usa >= en lugar de >: con un empate también se mueve.',
+        en: 'The condition that decides whether best changes uses >= instead of >: on a tie it moves too.',
+      },
+      {
+        es: 'Con [5, 1, 5], al llegar a i = 2 se cumple 5 >= 5 y devuelve 2 en lugar de 0.',
+        en: 'With [5, 1, 5], at i = 2 the check 5 >= 5 holds and it returns 2 instead of 0.',
+      },
+      {
+        es: 'Los tests visibles no repiten el máximo, por eso pasan. El fix: volver a >.',
+        en: 'The visible tests never repeat the maximum, so they pass. The fix: go back to >.',
+      },
+    ],
+  },
+};
+
+// Valores de fixture con los formatos de `verify` (S-050); el log genérico no los interpreta.
+export const BUG_HUNT_VERIFICATION = {
+  ok: true,
+  checks: [
+    { name: 'texts_bilingual', ok: true },
+    { name: 'code_shape', ok: true },
+    { name: 'lines_consistent', ok: true },
+    { name: 'tests_consistent', ok: true },
+    { name: 'variety_combo', ok: true },
+    { name: 'run_correct_js', ok: true, detail: '95 ms' },
+    { name: 'run_correct_go', ok: true, detail: '280 ms' },
+    { name: 'run_correct_java', ok: true, detail: '510 ms' },
+    { name: 'run_mutant_js', ok: true, detail: '90 ms' },
+    { name: 'run_mutant_go', ok: true, detail: '275 ms' },
+    { name: 'run_mutant_java', ok: true, detail: '505 ms' },
+    { name: 'correct_agrees', ok: true, detail: '8 tests' },
+    { name: 'mutant_agrees', ok: true, detail: '8 tests' },
+  ],
 };
 
 const VERIFICATIONS: Partial<Record<GameId, Record<string, unknown>>> = {
   'big-o': BIG_O_VERIFICATION,
+  'bug-hunt': BUG_HUNT_VERIFICATION,
 };
 
 const PAYLOADS: Partial<Record<GameId, Record<string, unknown>>> = {
   'big-o': BIG_O_PAYLOAD,
-  'bug-hunt': BUG_HUNT_STUB_PAYLOAD,
+  'bug-hunt': BUG_HUNT_PAYLOAD,
   devdle: DEVDLE_PAYLOAD,
   'grep-grid': GREP_GRID_PAYLOAD,
   timeline: TIMELINE_PAYLOAD,
@@ -364,10 +466,18 @@ export const UPCOMING_BIG_O_BAD_PAYLOAD = (() => {
   return base;
 })();
 
-export const UPCOMING_BUG_HUNT = upcoming(
-  {},
-  { games: ['devdle', 'grep-grid', 'timeline', 'bug-hunt'] },
-);
+const ALL_GAMES: GameId[] = ['devdle', 'grep-grid', 'timeline', 'big-o', 'bug-hunt'];
+
+export const UPCOMING_BUG_HUNT = upcoming({}, { games: ALL_GAMES });
+
+export const UPCOMING_BUG_HUNT_BAD_PAYLOAD = (() => {
+  const base = upcoming({}, { games: ALL_GAMES });
+  const g = base.days
+    .find((d) => d.date === '2026-12-02')
+    ?.games.find((x) => x.game_id === 'bug-hunt');
+  if (g?.challenge) g.challenge.payload = { ...g.challenge.payload, bug_type: 'typo' };
+  return base;
+})();
 
 export const UPCOMING_BAD_PAYLOAD = (() => {
   const base = upcoming();

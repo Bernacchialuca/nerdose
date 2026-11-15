@@ -14,6 +14,7 @@ type PreviewClient = { Preview: ComponentType<PreviewProps> };
  */
 const clientRegistry: Partial<Record<GameId, () => Promise<PreviewClient>>> = {
   'big-o': () => import('@nerdose/game-big-o/client'),
+  'bug-hunt': () => import('@nerdose/game-bug-hunt/client'),
   devdle: () => import('@nerdose/game-devdle/client'),
   'grep-grid': () => import('@nerdose/game-grep-grid/client'),
   timeline: () => import('@nerdose/game-timeline/client'),

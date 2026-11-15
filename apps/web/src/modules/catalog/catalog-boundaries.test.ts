@@ -36,11 +36,13 @@ describe('catalog boundaries', () => {
     const names = Object.keys({ ...pkg.dependencies, ...pkg.devDependencies });
     expect(names.filter((n) => n.startsWith('@nerdose/game-'))).toEqual([
       '@nerdose/game-big-o',
+      '@nerdose/game-bug-hunt',
       '@nerdose/game-devdle',
       '@nerdose/game-grep-grid',
       '@nerdose/game-timeline',
     ]);
     expect(pkg.dependencies?.['@nerdose/game-big-o']).toBe('workspace:*');
+    expect(pkg.dependencies?.['@nerdose/game-bug-hunt']).toBe('workspace:*');
     expect(pkg.dependencies?.['@nerdose/game-devdle']).toBe('workspace:*');
     expect(pkg.dependencies?.['@nerdose/game-grep-grid']).toBe('workspace:*');
     expect(pkg.dependencies?.['@nerdose/game-timeline']).toBe('workspace:*');

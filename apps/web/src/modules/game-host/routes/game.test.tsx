@@ -530,20 +530,6 @@ describe('estados sin client', () => {
     expect(screen.queryByRole('button', { name: 'Cómo se juega' })).toBeNull();
   });
 
-  it('TS-30: un juego válido sin client no llama a la api', async () => {
-    const calls = recordCalls();
-    view('/bug-hunt');
-    expect(await h1('Bug Hunt')).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        'Hoy no hay desafío de Bug Hunt. Es un día neutro: no suma ni corta tu racha.',
-      ),
-    ).toBeInTheDocument();
-    expect(calls.filter((c) => c.path.startsWith('/api/games/bug-hunt'))).toEqual([]);
-    const nav = within(screen.getByRole('banner')).getByRole('navigation', { name: 'Ruta' });
-    expect(within(nav).getByText('bug-hunt')).toBeInTheDocument();
-  });
-
   it('TS-32: anulado sin Play abre O-02 sobre el aviso, sin poder empezar', async () => {
     server.use(gameHandlers.today(gameTodayVoided));
     view();
@@ -954,11 +940,7 @@ describe('axe', () => {
     expect(await axe(container)).toHaveNoViolations();
   });
 
-  it('TS-53: juego sin client y partida anulada', async () => {
-    const a = view('/bug-hunt');
-    await h1('Bug Hunt');
-    expect(await axe(a.container)).toHaveNoViolations();
-    a.unmount();
+  it('TS-53: partida anulada', async () => {
     server.use(gameHandlers.today(gameTodayInProgress));
     const user = userEvent.setup();
     const b = view();

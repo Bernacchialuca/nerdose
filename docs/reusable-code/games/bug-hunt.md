@@ -10,6 +10,11 @@ Package `@nerdose/game-bug-hunt` (`packages/games/bug-hunt`). Entries: `./defini
 - **Signature:** `LANGUAGE_LABEL: Record<CodeLanguage, string>`; `BUG_TYPE_LABEL: Record<BugType, Record<Locale, string>>`
 - **Usage:** `BUG_TYPE_LABEL.off_by_one.en` is `off by one`.
 
+### formatCall / formatValue / formatArgs
+- **Location:** packages/games/bug-hunt/src/shared/format.ts
+- **Description:** Pure call formatting shared by the client (visible tests, failing test) and the generator (server-side explanation). `formatArgs([[3, 7, 2], 4])` is `[3, 7, 2], 4` (used in the accessible text of each test). `generator/format.ts` re-exports `formatCall` and `formatValue`.
+- **Signature:** `formatCall(name: string, input: readonly TestArg[]): string`; `formatValue(v: TestValue): string`; `formatArgs(input: readonly TestArg[]): string`
+
 ## Definition
 
 ### bugHunt / definition
@@ -26,6 +31,72 @@ Package `@nerdose/game-bug-hunt` (`packages/games/bug-hunt`). Entries: `./defini
 ### Test fixtures
 - **Location:** packages/games/bug-hunt/src/definition/test-fixtures.ts
 - **Description:** `PAYLOAD` (`maxIndex`, `comparison`, bug on line 4), `PAYLOAD_BOOL` (`anyAbove`, two arguments, boolean result, `bad_initialization`), `WON_JAVA`, `LOST_GO`, `WON_BOOL_JS`, `NON_PICKABLE`, `NOW`, `CTX_ES`, `CTX_EN`, `S0`. Not exported by the entry: copy them in other packages' tests.
+
+## Client
+
+Entry `./client` (React 19, Shiki loaded dynamically). Same props contract as Big O (`codeLanguage?` optional, default `'js'`); it imports only the schemas of `../definition/schemas` (never `../definition/index`, which carries the solution) and never `@nerdose/polyglot`. Shiki infrastructure, `ConsoleHint`, `SectionPanel`, `translatorFor`, `makeT` and `radio`/`lines` are copies of Big O's (cross-game imports are forbidden, ADR-002).
+
+### Instructions
+- **Location:** packages/games/bug-hunt/src/client/instructions.tsx
+- **Description:** Instructions screen: `h1` in the game accent, meta, three `Card` `step`s, count notice and a "Empezar" button that calls `onStart` once per attempt (re-armed when `starting` returns to `false`); inert with `starting` or `startDisabled`. Slots `notices` and `actions`; the rules section has `id={HELP_TARGET_ID}`. It shows no code nor bug types.
+- **Signature:** `Instructions(props: InstructionsProps)`
+
+### Game
+- **Location:** packages/games/bug-hunt/src/client/game.tsx
+- **Description:** Playing screen: consigna, question `h1`, `Statement`, `TestsCard` (visible tests as calls plus the hidden-test row), `CodeBlock mode="select"` starting at `codeLanguage ?? 'js'`, hint line with a polite live region, "Confirmar línea N" and the rules card (`#game-help`). Line and visible language are local state that survives a tab or locale change and restarts when the code changes (`state = {}` always starts without a selection). `onMove(moveSchema.parse({ language, line }))` once per attempt; `pending` locks tabs and lines; `invalid_move` keeps the line; `locked` hides the board. DOM in mobile order, `lg:` placement for desktop.
+- **Signature:** `Game(props: GameProps)`
+
+### Result
+- **Location:** packages/games/bug-hunt/src/client/result.tsx
+- **Description:** Verdict (`sr-only` `h1` on a win, `Banner` `failure` otherwise), question `h2`, `Statement`, `CodeBlock mode="result"` at `result.code_language` with the bug / wrong-pick marks, and the "Por qué falla" `aside` (`WhyPanel`: failing test, fix of the active tab, steps and the "tipo: …" chip). Without `publicView` the question, spec and code are omitted and the fix stays in `code_language`. Slots `notices`, `footer`, `aside`.
+- **Signature:** `Result(props: ResultProps)`
+
+### Preview
+- **Location:** packages/games/bug-hunt/src/client/preview.tsx
+- **Description:** Read-only solution mode for the admin: parses the full payload, translates with `translatorFor(language)`, plain-text `CodeBlock mode="preview"` (`highlight={false}`, never loads Shiki; non-eligible lines dimmed, bug line tagged) with local view tabs, chips "tipo" and "mutación: from → to", visible tests (no hidden row), failing test, fix following the tab and the steps in `language`. Root `<div lang>`, `h3` headings, no controls beyond the tabs.
+- **Signature:** `Preview(props: { payload: unknown; language: Locale })`
+
+### share
+- **Location:** packages/games/bug-hunt/src/client/share.ts
+- **Description:** `🐛 Bug Hunt #N · <Language>` / `🟩 bug encontrado` | `🟥 se me escapó` (en: `bug found` | `it got away`) / `nerdose.dev`; never the line, the bug type or the test. `locale` is optional (default `'es'`) so the client fits the host's current and future `GameClient.share`. Throws `ZodError` on an invalid result.
+- **Signature:** `share(result: unknown, number: number, locale?: Locale): string`
+
+### i18n / HELP_TARGET_ID / contract types / parsers
+- **Location:** packages/games/bug-hunt/src/client/{i18n/index.ts,help-target.ts,types.ts,parse.ts}
+- **Description:** Namespace `bug-hunt` (es/en), help anchor `game-help`, the props types (`ClientBaseProps` with the optional `codeLanguage?`, `PreviewProps`) and the parsers `parsePublicView`, `parseState`, `parseResult`, `parsePayload`.
+
+### CodeBlock
+- **Location:** packages/games/bug-hunt/src/client/code-block.tsx
+- **Description:** Code block with `tablist` JavaScript / Go / Java (arrows, Home, End, wrap; `aria-disabled` when locked), file name from `fileNames(name)` and three modes. `select`: `radiogroup` where only `pickable` lines are `role="radio"` (roving tabindex; arrows move focus, Space picks, Enter does nothing), the rest plain `text-text-dim` text, `◀` tag fixed at the visible edge (text from `@lg`). `result`: marks `found` / `bug` / `wrong` with glyph + text tags under the line below 32rem and at the margin from there, tied by `aria-describedby`. `preview`: as `result` with plain text. Same tree with or without color (Shiki tokens only after the tokenizer loads; non-eligible lines never colored in `select`/`preview`).
+- **Signature:** `CodeBlock({ mode, name, code, initialLanguage, t, pickable?, selected?, onSelect?, marks?, markLabel?, highlight?, disabled?, onLanguageChange?, className? })`
+
+### FixDiff
+- **Location:** packages/games/bug-hunt/src/client/fix-diff.tsx
+- **Description:** `diff` code block of the one-line fix: `- ` / `+ ` literal prefixes with error / success tinted rows, own horizontal scroll (keyboard reachable), heading `h2` or `h3`.
+- **Signature:** `FixDiff({ line, fix: { before, after }, language, t, headingLevel })`
+
+### Statement / TestsCard / FailingTest / WhyPanel / TypeChip / Question
+- **Location:** packages/games/bug-hunt/src/client/{statement,tests-card,failing-test,why-panel,question}.tsx
+- **Description:** `Statement` is the amber `bug-hunt.statement` panel (`headingLevel: 2 | 3 | null`). `TestsCard` lists the visible tests as calls with a `sr-only` text and, with `showHidden`, the dashed "1 test oculto falla" row. `FailingTest` is the error box with expected / got in words. `WhyPanel` is the `aside` (level 2) or `section` (level 3) with failing test, `FixDiff`, numbered steps and optional chips; `TypeChip` is the accent chip. `Question` renders the fixed question as `h1` or `h2`.
+- **Signature:** `Statement({ spec, t, headingLevel, className? })`; `TestsCard({ name, tests, t, headingLevel, showHidden, className? })`; `FailingTest({ name, failing, t, headingLevel })`; `WhyPanel({ name, failing, fixLine, fix, language, steps, chips?, t, headingLevel })`
+
+### loadTokenizer / SHIKI_VARS / useTokenizer
+- **Location:** packages/games/bug-hunt/src/client/{highlight.ts,shiki-vars.ts,use-tokenizer.ts}
+- **Description:** Copies of Big O's with the `nerdose-bug-hunt` theme: `loadTokenizer()` imports Shiki only with `import()`, memoises the promise and clears it on rejection; `SHIKI_VARS` maps the 11 `--shiki-*` variables to Bug Hunt DS tokens (no hex; AA verified in `contrast.test.ts`); `useTokenizer(enabled)` returns the tokenizer or `null`. Not exported by the entry.
+- **Signature:** `loadTokenizer(): Promise<Tokenizer>`; `useTokenizer(enabled: boolean): Tokenizer | null`
+
+### fileNames / resultLineMarks / previewLineMarks / payloadFix / moveRadio / moveLine / codeLines
+- **Location:** packages/games/bug-hunt/src/client/{files,marks,radio,lines}.ts
+- **Description:** Pure helpers. `fileNames('maxIndex')` gives `max-index.js` / `max_index.go` / `MaxIndex.java`; `resultLineMarks` and `previewLineMarks` build the `Map<line, 'found' | 'bug' | 'wrong'>`; `payloadFix(p, lang)` builds `{ before, after }` for the admin; `moveRadio` is APG radio navigation; `moveLine` handles only ArrowUp/Down, Home and End; `codeLines` splits lines.
+- **Signature:** `fileNames(name: string): Record<CodeLanguage, string>`; `moveLine(index: number, key: string, count: number): number | null`
+
+### ConsoleHint / SectionPanel / translatorFor
+- **Location:** packages/games/bug-hunt/src/client/{console-hint.tsx,section-panel.tsx,translate.ts}
+- **Description:** Copies of Big O's: silent hint line with a polite live region, panel with an `h2`/`h3` `//` header, and the production translator for `Preview` (returns the key when missing).
+
+### makeT / test fixtures
+- **Location:** packages/games/bug-hunt/src/client/{test-utils.ts,test-fixtures.ts}
+- **Description:** Test-only: `makeT(locale)` (throws on a missing key) and the client fixtures (`CODE`, `PUBLIC_VIEW`, `PUBLIC_VIEW_EN`, `PUBLIC_VIEW_BOOL`, `RESULT_WON_JAVA_ES/EN`, `RESULT_LOST_GO_ES`, `RESULT_BOOL_ES`, `PREVIEW_PAYLOAD`, `PREVIEW_PAYLOAD_BOOL`).
 
 ## Generator
 
@@ -69,7 +140,7 @@ Everything lives in `packages/games/bug-hunt/src/generator/` and is re-exported 
 
 ### formatCall / formatValue
 - **Location:** packages/games/bug-hunt/src/generator/format.ts
-- **Description:** `formatCall('maxIndex', [[5, 1, 5]])` is `maxIndex([5, 1, 5])`; `formatValue` prints integers, booleans and arrays.
+- **Description:** Re-export of `shared/format.ts` (S-051 moved the implementation there so the client shows the same call text): `formatCall('maxIndex', [[5, 1, 5]])` is `maxIndex([5, 1, 5])`; `formatValue` prints integers, booleans and arrays.
 - **Signature:** `formatCall(name: string, input: TestInput): string`
 
 ### VARIETY_DAYS / canonicalJson / varietyKey / keysUsedNear

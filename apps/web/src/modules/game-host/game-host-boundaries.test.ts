@@ -27,6 +27,7 @@ describe('game-host boundaries', () => {
     ]);
     const text = readFileSync(withGame[0] as string, 'utf8');
     expect(text).toContain("import('@nerdose/game-big-o/client')");
+    expect(text).toContain("import('@nerdose/game-bug-hunt/client')");
     expect(text).toContain("import('@nerdose/game-devdle/client')");
     expect(text).toContain("import('@nerdose/game-grep-grid/client')");
     expect(text).toContain("import('@nerdose/game-timeline/client')");
@@ -74,6 +75,27 @@ describe('game-host boundaries', () => {
     for (const file of rels) {
       expect(readFileSync(join(ROOT, file), 'utf8'), file).not.toMatch(
         /chosen_option|trap_option|recipe_category|line_notes|public_view\.code/,
+      );
+    }
+  });
+
+  it('TS-3: sin lógica por juego para Bug Hunt ni lectura de campos suyos', () => {
+    const allowed = [
+      'modules/game-host/registry.ts',
+      'modules/catalog/games.ts',
+      'modules/catalog/components/how-it-works.tsx',
+      'i18n/es.ts',
+      'i18n/en.ts',
+    ];
+    const rels = files.map((f) => f.slice(ROOT.length + 1)).filter((f) => !f.startsWith('test/'));
+    for (const file of rels.filter((f) =>
+      readFileSync(join(ROOT, f), 'utf8').includes("'bug-hunt'"),
+    )) {
+      expect(allowed, file).toContain(file);
+    }
+    for (const file of rels) {
+      expect(readFileSync(join(ROOT, file), 'utf8'), file).not.toMatch(
+        /chosen_line|bug_line|bug_type|failing_test|pickable_lines|visible_tests|function_name/,
       );
     }
   });

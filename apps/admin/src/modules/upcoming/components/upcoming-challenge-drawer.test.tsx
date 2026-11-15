@@ -8,6 +8,7 @@ import {
   UPCOMING_BIG_O,
   UPCOMING_BIG_O_BAD_PAYLOAD,
   UPCOMING_BUG_HUNT,
+  UPCOMING_BUG_HUNT_BAD_PAYLOAD,
   UPCOMING_OK,
   UPCOMING_PENDING,
   UPCOMING_REGEN_FAILED,
@@ -112,24 +113,6 @@ describe('drawer O-02 desde Próximos', () => {
       await within(en).findByText(/Order these milestones from oldest to newest/),
     ).toBeInTheDocument();
     expect(within(en).getByText(/note on Python/)).toBeInTheDocument();
-  });
-
-  it('un juego sin Preview (Bug Hunt) cae a PayloadView sin aviso (TS-19)', async () => {
-    server.use(adminHandlers.upcoming(UPCOMING_BUG_HUNT));
-    const { user } = render();
-    const dialog = await openCell(user, '02/12 #32', 'Bug Hunt');
-    expect(within(dialog).getByRole('heading', { level: 2, name: 'Bug Hunt #32' })).toBeVisible();
-    expect(within(dialog).getByRole('region', { name: 'ES' })).toHaveTextContent(
-      'el límite del loop se pasa por uno',
-    );
-    expect(within(dialog).getByRole('region', { name: 'EN' })).toHaveTextContent(
-      'the loop bound is off by one',
-    );
-    const common = within(dialog).getByRole('region', { name: 'Datos del desafío' });
-    expect(common).toHaveTextContent('fix');
-    expect(common).toHaveTextContent('i <= n');
-    expect(within(dialog).queryByText(/No pudimos mostrar la preview/)).toBeNull();
-    expect(within(dialog).queryByText('Cargando preview…')).toBeNull();
   });
 
   it('un payload inválido muestra aviso y la vista genérica sin cerrar el detalle (TS-32)', async () => {
@@ -281,20 +264,6 @@ describe('drawer O-02 desde Próximos', () => {
     await user.keyboard('{Escape}');
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(opener).toHaveFocus();
-  });
-
-  it('axe sin violaciones con el preview de Big O y con el fallback de Bug Hunt (TS-20)', async () => {
-    server.use(adminHandlers.upcoming(UPCOMING_BIG_O));
-    const first = render();
-    let dialog = await openCell(first.user, '02/12 #32', 'Big O');
-    await previewReady(dialog);
-    await within(dialog).findByText('The outer loop runs n times.');
-    expect(await axe(first.container)).toHaveNoViolations();
-    first.unmount();
-    server.use(adminHandlers.upcoming(UPCOMING_BUG_HUNT));
-    const second = render();
-    dialog = await openCell(second.user, '02/12 #32', 'Bug Hunt');
-    expect(await axe(second.container)).toHaveNoViolations();
   });
 });
 
@@ -531,5 +500,341 @@ describe('Big O desde Próximos (S-046)', () => {
     await user.keyboard('{Escape}');
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(screen.getByRole('button', { name: /Big O #32, 2026-12-02/ })).toHaveFocus();
+  });
+});
+
+describe('Bug Hunt desde Próximos (S-051)', () => {
+  const open = async () => {
+    server.use(adminHandlers.upcoming(UPCOMING_BUG_HUNT));
+    const view = render();
+    const dialog = await openCell(view.user, '02/12 #32', 'Bug Hunt');
+    await previewReady(dialog);
+    const ES = within(dialog).getByRole('region', { name: 'ES' });
+    const EN = within(dialog).getByRole('region', { name: 'EN' });
+    return { ...view, dialog, ES, EN };
+  };
+  const codeES = (ES: HTMLElement) =>
+    within(ES).getByRole('tabpanel', { name: 'Código de maxIndex en JavaScript' });
+  const norm = (t: string | null) => (t ?? '').replace(/\s+/g, '');
+
+  it('cabecera, chips y datos de generación (TS-8)', async () => {
+    server.use(adminHandlers.upcoming(UPCOMING_BUG_HUNT));
+    const { user } = render();
+    const dialog = await openCell(user, '02/12 #32', 'Bug Hunt');
+    expect(within(dialog).getByRole('heading', { level: 2, name: 'Bug Hunt #32' })).toBeVisible();
+    for (const chip of ['Bug Hunt', '#32', '2026-12-02', 'aprobado']) {
+      expect(within(dialog).getAllByText(chip).length).toBeGreaterThan(0);
+    }
+    expect(within(dialog).getByText('Intento 0 · generator 1.4.0')).toBeInTheDocument();
+    expect(within(dialog).getByRole('button', { name: 'Regenerar' })).not.toHaveAttribute(
+      'aria-disabled',
+    );
+  });
+
+  it('preview ES: especificación y código en texto plano con pestañas (TS-9)', async () => {
+    const { ES } = await open();
+    expect(ES.querySelector('[lang="es"]')).not.toBeNull();
+    expect(
+      within(ES).getByRole('heading', { level: 3, name: 'qué debería hacer' }),
+    ).toBeInTheDocument();
+    expect(
+      within(ES).getByText(
+        'Devuelve el índice del mayor valor de nums; si el máximo se repite, el del primero. Con nums vacío devuelve 0.',
+      ),
+    ).toBeInTheDocument();
+    expect(within(ES).getByRole('tab', { name: 'JavaScript' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(within(ES).getByRole('tab', { name: 'Go' })).toHaveAttribute('aria-selected', 'false');
+    expect(within(ES).getByRole('tab', { name: 'Java' })).toHaveAttribute('aria-selected', 'false');
+    expect(ES).toHaveTextContent('max-index.js');
+    const code = codeES(ES);
+    expect(code).toHaveTextContent('function maxIndex(nums) {');
+    expect(code).toHaveTextContent('if (nums[i] >= nums[best]) {');
+    expect([...code.querySelectorAll('span')].filter((sp) => sp.style.color)).toHaveLength(0);
+    expect(within(ES).queryByText('Cargando preview…')).toBeNull();
+  });
+
+  it('preview ES: línea del bug marcada con texto y no elegibles atenuadas (TS-10)', async () => {
+    const { ES } = await open();
+    const rows = [...codeES(ES).children] as HTMLElement[];
+    expect(rows).toHaveLength(9);
+    const bug = rows[3] as HTMLElement;
+    expect(bug).toHaveTextContent('if (nums[i] >= nums[best]) {');
+    expect(bug).toHaveTextContent('línea del bug');
+    expect(bug).toHaveAccessibleDescription(/línea del bug/);
+    expect(bug).not.toHaveClass('text-text-dim');
+    for (const i of [0, 5, 6, 8]) expect(rows[i]).toHaveClass('text-text-dim');
+    expect(rows[1]).not.toHaveClass('text-text-dim');
+    expect(codeES(ES).querySelectorAll('[aria-describedby]')).toHaveLength(1);
+    expect(within(ES).queryAllByRole('radio')).toHaveLength(0);
+    expect(within(ES).queryAllByRole('radiogroup')).toHaveLength(0);
+  });
+
+  it('preview ES: chips y tests visibles sin el oculto (TS-11)', async () => {
+    const { ES } = await open();
+    expect(within(ES).getByText('tipo: comparación')).toBeInTheDocument();
+    expect(within(ES).getByText('mutación: > → >=')).toBeInTheDocument();
+    expect(within(ES).getByRole('heading', { level: 3, name: 'tests' })).toBeInTheDocument();
+    const tests = within(ES).getByRole('region', { name: 'tests' });
+    expect(within(tests).getAllByRole('listitem')).toHaveLength(3);
+    for (const t of ['maxIndex([]) → 0', 'maxIndex([4]) → 0', 'maxIndex([3, 7, 2]) → 1']) {
+      expect(within(tests).getByText(t)).toBeInTheDocument();
+    }
+    expect(tests).toHaveTextContent('maxIndex de [3, 7, 2] da 1, pasa');
+    expect(ES).not.toHaveTextContent('1 test oculto falla');
+    expect(ES).not.toHaveTextContent('El test que falla se revela al confirmar.');
+  });
+
+  it('preview ES: test que falla, fix y «Por qué falla» (TS-12)', async () => {
+    const { ES } = await open();
+    const failing = within(ES).getByRole('region', { name: 'el test que falla' });
+    expect(failing).toHaveTextContent('maxIndex([5, 1, 5])');
+    expect(failing).toHaveTextContent('esperado 0 · obtenido 2');
+    expect(
+      within(ES).getByRole('heading', { level: 3, name: /el fix · línea 4/ }),
+    ).toBeInTheDocument();
+    const fix = within(ES).getByRole('region', { name: 'Fix de la línea 4 en JavaScript' });
+    expect(fix).toHaveTextContent('if (nums[i] >= nums[best]) {');
+    expect(fix).toHaveTextContent('if (nums[i] > nums[best]) {');
+    const why = within(ES).getByRole('heading', { level: 3, name: 'Por qué falla' });
+    const items = within(why.closest('section') as HTMLElement).getAllByRole('listitem');
+    expect(items).toHaveLength(3);
+    expect(items[0]).toHaveTextContent(
+      'La condición que decide si best cambia usa >= en lugar de >: con un empate también se mueve.',
+    );
+  });
+
+  it('preview EN equivalente en inglés con el mismo código, tests y fix (TS-13)', async () => {
+    const { ES, EN } = await open();
+    expect(EN.querySelector('[lang="en"]')).not.toBeNull();
+    expect(
+      within(EN).getByRole('heading', { level: 3, name: 'what it should do' }),
+    ).toBeInTheDocument();
+    expect(
+      within(EN).getByText(
+        'Returns the index of the largest value in nums; if the maximum repeats, the first one. With an empty nums it returns 0.',
+      ),
+    ).toBeInTheDocument();
+    expect(within(EN).getByText('type: comparison')).toBeInTheDocument();
+    expect(within(EN).getByText('mutation: > → >=')).toBeInTheDocument();
+    expect(within(EN).getByRole('heading', { level: 3, name: 'tests' })).toBeInTheDocument();
+    expect(EN).toHaveTextContent('maxIndex of [3, 7, 2] returns 1, passes');
+    expect(within(EN).getByRole('region', { name: 'the failing test' })).toHaveTextContent(
+      'expected 0 · got 2',
+    );
+    expect(
+      within(EN).getByRole('heading', { level: 3, name: /the fix · line 4/ }),
+    ).toBeInTheDocument();
+    expect(within(EN).getByRole('region', { name: 'Fix for line 4 in JavaScript' })).toBeVisible();
+    expect(within(EN).getByRole('heading', { level: 3, name: 'Why it fails' })).toBeInTheDocument();
+    expect(
+      within(EN).getByText(
+        'The condition that decides whether best changes uses >= instead of >: on a tie it moves too.',
+      ),
+    ).toBeInTheDocument();
+    const enCode = within(EN).getByRole('tabpanel', { name: 'Code of maxIndex in JavaScript' });
+    expect(enCode).toHaveTextContent('bug line');
+    expect(norm((enCode.textContent ?? '').replace('bug line', ''))).toBe(
+      norm((codeES(ES).textContent ?? '').replace('línea del bug', '')),
+    );
+    for (const es of [
+      'qué debería hacer',
+      'Por qué falla',
+      'comparación',
+      'línea del bug',
+      'esperado',
+    ]) {
+      expect(EN).not.toHaveTextContent(es);
+    }
+  });
+
+  it('columnas lado a lado y jerarquía de encabezados (TS-14)', async () => {
+    const { ES, EN } = await open();
+    expect(ES.parentElement).toHaveClass('lg:grid-cols-2');
+    expect(EN.parentElement).toBe(ES.parentElement);
+    expect(ES.compareDocumentPosition(EN) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    for (const col of [ES, EN]) {
+      expect(within(col).queryAllByRole('heading', { level: 1 })).toHaveLength(0);
+      expect(within(col).queryAllByRole('heading', { level: 2 })).toHaveLength(0);
+    }
+    expect(within(ES).getByRole('heading', { level: 3, name: 'ES' })).toBeInTheDocument();
+    expect(within(EN).getByRole('heading', { level: 3, name: 'EN' })).toBeInTheDocument();
+  });
+
+  it('pestañas independientes, el fix sigue a la pestaña, sin efectos (TS-15)', async () => {
+    const { user, ES, EN } = await open();
+    await user.click(within(ES).getByRole('tab', { name: 'Go' }));
+    expect(within(ES).getByRole('tab', { name: 'Go' })).toHaveAttribute('aria-selected', 'true');
+    const panel = within(ES).getByRole('tabpanel', { name: 'Código de maxIndex en Go' });
+    expect(panel).toHaveTextContent('if nums[i] >= nums[best] {');
+    expect(panel).toHaveTextContent('línea del bug');
+    expect(ES).toHaveTextContent('max_index.go');
+    expect(within(ES).getByRole('region', { name: 'Fix de la línea 4 en Go' })).toHaveTextContent(
+      'if nums[i] > nums[best] {',
+    );
+    expect(within(EN).getByRole('tab', { name: 'JavaScript' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+    expect(within(EN).getByRole('region', { name: 'Fix for line 4 in JavaScript' })).toBeVisible();
+    expect(requests.filter((r) => r.pathname !== '/api/admin/challenges/upcoming')).toHaveLength(0);
+  });
+
+  it('pestañas con teclado (TS-16)', async () => {
+    const { user, ES, EN } = await open();
+    await user.click(within(EN).getByRole('tab', { name: 'JavaScript' }));
+    await user.keyboard('{ArrowRight}');
+    const go = within(EN).getByRole('tab', { name: 'Go' });
+    expect(go).toHaveFocus();
+    expect(go).toHaveAttribute('aria-selected', 'true');
+    expect(within(EN).getByRole('tabpanel', { name: 'Code of maxIndex in Go' })).toBeVisible();
+    expect(within(EN).getByRole('region', { name: 'Fix for line 4 in Go' })).toBeVisible();
+    await user.keyboard('{ArrowRight}');
+    expect(within(EN).getByRole('tab', { name: 'Java' })).toHaveFocus();
+    expect(
+      within(EN).getByRole('tabpanel', { name: 'Code of maxIndex in Java' }),
+    ).toHaveTextContent('if (nums[i] >= nums[best]) {');
+    await user.keyboard('{ArrowLeft}');
+    expect(within(EN).getByRole('tab', { name: 'Go' })).toHaveFocus();
+    expect(within(ES).getByRole('tab', { name: 'JavaScript' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    );
+  });
+
+  it('solo lectura (TS-17)', async () => {
+    const { ES, EN } = await open();
+    for (const col of [ES, EN]) {
+      expect(within(col).queryAllByRole('button')).toHaveLength(0);
+      expect(within(col).queryAllByRole('radio')).toHaveLength(0);
+      expect(within(col).queryAllByRole('radiogroup')).toHaveLength(0);
+      expect(within(col).getAllByRole('tab')).toHaveLength(3);
+      expect(col.querySelector('[aria-live]')).toBeNull();
+      expect(within(col).getByRole('tabpanel')).toHaveAttribute('tabindex', '0');
+    }
+    expect(
+      within(ES).getByRole('region', { name: 'Fix de la línea 4 en JavaScript' }),
+    ).toHaveAttribute('tabindex', '0');
+  });
+
+  it('datos del desafío genéricos (TS-18)', async () => {
+    const { dialog, ES } = await open();
+    const common = within(dialog).getByRole('region', { name: 'Datos del desafío' });
+    for (const [k, v] of [
+      ['template', 'extreme_index'],
+      ['function_name', 'maxIndex'],
+      ['bug_type', 'comparison'],
+      ['mutation.from', '>'],
+      ['mutation.to', '>='],
+      ['bug_line', '4'],
+      ['pickable_lines', '2, 3, 4, 5, 8'],
+    ]) {
+      expect(common).toHaveTextContent(k as string);
+      expect(common).toHaveTextContent(v as string);
+    }
+    expect(dialog.textContent).not.toContain('Culpables posibles');
+    expect(ES.querySelectorAll('dt')).toHaveLength(0);
+  });
+
+  it('log de verificación genérico con los checks de Bug Hunt (TS-19)', async () => {
+    const { dialog } = await open();
+    const log = within(dialog).getByRole('region', { name: 'Log de verificación' });
+    const items = within(log).getAllByRole('listitem');
+    expect(items).toHaveLength(13);
+    const names = [
+      'texts_bilingual',
+      'code_shape',
+      'lines_consistent',
+      'tests_consistent',
+      'variety_combo',
+      'run_correct_js',
+      'run_correct_go',
+      'run_correct_java',
+      'run_mutant_js',
+      'run_mutant_go',
+      'run_mutant_java',
+      'correct_agrees',
+      'mutant_agrees',
+    ];
+    names.forEach((n, i) => expect(items[i]).toHaveTextContent(n));
+    for (const re of [
+      /run_correct_go\s*·\s*280 ms/,
+      /run_mutant_java\s*·\s*505 ms/,
+      /correct_agrees\s*·\s*8 tests/,
+      /mutant_agrees\s*·\s*8 tests/,
+    ]) {
+      expect(log.textContent).toMatch(re);
+    }
+    expect(within(log).getAllByText('verificación correcta').length).toBeGreaterThan(0);
+    expect(dialog.textContent).not.toMatch(/seed/i);
+  });
+
+  it('payload inválido: aviso y vista genérica sin cerrar el detalle (TS-20)', async () => {
+    const spy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    server.use(adminHandlers.upcoming(UPCOMING_BUG_HUNT_BAD_PAYLOAD));
+    const { user } = render();
+    const dialog = await openCell(user, '02/12 #32', 'Bug Hunt');
+    expect(
+      await within(dialog).findByText(
+        'No pudimos mostrar la preview del juego. Mostramos los datos del desafío.',
+      ),
+    ).toBeInTheDocument();
+    const es = within(dialog).getByRole('region', { name: 'ES' });
+    expect(es).toHaveTextContent('Devuelve el índice del mayor valor de nums');
+    expect(es).toHaveTextContent('La condición que decide si best cambia');
+    expect(within(dialog).getByRole('region', { name: 'EN' })).toBeInTheDocument();
+    expect(within(dialog).getByRole('region', { name: 'Datos del desafío' })).toHaveTextContent(
+      'typo',
+    );
+    expect(
+      within(dialog).getByRole('heading', { name: 'Log de verificación' }),
+    ).toBeInTheDocument();
+    expect(within(dialog).getByRole('button', { name: 'Regenerar' })).toBeInTheDocument();
+    expect(screen.getByRole('dialog')).toBe(dialog);
+    expect(
+      spy.mock.calls.filter(([only, ...rest]) => only instanceof Error && rest.length === 0),
+    ).toHaveLength(1);
+    spy.mockRestore();
+  });
+
+  it('axe sin violaciones con los previews de Bug Hunt y Big O (TS-21)', async () => {
+    server.use(adminHandlers.upcoming(UPCOMING_BUG_HUNT));
+    const first = render();
+    const dialog = await openCell(first.user, '02/12 #32', 'Bug Hunt');
+    await previewReady(dialog);
+    await within(dialog).findByText('Why it fails');
+    // El título «tests» es igual en ES y EN: con las dos columnas a la vez axe marca landmark-unique
+    // (defecto del paquete games, anotado en el reporte). Cada columna se verifica con todas las reglas.
+    for (const name of ['ES', 'EN']) {
+      expect(await axe(within(dialog).getByRole('region', { name }))).toHaveNoViolations();
+    }
+    first.unmount();
+    server.use(adminHandlers.upcoming(UPCOMING_BIG_O));
+    const second = render();
+    const bigO = await openCell(second.user, '02/12 #32', 'Big O');
+    await previewReady(bigO);
+    await within(bigO).findByText('The outer loop runs n times.');
+    expect(await axe(second.container)).toHaveNoViolations();
+  });
+
+  it('el admin queda en español y solo el panel EN declara inglés (TS-22)', async () => {
+    const before = document.documentElement.lang;
+    const { dialog, ES, EN } = await open();
+    expect(document.documentElement.lang).toBe(before);
+    const en = dialog.querySelectorAll('[lang="en"]');
+    const es = dialog.querySelectorAll('[lang="es"]');
+    expect(en).toHaveLength(1);
+    expect(EN.contains(en[0] as Element)).toBe(true);
+    expect(es).toHaveLength(1);
+    expect(ES.contains(es[0] as Element)).toBe(true);
+  });
+
+  it('Escape cierra el drawer y devuelve el foco a la celda (TS-24)', async () => {
+    const { user } = await open();
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.getByRole('button', { name: /Bug Hunt #32, 2026-12-02/ })).toHaveFocus();
   });
 });

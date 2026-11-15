@@ -41,7 +41,7 @@ export const clientRegistry = {
 } satisfies Record<GameId, () => Promise<GameClient>>;
 ```
 
-`GameClient` is the shape of the `./client` entry defined by the game contract: React components `Instructions`, `Game`, `Result` and `share(result, number): string`. The exact props of those components are owned by the game packages and `@nerdose/core`; the app passes them through and does not reinterpret them.
+`GameClient` is the shape of the `./client` entry defined by the game contract: React components `Instructions`, `Game`, `Result` and `share(result, number, locale): string`. The exact props of those components are owned by the game packages and `@nerdose/core`; the app passes them through and does not reinterpret them.
 
 ## How to use
 
@@ -60,7 +60,7 @@ const Client = lazy(clientRegistry[gameId]);
 
 ### Share
 
-- `share(result, number)` produces the text. The shell calls `navigator.share({ text })` when available and falls back to `navigator.clipboard.writeText`, with a visible confirmation message. After sharing it calls `track('share:<game_id>')` (see `analytics`).
+- `share(result, number, locale)` produces the text. The shell calls `navigator.share({ text })` when available and falls back to `navigator.clipboard.writeText`, with a visible confirmation message. After sharing it calls `track('share:<game_id>')` (see `analytics`).
 
 ### Heavy dependencies stay inside the game
 
@@ -98,3 +98,7 @@ const Client = lazy(clientRegistry[gameId]);
 - `ClientBaseProps.codeLanguage: CodeLanguage` is generic (no per-game branch): the host resolves it as `session.preferred_code_language ?? 'js'` and the client reads it when it mounts (Big O, Bug Hunt); the other clients ignore it.
 - `web` writes `MoveResponse.play.code_language` into the `GameToday` cache and, when not null, into the session cache through `rememberCodeLanguage` (no `PATCH`: the `api` already stored it when the game closed).
 - Shiki never appears in `apps/web` (not even in tests); a build guard checks it stays out of the entry chunk.
+
+## Update (REQ-010)
+
+- `GameClient.share(result, number, locale)`: `ClientShareButton` receives the session locale from `GameHostHeader` and builds the text on click; games whose share text has no words ignore the third argument. The five games have a client; the registry stays `Partial` so a new game can be added before its client.

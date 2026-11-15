@@ -41,7 +41,7 @@ export const clientRegistry = {
 } satisfies Record<GameId, () => Promise<GameClient>>;
 ```
 
-`GameClient` is the shape of the `./client` entry defined by the game contract: React components `Instructions`, `Game`, `Result` and `share(result, number): string`. The exact props of those components are owned by the game packages and `@nerdose/core`; the app passes them through and does not reinterpret them.
+`GameClient` is the shape of the `./client` entry defined by the game contract: React components `Instructions`, `Game`, `Result` and `share(result, number, locale): string`. The exact props of those components are owned by the game packages and `@nerdose/core`; the app passes them through and does not reinterpret them.
 
 ## How to use
 
@@ -60,7 +60,7 @@ const Client = lazy(clientRegistry[gameId]);
 
 ### Share
 
-- `share(result, number)` produces the text. The shell calls `navigator.share({ text })` when available and falls back to `navigator.clipboard.writeText`, with a visible confirmation message. After sharing it calls `track('share:<game_id>')` (see `analytics`).
+- `share(result, number, locale)` produces the text; the host passes the active language and games without localized text ignore it. The shell calls `navigator.share({ text })` when available and falls back to `navigator.clipboard.writeText`, with a visible confirmation message. After sharing it calls `track('share:<game_id>')` (see `analytics`).
 
 ### Heavy dependencies stay inside the game
 
@@ -102,3 +102,9 @@ const Client = lazy(clientRegistry[gameId]);
 - `ClientBaseProps.codeLanguage: CodeLanguage` (generic: Big O and Bug Hunt use it, the other games ignore it) is `session.preferred_code_language ?? 'js'`. In a game package it is optional with default `'js'`, so a client is assignable to the host's component type whether or not the host already passes it. The `Game` reads it only on mount and when the challenge changes; switching the code tab is local state: no request, no persistence, and the chosen option survives it.
 - Shiki (Big O, Bug Hunt) is loaded only through dynamic `import('shiki/…')` inside the game package (`highlight.ts`, own chunk), with the JS regex engine and the `css-variables` theme. The theme's `--shiki-*` variables are defined with `style` on the code block and point to DS tokens: no hex, no CSS file, no Shiki markup. While loading, or if loading fails, the same code is shown without color and with the same structure (no layout shift).
 - Big O's `Preview` shows the code in plain text (it never loads Shiki, so the admin never pays for it) with local-view language tabs (CA-6: no effects, no fetch, no storage, no play state). The tabs are the only controls; the options are a read-only list, with the answer ("correcta") and the `trap_option` ("trampa") marked.
+
+## Update (REQ-010)
+
+- `GameClient.share(result, number, locale)`: the host (`share-button.tsx`) passes the active language; the games whose share text has no words ignore the third argument. Bug Hunt builds `🐛 Bug Hunt #N · <Language>` / `🟩 bug encontrado | 🟥 se me escapó` / `nerdose.dev` in `locale`, never the line nor the bug type.
+- Bug Hunt's `Preview` shows the code in plain text (never loads Shiki) with local-view language tabs, the bug line tagged "línea del bug", non-eligible lines dimmed, the "tipo" and "mutación: from → to" chips, the visible tests (without the hidden row), the failing test, the fix of the active tab and the steps in `language`. The tabs are the only controls (no radios, hints or live regions).
+- Bug Hunt's `Game` renders the eligible lines as a `radiogroup` (roving tabindex; arrows move focus, Space picks, Enter belongs to "Confirmar línea") and validates `moveSchema.parse({ language, line })` before `onMove`; the selected line is local state and is never restored on resume.
