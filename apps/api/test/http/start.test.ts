@@ -4,6 +4,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } 
 
 import { buildDbApp, MUTATION_HEADERS } from '../helpers/app';
 import { PAYLOAD, useDatabases } from '../helpers/db';
+import { registryWithoutBugHunt } from '../helpers/registries';
 
 const dbs = useDatabases();
 beforeAll(() => dbs.reset());
@@ -151,8 +152,12 @@ describe('POST /api/games/{game_id}/today/start', () => {
   it('TS-36 juego sin paquete o inexistente', async () => {
     await dbs.insertChallenge({ gameId: 'bug-hunt', date: '2026-12-01', status: 'published' });
     const player = await dbs.insertPlayer();
-    const { app } = await buildDbApp(dbs);
-    for (const game of ['bug-hunt', 'foo']) {
+    const apps = {
+      'bug-hunt': (await buildDbApp(dbs, { games: registryWithoutBugHunt })).app,
+      foo: (await buildDbApp(dbs)).app,
+    };
+    for (const game of ['bug-hunt', 'foo'] as const) {
+      const app = apps[game];
       const res = await post(app, { challenge_number: 8 }, { Cookie: `nd_pid=${player.id}` }, game);
       expect(res.status).toBe(404);
       expect((await res.json()).error.code).toBe('not_found');

@@ -129,6 +129,9 @@ importers:
       '@nerdose/game-big-o':
         specifier: workspace:*
         version: link:../../packages/games/big-o
+      '@nerdose/game-bug-hunt':
+        specifier: workspace:*
+        version: link:../../packages/games/bug-hunt
       '@nerdose/game-devdle':
         specifier: workspace:*
         version: link:../../packages/games/devdle

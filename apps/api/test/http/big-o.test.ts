@@ -17,6 +17,7 @@ import {
   seedBigOPlay,
 } from '../helpers/big-o';
 import { useDatabases } from '../helpers/db';
+import { registryWithoutBugHunt } from '../helpers/registries';
 
 const dbs = useDatabases();
 beforeAll(() => dbs.reset());
@@ -645,7 +646,7 @@ describe('Big O: admin', () => {
       const p = await dbs.insertPlayer();
       await dbs.insertReport({ challengeId: c.id, playerId: p.id });
     }
-    const { app } = await buildDbApp(dbs);
+    const { app } = await buildDbApp(dbs, { games: registryWithoutBugHunt });
     const res = await app.request('/api/admin/reports', { headers: await adminAuth() });
     expect(res.status).toBe(200);
     const body = (await res.json()) as { groups: Json[] };

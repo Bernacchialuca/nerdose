@@ -7,6 +7,7 @@ import { playerRef } from '@/domain/admin/admin.service';
 import { adminAuth, ADMIN_HEADERS, buildDbApp } from '../helpers/app';
 import { PAYLOAD, useDatabases } from '../helpers/db';
 import { GG_PAYLOAD } from '../helpers/grep-grid';
+import { registryWithoutBugHunt } from '../helpers/registries';
 import { TL_PAYLOAD } from '../helpers/timeline';
 
 const dbs = useDatabases();
@@ -135,7 +136,7 @@ describe('GET /api/admin/reports', () => {
       payload: {},
     });
     await seedReports(c, 1);
-    const { app } = await buildDbApp(dbs);
+    const { app } = await buildDbApp(dbs, { games: registryWithoutBugHunt });
     const res = await list(app);
     expect(res.status).toBe(200);
     expect(((await res.json()) as { groups: Json[] }).groups[0]!.challenge.culprits).toEqual([]);

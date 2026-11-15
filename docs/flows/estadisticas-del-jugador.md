@@ -14,7 +14,7 @@ stories: [S-043, S-048]
 **Status:** Draft
 **Creado:** 2026-11-03
 **Última actualización:** 2026-11-14
-**Stories:** S-043
+**Stories:** S-043, S-048
 
 ## Descripción
 
@@ -140,6 +140,9 @@ sequenceDiagram
 - Las Play `voided` cuentan en el heatmap, el historial, las rachas y `total_completed`, pero no en `played`, `wins` ni `extra` (invariante 23).
 - Las Play `in_progress` (incluidas las de días pasados) no aparecen.
 - `extra` de big-o = `{ by_category: { <recipe_category>: { played, correct } } }` (una partida suma `played` a la categoría de su receta y `correct` si ganó). La `api` ya lo devuelve en `games[].extra`; mostrar los aciertos por categoría en la pantalla es de FG-10. La etiqueta del historial de big-o es `✓ O(n log n)` (la respuesta correcta) si ganó, o `✗` si no.
+- `extra` de bug-hunt = `{ by_language: { <code_language>: { played, correct } }, by_bug_type: { <bug_type>: { played, correct } } }`; la etiqueta del historial es `✓ L<n>` / `✗ L<n>` con `n` = `bug_line`.
 - TanStack Query invalida esta query al terminar una partida y al cambiar el día.
 
 > Actualizado por REQ-009 (story S-043): `extra` y etiqueta del historial de Big O.
+
+> Actualizado por REQ-010 (story S-048): `extra` y etiqueta del historial de Bug Hunt.

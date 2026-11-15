@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { devdle, scoreGuess } from '@nerdose/game-devdle/definition';
+import type { GameRegistry } from '@nerdose/core';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { IdentityService } from '@/domain/identity/identity.service';
@@ -8,6 +9,7 @@ import type { IdentityRepository } from '@/domain/identity/identity.repository';
 
 import { buildDbApp, buildTestApp } from '../helpers/app';
 import { PAYLOAD, useDatabases } from '../helpers/db';
+import { registryWithoutBugHunt } from '../helpers/registries';
 
 const dbs = useDatabases();
 beforeAll(() => dbs.reset());
@@ -212,8 +214,8 @@ describe('GET /api/today con estado real', () => {
     current_streak: 0,
     ...overrides,
   });
-  const fetchToday = async (headers: Record<string, string> = {}) => {
-    const { app } = await buildDbApp(dbs);
+  const fetchToday = async (headers: Record<string, string> = {}, games?: GameRegistry) => {
+    const { app } = await buildDbApp(dbs, { games });
     const res = await app.request('/api/today', { headers });
     expect(res.status).toBe(200);
     return res.json();
@@ -346,7 +348,7 @@ describe('GET /api/today con estado real', () => {
   it('TS-49 juego no registrado con desafío en la base aparece none', async () => {
     await publish();
     await dbs.insertChallenge({ gameId: 'bug-hunt', date: '2026-12-01', status: 'published' });
-    const body = await fetchToday();
+    const body = await fetchToday({}, registryWithoutBugHunt);
     expect(body.games[4]).toEqual(none[4]);
     expect(body.games[0].challenge_status).toBe('published');
   });
