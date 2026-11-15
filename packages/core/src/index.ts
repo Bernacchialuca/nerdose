@@ -45,9 +45,18 @@ export type {
   VerificationLog,
 } from './game-generator';
 export { createGameRegistry, type AnyGameDefinition, type GameRegistry } from './game-registry';
-export { challengeNumber, nextResetAt, secondsToReset, today } from './platform-day';
+export {
+  challengeNumber,
+  nextResetAt,
+  secondsToReset,
+  today,
+  validateMetricsRange,
+  type MetricsRangeReason,
+  type MetricsRangeResult,
+} from './platform-day';
 export { rngFrom, type Rng } from './prng';
 export {
+  isStreakAlive,
   liveStreak,
   nextStreak,
   rebuildGameStats,

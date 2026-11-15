@@ -29,6 +29,13 @@ Package `@nerdose/db` (`packages/db`), entries `.` and `./testing`.
 - **jobRuns** (packages/db/src/schema/jobs.ts) - Drizzle table of generator job executions (`fill`, `sync_banks`)
 - **Challenge / NewChallenge, Play / NewPlay, RejectedGuess / NewRejectedGuess, PlayerGameStats / NewPlayerGameStats, PlayerStats / NewPlayerStats, Term / NewTerm, JobRun / NewJobRun** (packages/db/src/schema/*.ts) - Inferred select and insert types of the new tables
 
+## Metrics views (4 items) - DB objects, raw SQL (migration `0008_metrics_views`)
+No Drizzle objects exist for these views; read them with raw SQL, casting `date` to text (`date::text`) or using `mode: 'string'`. Only `nerdose_api` has `SELECT`; `nerdose_generator` has no access. No view reads the clock.
+- **metrics_daily_players** (`date` date, `game_id` game_id nullable = total, `players` int4) - Distinct players with any Play per date, total and per game
+- **metrics_retention** (`cohort_date` date, `cohort_size` int4, `d1_players` int4, `d7_players` int4) - Cohort by first completed Play; the `api` computes `d1`/`d7` from `d1_players`/`d7_players` and returns null when the day has not ended
+- **metrics_streak_distribution** (`bucket` text, `last_active_date` date nullable, `players` int4) - Players per bucket of the stored `global_streak`; the `api` moves rows whose streak is not alive to `'0'` using `last_active_date` and `isStreakAlive` of core
+- **metrics_challenge_quality** (`challenge_id` uuid, `game_id`, `date`, `number` int4, `started`/`finished`/`reports` int4, `completion_rate`/`win_rate` float8 nullable, `status`) - Per published or voided challenge; voided plays count in `started` only
+
 ## Migrations (2 items) - see client.md
 - **runMigrations / MIGRATIONS_FOLDER** (packages/db/src/migrations/run-migrations.ts) - Applies the versioned migrations with the Drizzle migrator
 - **syncRolePasswords** (packages/db/src/migrations/sync-role-passwords.ts) - Validates role URLs and runs `ALTER ROLE ... PASSWORD`

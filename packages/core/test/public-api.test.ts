@@ -11,6 +11,8 @@ import type {
   CodeLanguage,
   CompletedPlay,
   CompletedPlayStatus,
+  MetricsRangeReason,
+  MetricsRangeResult,
   Culprit,
   CulpritKind,
   RebuiltGameStats,
@@ -57,6 +59,7 @@ describe('public API of the "." entry', () => {
       'challengeNumber',
       'createGameRegistry',
       'isGameId',
+      'isStreakAlive',
       'liveStreak',
       'nextResetAt',
       'nextStreak',
@@ -65,6 +68,7 @@ describe('public API of the "." entry', () => {
       'rngFrom',
       'secondsToReset',
       'today',
+      'validateMetricsRange',
     ]);
   });
 
@@ -94,6 +98,13 @@ describe('public API of the "." entry', () => {
     expectTypeOf<Rng>().not.toBeNever();
     expectTypeOf(core.nextStreak).toEqualTypeOf<(input: StreakInput, day: string) => number>();
     expectTypeOf(core.liveStreak).toEqualTypeOf<(input: StreakInput, today: string) => number>();
+    expectTypeOf(core.isStreakAlive).toEqualTypeOf<
+      (lastCompleted: string | null, prevActiveDay: string | null, today: string) => boolean
+    >();
+    expectTypeOf(core.validateMetricsRange).toEqualTypeOf<
+      (from: string, to: string, today: string) => MetricsRangeResult
+    >();
+    expectTypeOf<MetricsRangeReason>().not.toBeNever();
     expectTypeOf<BankUsage>().not.toBeNever();
     expectTypeOf<GenerationRequestStatus>().not.toBeNever();
     expectTypeOf<Culprit>().not.toBeNever();

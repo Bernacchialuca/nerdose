@@ -34,5 +34,17 @@ All functions are pure and isomorphic; the clock is injected via `now`.
 ## nextStreak / liveStreak
 - **Location:** packages/core/src/streaks.ts
 - **Signature:** `nextStreak(input: StreakInput, day: string): number`; `liveStreak(input: StreakInput, today: string): number`; `StreakInput = { current, lastCompleted: string | null, prevActiveDay: string | null }`
-- **Rule:** alive if `lastCompleted !== null && (prevActiveDay === null || lastCompleted >= prevActiveDay)`; `max_*` is computed by the caller.
+- **Rule:** alive per `isStreakAlive`; `max_*` is computed by the caller.
 - **Usage:** game: `nextStreak({ current: current_streak, lastCompleted: last_completed_date, prevActiveDay: prev_active_day }, D)`; global: same with `global_streak`, `last_active_date`, `prev_active_day_global`.
+
+## isStreakAlive
+- **Location:** packages/core/src/streaks.ts
+- **Signature:** `isStreakAlive(lastCompleted: string | null, prevActiveDay: string | null, today: string): boolean`
+- **Rule:** `lastCompleted !== null && (lastCompleted === today || prevActiveDay === null || lastCompleted >= prevActiveDay)`; `liveStreak` and `nextStreak` are built on it. Pure.
+- **Usage:** `isStreakAlive(last_active_date, prevActiveDays(today).global, today)`
+
+## validateMetricsRange
+- **Location:** packages/core/src/platform-day.ts
+- **Signature:** `validateMetricsRange(from: string, to: string, today: string): MetricsRangeResult` with `MetricsRangeResult = 'ok' | MetricsRangeReason` and `MetricsRangeReason = 'from_after_to' | 'future' | 'too_long'`
+- **Rule:** checked in that order; `to - from <= 365` days (366 inclusive); inputs must be valid `YYYY-MM-DD`; pure (`today` injected).
+- **Usage:** api: `validateMetricsRange(from, to, clock.today()) === 'ok'`; admin: `validateMetricsRange(from, to, todayUtc)` mapped to a message per reason.

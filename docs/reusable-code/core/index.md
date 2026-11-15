@@ -30,9 +30,11 @@ Package `@nerdose/core` (`packages/core`), isomorphic entry `.`.
 - **REPORT_REASONS / ReportReason** (packages/core/src/enums.ts) - Report reasons (aligned with PG enum `report_reason`)
 - **REPORT_STATUSES / ReportStatus** (packages/core/src/enums.ts) - Report statuses `open`, `resolved`, `dismissed` (aligned with PG enum `report_status`)
 
-## Platform day (8 items) - see platform-day.md
+## Platform day (10 items) - see platform-day.md
 - **today / challengeNumber / nextResetAt / secondsToReset** (packages/core/src/platform-day.ts) - Pure UTC day, challenge number and reset countdown functions
 - **nextStreak / liveStreak / StreakInput** (packages/core/src/streaks.ts) - Single streak implementation with neutral days (ADR-011)
+- **isStreakAlive** (packages/core/src/streaks.ts) - ADR-011 live-streak predicate (completed today or on/after the previous active day); base of `liveStreak`/`nextStreak`, used by the api for the admin streak distribution
+- **validateMetricsRange / MetricsRangeReason / MetricsRangeResult** (packages/core/src/platform-day.ts) - Admin metrics range check (`from <= to`, `to <= today`, at most 366 days inclusive); returns `'ok'` or `from_after_to` | `future` | `too_long`; shared by api and admin
 - **replayStreak / ReplayedStreak** (packages/core/src/streaks.ts) - Rebuilds a streak from completed and active days by chaining `nextStreak` (ADR-011 recompute)
 - **rebuildGameStats / CompletedPlay / RebuiltGameStats** (packages/core/src/streaks.ts) - Rebuilds played/wins/extra from completed plays, skipping voided
 

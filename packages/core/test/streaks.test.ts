@@ -2,7 +2,13 @@ import { afterEach, beforeEach, describe, expect, expectTypeOf, it, vi } from 'v
 
 import { today } from '../src/platform-day';
 import { rngFrom } from '../src/prng';
-import { liveStreak, nextStreak, rebuildGameStats, replayStreak } from '../src/streaks';
+import {
+  isStreakAlive,
+  liveStreak,
+  nextStreak,
+  rebuildGameStats,
+  replayStreak,
+} from '../src/streaks';
 import type { AnyGameDefinition } from '../src/game-registry';
 import { makeDefinition } from './fixtures/fake-definition';
 import type { StreakInput } from '../src/streaks';
@@ -313,5 +319,55 @@ describe('rebuildGameStats', () => {
       ]),
     ).toEqual({ played: 1, wins: 1, extra: { played: 1 } });
     expectTypeOf<AnyGameDefinition>().toExtend<Parameters<typeof rebuildGameStats>[0]>();
+  });
+});
+
+describe('isStreakAlive (S-052)', () => {
+  it.each([
+    ['completed today (TS-1)', '2026-12-03', '2026-12-02', '2026-12-03', true],
+    ['completed today without previous active day (TS-2)', '2026-12-03', null, '2026-12-03', true],
+    ['completed the previous active day (TS-3)', '2026-12-02', '2026-12-02', '2026-12-03', true],
+    ['alive across neutral days (TS-4)', '2026-12-01', '2026-12-01', '2026-12-04', true],
+    ['dead after a missed playable day (TS-5)', '2026-12-01', '2026-12-02', '2026-12-03', false],
+    ['never completed with previous day (TS-6)', null, '2026-12-02', '2026-12-03', false],
+    ['never completed without previous day (TS-6)', null, null, '2026-12-03', false],
+    ['completed once and no previous active day (TS-7)', '2026-11-20', null, '2026-12-03', true],
+    ['crosses month and year, alive (TS-8)', '2026-12-31', '2026-12-31', '2027-01-01', true],
+    ['crosses month and year, dead (TS-8)', '2026-12-30', '2026-12-31', '2027-01-01', false],
+  ] as const)('%s', (_name, last, prev, day, expected) => {
+    expect(isStreakAlive(last, prev, day)).toBe(expected);
+  });
+
+  describe('purity', () => {
+    beforeEach(() => {
+      vi.useFakeTimers({ toFake: ['Date'] });
+      vi.setSystemTime(new Date('2030-06-15T12:00:00Z'));
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('ignores the system clock (TS-9)', () => {
+      expect(isStreakAlive('2026-12-01', '2026-12-01', '2026-12-03')).toBe(true);
+      expect(isStreakAlive('2026-12-01', '2026-12-02', '2026-12-03')).toBe(false);
+    });
+  });
+
+  it('matches liveStreak and nextStreak over 500 generated states (TS-10)', () => {
+    const rng = rngFrom(SEED_A);
+    const dayOf = (n: number): string => `2026-12-${String(n).padStart(2, '0')}`;
+    for (let i = 0; i < 500; i++) {
+      const dayNum = rng.int(10, 28);
+      const day = dayOf(dayNum);
+      const prevActiveDay = rng.int(0, 1) === 0 ? null : dayOf(rng.int(1, dayNum - 1));
+      const lastCompleted = rng.int(0, 1) === 0 ? null : dayOf(rng.int(1, dayNum));
+      const current = lastCompleted === null ? 0 : rng.int(0, 50);
+      const state = s(current, lastCompleted, prevActiveDay);
+      const alive = isStreakAlive(state.lastCompleted, state.prevActiveDay, day);
+      expect(liveStreak(state, day)).toBe(alive ? state.current : 0);
+      if (state.lastCompleted !== day) {
+        expect(nextStreak(state, day)).toBe(alive ? state.current + 1 : 1);
+      }
+    }
   });
 });

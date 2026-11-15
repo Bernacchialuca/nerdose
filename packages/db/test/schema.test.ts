@@ -343,3 +343,49 @@ describe('generation schema', () => {
     expect(sql).not.toMatch(/GRANT[^;]*\bDELETE\b/);
   });
 });
+
+describe('metrics views migration', () => {
+  it('S052-TS-11: 0008 SQL has the 4 views and the api grant', () => {
+    const sql = readFileSync(join(MIGRATIONS_FOLDER, '0008_metrics_views.sql'), 'utf8');
+    for (const fragment of [
+      'CREATE VIEW metrics_daily_players AS',
+      'CREATE VIEW metrics_retention AS',
+      'CREATE VIEW metrics_streak_distribution AS',
+      'CREATE VIEW metrics_challenge_quality AS',
+      'GRANT SELECT ON metrics_daily_players, metrics_retention, metrics_streak_distribution, metrics_challenge_quality TO nerdose_api;',
+    ]) {
+      expect(sql).toContain(fragment);
+    }
+  });
+
+  it('S052-TS-12: 0008 SQL does nothing out of scope nor reads the clock', () => {
+    const sql = readFileSync(join(MIGRATIONS_FOLDER, '0008_metrics_views.sql'), 'utf8');
+    for (const forbidden of [
+      'nerdose_generator',
+      'DROP',
+      'DELETE FROM',
+      'TRUNCATE',
+      'CREATE TABLE',
+      'ALTER TABLE',
+      'CREATE FUNCTION',
+    ]) {
+      expect(sql).not.toContain(forbidden);
+    }
+    expect(sql).not.toMatch(/GRANT[^;]*\b(INSERT|UPDATE|DELETE)\b/);
+    expect(sql).not.toMatch(
+      /\bnow\(\)|\bcurrent_date\b|\bcurrent_timestamp\b|\blocaltimestamp\b|\blocaltime\b/i,
+    );
+  });
+
+  it('S052-TS-13: 0000 SQL does not mention metrics_', () => {
+    const sql = readFileSync(join(MIGRATIONS_FOLDER, '0000_roles_and_grants.sql'), 'utf8');
+    expect(sql).not.toContain('metrics_');
+  });
+
+  it('S052-TS-1: the journal registers 0008_metrics_views at idx 8', () => {
+    const journal = JSON.parse(
+      readFileSync(join(MIGRATIONS_FOLDER, 'meta', '_journal.json'), 'utf8'),
+    ) as { entries: { idx: number; tag: string }[] };
+    expect(journal.entries[8]).toMatchObject({ idx: 8, tag: '0008_metrics_views' });
+  });
+});
