@@ -1,6 +1,6 @@
 # Reusable Code Index - games
 
-Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition`, `./client` and `./generator`, `@nerdose/game-timeline` (`packages/games/timeline`), entries `./definition`, `./generator` and `./client`, and `@nerdose/game-big-o` (`packages/games/big-o`), entries `./definition`, `./client` and `./generator`. The build script lives in `scripts/` and is never importable from `src/` or other packages.
+Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition`, `./client`, `./generator` and data resource `./wordlist`, `@nerdose/game-grep-grid` (`packages/games/grep-grid`), entries `./definition`, `./client` and `./generator`, `@nerdose/game-timeline` (`packages/games/timeline`), entries `./definition`, `./generator` and `./client`, `@nerdose/game-big-o` (`packages/games/big-o`), entries `./definition`, `./client` and `./generator`, and `@nerdose/game-bug-hunt` (`packages/games/bug-hunt`), entry `./definition` (`./generator` and `./client` arrive with S-049/S-050/S-051). The build script lives in `scripts/` and is never importable from `src/` or other packages.
 
 ## Devdle definition (6 items) - see devdle.md
 - **devdle / definition** (packages/games/devdle/src/definition/index.ts) - `GameDefinition` of Devdle (`id: 'devdle'`, `version: 1`); `definition` is an alias; implements `codeLanguage` -> `null`; implements `culprits(p)` (1 `term`, kind/id/label; test in `src/generator/culprits.test.ts`); declares `bankUsage` terms/last_used_devdle/365/1 (checked against `historySpec`/`REUSE_WINDOW_DAYS`/`usedBankItems` in `src/generator/bank-usage.test.ts`)
@@ -145,3 +145,13 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **MAX_LINES / MAX_NESTING / MAX_RECURSION_DEPTH / measureCode / treeNesting** (packages/games/big-o/src/generator/shape.ts) - Shape limits and indentation-based measure of emitted code
 - **addDays** (packages/games/big-o/src/generator/days.ts) - Clock-free `YYYY-MM-DD` arithmetic in UTC (copy of Timeline's)
 - **seed / seedFrom / recipe / recent / D / fakeRunner / allLanguages / emptyHistory / withDate / noExample / interpret** (packages/games/big-o/src/generator/{test-fixtures.ts,test-utils.ts}) - Test-only: SHA-256 seeds, recipe lookup, `RecentChallenge` builder, a runner double and payload helpers, and a tree interpreter (never runs emitted code)
+
+## Bug Hunt shared (1 item) - see bug-hunt.md
+- **LANGUAGE_LABEL / BUG_TYPE_LABEL** (packages/games/bug-hunt/src/shared/labels.ts) - `JavaScript`/`Go`/`Java` labels and the 7 `bug_type` labels in es and en; not re-exported by `./definition`
+
+## Bug Hunt definition (6 items) - see bug-hunt.md
+- **bugHunt / definition** (packages/games/bug-hunt/src/definition/index.ts) - `GameDefinition` of Bug Hunt (`id: 'bug-hunt'`, `version: 1`); `toPublic` with exactly 5 keys, single-move `applyMove` (`invalid_move` outside `pickable_lines`), localized `result` with `fix` `{ before, after }`, `reduceStats` by `code_language` and `bug_type`, `historyLabel` `✓ L<n>` / `✗ L<n>`, `culprits` `[]`, `bankUsage` `null`
+- **payloadSchema / moveSchema / stateSchema / publicViewSchema / feedbackSchema / resultSchema / statsSchema / codeByLanguageSchema / testCaseSchema / visibleTestSchema** (packages/games/bug-hunt/src/definition/schemas.ts) - Zod schemas; payload validates structure only, content rules belong to `verify`
+- **MIN_STEPS / MAX_STEPS / MIN_VISIBLE_TESTS / MAX_VISIBLE_TESTS** (packages/games/bug-hunt/src/definition/schemas.ts) - 2, 4, 2, 3
+- **BugHuntPayload / BugHuntMove / BugHuntState / BugHuntPublicView / BugHuntFeedback / BugHuntResult / BugHuntLineFix / BugHuntExplanation / BugHuntStats / BugHuntTestCase / BugHuntVisibleTest / CodeByLanguage** (packages/games/bug-hunt/src/definition/schemas.ts) - Types inferred from the schemas
+- **PAYLOAD / PAYLOAD_BOOL / WON_JAVA / LOST_GO / WON_BOOL_JS / NON_PICKABLE / NOW / CTX_ES / CTX_EN / S0** (packages/games/bug-hunt/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry
