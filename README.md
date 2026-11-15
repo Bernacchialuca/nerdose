@@ -55,7 +55,7 @@ go version       # go1.25 o superior
 java -version    # openjdk version "21.x"
 ```
 
-Los tests de integración de `@nerdose/polyglot`, `@nerdose/game-big-o` y `@nerdose/game-bug-hunt` ejecutan los tres toolchains y fallan (no se saltean) si falta uno o la versión no es la pedida, con `Missing toolchain: …` o `Wrong toolchain version: …`. Las versiones no se sustituyen. Para verificarlos sin la cache de Turborepo: `pnpm --filter @nerdose/polyglot --filter @nerdose/game-big-o --filter @nerdose/game-bug-hunt test`.
+Los tests de integración de `@nerdose/polyglot`, `@nerdose/game-big-o` y `@nerdose/game-bug-hunt` ejecutan los tres toolchains y fallan (no se saltean) si falta uno o la versión no es la pedida, con `Missing toolchain: …` o `Wrong toolchain version: …`. Las versiones no se sustituyen. Para verificarlos sin la cache de Turborepo: `pnpm --filter @nerdose/polyglot test` (ídem con `@nerdose/game-big-o` y `@nerdose/game-bug-hunt`).
 
 **Usuario no root:** el runner de `@nerdose/polyglot` nunca ejecuta código como root. Si el proceso corre como root, exige `RUNNER_UID` y `RUNNER_GID` (enteros mayores que 0: el usuario y el grupo no root con los que corre cada programa) y, si faltan, no ejecuta nada y devuelve `runner_requires_non_root`. En local, corriendo como usuario normal, no hacen falta.
 

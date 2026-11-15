@@ -4,7 +4,7 @@ Class-string helpers: they only return classes, so `web` applies them to `<butto
 
 ## buttonClass
 - **Location:** packages/ui/src/components/button-class.ts
-- **Description:** DS button: radius 10, Mono, `lg` (48px) / `md` (44px) / `share` (44px high, `px-3.5`), `primary` (brand), `secondary` (outline), `accent` (per-game, requires `game`) and `error` (destructive fill: `bg-status-error`, hover Pending in the DS) and `icon` (44x44 icon-only; the consumer must set `aria-label`). Disabled is neutral with no hover; the consumer sets `aria-disabled="true"` and blocks the action so the control stays focusable.
+- **Description:** DS button: radius 10, Mono, `lg` (48px) / `md` (44px) / `share` (44px high, `px-3.5`), `primary` (brand), `secondary` (outline), `accent` (per-game, requires `game`) and `error` (destructive fill: `bg-status-error`, hover Pending in the DS) and `icon` (44x44 icon-only; the consumer must set `aria-label`). Disabled is neutral with no hover, except the Bug Hunt `accent`, which uses `game.bug-hunt.disabled.*` (`GAME_CLASSES[game].disabled`); the consumer sets `aria-disabled="true"` and blocks the action so the control stays focusable.
 - **Signature:** `buttonClass(options?: ButtonClassOptions): string` where `ButtonClassOptions = { size?: 'lg' | 'md' | 'share'; fullWidth?: boolean; disabled?: boolean } & ({ variant?: 'primary' | 'secondary' | 'error' } | { variant: 'accent'; game: UiGameId }) | { variant: 'icon'; disabled?: boolean }`
 - **Usage:** `<Link to="/play" className={buttonClass({ variant: 'accent', game: 'big-o', fullWidth: true })}>Jugar →</Link>` · `<button aria-label={t('help')} className={buttonClass({ variant: 'icon' })}><HelpIcon /></button>`
 

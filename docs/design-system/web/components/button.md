@@ -1,6 +1,6 @@
 ---
 component: button
-version: 1.3.0
+version: 1.3.1
 status: active
 last_updated: 2026-11-09
 source: docs/nerdose.html
@@ -69,7 +69,7 @@ related: [link, card, banner, alert, game-header]
 | disabled (`accent` de Bug Hunt) | Fondo `#2A2416`, texto `#8A7856`, label que explica qué falta ("Elegí una línea") (L836) | `button.accent.disabled.*` |
 | loading | **Pendiente — el prototipo no lo define.** | — |
 
-**Implementación:** `buttonClass({ variant, size, game?, fullWidth?, disabled? })` de `@nerdose/ui` (`packages/ui/src/components/button-class.ts`) devuelve las clases para `<button>` y `<Link>`; el consumidor pone `aria-disabled="true"` y bloquea la acción. Se implementan `primary`, `secondary` y `accent` en `lg`/`md`; el resto de las variants queda para las stories que las consuman.
+**Implementación:** `buttonClass({ variant, size, game?, fullWidth?, disabled? })` de `@nerdose/ui` (`packages/ui/src/components/button-class.ts`) devuelve las clases para `<button>` y `<Link>`; el consumidor pone `aria-disabled="true"` y bloquea la acción. Se implementan `primary`, `secondary` y `accent` en `lg`/`md`; el resto de las variants queda para las stories que las consuman. El deshabilitado del `accent` de Bug Hunt usa `button.accent.disabled.*`; el de los demás juegos, el neutro.
 
 **Decisión:** el prototipo solo define deshabilitado para Compartir (neutro) y Confirmar (ámbar). El estado deshabilitado de `primary`, `secondary` y `accent` fuera de Bug Hunt usa el **neutro** de Compartir. El deshabilitado tintado de otros juegos queda Pendiente.
 
@@ -145,3 +145,4 @@ related: [link, card, banner, alert, game-header]
 - 2026-11-05 v1.0.0 — Reescrito desde el prototipo: radio 10px, tamaños `lg` (48) / `md` (44) / `share` / `sm` / `icon` (44×44), variants `accent`, `outline-tinted`, `ghost` e `icon`; `secondary` pasa a texto `text.primary` con borde `border.control` y peso 500; deshabilitado neutro y tintado. Se elimina la variant `disabled` (pasa a ser estado) y los tokens reservados `destructive`.
 - 2026-11-06 v1.2.0 — Hover derivado de `primary`, `accent` y `secondary` (con contraste medido) y helper `buttonClass` en `@nerdose/ui`.
 - 2026-11-09 v1.3.0 — S-021: `icon` (44×44) y tamaño `share` implementados en `buttonClass` de `@nerdose/ui`. Hover de `icon` derivado (`border.control` a `border.control.hover`). `outline-tinted` y `ghost` siguen pendientes de implementación.
+- 2026-11-15 v1.3.1 — `buttonClass` implementa `button.accent.disabled.*` para Bug Hunt (`game.bug-hunt.disabled.*`).

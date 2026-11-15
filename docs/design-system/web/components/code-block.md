@@ -1,8 +1,8 @@
 ---
 component: code-block
-version: 1.2.0
+version: 1.2.1
 status: active
-last_updated: 2026-11-14
+last_updated: 2026-11-15
 source: docs/nerdose.html
 related: [panel, terminal-window]
 ---
@@ -111,7 +111,7 @@ Caja `radius.inset` (12), `bg.surface.sunken`, borde `border.default`, `overflow
 - **Teclado de `selectable`:** una sola parada de Tab (roving tabindex entre elegibles); ↑ ↓ con wrap, Home y End mueven solo el foco; Espacio o clic eligen; Enter no actúa sobre una línea. ← → quedan para cambiar de pestaña y para el scroll horizontal.
 - **Tag de la línea elegida:** glifo `◀` fijo al borde visible del bloque (`position: sticky`) cuando mide menos de 32rem; con ≥ 32rem suma el texto «tu elección». El estado accesible lo dan `aria-checked`, la línea de aviso y el botón de confirmar.
 - **Modo resultado:** marcas acierto / bug / elección errónea con barra `inset 3px`, glifo y texto; el tag baja bajo su línea con menos de 32rem y va al margen desde 32rem; cada línea marcada apunta a su tag con `aria-describedby`.
-- **Diff (mapeo provisorio):** `status.error.diff-text` (`#FFB3AD`) y `status.success.diff-text` (`#9EF0C2`) no están en `@nerdose/ui`: `-` usa `status.error.soft` sobre `status.error.bg` y `+` `status.success.soft` sobre `status.success.bg`. Pendiente de una story de `ui`.
+- **Diff:** `-` usa `status.error.diff-text` (`#FFB3AD`) sobre `status.error.bg` y `+` `status.success.diff-text` (`#9EF0C2`) sobre `status.success.bg`, ya en `@nerdose/ui` (DS 1.11.1).
 
 ## API
 
@@ -133,3 +133,4 @@ Caja `radius.inset` (12), `bg.surface.sunken`, borde `border.default`, `overflow
 - 2026-11-05 v1.0.0 — Creación desde el prototipo: tab-bar con pestañas y nombre de archivo, líneas Mono 15/2 con número de 30px, barra `inset 3px`, anotaciones al margen y diff con fondos tintados.
 - 2026-11-14 v1.1.0 — Story S-046: variante de resaltado con tema desde tokens y fallback sin color, números de línea en `text.dim`, nota bajo la línea en bloques angostos, pestañas bloqueadas y mapeo provisorio de los tokens Big O ausentes en `@nerdose/ui`.
 - 2026-11-15 v1.2.0 — Story S-051: resaltado en `selectable` y modo resultado de Bug Hunt (tema desde tokens de Bug Hunt con AA sobre los cuatro fondos de línea, no elegibles sin color), glifo `◀` fijo en bloques angostos, números de línea en `text.dim`, teclado de las líneas y mapeo provisorio del diff.
+- 2026-11-15 v1.2.1 — Diff con `status.*.diff-text`: los tokens ya están en `@nerdose/ui` y se elimina el mapeo provisorio.

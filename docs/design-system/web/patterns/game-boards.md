@@ -1,6 +1,6 @@
 ---
 pattern: game-boards
-version: 1.7.0
+version: 1.7.1
 status: active
 last_updated: 2026-11-15
 source: docs/nerdose.html
@@ -136,9 +136,9 @@ Cabecera del panel: "// tests" + "input → esperado" (Mono 12). Nota al pie Int
 
 ### Bug Hunt — mapeo de S-051 (1.7.0)
 
-- **`bug-hunt.line`:** el hover de la línea elegible usa `surface-3` (`#141920`, neutro, para no confundirse con la elegida `#1A140A`) hasta que exista `game.bug-hunt.tint-hover`. Las líneas no elegibles no son interactivas (texto plano `text.dim`, no radios `disabled`). El tag de la elegida es el glifo `◀` en bloques < 32rem y «◀ tu elección» desde 32rem; en el resultado los tags bajan bajo su línea en < 32rem.
+- **`bug-hunt.line`:** el hover de la línea elegible usa `game.bug-hunt.tint-hover` (`#15110A`). Las líneas no elegibles no son interactivas (texto plano `text.dim`, no radios `disabled`). El tag de la elegida es el glifo `◀` en bloques < 32rem y «◀ tu elección» desde 32rem; en el resultado los tags bajan bajo su línea en < 32rem.
 - **`bug-hunt.test`:** cada test es una llamada con `function_name` (`maxIndex([3, 7, 2]) → 1`), sintaxis neutra igual en las tres pestañas; texto accesible «maxIndex de [3, 7, 2] da 1, pasa». La fila del oculto es «1 test oculto falla» (punteada, sin su entrada).
-- **`bug-hunt.confirm`:** deshabilitado con la etiqueta «Elegí una línea» y el `disabled` de `buttonClass`, hasta que existan `game.bug-hunt.disabled.*`.
+- **`bug-hunt.confirm`:** deshabilitado con la etiqueta «Elegí una línea» y `game.bug-hunt.disabled.*` (`#2A2416` / `#8A7856`), que `buttonClass` aplica al `accent` de Bug Hunt.
 
 ## Big O
 
@@ -332,3 +332,4 @@ Cabecera de 150px de la [tarjeta de juego](../components/card.md), `aria-hidden`
 - 2026-11-13 v1.5.0 — Story S-038: modo solución para la preview del admin (Devdle, Grep Grid y Tech Timeline), estado «solución» de `grep-grid.cell` y `grep-grid.word` y cabecera `//` en `h3` cuando va embebida.
 - 2026-11-14 v1.6.0 — Story S-046: se resuelven los «Pendiente» de Big O (`big-o.option` jugando, elegida, incorrecta, 2/4 columnas y resultado), mapeo de `big-o.step`, trampa de la preview y fila Big O del modo solución con la excepción de las pestañas.
 - 2026-11-15 v1.7.0 — Story S-051: mapeo de `bug-hunt.line` / `bug-hunt.test` / `bug-hunt.confirm` a tokens existentes, tags responsivos, fila Bug Hunt del modo solución con la excepción de las pestañas y «Lo que compartís» / «↺ reiniciar demo» marcados como descartados.
+- 2026-11-15 v1.7.1 — `bug-hunt.line` y `bug-hunt.confirm` usan `game.bug-hunt.tint-hover` y `game.bug-hunt.disabled.*`, ya en `@nerdose/ui`.

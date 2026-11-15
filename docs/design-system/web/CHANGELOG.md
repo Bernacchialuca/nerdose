@@ -3,6 +3,20 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.11.1] - 2026-11-15
+
+**PATCH.** Se resuelven las notas de la 1.11.0 sobre tokens y textos del host. Ningún valor definido cambia: el código pasa a usar los tokens que el DS ya tenía.
+
+### Código alineado con el spec
+- `@nerdose/ui`: tokens `game.bug-hunt.tint-hover` (`--color-game-bug-hunt-tint-hover`, `#15110A`), `game.bug-hunt.disabled.bg` / `.text` (`--color-game-bug-hunt-disabled-bg` / `-text`, `#2A2416` / `#8A7856`), `status.error.diff-text` (`--color-status-error-diff-text`, `#FFB3AD`) y `status.success.diff-text` (`--color-status-success-diff-text`, `#9EF0C2`). `buttonClass` aplica `button.accent.disabled.*` al `accent` de Bug Hunt; el resto de los juegos sigue con el deshabilitado neutro.
+- `@nerdose/game-bug-hunt/client`: el hover de la línea elegible usa `game.bug-hunt.tint-hover` (antes `surface-3`), el confirmar y el «Empezar» deshabilitados usan `game.bug-hunt.disabled.*` y el diff usa `status.*.diff-text` (antes `status.*.soft`). Los colores del resaltado mantienen AA sobre el hover nuevo.
+- `apps/web`: el aviso de día nuevo dice «sin confirmar» en Tech Timeline, Big O y Bug Hunt, y «sin terminar» en Devdle y Grep Grid. El error de jugada cierra con «conservás tu intento» en Big O y Bug Hunt, con «retomás desde donde estabas» en Devdle y Grep Grid y sin cierre en Tech Timeline. Mientras carga el client, el loader dice «$ cargando tu partida de {juego}…» o «$ cargando tu resultado de {juego}…». Los textos viven en las traducciones de cada juego (`games.{id}.unfinished` / `.moveRecovery`), sin ramas por juego en el host.
+
+### Notas para limpiar en otros docs
+- El loader de la carga inicial (antes de conocer el estado del día) y el error de carga siguen siendo los de instrucciones: el host todavía no sabe si va a mostrar la partida o el resultado.
+
+---
+
 ## [1.11.0] - 2026-11-15
 
 **MINOR.** Bug Hunt jugable y preview del admin (story S-051, plan `games`). Ningún token se agrega ni cambia. Los planes de `web` y `admin` de S-051 suman sus ítems a esta misma entrada.
