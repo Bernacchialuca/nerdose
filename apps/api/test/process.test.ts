@@ -20,7 +20,9 @@ afterEach(async () => {
 
 const isServerStarted = (line: Record<string, unknown>) => line.msg === 'Server started';
 
-describe('proceso de la api', () => {
+// Cada test arranca la api como proceso (tsx): con la máquina cargada (pnpm test en paralelo) el
+// arranque supera el default de 5 s de vitest. Alineado con waitForLog (30 s) y spawnSync (60 s).
+describe('proceso de la api', { timeout: 60_000 }, () => {
   it('aborta sin DATABASE_URL, nombrando la variable y sin abrir el puerto', async () => {
     const port = await freePort();
     const result = spawnSync(process.execPath, ['--import', 'tsx', 'src/index.ts'], {
