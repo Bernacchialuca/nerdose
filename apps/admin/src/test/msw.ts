@@ -18,7 +18,13 @@ const defaultGenerationFailures = http.get('/api/admin/generation-failures', () 
   HttpResponse.json({ failures: [] }),
 );
 
-export const server = setupServer(defaultGenerationFailures);
+// Última instancia: ningún request de un test sale a la red. jsdom usa la URL del dev server
+// (localhost:5174); sin esto, un request sin handler (o con un handler que devuelve undefined)
+// llega al `pnpm dev` real si está corriendo y su respuesta (p. ej. un 401) cambia el resultado
+// del test. Se responde como si no hubiera servidor: error de red, igual que sin `pnpm dev`.
+const noNetwork = http.all('/api/*', () => HttpResponse.error());
+
+export const server = setupServer(defaultGenerationFailures, noNetwork);
 
 async function record(request: Request): Promise<void> {
   const url = new URL(request.url);

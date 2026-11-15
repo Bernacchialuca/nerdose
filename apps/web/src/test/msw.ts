@@ -50,4 +50,10 @@ export const bigOHandlers = gameHandlersFor('big-o');
 
 export const apiError = (code: string, message: string) => ({ error: { code, message } });
 
-export const server = setupServer(...defaultHandlers);
+// Última instancia: ningún request de un test sale a la red. jsdom usa la URL del dev server
+// (localhost:5173); sin esto, un request sin handler (o con un handler que devuelve undefined)
+// llega al `pnpm dev` real si está corriendo y su respuesta (p. ej. un 401) cambia el resultado
+// del test. Se responde como si no hubiera servidor: error de red, igual que sin `pnpm dev`.
+const noNetwork = http.all('/api/*', () => HttpResponse.error());
+
+export const server = setupServer(...defaultHandlers, noNetwork);
