@@ -11,6 +11,7 @@ import { GameplayRepository, moveTransaction } from '@/domain/gameplay/gameplay.
 import { GameplayService } from '@/domain/gameplay/gameplay.service';
 import { ProgressRepository } from '@/domain/progress/progress.repository';
 import { ProgressService } from '@/domain/progress/progress.service';
+import { MyStatsService } from '@/domain/progress/my-stats.service';
 import { QualityRepository } from '@/domain/quality/quality.repository';
 import { QualityService } from '@/domain/quality/quality.service';
 import { VoidService } from '@/domain/quality/void.service';
@@ -133,6 +134,7 @@ if (env) {
         activeDays: new ProgressRepository(db),
         clock,
       }),
+      myStats: new MyStatsService({ repo: new ProgressRepository(db), games, clock }),
       regeneration: new RegenerationService({
         runInTx: (fn) => db.transaction((tx) => fn(new PublishingRepository(tx))),
         clock,

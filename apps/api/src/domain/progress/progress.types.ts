@@ -33,3 +33,30 @@ export type ProgressWriteRepo = Pick<
   ProgressRepository,
   'prevActiveDays' | 'lockGameStats' | 'lockPlayerStats' | 'saveGameStats' | 'savePlayerStats'
 >;
+
+export type HeatmapDay = { date: string; completed: number };
+
+export type HistoryRow = {
+  date: string;
+  number: number;
+  gameId: GameId;
+  status: 'won' | 'lost' | 'voided';
+  result: unknown;
+};
+
+export type HistoryEntry = {
+  date: string;
+  number: number;
+  game_id: GameId;
+  status: 'won' | 'lost' | 'voided';
+  label: string;
+};
+
+export type MyStats = {
+  today: string;
+  global: { current_streak: number; max_streak: number; total_completed: number };
+  games: GameStatsView[];
+  heatmap: HeatmapDay[];
+  history: HistoryEntry[];
+  history_next_before: string | null;
+};

@@ -81,3 +81,9 @@ Vitest with `@/` alias. Integration tests need Docker (Testcontainers).
 - **Signature:** `CODE_PAYLOAD = { answer: 'o_n_log_n' }`; `codeGame: GameDefinition` (`id: 'big-o'`, move `{ language, option }`, `codeLanguage(s) = s.language ?? null`); `codeGameNull` (same, `codeLanguage: () => null`); `codeRegistry` / `codeNullRegistry = createGameRegistry([devdle, grepGrid, timeline, codeGame | codeGameNull])`
 - **Description:** test game that exercises closing a Play with a code language (the DB check `ck_plays_code_language_game` requires `big-o`/`bug-hunt`); `buildDbServices(dbs, { games })` / `buildDbApp(dbs, { games })` inject the registry
 - **Usage:** `const { app } = await buildDbApp(dbs, { games: codeRegistry }); await post(app, 'big-o', { challenge_number: 8, move: { language: 'go', option: 'o_n_log_n' } }, player)`
+
+## myStats in the test app builders
+- **Location:** apps/api/test/helpers/app.ts
+- **Signature:** `buildMemoryServices(...).myStats`, `buildDbServices(...).myStats`, `buildTestApp({ myStats })`, `buildDbApp(...)` passes `services.myStats`
+- **Description:** `MyStatsService` with an empty in-memory repo for `buildTestApp`, and the real one (api role, `opts.clock ?? systemClock`, `games`) for `buildDbServices` / `buildDbApp`.
+- **Usage:** `const { app } = await buildDbApp(dbs); await app.request('/api/me/stats', { headers: { Cookie: `nd_pid=${player.id}` } })`

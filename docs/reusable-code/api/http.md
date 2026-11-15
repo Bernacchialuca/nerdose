@@ -103,3 +103,8 @@
 - **Description:** reads the `metrics_*` views through `AdminRepository` plus `ProgressRepository.prevActiveDays(today).global`. Computes `d1`/`d7` per cohort (`null` when cohort+N is not before today), always the 5 streak buckets (not-alive streaks fall into `'0'` via core `isStreakAlive`) and `summary` (`d1`/`d7` = sum of players / sum of `cohort_size` over cohorts whose day +N ended). No rounding. The Zod schema validates `YYYY-MM-DD` and `validateMetricsRange`; any failure is `422 validation_error`.
 - **Usage:** `deps.adminMetrics.metrics(from, to, deps.adminMetrics.currentDay())`; route `GET /api/admin/metrics`
 
+## progressRoutes / getMyStats / myStatsQuerySchema
+- **Location:** apps/api/src/domain/progress/progress.routes.ts, progress.controller.ts, progress.schema.ts
+- **Signature:** `progressRoutes(deps: AppDeps): Hono<AppEnv>`; `getMyStats(deps)`; `myStatsQuerySchema = z.object({ history_before: z.iso.date().optional() })`
+- **Description:** `GET /api/me/stats` with `playerSession('required')` (401 before query validation) and `validationHook` (422). The controller only calls `deps.myStats`; not behind `ensureToday`.
+- **Usage:** `app.route('/api', progressRoutes(deps))`

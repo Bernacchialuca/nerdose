@@ -15,6 +15,7 @@ import { GameplayRepository, moveTransaction } from '@/domain/gameplay/gameplay.
 import { GameplayService } from '@/domain/gameplay/gameplay.service';
 import type { MoveTxRepos } from '@/domain/gameplay/gameplay.types';
 import type { IdentityService } from '@/domain/identity/identity.service';
+import { MyStatsService } from '@/domain/progress/my-stats.service';
 import { QualityRepository } from '@/domain/quality/quality.repository';
 import { QualityService } from '@/domain/quality/quality.service';
 import type { AlertThresholds, VoidTxRepos } from '@/domain/quality/quality.types';
@@ -221,6 +222,17 @@ export function buildMemoryServices(opts: { clock?: Clock; logger: Logger }) {
     activeDays: { prevActiveDays: async () => ({ byGame: {}, global: null }) },
     clock,
   });
+  const myStats = new MyStatsService({
+    repo: {
+      findPlayerStats: async () => null,
+      findAllGameStats: async () => [],
+      prevActiveDays: async () => ({ byGame: {}, global: null }),
+      heatmap: async () => [],
+      historyPage: async () => [],
+    },
+    games,
+    clock,
+  });
   const regeneration = {
     regenerate: async (): Promise<{
       request_id: string;
@@ -240,6 +252,7 @@ export function buildMemoryServices(opts: { clock?: Clock; logger: Logger }) {
     voids,
     adminContent,
     adminMetrics,
+    myStats,
     regeneration,
   };
 }
@@ -348,6 +361,7 @@ export async function buildDbServices(
     activeDays: new ProgressRepository(db),
     clock,
   });
+  const myStats = new MyStatsService({ repo: new ProgressRepository(db), games, clock });
   const regeneration = new RegenerationService({
     runInTx: (fn) =>
       db.transaction((tx) => {
@@ -368,6 +382,7 @@ export async function buildDbServices(
     voids,
     adminContent,
     adminMetrics,
+    myStats,
     regeneration,
   };
 }
@@ -390,6 +405,7 @@ export function buildTestApp(
     voids: overrides.voids ?? memory.voids,
     adminContent: overrides.adminContent ?? memory.adminContent,
     adminMetrics: overrides.adminMetrics ?? memory.adminMetrics,
+    myStats: overrides.myStats ?? memory.myStats,
     regeneration: overrides.regeneration ?? memory.regeneration,
   });
   return { app, lines: captured.lines };
@@ -414,6 +430,7 @@ export async function buildDbApp(
     voids: services.voids,
     adminContent: services.adminContent,
     adminMetrics: services.adminMetrics,
+    myStats: services.myStats,
     regeneration: services.regeneration,
   });
   return { app, lines: captured.lines, ...services };

@@ -4,6 +4,7 @@ import { adminAuthExcept } from '@/domain/admin/admin-auth.middleware';
 import { adminRoutes } from '@/domain/admin/admin.routes';
 import { gameplayRoutes } from '@/domain/gameplay/gameplay.routes';
 import { identityRoutes } from '@/domain/identity/identity.routes';
+import { progressRoutes } from '@/domain/progress/progress.routes';
 import { publishingAdminRoutes } from '@/domain/publishing/publishing-admin.routes';
 import { publishingRoutes } from '@/domain/publishing/publishing.routes';
 import { qualityAdminRoutes } from '@/domain/quality/quality-admin.routes';
@@ -31,6 +32,7 @@ export function registerRoutes(app: Hono<AppEnv>, deps: AppDeps) {
   app.route('/api/admin', qualityAdminRoutes(deps));
   app.route('/api/admin', publishingAdminRoutes(deps));
   app.route('/api', identityRoutes(deps));
+  app.route('/api', progressRoutes(deps));
   // Solo las rutas que dependen de "hoy" publican el día (single-flight).
   const publishDay = ensureToday(deps.publishing);
   app.use('/api/today', publishDay);

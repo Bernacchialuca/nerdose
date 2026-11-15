@@ -44,7 +44,7 @@
 
 ## ProgressService / ProgressRepository
 - **Location:** apps/api/src/domain/progress/
-- **Signature:** `gameStatsView(playerId, game, day): Promise<GameStatsView>`; `todayStreaks(playerId, day)`; `applyResult(repo: ProgressWriteRepo, { playerId, game, date, outcome }): Promise<{ streaks, gameStats }>` (outcome `won | lost | voided`); `ProgressRepository(db | tx)`: `findGameStats`, `findAllGameStats`, `findPlayerStats`, `prevActiveDays(day)`, `lockGameStats`, `lockPlayerStats`, `saveGameStats`, `savePlayerStats`
+- **Signature:** `gameStatsView(playerId, game, day): Promise<GameStatsView>`; `todayStreaks(playerId, day)`; `applyResult(repo: ProgressWriteRepo, { playerId, game, date, outcome }): Promise<{ streaks, gameStats }>` (outcome `won | lost | voided`); `ProgressRepository(db | tx)`: `findGameStats`, `findAllGameStats`, `findPlayerStats`, `prevActiveDays(day)`, `lockGameStats`, `lockPlayerStats`, `saveGameStats`, `savePlayerStats`, `heatmap(playerId, from, to)`, `historyPage(playerId, before, limit)`
 - **Description:** live streaks via `liveStreak()` and incremental streak/counter update via `nextStreak()` from `@nerdose/core`. `voided` counts for streaks and `total_completed` but not `played`, `wins` or `extra`.
 
 ## VoidService
@@ -64,3 +64,9 @@
 - **Signature:** `new RegenerationService({ runInTx, clock })`; `regenerate(challengeId, log): Promise<{ request_id, status: 'pending', requested_at }>`
 - **Description:** inside one transaction validates the challenge (`not_found`, `not_regenerable` if not `approved` or `date <= today`), inserts the pending request with `ON CONFLICT (challenge_id) WHERE status = 'pending' DO NOTHING` (returns the existing one if any) and runs `pg_notify('generation_requests', request_id)`. Logs `ChallengeRegenerationRequested` after COMMIT. Repository methods live in `PublishingRepository` (`findChallengeStatus`, `insertPendingRequest`, `findPendingRequest`, `notify`).
 - **Usage:** `POST /api/admin/challenges/{challenge_id}/regenerate` → `deps.regeneration.regenerate(id, c.var.logger)`
+
+## MyStatsService
+- **Location:** apps/api/src/domain/progress/my-stats.service.ts, game-stats-view.ts, history.ts
+- **Signature:** `new MyStatsService({ repo, games, clock })` with `currentDay(): string` and `myStats(playerId, day, locale, historyBefore): Promise<MyStats>`; pure `toGameStatsView(game, row | null, prevActiveDay, day)`, `pageByFullDays(rows, pageSize): { page, nextBefore }`, `HISTORY_PAGE_SIZE = 60`, `VOIDED_LABEL`
+- **Description:** read-only. Five parallel reads (`findPlayerStats`, `findAllGameStats`, `prevActiveDays`, `heatmap`, `historyPage`), always 5 games in `GAME_IDS` order, live streaks via `liveStreak()`, history label `historyLabel(result)` or the localized voided label, cursor = `date` of the last row of the page.
+- **Usage:** `await deps.myStats.myStats(player.id, deps.myStats.currentDay(), locale, historyBefore ?? null)`
