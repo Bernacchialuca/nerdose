@@ -43,6 +43,7 @@ export const TEXT_ROLES = [
 ] as const;
 
 export const RADIUS_ROLES = [
+  'micro',
   'cell-xs',
   'cell-sm',
   'cell-md',

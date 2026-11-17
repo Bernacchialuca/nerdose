@@ -168,3 +168,10 @@ Everything lives in `packages/games/bug-hunt/src/generator/` and is re-exported 
 - **Description:** `fakeRunnerFor(p, overrides?)` returns `{ run, calls }`, a runner that executes nothing: per language the 1st call is the correct version and the 2nd the mutant, and by default it prints `tests[].expected` / `tests[].actual`; `overrides` (`correct_<lang>` / `mutant_<lang>`) take values, a literal stdout or a `RunOutcome`. `catalogPayload(template, bugType, date?)` is a deterministic payload for each of the 62 template x bug type pairs. `requireToolchains()` (a copy of Big O's) fails, never skips, if Node 24, Go >= 1.25 or JDK 21 is missing. Not exported by the entry.
 - **Signature:** `fakeRunnerFor(p: BugHuntPayload, overrides?: FakeOverrides): { run: Runner; calls: FakeCall[] }`; `catalogPayload(template: Template, bugType: BugType, date?: string): BugHuntPayload`
 - **Usage:** `await createVerify({ run: fakeRunnerFor(p, { mutant_go: [0, 1] }).run })(p, emptyHistory)`.
+
+## StatsSummary (REQ-011)
+
+- **Location:** `src/client/stats-summary.tsx`, `src/client/stats.ts`, `src/client/stat-bar.tsx`
+- **Description:** Own stats of Bug Hunt: two groups (by language, by bug type) with `N de M`, bar and %.
+- **Signature:** `languageRates(stats)`, `bugTypeRates(stats)` (rows with `played`, `correct`, `rate: number | null`), `gamesCount(stats)`, `formatPercent(rate, locale)`, `StatBar({ rate })`
+- **Usage:** `<StatsSummary extra={game.extra} locale="en" t={t} />`

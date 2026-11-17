@@ -85,4 +85,9 @@ export const es = {
     rowOk: '{{label}}, posición {{position}}: bien',
     rowWrong: '{{label}}, posición {{position}}: mal ubicado, va en {{correct}}°',
   },
+  stats: {
+    title: 'acierto por categoría',
+    best: 'mejor categoría: {{category}}',
+    none: 'Todavía no jugaste a este juego.',
+  },
 } as const;

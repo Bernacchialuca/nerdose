@@ -89,4 +89,9 @@ export const en: Shape<typeof es> = {
     rowOk: '{{label}}, position {{position}}: right',
     rowWrong: '{{label}}, position {{position}}: misplaced, goes {{correct}}°',
   },
+  stats: {
+    title: 'accuracy by category',
+    best: 'best category: {{category}}',
+    none: "You haven't played this game yet.",
+  },
 };

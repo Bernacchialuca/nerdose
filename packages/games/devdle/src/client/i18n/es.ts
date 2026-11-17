@@ -96,6 +96,7 @@ export const es = {
     winRate: '{{value}}%',
     wins: 'victorias',
   },
+  stats: { title: 'intentos', none: 'Todavía no jugaste a este juego.' },
 };
 
 export type Resources = typeof es;

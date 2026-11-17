@@ -68,6 +68,12 @@ Components hold no visible text of their own (ADR-002): all text comes in throug
 - **Signature:** `GameThumbnail({ game: UiGameId; className?: string })`
 - **Usage:** `<Card game="devdle" thumbnail={<GameThumbnail game="devdle" />}>…</Card>`
 
+## Heatmap
+- **Location:** packages/ui/src/components/heatmap.tsx (pure model in heatmap-model.ts)
+- **Description:** 365-day activity grid anchored on the server's `today` (53 Monday-first weeks x 7, today on the right with `aria-current="date"` and a `border-interactive` ring); 5 DS levels (4 and 5 share the last tone); ARIA `grid` with one tab stop, arrows by day/week, Home/End; per-cell accessible name and `detail` line for the focused or tapped day; month labels and 0-5 legend (`aria-hidden`); opens scrolled to today. All text comes by props.
+- **Signature:** `Heatmap(props: HeatmapProps)` with `{ today: string; days: readonly HeatmapDay[]; locale: string; caption: ReactNode; summaryLabel: (total: number) => string; cellLabel: (day: HeatmapDayInfo) => string; detailLabel: (day: HeatmapDayInfo) => string; emptyDetail: string; className?: string }`
+- **Usage:** `<Heatmap today={data.today} days={data.heatmap} locale={i18n.language} caption={t('stats.heatmap.caption')} summaryLabel={(n) => t('stats.heatmap.summary', { count: n })} cellLabel={(d) => t('stats.heatmap.cell', { date: d.longDate, count: d.completed })} detailLabel={...} emptyDetail={t('stats.heatmap.empty')} />`
+
 ## Panel
 - **Location:** packages/ui/src/components/panel.tsx
 - **Description:** `<section aria-labelledby>` with a `// label` (the `//` is `aria-hidden`), optional amber `datum`, `h2`/`h3` title and Inter `note`. Variants `default` (radius 14) and `feature` (radius 16, padding 28).

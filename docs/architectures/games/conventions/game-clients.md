@@ -60,7 +60,7 @@ const Client = lazy(clientRegistry[gameId]);
 
 ### Share
 
-- `share(result, number, locale)` produces the text; the host passes the active language and games without localized text ignore it. The shell calls `navigator.share({ text })` when available and falls back to `navigator.clipboard.writeText`, with a visible confirmation message. After sharing it calls `track('share:<game_id>')` (see `analytics`).
+- `share(result, number, locale)` produces the text; the host passes the active language and games without localized text ignore it. The shell calls `navigator.share({ text })` when available and falls back to `navigator.clipboard.writeText`, with a visible confirmation message. Sharing emits no analytics event (web analytics was removed in REQ-011).
 
 ### Heavy dependencies stay inside the game
 
@@ -89,7 +89,6 @@ const Client = lazy(clientRegistry[gameId]);
 
 - **routing**: `/:game_id` resolves the registry entry and lazy-loads it.
 - **data-fetching**: public view, play state and moves go through TanStack Query hooks.
-- **analytics**: share events use `track()`.
 - **accessibility**: every game must be fully playable with keyboard and its feedback must not rely only on color.
 
 ## Update (REQ-005)
@@ -108,3 +107,10 @@ const Client = lazy(clientRegistry[gameId]);
 - `GameClient.share(result, number, locale)`: the host (`share-button.tsx`) passes the active language; the games whose share text has no words ignore the third argument. Bug Hunt builds `🐛 Bug Hunt #N · <Language>` / `🟩 bug encontrado | 🟥 se me escapó` / `nerdose.dev` in `locale`, never the line nor the bug type.
 - Bug Hunt's `Preview` shows the code in plain text (never loads Shiki) with local-view language tabs, the bug line tagged "línea del bug", non-eligible lines dimmed, the "tipo" and "mutación: from → to" chips, the visible tests (without the hidden row), the failing test, the fix of the active tab and the steps in `language`. The tabs are the only controls (no radios, hints or live regions).
 - Bug Hunt's `Game` renders the eligible lines as a `radiogroup` (roving tabindex; arrows move focus, Space picks, Enter belongs to "Confirmar línea") and validates `moveSchema.parse({ language, line })` before `onMove`; the selected line is local state and is never restored on resume.
+
+## Update (REQ-011)
+
+- Each `client` also exports `StatsSummary` with props `{ extra, locale, t }` (mandatory member, like `Preview`): it shows the game's own stats from `extra` in the player's statistics screen. The derived values (average, percentage of 8/8, success per category, best category) come from pure functions in the package; a percentage with no games in the category is shown as `—`. It never imports the board and `web` loads it with the existing client registry (`load-game-client.ts`), never branching on `game_id` (ADR-006).
+- A game with no games played renders only its own `stats.none` text (no groups, no rows), so `web` does not decide per game when there are own stats and does not repeat the text (D1).
+- `extra` is parsed with the game's `statsSchema`; an invalid `extra` propagates the error to the card's local boundary in `web` (D4).
+- The groups of `StatsSummary` are `h4` headings and the component has no `lang` nor landmark of its own: it lives inside the `web` page, which already declares the language (D6).

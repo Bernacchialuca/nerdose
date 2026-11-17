@@ -99,4 +99,5 @@ export const en: Resources = {
     winRate: '{{value}}%',
     wins: 'wins',
   },
+  stats: { title: 'tries', none: "You haven't played this game yet." },
 };

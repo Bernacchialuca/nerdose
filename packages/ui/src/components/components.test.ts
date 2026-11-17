@@ -42,6 +42,8 @@ describe('ui components', () => {
         'form-field.tsx',
         'tabs.tsx',
         'data-table-class.ts',
+        'heatmap.tsx',
+        'heatmap-model.ts',
       ]),
     );
     for (const file of files) {

@@ -9,9 +9,11 @@ export type {
   MoveErrorInfo,
   PreviewProps,
   ResultProps,
+  StatsSummaryProps,
   Translate,
 } from './types';
 export { share } from './share';
 export { Game } from './game';
 export { Result } from './result';
 export { Preview } from './preview';
+export { StatsSummary } from './stats-summary';

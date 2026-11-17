@@ -142,6 +142,13 @@
   --color-streak-hover: #FFD08A;         /* derivado S-011 */
   --color-streak-border-hover: #5C4419;  /* derivado S-011 */
 
+  /* data.heatmap.*: rampa verde del heatmap (DS web) */
+  --color-heatmap-0: #1A2028;  /* data.heatmap.0 */
+  --color-heatmap-1: #14532D;  /* data.heatmap.1 */
+  --color-heatmap-2: #1F8F4E;  /* data.heatmap.2 */
+  --color-heatmap-3: #2FBF6B;  /* data.heatmap.3 */
+  --color-heatmap-4: #3DDC84;  /* data.heatmap.4 */
+
   /* roles tipográficos: size / line-height / letter-spacing / weight */
   --text-display-streak-compact: 88px;
   --text-display-streak-compact--line-height: 0.9;
@@ -273,6 +280,7 @@
   --text-game-item--line-height: normal;
   --text-game-item--font-weight: 700;
 
+  --radius-micro: 3px;  /* radius.micro: heatmap de Stats y leyenda */
   --radius-cell-xs: 4px;
   --radius-cell-sm: 5px;
   --radius-cell-md: 6px;

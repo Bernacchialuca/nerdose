@@ -13,7 +13,7 @@ Package `@nerdose/ui` (`packages/ui`), consumed by `web` and `admin`.
 - **linkClass** (packages/ui/src/components/link-class.ts) - Class string for arrow and subtle links, brand or per-game tone, 44px target
 - **navItemClass** (packages/ui/src/components/nav-item-class.ts) - Class string for the header nav item, active / inactive
 
-## Components (23 items) - see components.md
+## Components (24 items) - see components.md
 - **Alert** (packages/ui/src/components/alert.tsx) - Error notice (`role="alert"`) with icon, optional title, detail and action slot
 - **AppHeader** (packages/ui/src/components/app-header.tsx) - `<header>` with brand, nav and actions slots; `home` variant with translucent background
 - **Badge** (packages/ui/src/components/badge.tsx) - Status badge (`success` / `pending` / `neutral`) and chip (`loose` for "coming soon")
@@ -24,6 +24,7 @@ Package `@nerdose/ui` (`packages/ui`), consumed by `web` and `admin`.
 - **Dialog** (packages/ui/src/components/dialog.tsx) - Modal, right drawer or `sheet` (bottom-sheet on mobile, modal from `sm`) with focus trap, Escape / overlay close, focus return, `closeDisabled`, `describedBy` and inert background; text comes by props
 - **GameHeader** (packages/ui/src/components/game-header.tsx) - Game screen header: `> nerdose / {game}` breadcrumb `<nav>`, `#number` meta and actions slot
 - **GameThumbnail** (packages/ui/src/components/game-thumbnail.tsx) - Decorative 150px card header content for the five games
+- **Heatmap** (packages/ui/src/components/heatmap.tsx) - 365-day activity grid (53 weeks x 7) with 5 DS levels, per-cell accessible name, `detail` line, arrow-key navigation and 0-5 legend
 - **HelpIcon** (packages/ui/src/components/icons.tsx) - 18px Lucide `circle-help` icon, `aria-hidden`
 - **Panel** (packages/ui/src/components/panel.tsx) - `<section>` with `// label`, optional datum, title and note; `default` and `feature`
 - **ProgressBar** (packages/ui/src/components/progress-bar.tsx) - Segmented `role="progressbar"`

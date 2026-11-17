@@ -351,6 +351,21 @@ describe('tokens.css', () => {
     });
   });
 
+  it('declares the heatmap ramp and the micro radius (S-056 TS-27)', () => {
+    const expected = {
+      '--color-heatmap-0': '#1A2028',
+      '--color-heatmap-1': '#14532D',
+      '--color-heatmap-2': '#1F8F4E',
+      '--color-heatmap-3': '#2FBF6B',
+      '--color-heatmap-4': '#3DDC84',
+      '--radius-micro': '3px',
+    };
+    expectTokens(expected);
+    for (const name of Object.keys(expected)) {
+      expect(tokensRaw.split(`${name}:`), name).toHaveLength(2);
+    }
+  });
+
   it('has only @source and texture-dots outside @theme (TS-8)', () => {
     expect(tokensCss.match(/@theme\s*\{/g)).toHaveLength(1);
     expect(tokensRaw.split('@source "./components";')).toHaveLength(2);

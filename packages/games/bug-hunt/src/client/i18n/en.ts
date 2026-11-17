@@ -80,4 +80,10 @@ export const en: Widen<typeof es> = {
   },
   preview: { bugTag: 'bug line', mutation: 'mutation: {{from}} → {{to}}' },
   share: { found: 'bug found', missed: 'it got away' },
+  stats: {
+    byLanguage: 'by language',
+    byBugType: 'by bug type',
+    count: '{{correct}} of {{played}}',
+    none: "You haven't played this game yet.",
+  },
 };

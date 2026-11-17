@@ -10,7 +10,8 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **DevdlePayload / DevdleMove / DevdleGuess / DevdleFeedback / DevdleState / DevdlePublicView / DevdleResult / DevdleStats / LetterMark** (packages/games/devdle/src/definition/schemas.ts) - Types inferred from the schemas
 - **PAYLOAD_REACT / PAYLOAD_MERGE / ALL_VALID / NONE_VALID / NOW** (packages/games/devdle/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry; `ALL_VALID` / `NONE_VALID` carry `locale: 'es'` (required by `MoveContext`)
 
-## Devdle client (11 items) - see devdle.md
+## Devdle client (12 items) - see devdle.md
+- **StatsSummary / StatsSummaryProps / distributionRows / gamesCount / formatPercent / DistributionBars** (packages/games/devdle/src/client/{stats-summary.tsx,stats.ts,distribution-bars.tsx,types.ts}) - Own stats from `GameStatsView.extra`: attempts distribution 1..6 and X (`DistributionBars` extracted from `Distribution`, `highlight?` for the "today" bar); `stats.none` without games; pure functions in `stats.ts`
 - **Preview / PreviewProps / translatorFor** (packages/games/devdle/src/client/{preview.tsx,types.ts,translate.ts}) - Read-only solution-mode preview `{ payload: unknown; language: Locale }` for the admin (one solved `Board` row + `WordCard`, `h3` headings, root `lang`); parses with `payloadSchema`; `translatorFor(language)` is the production translator (returns the key if missing). `SectionPanel` gained `headingLevel?: 2 | 3`; `WordCard` takes `Pick<DevdleResult, 'word'|'category'|'definition'|'summary'>` and `headingLevel?`
 - **Instructions / Game / Result** (packages/games/devdle/src/client/{instructions,game,result}.tsx) - React screens of the `./client` entry; game data props are `unknown` and parsed with the definition schemas
 - **share** (packages/games/devdle/src/client/share.ts) - `share(result, number)`: `🟩 Devdle #N · k/6`, one emoji row per try, `nerdose.dev`; never the solution
@@ -46,7 +47,8 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **GrepGridPayload / GrepGridWord / GrepGridPlacement / GrepGridMove / GrepGridState / GrepGridPublicView / GrepGridFeedback / GrepGridResult / GrepGridStats** (packages/games/grep-grid/src/definition/schemas.ts) - Types inferred from the schemas
 - **PAYLOAD / GRID_DUPLICATE / ID / NOW / CTX_ES / CTX_EN / S0 / select / selectWord / cellsOf / playAll** (packages/games/grep-grid/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry
 
-## Grep Grid client (15 items) - see grep-grid.md
+## Grep Grid client (16 items) - see grep-grid.md
+- **StatsSummary / StatsSummaryProps / averageWords / perfectRate / gamesCount / formatPercent / formatAverage / parseStats** (packages/games/grep-grid/src/client/{stats-summary.tsx,stats.ts,parse.ts,types.ts}) - Own stats: average of words found (one decimal) and % of 8/8, `—` without games; pure functions in `stats.ts`
 - **Preview / PreviewProps / translatorFor** (packages/games/grep-grid/src/client/{preview.tsx,types.ts,translate.ts}) - Read-only solution-mode preview `{ payload: unknown; language: Locale }` for the admin (`Board mode="result"` with `solution` cells + `WordList mode="preview"`, `h3` headings, root `lang`); `translatorFor(language)` returns the key if missing
 - **solutionKeys / previewCells** (packages/games/grep-grid/src/client/cells.ts) - `solutionKeys(payload)` walks `placements` with `DIRECTION_STEPS` (throws on an unknown `term_id`); `previewCells(grid, keys)` builds the 144 cells (`solution` / `free`). `CellState` and `WordRow.status` gained `solution`; `WordListMode = 'play' | 'result' | 'preview'`; `SectionPanel` gained `headingLevel`
 - **Instructions / Game / Result** (packages/games/grep-grid/src/client/{instructions,game,result}.tsx) - React screens of the `./client` entry; data props are `unknown` and parsed with the definition schemas; `Game` also takes `feedback` (last `MoveResponse.feedback`, processed by identity after mount); `Result` takes an optional `publicView` for the 144 letters
@@ -83,7 +85,8 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **ITEMS_COUNT / OPAQUE_ID_PATTERN** (packages/games/timeline/src/definition/schemas.ts) - 5 and `/^[a-z0-9]{6}$/`
 - **TimelinePayload / TimelineItem / TimelineMove / TimelineState / TimelinePublicView / TimelineFeedback / TimelineResult / TimelineStats** (packages/games/timeline/src/definition/schemas.ts) - Types inferred from the schemas
 
-## Timeline client (14 items) - see timeline.md
+## Timeline client (15 items) - see timeline.md
+- **StatsSummary / StatsSummaryProps / categoryRates / bestCategory / gamesCount / formatPercent / StatBar / parseStats** (packages/games/timeline/src/client/{stats-summary.tsx,stats.ts,stat-bar.tsx,parse.ts,types.ts}) - Own stats: one row per category in catalog order (label, bar, %) and best category (tie -> first of the catalog); `StatBar` is the inline `streak` bar (duplicated in big-o and bug-hunt)
 - **Preview / PreviewProps / translatorFor** (packages/games/timeline/src/client/{preview.tsx,types.ts,translate.ts}) - Read-only solution-mode preview `{ payload: unknown; language: Locale }` for the admin (`// consigna` line + `Rail` in `correct_order`, `h3` heading, root `lang`; throws on an unknown `opaque_id`); `translatorFor(language)` returns the key if missing. `SectionPanel` gained `headingLevel?: 2 | 3`
 - **Instructions** (packages/games/timeline/src/client/instructions.tsx) - Instructions screen with a once-per-attempt "Start"
 - **Game** (packages/games/timeline/src/client/game.tsx) - Playing screen with the dnd-kit sortable list, hint and confirmation
@@ -118,7 +121,8 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **BigOPayload / BigOPayloadExplanation / BigOMove / BigOState / BigOPublicView / BigOFeedback / BigOResult / BigOExplanation / BigOStats / CodeByLanguage** (packages/games/big-o/src/definition/schemas.ts) - Types inferred from the schemas
 - **PAYLOAD / PAYLOAD_RECURSION / WON_JAVA / LOST_GO / withAnswer / NOW / CTX_ES / CTX_EN / S0 / CODE_NLOGN** (packages/games/big-o/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry
 
-## Big O client (13 items) - see big-o.md
+## Big O client (14 items) - see big-o.md
+- **StatsSummary / StatsSummaryProps / categoryRates / gamesCount / formatPercent / StatBar / parseStats** (packages/games/big-o/src/client/{stats-summary.tsx,stats.ts,stat-bar.tsx,parse.ts,types.ts}) - Own stats: hits per recipe category (`N de M`, bar, %), labels in `stats.categories.*` of the i18n
 - **Instructions / Game / Result** (packages/games/big-o/src/client/{instructions,game,result}.tsx) - Screens: once-per-attempt "Start"; code tabs + 8-option radiogroup + confirm (`moveSchema.parse` then `onMove`); verdict, code with line notes, marked options and step-by-step panel
 - **Preview / translatorFor** (packages/games/big-o/src/client/{preview.tsx,translate.ts}) - Read-only plain-text solution mode `{ payload, language }` for the admin (answer and `trap_option` marked, `h3` headings, root `lang`)
 - **share** (packages/games/big-o/src/client/share.ts) - `🧮 Big O #N` / `🟩|🟥 <Language>` / `nerdose.dev`, spoiler-free
@@ -157,7 +161,8 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **BugHuntPayload / BugHuntMove / BugHuntState / BugHuntPublicView / BugHuntFeedback / BugHuntResult / BugHuntLineFix / BugHuntExplanation / BugHuntStats / BugHuntTestCase / BugHuntVisibleTest / CodeByLanguage** (packages/games/bug-hunt/src/definition/schemas.ts) - Types inferred from the schemas
 - **PAYLOAD / PAYLOAD_BOOL / WON_JAVA / LOST_GO / WON_BOOL_JS / NON_PICKABLE / NOW / CTX_ES / CTX_EN / S0** (packages/games/bug-hunt/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry
 
-## Bug Hunt client (14 items) - see bug-hunt.md
+## Bug Hunt client (15 items) - see bug-hunt.md
+- **StatsSummary / StatsSummaryProps / languageRates / bugTypeRates / gamesCount / formatPercent / StatBar / parseStats** (packages/games/bug-hunt/src/client/{stats-summary.tsx,stats.ts,stat-bar.tsx,parse.ts,types.ts}) - Own stats: hits by language and by bug type (`N de M`, bar, %), labels from `LANGUAGE_LABEL` / `BUG_TYPE_LABEL`
 - **Instructions / Game / Result** (packages/games/bug-hunt/src/client/{instructions,game,result}.tsx) - React screens of the `./client` entry; data props are `unknown` and parsed with the definition schemas; `Game` validates `moveSchema.parse({ language, line })` before `onMove`
 - **Preview / PreviewProps / translatorFor** (packages/games/bug-hunt/src/client/{preview.tsx,types.ts,translate.ts}) - Read-only solution-mode preview `{ payload: unknown; language: Locale }` for the admin (plain-text code with the bug line, type and mutation chips, tests, failing test, fix, steps; `h3` headings, root `lang`)
 - **share** (packages/games/bug-hunt/src/client/share.ts) - `share(result, number, locale = 'es')`: `🐛 Bug Hunt #N · <Language>` / `🟩 bug encontrado | 🟥 se me escapó` / `nerdose.dev`; never the line nor the bug type

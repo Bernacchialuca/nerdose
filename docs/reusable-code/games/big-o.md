@@ -140,3 +140,10 @@ Entry `./generator` (`packages/games/big-o/src/generator/index.ts`). It exports 
 ### Test utilities
 - **Location:** packages/games/big-o/src/generator/{test-fixtures,test-utils}.ts
 - **Description:** `seed(n)` / `seedFrom(prefix, n)` (SHA-256 seeds: uniform seeds collapse to a zero state in `rngFrom`), `D = '2027-03-15'`, `recipe(id)`, `recent(date, id, params?)`, `fakeRunner(outputs)` (returns `{ run, calls }`; a number array is the printed counts, a string is the literal stdout, a `RunOutcome` is returned as is), `allLanguages(counts)`, `emptyHistory`, `withDate(p)` and `noExample(p, answer)`. `requireToolchains()` (packages/games/big-o/test/integration/toolchains.ts, copy of polyglot's) fails, never skips, when Node 24, Go >= 1.25 or JDK 21 is missing. `interpret(func, n)` evaluates the tree with the integer semantics of the portable subset (test only: it never runs emitted code, which belongs to S-045's runner).
+
+## StatsSummary (REQ-011)
+
+- **Location:** `src/client/stats-summary.tsx`, `src/client/stats.ts`, `src/client/stat-bar.tsx`
+- **Description:** Own stats of Big O: one row per recipe category (`RECIPE_CATEGORIES` order) with `N de M`, bar and %.
+- **Signature:** `categoryRates(stats): { category; played; correct; rate: number | null }[]`, `gamesCount(stats)`, `formatPercent(rate, locale)`, `StatBar({ rate })`
+- **Usage:** `<StatsSummary extra={game.extra} locale="es" t={t} />`

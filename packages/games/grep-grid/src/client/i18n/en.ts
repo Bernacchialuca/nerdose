@@ -76,4 +76,10 @@ export const en: Resources = {
     gaveUp: 'You gave up with {{score}}/{{total}}',
     gaveUpDetail: 'These are the words you were missing.',
   },
+  stats: {
+    title: 'words',
+    average: 'average {{value}} of {{total}}',
+    perfect: '8/8 in {{value}} of games',
+    none: "You haven't played this game yet.",
+  },
 };

@@ -53,6 +53,15 @@ const CANDIDATES = [
   'pt-12',
   'sm:pt-0',
   'sm:px-4',
+  'bg-heatmap-0',
+  'bg-heatmap-1',
+  'bg-heatmap-2',
+  'bg-heatmap-3',
+  'bg-heatmap-4',
+  'rounded-micro',
+  'ring-border-interactive',
+  'size-3.5',
+  'w-max',
 ];
 
 const PREVIEW_CANDIDATES = [
