@@ -15,6 +15,7 @@ describe('@nerdose/ui public API', () => {
       'Dialog',
       'GameHeader',
       'GameThumbnail',
+      'Heatmap',
       'HelpIcon',
       'Panel',
       'ProgressBar',
