@@ -5,6 +5,7 @@ import type { GameId } from '@nerdose/core';
 import { api } from '@/lib/api-client';
 import { todayKeys } from '@/modules/catalog';
 import { useSession } from '@/modules/session';
+import { statsKeys } from '@/modules/stats';
 
 import { gameTodayKeys } from './game-today';
 import type { GameToday, MoveResponse } from './game-today';
@@ -33,7 +34,10 @@ export function useSubmitMove(gameId: GameId) {
       );
       if (res.play.code_language !== null) rememberCodeLanguage(res.play.code_language);
       // `MoveResponse` solo trae el estado nuevo del juego: la home y la racha global quedan viejas.
-      if (res.result !== null) void queryClient.invalidateQueries({ queryKey: todayKeys.all });
+      if (res.result !== null) {
+        void queryClient.invalidateQueries({ queryKey: todayKeys.all });
+        void queryClient.invalidateQueries({ queryKey: statsKeys.all });
+      }
     },
   });
 }

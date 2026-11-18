@@ -32,6 +32,15 @@ describe('i18n', () => {
     expect(es.errors.retry).toBe('Reintentar');
   });
 
+  it('textos de estadísticas en español', () => {
+    expect(es.stats.title).toBe('Estadísticas');
+    expect(es.stats.invitation.title).toBe('Todavía no jugaste');
+    expect(es.stats.history.more).toBe('Ver más partidas');
+    expect(es.stats.error.rateLimited).toBe(
+      'Hiciste muchas consultas seguidas. Esperá unos segundos e intentá de nuevo.',
+    );
+  });
+
   it('textos nuevos en español', () => {
     expect(es.cookies.title).toBe('Activá las cookies para poder jugar');
     expect(es.about.title).toBe('Acerca de nerdose');

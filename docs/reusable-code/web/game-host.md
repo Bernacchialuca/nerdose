@@ -14,7 +14,7 @@
 
 ## GameClient and props
 - **Location:** apps/web/src/modules/game-host/types.ts
-- **Description:** Structural copy of the `./client` contract of a game package: `GameClient` (`share(result, number, locale)`), `ClientBaseProps`, `InstructionsProps`, `GameProps`, `ResultProps`, `Translate`, `MoveErrorInfo`, `GameStatsView`. `GameProps.feedback` is the last `MoveResponse.feedback` (`null` until the first move; forwarded untouched, never interpreted by `web`) and `ResultProps.publicView` is `GameToday.public_view` for clients that draw the final board. `ClientBaseProps.codeLanguage: CodeLanguage` is `session.preferred_code_language ?? 'js'` (resolved by `GameScreens`, `DEFAULT_CODE_LANGUAGE`); Big O reads it when mounting the `Game`, the other clients ignore it. `MoveResponse.play` is a full `PlayView` (with `code_language`).
+- **Description:** Structural copy of the `./client` contract of a game package: `GameClient` (`StatsSummary: ComponentType<StatsSummaryProps>` plus `share(result, number, locale)`), `StatsSummaryProps` (`{ extra, locale, t }`), `ClientBaseProps`, `InstructionsProps`, `GameProps`, `ResultProps`, `Translate`, `MoveErrorInfo`, `GameStatsView`. `GameProps.feedback` is the last `MoveResponse.feedback` (`null` until the first move; forwarded untouched, never interpreted by `web`) and `ResultProps.publicView` is `GameToday.public_view` for clients that draw the final board. `ClientBaseProps.codeLanguage: CodeLanguage` is `session.preferred_code_language ?? 'js'` (resolved by `GameScreens`, `DEFAULT_CODE_LANGUAGE`); Big O reads it when mounting the `Game`, the other clients ignore it. `MoveResponse.play` is a full `PlayView` (with `code_language`).
 
 ## gameTodayKeys / fetchGameToday / useGameToday / useStartPlay / useSubmitMove / withSessionRetry
 - **Location:** apps/web/src/modules/game-host/api/
@@ -70,3 +70,7 @@
 - **Location:** apps/web/src/modules/game-host/components/voided-notice-dialog.tsx
 - **Description:** O-02 `alertdialog` (`variant="modal"`, described by its text via `describedBy`); `challenge_expired` calls `onExpired`, `not_voided` / `no_challenge_today` call `onStale`, any other error shows an inline alert.
 - **Signature:** `VoidedNoticeDialog({ gameId, number, onClose, onExpired, onStale })`
+
+## Stats invalidation (S-057)
+- **Location:** apps/web/src/modules/game-host/api/use-submit-move.ts, use-acknowledge-void.ts
+- **Description:** `useSubmitMove` also invalidates `statsKeys.all` (`['me','stats']`) when the move closes the play (`result !== null`); `useAcknowledgeVoid` invalidates it together with `today` and `game-today`.

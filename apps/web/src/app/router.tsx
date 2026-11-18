@@ -13,6 +13,7 @@ export const routes: RouteObject[] = [
     children: [
       { index: true, lazy: () => import('@/modules/catalog/routes/home') },
       { path: 'about', lazy: () => import('@/modules/about/routes/about') },
+      { path: 'stats', lazy: () => import('@/modules/stats/routes/stats') },
       { path: ':game_id', lazy: () => import('@/modules/game-host/routes/game') },
       { path: '*', element: <NotFound /> },
     ],

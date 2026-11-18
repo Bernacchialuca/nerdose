@@ -10,10 +10,12 @@ import { ChallengeNumber, GlobalStreakPill } from '@/modules/catalog';
 import { focusMainHeading } from '@/lib/focus-main-heading';
 import type { ShellHandle } from '@/lib/route-handle';
 import { LanguageSelector, useSession } from '@/modules/session';
+import { useInvalidateStatsOnDayChange } from '@/modules/stats';
 
 export function Shell() {
   const { t } = useTranslation();
   const { status } = useSession();
+  useInvalidateStatsOnDayChange();
   const { pathname } = useLocation();
   const isHome = pathname === '/';
   // La última ruta con `handle.header` que devuelva un nodo reemplaza al header de plataforma.

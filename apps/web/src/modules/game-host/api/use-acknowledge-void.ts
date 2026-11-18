@@ -4,6 +4,7 @@ import type { GameId } from '@nerdose/core';
 
 import { api } from '@/lib/api-client';
 import { todayKeys } from '@/modules/catalog';
+import { statsKeys } from '@/modules/stats';
 
 import { gameTodayKeys } from './game-today';
 import type { AcknowledgeVoidResponse } from './game-today';
@@ -24,6 +25,7 @@ export function useAcknowledgeVoid(gameId: GameId) {
       Promise.all([
         queryClient.invalidateQueries({ queryKey: todayKeys.all }),
         queryClient.invalidateQueries({ queryKey: gameTodayKeys.all }),
+        queryClient.invalidateQueries({ queryKey: statsKeys.all }),
       ]),
   });
 }

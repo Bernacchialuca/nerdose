@@ -17,6 +17,7 @@ import {
   moveWon,
   reportCreated,
 } from '@/test/fixtures/game-today';
+import { myStatsPage1 } from '@/test/fixtures/my-stats';
 import { sessionFixture } from '@/test/fixtures/session';
 import { apiError, gameHandlers, server } from '@/test/msw';
 
@@ -89,6 +90,40 @@ describe('useStartPlay', () => {
     expect(
       queryClient.getQueryData<GameToday>(gameTodayKeys.detail('devdle', 'es'))?.play?.status,
     ).toBe('in_progress');
+  });
+});
+
+const seedStats = (queryClient: QueryClient) =>
+  queryClient.setQueryData(['me', 'stats', 'es'], { pages: [myStatsPage1], pageParams: [null] });
+
+describe('useSubmitMove · estadísticas', () => {
+  it('TS-5: cerrar una partida invalida las stats', async () => {
+    server.use(gameHandlers.move(moveWon));
+    const { wrapper, queryClient } = setup();
+    seedStats(queryClient);
+    const { result } = renderHook(() => useSubmitMove('devdle'), { wrapper });
+    await act(() => result.current.mutateAsync({ challengeNumber: 128, move: { guess: 'REDIS' } }));
+    expect(queryClient.getQueryState(['me', 'stats', 'es'])?.isInvalidated).toBe(true);
+  });
+
+  it('TS-6: una jugada que no cierra no invalida', async () => {
+    server.use(gameHandlers.move(moveInProgress));
+    const { wrapper, queryClient } = setup();
+    seedStats(queryClient);
+    const { result } = renderHook(() => useSubmitMove('devdle'), { wrapper });
+    await act(() => result.current.mutateAsync({ challengeNumber: 128, move: { guess: 'REDIS' } }));
+    expect(queryClient.getQueryState(['me', 'stats', 'es'])?.isInvalidated).toBe(false);
+  });
+});
+
+describe('useAcknowledgeVoid · estadísticas', () => {
+  it('TS-7: confirmar una anulación invalida las stats', async () => {
+    server.use(gameHandlers.acknowledgeVoid(acknowledgeVoidOk));
+    const { wrapper, queryClient } = setup();
+    seedStats(queryClient);
+    const { result } = renderHook(() => useAcknowledgeVoid('devdle'), { wrapper });
+    await act(() => result.current.mutateAsync({ challengeNumber: 128 }));
+    expect(queryClient.getQueryState(['me', 'stats', 'es'])?.isInvalidated).toBe(true);
   });
 });
 

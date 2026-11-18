@@ -8,6 +8,7 @@ import type { GameId } from '@nerdose/core';
 import { bigONotStarted } from './fixtures/big-o-today';
 import { bugHuntNotStarted } from './fixtures/bug-hunt-today';
 import { gameTodayNotStarted } from './fixtures/game-today';
+import { myStatsPage1, myStatsPage2 } from './fixtures/my-stats';
 import { grepGridNotStarted } from './fixtures/grep-grid-today';
 import { sessionFixture } from './fixtures/session';
 import { timelineNotStarted } from './fixtures/timeline-today';
@@ -21,6 +22,13 @@ export const defaultHandlers = [
   http.get('/api/games/devdle/today', () => HttpResponse.json(gameTodayNotStarted)),
   http.get('/api/games/grep-grid/today', () => HttpResponse.json(grepGridNotStarted)),
   http.get('/api/games/timeline/today', () => HttpResponse.json(timelineNotStarted)),
+  http.get('/api/me/stats', ({ request }) =>
+    HttpResponse.json(
+      new URL(request.url).searchParams.get('history_before') === '2026-11-02'
+        ? myStatsPage2
+        : myStatsPage1,
+    ),
+  ),
   http.patch('/api/me/preferences', async ({ request }) =>
     HttpResponse.json({
       locale: ((await request.json()) as { locale: Locale }).locale,

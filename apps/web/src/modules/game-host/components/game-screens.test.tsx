@@ -33,6 +33,7 @@ const client: GameClient = {
     resultProps.push(props);
     return null;
   },
+  StatsSummary: () => null,
   share: () => '',
   i18n: { namespace: 'test', resources: { es: {}, en: {} } },
   HELP_TARGET_ID: 'game-help',
