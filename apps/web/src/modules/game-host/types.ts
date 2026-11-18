@@ -47,10 +47,13 @@ export type ResultProps = ClientBaseProps & {
   footer?: ReactNode;
 };
 
+export type StatsSummaryProps = { extra: unknown; locale: Locale; t: Translate };
+
 export type GameClient = {
   Instructions: ComponentType<InstructionsProps>;
   Game: ComponentType<GameProps>;
   Result: ComponentType<ResultProps>;
+  StatsSummary: ComponentType<StatsSummaryProps>;
   share: (result: unknown, number: number, locale: Locale) => string;
   i18n: { namespace: string; resources: Record<Locale, Record<string, unknown>> };
   HELP_TARGET_ID: string;

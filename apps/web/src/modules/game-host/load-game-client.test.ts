@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { GAME_IDS } from '@nerdose/core';
 import type { GameId } from '@nerdose/core';
 
 import i18n from '@/i18n';
@@ -84,5 +85,14 @@ describe('loadGameClient', () => {
 
   it('rechaza si el juego no tiene client', async () => {
     await expect(loadGameClient('unknown-game' as GameId)).rejects.toThrow('unknown-game');
+  });
+});
+
+describe('loadGameClient · StatsSummary', () => {
+  it('TS-10: los 5 clients exponen StatsSummary', async () => {
+    for (const id of GAME_IDS) {
+      const client = await loadGameClient(id);
+      expect(typeof client.StatsSummary).toBe('function');
+    }
   });
 });

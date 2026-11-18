@@ -2,7 +2,7 @@
 
 ## GAME_CATALOG
 - **Location:** apps/web/src/modules/catalog/games.ts
-- **Signature:** `Record<GameId, { minutes: number; untimed: boolean; accentClass: string }>`
+- **Signature:** `Record<GameId, { minutes: number; untimed: boolean; accentClass: string; barClass: string }>` (`barClass` is the full `bg-game-<id>` literal for the accent bar)
 - **Usage:** `GAME_CATALOG[gameId].accentClass`
 
 ## deriveHomeView

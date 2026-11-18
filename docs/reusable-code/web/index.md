@@ -32,6 +32,15 @@ App `apps/web` (not a package; imported through the `@/` alias).
 - **useToday / todayKeys / fetchToday** (apps/web/src/modules/catalog/api/) - `GET /api/today?lang=` query keyed by the active locale
 - **sessionKeys / createSession / updatePreferences** (apps/web/src/modules/session/api/session.ts) - Session API calls and types (`createSession` is also exported from the module index)
 
+## Stats (7 items) - see stats.md
+- **statsKeys / fetchMyStats / MyStats** (apps/web/src/modules/stats/api/my-stats.ts) - Key factory, fetcher and type of `GET /api/me/stats`
+- **useMyStats** (apps/web/src/modules/stats/api/use-my-stats.ts) - Paginated infinite query that keeps loaded pages across a locale change
+- **useInvalidateStatsOnDayChange** (apps/web/src/modules/stats/api/use-invalidate-stats-on-day-change.ts) - Invalidates the stats when the platform day changes
+- **deriveStatsView** (apps/web/src/modules/stats/stats-view.ts) - Pure selector for the `/stats` states
+- **formatShortDate / formatWinRate / formatCount** (apps/web/src/modules/stats/format.ts) - UTC dates and numbers in the active locale
+- **StatsInvitation / StatsKpis / GameStatsCard / GameStatsSummary / ActivityPanel / HistoryPanel** (apps/web/src/modules/stats/components/) - Presentational blocks of the stats screen
+- **myStatsPage1 / myStatsPage2 / myStatsEmpty** (apps/web/src/test/fixtures/my-stats.ts) - `MyStats` fixtures
+
 ## Components and hooks (5 items) - see components.md
 - **CTA y links** - use `buttonClass` / `linkClass` from `@nerdose/ui` (see docs/reusable-code/ui/helpers.md)
 - **MainNav** (apps/web/src/components/main-nav.tsx) - Primary navigation `<nav>` (always in the header, `navItemClass`)
@@ -47,7 +56,7 @@ App `apps/web` (not a package; imported through the `@/` alias).
 - **fontOf** (apps/web/src/test/font-family.ts) - Resolves `'mono' | 'sans'` for an element by walking up to the nearest `font-*` class
 
 ## Catalog (12 items) - see catalog.md
-- **GAME_CATALOG** (apps/web/src/modules/catalog/games.ts) - Static per-game metadata (minutes, untimed, accent class) in `GAME_IDS` order
+- **GAME_CATALOG** (apps/web/src/modules/catalog/games.ts) - Static per-game metadata (minutes, untimed, accent and bar classes) in `GAME_IDS` order
 - **deriveHomeView** (apps/web/src/modules/catalog/home-view.ts) - Pure function deriving home state (loading/error/ready, cards with `next`, terminal rows, hero, summary) from `Today` and session status
 - **useDayCountdown** (apps/web/src/modules/catalog/api/use-day-countdown.ts) - Seconds to reset; at 0 waits a 0-3 s jitter and invalidates `todayKeys.all` (plus optional `extraKeys`) once
 - **nextPendingGame** (apps/web/src/modules/catalog/home-view.ts) - Next game to play (in progress first, then not started), optionally excluding one
