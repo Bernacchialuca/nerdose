@@ -58,7 +58,7 @@ describe('game-devdle entry boundaries (TS-3, TS-4)', () => {
           );
         }
       }
-      for (const forbidden of ['window.plausible', '@nerdose/game-']) {
+      for (const forbidden of ['@nerdose/game-']) {
         expect(text.includes(forbidden), `${file} contains ${forbidden}`).toBe(false);
       }
     }

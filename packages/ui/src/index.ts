@@ -1,6 +1,4 @@
 export { cn } from './cn';
-export { injectAnalytics, track } from './analytics';
-export type { AnalyticsEvent } from './analytics';
 export { Alert } from './components/alert';
 export type { AlertProps } from './components/alert';
 export { AppHeader } from './components/app-header';

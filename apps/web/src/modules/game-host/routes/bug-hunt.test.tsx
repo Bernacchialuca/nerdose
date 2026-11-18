@@ -2,7 +2,6 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { track } from '@nerdose/ui';
 import { axe } from 'vitest-axe';
 
 import {
@@ -33,11 +32,6 @@ import {
 } from '@/test/game-route-helpers';
 import { bugHuntHandlers as handlers, server } from '@/test/msw';
 import { renderWithProviders } from '@/test/render';
-
-vi.mock('@nerdose/ui', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('@nerdose/ui')>()),
-  track: vi.fn(),
-}));
 
 const TODAY = '/api/games/bug-hunt/today?lang=es';
 const START = '/api/games/bug-hunt/today/start';
@@ -90,7 +84,6 @@ afterEach(() => {
   server.events.removeAllListeners();
   Reflect.deleteProperty(navigator, 'share');
   vi.restoreAllMocks();
-  vi.mocked(track).mockClear();
   vi.useRealTimers();
   localStorage.clear();
   sessionStorage.clear();
@@ -438,7 +431,6 @@ describe('compartir', () => {
     await user.click(button);
     await waitFor(() => expect(share).toHaveBeenCalledWith({ text: SHARE_WON_JAVA_ES }));
     expect(SHARE_WON_JAVA_ES).not.toMatch(/línea|comparación|maxIndex|L4/);
-    expect(track).toHaveBeenCalledWith('share:bug-hunt');
   });
 
   it('TS-18: share por portapapeles al perder', async () => {
@@ -447,7 +439,6 @@ describe('compartir', () => {
     await user.click(button);
     await waitFor(() => expect(write).toHaveBeenCalledWith(SHARE_LOST_GO_ES));
     expect(await within(button).findByText('✓ Copiado')).toBeInTheDocument();
-    expect(track).toHaveBeenCalledWith('share:bug-hunt');
   });
 
   it('TS-19: el share sigue el idioma activo al momento de compartir', async () => {
@@ -475,7 +466,6 @@ describe('compartir', () => {
     await waitFor(() => expect(write).toHaveBeenCalledTimes(2));
     expect(write.mock.calls[0]?.[0]).toBe(SHARE_WON_JAVA_ES);
     expect(write.mock.calls[1]?.[0]).toBe(SHARE_WON_JAVA_EN);
-    expect(vi.mocked(track).mock.calls.filter((c) => c[0] === 'share:bug-hunt')).toHaveLength(2);
   });
 });
 

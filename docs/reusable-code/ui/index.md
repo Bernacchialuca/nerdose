@@ -2,10 +2,8 @@
 
 Package `@nerdose/ui` (`packages/ui`), consumed by `web` and `admin`.
 
-## Utils (3 items) - see utils.md
+## Utils (1 item) - see utils.md
 - **cn** (packages/ui/src/cn.ts) - Conditional class merge with a `tailwind-merge` instance extended with the theme's text, radius and shadow roles
-- **injectAnalytics** (packages/ui/src/analytics.ts) - Injects the Plausible script only when a domain and script URL are given; idempotent
-- **track** (packages/ui/src/analytics.ts) - Sends `share:<game_id>` without properties; no-op when analytics is off, never throws
 
 ## Helpers (4 items) - see helpers.md
 - **buttonClass** (packages/ui/src/components/button-class.ts) - Class string for `primary` / `secondary` / `accent` / `error` / `icon` buttons, `lg` / `md` / `share`, full width and disabled

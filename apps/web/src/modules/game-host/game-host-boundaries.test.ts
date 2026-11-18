@@ -140,10 +140,4 @@ describe('game-host boundaries', () => {
       expect(text, file).not.toMatch(/\.reason\s*===/);
     }
   });
-
-  it('TS-5: nadie referencia window.plausible', () => {
-    for (const file of files) {
-      expect(readFileSync(file, 'utf8'), file).not.toContain('window.plausible');
-    }
-  });
 });

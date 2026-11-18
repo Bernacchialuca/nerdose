@@ -17,14 +17,13 @@ App `apps/web` (not a package; imported through the `@/` alias).
 - **gameTodayKeys / fetchGameToday / useGameToday / useStartPlay / useSubmitMove / withSessionRetry** (apps/web/src/modules/game-host/api/) - Query/mutation layer for a game's day
 - **deriveGameView / toMoveError** (apps/web/src/modules/game-host/game-view.ts) - Pure screen selector and error mapping
 - **GameHostHeader** (apps/web/src/modules/game-host/components/game-host-header.tsx) - `GameHeader` for the game screens
-- **ShareButton / ClientShareButton** (apps/web/src/modules/game-host/components/share-button.tsx) - Share with clipboard fallback and analytics; the header passes the session locale to the game's `share(result, number, locale)`
+- **ShareButton / ClientShareButton** (apps/web/src/modules/game-host/components/share-button.tsx) - Share with clipboard fallback; the header passes the session locale to the game's `share(result, number, locale)`
 - **ResultExits / Confetti** (apps/web/src/modules/game-host/components/) - Result closing card (streaks + countdown + exits) and win confetti
 - **useReport / useAcknowledgeVoid** (apps/web/src/modules/game-host/api/) - Mutations for reporting a challenge and acknowledging a voided one
 - **ReportDialog / ReportLink** (apps/web/src/modules/game-host/components/) - O-01 report form and its trigger (generic, no per-game logic)
 - **VoidedNoticeDialog** (apps/web/src/modules/game-host/components/voided-notice-dialog.tsx) - O-02 voided-challenge notice with «Marcar como completado»
 - **ShellHandle** (apps/web/src/lib/route-handle.ts) - Route-provided header contract for the `Shell`
 - **focusMainHeading** (apps/web/src/lib/focus-main-heading.ts) - Moves focus to `main h1`
-- **env / parseEnv / initAnalytics** (apps/web/src/lib/env.ts, analytics.ts) - Validated env and Plausible injection
 
 ## Session and i18n (5 items) - see session.md
 - **SessionProvider / useSession** (apps/web/src/modules/session/) - Single session/locale context: bootstraps `POST /api/session`, exposes `status`, `canPlay`, `locale`, `changeLocale`

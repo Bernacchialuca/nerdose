@@ -2,7 +2,6 @@ import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { track } from '@nerdose/ui';
 import { axe } from 'vitest-axe';
 
 import { stubSortableRects } from '@/test/dnd-rects';
@@ -29,11 +28,6 @@ import { todayFixture, todayNoSessionFixture } from '@/test/fixtures/today';
 import { sessionFixture } from '@/test/fixtures/session';
 import { server, timelineHandlers as handlers } from '@/test/msw';
 import { renderWithProviders } from '@/test/render';
-
-vi.mock('@nerdose/ui', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('@nerdose/ui')>()),
-  track: vi.fn(),
-}));
 
 const TODAY = '/api/games/timeline/today?lang=es';
 const MOVE = '/api/games/timeline/today/move?lang=es';
@@ -95,7 +89,6 @@ afterEach(() => {
   server.events.removeAllListeners();
   Reflect.deleteProperty(navigator, 'share');
   vi.restoreAllMocks();
-  vi.mocked(track).mockClear();
   vi.useRealTimers();
   localStorage.clear();
   sessionStorage.clear();
@@ -437,8 +430,6 @@ describe('compartir', () => {
     await waitFor(() => expect(share).toHaveBeenCalledTimes(1));
     expect(share).toHaveBeenCalledWith({ text: SHARE_3 });
     expect(write).not.toHaveBeenCalled();
-    expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith('share:timeline');
     const text: string = share.mock.calls[0]?.[0].text;
     expect(text).not.toMatch(/Python|Java|Go|Docker|Kubernetes/);
     expect(text).not.toMatch(/\b(19|20)\d\d\b/);
@@ -451,8 +442,6 @@ describe('compartir', () => {
     await user.click(button);
     await waitFor(() => expect(write).toHaveBeenCalledWith(SHARE_3));
     expect(await within(button).findByText('✓ Copiado')).toHaveAttribute('role', 'status');
-    expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith('share:timeline');
     await act(async () => {
       await vi.advanceTimersByTimeAsync(3000);
     });
