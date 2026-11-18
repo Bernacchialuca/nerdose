@@ -31,10 +31,8 @@ describe('@nerdose/ui public API', () => {
       'buttonClass',
       'cn',
       'dataTableClass',
-      'injectAnalytics',
       'linkClass',
       'navItemClass',
-      'track',
     ]);
     for (const value of Object.values(ui)) expect(typeof value).toBe('function');
   });
