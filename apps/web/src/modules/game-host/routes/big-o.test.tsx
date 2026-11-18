@@ -2,7 +2,6 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { track } from '@nerdose/ui';
 import { axe } from 'vitest-axe';
 
 import {
@@ -32,11 +31,6 @@ import {
 } from '@/test/game-route-helpers';
 import { bigOHandlers as handlers, server } from '@/test/msw';
 import { renderWithProviders } from '@/test/render';
-
-vi.mock('@nerdose/ui', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('@nerdose/ui')>()),
-  track: vi.fn(),
-}));
 
 const TODAY = '/api/games/big-o/today?lang=es';
 const MOVE = '/api/games/big-o/today/move?lang=es';
@@ -83,7 +77,6 @@ afterEach(() => {
   server.events.removeAllListeners();
   Reflect.deleteProperty(navigator, 'share');
   vi.restoreAllMocks();
-  vi.mocked(track).mockClear();
   vi.useRealTimers();
   localStorage.clear();
   sessionStorage.clear();
@@ -354,7 +347,6 @@ describe('compartir', () => {
     const { user, button } = await openResult(bigOWonJava);
     await user.click(button);
     await waitFor(() => expect(share).toHaveBeenCalledWith({ text: SHARE_WON_JAVA }));
-    expect(track).toHaveBeenCalledWith('share:big-o');
   });
 
   it('TS-21: share por portapapeles al perder', async () => {
@@ -364,7 +356,6 @@ describe('compartir', () => {
     await waitFor(() => expect(write).toHaveBeenCalledWith(SHARE_LOST_GO));
     expect(SHARE_LOST_GO).not.toContain('O(');
     expect(await within(button).findByText('✓ Copiado')).toBeInTheDocument();
-    expect(track).toHaveBeenCalledWith('share:big-o');
   });
 });
 

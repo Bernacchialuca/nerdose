@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import type { GameId, Locale } from '@nerdose/core';
-import { buttonClass, ShareIcon, track } from '@nerdose/ui';
+import { buttonClass, ShareIcon } from '@nerdose/ui';
 
 import { useLoadedGameClient } from '../use-loaded-game-client';
 
@@ -30,7 +30,6 @@ export function ShareButton({ gameId, getText, variant }: Props) {
       if (typeof navigator.share === 'function') {
         try {
           await navigator.share({ text });
-          track(`share:${gameId}`);
           return;
         } catch (error) {
           if (isAbort(error)) return;
@@ -39,7 +38,6 @@ export function ShareButton({ gameId, getText, variant }: Props) {
       }
       await navigator.clipboard.writeText(text);
       setCopied(true);
-      track(`share:${gameId}`);
       clearTimeout(timer.current);
       timer.current = setTimeout(() => setCopied(false), COPIED_RESET_MS);
     } catch {

@@ -2,7 +2,6 @@ import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { track } from '@nerdose/ui';
 import { axe } from 'vitest-axe';
 
 import {
@@ -34,11 +33,6 @@ import {
 import { gameHandlers, server } from '@/test/msw';
 import { renderWithProviders } from '@/test/render';
 
-vi.mock('@nerdose/ui', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('@nerdose/ui')>()),
-  track: vi.fn(),
-}));
-
 const FILLED_CELLS = /^[A-Z], /;
 const filledCells = (pattern = FILLED_CELLS) =>
   within(screen.getByRole('grid', { name: /^(Tablero|Board):/ })).getAllByLabelText(pattern);
@@ -58,7 +52,6 @@ afterEach(() => {
   server.events.removeAllListeners();
   Reflect.deleteProperty(navigator, 'share');
   vi.restoreAllMocks();
-  vi.mocked(track).mockClear();
   vi.useRealTimers();
 });
 
@@ -627,7 +620,6 @@ describe('header', () => {
     const write = vi.spyOn(navigator.clipboard, 'writeText');
     await user.click(share);
     expect(write).not.toHaveBeenCalled();
-    expect(track).not.toHaveBeenCalled();
     expect(header.getByRole('group', { name: 'Idioma' })).toBeInTheDocument();
     expect(header.getByText('5')).toBeInTheDocument();
     await user.click(header.getByRole('button', { name: 'Cómo se juega' }));
@@ -671,8 +663,6 @@ describe('compartir', () => {
     expect(write).not.toHaveBeenCalled();
     expect(share).toHaveBeenCalledWith({ text: SHARE_WIN });
     expect(share.mock.calls[0]?.[0].text).not.toMatch(/PARSER|software_engineering/);
-    expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith('share:devdle');
   });
 
   it('TS-39: sin share nativo copia al portapapeles y confirma «✓ Copiado»', async () => {
@@ -683,8 +673,6 @@ describe('compartir', () => {
     await waitFor(() => expect(write).toHaveBeenCalledWith(SHARE_WIN));
     const confirmation = await within(button).findByText('✓ Copiado');
     expect(confirmation).toHaveAttribute('role', 'status');
-    expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith('share:devdle');
     await act(async () => {
       await vi.advanceTimersByTimeAsync(3000);
     });
@@ -698,7 +686,6 @@ describe('compartir', () => {
     await user.click(button);
     await new Promise((r) => setTimeout(r, 20));
     expect(write).not.toHaveBeenCalled();
-    expect(track).not.toHaveBeenCalled();
     expect(within(button).getByText('Compartir')).toBeInTheDocument();
   });
 
@@ -710,7 +697,6 @@ describe('compartir', () => {
     await user.click(button);
     await new Promise((r) => setTimeout(r, 20));
     expect(within(button).getByText('Compartir')).toBeInTheDocument();
-    expect(track).not.toHaveBeenCalled();
     await user.click(button);
     await new Promise((r) => setTimeout(r, 20));
     process.off('unhandledRejection', unhandled);

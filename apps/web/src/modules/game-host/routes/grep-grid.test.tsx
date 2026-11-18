@@ -2,7 +2,6 @@ import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { track } from '@nerdose/ui';
 import { axe } from 'vitest-axe';
 
 import { countOf, errorResponse, h1, recordCalls, setShare } from '@/test/game-route-helpers';
@@ -36,11 +35,6 @@ import {
 import { todayFixture, todayNoSessionFixture } from '@/test/fixtures/today';
 import { grepGridHandlers as handlers, server } from '@/test/msw';
 import { renderWithProviders } from '@/test/render';
-
-vi.mock('@nerdose/ui', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('@nerdose/ui')>()),
-  track: vi.fn(),
-}));
 
 const TODAY = '/api/games/grep-grid/today?lang=es';
 const MOVE = '/api/games/grep-grid/today/move?lang=es';
@@ -89,7 +83,6 @@ afterEach(() => {
   server.events.removeAllListeners();
   Reflect.deleteProperty(navigator, 'share');
   vi.restoreAllMocks();
-  vi.mocked(track).mockClear();
   vi.useRealTimers();
   localStorage.clear();
   sessionStorage.clear();
@@ -468,8 +461,6 @@ describe('compartir', () => {
     await waitFor(() => expect(share).toHaveBeenCalledTimes(1));
     expect(share).toHaveBeenCalledWith({ text: SHARE_LOST6 });
     expect(write).not.toHaveBeenCalled();
-    expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith('share:grep-grid');
     const text: string = share.mock.calls[0]?.[0].text;
     expect(text).not.toMatch(/CACHE|DOCKER|KERNEL|KUBERNETES|MERGE|OAUTH|PYTHON|REDIS/);
     expect(text).not.toMatch(/rend|gave/);
@@ -485,8 +476,6 @@ describe('compartir', () => {
     await waitFor(() => expect(write).toHaveBeenCalledWith(SHARE_LOST6));
     expect(await within(button).findByText('✓ Copiado')).toHaveAttribute('role', 'status');
     expect(button).toHaveAttribute('aria-label', '✓ Copiado');
-    expect(track).toHaveBeenCalledTimes(1);
-    expect(track).toHaveBeenCalledWith('share:grep-grid');
     await act(async () => {
       await vi.advanceTimersByTimeAsync(3000);
     });
