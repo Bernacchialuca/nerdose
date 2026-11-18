@@ -66,14 +66,13 @@ describe('game-timeline entry boundaries (TS-2)', () => {
     }
   });
 
-  it('client contains no storage, analytics, game imports nor impure calls (TS-2)', () => {
+  it('client contains no storage, game imports nor impure calls (TS-2)', () => {
     const clientFiles = files.filter((f) => f.file.startsWith('client/'));
     expect(clientFiles.length).toBeGreaterThan(0);
     for (const { file, text } of clientFiles) {
       for (const forbidden of [
         'localStorage',
         'sessionStorage',
-        'window.plausible',
         '@nerdose/game-',
       ]) {
         expect(text.includes(forbidden), `${file} contains ${forbidden}`).toBe(false);

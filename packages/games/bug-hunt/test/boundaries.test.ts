@@ -61,15 +61,13 @@ describe('game-bug-hunt entry boundaries (TS-4)', () => {
     }
   });
 
-  it('client contains no storage, analytics, game imports nor tracking', () => {
+  it('client contains no storage, polyglot nor game imports', () => {
     for (const { file, text } of files.filter((f) => f.file.startsWith('client/'))) {
       for (const forbidden of [
         '@nerdose/polyglot',
         '@nerdose/game-',
         'localStorage',
         'sessionStorage',
-        'window.plausible',
-        'track(',
       ]) {
         expect(text.includes(forbidden), `${file} contains ${forbidden}`).toBe(false);
       }

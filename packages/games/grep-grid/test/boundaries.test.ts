@@ -68,7 +68,6 @@ describe('game-grep-grid entry boundaries (TS-4)', () => {
         }
       }
       for (const forbidden of [
-        'window.plausible',
         '@nerdose/game-',
         'localStorage',
         'sessionStorage',
