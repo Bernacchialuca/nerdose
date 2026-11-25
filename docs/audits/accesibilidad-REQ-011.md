@@ -1,6 +1,6 @@
 # Auditoría de accesibilidad y mobile — REQ-011
 
-**Story:** S-059 · **Fecha:** 2026-11-17 (`web`) · 2026-11-20 (`admin`) · 2026-11-25 (`games`) · **Estado:** En curso (cerrados `web`, `admin` y `games`; pendiente `ui`)
+**Story:** S-059 · **Fecha:** 2026-11-17 (`web`) · 2026-11-20 (`admin`) · 2026-11-25 (`games`) · 2026-11-25 (`ui`) · **Estado:** Cerrada
 
 ## Alcance y método
 
@@ -11,6 +11,7 @@
 - Chequeos extra: `scrollWidth <= 320` (`html` y `body`), objetivos de toque >= 44×44 (exentos: links en línea dentro de un `p` y celdas dentro de `[role="grid"]`), foco visible (`:focus-visible` con outline o sombra), `prefers-reduced-motion`.
 - `admin`: mismas versiones (`@playwright/test` 1.65.1, `@axe-core/playwright` 4.14.0, axe-core 4.14.0, Chromium headless shell 159.0.8154.6); solo proyecto `desktop` (Desktop Chrome, 1280×720, `timezoneId: UTC`, `locale: es-AR`); Vite aparte en el puerto 5181 con `--workers=2`; sesión sembrada en `sessionStorage` con `addInitScript` (`nerdose_admin_session`); red simulada con `page.route` y los fixtures de `apps/admin/src/test/fixtures/`; reloj fijo por pantalla con `page.clock.setFixedTime` (reportes `2026-11-11T12:00:00Z`, próximos `2026-12-01T14:10:00Z`, métricas `2026-12-10T12:00:00Z`). Resumen de la corrida final: 39 escenarios de página + 6 specs de teclado = 45 tests, todos en verde; axe **0 violaciones** en los 39 análisis.
 - `games` (2026-11-25): mismas versiones (`@playwright/test` 1.65.1, `@axe-core/playwright` 4.14.0, Chromium headless shell 159.0.8154.6); solo los escenarios afectados: `devdle-partida` (`mobile`), `timeline-partida`, `timeline-resultado-ganado`, `timeline-resultado-perdido`, `big-o-partida`, `big-o-resultado-ganado`, `big-o-resultado-perdido`, `bug-hunt-partida`, `bug-hunt-resultado-ganado` y `bug-hunt-resultado-perdido` en `mobile` y `desktop`, más 3 specs de teclado (Timeline, Big O, Bug Hunt; `desktop`) y un chequeo de movimiento reducido en Timeline; Vite aparte en el puerto 5180, `--workers=2`, resultados fuera del repo. Resumen: 10 escenarios (19 corridas, Devdle solo `mobile`) + 3 teclado + 1 movimiento reducido = 26 pasan, 2 omitidas por diseño; axe **0 violaciones** en los 19 análisis; objetivos < 44×44 fuera de exentos = `[]`; `unhandled` = `[]`; `scrollWidth` <= 320.
+- `ui` (2026-11-25): mismas versiones (`@playwright/test` 1.65.1, `@axe-core/playwright` 4.14.0, Chromium de Playwright `chromium-1255`); 8 escenarios con «Cerrar» (`devdle-anulado`, `grep-grid-anulado`, `timeline-anulado`, `big-o-anulado`, `bug-hunt-anulado`, `home-o02`, `devdle-o01`, `bug-hunt-o01`) en `mobile` y `desktop` + 1 spec de teclado del diálogo (solo `desktop`); Vite aparte en el puerto 5180 con `--workers=2`; resultados fuera del repo. Resumen: 17 corridas, todas pasan; axe 0 violaciones; ✕ medido 44×44 en los 16 escenarios×proyecto; `unhandled` vacío. `admin` no se re-audita con Playwright (P-8): el cambio solo agranda un botón y `admin` queda cubierto por los tests de Vitest con axe sobre sus diálogos y drawers.
 - Lockfile antes de la auditoría: `sha256 6bda4924bf6eab2f7e5d9a144d0bcb76530dc6d2b21c3ce9c02c02a17fb60e79  pnpm-lock.yaml`.
 - Resumen de la corrida final de `web` (43 escenarios + 4 chequeos + 5 teclado): `desktop` sin fallos; `mobile` con un único tipo de fallo, el chequeo de objetivos de toque (ver «320 px»). axe: **0 violaciones** en los 86 análisis (43 × 2 proyectos).
 
@@ -126,6 +127,7 @@ axe no encontró **ninguna violación** (WCAG 2.1 A y AA) en los 43 escenarios d
 | — | (sin violaciones propias de `web`) | — | — | — | — | `web` | No hizo falta cambiar código en `apps/web/src` | cerrado |
 | — | (sin violaciones propias de `admin`) | — | — | `desktop` | — | `admin` | No hizo falta cambiar código en `apps/admin/src`; los «hallazgos probables» del plan (contraste de `text-dim`, `heading-order` del drawer, landmarks de `RouteError`, nombre del botón de celda) no se reprodujeron | cerrado |
 | — | (sin violaciones de axe propias de `games`) | — | pantallas de juego afectadas | `mobile`, `desktop` | — | `games` | Los hallazgos G-1…G-6 vienen de los chequeos extra (objetivos de toque y corte de palabra); ver «Hallazgos derivados» | cerrado |
+| — | (sin violaciones de axe propias de `ui`) | — | 8 escenarios con «Cerrar» | `mobile`, `desktop` | — | `ui` | El hallazgo UI-1 viene del chequeo extra de objetivos de toque; corregido en `packages/ui/src/components/dialog.tsx` | cerrado |
 
 ## `incomplete` revisados a mano
 
@@ -191,6 +193,10 @@ Pasada con `page.keyboard` en `desktop` (sin `click` salvo para devolver el foco
 Movimiento reducido: con `reducedMotion: 'reduce'` y `timelineWon`, `document.getAnimations()` no tiene animaciones en curso (0).
 
 
+## Teclado · ui
+
+Pasada con `page.keyboard` en `desktop` sobre el diálogo O-01 («Reportar un problema») abierto desde Devdle en partida: Tab hasta «Reportar un problema» (≤ 60 Tab) + Enter abre el `dialog` con el foco dentro; Tab × (focusables + 2) no sale del diálogo (trampa de foco); con el foco en el ✕ «Cerrar», `:focus-visible` con outline de ancho > 0; Escape cierra y el foco vuelve a «Reportar un problema». Pasa.
+
 ## 320 px
 
 - `admin` no se audita a 320 px (superficie de un solo viewport `desktop`; supuesto [Pulido / admin] de REQ-011).
@@ -202,7 +208,7 @@ Movimiento reducido: con `reducedMotion: 'reduce'` y `timelineWon`, `document.ge
 | Elemento | Medida | Dueño | Origen | Estado |
 |---|---|---|---|---|
 | Botones ES / EN del selector de idioma | 44×36 de caja, 44×44 efectivos | `ui` | `packages/ui/src/components/segmented-control.tsx` (`h-9` + `before:-inset-y-1` amplía el área tocable 4 px arriba y abajo) | **Excepción aceptada**: el área de toque medida con el pseudo-elemento es 44×44; el chequeo mide la caja. |
-| «Cerrar» de los diálogos | 32×32 | `ui` | componente de diálogo/aviso de `@nerdose/ui` | Derivado a `ui` |
+| «Cerrar» de los diálogos | 32×32 | `ui` | componente de diálogo/aviso de `@nerdose/ui` | Corregido (UI-1): `packages/ui/src/components/dialog.tsx`, ✕ con `buttonClass({ variant: 'icon' })`, medido 44×44 en los 8 escenarios en `mobile` y `desktop` |
 | Teclas del teclado de Devdle | 20–31 × 54 | `games` | `packages/games/devdle/src/client/keyboard.tsx` | Excepción aceptada (G-1): ancho 20,2–31,0 × 54 px, pitch mínimo 26,2 px (≥ 24); ver «Excepciones aceptadas» |
 | Asas de Timeline | 21–22 × 44 | `games` | `packages/games/timeline/src/client/sortable-row.tsx` | Corregido (G-2): `sortable-row.tsx`, asa y ↑ ↓ `shrink-0`, medidos 44×44 en las 5 filas |
 | Pestañas de lenguaje de Big O y Bug Hunt | 48–112 × 40 | `games`/`ui` | pestañas de `code-block.tsx` | Corregido (G-4 / UI-3): `code-block.tsx` de Big O y Bug Hunt a `min-h-11`, alto ≥ 44 |
@@ -214,7 +220,8 @@ Movimiento reducido: con `reducedMotion: 'reduce'` y `timelineWon`, `document.ge
 |---|---|---|
 | Estados de la home | Texto visible por tarjeta: «✓ 4/6», «en curso», «sin jugar», «sin desafío hoy», «anulado» | TS-7 (aserción de texto + captura en gris) |
 | Historial de `/stats` | Estado en texto («ganada», «perdida», «anulada») y `✓ 4/6` | TS-13 |
-| Heatmap | Nombre accesible por celda «jueves, 13 de agosto de 2026: 0 de 5 desafíos completados» y resumen «7 desafíos completados en los últimos 365 días» | TS-13 |
+| Heatmap | Nombre accesible por celda «jueves, 13 de agosto de 2026: 0 de 5 desafíos completados» y resumen «7 desafíos completados en los últimos 365 días» | TS-13; registrado en el DS `heatmap` 1.1.0 (variante `year`) |
+| Miniaturas de la home | Decorativas (`aria-hidden`); el estado de cada tarjeta va en texto | `game-thumbnail.test.tsx` TS-37 |
 | Devdle | Fichas correctas con ✓, ausentes con borde punteado y «~», descartadas con «✕» | Captura en gris de `devdle-resultado-perdido`: se distinguen sin color |
 | Timeline | «✓ bien» / «✕ va en N°» + borde punteado; «3/5 posiciones correctas» | Captura en gris de `timeline-resultado-perdido` |
 | Grep Grid | Celdas encontradas rellenas, reveladas con borde punteado; nombre de celda con el estado | Capturas en gris (`grep-grid-resultado-*`) y nombres accesibles |
@@ -236,23 +243,23 @@ Movimiento reducido: con `reducedMotion: 'reduce'` y `timelineWon`, `document.ge
 | Teclas del teclado virtual de Devdle ~20 × 54 px a 320 px (medido 20,2–31,0 × 54, pitch mínimo 26,2) | 2.5.8 (proyecto: 44 px) | WCAG 2.1 AA no tiene criterio de tamaño de objetivo; pitch ≥ 24 px (cumple WCAG 2.2 2.5.8 por espaciado); teclado físico equivalente (A–Z, Enter, Backspace; NFR-U03); 10 teclas en 256 px útiles no pueden medir 44 de ancho sin cambiar la QWERTY | DS `game-boards` `devdle.key` 1.1.0 / 1.8.0, `keyboard.tsx`, test TS-11 de `keyboard.test.tsx` |
 | Controles deshabilitados | 1.4.3 | Exentos por la norma | `color.md` |
 | Links en línea dentro de un párrafo | 2.5.8 (en línea) | Excepción «inline» | WCAG 2.5.8 |
-| Miniaturas de las tarjetas con contraste < 4,5:1 (`aria-hidden`) | 1.4.3 | Decorativas | `game-thumbnail.tsx` |
-| `admin`: objetivos de toque (p. ej. «Cerrar» de los diálogos 32×32) no evaluados | 2.5.8 (proyecto: 44 px) | Superficie de escritorio de un solo usuario; WCAG 2.1 AA no tiene criterio de tamaño de objetivo; el supuesto de REQ-011 limita `admin` a accesibilidad y desktop (el UI-1 de `web` ya cubre el componente) | P-2 del plan admin, REQ-011 [Pulido / admin] |
+| Miniaturas de las tarjetas con contraste < 4,5:1 (`aria-hidden`) | 1.4.3 | Decorativas; guarda TS-37 de `game-thumbnail.test.tsx` (`aria-hidden` y sin focusables en los 5 juegos) y pares exentos de `foundations/color.md` | `game-thumbnail.tsx` |
+| `admin`: objetivos de toque (p. ej. «Cerrar» de los diálogos 32×32) no evaluados | 2.5.8 (proyecto: 44 px) | Superficie de escritorio de un solo usuario; WCAG 2.1 AA no tiene criterio de tamaño de objetivo; el supuesto de REQ-011 limita `admin` a accesibilidad y desktop (el UI-1 de `web` ya cubre el componente); desde UI-1 el ✕ de `Dialog` mide 44×44 | P-2 del plan admin, REQ-011 [Pulido / admin] |
 | `admin`: estados transitorios no auditados con axe | — | Requieren congelar la red a mitad de request; cubiertos por tests de componente | P-11 del plan admin |
 
 ## Hallazgos derivados
 
-### ui — Pendiente de corregir (plan ui de S-059)
+### ui — Cerrado (plan ui de S-059)
 
-| # | Hallazgo | Dónde | Escenarios (`mobile`) | Valor medido | Origen |
-|---|---|---|---|---|---|
-| UI-1 | Objetivo de toque 32×32 en «Cerrar» de diálogos y avisos | `button "Cerrar"` | `*-anulado`, `bug-hunt-o01` | 32×32 | componente de diálogo de `packages/ui/src/components` |
-| UI-2 | Miniaturas: texto decorativo bajo 4,5:1 (informativo, sin impacto mientras sean `aria-hidden`) | línea de código de Bug Hunt `#7A5A2A` (3,0:1 sobre `#0D1116`) y letras de Grep Grid `#8A5C7A` (3,5:1) | `home*` | ver columna | `packages/ui/src/components/game-thumbnail.tsx` |
-| UI-3 | Las pestañas de lenguaje (si son de `ui`) miden 40 px de alto | `button[role=tab]` de Big O y Bug Hunt | `big-o-partida`, `bug-hunt-partida`, resultados | 48–112 × 40 | verificar origen (`code-block` de los juegos o `ui`) |
+| # | Hallazgo | Dónde | Escenarios (`mobile`) | Valor medido | Origen | corrección / resolución | estado |
+|---|---|---|---|---|---|---|---|
+| UI-1 | Objetivo de toque 32×32 en «Cerrar» de diálogos y avisos | `button "Cerrar"` | `*-anulado`, `bug-hunt-o01` | 32×32 | componente de diálogo de `packages/ui/src/components` | `dialog.tsx`: se quita `size-8` del ✕ (queda el `size-11` de `buttonClass` `icon`); tests en `dialog.test.tsx` («gives the close button the 44px icon size in modal, drawer and sheet», «keeps the 44px size when the close button is disabled»); medido 44×44 | corregido |
+| UI-2 | Miniaturas: texto decorativo bajo 4,5:1 (informativo, sin impacto mientras sean `aria-hidden`) | línea de código de Bug Hunt `#7A5A2A` (3,0:1 sobre `#0D1116`) y letras de Grep Grid `#8A5C7A` (3,5:1) | `home*` | ver columna | `packages/ui/src/components/game-thumbnail.tsx` | Excepción aceptada sin cambio de código: decorativas (`aria-hidden`), guarda TS-37; si se vuelven informativas hay que subir `game.bug-hunt.muted` / `game.grep-grid.muted` | excepción aceptada |
+| UI-3 | Las pestañas de lenguaje (si son de `ui`) miden 40 px de alto | `button[role=tab]` de Big O y Bug Hunt | `big-o-partida`, `bug-hunt-partida`, resultados | 48–112 × 40 | verificar origen (`code-block` de los juegos o `ui`) | El origen son los `code-block.tsx` de los juegos; cerrado por G-4 (`min-h-11`), sin cambios en `ui` | cerrado por G-4 |
 
 `admin` no agregó hallazgos a `ui` ni a `games`: los 5 `Preview` de O-02 desde Próximos y los componentes de `ui` que usa `admin` no produjeron violaciones; en el único punto que toca a UI-1 («Cerrar» 32×32 en O-01, O-02 y O-03) no hay criterio de fallo en `admin` (ver «Excepciones aceptadas»).
 
-UI-3: el origen son los `code-block.tsx` de Big O y Bug Hunt; resuelto por `games` como G-4 (pestañas a 44 px). El plan `ui` solo lo marca cerrado.
+UI-3: el origen son los `code-block.tsx` de Big O y Bug Hunt; resuelto por `games` como G-4 (pestañas a 44 px).
 
 ### games — Cerrado (plan games de S-059)
 
@@ -283,7 +290,7 @@ UI-3: el origen son los `code-block.tsx` de Big O y Bug Hunt; resuelto por `game
 
 Cerrado en `web` (2026-11-17):
 
-- Auditoría: 43 escenarios × 2 proyectos, 5 specs de teclado y 4 chequeos; axe 0 violaciones; ningún hallazgo con dueño `web` (no se tocó `apps/web/src`, por eso no hay tests de regresión nuevos). Lo pendiente depende de `ui` y `games` (ver «Hallazgos derivados»).
+- Auditoría: 43 escenarios × 2 proyectos, 5 specs de teclado y 4 chequeos; axe 0 violaciones; ningún hallazgo con dueño `web` (no se tocó `apps/web/src`, por eso no hay tests de regresión nuevos). Los hallazgos derivados a `ui` y `games` quedaron cerrados en sus planes (ver «Hallazgos derivados»).
 - Retiro: `pnpm --filter web exec playwright uninstall`, `pnpm --filter web remove @playwright/test @axe-core/playwright`, borrados `apps/web/playwright.config.ts` y `apps/web/e2e/`, script `e2e` y `include` de `tsconfig.json` restaurados.
 - `grep "@playwright/test\|@axe-core/playwright" apps/web/package.json pnpm-lock.yaml`: sin coincidencias; `apps/web/playwright.config.ts` y `apps/web/e2e/` no existen; sin scripts `e2e*`.
 - Hash del lockfile idéntico al previo (`6bda4924…0e79`), `git diff` de `pnpm-lock.yaml` vacío.
@@ -313,4 +320,30 @@ Cerrado en `games` (2026-11-25):
 - Exit 0: `pnpm install --frozen-lockfile`, `pnpm lint`, `pnpm typecheck`, `pnpm test` (con la corrida en paralelo completa hubo timeouts de axe y Shiki bajo carga en Devdle, Bug Hunt y Timeline; los mismos tests pasan en aislamiento y con `--concurrency=2`).
 - `docs/architectures/{web,admin}/conventions/testing-e2e.md`: coherentes (no hay suite, Playwright no es herramienta vigente, remiten a este informe, D3 abierta); sin cambios.
 
-### ui — Pendiente
+### ui
+
+Cerrado en `ui` (2026-11-25):
+
+- Corrección: `packages/ui/src/components/dialog.tsx` (UI-1: el ✕ usa `buttonClass({ variant: 'icon' })` de 44×44; antes `size-8` lo pisaba); tests de regresión en `dialog.test.tsx` (modal, drawer y sheet; deshabilitado). UI-2 excepción aceptada sin cambio de código; UI-3 cerrado por G-4.
+- DS: `web` 1.13.0 (`heatmap` 1.1.0 con la variante `year`; `Dialog` en «Código alineado con el spec») y `admin` 0.1.2 (`Dialog` ✕ 44×44).
+- Auditoría: 8 escenarios × 2 proyectos + 1 spec de teclado (17 corridas); axe 0 violaciones; ✕ 44×44 medido en todos; sin scroll horizontal a 320 px; sin objetivos < 44×44 fuera de exentos.
+- Retiro: `pnpm --filter web exec playwright uninstall`, `pnpm --filter web remove @playwright/test @axe-core/playwright`, borrados `apps/web/playwright.config.ts` y `apps/web/e2e/`; resultados temporales fuera del repo borrados.
+- `grep "@playwright/test\|@axe-core/playwright"` sobre todos los `package.json` y `pnpm-lock.yaml`: sin coincidencias; sin `playwright.config.*`, carpetas `e2e/` ni scripts `e2e*` en el repo; `grep -rn playwright apps packages` (sin `node_modules`, `dist`) vacío.
+- Hash del lockfile idéntico al previo (`6bda4924…0e79`), `git diff -- apps pnpm-lock.yaml` vacío.
+- Exit 0: `pnpm install --frozen-lockfile`, `pnpm lint`, `pnpm typecheck`, `pnpm test` (con la corrida en paralelo completa hubo timeouts aislados de axe en `game-devdle` bajo carga; pasan con `--concurrency=2`).
+- `docs/architectures/{web,admin}/conventions/testing-e2e.md`: coherentes (no hay suite, Playwright no es herramienta vigente, remiten a este informe, D3 abierta); sin cambios.
+
+### Cierre general
+
+| Criterio | Estado | Evidencia |
+|---|---|---|
+| CA-1 axe | cumple | «Violaciones encontradas», «Pantallas y estados auditados»: 0 violaciones en `web`, `admin`, `games` y `ui`; `incomplete` revisados en «`incomplete` revisados a mano» |
+| CA-2 teclado | cumple | «Teclado (5 juegos)», «Teclado · admin», «Teclado · games», «Teclado · ui» |
+| CA-3 320 px | cumple con excepciones aceptadas | «320 px» (ES/EN, teclas de Devdle, tablas y heatmap con scroll interno); «Excepciones aceptadas» |
+| CA-4 sin color | cumple | «Sin color (CA 30)» |
+| CA-5 correcciones y DS | cumple | «Hallazgos derivados» (UI-1, G-2 a G-5 corregidos; UI-2, G-1 excepciones; UI-3, G-6 cerrados), DS `web` 1.13.0 y `admin` 0.1.2 |
+| CA-6 informe | cumple | este documento |
+| CA-7 Playwright retirado | cumple | «Cierre» de `web`, `admin`, `games` y `ui`: sin dependencias, specs, configuración ni scripts en el repo; lockfile idéntico |
+| CA-8 convenciones | cumple | `testing-e2e` de `web` y `admin` coherentes (ver «Cierre»); D3 abierta |
+
+Deuda abierta: D3 (e2e contra una `api` real). No queda verificación automática de páginas completas: riesgo aceptado por el usuario; `vitest-axe` sigue en los tests de componentes y de ruta.

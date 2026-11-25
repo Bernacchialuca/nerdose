@@ -3,6 +3,21 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.13.0] - 2026-11-25
+
+**MINOR.** Auditoría de accesibilidad (story S-059, plan `ui`). Ningún token se agrega ni cambia.
+
+### Agregado
+- `components/heatmap.md` 1.1.0: variante `year` (365 días) con su accesibilidad resuelta.
+
+### Código alineado con el spec
+- `@nerdose/ui`: el botón cerrar de `Dialog` (O-01 reportar, O-02 anulado) usa `buttonClass({ variant: 'icon' })` de 44×44 (antes un override de 32×32), como el `button` `icon` y el modal derivado `grep-grid.surrender-dialog`.
+
+### Notas para limpiar en otros docs
+- El DS sigue sin componente de modal (gap aceptado en REQ-005) y `--color-text-line-number` sigue sin uso.
+
+---
+
 ## [1.12.0] - 2026-11-25
 
 **MINOR.** Auditoría de accesibilidad (story S-059, plan `games`). Ningún token se agrega ni cambia.

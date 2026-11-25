@@ -11,7 +11,7 @@
 ## Estado actual
 
 - **Surface:** `admin`
-- **Versión:** `0.1.1` (placeholder; paleta de color oscura del prototipo)
+- **Versión:** `0.1.2` (placeholder; paleta de color oscura del prototipo)
 - **Estado:** sin definir — esperando aportes del equipo de diseño
 
 ## Estructura

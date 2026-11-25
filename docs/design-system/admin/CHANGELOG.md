@@ -3,6 +3,11 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [0.1.2] - 2026-11-25
+
+### Corregido
+- `Dialog` de `@nerdose/ui` (O-01 anular, O-02 detalle en drawer, O-03 regenerar): botón cerrar de 44×44 (antes 32×32), alineado con el `button` `icon` del DS `web` (S-059, plan `ui`).
+
 ## [0.1.1] - 2026-11-03
 
 ### Cambiado

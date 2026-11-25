@@ -361,4 +361,30 @@ describe('Dialog', () => {
     await user.keyboard('{Escape}');
     expect(document.querySelector('[inert]')).toBeNull();
   });
+
+  it.each(['modal', 'drawer', 'sheet'] as const)(
+    'gives the close button the 44px icon size in %s (S-059 UI-1)',
+    (variant) => {
+      render(
+        <Dialog variant={variant} title="Devdle #8" closeLabel="Cerrar" onClose={vi.fn()}>
+          <p>x</p>
+        </Dialog>,
+      );
+      const close = screen.getByRole('button', { name: 'Cerrar' });
+      expect(close).toHaveClass('size-11', 'shrink-0', 'inline-flex', 'rounded-control');
+      expect(close).not.toHaveClass('size-8');
+      expect(close.children).toHaveLength(1);
+      expect(close.querySelector('span[aria-hidden="true"]')).toHaveTextContent('✕');
+    },
+  );
+
+  it('keeps the 44px size when the close button is disabled (S-059 UI-1)', async () => {
+    const user = userEvent.setup();
+    render(<Harness closeDisabled />);
+    await user.click(screen.getByRole('button', { name: 'Abrir' }));
+    const close = screen.getByRole('button', { name: 'Cerrar' });
+    expect(close).toHaveAttribute('aria-disabled', 'true');
+    expect(close).toHaveClass('size-11', 'text-text-disabled', 'cursor-not-allowed');
+    expect(close).not.toHaveClass('size-8');
+  });
 });
