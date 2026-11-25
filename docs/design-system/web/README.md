@@ -1,6 +1,6 @@
 ---
-version: 1.11.1
-last_updated: 2026-11-15
+version: 1.13.0
+last_updated: 2026-11-25
 status: defined
 source: docs/nerdose.html
 ---
@@ -10,7 +10,7 @@ source: docs/nerdose.html
 ## Estado actual
 
 - **Surface:** `web`
-- **Versión:** `1.11.1`
+- **Versión:** `1.13.0`
 - **Estado:** definido desde el prototipo
 - **Fuente de verdad visual:** [`docs/nerdose.html`](../../nerdose.html). Ante una duda de estética gana el prototipo; en datos, reglas y accesibilidad gana el PRD (ver [`governance.md`](governance.md)).
 - **Código:** `@nerdose/ui` está alineado desde S-011 (v1.2.0). `apps/web` tiene alineados el shell, "Acerca de" y la 404 (S-012), la home (S-013) desde la v1.4.0 y las tres pantallas de Devdle (S-021, v1.5.0); los `Preview` (modo solución) de Devdle, Grep Grid y Tech Timeline para el admin siguen `game-boards` 1.5.0 (S-038, v1.9.0); ver [`CHANGELOG.md`](CHANGELOG.md) → "Desalineaciones conocidas en código".
@@ -113,3 +113,5 @@ Semver independiente del surface `admin`. MAJOR = cambio de valor o rename de to
 - 2026-11-11 v1.8.0 — Resultado y partida más compactos: `grep-grid.counter` como dato `N/8`, confeti al ganar y card de cierre; ver CHANGELOG 1.8.0.
 - 2026-11-13 v1.9.0 — S-038: modo solución para la preview del admin (`game-boards` 1.5.0); ver CHANGELOG 1.9.0.
 - 2026-11-14 v1.10.0 — S-046: Big O jugable y preview (`code-block` 1.1.0 con resaltado, `game-boards` 1.6.0); ver CHANGELOG 1.10.0.
+- 2026-11-25 v1.12.0 — S-059 (plan `games`): objetivos de toque de 44px en `code-block` y `bug-hunt.line`, filas de Timeline a 320px; ver CHANGELOG 1.12.0.
+- 2026-11-25 v1.13.0 — S-059 (plan `ui`): variante `year` del `heatmap` y cierre de diálogos de 44×44; ver CHANGELOG 1.13.0.

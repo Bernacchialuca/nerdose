@@ -143,7 +143,7 @@ export function Dialog({
             onClick={close}
             className={cn(
               buttonClass({ variant: 'icon', disabled: closeDisabled }),
-              'size-8 shrink-0 text-xs',
+              'shrink-0 text-xs',
             )}
           >
             <span aria-hidden="true">✕</span>

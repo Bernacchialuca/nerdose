@@ -1,8 +1,8 @@
 ---
 pattern: game-boards
-version: 1.7.1
+version: 1.8.0
 status: active
-last_updated: 2026-11-15
+last_updated: 2026-11-25
 source: docs/nerdose.html
 related: [card, panel, code-block, button, chip, streak-pill]
 ---
@@ -67,7 +67,7 @@ Tecla: alto 54, `radius.tile` (8), sin borde, `type.game.key` (Mono 700 15); let
 - **Borde estable:** todas las teclas llevan borde de 2px; en los estados sin borde visible es del color del fondo.
 - **Hover / foco:** sin usar y ⌫ `hover` un paso más claro (`#3A424C`); ENTER `hover` `#7CF0B0`; correcta, presente y descartada sin hover. Foco: `outline 2px` con offset 2 en `--color-accent`.
 - **Deshabilitado:** ENTER con `pending` → `aria-disabled="true"`, neutro (`#11151A` / `text.disabled`), sin hover; la acción se bloquea en el handler.
-- **Ancho a 320px:** se mantiene `flex: 1 1 0; min-width: 0`: la tecla mide ~20 × 54px con pitch de 26px. Excepción documentada al target 44×44: cumple WCAG 2.5.8 por espaciado (≥ 24px).
+- **Ancho a 320px:** se mantiene `flex: 1 1 0; min-width: 0`: la tecla mide ~20 × 54px con pitch de 26px. Excepción documentada al target 44×44: cumple WCAG 2.5.8 por espaciado (≥ 24px). Medido en la auditoría de S-059: 20,2–31,0 × 54 px, pitch mínimo 26,2 px (informe `docs/audits/accesibilidad-REQ-011.md`).
 - El teclado físico funciona igual que el virtual (NFR-U03): A–Z, Enter y Backspace; Enter/Espacio sobre un botón enfocado quedan al comportamiento nativo.
 
 ### `devdle.hint` — aviso de jugada (1.1.0)
@@ -96,7 +96,7 @@ Layout: banner (al terminar) → encabezado (`// un solo intento · las líneas 
 
 ### `bug-hunt.line` — línea elegible (L786-807)
 
-[Code-block](../components/code-block.md) `selectable`. Línea `<button role="radio">`, ancho completo, `min-height: 40px`, padding 0 18, Mono 15/2. Elegibles: líneas con lógica (2, 3, 4, 5, 8); las de solo llaves quedan atenuadas y deshabilitadas.
+[Code-block](../components/code-block.md) `selectable`. Línea `<button role="radio">`, ancho completo, `min-height: 44px` (antes 40; S-059), padding 0 18, Mono 15/2. Elegibles: líneas con lógica (2, 3, 4, 5, 8); las de solo llaves quedan atenuadas y deshabilitadas.
 
 | Estado | Fondo | Barra `inset 3px` | Tag a la derecha (Mono 700 12) | Fuente |
 |---|---|---|---|---|
@@ -188,7 +188,9 @@ Layout: título (`// consigna: …` + `h1`) ↔ puntaje [`streak-number` `score`
 
 **Fila de partida (1.3.0):** flex, gap 8, `min-height: 52px`, padding 0 8, `radius.control`. Contenido: asa `⠿` (botón `icon` 44×44, único activador de arrastre, `touch-action: none` solo en ella) · posición Mono 13 `text.dim` (ancho 18) · nombre `type.game.item` (`flex-grow: 1`, envuelve) · grupo ↑ ↓ (botones `icon` 44×44). Sin animación: no hay transición de reacomodo ni de soltado.
 
-**A 320px (1.3.0):** contenido útil 256px; panel padding 16 → 224; fila padding 8 → 208. Asa 44 + posición 18 + ↑↓ apilados 44 + 3 gaps de 8 = 130 → quedan **78px para el nombre**, que envuelve a 2 líneas (la fila crece en alto, nunca en ancho) y nunca achica los controles de 44px. Con la lista a 320px o más (`@container`) los ↑ ↓ van en línea.
+**A 320px (1.3.0, ajustado en 1.8.0):** con la lista por debajo de 20rem (`@container`) la fila de partida va en dos líneas: asa 44 · posición 18 · ↑ ↓ en fila al borde derecho (controles `flex-shrink: 0`, nunca se achican) y, debajo, el nombre y la categoría a todo el ancho (206px a 320px de viewport); desde 20rem, una sola línea como antes. Motivo (S-059): con 78px un nombre de una palabra («Kubernetes», 96px) se partía.
+
+**Fila de resultado (1.8.0):** a anchos angostos nombre y badge van en un grupo que envuelve: si no entran juntos el badge baja bajo el nombre (S-059: «Kuberne/tes» a 320px).
 
 El error es **ámbar + punteado**, no rojo, y el badge dice dónde va. Nota Inter 13: "Se arrastra y se suelta. En pantallas táctiles, cada fila también tiene flechas para subir y bajar." (L1021).
 
@@ -333,3 +335,4 @@ Cabecera de 150px de la [tarjeta de juego](../components/card.md), `aria-hidden`
 - 2026-11-14 v1.6.0 — Story S-046: se resuelven los «Pendiente» de Big O (`big-o.option` jugando, elegida, incorrecta, 2/4 columnas y resultado), mapeo de `big-o.step`, trampa de la preview y fila Big O del modo solución con la excepción de las pestañas.
 - 2026-11-15 v1.7.0 — Story S-051: mapeo de `bug-hunt.line` / `bug-hunt.test` / `bug-hunt.confirm` a tokens existentes, tags responsivos, fila Bug Hunt del modo solución con la excepción de las pestañas y «Lo que compartís» / «↺ reiniciar demo» marcados como descartados.
 - 2026-11-15 v1.7.1 — `bug-hunt.line` y `bug-hunt.confirm` usan `game.bug-hunt.tint-hover` y `game.bug-hunt.disabled.*`, ya en `@nerdose/ui`.
+- 2026-11-25 v1.8.0 — Story S-059 (plan `games`): `bug-hunt.line` a 44px, fila de partida de Timeline en dos líneas bajo 20rem con controles que no se achican, badge que envuelve en la fila de resultado y medida de la excepción de `devdle.key`.

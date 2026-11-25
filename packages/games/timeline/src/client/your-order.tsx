@@ -11,7 +11,7 @@ export function YourOrder({ marks, t }: { marks: PositionMark[]; t: Translate })
         <li
           key={m.opaque_id}
           className={cn(
-            'flex min-h-13 items-center gap-3 rounded-control border px-3.5',
+            'flex min-h-13 items-center gap-3 rounded-control border px-3.5 py-2',
             m.correct
               ? 'border-status-success-border bg-status-success-row-bg'
               : 'border-dashed border-status-misplaced-border bg-status-misplaced-bg',
@@ -30,12 +30,14 @@ export function YourOrder({ marks, t }: { marks: PositionMark[]; t: Translate })
             <span className="w-4.5 shrink-0 font-mono text-label-comment text-text-dim">
               {m.position}
             </span>
-            <span className="min-w-0 grow break-words font-mono text-game-item text-text">
-              {m.label}
+            <span className="flex min-w-0 grow flex-wrap items-center gap-x-3 gap-y-1">
+              <span className="min-w-0 grow break-words font-mono text-game-item text-text">
+                {m.label}
+              </span>
+              <Badge tone={m.correct ? 'success' : 'pending'} strong>
+                {m.correct ? t('result.ok') : t('result.goesIn', { position: m.correctPosition })}
+              </Badge>
             </span>
-            <Badge tone={m.correct ? 'success' : 'pending'} strong>
-              {m.correct ? t('result.ok') : t('result.goesIn', { position: m.correctPosition })}
-            </Badge>
           </span>
         </li>
       ))}

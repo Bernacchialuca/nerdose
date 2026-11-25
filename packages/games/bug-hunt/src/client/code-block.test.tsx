@@ -108,6 +108,23 @@ describe('CodeBlock select: structure (TS-18)', () => {
   });
 });
 
+describe('CodeBlock touch targets (TS-8)', () => {
+  it('gives tabs and eligible lines 44px and leaves other lines as plain text', () => {
+    render(select());
+    for (const tab of screen.getAllByRole('tab')) {
+      expect(tab).toHaveClass('min-h-11');
+      expect(tab).not.toHaveClass('min-h-10');
+    }
+    const radios = screen.getAllByRole('radio');
+    expect(radios).toHaveLength(PICKABLE.length);
+    for (const r of radios) {
+      expect(r).toHaveClass('min-h-11');
+      expect(r).not.toHaveClass('min-h-10');
+    }
+    expect(lineEl(1).querySelector('[role="radio"]')).toBeNull();
+  });
+});
+
 describe('CodeBlock tabs (TS-19)', () => {
   it('switches with arrows, Home, End and click, moving focus with the selection', async () => {
     const user = userEvent.setup();

@@ -57,6 +57,25 @@ describe('Result 3/5', () => {
     expect(container.innerHTML).not.toContain('status-error');
   });
 
+  it('wraps name and badge in one flex-wrap group so the badge drops below (TS-5)', () => {
+    render(<Result {...base()} />);
+    const row = within(lists()[0] as HTMLElement).getAllByRole('listitem')[4] as HTMLElement;
+    const name = within(row).getByText('Kubernetes');
+    const badge = within(row).getByText('✓ bien');
+    expect(name.parentElement).toBe(badge.parentElement);
+    expect(name.parentElement).toHaveClass(
+      'flex',
+      'flex-wrap',
+      'min-w-0',
+      'grow',
+      'items-center',
+      'gap-x-3',
+      'gap-y-1',
+    );
+    expect(name).toHaveClass('min-w-0', 'grow', 'break-words');
+    expect(row).toHaveClass('py-2', 'min-h-13');
+  });
+
   it('shows the correct order with dates by precision and notes (TS-45)', () => {
     render(<Result {...base()} />);
     const items = within(lists()[1] as HTMLElement).getAllByRole('listitem');

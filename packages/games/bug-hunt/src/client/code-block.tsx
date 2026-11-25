@@ -216,7 +216,7 @@ export function CodeBlock({
           onKeyDown={(e) => onLineKeyDown(e, number)}
           className={cn(
             rowBase,
-            'min-h-10 text-left text-text hover:bg-game-bug-hunt-tint-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-game-bug-hunt',
+            'min-h-11 text-left text-text hover:bg-game-bug-hunt-tint-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-game-bug-hunt',
             isSelected && 'bg-game-bug-hunt-tint shadow-bar-bug-hunt',
           )}
         >
@@ -298,7 +298,7 @@ export function CodeBlock({
                 onClick={() => switchTo(lang)}
                 onKeyDown={(e) => onTabKeyDown(e, index)}
                 className={cn(
-                  'min-h-10 rounded-tile px-4 font-mono text-label-comment focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-game-bug-hunt',
+                  'min-h-11 rounded-tile px-4 font-mono text-label-comment focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-game-bug-hunt',
                   isSelected
                     ? 'bg-game-bug-hunt-tint-strong font-bold text-game-bug-hunt'
                     : 'text-text-muted hover:text-text',
