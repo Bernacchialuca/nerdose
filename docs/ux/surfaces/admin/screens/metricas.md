@@ -8,8 +8,8 @@ audiences:
   - responsable
 fidelity: mid
 status: diseñada
-version: "1.1"
-date: 2026-11-13
+version: "1.2"
+date: 2026-11-15
 ---
 
 # Pantalla: P-05 · Métricas
@@ -17,21 +17,22 @@ date: 2026-11-13
 ## Identidad
 
 - **Audiencia primaria:** [responsable](../../../audiences/responsable/research-context.md)
-- **JTBD / Propósito:** Elegir un rango de fechas y ver cifras resumen y tablas de jugadores únicos, retención D1/D7, distribución de rachas y calidad por desafío.
+- **JTBD / Propósito:** Elegir un rango de fechas (por defecto, los últimos 30 días UTC) y ver cuatro cifras resumen y cuatro tablas: jugadores diarios por juego, retención D1/D7 por cohorte, distribución de rachas vivas y calidad por desafío. Solo lectura, sin gráficos y sin identificar jugadores.
 - **Viewports:**
-  - **desktop** — Barra de rango arriba, cuatro cifras resumen en una fila (3/12 c/u) y tablas debajo en paneles. (único viewport de la superficie; no hay caso mobile relevado).
+  - **desktop** — barra de rango arriba, cuatro cifras resumen en una fila (3/12 c/u) y las tablas debajo en paneles: jugadores diarios a todo el ancho, retención y rachas lado a lado, y calidad a todo el ancho. (Único viewport de la superficie; no hay caso mobile relevado).
 
 ## Entrada y salida
 
 **Entradas:**
 - Encabezado · «Métricas»
+- URL directa con el rango (`/metrics?from=AAAA-MM-DD&to=AAAA-MM-DD`)
 
 **Salidas user-driven:**
 - A `reportes`, `proximos-desafios`, `stock-contenido` · encabezado
-- A `login` · «Cerrar sesión» o `401`
+- A `login` · «Cerrar sesión»
 
 **Salidas automáticas:**
-- A `login` · `401` por token vencido (borra el token).
+- A `login` · sin sesión o `401` por token vencido (borra el token y no muestra ninguna cifra).
 
 ## Estructura
 
@@ -44,21 +45,22 @@ date: 2026-11-13
 | 5 | nav-metricas | link | — | navigation | desktop | — | Navegación del encabezado a Métricas |
 | 6 | nav-cerrar-sesion | link | — | navigation | desktop | — | Cierra la sesión: borra el token y va a Login |
 | 7 | titulo | heading | h1 | content | desktop | — | Título |
-| 8 | fecha-desde | date-picker | — | input | desktop | — | Inicio del rango (`from`) |
-| 9 | fecha-hasta | date-picker | — | input | desktop | — | Fin del rango (`to`) |
+| 8 | fecha-desde | date-picker | — | input | desktop | state_overrides: error de validación→error | Inicio del rango (`from`) |
+| 9 | fecha-hasta | date-picker | — | input | desktop | state_overrides: error de validación→error | Fin del rango (`to`) |
 | 10 | btn-consultar | button | variant=primary | input | desktop | state_overrides: loading, error de validación | Consulta el rango |
-| 11 | alerta-rango | alert | error | feedback | desktop | visible_only_in_states: error de validación | Rango inválido |
-| 12 | alerta-sistema | alert | error | feedback | desktop | visible_only_in_states: error de sistema | Falla de carga |
-| 13 | btn-reintentar | button | variant=secondary | input | desktop | visible_only_in_states: error de sistema | Reintenta la carga |
-| 14 | estado-vacio | empty-state | — | feedback | desktop | visible_only_in_states: empty | Rango sin Play |
+| 11 | nota-rango | paragraph | caption | content | desktop | — | Reglas del rango a la vista |
+| 12 | alerta-rango | alert | error | feedback | desktop | visible_only_in_states: error de validación | Rango inválido, con el motivo |
+| 13 | alerta-sistema | alert | error | feedback | desktop | visible_only_in_states: error de sistema | Falla de carga |
+| 14 | btn-reintentar | button | variant=secondary | input | desktop | visible_only_in_states: error de sistema | Reintenta la carga |
 | 15 | cargando | loader | — | feedback | desktop | visible_only_in_states: loading | Carga |
-| 16 | cifra-unicos | card | — | content | desktop | hidden_in_states: empty, loading, error de sistema | Jugadores únicos |
-| 17 | cifra-d1 | card | — | content | desktop | hidden_in_states: empty, loading, error de sistema | Retención D1 |
-| 18 | cifra-d7 | card | — | content | desktop | hidden_in_states: empty, loading, error de sistema | Retención D7 |
-| 19 | cifra-completados | card | — | content | desktop | hidden_in_states: empty, loading, error de sistema | Partidas completadas |
-| 20 | tabla-retencion | table | — | content | desktop | hidden_in_states: empty, loading, error de sistema | Retención por cohorte |
-| 21 | tabla-rachas | table | — | content | desktop | hidden_in_states: empty, loading, error de sistema | Distribución de rachas |
-| 22 | tabla-calidad | table | — | content | desktop | hidden_in_states: empty, loading, error de sistema | Calidad por desafío |
+| 16 | cifra-unicos | card | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema; state_overrides: empty | Jugadores únicos del rango |
+| 17 | cifra-d1 | card | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema; state_overrides: empty | Retención D1 del rango |
+| 18 | cifra-d7 | card | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema; state_overrides: empty | Retención D7 del rango |
+| 19 | cifra-completados | card | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema; state_overrides: empty | Partidas completadas del rango |
+| 20 | tabla-diarios | table | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema; state_overrides: empty | Jugadores únicos por día, total y por juego |
+| 21 | tabla-retencion | table | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema; state_overrides: empty | Retención D1/D7 por cohorte |
+| 22 | tabla-rachas | table | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema | Distribución de rachas globales vivas a hoy |
+| 23 | tabla-calidad | table | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema; state_overrides: empty | Calidad por desafío, ordenable por columna |
 
 ## Layout por viewport
 
@@ -85,13 +87,13 @@ date: 2026-11-13
     - fecha-hasta
   - col 2/12:
     - btn-consultar
-  - col 4/12: (vacía)
+  - col 4/12:
+    - nota-rango
 - row `avisos`
   - col 12/12:
     - alerta-rango
     - alerta-sistema
     - btn-reintentar
-    - estado-vacio
     - cargando
 - row `cifras`
   - col 3/12:
@@ -102,10 +104,13 @@ date: 2026-11-13
     - cifra-d7
   - col 3/12:
     - cifra-completados
+- row `panel-diarios` (card, título «Jugadores diarios»)
+  - col 12/12:
+    - tabla-diarios
 - row `tablas-1`
-  - col 7/12 (card):
+  - col 7/12 (card, título «Retención por cohorte»):
     - tabla-retencion
-  - col 5/12 (card):
+  - col 5/12 (card, título «Distribución de rachas»):
     - tabla-rachas
 - row `panel-calidad` (card, título «Calidad por desafío»)
   - col 12/12:
@@ -118,7 +123,7 @@ date: 2026-11-13
 ### header
 - Texto/label: > nerdose admin
 - Icono: settings
-- Annotation: nada
+- Annotation: no carga ningún script de analítica (ADR-014)
 
 ### nav-reportes
 - Texto/label: Reportes (3)
@@ -138,7 +143,7 @@ date: 2026-11-13
 ### nav-metricas
 - Texto/label: Métricas
 - Icono: nada
-- Annotation: sección actual
+- Annotation: sección actual (`aria-current="page"`); se renderiza desde REQ-011
 
 ### nav-cerrar-sesion
 - Texto/label: Cerrar sesión
@@ -152,37 +157,37 @@ date: 2026-11-13
 
 ### fecha-desde
 - Texto/label: Desde
-- Icono: nada
-- Annotation: nada
+- Icono: calendar
+- Annotation: fecha UTC; por defecto, hoy − 29 días. El rango vive en la URL: recargar o volver atrás conserva lo consultado
 
 ### fecha-hasta
 - Texto/label: Hasta
-- Icono: nada
-- Annotation: nada
+- Icono: calendar
+- Annotation: fecha UTC; por defecto, hoy (UTC)
 
 ### btn-consultar
 - Texto/label: Consultar
 - Icono: search
+- Annotation: valida el rango antes de consultar; con un rango inválido no pide datos
+
+### nota-rango
+- Texto/label: Fechas en UTC · hasta 366 días · sin fechas futuras
+- Icono: nada
 - Annotation: nada
 
 ### alerta-rango
 - Texto/label: La fecha inicial no puede ser posterior a la final.
-- Icono: nada
-- Annotation: nada
+- Icono: error
+- Annotation: el texto depende del motivo: «Elegí las dos fechas del rango.» (vacío) · «La fecha inicial no puede ser posterior a la final.» · «El rango no puede incluir fechas futuras. Hoy es {dd/mm/aaaa} (UTC).» · «El rango no puede superar los 366 días.» Si el servidor rechaza un rango que el navegador aceptó (reloj desfasado), muestra el mensaje del servidor. `role="alert"`
 
 ### alerta-sistema
 - Texto/label: No pudimos cargar las métricas. Probá de nuevo.
-- Icono: nada
+- Icono: error
 - Annotation: nada
 
 ### btn-reintentar
 - Texto/label: Reintentar
 - Icono: refresh
-- Annotation: nada
-
-### estado-vacio
-- Texto/label: Sin datos en el rango. Probá con un rango más amplio.
-- Icono: nada
 - Annotation: nada
 
 ### cargando
@@ -193,55 +198,67 @@ date: 2026-11-13
 ### cifra-unicos
 - Texto/label: Jugadores únicos · 1.284
 - Icono: nada
-- Annotation: nada
+- Annotation: jugadores distintos con alguna partida iniciada en el rango; cada uno cuenta una vez (no es la suma de los días)
 
 ### cifra-d1
-- Texto/label: Retención D1 · 41 %
+- Texto/label: Retención D1 · 41,3 %
 - Icono: nada
-- Annotation: nada
+- Annotation: promedio de las cohortes del rango con D1 ya ocurrido, ponderado por su cantidad de jugadores; «—» si ninguna lo tiene todavía. Porcentaje con un decimal
 
 ### cifra-d7
-- Texto/label: Retención D7 · 18 %
+- Texto/label: Retención D7 · 18,2 %
 - Icono: nada
-- Annotation: nada
+- Annotation: igual que D1, con el día +7
 
 ### cifra-completados
 - Texto/label: Partidas completadas · 9.730
 - Icono: nada
-- Annotation: nada
+- Annotation: ganadas, perdidas y anuladas del rango
+
+### tabla-diarios
+- Texto/label: Jugadores diarios
+- Columnas: Fecha / Total / Devdle / Grep Grid / Tech Timeline / Big O / Bug Hunt
+- Icono: nada
+- Annotation: una fila por día del rango, del más reciente al más antiguo; los días sin partidas van en 0. Columnas de juego en el orden del catálogo. Pie de tabla: «El total cuenta a cada jugador una vez por día: no es la suma de las columnas.»
 
 ### tabla-retencion
-- Texto/label: ver columnas
+- Texto/label: Retención por cohorte
+- Columnas: Cohorte (primer día) / Jugadores / D1 / D7
 - Icono: nada
-- Annotation: la definición de cohorte es visible al pie de la tabla
-- Columnas: Cohorte (primer día), Jugadores, D1, D7
+- Annotation: una fila por cohorte del rango, de la más reciente a la más antigua; las cohortes vacías no se listan. «—» si el día +1 o +7 todavía no terminó. Pie de tabla: «Cohorte: jugadores cuya primera partida completada fue ese día. D1 y D7: porcentaje que completó alguna partida exactamente 1 y 7 días después. Las partidas anuladas cuentan como completadas.»
 
 ### tabla-rachas
-- Texto/label: ver columnas
+- Texto/label: Distribución de rachas
+- Columnas: Tramo de racha / Jugadores / % del total
 - Icono: nada
-- Annotation: nada
-- Columnas: Tramo de racha, Jugadores, % del total
+- Annotation: siempre los 5 tramos, en orden: 0, 1, 2–6, 7–29, 30+, aunque tengan 0. Pie de tabla: «Racha global viva a hoy: no depende del rango elegido. El tramo 0 incluye a quienes nunca completaron una partida.»
 
 ### tabla-calidad
-- Texto/label: ver columnas
+- Texto/label: Calidad por desafío
+- Columnas: Desafío / Juego / Iniciadas / Terminadas / Completado / Victorias / Reportes / Estado
 - Icono: nada
-- Annotation: sin enlace a Reportes desde la fila (pregunta abierta 6)
-- Columnas: Desafío, Jugadas, Completado, Victorias, Reportes
+- Annotation: una fila por desafío publicado o anulado del rango, por defecto de la fecha más reciente a la más antigua. «Desafío» = «#N · dd/mm». Cada encabezado es un botón que ordena por esa columna (ascendente y descendente, con `aria-sort`), sin recargar. «Completado» = terminadas / iniciadas y «Victorias» = ganadas / terminadas, con un decimal; «—» si el divisor es 0. «Estado» en texto: «publicado» o «anulado». Sin enlace desde la fila (pregunta 6 del product-map, resuelta por REQ-011). Pie de tabla: «Las partidas anuladas no cuentan en terminadas ni en victorias.»
 
 ## Estados
 
 ### default
 - Aplica: Sí
-- Mensaje: Rango de los últimos 30 días con cifras y tablas.
+- Mensaje: Rango de los últimos 30 días (UTC) con las cifras resumen y las cuatro tablas.
 - Cambios:
   - ninguno respecto de default.
 
 ### empty
 - Aplica: Sí
-- Mensaje: Sin datos en el rango. Probá con un rango más amplio.
+- Mensaje: Sin datos en el rango.
 - Cambios:
-  - estado-vacio: visible solo acá.
-  - cifras y tablas: ocultas.
+  - cifra-unicos: content="Jugadores únicos · 0" (state_override)
+  - cifra-d1: content="Retención D1 · —" (state_override)
+  - cifra-d7: content="Retención D7 · —" (state_override)
+  - cifra-completados: content="Partidas completadas · 0" (state_override)
+  - tabla-diarios: content="Sin datos en el rango." (state_override; una fila de mensaje en lugar de días en 0)
+  - tabla-retencion: content="Sin datos en el rango." (state_override)
+  - tabla-calidad: content="Sin datos en el rango." (state_override)
+  - tabla-rachas: sin cambios (no depende del rango)
 
 ### loading
 - Aplica: Sí
@@ -249,51 +266,71 @@ date: 2026-11-13
 - Cambios:
   - cargando: visible solo acá.
   - btn-consultar: variant="disabled", content="Consultando…".
+  - cifras y tablas: ocultas.
 
 ### error de validación
 - Aplica: Sí
 - Mensaje: La fecha inicial no puede ser posterior a la final.
 - Cambios:
-  - alerta-rango: visible solo acá.
-  - btn-consultar: variant="disabled".
+  - alerta-rango: visible solo acá, con el texto del motivo.
+  - fecha-desde, fecha-hasta: state=error en el campo que corresponde al motivo (los dos si `from` > `to`).
+  - btn-consultar: variant="disabled" hasta que el rango sea válido.
+  - cifras y tablas: ocultas; no se muestran datos de ese rango.
 
 ### error de sistema
 - Aplica: Sí
 - Mensaje: No pudimos cargar las métricas. Probá de nuevo.
 - Cambios:
   - alerta-sistema y btn-reintentar: visibles solo acá; no se muestran cifras viejas.
+  - cifras y tablas: ocultas.
 
 ## Interacciones
 
 **Eventos:**
-- btn-consultar · on click → consulta `from`/`to` y aplica a todas las tablas
-- btn-reintentar · on click → reconsulta
+- btn-consultar · on click → valida el rango; si es válido, lo escribe en la URL y consulta; todas las cifras y tablas se actualizan juntas
+- fecha-desde, fecha-hasta · on change → revalida el rango; con un rango válido se habilita «Consultar»
+- btn-reintentar · on click → reconsulta el mismo rango
+- tabla-calidad · encabezado on click → ordena por esa columna; un segundo click invierte el orden
 
 **Validaciones:**
-- `from` > `to` o vacío: marca el rango y no consulta.
+- `from` o `to` vacío → mensaje «Elegí las dos fechas del rango.»
+- `from` > `to` → mensaje «La fecha inicial no puede ser posterior a la final.»
+- `to` posterior a hoy (UTC) → mensaje «El rango no puede incluir fechas futuras. Hoy es {dd/mm/aaaa} (UTC).»
+- `to − from` mayor a 365 días → mensaje «El rango no puede superar los 366 días.»
 
 **Feedback:**
-- Rango sin Play muestra «Sin datos en el rango», distinto de error de carga.
+- Un rango sin partidas muestra «Sin datos en el rango.» en cada tabla, distinto del error de carga.
 - Tras un `401` el rango elegido se pierde (el login lleva a `reportes`).
 
 ## Accesibilidad
 
-- **Orden de foco:** encabezado → fecha-desde → fecha-hasta → btn-consultar → cifras → tablas.
-- **Landmarks y jerarquía:** `main` con h1 y h2 por panel; los errores del rango son `role="alert"`.
+- **Orden de foco:** encabezado → fecha-desde → fecha-hasta → btn-consultar → cifras → tablas (en la de calidad, los botones de los encabezados).
+- **Landmarks y jerarquía:** `main` con `h1` «Métricas» y un `h2` por panel («Jugadores diarios», «Retención por cohorte», «Distribución de rachas», «Calidad por desafío»); los errores del rango son `role="alert"`.
+- **Propio de esta composición:** cada tabla es `<table>` con `<caption>` y su pie de definición asociado. El orden activo de la tabla de calidad se anuncia con `aria-sort`. Ninguna celda depende del color: «—», «publicado» y «anulado» van en texto.
 
 ## Decisiones y descartes
 
 **Decisiones tomadas:**
 - Cifras resumen antes del detalle (benchmark: Plausible Analytics).
-- Solo tablas, sin gráficos (decisión de arquitectura de `admin`).
+- Solo tablas, sin gráficos (decisión de arquitectura de `admin`, ADR-014).
 - REQ-008: «Próximos» del encabezado lleva el contador de fallas de generación activas, igual que en el resto de las pantallas.
+- REQ-011: se agrega `tabla-diarios`. C-46 pide los jugadores diarios por juego y la pantalla no los tenía. Va primera y a todo el ancho porque tiene 7 columnas.
+- REQ-011: el rango por defecto son los últimos 30 días UTC, el tope es 366 días y no se aceptan fechas futuras. Las reglas están a la vista en `nota-rango` y cada motivo tiene su propio mensaje.
+- REQ-011: el rango va en la URL para poder volver al mismo corte o compartirlo con uno mismo.
+- REQ-011: el estado vacío deja de ocultar las tablas. Cada tabla dependiente del rango muestra «Sin datos en el rango.» (CA 19) y la de rachas sigue con datos, porque es una foto a hoy. Por eso desaparece `estado-vacio`, que tapaba una tabla con datos.
+- REQ-011: cada tabla define su métrica en un pie de tabla (cohorte, tramos, anuladas, total no sumable), porque el flujo 5 deja como riesgo una cifra que no cuadra sin otra fuente dentro del admin.
+- REQ-011: porcentajes con un decimal («96,7 %») y «—» cuando el divisor es 0 o el día todavía no terminó (CA 15, 16).
+- REQ-011: la calidad por desafío se ordena por columna con botones en los encabezados, sin una librería de tablas. Suma «Iniciadas», «Terminadas» y «Estado» (publicado / anulado), que el diseño técnico expone.
 
 **Alternativas descartadas:**
 - Selector de rangos predefinidos (7/30/90 días): el PRD define `from` y `to` libres.
+- Un único mensaje «Sin datos en el rango» en lugar de las tablas: ocultaba la distribución de rachas, que no depende del rango.
+- Enlace desde la fila de calidad a Reportes o al desafío: REQ-011 no lo pide y suma una relación P-05 → P-02 sin un caso de uso relevado.
 
 **Preguntas abiertas:**
-- ¿La fila de calidad debe enlazar a Reportes o al desafío? (pregunta 6 del product-map).
+- Ninguna propia de esta pantalla.
 
 ## Trazabilidad
 
 - C-46 · flujo 5 de `user-flows.md`.
+- REQ-011: RF 11-16 · CA 13-21, 26, 30 · decisiones 1-5 del diseño técnico.

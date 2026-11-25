@@ -40,7 +40,7 @@ Lo que se descartó como servicio aparte, y dónde vive:
 - `api` MUST ser la única interfaz HTTP del backend. `generator` MUST NOT abrir ningún puerto ni exponer endpoints.
 - `api` MUST NOT ejecutar código (no `child_process`, `vm`, `eval` ni equivalentes) y MUST NOT llamar a APIs externas (ADR-017).
 - `generator` MUST ser el único proceso que hace `INSERT` en `challenges`, `terms` y `timeline_facts`.
-- `web` y `admin` MUST hablar solo con `api` (más Plausible en `web`, si está activo). MUST NOT acceder a la base.
+- `web` y `admin` MUST hablar solo con `api` (sin analítica de terceros: Plausible se retiró en REQ-011, ADR-014). MUST NOT acceder a la base.
 - MUST NOT agregarse Redis, RabbitMQ, Kafka, BullMQ ni ningún broker en v1.
 - Debe haber una sola instancia de `api` en v1. Las caches y el rate limit en memoria dependen de eso (ADR-012).
 

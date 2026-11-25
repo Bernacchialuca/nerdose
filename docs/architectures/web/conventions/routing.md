@@ -109,4 +109,3 @@ if (!isGameId(game_id)) return <NotFound />;   // isGameId comes from @nerdose/c
 - **game-clients**: `/:game_id` mounts the game's lazy `client` through the registry.
 - **error-handling**: `errorElement` and the not-found screen.
 - **accessibility**: focus management and page titles on navigation.
-- **analytics**: pageviews are reported by Plausible's own script on route changes when enabled.

@@ -19,7 +19,7 @@ Este documento contiene los feature groups identificados durante la inicializaci
 2. `/product-design-request REQ-XXX`: diseñar la solución técnica y proponer el story split
 3. `/product-create-stories REQ-XXX`: crear las stories implementables
 
-**Status actual:** 10 feature groups pendientes de formalización. Las 53 capabilities de `requirements.md` (C-01 a C-53) están asignadas, cada una a un solo grupo.
+**Status actual:** 10 feature groups pendientes de formalización. Las 53 capabilities de `requirements.md` (C-01 a C-53) están asignadas, cada una a un solo grupo. C-53 (analítica web) quedó retirada de v1 en REQ-011.
 
 ---
 
@@ -346,17 +346,17 @@ El jugador busca el bug en una función de 8 a 15 líneas, en su lenguaje prefer
 **Status:** Pending
 
 **Descripción:**
-Cierra la experiencia de progreso y la medición. El jugador tiene la pantalla de estadísticas completa: rachas y récords por juego y global, completados, porcentaje de victorias, stats propias de cada juego, heatmap de los últimos 365 días e historial con etiquetas cortas. El Responsable tiene la sección Métricas del admin (jugadores diarios, retención D1/D7, distribución de rachas y calidad por desafío). Se integra Plausible self-hosted detrás del flag, apagado por defecto. Incluye el pulido mobile y de accesibilidad de toda la plataforma.
+Cierra la experiencia de progreso y la medición. El jugador tiene la pantalla de estadísticas completa: rachas y récords por juego y global, completados, porcentaje de victorias, stats propias de cada juego, heatmap de los últimos 365 días e historial con etiquetas cortas. El Responsable tiene la sección Métricas del admin (jugadores diarios, retención D1/D7, distribución de rachas y calidad por desafío). Incluye el pulido mobile y de accesibilidad de toda la plataforma. La analítica web (Plausible, C-53) se retiró en REQ-011 por decisión del usuario: v1 no la incluye y se elimina el código existente.
 
 **¿Por qué es importante?:**
 - Las estadísticas completas son uno de los motivos para volver todos los días (G-01).
-- Las métricas permiten saber si el producto se usa y si los desafíos funcionan, sin depender de Plausible.
+- Las métricas permiten saber si el producto se usa y si los desafíos funcionan, sin depender de una analítica externa.
 - Con los 5 juegos ya hechos, el pulido de accesibilidad y mobile se hace sobre la plataforma completa.
 
 **Capabilities que implementa:**
 - C-34: Ver estadísticas (de F-09)
 - C-46: Ver métricas (de F-13)
-- C-53: Registrar visitas y shares (de F-16)
+- ~~C-53: Registrar visitas y shares (de F-16)~~ — retirada en v1 (REQ-011)
 - NFR-U01 a NFR-U04 (pulido mobile, WCAG 2.1 AA, teclado, color)
 
 **Precondiciones:**
@@ -366,11 +366,11 @@ Cierra la experiencia de progreso y la medición. El jugador tiene la pantalla d
 **Postcondiciones:**
 - Pantalla de estadísticas con heatmap e historial paginado.
 - Vistas `metrics_*` en la base y sección Métricas en el admin.
-- Helper `track()` y Plausible integrados detrás de `VITE_PLAUSIBLE_DOMAIN`.
-- Auditoría de accesibilidad (axe-core) sin violaciones.
+- Sin analítica web: helper `track()`, Plausible y `VITE_PLAUSIBLE_*` eliminados.
+- Auditoría de accesibilidad (axe-core) sin violaciones, con informe en `docs/audits/`.
 
 **Valor entregado:**
-El jugador consulta todo su progreso, con heatmap e historial. El Responsable ve cuánta gente juega, si vuelve y qué desafíos fallan. La analítica web queda lista para activarse cuando Plausible esté instalado.
+El jugador consulta todo su progreso, con heatmap e historial. El Responsable ve cuánta gente juega, si vuelve y qué desafíos fallan. La plataforma no carga analítica de terceros.
 
 ---
 

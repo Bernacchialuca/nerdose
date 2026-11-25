@@ -37,7 +37,7 @@ No hay competidores directos en sentido estricto: el admin de nerdose es una her
 
 ### Plausible Analytics (categoría: analítica web)
 
-- **Qué expectativa trae a este producto:** Métricas con selector de período y totales arriba, con desglose por dimensión debajo. nerdose lo integra además como analítica web opcional (decisión #30), por lo que el responsable lo conocerá.
+- **Qué expectativa trae a este producto:** Métricas con selector de período y totales arriba, con desglose por dimensión debajo. nerdose llegó a planear integrarlo como analítica web opcional (decisión #30, retirada en REQ-011), por lo que el responsable lo conoce.
 - **Cómo se manifiesta:** Hipótesis: el responsable espera elegir un rango de fechas (C-46: `from`/`to`) y ver cifras resumen antes del detalle. Plausible, según su guía oficial, usa un selector de fechas que define el período y cifras principales (visitantes únicos, visitas, páginas vistas, rebote, duración).
 - **Fuente:** [Plausible: Introduction to the dashboard](https://docs.plausible.io/guided-tour) (resultado de búsqueda, noviembre 2026).
 

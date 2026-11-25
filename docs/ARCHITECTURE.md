@@ -591,6 +591,6 @@ No hay preguntas abiertas por ahora. Las decisiones tomadas están en §2.
 | 3 | Paquete `polyglot` (árbol, 3 emisores, runner, CI con `go`/`javac`) | La infraestructura de los juegos de código |
 | 4 | **Big O** (catálogo de bloques) y **Bug Hunt** (mutaciones), con verificación ejecutando | Generación verificada multi-lenguaje |
 | 5 | Pantalla de stats completa, heatmap, historial, pulido mobile | La experiencia completa |
-| 6 | **Plausible** (analítica). El detalle se define más adelante, con referencias por sumar | Métricas de uso |
+| 6 | ~~**Plausible** (analítica)~~ Retirada en REQ-011 por decisión del usuario: sin analítica web en v1 (ADR-014) | — |
 
 **Después del MVP:** integrar un LLM para generar y validar contenido y funcionalidades nuevas (§10.9).

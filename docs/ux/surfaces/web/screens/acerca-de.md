@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.2"
-date: 2026-11-06
+version: "1.3"
+date: 2026-11-15
 ---
 
 # Pantalla: Acerca de
@@ -157,6 +157,7 @@ date: 2026-11-06
 
 - REQ-003: se alinea al DS 1.0.0 sin cambiar contenido ni layout: las tarjetas pasan a ser `panel` del DS (radio 14, tipografía Mono para títulos e Inter para la prosa, sin peso 600), el enlace de salida usa el estilo de `link` y el header es el `app-header` `default`. La tira `nav-movil` se elimina: la nav vive siempre en el header con `flex-wrap` (cambio solo de mobile).
 - REQ-003: la entrada desde «¿Cómo funciona?» de la home desaparece: ese botón ahora baja a la sección «Cómo funciona» de la propia home. Esta pantalla se alcanza desde `./about` del header.
+- REQ-011: el aviso de privacidad no cambia. La analítica web (Plausible) se retiró de la plataforma por decisión del usuario: no se carga ningún script de terceros y no hay nada más que avisar. Sin cambios de layout ni bloques nuevos.
 
 **Alternativas descartadas:**
 - Un FAQ con acordeones: más interacción para un contenido corto.
@@ -169,4 +170,5 @@ date: 2026-11-06
 - C-07, F-01 · flujo 3 (dudas sobre la racha).
 - REQ-002: RF 14, RF 15 · CA 19, CA 21.
 - REQ-003: RF 4, 6, 11, 13 · CA 2.
+- REQ-011: retiro de la analítica web (story S-058); el aviso de privacidad queda sin cambios.
 - REQ-003 (revisión visual): la intro presenta a nerdose como plataforma y no nombra la cantidad de juegos; la card «Los 5 juegos» pasa a «Los juegos», genérica y con enlace a `home`, para que escale al sumar juegos sin reescribir el texto. La card de la racha suma «Ver tus estadísticas →» (a `estadisticas`) para emparejar la altura de la fila.

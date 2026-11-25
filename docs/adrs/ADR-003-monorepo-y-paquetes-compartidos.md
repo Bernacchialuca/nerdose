@@ -30,7 +30,7 @@ apps/
 packages/
   core/         GameDefinition, día UTC, número de desafío, rachas, PRNG (rngFrom sobre pure-rand), códigos de error
   db/           schema Drizzle, migraciones, queries compartidas, vistas metrics_*
-  ui/           componentes compartidos (header, banners, share, stat cards), tokens, track()
+  ui/           componentes compartidos (header, banners, share, stat cards), tokens
   polyglot/     árbol de código, emisores JS/Go/Java, runner multi-lenguaje
   content/      dataset versionado de los bancos (data/*.json) + script offline import:banks (ADR-016)
   games/

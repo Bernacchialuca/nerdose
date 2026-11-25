@@ -1,8 +1,8 @@
 ---
 document: UX Product Map
 surface: admin
-version: "1.4"
-date: 2026-11-14
+version: "1.5"
+date: 2026-11-15
 status: Draft - Punto de partida para discusión
 audiences: [responsable]
 ---
@@ -28,7 +28,7 @@ Viewport: `desktop` (único). No hay caso mobile relevado (ver pregunta abierta 
 | P-02 | Reportes | `reportes` · `/reports` | Cola de reportes agrupados por desafío (alertados primero, luego más reportados, luego más recientes; sin paginación en v1), filtro por estado (abiertos / resueltos / descartados; default `open`), acceso al detalle y a anular; aviso de anulación confirmada | responsable | solo desktop | C-37, C-39, C-40, C-41, REQ-007 |
 | P-03 | Próximos desafíos | `proximos-desafios` · `/upcoming` | Grilla de mañana a +14 días × juegos registrados (5 con Big O, REQ-009, y Bug Hunt, REQ-010) con estado por celda: aprobado, sin desafío con su falla de generación (intentos y motivo), regeneración pendiente, regeneración fallida con su motivo, usa un ítem rechazado. Acceso al detalle y a regenerar; aviso de fallas activas | responsable | solo desktop | C-43, C-44, C-49, REQ-008 |
 | P-04 | Stock de contenido | `stock-contenido` · `/content` | Salud de los bancos (términos desglosado por Devdle y Grep Grid, y hechos): disponibles, totales, rechazados con motivo, días de stock y si alcanza para ciclar; última carga del dataset (fecha, versión, insertados, actualizados) y top 50 de palabras rechazadas en Devdle por jugadores distintos; estados vacíos; solo lectura | responsable | solo desktop | C-45, REQ-008 |
-| P-05 | Métricas | `metricas` · `/metrics` | Rango de fechas, cifras resumen y tablas: jugadores únicos, retención D1/D7, distribución de rachas, calidad por desafío | responsable | solo desktop | C-46 |
+| P-05 | Métricas | `metricas` · `/metrics` | Rango de fechas en la URL (por defecto, últimos 30 días UTC; hasta 366 días, sin fechas futuras), cuatro cifras resumen (jugadores únicos, D1, D7, partidas completadas) y tablas con su definición al pie: jugadores diarios total y por juego, retención D1/D7 por cohorte, distribución de rachas globales vivas a hoy (5 tramos fijos, no depende del rango) y calidad por desafío ordenable por columna (iniciadas, terminadas, completado, victorias, reportes, estado). Solo tablas, sin gráficos ni datos de jugadores; «Sin datos en el rango» por tabla | responsable | solo desktop | C-46, REQ-011 |
 
 > `/` redirige a `/reports` (P-02). Cualquier ruta sin sesión redirige a `/login`.
 >
@@ -52,7 +52,7 @@ Viewport: `desktop` (único). No hay caso mobile relevado (ver pregunta abierta 
 
 ### Navegación principal
 
-Barra superior fija (encabezado único, sin sidebar), visible en P-02 a P-05. **REQ-007 entregó Reportes y Cerrar sesión; REQ-008 suma Próximos y Stock**; Métricas se suma con FG-10:
+Barra superior fija (encabezado único, sin sidebar), visible en P-02 a P-05. **REQ-007 entregó Reportes y Cerrar sesión; REQ-008 suma Próximos y Stock; REQ-011 suma Métricas**:
 
 - **Reportes** → P-02 (destino de `/`)
 - **Próximos** → P-03, con el contador de fallas de generación activas («Próximos (n)», REQ-008)
@@ -65,7 +65,7 @@ Las etiquetas del encabezado y de los títulos de pantalla son idénticas (uso e
 ### Navegación secundaria
 
 Dentro de **Reportes**: filtro de estado (abiertos / resueltos / descartados).
-Dentro de **Métricas**: selector de rango de fechas (`from`, `to`) que aplica a todas las tablas.
+Dentro de **Métricas**: selector de rango de fechas (`from`, `to`) que aplica a todas las cifras y tablas salvo la distribución de rachas (foto a hoy); el rango vive en la URL (REQ-011). La tabla de calidad se ordena por columna.
 Dentro de **Próximos** y **Stock**: sin navegación secundaria.
 
 ## Information Architecture
@@ -86,7 +86,7 @@ Pantallas: Próximos desafíos (P-03), Stock de contenido (P-04); overlays Detal
 
 Pantallas: Métricas (P-05).
 
-**Por qué se agrupan:** JTBD 3, solo lectura, tablas simples sin gráficos (decisión de arquitectura de `admin`).
+**Por qué se agrupan:** JTBD 3, solo lectura, tablas simples sin gráficos (decisión de arquitectura de `admin`, ADR-014). El admin no carga analítica web (ADR-014; la plataforma no tiene analítica desde REQ-011).
 
 ### Reutilización
 
@@ -99,7 +99,7 @@ O-02 es un solo componente con dos orígenes (P-02 y P-03): misma vista del desa
 - **Login bloqueado** — 5 intentos por IP cada 15 min: P-01 informa los minutos de espera (`Retry-After`) y deshabilita el envío hasta entonces.
 - **Regeneración pendiente** — Mientras alguna celda de P-03 tenga una regeneración pendiente, la pantalla (y O-02 si está abierto) hace polling cada 5 s (REQ-008) y marca la celda; el resultado reemplaza el desafío, deja el actual con «regeneración fallida» y su motivo, o se cancela si llega la fecha (se publica el actual).
 - **Falla de generación activa** — Un juego sin desafío aprobado para una fecha de la ventana, con su falla registrada (intentos y motivo): se ve en la celda, en el aviso de P-03 y en el contador «Próximos (n)» del encabezado; deja de mostrarse sola cuando una corrida posterior logra el desafío (REQ-008, ADR-017).
-- **Sin datos / vacío** — Reportes sin abiertos, rango de métricas sin Play, celdas sin desafío en P-03, "sin datos de carga" y "sin rechazos" en P-04: cada pantalla distingue "no hay nada" de "error de carga".
+- **Sin datos / vacío** — Reportes sin abiertos, rango de métricas sin Play (cada tabla dependiente del rango dice «Sin datos en el rango.»; la de rachas sigue con datos, REQ-011), celdas sin desafío en P-03, "sin datos de carga" y "sin rechazos" en P-04: cada pantalla distingue "no hay nada" de "error de carga".
 
 ## Mapa Visual
 
@@ -146,7 +146,7 @@ flowchart TD
    - Si grilla de celdas con estado y preview en O-02: se ven los huecos de un vistazo, pero se renderizan los `client` solo al abrir el detalle (menos costo, coherente con el contrato de props aún sin cerrar).
    - Si lista por día con preview inline: sin O-02 en P-03; la página es larga y ES/EN lado a lado se repite 70 veces.
 
-6. **¿Las métricas de calidad por desafío necesitan llevar a Reportes o al desafío (enlace desde la fila)?**
+6. ~~**¿Las métricas de calidad por desafío necesitan llevar a Reportes o al desafío (enlace desde la fila)?**~~ **Resuelta por REQ-011:** no en v1. P-05 queda aislada y el responsable va a Reportes por el encabezado; la tabla se ordena por columna para encontrar los desafíos con baja tasa o muchos reportes.
    - Si sí: la fila de calidad abre O-02 o filtra P-02 por ese desafío; agrega una relación P-05 → P-02.
    - Si no: P-05 queda aislada, sin overlays ni enlaces salientes.
 

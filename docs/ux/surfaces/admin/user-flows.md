@@ -1,8 +1,8 @@
 ---
 document: UX User Flows
 surface: admin
-version: "1.2"
-date: 2026-11-13
+version: "1.3"
+date: 2026-11-15
 status: Draft - Punto de partida para discusión
 flows_count: 5
 ---
@@ -210,25 +210,26 @@ La grilla refleja que cada celda dudosa fue reemplazada (desafío nuevo aprobado
 1. El responsable abre P-04 (Stock de contenido) desde el encabezado.
 2. Ve la última carga del dataset (fecha, versión, insertados, actualizados) y, por banco (términos desglosado por Devdle y Grep Grid; hechos para Tech Timeline): ítems aprobados disponibles y totales, rechazados con motivo, días de stock estimados y si alcanza para ciclar respetando la ventana anti-repetición de cada juego. Además el top 50 de palabras rechazadas en Devdle por cantidad de jugadores distintos, solo lectura. `[fuente: REQ-008 CA 11-13]`
 3. Concluye que el stock es suficiente y abre P-05 (Métricas).
-4. Elige el rango de fechas (`from`, `to`). Ve cifras resumen y tablas: jugadores únicos, retención D1/D7, distribución de rachas, calidad por desafío.
-5. Identifica un desafío con tasa de completado baja o reportes altos y decide si revisarlo (ver camino alternativo).
+4. P-05 abre con los últimos 30 días UTC; si quiere, cambia `from` y `to` y toca «Consultar». Ve cuatro cifras resumen (jugadores únicos, retención D1 y D7, partidas completadas) y las tablas: jugadores diarios total y por juego, retención D1/D7 por cohorte, distribución de rachas vivas a hoy y calidad por desafío. Cada tabla define su métrica al pie. `[fuente: C-46; REQ-011 RF 11-16]`
+5. Ordena la tabla de calidad por «Completado», «Victorias» o «Reportes», identifica un desafío con tasa baja o muchos reportes y decide si revisarlo (ver camino alternativo). `[fuente: REQ-011 decisión de diseño de P-05]`
 
 ### Caminos alternativos
 
 - **Solo métricas** — Entra directo a P-05 sin pasar por P-04.
-- **Un desafío de baja calidad** — La fila de calidad no enlaza hoy a Reportes ni al desafío (pregunta abierta 6). El responsable va a P-02 manualmente para investigar. Supuesto: si debe haber enlace, depende de la respuesta a esa pregunta.
+- **Un desafío de baja calidad** — La fila de calidad no enlaza a Reportes ni al desafío (pregunta 6, resuelta por REQ-011: no en v1). El responsable va a P-02 por el encabezado para investigar. Un desafío anulado sigue en la tabla con estado «anulado», y sus partidas anuladas no cuentan en terminadas ni en victorias. `[fuente: REQ-011 CA 17]`
 - **Banco por agotarse** — P-04 muestra días de stock bajos o «Alcanza para ciclar: No» con un aviso que dice qué juego no alcanza; la acción es externa a la superficie (solo lectura, C-45). Alimenta el Flujo 4 si empiezan a aparecer huecos.
 - **Palabra rechazada que debería aceptarse** — El responsable la ve en el top 50 y la suma a la lista base fuera del admin (cambio de código, F-15): no hay acción en P-04.
 - **Sin carga registrada o sin rechazos** — P-04 muestra «Sin datos de carga» y «Sin rechazos» como estados vacíos, no como error. `[fuente: REQ-008 CA 14]`
-- **Cambiar el rango** — Reconsultar con otro rango; todas las tablas lo respetan.
+- **Cambiar el rango** — Reconsultar con otro rango; todas las cifras y tablas lo respetan salvo la distribución de rachas, que es una foto a hoy y lo aclara al pie. El rango queda en la URL: recargar o volver atrás conserva lo consultado. `[fuente: REQ-011 supuesto «Distribución de rachas»]`
+- **Cohorte reciente** — D1 o D7 se ve «—» si ese día todavía no terminó, no 0 %. `[fuente: REQ-011 CA 15]`
 
 ### Errores y recuperación
 
-- **Rango inválido** (`from` > `to`, o vacío) — P-05 marca el campo y no consulta. Recuperación: corregir el rango.
-- **Rango sin Play** — Muestra "sin datos en el rango", distinto de error de carga. Recuperación: ampliar el rango.
+- **Rango inválido** (vacío, `from` > `to`, fechas futuras o más de 366 días) — P-05 marca el campo, muestra el motivo y no consulta ni muestra datos. Si el servidor rechaza un rango que el navegador aceptó (reloj desfasado), se muestra el mensaje del servidor. Recuperación: corregir el rango. `[fuente: REQ-011 CA 20]`
+- **Rango sin Play** — Cifras en 0 y «—», y cada tabla dependiente del rango dice «Sin datos en el rango.», distinto de error de carga; la distribución de rachas sigue con datos. Recuperación: ampliar el rango. `[fuente: REQ-011 CA 19]`
 - **Error de carga o API caída** — Cada pantalla muestra el error con reintento, sin mostrar cifras viejas como actuales.
 - **Sesión vencida** — Ver Flujo 1; tras ingresar, el rango elegido se pierde (el login lleva a P-02).
-- **Cifra que no cuadra con lo que el responsable espera** — La definición de cada métrica (cohorte, tramos de rachas) debe ser visible en la tabla. Si no basta, no hay otra fuente dentro de la superficie. A validar.
+- **Cifra que no cuadra con lo que el responsable espera** — La definición de cada métrica está al pie de su tabla (cohorte, tramos de rachas, anuladas, total diario no sumable; REQ-011). Si no basta, no hay otra fuente dentro de la superficie. A validar.
 
 ### Estado final
 

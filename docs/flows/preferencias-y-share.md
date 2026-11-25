@@ -4,8 +4,8 @@ title: Preferencias del jugador y compartir resultado
 type: feature
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-14
-stories: [S-007, S-009, S-024, S-046, S-051]
+last_updated: 2026-11-15
+stories: [S-007, S-009, S-024, S-046, S-051, S-058]
 ---
 
 # Preferencias del jugador y compartir resultado
@@ -13,12 +13,12 @@ stories: [S-007, S-009, S-024, S-046, S-051]
 **Tipo:** Feature
 **Status:** Draft
 **Creado:** 2026-11-03
-**Última actualización:** 2026-11-14
-**Stories:** S-007, S-009, S-024, S-046
+**Última actualización:** 2026-11-15
+**Stories:** S-007, S-009, S-024, S-046, S-051, S-058
 
 ## Descripción
 
-El jugador cambia el idioma o el lenguaje de código preferido, incluso a mitad de partida. Al terminar, comparte su resultado sin spoilers, por share nativo o por el portapapeles. Si la analítica está activa, se registra el evento de share. Cubre C-03, C-04, C-13 y C-53 (F13, ADR-014).
+El jugador cambia el idioma o el lenguaje de código preferido, incluso a mitad de partida. Al terminar, comparte su resultado sin spoilers, por share nativo o por el portapapeles. Compartir no registra ningún evento de analítica (la analítica web se retiró en REQ-011, ADR-014). Cubre C-03, C-04 y C-13.
 
 ## Servicios Involucrados
 
@@ -27,7 +27,6 @@ El jugador cambia el idioma o el lenguaje de código preferido, incluso a mitad 
 | web | Selector de idioma y lenguaje; arma el texto de share | Iniciador |
 | api | Guarda las preferencias y responde los textos en el locale nuevo | Procesador |
 | nerdose-db | `players` | Procesador |
-| Plausible CE (opcional) | Recibe el evento `share:<game_id>` | Consumidor |
 
 ## Pasos del Flujo
 
@@ -36,7 +35,6 @@ sequenceDiagram
     participant W as web
     participant A as api
     participant DB as nerdose-db
-    participant P as Plausible (opcional)
 
     W->>A: PATCH /api/me/preferences { locale?, preferred_code_language? }
     A->>DB: UPDATE players SET locale, preferred_code_language
@@ -48,9 +46,6 @@ sequenceDiagram
     Note over W: al terminar la partida
     W->>W: text = share(result, number, locale)
     W->>W: navigator.share({ text }) o clipboard.writeText(text)
-    opt VITE_PLAUSIBLE_DOMAIN con valor
-        W->>P: track('share:<game_id>')
-    end
 ```
 
 ### Paso 1: Cambiar preferencias
@@ -103,8 +98,8 @@ sequenceDiagram
 ### Paso 3: Compartir (solo cliente)
 
 **Origen:** web
-**Destino:** (interno) / Plausible
-**Tipo:** Interno + Evento (opcional)
+**Destino:** (interno)
+**Tipo:** Interno
 
 **Acción:**
 1. `text = share(result, number, locale)` del `client` del juego (el `locale` es el idioma activo de la sesión; solo el share de Bug Hunt tiene texto y lo traduce). Nunca incluye la solución y termina en `nerdose.dev`. Ejemplo:
@@ -134,8 +129,7 @@ sequenceDiagram
    nerdose.dev
    ```
    En inglés, la segunda línea es `🟥 it got away` (y `🟩 bug found` al acertar).
-2. `navigator.share({ text })` si está disponible; si no, `navigator.clipboard.writeText(text)` y el aviso "copiado".
-3. `track('share:<game_id>')` de `@nerdose/ui`. Es un no-op si `VITE_PLAUSIBLE_DOMAIN` está vacío.
+2. `navigator.share({ text })` si está disponible; si no, `navigator.clipboard.writeText(text)` y el aviso "copiado". No se emite ningún evento de analítica.
 
 ## Manejo de Errores
 
@@ -144,9 +138,8 @@ sequenceDiagram
 | 1 | Sin sesión | 401 | `{ "error": { "code": "no_session", … } }` | web cambia el idioma solo en la UI y reintenta después de `POST /api/session` |
 | 1 | Body vacío o valores inválidos | 422 | `{ "error": { "code": "validation_error", … } }` | Error de programación |
 | 1 | Rate limit (30/min por `player_id`) | 429 | `{ "error": { "code": "rate_limited", … } }` | Reintento después de `Retry-After` |
-| 3 | El usuario cancela el share nativo | — | `AbortError` | Se ignora; no se registra el evento |
+| 3 | El usuario cancela el share nativo | — | `AbortError` | Se ignora |
 | 3 | Clipboard no disponible | — | — | web muestra el texto en un cuadro para copiar a mano |
-| 3 | Plausible caído o bloqueado | — | — | `track()` no lanza errores; no afecta al jugador |
 
 ## Resultado
 
@@ -154,12 +147,13 @@ sequenceDiagram
 
 **Estado final:**
 - Player: `locale` y/o `preferred_code_language` actualizados.
-- Plausible (si está activo): un evento `share:<game_id>`.
 
 ## Notas
 
 - `preferred_code_language` también se actualiza solo al confirmar en Big O o Bug Hunt (ver `jugada-y-cierre-de-partida`): la `api` lo guarda con `codeLanguage(state)` en la transacción de cierre y la web lo copia de `MoveResponse.play.code_language` a la cache de la sesión (`sessionKeys.all`) sin otro request, así la próxima partida de Big O o Bug Hunt arranca en ese lenguaje.
 - El cambio de lenguaje de código durante la partida es solo del cliente: no llama a este endpoint hasta que el jugador lo fija como preferencia.
-- Compartir no hace ningún request a la `api`.
+- Compartir no hace ningún request a la `api` ni a terceros.
 
 > Actualizado por REQ-009 (story S-046): formato de share de Big O y preferencia de lenguaje reflejada en la cache de la sesión al confirmar.
+
+> Actualizado por REQ-011 (story S-058): se retira la analítica web (Plausible) por decisión del usuario; compartir ya no emite `share:<game_id>` y el flujo deja de cubrir C-53.

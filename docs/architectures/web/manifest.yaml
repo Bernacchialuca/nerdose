@@ -12,7 +12,6 @@ conventions:
   - styling
   - state-management
   - i18n
-  - analytics
   - accessibility
   - testing-unit
   - testing-e2e

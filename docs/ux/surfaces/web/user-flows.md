@@ -1,8 +1,8 @@
 ---
 document: UX User Flows
 surface: web
-version: "1.7"
-date: 2026-11-14
+version: "1.8"
+date: 2026-11-15
 status: Draft - Punto de partida para discusión
 flows_count: 5
 ---
@@ -225,8 +225,9 @@ El reporte queda guardado y el enlace muestra "Ya reportaste este desafío". El 
 1. `{juego}-resultado`: el jugador ve el veredicto, la solución y la explicación, y las rachas actualizadas.
 2. Toca "Compartir" en el header de la pantalla. El sistema abre el share nativo del dispositivo con el texto: emoji del juego + nombre + `#número`, una línea de resultado sin spoilers y `nerdose.dev` (C-13).
 3. El jugador elige la app o contacto y envía. Vuelve a `{juego}-resultado`.
-4. Toca "Ver mis estadísticas" y llega a `estadisticas`: racha global actual y récord, desafíos completados, heatmap de 365 días, bloque por juego (racha, récord, jugadas, % de victorias, stat propia) e historial paginado.
-5. Vuelve a `home` desde el header, o sigue con "Siguiente juego".
+4. Toca "Ver mis estadísticas" y llega a `estadisticas`: racha global actual y récord, desafíos completados, heatmap de los últimos 365 días (toca o enfoca un día y ve cuántos completó), una tarjeta por juego (racha, récord, jugadas, ganadas, % de victorias y sus stats propias) y el historial de sus partidas con la etiqueta corta de cada una. `[fuente: C-34; REQ-011 RF 1-6]`
+5. Si quiere ir más atrás, toca «Ver más partidas» y la página siguiente se agrega debajo, sin recargar ni repetir filas. `[fuente: REQ-011 CA 7]`
+6. Vuelve a `home` desde el header, o sigue con "Siguiente juego".
 
 ### Caminos alternativos
 
@@ -237,10 +238,11 @@ El reporte queda guardado y el enlace muestra "Ya reportaste este desafío". El 
 - **Texto de Bug Hunt** — "🐛 Bug Hunt #N · <Lenguaje>" (el lenguaje con el que confirmó), "🟩 bug encontrado" o "🟥 se me escapó" y "nerdose.dev"; es el único share con texto, que sale en el idioma activo (en inglés "🟩 bug found" / "🟥 it got away"); nunca la línea ni el tipo de bug. `[fuente: REQ-010 RF 7, CA 10, decisión 9]`
 - **Texto de Devdle** — "🟩 Devdle #N · 4/6" (o "X/6"), una línea de 🟩🟨⬛ por intento y "nerdose.dev"; nunca la palabra ni la categoría. `[fuente: REQ-004 RF 16, CA 14]`
 - **Sin juegos pendientes** — Si no queda otro juego con desafío sin completar, "Siguiente juego" no se muestra y la salida es "Volver a los juegos". `[fuente: REQ-004 supuesto «Juegos distintos de Devdle»]`
-- **Entrada a estadísticas desde `home`** — El jugador toca "ver estadísticas →" en el panel "Tu progreso", la píldora de racha del header o "./stats"; llega a la misma pantalla. `[fuente: REQ-003, RF 4]`
-- **Primera visita, sin datos** — `estadisticas` aparece vacía (racha 0, heatmap sin actividad), sin error. `[fuente: C-05, C-34]`
+- **Entrada a estadísticas desde `home`** — El jugador toca "ver estadísticas →" en el panel "Tu progreso", la píldora de racha del header o "./stats"; llega a la misma pantalla. La racha de la home y la de `estadisticas` coinciden porque usan la misma regla y el mismo día del servidor. `[fuente: REQ-003, RF 4; REQ-011 RF 10]`
+- **Primera visita, sin datos** — `estadisticas` muestra la invitación «Todavía no jugaste» con «Ir a los juegos», las cifras en cero, «—» en los porcentajes y el heatmap y el historial vacíos, sin error. `[fuente: C-05, C-34; REQ-011 CA 9]`
 - **Racha viva o en 0** — La racha se muestra viva si el último día completado es hoy o ayer (contando días neutros); si no, 0 sin un job de reseteo. `[fuente: C-34]`
-- **Historial** — "Ver historial completo" pagina dentro de `estadisticas` (pregunta abierta 3 del product-map; si fuera pantalla propia, cambia el recorrido).
+- **Historial** — «Ver más partidas» agrega la página siguiente dentro de `estadisticas` y desaparece cuando no hay más. Cada página termina en un día completo. Las anuladas dicen «anulada» y las partidas en curso no aparecen (pregunta 3 del product-map, resuelta por REQ-011). `[fuente: REQ-011 CA 4, 7, 8]`
+- **Juego nunca jugado** — Su tarjeta muestra ceros y «—» y no muestra stats propias. `[fuente: REQ-011 supuesto «Jugador sin datos»]`
 - **Resultado de una Play `voided`** — Si es "Marcar como completado" no hay `result` ni partida y C-13 no cubre explícitamente compartir una Play `voided` (pregunta abierta 2 del product-map): puede no haber "Compartir".
 - **Reabrir el resultado más tarde el mismo día** — Entrar a `/:game_id` muestra el resultado y permite compartir de nuevo. `[fuente: product-map]`
 
@@ -249,19 +251,21 @@ El reporte queda guardado y el enlace muestra "Ya reportaste este desafío". El 
 - **Falla el share o el portapapeles** — El PRD no define el mensaje; recuperación mínima: el jugador puede reintentar el toque sin salir de la pantalla. El texto no incluye la solución, por lo que un reintento o una copia manual no filtran la respuesta. `[fuente: C-13]`
 - **Cancela el share nativo** — No es un error: el jugador queda en `{juego}-resultado` sin cambios.
 - **Racha en 0 por borrar la cookie o cambiar de dispositivo** — `estadisticas` muestra 0 y sin historial: el PRD no tiene cuenta en v1, así que **no hay recuperación**. Es un pain declarado y la hipótesis de abandono es `por-analogía`. `[fuente: PRD §requirements, entidad Player; research-context, Pains y Lo que NO sabemos]`
-- **Sin sesión (cookies bloqueadas)** — `estadisticas` aparece vacía con O-03; recuperación: habilitar cookies (flujo 1).
-- **Error al cargar estadísticas** — Sin copy ni pantalla de error definidos (product-map, Estados Globales); a resolver en wireframes.
+- **Sin sesión (cookies bloqueadas)** — `estadisticas` aparece vacía con O-03 y «Ir a los juegos» deshabilitado; no se crea una sesión desde esa pantalla. Recuperación: habilitar cookies y recargar (flujo 1). `[fuente: REQ-011 CA 10]`
+- **Error al cargar estadísticas** — «No pudimos cargar tus estadísticas. Revisá tu conexión e intentá de nuevo.» con «Reintentar», sin cifras viejas; ante demasiadas consultas, «Hiciste muchas consultas seguidas…». `[fuente: REQ-011, flujo de interacción]`
+- **Falla «Ver más partidas»** — «No pudimos cargar más partidas. Probá de nuevo.»; las filas ya cargadas se mantienen y el mismo botón reintenta. `[fuente: REQ-011, flujo de interacción]`
 - **El jugador esperaba ver estadísticas dentro del resultado** — Hipótesis a validar: los jugadores de Wordle y Connections las ven al terminar; acá hay un toque extra. `[hipótesis | inferida-benchmark]`
 
 ### Estado final
 
-El jugador compartió o copió su resultado (sin solución) y vio sus rachas y estadísticas actualizadas. En el sistema no cambia nada al compartir (el contador de shares de C-53 es opcional y sin cookies).
+El jugador compartió o copió su resultado (sin solución) y vio sus rachas y estadísticas actualizadas. En el sistema no cambia nada al compartir: no se registra ningún evento ni se llama a terceros (la analítica web, C-53, se retiró en REQ-011).
 
 ### Criterios de éxito
 
 - El jugador puede compartir en un toque desde `{juego}-resultado`, y el texto no revela la respuesta.
 - El jugador llega a sus estadísticas desde el resultado en un toque.
 - El jugador entiende por qué su racha tiene el valor que tiene (completar cuenta, días neutros y anulados).
+- El jugador ve la cantidad de partidas de cualquier día del heatmap sin depender del color. `[fuente: REQ-011 CA 6, 30]`
 
 ---
 

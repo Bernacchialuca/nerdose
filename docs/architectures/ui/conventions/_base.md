@@ -50,7 +50,7 @@ apps/{web|admin}/
 │   ├── hooks/                    # generic custom hooks
 │   ├── i18n/                     # web only: i18next setup and ES/EN resources
 │   └── test/                     # test setup and shared test utilities
-├── e2e/                          # Playwright specs
+├── e2e/                          # e2e specs (not adopted yet, debt D3; see testing-e2e)
 ├── public/                       # static assets served as-is
 └── package.json
 ```
@@ -94,7 +94,7 @@ Component files export one main component; tests live next to the file as `*.tes
 
 - All `import.meta.env` access happens in **one place** (`src/lib/env.ts`), validated with Zod at module load so a bad build fails fast.
 - Only `VITE_*` variables reach the bundle. Everything in the bundle is public: never put secrets in a `VITE_*` variable.
-- Known variables: `VITE_PLAUSIBLE_DOMAIN` and `VITE_PLAUSIBLE_SCRIPT_URL` (web only, see `analytics`). Plausible's script URL is required only when the domain is set.
+- Known variables: none. The Plausible variables (`VITE_PLAUSIBLE_*`) were removed with web analytics in REQ-011; a new variable goes through `src/lib/env.ts` as above.
 - The rest of the code consumes the typed `env` object, not `import.meta.env`.
 
 ## Dates

@@ -697,7 +697,7 @@
           "category": "content",
           "content": "9",
           "paragraph": "récord de racha",
-          "annotation": "`card` variant `mini-stat`. El heatmap y los demás mini-stats del prototipo (desafíos completados, % de victorias) no se muestran hasta que exista su fuente de datos (FG-3 / FG-10)",
+          "annotation": "`card` variant `mini-stat`. El heatmap y los demás mini-stats del prototipo (desafíos completados, % de victorias) no se suman a la home: viven en `estadisticas` (REQ-011, decisión 10)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
@@ -1091,225 +1091,15 @@
           "level": "h1"
         },
         {
-          "name": "kpi-racha",
-          "type": "card",
-          "category": "content",
-          "content": "Racha global",
-          "paragraph": "4 días",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "empty"
-          ]
-        },
-        {
-          "name": "kpi-record",
-          "type": "card",
-          "category": "content",
-          "content": "Récord",
-          "paragraph": "9 días",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "empty"
-          ]
-        },
-        {
-          "name": "kpi-completados",
-          "type": "card",
-          "category": "content",
-          "content": "Desafíos completados",
-          "paragraph": "31",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "empty"
-          ]
-        },
-        {
-          "name": "heatmap",
-          "type": "image",
-          "category": "content",
-          "content": "Heatmap de actividad · últimos 365 días",
-          "aspect_ratio": "6:1",
-          "h": 110,
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "empty"
-          ],
-          "annotation": "en mobile el heatmap scrollea horizontal; color + valor en el tooltip (NFR-U04)"
-        },
-        {
-          "name": "titulo-juegos",
-          "type": "heading",
-          "category": "content",
-          "content": "Por juego",
-          "level": "h2",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "empty"
-          ]
-        },
-        {
-          "name": "stats-devdle",
-          "type": "card",
-          "category": "content",
-          "content": "Devdle",
-          "paragraph": "Racha 3 · Récord 7 · Jugadas 21 · 75 % victorias · Promedio 4,1 intentos",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "empty"
-          ]
-        },
-        {
-          "name": "stats-bug-hunt",
-          "type": "card",
-          "category": "content",
-          "content": "Bug Hunt",
-          "paragraph": "Racha 2 · Récord 6 · Jugadas 18 · 70 % victorias · Mejor racha 7",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "empty"
-          ]
-        },
-        {
-          "name": "stats-big-o",
-          "type": "card",
-          "category": "content",
-          "content": "Big O",
-          "paragraph": "Racha 5 · Récord 9 · Jugadas 27 · 85 % victorias · Aciertos con n log n: 3",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "empty"
-          ]
-        },
-        {
-          "name": "stats-timeline",
-          "type": "card",
-          "category": "content",
-          "content": "Tech Timeline",
-          "paragraph": "Racha 1 · Récord 5 · Jugadas 15 · 65 % victorias · Posiciones acertadas: 78 %",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "empty"
-          ]
-        },
-        {
-          "name": "stats-grep-grid",
-          "type": "card",
-          "category": "content",
-          "content": "Grep Grid",
-          "paragraph": "Racha 0 · Récord 4 · Jugadas 12 · 60 % victorias · Promedio 6,4/8 palabras",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "empty"
-          ]
-        },
-        {
-          "name": "titulo-historial",
-          "type": "heading",
-          "category": "content",
-          "content": "Historial",
-          "level": "h2",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "empty"
-          ]
-        },
-        {
-          "name": "tabla-historial",
-          "type": "table",
-          "category": "content",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "empty"
-          ],
-          "columns": [
-            {
-              "label": "Fecha",
-              "width": 3
-            },
-            {
-              "label": "Juego",
-              "width": 4
-            },
-            {
-              "label": "Resultado",
-              "width": 3
-            }
-          ],
-          "rows": [
-            [
-              "03/11",
-              "Devdle",
-              "✓ 4/6"
-            ],
-            [
-              "03/11",
-              "Grep Grid",
-              "6/8"
-            ],
-            [
-              "02/11",
-              "Bug Hunt",
-              "✗ L7"
-            ],
-            [
-              "02/11",
-              "Tech Timeline",
-              "4/5"
-            ],
-            [
-              "02/11",
-              "Big O",
-              "✓"
-            ],
-            [
-              "01/11",
-              "Devdle",
-              "✗ X/6"
-            ]
-          ]
-        },
-        {
-          "name": "paginacion",
-          "type": "pagination",
-          "category": "navigation",
-          "pages": 3,
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "empty"
-          ]
-        },
-        {
-          "name": "vacio",
-          "type": "empty-state",
+          "name": "banner-cookies",
+          "type": "alert",
           "category": "feedback",
-          "content": "Todavía no jugaste",
-          "paragraph": "Completá un desafío y acá vas a ver tus rachas, tu heatmap y tu historial.",
+          "kind": "warning",
+          "icon": "warning",
+          "content": "Activá las cookies para poder jugar",
+          "annotation": "es el overlay O-03 del shell (`banner` variant `warning`), igual que en `home`. La pantalla no llama a la `api` ni crea una sesión desde acá (REQ-011 CA 10)",
           "visible_only_in_states": [
-            "empty"
-          ]
-        },
-        {
-          "name": "btn-ir-juegos",
-          "type": "button",
-          "category": "input",
-          "content": "Ir a los juegos",
-          "variant": "primary",
-          "icon": "arrow-right",
-          "visible_only_in_states": [
-            "empty"
+            "sin sesión"
           ]
         },
         {
@@ -1325,8 +1115,10 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "content": "No pudimos cargar tus estadísticas. Revisá tu conexión e intentá de nuevo.",
           "kind": "error",
+          "icon": "error",
+          "content": "No pudimos cargar tus estadísticas. Revisá tu conexión e intentá de nuevo.",
+          "annotation": "ante un `429` el texto es «Hiciste muchas consultas seguidas. Esperá unos segundos e intentá de nuevo.»; no se muestran cifras viejas",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -1335,12 +1127,449 @@
           "name": "btn-reintentar",
           "type": "button",
           "category": "input",
-          "content": "Reintentar",
           "variant": "secondary",
           "icon": "refresh",
+          "content": "Reintentar",
           "visible_only_in_states": [
             "error de sistema"
           ]
+        },
+        {
+          "name": "invitacion",
+          "type": "card",
+          "category": "feedback",
+          "content": "Todavía no jugaste",
+          "paragraph": "Completá un desafío y acá vas a ver tus rachas, tu actividad y tu historial.",
+          "annotation": "`panel` del DS, arriba de las cifras para que sea lo primero que ve un jugador nuevo. Las cifras, el heatmap y las tarjetas siguen visibles debajo, en cero (REQ-011 CA 9)",
+          "visible_only_in_states": [
+            "empty",
+            "sin sesión"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "content": "Sin sesión no hay progreso para mostrar",
+              "paragraph": "Activá las cookies y recargá la página para empezar a jugar y guardar tus estadísticas."
+            }
+          }
+        },
+        {
+          "name": "btn-ir-juegos",
+          "type": "button",
+          "category": "input",
+          "variant": "primary",
+          "icon": "arrow-right",
+          "content": "Ir a los juegos",
+          "annotation": "`button` `primary` `md`; lleva a `home`",
+          "visible_only_in_states": [
+            "empty",
+            "sin sesión"
+          ],
+          "state_overrides": {
+            "sin sesión": {
+              "variant": "disabled"
+            }
+          }
+        },
+        {
+          "name": "kpi-racha",
+          "type": "card",
+          "category": "content",
+          "content": "Racha global",
+          "paragraph": "4 días seguidos",
+          "annotation": "`streak-number` variant `card`, en ámbar. Es la racha viva: si el último día completado no es hoy ni ayer (contando días neutros) se muestra 0, sin borrar el récord. Con racha 0 el número va en gris",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "empty": {
+              "paragraph": "0 días seguidos"
+            },
+            "sin sesión": {
+              "paragraph": "0 días seguidos"
+            }
+          }
+        },
+        {
+          "name": "kpi-record",
+          "type": "card",
+          "category": "content",
+          "content": "Récord",
+          "paragraph": "9 días",
+          "annotation": "`card` variant `stat`; el récord nunca baja",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "empty": {
+              "paragraph": "0 días"
+            },
+            "sin sesión": {
+              "paragraph": "0 días"
+            }
+          }
+        },
+        {
+          "name": "kpi-completados",
+          "type": "card",
+          "category": "content",
+          "content": "Desafíos completados",
+          "paragraph": "31",
+          "annotation": "`card` variant `stat`. Incluye las partidas anuladas, por eso puede ser mayor que la suma de jugadas de las tarjetas por juego",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "empty": {
+              "paragraph": "0"
+            },
+            "sin sesión": {
+              "paragraph": "0"
+            }
+          }
+        },
+        {
+          "name": "titulo-actividad",
+          "type": "heading",
+          "category": "content",
+          "level": "h2",
+          "content": "Actividad",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "heatmap",
+          "type": "chart",
+          "category": "content",
+          "h": 150,
+          "content": "últimos 365 días · desafíos completados por día",
+          "annotation": "`heatmap` del DS: 53 columnas de semana (lunes a domingo) × 7 días, la más antigua a la izquierda y hoy a la derecha con borde; meses sobre las columnas (nov · dic · ene · …) y leyenda «0 1 2 3 4 5». Días UTC anclados en el «hoy» del servidor. Rampa verde de 5 niveles (4 y 5 comparten el último tono); el número exacto va siempre en texto, nunca solo en el color. Navegable con flechas (una sola parada de tabulación). En mobile scrollea dentro del panel y abre mostrando hoy; en desktop entra completo",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "empty": {
+              "annotation": "todas las celdas en nivel 0 (sin partidas en los últimos 365 días)"
+            },
+            "sin sesión": {
+              "annotation": "todas las celdas en nivel 0 (sin partidas en los últimos 365 días)"
+            }
+          }
+        },
+        {
+          "name": "detalle-dia",
+          "type": "paragraph",
+          "category": "content",
+          "level": "caption",
+          "content": "Hoy · 2 de 5 completados",
+          "annotation": "muestra el día enfocado con teclado o tocado; sin interacción, muestra hoy. Formato «{día abreviado} dd/mm · N de 5 completados» («vie 30/10 · 0 de 5 completados» para un día vacío)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "empty": {
+              "content": "Sin partidas en los últimos 365 días"
+            },
+            "sin sesión": {
+              "content": "Sin partidas en los últimos 365 días"
+            }
+          }
+        },
+        {
+          "name": "titulo-juegos",
+          "type": "heading",
+          "category": "content",
+          "level": "h2",
+          "content": "Por juego",
+          "annotation": "tarjetas en el orden del catálogo (`GAME_IDS`): Devdle, Grep Grid, Tech Timeline, Big O y Bug Hunt; es el mismo orden del historial dentro de un día",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "stats-devdle",
+          "type": "card",
+          "category": "content",
+          "content": "Devdle",
+          "paragraph": "racha 3 · máx 7 · 21 jugadas · 16 ganadas · 76 % victorias · // intentos 1 · 2 · 3 · 4 · 5 · 6 · X",
+          "annotation": "`card` variant `game-stats` con la barra y el `h3` en el acento del juego; «racha N · máx M» en ámbar; jugadas, ganadas y % de victorias como `card` `metric` («—» sin jugadas). `StatsSummary`: distribución de intentos 1 a 6 y X con el pattern `devdle.distribution`, con el número en cada barra. Las anuladas no cuentan",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "empty": {
+              "paragraph": "racha 0 · máx 0 · 0 jugadas · 0 ganadas · — victorias · Todavía no jugaste a este juego."
+            },
+            "sin sesión": {
+              "paragraph": "racha 0 · máx 0 · 0 jugadas · 0 ganadas · — victorias · Todavía no jugaste a este juego."
+            }
+          }
+        },
+        {
+          "name": "stats-grep-grid",
+          "type": "card",
+          "category": "content",
+          "content": "Grep Grid",
+          "paragraph": "racha 0 · máx 4 · 12 jugadas · 5 ganadas · 42 % victorias · // palabras · promedio 6,4 de 8 · 8/8 en el 42 % de las partidas",
+          "annotation": "misma estructura que Devdle. `StatsSummary`: promedio de palabras encontradas con un decimal y % de partidas con 8/8. Sin tiempos",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "empty": {
+              "paragraph": "racha 0 · máx 0 · 0 jugadas · 0 ganadas · — victorias · Todavía no jugaste a este juego."
+            },
+            "sin sesión": {
+              "paragraph": "racha 0 · máx 0 · 0 jugadas · 0 ganadas · — victorias · Todavía no jugaste a este juego."
+            }
+          }
+        },
+        {
+          "name": "stats-timeline",
+          "type": "card",
+          "category": "content",
+          "content": "Tech Timeline",
+          "paragraph": "racha 1 · máx 5 · 15 jugadas · 6 ganadas · 40 % victorias · // acierto por categoría · mejor categoría: Lenguajes",
+          "annotation": "misma estructura que Devdle. `StatsSummary`: una fila por categoría de hito con su etiqueta, barra en el acento y % en texto; «—» sin hitos jugados. «Mejor categoría» = mayor acierto (empate: la primera del catálogo); no se muestra sin partidas",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "empty": {
+              "paragraph": "racha 0 · máx 0 · 0 jugadas · 0 ganadas · — victorias · Todavía no jugaste a este juego."
+            },
+            "sin sesión": {
+              "paragraph": "racha 0 · máx 0 · 0 jugadas · 0 ganadas · — victorias · Todavía no jugaste a este juego."
+            }
+          }
+        },
+        {
+          "name": "stats-big-o",
+          "type": "card",
+          "category": "content",
+          "content": "Big O",
+          "paragraph": "racha 5 · máx 9 · 27 jugadas · 23 ganadas · 85 % victorias · // aciertos por categoría de receta",
+          "annotation": "misma estructura que Devdle. `StatsSummary`: una fila por categoría de receta con «N de M», barra y %; «—» sin partidas en esa categoría",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "empty": {
+              "paragraph": "racha 0 · máx 0 · 0 jugadas · 0 ganadas · — victorias · Todavía no jugaste a este juego."
+            },
+            "sin sesión": {
+              "paragraph": "racha 0 · máx 0 · 0 jugadas · 0 ganadas · — victorias · Todavía no jugaste a este juego."
+            }
+          }
+        },
+        {
+          "name": "stats-bug-hunt",
+          "type": "card",
+          "category": "content",
+          "content": "Bug Hunt",
+          "paragraph": "racha 2 · máx 6 · 18 jugadas · 13 ganadas · 72 % victorias · // por lenguaje · // por tipo de bug",
+          "annotation": "misma estructura que Devdle. `StatsSummary` con dos grupos: por lenguaje (JavaScript, Go, Java) y por tipo de bug (las 7 etiquetas de `bug_type`), cada fila con «N de M», barra y %; «—» sin partidas",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "state_overrides": {
+            "empty": {
+              "paragraph": "racha 0 · máx 0 · 0 jugadas · 0 ganadas · — victorias · Todavía no jugaste a este juego."
+            },
+            "sin sesión": {
+              "paragraph": "racha 0 · máx 0 · 0 jugadas · 0 ganadas · — victorias · Todavía no jugaste a este juego."
+            }
+          }
+        },
+        {
+          "name": "titulo-historial",
+          "type": "heading",
+          "category": "content",
+          "level": "h2",
+          "content": "Historial",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
+        },
+        {
+          "name": "tabla-historial",
+          "type": "table",
+          "category": "content",
+          "content": "Historial de partidas completadas",
+          "columns": [
+            {
+              "label": "Fecha",
+              "width": 3
+            },
+            {
+              "label": "Desafío",
+              "width": 2
+            },
+            {
+              "label": "Juego",
+              "width": 3
+            },
+            {
+              "label": "Resultado",
+              "width": 4
+            }
+          ],
+          "rows": [
+            [
+              "dom 15/11",
+              "#13",
+              "Devdle",
+              "ganada · ✓ 4/6"
+            ],
+            [
+              "dom 15/11",
+              "#13",
+              "Grep Grid",
+              "perdida · 6/8"
+            ],
+            [
+              "sáb 14/11",
+              "#12",
+              "Devdle",
+              "perdida · ✗ X/6"
+            ],
+            [
+              "sáb 14/11",
+              "#12",
+              "Tech Timeline",
+              "ganada · ✓ 5/5"
+            ],
+            [
+              "sáb 14/11",
+              "#12",
+              "Big O",
+              "anulada"
+            ],
+            [
+              "sáb 14/11",
+              "#12",
+              "Bug Hunt",
+              "perdida · ✗ L7"
+            ]
+          ],
+          "annotation": "`data-table` del DS, de la más reciente a la más antigua; dentro de un día, en el orden del catálogo. «Resultado» = estado en texto + etiqueta corta del juego; en mobile solo la etiqueta y el #número va bajo la fecha. ✓ y ✗ sin color. Las partidas en curso no aparecen. El `<caption>` «Historial de partidas completadas» va visualmente oculto",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ],
+          "viewport_overrides": {
+            "mobile": {
+              "columns": [
+                {
+                  "label": "Fecha",
+                  "width": 4
+                },
+                {
+                  "label": "Juego",
+                  "width": 4
+                },
+                {
+                  "label": "Resultado",
+                  "width": 3
+                }
+              ],
+              "rows": [
+                [
+                  "dom 15/11 · #13",
+                  "Devdle",
+                  "✓ 4/6"
+                ],
+                [
+                  "dom 15/11 · #13",
+                  "Grep Grid",
+                  "6/8"
+                ],
+                [
+                  "sáb 14/11 · #12",
+                  "Devdle",
+                  "✗ X/6"
+                ],
+                [
+                  "sáb 14/11 · #12",
+                  "Tech Timeline",
+                  "✓ 5/5"
+                ],
+                [
+                  "sáb 14/11 · #12",
+                  "Big O",
+                  "anulada"
+                ],
+                [
+                  "sáb 14/11 · #12",
+                  "Bug Hunt",
+                  "✗ L7"
+                ]
+              ]
+            }
+          },
+          "state_overrides": {
+            "empty": {
+              "rows": [
+                [
+                  "Todavía no hay partidas completadas."
+                ]
+              ]
+            },
+            "sin sesión": {
+              "rows": [
+                [
+                  "Todavía no hay partidas completadas."
+                ]
+              ]
+            }
+          }
+        },
+        {
+          "name": "alerta-ver-mas",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "error",
+          "icon": "error",
+          "content": "No pudimos cargar más partidas. Probá de nuevo.",
+          "annotation": "las filas ya cargadas se mantienen; «Ver más partidas» reintenta",
+          "visible_only_in_states": [
+            "error al cargar más"
+          ]
+        },
+        {
+          "name": "btn-ver-mas",
+          "type": "button",
+          "category": "input",
+          "variant": "secondary",
+          "icon": "chevron-down",
+          "content": "Ver más partidas",
+          "annotation": "`button` `secondary` `md`, a todo el ancho en mobile y centrado en desktop. Agrega la página siguiente (56 a 60 partidas, siempre días completos) sin recargar ni repetir filas; una región `aria-live` anuncia «Se agregaron N partidas». Desaparece cuando no hay más",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "empty",
+            "sin sesión",
+            "historial completo"
+          ],
+          "state_overrides": {
+            "cargando más": {
+              "variant": "disabled",
+              "content": "Cargando…"
+            }
+          }
         },
         {
           "name": "footer",
@@ -1353,31 +1582,58 @@
       "layouts": {
         "mobile": [
           "titulo",
+          "banner-cookies",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
-          "vacio",
+          "invitacion",
           "btn-ir-juegos",
           "kpi-racha",
           "kpi-record",
           "kpi-completados",
-          "heatmap",
+          {
+            "row": "actividad",
+            "card": true,
+            "cols": [
+              {
+                "w": 12,
+                "stack": [
+                  "titulo-actividad",
+                  "heatmap",
+                  "detalle-dia"
+                ]
+              }
+            ]
+          },
           "titulo-juegos",
           "stats-devdle",
-          "stats-bug-hunt",
-          "stats-big-o",
-          "stats-timeline",
           "stats-grep-grid",
-          "titulo-historial",
-          "tabla-historial",
-          "paginacion"
+          "stats-timeline",
+          "stats-big-o",
+          "stats-bug-hunt",
+          {
+            "row": "historial",
+            "card": true,
+            "cols": [
+              {
+                "w": 12,
+                "stack": [
+                  "titulo-historial",
+                  "tabla-historial",
+                  "alerta-ver-mas",
+                  "btn-ver-mas"
+                ]
+              }
+            ]
+          }
         ],
         "desktop": [
           "titulo",
+          "banner-cookies",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
-          "vacio",
+          "invitacion",
           "btn-ir-juegos",
           {
             "row": "kpis",
@@ -1402,7 +1658,20 @@
               }
             ]
           },
-          "heatmap",
+          {
+            "row": "actividad",
+            "card": true,
+            "cols": [
+              {
+                "w": 12,
+                "stack": [
+                  "titulo-actividad",
+                  "heatmap",
+                  "detalle-dia"
+                ]
+              }
+            ]
+          },
           "titulo-juegos",
           {
             "row": "juegos-1",
@@ -1416,13 +1685,13 @@
               {
                 "w": 4,
                 "stack": [
-                  "stats-bug-hunt"
+                  "stats-grep-grid"
                 ]
               },
               {
                 "w": 4,
                 "stack": [
-                  "stats-big-o"
+                  "stats-timeline"
                 ]
               }
             ]
@@ -1433,13 +1702,13 @@
               {
                 "w": 4,
                 "stack": [
-                  "stats-timeline"
+                  "stats-big-o"
                 ]
               },
               {
                 "w": 4,
                 "stack": [
-                  "stats-grep-grid"
+                  "stats-bug-hunt"
                 ]
               },
               {
@@ -1450,17 +1719,18 @@
           },
           {
             "row": "historial",
+            "card": true,
             "cols": [
               {
                 "w": 12,
                 "stack": [
                   "titulo-historial",
                   "tabla-historial",
-                  "paginacion"
+                  "alerta-ver-mas",
+                  "btn-ver-mas"
                 ]
               }
-            ],
-            "card": true
+            ]
           }
         ]
       },
@@ -1474,11 +1744,27 @@
           "applies": true
         },
         {
+          "name": "sin sesión",
+          "applies": true
+        },
+        {
           "name": "loading",
           "applies": true
         },
         {
           "name": "error de sistema",
+          "applies": true
+        },
+        {
+          "name": "cargando más",
+          "applies": true
+        },
+        {
+          "name": "error al cargar más",
+          "applies": true
+        },
+        {
+          "name": "historial completo",
           "applies": true
         }
       ]

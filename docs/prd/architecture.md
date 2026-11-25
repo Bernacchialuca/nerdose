@@ -22,7 +22,7 @@ Documento de alto nivel: qué servicios existen, cómo se comunican, qué base d
 
 | Servicio | Tecnología | Responsabilidades | Entidades propias | Base de datos | APIs externas |
 |----------|-----------|-------------------|-------------------|---------------|---------------|
-| `web` | TypeScript, React 19, Vite, React Router, TanStack Query, Tailwind CSS v4, i18next, dnd-kit, Shiki (lazy) | SPA de jugadores: shell, catálogo (home), instrucciones, partida y resultado de cada juego, stats, share, selector de idioma. Nunca tiene la solución antes de terminar | – (UI de Gameplay, Progress e Identity) | – | `api`; Plausible (opcional) |
+| `web` | TypeScript, React 19, Vite, React Router, TanStack Query, Tailwind CSS v4, i18next, dnd-kit, Shiki (lazy) | SPA de jugadores: shell, catálogo (home), instrucciones, partida y resultado de cada juego, stats, share, selector de idioma. Nunca tiene la solución antes de terminar | – (UI de Gameplay, Progress e Identity) | – | `api` |
 | `admin` | TypeScript, React 19, Vite, TanStack Query, Tailwind CSS v4 | SPA del responsable: login, reportes y anulación, próximos 14 días (preview con solución y regenerar), stock de contenido, métricas. Solo en español | – (UI de Quality; lectura de Challenge Publishing y Content Banks) | – | `api` |
 | `api` | Node.js 24 LTS, Hono, Zod, Drizzle ORM, postgres.js | Única interfaz HTTP. Jugador anónimo y preferencias; vista pública y validación de jugadas con el `GameDefinition` de cada juego; cierre de partidas y rachas en la misma transacción; reportes, umbral de alerta y anulación; rutas `/api/admin/*`; publicación `approved → published` al cambiar el día. **Nunca ejecuta código** | Player, Play, PlayerGameStats, PlayerStats, ChallengeReport, RejectedGuess (y escrituras acotadas sobre Challenge) | `nerdose-db` (rol `nerdose_api`) | — |
 | `generator` | Node.js 24 LTS (TS) + Go ≥ 1.25 + JDK 21, croner, pure-rand | Worker siempre activo. Genera, verifica y aprueba desafíos de los próximos 14 días; atiende pedidos de regeneración; carga los bancos desde el dataset versionado (`@nerdose/content`) al arrancar; registra las fallas de generación (`generation_failures`). **Único que crea desafíos y escribe los bancos**. No expone interfaz de red y no llama a APIs externas | Challenge, Term, TimelineFact (y las tablas técnicas `generation_requests`, `generation_failures`, `job_runs`) | `nerdose-db` (rol `nerdose_generator`) | — |
@@ -36,7 +36,7 @@ Documento de alto nivel: qué servicios existen, cómo se comunican, qué base d
 | `games/<game_id>` | `definition` → api · `client` → web y admin · `generator` → generator | Un paquete por juego: `devdle`, `grep-grid`, `timeline`, `big-o`, `bug-hunt` |
 | `polyglot` | generator | Árbol de código, emisores JS/Go/Java y runner multi-lenguaje |
 | `content` | generator (carga); script de importación (desarrollo) | Dataset versionado de los bancos (`data/terms.json`, `data/timeline_facts.json`, `data/manifest.json`) y el script offline `import:banks` que lo genera desde Wikidata y Wikipedia |
-| `ui` | web, admin | Header, banners, share, stat cards, tokens visuales y helper `track()` |
+| `ui` | web, admin | Header, banners, share, stat cards y tokens visuales |
 
 Cada paquete compartido tiene su propia arquitectura en `docs/architectures/{workspace,core,db,ui,games,polyglot,content}/` (`workspace` es la raíz del monorepo: pnpm, Turborepo, ESLint, Compose). En las tablas "Servicios Afectados" de requests y stories se los nombra con esos ids.
 
@@ -74,8 +74,7 @@ No hay Redis ni bus de mensajes: las caches y el rate limit viven en la memoria 
 
 - Ninguna en v1. Las alertas no salen del sistema: el umbral de reportes marca `challenges.alerted_at` (api) y la falla de generación crea una fila en `generation_failures` (generator); el admin las muestra.
 
-- **web → Plausible CE** (HTTPS, asíncrono, **opcional**)
-  - Pageviews y eventos `share:<game_id>`. Solo si `VITE_PLAUSIBLE_DOMAIN` tiene valor al compilar; está apagado por defecto.
+- **web → analítica web:** ninguna. La integración opcional con Plausible CE se retiró en REQ-011 por decisión del usuario (ADR-014).
 
 ### Fuentes del dataset (solo en desarrollo, nunca en producción)
 
@@ -121,7 +120,7 @@ El script manda un `User-Agent` descriptivo con un contacto del proyecto, como e
 
 **Testing:**
 - Vitest para unit y contrato (incluidos los tests anti-spoiler por juego, NFR-S01/NFR-S04), con relojes falsos para fechas y rachas.
-- Playwright para e2e del flujo jugar → terminar → racha.
+- E2E con Playwright: no adoptado (deuda D3). La auditoría de accesibilidad y mobile de REQ-011 usa Playwright + axe de forma puntual y lo desinstala al terminar (informe en `docs/audits/accesibilidad-REQ-011.md`).
 
 ### Seguridad
 
@@ -176,5 +175,4 @@ El script manda un `User-Agent` descriptivo con un contacto del proyecto, como e
 
 **Fase Post-MVP:**
 - Escalado horizontal de la `api` (NFR-SC03): el rate limit y las caches pasan a Postgres o Redis, y la publicación single-flight se protege con un advisory lock.
-- Instalar Plausible CE self-hosted y activar `VITE_PLAUSIBLE_DOMAIN` / `VITE_PLAUSIBLE_SCRIPT_URL`.
 - Aislamiento del runner del generator (sin red y con límites de recursos).

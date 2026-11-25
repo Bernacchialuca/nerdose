@@ -9,7 +9,7 @@ Library en node (TypeScript estricto, Node.js 24 LTS). Vive en `packages/core` y
 ## Modulos del dominio
 - **game-contract**: `GameId`, `Locale`, `GameDefinition`, `MoveError` y `createGameRegistry()` (ADR-006).
 - **errors**: `ERROR_CATALOG`, `AppError` y `ErrorCode` (ADR-015).
-- **platform-day**: `today()`, `challengeNumber()`, `nextStreak()`, `liveStreak()` (ADR-008, ADR-011).
+- **platform-day**: `today()`, `challengeNumber()`, `nextStreak()`, `liveStreak()` y `isStreakAlive(lastCompleted, prevActiveDay, today)` (el predicado sobre el que se construye `liveStreak`, también usado por las métricas del admin), más `validateMetricsRange(from, to, today)` (isomorfa, compartida por `api` y `admin`: `from <= to`, `to <= today`, `to − from <= 365`; motivos `from_after_to`, `future`, `too_long`) (ADR-008, ADR-011, REQ-011).
 - **seed-prng**: derivación y uso del seed y del PRNG (ADR-007).
 
 ## Notas adicionales

@@ -60,7 +60,7 @@ const Client = lazy(clientRegistry[gameId]);
 
 ### Share
 
-- `share(result, number, locale)` produces the text. The shell calls `navigator.share({ text })` when available and falls back to `navigator.clipboard.writeText`, with a visible confirmation message. After sharing it calls `track('share:<game_id>')` (see `analytics`).
+- `share(result, number, locale)` produces the text. The shell calls `navigator.share({ text })` when available and falls back to `navigator.clipboard.writeText`, with a visible confirmation message. Sharing emits no analytics event (web analytics was removed in REQ-011).
 
 ### Heavy dependencies stay inside the game
 
@@ -85,7 +85,6 @@ const Client = lazy(clientRegistry[gameId]);
 
 - **routing**: `/:game_id` resolves the registry entry and lazy-loads it.
 - **data-fetching**: public view, play state and moves go through TanStack Query hooks.
-- **analytics**: share events use `track()`.
 - **accessibility**: every game must be fully playable with keyboard and its feedback must not rely only on color.
 
 ## Update (REQ-005)
@@ -102,3 +101,7 @@ const Client = lazy(clientRegistry[gameId]);
 ## Update (REQ-010)
 
 - `GameClient.share(result, number, locale)`: `ClientShareButton` receives the session locale from `GameHostHeader` and builds the text on click; games whose share text has no words ignore the third argument. The five games have a client; the registry stays `Partial` so a new game can be added before its client.
+
+## Update (REQ-011)
+
+- Each `client` also exports `StatsSummary` with props `{ extra, locale, t }` (mandatory member, like `Preview`): it shows the game's own stats from `extra` in the player's statistics screen. The derived values (average, percentage of 8/8, success per category, best category) come from pure functions in the package; a percentage with no games in the category is shown as `—`. It never imports the board and `web` loads it with the existing client registry (`load-game-client.ts`), never branching on `game_id` (ADR-006).

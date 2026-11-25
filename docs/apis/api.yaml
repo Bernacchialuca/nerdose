@@ -1076,7 +1076,10 @@ paths:
     get:
       tags: [Admin]
       summary: Métricas de uso, retención y calidad
-      description: F11, C-46, ADR-014. Lee las vistas `metrics_*` en el rango `[from, to]`.
+      description: |
+        F11, C-46, ADR-014. Lee las vistas `metrics_*` en el rango `[from, to]`. Devuelve 422 `validation_error`
+        si `from > to`, `to` es posterior a hoy (día UTC de la plataforma) o `to − from > 365` días.
+        `d1`/`d7` y los tramos de `streak_distribution` se calculan en la api con su reloj y con core (REQ-011).
       operationId: getMetrics
       security:
         - adminBearer: []
@@ -1989,8 +1992,9 @@ components:
 
     MyStats:
       type: object
-      required: [global, games, heatmap, history, history_next_before]
+      required: [today, global, games, heatmap, history, history_next_before]
       properties:
+        today: { type: string, format: date, description: 'Día UTC de la plataforma; ancla la grilla de 365 días y la racha (REQ-011)' }
         global:
           type: object
           required: [current_streak, max_streak, total_completed]
@@ -2000,10 +2004,13 @@ components:
             total_completed: { type: integer, minimum: 0, description: Incluye Play voided }
         games:
           type: array
+          minItems: 5
+          maxItems: 5
+          description: Siempre los 5 juegos, en el orden de `GAME_IDS`; un juego sin partidas sale con ceros, `win_rate` null y `extra` inicial
           items: { $ref: '#/components/schemas/GameStatsView' }
         heatmap:
           type: array
-          description: Últimos 365 días
+          description: Solo los días con `completed > 0` en `[today − 364, today]`; el cliente completa los días vacíos
           items:
             type: object
             required: [date, completed]
@@ -2021,12 +2028,12 @@ components:
               number: { type: integer, minimum: 1 }
               game_id: { $ref: '#/components/schemas/GameId' }
               status: { $ref: '#/components/schemas/PlayStatus' }
-              label: { type: string, description: '`historyLabel(result)`' }
+              label: { type: string, description: '`historyLabel(result)`; «anulado» / «voided» según el locale si `status = voided`' }
         history_next_before:
           type: string
           format: date
           nullable: true
-          description: Valor para pedir la página siguiente; null si no hay más
+          description: Valor para pedir la página siguiente; null si no hay más. Cada página termina en un día completo (56–60 filas), sin repetir ni saltear filas
 
     # ─────────── Admin ───────────
     AdminLoginResponse:
@@ -2228,8 +2235,16 @@ components:
 
     Metrics:
       type: object
-      required: [daily_players, retention, streak_distribution, challenge_quality]
+      required: [summary, daily_players, retention, streak_distribution, challenge_quality]
       properties:
+        summary:
+          type: object
+          required: [unique_players, completed, d1, d7]
+          properties:
+            unique_players: { type: integer, description: 'Player distintos con alguna Play en [from, to]' }
+            completed: { type: integer, description: 'Play won|lost|voided en [from, to]' }
+            d1: { type: number, nullable: true, description: 'Promedio ponderado por cohort_size de las cohortes del rango con d1 no nulo; null si no hay ninguna' }
+            d7: { type: number, nullable: true }
         daily_players:
           type: array
           description: metrics_daily_players
@@ -2256,7 +2271,7 @@ components:
               d7: { type: number, nullable: true, description: '% (0–1); null si la cohorte no llegó a +7' }
         streak_distribution:
           type: array
-          description: metrics_streak_distribution
+          description: 'metrics_streak_distribution; siempre los 5 tramos, en ese orden, aunque tengan 0; cuenta la racha viva a hoy'
           items:
             type: object
             required: [bucket, players]
@@ -2275,7 +2290,7 @@ components:
               date: { type: string, format: date }
               number: { type: integer }
               started: { type: integer }
-              finished: { type: integer, description: won + lost }
+              finished: { type: integer, description: won + lost (las voided no cuentan) }
               completion_rate: { type: number, nullable: true }
               win_rate: { type: number, nullable: true }
               reports: { type: integer }

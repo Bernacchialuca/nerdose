@@ -17,14 +17,13 @@
 - **[Estilos (Tailwind CSS v4)](./conventions/styling.md)** — Tailwind CSS v4 with the prototype's visual tokens declared in @theme and owned by @nerdose/ui (custom)
 - **[Manejo de estado](./conventions/state-management.md)** — Where each kind of state lives in the SPA: server cache, URL, local component state and minimal context (custom)
 - **[Internacionalización (i18next)](./conventions/i18n.md)** — UI-only translations with i18next and react-i18next; content already arrives resolved from the api (custom)
-- **[Analítica (Plausible opcional)](./conventions/analytics.md)** — Opt-in Plausible analytics through the track() helper of @nerdose/ui, off by default (custom)
 - **[Accesibilidad (WCAG 2.1 AA)](./conventions/accessibility.md)** — Mobile-first, keyboard-complete, non-color-dependent UI that meets WCAG 2.1 AA (custom)
 - **[Tests unitarios (Vitest + Testing Library)](./conventions/testing-unit.md)** — Unit and component tests with Vitest, Testing Library and axe-core for the SPAs (custom)
-- **[Tests E2E (Playwright)](./conventions/testing-e2e.md)** — End-to-end tests with Playwright and axe-core against the built SPA and a real api (custom)
+- **[Tests E2E (no adoptados, deuda D3)](./conventions/testing-e2e.md)** — No e2e suite in the repo (debt D3); reference design for when it is adopted. The REQ-011 accessibility audit was one-off (custom)
 - **[Manejo de errores](./conventions/error-handling.md)** — Error boundaries, typed ApiError codes and user-facing recovery for the web SPA (custom, auto-incluida)
 
 > Donde el tag es " (auto-incluida)" si vino por `required_by`, " (custom)" si esta en el path del servicio, y vacio si es del catalogo elegida explicitamente. En este servicio todas son custom porque no existe catalogo para `react`.
 
 ---
 
-**Total:** 12 convenciones activas.
+**Total:** 11 convenciones activas.

@@ -21,7 +21,7 @@ The apps target **WCAG 2.1 AA**. These rules make the product usable from 320 px
 
 ```
 axe-core / vitest-axe          # component checks (testing-unit)
-@axe-core/playwright           # page checks (testing-e2e)
+# @axe-core/playwright: not installed; only for one-off page audits (see testing-e2e, debt D3)
 eslint-plugin-jsx-a11y         # lint-time checks
 ```
 
@@ -63,7 +63,7 @@ eslint-plugin-jsx-a11y         # lint-time checks
 - Focus is never removed (`outline: none`) without a visible replacement.
 - Modal and overlay UI traps focus while open, closes with `Escape` and returns focus to the trigger.
 - Dynamic updates are announced via live regions; do not move focus unexpectedly.
-- axe-core reports zero violations in unit checks and e2e page checks.
+- axe-core reports zero violations in unit checks and in page audits (one-off while e2e is not adopted, see testing-e2e).
 - Language is declared (`<html lang>`) and updated when the locale changes.
 
 ## Integration with other conventions

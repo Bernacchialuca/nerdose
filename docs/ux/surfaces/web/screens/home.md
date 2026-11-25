@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.2"
-date: 2026-11-06
+version: "1.3"
+date: 2026-11-15
 ---
 
 # Pantalla: Home (catálogo)
@@ -312,7 +312,7 @@ date: 2026-11-06
 - Texto/label: 9
 - Texto secundario: récord de racha
 - Icono: nada
-- Annotation: `card` variant `mini-stat`. El heatmap y los demás mini-stats del prototipo (desafíos completados, % de victorias) no se muestran hasta que exista su fuente de datos (FG-3 / FG-10)
+- Annotation: `card` variant `mini-stat`. El heatmap y los demás mini-stats del prototipo (desafíos completados, % de victorias) no se suman a la home: viven en `estadisticas` (REQ-011, decisión 10)
 
 ### resumen-progreso
 - Texto/label: Todavía no hay datos. Completá un desafío y acá vas a ver tu racha.
@@ -598,6 +598,7 @@ date: 2026-11-06
 - REQ-003: «¿Cómo funciona?» pasa de enlace a `acerca-de` a botón `secondary` que baja a la sección «Cómo funciona» de la misma home (como en el prototipo). «Acerca de» sigue accesible desde `./about` del header.
 - REQ-003: la terminal y la barra segmentada usan solo los campos de `/api/today` (estado y etiqueta por juego, `completed_today`, racha global, `seconds_to_reset`). Las filas «sin desafío», «en curso», «anulado» y «próximamente» no están en el prototipo: se derivan de la identidad (ícono + texto) y se documentan en el DS en la misma story.
 - REQ-003: el panel «Tu progreso» muestra solo racha y récord. El heatmap y los mini-stats de desafíos completados y % de victorias no se muestran con datos falsos: llegan con FG-3 / FG-10. Por eso los textos sin datos ya no prometen el heatmap.
+- REQ-011: con la fuente de datos ya disponible, «Tu progreso» sigue con racha y récord leídos de `/api/today` (la misma regla de racha viva que `estadisticas`) y el enlace «ver estadísticas →». No se suman el heatmap ni los mini-stats de completados y % de victorias, para no pedir `/api/me/stats` en cada carga de la home (decisión 10 del diseño técnico). Sin cambios de layout.
 - REQ-003: la tarjeta «próximo juego» (`placeholder`) entra como sexta tarjeta decorativa: en la grilla de 3 columnas completa la segunda fila, que antes ocupaba el resumen.
 - REQ-003: la tarjeta `next` (destino de «Seguir jugando») se marca con el borde del acento del juego; en el estado actual de la plataforma (`ningún desafío hoy`) ninguna lo es.
 - Layout desktop: hero 7/5 y grilla de 3 columnas salen de las reglas `flex-wrap` / `auto-fit minmax(300px, 1fr)` del prototipo a 1200 px (1176 px útiles). Mobile: la misma grilla baja a una columna; no hay breakpoints propios de la pantalla.
@@ -619,3 +620,4 @@ date: 2026-11-06
 - F-02, C-05, C-06, C-14, C-41, C-42, C-02, C-01 · flujos 1, 2 y 3 de `user-flows.md`.
 - REQ-002: RF 5, 10, 11, 12, 14, 16 · CA 9, 10, 13, 17, 18, 19.
 - REQ-003: RF 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14 · CA 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 · decisiones de diseño 1, 5, 6, 7, 9.
+- REQ-011: RF 10 · decisión 10 del diseño técnico (alcance de «Tu progreso» sin cambios).

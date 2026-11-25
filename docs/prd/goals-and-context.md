@@ -58,7 +58,7 @@ Hay dos tipos de métricas (decisión #1 del análisis funcional):
 | Jugadores únicos diarios, total y por juego | Sin meta: seguimiento | Diario | G-01, G-02 |
 | Retorno D1 y D7 | Sin meta: seguimiento | Por cohorte diaria | G-01 |
 | Distribución de rachas globales | Sin meta: seguimiento | Semanal | G-01 |
-| Clicks en compartir, por juego | Sin meta: seguimiento (requiere Plausible activado) | Diario | G-05 |
+| Clicks en compartir, por juego | Sin medición en v1: la analítica web (Plausible) se retiró en REQ-011 | — | G-05 |
 | Accesibilidad | WCAG 2.1 AA | Por release | G-05 |
 
 ## Contexto
@@ -105,12 +105,12 @@ Decisiones de producto tomadas en el discovery, con su porqué. El registro comp
 | 22 | Bilingüe | ES/EN desde el lanzamiento, con textos naturales en cada idioma y la misma solución. Sin los dos idiomas no se publica |
 | 23 | Escala objetivo | ~1.000 jugadores diarios con pico a las 00:00 UTC. Alcanza con una instancia |
 | 24 | Accesibilidad | Mobile-first + WCAG 2.1 AA + jugable con teclado. El uso diario ocurre sobre todo en el teléfono |
-| 25 | Privacidad | Cookie funcional sin PII, sin banner, analítica sin cookies, retención indefinida |
+| 25 | Privacidad | Cookie funcional sin PII, sin banner, sin analítica web en v1 (ver #30), retención indefinida |
 | 26 | Interacciones de un solo intento | Seleccionar y después confirmar (Bug Hunt, Big O, Timeline). Evita perder por un toque accidental |
 | 27 | Idioma de la interfaz | Del navegador, cambiable con un selector visible y guardado; se puede cambiar a mitad de partida |
 | 28 | Big O: criterio | Complejidad temporal en el peor caso, 8 opciones fijas y O(2ⁿ) para la recursión doble. Garantiza una única respuesta indiscutible |
 | 29 | Métricas en el admin | Las métricas de uso, retención y calidad salen de la base y se ven en una sección "Métricas" del admin. Son exactas y no dependen de bloqueadores (análisis técnico) |
-| 30 | Analítica web | Plausible Community Edition self-hosted, integrado desde v1 pero apagado por defecto (flag de build). Sin costo de SaaS; se activa cuando esté instalado (análisis técnico) |
+| 30 | Analítica web | **Retirada en REQ-011** por decisión del usuario: con un solo evento (`share:<game_id>`) no vale la pena; v1 no tiene analítica web. Decisión original: Plausible Community Edition self-hosted, integrado desde v1 pero apagado por defecto (flag de build) |
 | 31 | Diseño UI/UX | El prototipo `docs/nerdose.html` es la fuente de verdad visual (identidad, tipografía, layout, componentes, tono) y se formaliza en el Design System de `web`. No es una copia obligada píxel a píxel: los agentes pueden decidir y crear piezas nuevas siempre que respeten la identidad. Revisado el 2026-11-05: antes era solo una referencia y las primeras pantallas se apartaron de él. En datos, métricas, reglas, textos y accesibilidad manda el PRD. Detalle en NFR-U07 de `requirements.md` |
 | 32 | Bancos de contenido | Dataset versionado en el repo, generado offline desde Wikidata y Wikipedia por un script con reglas automáticas, y cargado por el generator al arrancar. Sin APIs de Wikimedia en producción. Los bancos se reutilizan al vencer su ventana anti-repetición, así que no se agotan (análisis de la fase técnica) |
 
@@ -127,7 +127,6 @@ Decisiones de producto tomadas en el discovery, con su porqué. El registro comp
 - **Reporte de problemas** por desafío.
 - **Generación, verificación y publicación automáticas** del contenido, por reglas.
 - **Admin aparte:** reportes y anulación, próximos desafíos, stock de contenido y métricas.
-- **Analítica web** con Plausible self-hosted, detrás de un flag (apagado por defecto).
 - **Página principal** como catálogo de juegos.
 
 ### Fuera del Alcance (v1)
@@ -145,6 +144,7 @@ Decisiones de producto tomadas en el discovery, con su porqué. El registro comp
 - **Monetización** (ads, premium, sponsors).
 - **Notificaciones push o recordatorios por mail.**
 - **Categorías de Timeline "Hitos de Internet" e "Historia general":** diferidas hasta tener una fuente automática fiable.
+- **Analítica web (Plausible u otra):** retirada en REQ-011 por decisión del usuario (decisión #30, F-16/C-53). Sumarla requiere un ADR nuevo.
 - **Alertas por mail, webhook (Discord/Slack) o push:** v1 no envía notificaciones. Las alertas (umbral de reportes y fallas de generación) se registran en la base y se ven en el admin.
 
 ### Restricciones

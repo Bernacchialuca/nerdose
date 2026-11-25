@@ -1,9 +1,10 @@
-# ADR-014: Métricas en la base y analítica web opcional
+# ADR-014: Métricas en la base (sin analítica web)
 
 **Estado:** Accepted
 **Fecha:** 2026-11-03
 **Decisores:** Responsable de nerdose
-**Etiquetas:** métricas, analítica, privacidad, admin
+**Etiquetas:** métricas, privacidad, admin
+**Actualizado:** 2026-11-15 (REQ-011) — se retiró la analítica web (Plausible); ver «Historial»
 
 ## Contexto
 
@@ -17,7 +18,9 @@ El PRD define métricas de seguimiento sin meta:
 
 Todas menos los shares salen de datos que ya están en la base.
 
-Las restricciones de privacidad son: sin cookies de terceros, sin banner y analítica sin cookies (NFR-PR01, NFR-PR02). El usuario quiere Plausible Community Edition self-hosted, integrado desde v1 pero **apagado por defecto** hasta que esté instalado (decisión #30).
+Las restricciones de privacidad son: sin cookies de terceros y sin banner (NFR-PR01, NFR-PR02).
+
+Originalmente el usuario pidió Plausible Community Edition self-hosted, integrado desde v1 pero apagado por defecto (decisión #30), solo para medir los clicks en compartir. En REQ-011 el usuario decidió retirarlo: con un único evento propio (`share:<game_id>`) no justifica el script, el flag ni el mantenimiento.
 
 ## Decisión
 
@@ -30,7 +33,7 @@ Las restricciones de privacidad son: sin cookies de terceros, sin banner y anal�
 | `metrics_streak_distribution` | Jugadores por tramo de `global_streak` vivo: `0`, `1`, `2-6`, `7-29`, `30+` |
 | `metrics_challenge_quality` | Por challenge: `started` (Play creadas), `finished` (won + lost), `completion_rate`, `win_rate`, `reports`, `status` |
 
-**Analítica web:** script de Plausible en `web` detrás del flag de build `VITE_PLAUSIBLE_DOMAIN`, con eventos `share:<game_id>`. Todo pasa por un helper `track(event)` de `@nerdose/ui`.
+**Sin analítica web en v1:** ni `web` ni `admin` cargan scripts de analítica de terceros ni registran eventos de uso. Los clicks en compartir no se miden.
 
 ## Reglas de Implementación
 
@@ -39,22 +42,18 @@ Las restricciones de privacidad son: sin cookies de terceros, sin banner y anal�
 - En `metrics_challenge_quality`, `completion_rate = finished / started` y `win_rate = won / finished`. Ambas MUST ser `null` si el divisor es 0.
 - Las Play `voided` MUST NOT contar en `finished` ni en `win_rate`.
 - El admin MUST mostrar las métricas como tablas HTML. MUST NOT agregarse librería de gráficos en v1.
-- `web` MUST llamar solo a `track(event)` de `@nerdose/ui`. MUST NOT referenciar `window.plausible` fuera de ese helper.
-- Si `VITE_PLAUSIBLE_DOMAIN` está vacío, el build MUST NOT inyectar el script de Plausible y `track()` MUST ser un no-op.
-- Si `VITE_PLAUSIBLE_DOMAIN` tiene valor, `VITE_PLAUSIBLE_SCRIPT_URL` MUST ser obligatoria (el build falla si falta), y el script MUST inyectarse con `defer` y `data-domain`.
-- El evento de share MUST llamarse exactamente `share:<game_id>` (por ejemplo `share:devdle`) y MUST NOT llevar propiedades personalizadas.
-- `admin` MUST NOT cargar analítica.
+- `web` y `admin` MUST NOT cargar scripts de analítica ni de tracking de terceros, ni enviar eventos de uso. Sumar analítica requiere un ADR nuevo.
+- **Nota de implementación (REQ-011):** las vistas no dependen de "hoy". `metrics_retention` expone conteos (`d1_players`, `d7_players`) y `metrics_streak_distribution` el tramo de la racha guardada con `last_active_date`; la `api` completa `d1`/`d7` y la racha viva con su reloj y con `isStreakAlive` de core (ADR-011), para no duplicar la regla en SQL y poder probarla con relojes falsos.
 
 ## Consecuencias
 
 ### Positivas
 - Las métricas son exactas, no dependen de bloqueadores y no requieren otro servicio.
-- La plataforma funciona igual con la analítica apagada. Las métricas del admin no dependen de Plausible.
-- Activar Plausible no toca el código de los juegos.
+- Las métricas del admin no dependen de ningún servicio externo de analítica.
+- Sin scripts de terceros: menos superficie de privacidad y nada que configurar en el build.
 
 ### Negativas
-- Los clicks en compartir solo se miden con Plausible activo.
-- Cambiar el flag requiere un build y un deploy nuevos.
+- Los clicks en compartir, las pageviews y los orígenes del tráfico no se miden en v1.
 - Las vistas se calculan al consultar. Con más volumen pueden necesitar vistas materializadas.
 
 ### Riesgos
@@ -83,9 +82,28 @@ Las restricciones de privacidad son: sin cookies de terceros, sin banner y anal�
 **Contras:**
 - Costo de SaaS.
 
-**Por qué se descartó:** decisión del usuario (#30). La URL del script es configurable, así que se puede apuntar al plan cloud sin cambiar código.
+**Por qué se descartó:** decisión del usuario (#30).
+
+---
+
+### Alternativa 3: Plausible self-hosted detrás de un flag de build, apagado por defecto
+
+Fue la decisión original (decisión #30): helper `track()` en `@nerdose/ui`, flags `VITE_PLAUSIBLE_DOMAIN` / `VITE_PLAUSIBLE_SCRIPT_URL` y evento `share:<game_id>`.
+
+**Pros:**
+- Medía los clicks en compartir y las visitas sin cookies.
+
+**Contras:**
+- Un solo evento propio; un servicio más que instalar y operar; flag y validación de build que mantener.
+
+**Por qué se retiró:** decisión del usuario en REQ-011 (story S-058 elimina el código existente).
 
 ## Referencias
 
 - `docs/discovery/analisis-tecnico.md` — Analítica opcional (Plausible), F11 (métricas), F13, Arq-19
-- `docs/prd/requirements.md` — F-13, F-16, NFR-PR02
+- `docs/prd/requirements.md` — F-13, F-16 (retirada en v1), NFR-PR02
+
+## Historial
+
+- 2026-11-03: Accepted con métricas en la base y analítica web opcional con Plausible (decisión #30).
+- 2026-11-15 (REQ-011): se retira la analítica web por decisión del usuario. Se eliminan las reglas de `track()`, `VITE_PLAUSIBLE_*` y `share:<game_id>`; se agrega la nota de implementación de las vistas.

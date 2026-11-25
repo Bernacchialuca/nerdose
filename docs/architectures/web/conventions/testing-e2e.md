@@ -1,16 +1,25 @@
 ---
 id: testing-e2e
-display_name: Tests E2E (Playwright)
+display_name: Tests E2E (no adoptados, deuda D3)
 language: react
-description: "End-to-end tests with Playwright and axe-core against the built SPA and a real api"
+description: "No e2e suite in the repo (debt D3); reference design for when it is adopted. The REQ-011 accessibility audit was one-off"
 applies_to: [frontend]
 required_by: []
-package: "@playwright/test"
+package: null
 ---
 
-# E2E Testing (React, Playwright)
+# E2E Testing (React) — not adopted (debt D3)
 
-End-to-end tests run in a real browser with **Playwright**, against the Vite app and a running `api` (same origin through the dev proxy). They cover the critical flows and run **axe-core** on full pages. Unit and component behavior belongs to `testing-unit`.
+## Current status
+
+- **There is no e2e suite in the repo.** Playwright, `@axe-core/playwright`, `e2e/` and `playwright.config.ts` are **not** installed and MUST NOT be assumed by stories or plans. Critical flows are covered by route tests in jsdom (`testing-unit`), `vitest-axe` on components and manual verification.
+- **Debt D3 stays open:** adopting e2e requires a running `api` with seeded challenges of every game (there is no `seed:dev`).
+- **REQ-011 accessibility and mobile audit (S-059) was one-off:** Playwright + `@axe-core/playwright` were installed temporarily (mocking `/api/*` with `page.route` and fixtures typed with `api.yaml`), the violations were fixed, and then the dependencies, specs and configuration were removed. The result (violations found, fixes, accepted exceptions with justification) lives in `docs/audits/accesibilidad-REQ-011.md`. A future audit follows the same one-off approach unless D3 is closed.
+- The rest of this document is the **reference design** to apply only if the user decides to adopt e2e (closing D3). It is not a current rule.
+
+## Reference design (if e2e is adopted)
+
+End-to-end tests would run in a real browser with **Playwright**, against the Vite app and a running `api` (same origin through the dev proxy). They would cover the critical flows and run **axe-core** on full pages. Unit and component behavior belongs to `testing-unit`.
 
 ## When to use
 
@@ -105,6 +114,10 @@ export async function expectNoA11yViolations(page: Page) {
 
 ## Integration with other conventions
 
-- **accessibility**: e2e is where WCAG 2.1 AA is verified on real pages.
-- **styling**: the 320 px project validates mobile-first layout.
-- **routing**: specs navigate by URL and by link.
+- **accessibility**: while e2e is not adopted, WCAG 2.1 AA on real pages is verified by one-off audits (REQ-011: `docs/audits/accesibilidad-REQ-011.md`) plus `vitest-axe` on components.
+- **styling**: 320 px layout is checked in those audits and manually.
+- **routing**: if adopted, specs navigate by URL and by link.
+
+## Update (REQ-011)
+
+- The accessibility and mobile audit of REQ-011 (S-059) is one-off: Playwright + `@axe-core/playwright` are installed only while it runs, with `/api/*` mocked through `page.route` and fixtures typed with the `api.yaml` contracts (tags `wcag2a`, `wcag2aa`, `wcag21aa`; `mobile` 320 px and `desktop`, `admin` only `desktop`). When it ends, the dependencies, specs and Playwright configuration are removed and the report stays in `docs/audits/accesibilidad-REQ-011.md`. Playwright is not a current tool of the repo; flows against a real `api` remain open debt (D3).

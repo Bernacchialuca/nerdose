@@ -5,7 +5,7 @@ type: feature
 status: Active
 created: 2026-11-03
 last_updated: 2026-11-13
-stories: [S-032, S-033, S-037, S-039, S-040]
+stories: [S-032, S-033, S-037, S-039, S-040, S-052, S-053, S-054]
 ---
 
 # Admin — login, reportes, stock y métricas
@@ -178,13 +178,14 @@ sequenceDiagram
 
 **Request:** `GET /api/admin/metrics?from=YYYY-MM-DD&to=YYYY-MM-DD`
 
-**Operación de BD:** SELECT de `metrics_daily_players`, `metrics_retention`, `metrics_streak_distribution` y `metrics_challenge_quality`, filtradas por rango (salvo `streak_distribution`, que es una foto actual).
+**Operación de BD:** SELECT de `metrics_daily_players`, `metrics_retention`, `metrics_streak_distribution` y `metrics_challenge_quality`, filtradas por rango (salvo `streak_distribution`, que es una foto actual), y consulta a `plays` en el rango para `summary`.
 
 **Response (éxito):**
 - **Status:** 200
 - **Body:**
   ```json
   {
+    "summary": { "unique_players", "completed", "d1", "d7" },
     "daily_players": [ { "date", "game_id": "GameId | null", "players" } ],
     "retention": [ { "cohort_date", "cohort_size", "d1", "d7" } ],
     "streak_distribution": [ { "bucket": "0 | 1 | 2-6 | 7-29 | 30+", "players" } ],
@@ -217,4 +218,6 @@ sequenceDiagram
 
 - Las rutas de admin no usan la cookie `nd_pid` ni CORS: van en el mismo origen, `admin.nerdose.dev/api/admin/*`.
 - Rotar `ADMIN_JWT_SECRET` invalida todas las sesiones.
-- Las métricas no dependen de Plausible (ADR-014).
+- Las métricas salen solo de la base; no hay analítica web (ADR-014).
+
+> Actualizado por REQ-011 (stories S-052, S-053 y S-054): el paso 5 valida el rango con `validateMetricsRange` de core (admin y api, 422 si falla); la api lee las vistas `metrics_*` y consulta `plays` para `summary`; `d1`/`d7` y los tramos vivos de `streak_distribution` se calculan en la api con su reloj y core; la respuesta suma `summary` y trae siempre los 5 tramos.

@@ -392,9 +392,13 @@ Las cuatro vistas viven en migraciones de `@nerdose/db` (ADR-014). El rol `nerdo
 | Vista | Columnas | Definición |
 |---|---|---|
 | `metrics_daily_players` | `date`, `game_id` (null = total), `players` | `count(DISTINCT player_id)` de `plays` por `date`, agrupado por `game_id` y con `GROUPING SETS ((date, game_id), (date))` |
-| `metrics_retention` | `cohort_date`, `cohort_size`, `d1`, `d7` | Cohorte = fecha de la primera Play con `status IN ('won','lost','voided')` de cada jugador. `d1`/`d7` = fracción (0–1) de la cohorte con una Play completada en `cohort_date + 1` / `+ 7`. `null` si esa fecha todavía no pasó |
-| `metrics_streak_distribution` | `bucket`, `players` | `player_stats.global_streak` **vivo** (0 si `last_active_date` es anterior al día activo previo, ADR-011), agrupado en `'0'`, `'1'`, `'2-6'`, `'7-29'`, `'30+'` |
+| `metrics_retention` | `cohort_date`, `cohort_size`, `d1_players`, `d7_players` | Cohorte = fecha de la primera Play con `status IN ('won','lost','voided')` de cada jugador. `d1_players`/`d7_players` = conteo de la cohorte con una Play completada en `cohort_date + 1` / `+ 7`. La vista no conoce "hoy": la api calcula `d1 = d1_players / cohort_size` y devuelve `null` si ese día todavía no terminó (REQ-011) |
+| `metrics_streak_distribution` | `bucket`, `last_active_date`, `players` | Tramo de la racha **guardada** (`players LEFT JOIN player_stats`: sin `player_stats` cuenta en `'0'` con `last_active_date` null), agrupado en `'0'`, `'1'`, `'2-6'`, `'7-29'`, `'30+'`. La api mueve al `'0'` las filas cuya racha no está viva con `isStreakAlive` de core (ADR-011) |
 | `metrics_challenge_quality` | `challenge_id`, `game_id`, `date`, `number`, `started`, `finished`, `completion_rate`, `win_rate`, `reports`, `status` | Por challenge `published` o `voided`: `started = count(plays)`, `finished = count(plays WHERE status IN ('won','lost'))`, `completion_rate = finished / NULLIF(started, 0)`, `win_rate = count(won) / NULLIF(finished, 0)`, `reports = count(challenge_reports)` |
+
+Las vistas se crean en la migración `0008_metrics_views` (solo `CREATE VIEW` + `GRANT`, forward-only). `metrics_challenge_quality` lista desafíos `published` o `voided`.
+
+**Nota:** `pnpm --filter @nerdose/db seed:dev`, citado más abajo, todavía no existe en `packages/db/package.json`; REQ-011 no lo agrega (las specs de accesibilidad usan red simulada).
 
 ## Estrategia de Migraciones
 

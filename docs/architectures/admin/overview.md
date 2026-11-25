@@ -19,9 +19,9 @@ Frontend en React 19 + Vite (SPA, sin SSR), TypeScript estricto.
 - Autenticación: JWT HS256 de 8 h en `sessionStorage`, enviado como `Authorization: Bearer`; ante un `401` se borra el token y se vuelve al login; sin refresh ni multiusuario (ADR-010). Nunca usa la cookie `nd_pid`.
 - Polling explícito de próximos desafíos mientras haya una regeneración pendiente.
 - Preview con los `client` de `packages/games/<game_id>/client` y un registry propio, sin lógica por juego (ADR-006).
-- Sin analítica: no carga Plausible (ADR-014).
+- Sin analítica: no carga scripts de analítica ni de tracking (ADR-014).
 - Contextos de React a nivel app: solo `AuthProvider` además del `QueryClientProvider`.
-- Pruebas: Vitest + Testing Library (unit), Playwright (e2e) y axe-core (accesibilidad).
+- Pruebas: Vitest + Testing Library (unit) y axe-core vía `vitest-axe` (accesibilidad de componentes). Sin suite e2e (deuda D3, ver `testing-e2e`); la auditoría de accesibilidad de REQ-011 (S-059) fue puntual.
 
 ## Notas adicionales
 - **Sin catálogo para `react`.** El catálogo del workflow (`.claude/conventions/`) solo trae `nextjs`, que asume App Router, Server Components y Server Actions que esta SPA no usa. Por decisión del proyecto `admin` declara `language: react` y define **todas** sus convenciones, incluida `_base`, como custom en `docs/architectures/admin/conventions/`. Así ninguna convención de Next.js entra por catálogo ni por `required_by`.

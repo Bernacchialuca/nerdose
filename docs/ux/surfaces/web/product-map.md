@@ -1,8 +1,8 @@
 ---
 document: UX Product Map
 surface: web
-version: "1.7"
-date: 2026-11-14
+version: "1.8"
+date: 2026-11-15
 status: Draft - Punto de partida para discusión
 audiences:
   - jugador
@@ -36,7 +36,7 @@ Se inventaría **una pantalla por fase por juego** (15 pantallas), porque cada f
 | # | Slug | Pantalla | Propósito | Audiencia primaria | Viewports | Referencia PRD |
 |---|------|----------|-----------|---------------------|-----------|----------------|
 | 1 | `home` | Home (catálogo) | Ver qué juegos faltan hoy, la racha global y cuánto falta para el próximo desafío | jugador | ambos | F-02, C-05, C-06, C-14, C-42 |
-| 2 | `estadisticas` | Estadísticas | Ver rachas, récords, completados, % de victorias, stats por juego, heatmap e historial | jugador | ambos | F-09, C-34 |
+| 2 | `estadisticas` | Estadísticas | Ver racha global y récord, completados, una tarjeta por juego (racha, récord, jugadas, ganadas, % de victorias y stats propias), el heatmap de 365 días y el historial con «Ver más partidas» | jugador | ambos | F-09, C-34, REQ-011 |
 | 3 | `acerca-de` | Acerca de | Explicar qué es nerdose y atribuir Wikipedia y Wikidata; aviso de privacidad | jugador | ambos | C-07 |
 | 4 | `devdle-instrucciones` | Devdle · Instrucciones | Explicar reglas y cómo leer las pistas antes de empezar | jugador | ambos | F-04, C-08, C-09 |
 | 5 | `devdle-partida` | Devdle · Partida | Adivinar el término en hasta 6 intentos con teclado en pantalla y físico | jugador | ambos | C-15, C-10, C-11, C-36 |
@@ -57,6 +57,8 @@ Se inventaría **una pantalla por fase por juego** (15 pantallas), porque cada f
 
 Todas las pantallas existen en ambos viewports. La excepción de contenido a anotar es la grilla de Grep Grid (12×12) y el código de Bug Hunt / Big O a 320 px: se resuelven en layout (scroll horizontal del código, celdas de la grilla escaladas al ancho: la grilla de Grep Grid entra completa a 320 px sin scroll horizontal, REQ-005 CA 36; las 5 filas de Tech Timeline ocupan el ancho y el nombre envuelve antes que achicar el asa o los botones ↑ ↓, REQ-006 CA 11), no con una pantalla distinta `[fuente: PRD §NFR-U01]`.
 
+> **Auditoría de accesibilidad y mobile (REQ-011):** todas las pantallas del jugador, en sus estados principales, pasan axe-core sin violaciones WCAG 2.1 AA, se usan con teclado (los 5 juegos de punta a punta, con foco visible) y no tienen scroll horizontal de la página a 320 px. Ningún estado depende solo del color: en el feedback de los juegos, el heatmap y los estados de la home hay texto, ícono o patrón. La auditoría no rediseña pantallas. Los ajustes salen del Design System y, si cambian un componente, se registran en él. Es una auditoría puntual (Playwright + axe instalados solo mientras dura, story S-059); su resultado queda en `docs/audits/accesibilidad-REQ-011.md`.
+
 ### Bloques por pantalla
 
 Header común a todas las pantallas de plataforma (shell, `app-header` del DS): marca `> nerdose_`, navegación (`./juegos`, `./stats`, `./about`) **siempre dentro del header** y acomodada con `flex-wrap` en mobile (sin tira de navegación aparte, REQ-003), **`#número` del desafío del día** (reemplaza "desafío del 30/10" del prototipo; decisión #12, F-02), selector de idioma ES/EN segmentado y, en la home, la **píldora de racha global** que enlaza a `estadisticas` (REQ-003). El `#número` se oculta cuando el servidor no lo informa (antes del lanzamiento, REQ-002). En las pantallas de juego el header es el `game-header` del DS, con el nombre del juego; en las de resultado se suma el botón "Compartir". El footer (`site-footer`) es una sola línea, como el prototipo: el lema `> nerdose — una plataforma, múltiples desafíos.` y `exit 0`, en todas las pantallas. El aviso de privacidad (una única cookie funcional, sin datos personales ni cookies de terceros) vive en `acerca-de` (C-07, REQ-003).
@@ -65,8 +67,8 @@ Header común a todas las pantallas de plataforma (shell, `app-header` del DS): 
 
 | Slug | Bloques principales (de `docs/nerdose.html` ajustados al PRD) |
 |------|-----------------------------------------------------------------|
-| `home` | Hero (prompt `$ nerdose --today // fecha`, titular, presentación breve, CTA "Seguir jugando" → tarjetas y "¿Cómo funciona?" → sección "Cómo funciona" de la misma home) con la **ventana de terminal** del día al lado (estado por juego, racha global y récord, cuenta regresiva `HH:MM:SS`); "Los desafíos de hoy" con barra segmentada de progreso y 5 tarjetas de juego (miniatura, nombre, badge de estado, descripción, duración, racha del juego y CTA; la tarjeta del próximo juego a jugar se destaca) + tarjeta decorativa "próximo juego" (`$ git checkout -b próximo-juego`, REQ-003); panel "Tu progreso" (racha global de 88 px, récord, enlace a `estadisticas`; el heatmap y los demás mini-stats esperan a FG-3 / FG-10); "Cómo funciona" en 4 pasos (REQ-003) |
-| `estadisticas` | Racha global actual, récord, desafíos completados; heatmap de 365 días; bloque por juego (racha, récord, jugadas, % de victorias, stat propia); historial paginado con etiqueta corta ("✓ 4/6", "✗ L7", "6/8"). El prototipo muestra "días con actividad" y "juegos por día activo": no están en C-34, **manda el PRD** |
+| `home` | Hero (prompt `$ nerdose --today // fecha`, titular, presentación breve, CTA "Seguir jugando" → tarjetas y "¿Cómo funciona?" → sección "Cómo funciona" de la misma home) con la **ventana de terminal** del día al lado (estado por juego, racha global y récord, cuenta regresiva `HH:MM:SS`); "Los desafíos de hoy" con barra segmentada de progreso y 5 tarjetas de juego (miniatura, nombre, badge de estado, descripción, duración, racha del juego y CTA; la tarjeta del próximo juego a jugar se destaca) + tarjeta decorativa "próximo juego" (`$ git checkout -b próximo-juego`, REQ-003); panel "Tu progreso" (racha global de 88 px, récord, enlace a `estadisticas`; el heatmap y los demás mini-stats no se suman: viven en `estadisticas`, REQ-011); "Cómo funciona" en 4 pasos (REQ-003) |
+| `estadisticas` | Racha global actual (`streak-number`), récord y desafíos completados (incluye anuladas); heatmap de 365 días (53 semanas, días UTC, hoy a la derecha; en mobile scrollea en su contenedor y abre en hoy) con la cantidad del día enfocado o tocado en texto y en el nombre accesible de cada celda; una tarjeta `game-stats` por juego en el orden del catálogo (racha, récord, jugadas, ganadas, % de victorias y el `StatsSummary` del juego: distribución de intentos en Devdle, promedio de palabras y % de 8/8 en Grep Grid, acierto por categoría y mejor categoría en Tech Timeline, aciertos por categoría de receta en Big O, aciertos por lenguaje y por tipo de bug en Bug Hunt; «—» sin partidas); historial de partidas completadas (fecha, `#número`, juego y resultado con la etiqueta corta del juego; «anulada» en las anuladas) con «Ver más partidas» (páginas de días completos). Estado vacío con cifras en cero, «—», heatmap e historial vacíos e invitación a jugar; sin sesión, igual con O-03 y «Ir a los juegos» deshabilitado (REQ-011). El prototipo muestra "días con actividad" y "juegos por día activo": no están en C-34, **manda el PRD** |
 | `no-encontrado` | Código `404 · página no encontrada`; mensaje corto; CTA "Volver a los juegos". Mismo header y footer del shell (REQ-002) |
 | `acerca-de` | Qué es nerdose y cómo funciona; los 5 juegos; reglas de racha (completar cuenta, días neutros, anulados); atribución Wikipedia/Wikidata (CC BY-SA); aviso de privacidad (cookie funcional, sin cuenta) |
 | `*-instrucciones` | Nombre y acento del juego; reglas en 3 pasos (patrón "cómo se juega" del prototipo); duración estimada; estado del día de ese juego; CTA "Empezar" (crea la Play); aviso de que la partida no cuenta hasta completarla |
@@ -153,7 +155,7 @@ Dentro de las **pantallas de juego**:
 
 Dentro de **`home`**: tarjeta de juego → fase correspondiente; "ver estadísticas →" → `estadisticas`; "¿Cómo funciona?" → sección "Cómo funciona" de la misma pantalla (ancla `#como`, REQ-003). `acerca-de` se alcanza desde `./about` del header.
 
-Dentro de **`estadisticas`**: bloque por juego y "ver historial completo" (paginado en la misma pantalla, ver pregunta 3).
+Dentro de **`estadisticas`**: heatmap navegable con flechas (una sola parada de tabulación) y «Ver más partidas», que agrega la página siguiente del historial en la misma pantalla (REQ-011, pregunta 3 resuelta).
 
 ## Information Architecture
 
@@ -188,7 +190,8 @@ Pantallas: (ninguna)
 - **Idioma ES / EN** — Aplica a toda la superficie, también a mitad de partida; el contenido del desafío se resuelve en el servidor (C-03, C-04). `[fuente: PRD NFR-U05]`
 - **Cambio de día (00:00 UTC)** — Cualquier pantalla abierta puede recibir `challenge_expired` al jugar: se carga el desafío nuevo, la Play vieja queda `in_progress` y no cuenta. En `home` la cuenta regresiva recarga sola. `[fuente: PRD C-06, C-11]`
 - **Desafío anulado** — Afecta a la tarjeta, a las instrucciones y al resultado (O-02). La racha no se ve afectada. `[fuente: PRD C-41, C-42]`
-- **Error de red / sin conexión** — El PRD supone conexión permanente y no hay modo offline. El manejo de errores globales vive en el shell. En `home`, REQ-002 define el estado "error de carga" (mensaje con "Reintentar", catálogo estático visible); en el resto de las pantallas el copy sigue sin definir. `[fuente: PRD §Supuestos; REQ-002 CA 18]`
+- **Error de red / sin conexión** — El PRD supone conexión permanente y no hay modo offline. El manejo de errores globales vive en el shell. En `home`, REQ-002 define el estado "error de carga" (mensaje con "Reintentar", catálogo estático visible); En `estadisticas`, REQ-011 define «No pudimos cargar tus estadísticas…» con «Reintentar» y, al fallar «Ver más partidas», un aviso que conserva las filas cargadas. En el resto de las pantallas el copy sigue sin definir. `[fuente: PRD §Supuestos; REQ-002 CA 18; REQ-011]`
+- **Sin analítica web** — La plataforma no carga scripts de analítica de terceros y compartir no registra ningún evento: la analítica (Plausible, C-53) se retiró en REQ-011 por decisión del usuario. El aviso de privacidad de `acerca-de` no cambia. `[fuente: ADR-014; REQ-011]`
 - **Antes del lanzamiento** — Mientras hoy sea anterior al día del desafío #1, el servidor no informa el desafío y el header no muestra «desafío del dd/mm». `[fuente: REQ-002 CA 17]`
 
 ## Mapa Visual
@@ -232,7 +235,7 @@ Juegos: `devdle`, `bug-hunt`, `big-o`, `timeline`, `grep-grid`.
    - Si hay resultado y el jugador ve la solución y su propio resultado con el aviso de anulación: `*-resultado` necesita una variante "anulado con resultado" y otra "anulado sin resultado".
    - Si en ambos casos solo se ve el aviso y la racha: una sola variante mínima de `*-resultado`, sin share (C-13 no cubre explícitamente Play `voided`).
 
-3. **¿"Ver historial completo" es una pantalla o está dentro de `estadisticas`?** C-34 pide historial paginado; las rutas del PRD y de `web` solo declaran `/stats`.
+3. ~~**¿"Ver historial completo" es una pantalla o está dentro de `estadisticas`?**~~ **Resuelta por REQ-011:** inline, con «Ver más partidas» (el servidor pagina por cursor de fecha y cada página termina en un día completo). El inventario queda en 19 pantallas. C-34 pide historial paginado; las rutas del PRD y de `web` solo declaran `/stats`.
    - Si está inline (paginación o "cargar más"): el inventario queda igual (19 pantallas); en mobile `estadisticas` es larga.
    - Si es una pantalla propia (`/stats/historial`): se agrega una ruta y un item #20, y la tabla de 5 juegos por fila del prototipo necesita variante mobile.
 

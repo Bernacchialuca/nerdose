@@ -619,7 +619,7 @@ para anticipar problemas sin tener que cargar nada a mano.
 
 ### F-13: Admin — métricas
 
-**Descripción:** Sección del admin con las métricas de uso, retención y calidad, calculadas desde la base (no desde Plausible). *Alcance agregado en el análisis técnico.*
+**Descripción:** Sección del admin con las métricas de uso, retención y calidad, calculadas desde la base (no desde una analítica web). *Alcance agregado en el análisis técnico.*
 
 **Historia de usuario:**
 Como responsable de la plataforma,
@@ -724,9 +724,11 @@ para no cargar ni aprobar nada a mano ni depender de una API externa en producci
 
 ---
 
-### F-16: Analítica web
+### F-16: Analítica web (retirada en v1)
 
-**Descripción:** Pageviews, orígenes del tráfico y clicks en compartir con Plausible Community Edition self-hosted, sin cookies. Viene integrado pero **apagado por defecto** y se activa con un flag de build.
+> **Retirada en REQ-011 por decisión del usuario:** con un único evento propio (`share:<game_id>`) no se justifica integrar Plausible. En v1 no hay analítica web: no se carga ningún script de terceros y compartir no registra eventos. La story S-058 elimina el código existente (ADR-014). Se conserva la definición original como referencia.
+
+**Descripción (original):** Pageviews, orígenes del tráfico y clicks en compartir con Plausible Community Edition self-hosted, sin cookies. Venía integrado pero **apagado por defecto** y se activaba con un flag de build.
 
 **Historia de usuario:**
 Como responsable de la plataforma,
@@ -737,15 +739,12 @@ sin agregar cookies ni un banner.
 
 | ID | Capability | Actor | Entity | Operation | Key Fields | Business Rules |
 |----|-----------|-------|--------|-----------|------------|----------------|
-| C-53 | Registrar visitas y shares | Sistema | — | ACTION | evento `share:<game_id>` | Solo si el flag está activo; apagado, no se carga ningún script de terceros. Sin cookies. No se usa en el admin. No reemplaza a las métricas de C-46 |
+| C-53 | Registrar visitas y shares (**retirada en v1**, REQ-011) | Sistema | — | ACTION | evento `share:<game_id>` | Fuera de v1: no se implementa. Definición original: solo si el flag está activo; apagado, no se carga ningún script de terceros. Sin cookies. No se usa en el admin. No reemplaza a las métricas de C-46 |
 
-**Criterios de Aceptación:**
-- DADO el flag de analítica vacío
-  CUANDO un jugador abre nerdose.dev
-  ENTONCES no se pide ningún script de Plausible.
-- DADO el flag activo apuntando al Plausible self-hosted
-  CUANDO un jugador comparte Devdle
-  ENTONCES se registra el evento `share:devdle`.
+**Criterios de Aceptación (v1, tras el retiro):**
+- DADO cualquier build de la web
+  CUANDO un jugador abre nerdose.dev y comparte un resultado
+  ENTONCES no se pide ningún script de analítica de terceros, no se registra ningún evento y el share funciona igual.
 
 **Prioridad:** Baja
 
@@ -779,7 +778,7 @@ sin agregar cookies ni un banner.
 | ID | Requerimiento | Meta | Medición |
 |----|--------------|------|----------|
 | NFR-PR01 | Cookies | Una sola cookie funcional, sin cookies de terceros y **sin banner** | Inspección del navegador |
-| NFR-PR02 | Analítica | Sin cookies; apagada por defecto | Inspección de requests |
+| NFR-PR02 | Analítica | Sin analítica web en v1 (F-16 retirada en REQ-011): ningún script de analítica de terceros | Inspección de requests |
 | NFR-PR03 | Retención | Indefinida para jugadores anónimos (historial y rachas) | — |
 | NFR-PR04 | Aviso | Aviso de privacidad y atribución CC BY-SA en "Acerca de", accesible desde `./about` en el header de todas las pantallas | Revisión visual |
 
