@@ -3460,7 +3460,7 @@
             "error de sistema",
             "anulado"
           ],
-          "annotation": "`code-block` `selectable` + pattern `bug-hunt.line`: `radiogroup` «Líneas de maxIndex en {lenguaje}»; solo `pickable_lines` (aquí 2, 3, 4, 5 y 8) son radios de ancho completo y 40 px; firma y llaves en `text.dim`, no enfocables (C-30, CA 6). Elegida: fondo `#1A140A`, barra `inset 3px #FFB547`, «◀ tu elección». Shiki con fallback sin color; scroll horizontal propio, nunca la página (CA 23)",
+          "annotation": "`code-block` `selectable` + pattern `bug-hunt.line`: `radiogroup` «Líneas de maxIndex en {lenguaje}»; solo `pickable_lines` (aquí 2, 3, 4, 5 y 8) son radios de ancho completo y 44 px; firma y llaves en `text.dim`, no enfocables (C-30, CA 6). Elegida: fondo `#1A140A`, barra `inset 3px #FFB547`, «◀ tu elección». Shiki con fallback sin color; scroll horizontal propio, nunca la página (CA 23)",
           "viewport_overrides": {
             "mobile": {
               "annotation": "bloque angosto (< 32rem): el tag «◀ tu elección» se reduce al glifo `◀` fijo al borde derecho visible; el texto completo lo dan `seleccion` y el botón"
@@ -5919,7 +5919,7 @@
             "loading",
             "error de sistema"
           ],
-          "annotation": "pattern `timeline.row` en `panel` «// tu orden»: asa ⠿ (arrastre, `touch-action: none` solo en el asa, CA 11) · posición · nombre · ↑ ↓ (↑ deshabilitado en la 1.ª, ↓ en la 5.ª). Sin fecha, nota ni badge (RF 2). A 320 px el nombre envuelve, sin scroll horizontal",
+          "annotation": "pattern `timeline.row` en `panel` «// tu orden»: asa ⠿ (arrastre, `touch-action: none` solo en el asa, CA 11) · posición · nombre · ↑ ↓ (↑ deshabilitado en la 1.ª, ↓ en la 5.ª). Sin fecha, nota ni badge (RF 2). A 320 px cada fila va en dos líneas (posición, nombre y categoría arriba; asa y ↑ ↓ de 44 px abajo, sin achicarse), sin scroll horizontal",
           "state_overrides": {
             "moviendo": {
               "items": [
