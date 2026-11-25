@@ -25,13 +25,31 @@ async function renderStats() {
 }
 
 const streakValue = () => document.querySelector('.text-display-streak-compact') as HTMLElement;
+const GAME_NAMES = ['Devdle', 'Grep Grid', 'Tech Timeline', 'Big O', 'Bug Hunt'];
+/** Las 5 tarjetas muestran «0» jugadas, «0» ganadas y «—» victorias. */
+function expectEmptyCards() {
+  for (const name of GAME_NAMES) {
+    const card = screen.getByRole('article', { name });
+    for (const [label, value] of [
+      ['jugadas', '0'],
+      ['ganadas', '0'],
+      ['victorias', '—'],
+    ] as const) {
+      expect(within(card).getByText(label).nextElementSibling).toHaveTextContent(value);
+    }
+  }
+}
 const dataRows = () => within(screen.getByRole('table')).getAllByRole('row').slice(1);
 
 describe('Pantalla /stats', () => {
   it('TS-19: la ruta existe, título y nav', async () => {
     await renderStats();
     expect(document.title).toBe('Estadísticas · nerdose');
-    expect(screen.getAllByRole('link', { current: 'page' }).length).toBeGreaterThan(0);
+    const nav = screen.getByRole('navigation', { name: 'Navegación principal' });
+    const link = within(nav).getByRole('link', { name: './stats' });
+    expect(link).toHaveAttribute('href', '/stats');
+    expect(link).toHaveAttribute('aria-current', 'page');
+    expect(within(nav).getByRole('link', { name: './juegos' })).not.toHaveAttribute('aria-current');
   });
 
   it('TS-20: cargando', async () => {
@@ -52,6 +70,7 @@ describe('Pantalla /stats', () => {
     expect(screen.getByText('racha global', { exact: false })).toBeInTheDocument();
     expect(streakValue()).toHaveTextContent('4');
     expect(streakValue()).toHaveClass('text-streak');
+    expect(streakValue().nextElementSibling).toHaveTextContent(/días\s*seguidos/);
     expect(screen.getByText('9 días')).toBeInTheDocument();
     expect(screen.getByText('Récord')).toBeInTheDocument();
     expect(screen.getByText('31')).toBeInTheDocument();
@@ -64,6 +83,7 @@ describe('Pantalla /stats', () => {
     expect(streakValue()).toHaveTextContent('0');
     expect(streakValue()).toHaveClass('text-text-dim');
     expect(streakValue()).not.toHaveClass('text-streak');
+    expect(streakValue().nextElementSibling).toHaveTextContent(/días\s*seguidos/);
     expect(screen.getByText('9 días')).toBeInTheDocument();
   });
 
@@ -83,6 +103,7 @@ describe('Pantalla /stats', () => {
     expect(
       await within(devdle).findByRole('heading', { level: 4, name: 'intentos' }),
     ).toBeVisible();
+    expect(await within(devdle).findByText('1: 1 partidas')).toBeInTheDocument();
     expect(await within(bug).findByText('Todavía no jugaste a este juego.')).toBeInTheDocument();
   });
 
@@ -219,7 +240,14 @@ describe('Pantalla /stats', () => {
       ),
     ).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Ir a los juegos/ })).toHaveAttribute('href', '/');
+    expect(streakValue()).toHaveTextContent('0');
+    expect(streakValue()).toHaveClass('text-text-dim');
+    expect(streakValue().nextElementSibling).toHaveTextContent(/días\s*seguidos/);
     expect(screen.getByText('0 días')).toBeInTheDocument();
+    expect(screen.getByText('Récord')).toBeInTheDocument();
+    expect(screen.getByText('0', { selector: 'p.font-mono' })).toBeInTheDocument();
+    expect(screen.getByText('Desafíos completados')).toBeInTheDocument();
+    expectEmptyCards();
     expect(screen.getAllByText('Todavía no jugaste a este juego.')).toHaveLength(5);
     expect(screen.getByText('Sin partidas en los últimos 365 días')).toBeInTheDocument();
     expect(screen.getByText('Todavía no hay partidas completadas.')).toBeInTheDocument();
@@ -244,7 +272,11 @@ describe('Pantalla /stats', () => {
     expect(cta).toHaveAttribute('aria-disabled', 'true');
     expect(screen.getAllByText('Todavía no jugaste a este juego.')).toHaveLength(5);
     expect(screen.getByText('Sin partidas en los últimos 365 días')).toBeInTheDocument();
-    expect(document.querySelector('[aria-current="date"]')).not.toBeNull();
+    expectEmptyCards();
+    const todayCell = document.querySelector('[aria-current="date"]') as HTMLElement;
+    expect(todayCell).not.toBeNull();
+    expect(todayCell.getAttribute('aria-label')).toContain('3 de noviembre de 2026');
+    expect(document.querySelectorAll('[aria-current="date"]')).toHaveLength(1);
   });
 
   it('TS-34: 401 con sesión activa muestra el banner y la invitación sin sesión', async () => {
@@ -365,6 +397,13 @@ describe('Pantalla /stats', () => {
     expect(await axe(container)).toHaveNoViolations();
     expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
     expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(5);
+    for (const name of GAME_NAMES) {
+      const card = screen.getByRole('article', { name });
+      const id = card.getAttribute('aria-labelledby');
+      expect(id).toBeTruthy();
+      expect(document.getElementById(id as string)).toHaveTextContent(name);
+      expect(within(card).getByRole('heading', { level: 3 })).toHaveAttribute('id', id as string);
+    }
     for (const name of ['Actividad', 'Por juego', 'Historial']) {
       expect(screen.getByRole('heading', { level: 2, name })).toBeInTheDocument();
     }
