@@ -12,6 +12,7 @@ const FORBIDDEN = [
   { name: 'outline-none', re: /\boutline-none\b/ },
   { name: 'transition', re: /\btransition\b/ },
   { name: 'animate', re: /\banimate-/ },
+  { name: 'line-number token', re: /\btext-line-number\b/ },
 ] as const;
 
 describe('client styles (TS-62)', () => {

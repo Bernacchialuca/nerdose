@@ -408,17 +408,48 @@ describe('Game layout and styles', () => {
     expect(screen.getByRole('button', { name: 'Confirmar orden' })).toHaveClass('w-full');
   });
 
-  it('keeps 44px controls and wraps the name at 320px (TS-40)', () => {
+  it('keeps 44px controls that never shrink (TS-1)', () => {
+    const { container } = render(<Game {...base()} />);
+    const row = container.querySelector('[data-row-id="g2n5w3"]') as HTMLElement;
+    const controls = [
+      within(row).getByRole('button', { name: /^Go, posición \d de 5$/ }),
+      within(row).getByRole('button', { name: 'Subir Go' }),
+      within(row).getByRole('button', { name: 'Bajar Go' }),
+    ];
+    for (const b of controls) expect(b).toHaveClass('size-11', 'shrink-0');
+  });
+
+  it('wraps the row in two lines below @xs and keeps one line from @xs (TS-2)', () => {
     const { container } = render(<Game {...base()} />);
     expect(orderList()).toHaveClass('@container');
     const row = container.querySelector('[data-row-id="g2n5w3"]') as HTMLElement;
+    expect(row).toHaveClass('flex-wrap', '@xs:flex-nowrap');
     const name = within(row).getByText('Go');
     expect(name).toHaveClass('break-words');
-    expect(name.parentElement).toHaveClass('min-w-0', 'grow');
+    expect(name.parentElement).toHaveClass(
+      'min-w-0',
+      'grow',
+      'basis-full',
+      'order-last',
+      '@xs:basis-auto',
+      '@xs:order-none',
+    );
     const group = within(row).getByRole('button', { name: 'Bajar Go' }).parentElement;
-    expect(group).toHaveClass('flex-col', '@xs:flex-row');
-    for (const b of within(row).getAllByRole('button')) expect(b).toHaveClass('size-11');
+    expect(group).toHaveClass('flex-row', 'ml-auto');
+    expect(group).not.toHaveClass('flex-col');
     expect(container.innerHTML).not.toMatch(/overflow-x-|w-\[/);
+  });
+
+  it('keeps the focus order handle, up, down inside a row (TS-3)', async () => {
+    const user = userEvent.setup();
+    const { container } = render(<Game {...base()} />);
+    const row = container.querySelector('[data-row-id="k1v3s8"]') as HTMLElement;
+    const handle = within(row).getByRole('button', { name: /^Kubernetes, posición \d de 5$/ });
+    handle.focus();
+    await user.tab();
+    expect(within(row).getByRole('button', { name: 'Subir Kubernetes' })).toHaveFocus();
+    await user.tab();
+    expect(within(row).getByRole('button', { name: 'Bajar Kubernetes' })).toHaveFocus();
   });
 });
 

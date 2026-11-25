@@ -125,7 +125,7 @@ export function CodeBlock({
                 onClick={() => select(lang)}
                 onKeyDown={(e) => onKeyDown(e, index)}
                 className={cn(
-                  'min-h-10 rounded-tile px-4 font-mono text-label-comment focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
+                  'min-h-11 rounded-tile px-4 font-mono text-label-comment focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
                   selected
                     ? 'bg-game-big-o-border font-bold text-text'
                     : 'text-text-muted hover:text-text',

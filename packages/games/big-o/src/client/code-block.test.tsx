@@ -31,6 +31,20 @@ beforeEach(() => {
   mockedLoad.mockImplementation(() => new Promise(() => {}));
 });
 
+describe('CodeBlock touch targets and line numbers (TS-7, TS-10)', () => {
+  it('renders 44px tabs and dim line numbers', () => {
+    render(<CodeBlock code={CODE} initialLanguage="go" t={t} highlight={false} />);
+    for (const tab of screen.getAllByRole('tab')) {
+      expect(tab).toHaveClass('min-h-11');
+      expect(tab).not.toHaveClass('min-h-10');
+    }
+    const num = screen
+      .getByRole('tabpanel')
+      .querySelector('[data-line="1"] span[aria-hidden="true"]') as HTMLElement;
+    expect(num).toHaveClass('text-text-dim');
+  });
+});
+
 describe('CodeBlock plain structure (TS-19)', () => {
   it('renders tabs, panel and numbered lines', () => {
     const { container } = render(

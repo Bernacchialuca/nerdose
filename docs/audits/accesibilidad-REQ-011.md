@@ -1,6 +1,6 @@
 # Auditoría de accesibilidad y mobile — REQ-011
 
-**Story:** S-059 · **Fecha:** 2026-11-17 (`web`) · 2026-11-20 (`admin`) · **Estado:** En curso (cerrados `web` y `admin`; pendientes `games` y `ui`)
+**Story:** S-059 · **Fecha:** 2026-11-17 (`web`) · 2026-11-20 (`admin`) · 2026-11-25 (`games`) · **Estado:** En curso (cerrados `web`, `admin` y `games`; pendiente `ui`)
 
 ## Alcance y método
 
@@ -10,6 +10,7 @@
 - Proyectos: `mobile` (Pixel 5, 320×640) y `desktop` (Desktop Chrome, 1280×720); el teclado corre solo en `desktop`. `admin`: solo `desktop`.
 - Chequeos extra: `scrollWidth <= 320` (`html` y `body`), objetivos de toque >= 44×44 (exentos: links en línea dentro de un `p` y celdas dentro de `[role="grid"]`), foco visible (`:focus-visible` con outline o sombra), `prefers-reduced-motion`.
 - `admin`: mismas versiones (`@playwright/test` 1.65.1, `@axe-core/playwright` 4.14.0, axe-core 4.14.0, Chromium headless shell 159.0.8154.6); solo proyecto `desktop` (Desktop Chrome, 1280×720, `timezoneId: UTC`, `locale: es-AR`); Vite aparte en el puerto 5181 con `--workers=2`; sesión sembrada en `sessionStorage` con `addInitScript` (`nerdose_admin_session`); red simulada con `page.route` y los fixtures de `apps/admin/src/test/fixtures/`; reloj fijo por pantalla con `page.clock.setFixedTime` (reportes `2026-11-11T12:00:00Z`, próximos `2026-12-01T14:10:00Z`, métricas `2026-12-10T12:00:00Z`). Resumen de la corrida final: 39 escenarios de página + 6 specs de teclado = 45 tests, todos en verde; axe **0 violaciones** en los 39 análisis.
+- `games` (2026-11-25): mismas versiones (`@playwright/test` 1.65.1, `@axe-core/playwright` 4.14.0, Chromium headless shell 159.0.8154.6); solo los escenarios afectados: `devdle-partida` (`mobile`), `timeline-partida`, `timeline-resultado-ganado`, `timeline-resultado-perdido`, `big-o-partida`, `big-o-resultado-ganado`, `big-o-resultado-perdido`, `bug-hunt-partida`, `bug-hunt-resultado-ganado` y `bug-hunt-resultado-perdido` en `mobile` y `desktop`, más 3 specs de teclado (Timeline, Big O, Bug Hunt; `desktop`) y un chequeo de movimiento reducido en Timeline; Vite aparte en el puerto 5180, `--workers=2`, resultados fuera del repo. Resumen: 10 escenarios (19 corridas, Devdle solo `mobile`) + 3 teclado + 1 movimiento reducido = 26 pasan, 2 omitidas por diseño; axe **0 violaciones** en los 19 análisis; objetivos < 44×44 fuera de exentos = `[]`; `unhandled` = `[]`; `scrollWidth` <= 320.
 - Lockfile antes de la auditoría: `sha256 6bda4924bf6eab2f7e5d9a144d0bcb76530dc6d2b21c3ce9c02c02a17fb60e79  pnpm-lock.yaml`.
 - Resumen de la corrida final de `web` (43 escenarios + 4 chequeos + 5 teclado): `desktop` sin fallos; `mobile` con un único tipo de fallo, el chequeo de objetivos de toque (ver «320 px»). axe: **0 violaciones** en los 86 análisis (43 × 2 proyectos).
 
@@ -124,6 +125,7 @@ axe no encontró **ninguna violación** (WCAG 2.1 A y AA) en los 43 escenarios d
 |---|---|---|---|---|---|---|---|---|
 | — | (sin violaciones propias de `web`) | — | — | — | — | `web` | No hizo falta cambiar código en `apps/web/src` | cerrado |
 | — | (sin violaciones propias de `admin`) | — | — | `desktop` | — | `admin` | No hizo falta cambiar código en `apps/admin/src`; los «hallazgos probables» del plan (contraste de `text-dim`, `heading-order` del drawer, landmarks de `RouteError`, nombre del botón de celda) no se reprodujeron | cerrado |
+| — | (sin violaciones de axe propias de `games`) | — | pantallas de juego afectadas | `mobile`, `desktop` | — | `games` | Los hallazgos G-1…G-6 vienen de los chequeos extra (objetivos de toque y corte de palabra); ver «Hallazgos derivados» | cerrado |
 
 ## `incomplete` revisados a mano
 
@@ -176,22 +178,35 @@ Pasada con `page.keyboard` en `desktop` (sin `click`, `tap` ni `mouse`), foco vi
 
 Observación de método: el indicador interno del selector de fecha de Chromium no activa `:focus-visible` en el `input`; se exime en el helper y el control tiene anillo en los segmentos.
 
+## Teclado · games
+
+Pasada con `page.keyboard` en `desktop` (sin `click` salvo para devolver el foco al documento), foco visible comprobado en cada Tab (exento `h1[tabindex="-1"]`). Los tres pasan hasta el resultado y «✓ Copiado»; sin regresión tras los cambios de `games`.
+
+| juego | pasos | foco visible | Tabs hasta cada destino | observaciones |
+|---|---|---|---|---|
+| timeline | «Empezar» + Enter → asa de la primera fila, Espacio, ↓, Espacio → «Confirmar orden» + Enter → «Compartir» + Enter | sí | 7 hasta «Empezar», 7 hasta el asa, 13 hasta «Confirmar orden», 3 hasta «Compartir» | dentro de una fila el Tab sigue asa → ↑ → ↓ (en la primera fila, ↑ está deshabilitado y salta a ↓); el `order-last` del nombre no altera el orden del DOM |
+| big-o | «Empezar» + Enter → `radiogroup`, flechas hasta «O(n log n)», Espacio → «Confirmar respuesta» + Enter → «Compartir» + Enter | sí | 7, 3 hasta el grupo, 1 hasta «Confirmar respuesta», 3 hasta «Compartir» | — |
+| bug-hunt | «Empezar» + Enter → grupo de líneas, ↓ hasta la línea 4, Espacio → «Confirmar línea 4» + Enter → «Compartir» + Enter | sí | 7, 2 hasta el grupo, 1 hasta «Confirmar línea 4», 3 hasta «Compartir» | solo recorre líneas elegibles |
+
+Movimiento reducido: con `reducedMotion: 'reduce'` y `timelineWon`, `document.getAnimations()` no tiene animaciones en curso (0).
+
+
 ## 320 px
 
 - `admin` no se audita a 320 px (superficie de un solo viewport `desktop`; supuesto [Pulido / admin] de REQ-011).
 - `document.documentElement.scrollWidth` y `document.body.scrollWidth` <= 320 en los 43 escenarios de `mobile` (el chequeo no registró ningún desborde); el código de Big O y Bug Hunt desplaza dentro de su bloque.
 - `/stats`: dos contenedores con scroll horizontal (la tabla del historial 958 > 214 y el heatmap 280 > 212), ambos alcanzables con teclado (`focusable=true`) y con una única parada de Tab en el `role="grid"`; sin violación de `scrollable-region-focusable`.
-- Contenido cortado (revisión de capturas): Timeline en resultado parte «Kubernetes» en dos líneas («Kuberne/tes») dentro de la fila a 320 px. Se deriva a `games` (corte de palabra en la fila del resultado).
+- Contenido cortado (revisión de capturas): Timeline en resultado parte «Kubernetes» en dos líneas («Kuberne/tes») dentro de la fila a 320 px. **Corregido en `games` (G-5):** `packages/games/timeline/src/client/your-order.tsx` agrupa nombre y badge en un contenedor `flex-wrap`; tras la corrección, «Kubernetes» y los demás nombres de una palabra dan un único rectángulo de línea en «// tu orden» y «// orden correcto», en `mobile` y `desktop` (el badge «✓ bien» baja bajo el nombre).
 - Objetivos de toque < 44×44 (`mobile`), fuera de exentos:
 
 | Elemento | Medida | Dueño | Origen | Estado |
 |---|---|---|---|---|
 | Botones ES / EN del selector de idioma | 44×36 de caja, 44×44 efectivos | `ui` | `packages/ui/src/components/segmented-control.tsx` (`h-9` + `before:-inset-y-1` amplía el área tocable 4 px arriba y abajo) | **Excepción aceptada**: el área de toque medida con el pseudo-elemento es 44×44; el chequeo mide la caja. |
 | «Cerrar» de los diálogos | 32×32 | `ui` | componente de diálogo/aviso de `@nerdose/ui` | Derivado a `ui` |
-| Teclas del teclado de Devdle | 20–31 × 54 | `games` | `packages/games/devdle/src/client/keyboard.tsx` | Derivado a `games` (10 teclas por fila en 288 px no llegan a 44 de ancho; evaluar excepción justificada por espaciado o teclado reducido) |
-| Asas de Timeline | 21–22 × 44 | `games` | `packages/games/timeline/src/client/sortable-row.tsx` | Derivado a `games` |
-| Pestañas de lenguaje de Big O y Bug Hunt | 48–112 × 40 | `games`/`ui` | pestañas de `code-block.tsx` | Derivado a `games` |
-| Líneas elegibles de Bug Hunt | 254–435 × 40 | `games` | `packages/games/bug-hunt/src/client/code-block.tsx` | Derivado a `games` (alto 40) |
+| Teclas del teclado de Devdle | 20–31 × 54 | `games` | `packages/games/devdle/src/client/keyboard.tsx` | Excepción aceptada (G-1): ancho 20,2–31,0 × 54 px, pitch mínimo 26,2 px (≥ 24); ver «Excepciones aceptadas» |
+| Asas de Timeline | 21–22 × 44 | `games` | `packages/games/timeline/src/client/sortable-row.tsx` | Corregido (G-2): `sortable-row.tsx`, asa y ↑ ↓ `shrink-0`, medidos 44×44 en las 5 filas |
+| Pestañas de lenguaje de Big O y Bug Hunt | 48–112 × 40 | `games`/`ui` | pestañas de `code-block.tsx` | Corregido (G-4 / UI-3): `code-block.tsx` de Big O y Bug Hunt a `min-h-11`, alto ≥ 44 |
+| Líneas elegibles de Bug Hunt | 254–435 × 40 | `games` | `packages/games/bug-hunt/src/client/code-block.tsx` | Corregido (G-3): `code-block.tsx` a `min-h-11`, alto ≥ 44 |
 
 ## Sin color (CA 30)
 
@@ -203,7 +218,7 @@ Observación de método: el indicador interno del selector de fecha de Chromium 
 | Devdle | Fichas correctas con ✓, ausentes con borde punteado y «~», descartadas con «✕» | Captura en gris de `devdle-resultado-perdido`: se distinguen sin color |
 | Timeline | «✓ bien» / «✕ va en N°» + borde punteado; «3/5 posiciones correctas» | Captura en gris de `timeline-resultado-perdido` |
 | Grep Grid | Celdas encontradas rellenas, reveladas con borde punteado; nombre de celda con el estado | Capturas en gris (`grep-grid-resultado-*`) y nombres accesibles |
-| Big O / Bug Hunt | Etiquetas «tu elección» / «correcta» y glifos en las opciones; ✓/✕ en las líneas | Capturas en gris generadas; revisar con `games` |
+| Big O / Bug Hunt | Etiquetas «tu elección» / «correcta» y glifos en las opciones; ✓/✕ en las líneas | Verificado sin código nuevo: `big-o/src/client/result.test.tsx` («O(n log n), correcta, tu respuesta», `✓`, «O(n²), tu respuesta, incorrecta», `✗`) y `bug-hunt/src/client/{result,code-block}.test.tsx` («✓ acá estaba el bug», «🐛 acá estaba el bug», «✗ tu elección», `◀`); en el navegador los textos «correcta · tu respuesta», «tu elección» y «acá estaba el bug» están visibles y las 4 capturas en gris de `mobile` se revisaron a mano |
 
 | Tablas de métricas (`admin`) | «—» para `null` (p. ej. D7 de la cohorte sin datos), «publicado» / «anulado» en texto en la tabla de calidad, orden activo con `aria-sort` (un solo `th`) | TS-15, TS-17, `metricas` en gris: las filas y estados se distinguen sin color |
 | Celdas de Próximos (`admin`) | Cada celda lleva el texto del estado y su glifo («Aprobado», «Sin desafío», «Falla de generación · 20 intentos · no_valid_term», «Regenerando…»); la falla tiene texto además del fondo `status-warning`; la leyenda lista los estados | TS-9, TS-10, `proximos-falla` en gris |
@@ -218,6 +233,7 @@ Observación de método: el indicador interno del selector de fecha de Chromium 
 | Celdas del tablero de Grep Grid < 44 px | 2.5.8 (proyecto: 44 px) | Tablero 12×12 en 256 px; `role="grid"` con roving tabindex | S-024, `foundations/grid.md` |
 | Celdas del heatmap < 44 px | 2.5.8 | Grilla de datos con alternativa por teclado y dato en texto (`detalle-dia`) | S-056, REQ-011 |
 | Botones ES/EN: caja 44×36 con área tocable de 44×44 por pseudo-elemento | 2.5.8 | Medida con `::before` de 4 px | `segmented-control.tsx` |
+| Teclas del teclado virtual de Devdle ~20 × 54 px a 320 px (medido 20,2–31,0 × 54, pitch mínimo 26,2) | 2.5.8 (proyecto: 44 px) | WCAG 2.1 AA no tiene criterio de tamaño de objetivo; pitch ≥ 24 px (cumple WCAG 2.2 2.5.8 por espaciado); teclado físico equivalente (A–Z, Enter, Backspace; NFR-U03); 10 teclas en 256 px útiles no pueden medir 44 de ancho sin cambiar la QWERTY | DS `game-boards` `devdle.key` 1.1.0 / 1.8.0, `keyboard.tsx`, test TS-11 de `keyboard.test.tsx` |
 | Controles deshabilitados | 1.4.3 | Exentos por la norma | `color.md` |
 | Links en línea dentro de un párrafo | 2.5.8 (en línea) | Excepción «inline» | WCAG 2.5.8 |
 | Miniaturas de las tarjetas con contraste < 4,5:1 (`aria-hidden`) | 1.4.3 | Decorativas | `game-thumbnail.tsx` |
@@ -236,16 +252,18 @@ Observación de método: el indicador interno del selector de fecha de Chromium 
 
 `admin` no agregó hallazgos a `ui` ni a `games`: los 5 `Preview` de O-02 desde Próximos y los componentes de `ui` que usa `admin` no produjeron violaciones; en el único punto que toca a UI-1 («Cerrar» 32×32 en O-01, O-02 y O-03) no hay criterio de fallo en `admin` (ver «Excepciones aceptadas»).
 
-### games — Pendiente de corregir (plan games de S-059)
+UI-3: el origen son los `code-block.tsx` de Big O y Bug Hunt; resuelto por `games` como G-4 (pestañas a 44 px). El plan `ui` solo lo marca cerrado.
 
-| # | Hallazgo | Dónde | Escenarios (`mobile`) | Valor medido | Origen |
-|---|---|---|---|---|---|
-| G-1 | Teclas de Devdle de 20–31 px de ancho | `keyboard.tsx` | `devdle-partida`, `devdle-o01` | 20–31 × 54 | `packages/games/devdle/src/client/keyboard.tsx` |
-| G-2 | Asas de Timeline de 21–22 px de ancho | `sortable-row.tsx` | `timeline-partida` | 21–22 × 44 | `packages/games/timeline/src/client/sortable-row.tsx` |
-| G-3 | Líneas elegibles de Bug Hunt de 40 px de alto | `code-block.tsx` | `bug-hunt-partida` | 254–435 × 40 | `packages/games/bug-hunt/src/client/code-block.tsx` |
-| G-4 | Pestañas de lenguaje de 40 px de alto | `code-block.tsx` de Big O y Bug Hunt | `big-o-*`, `bug-hunt-*` | 48–112 × 40 | `packages/games/{big-o,bug-hunt}/src/client/code-block.tsx` |
-| G-5 | «Kubernetes» se parte en «Kuberne/tes» a 320 px en la fila de resultado | fila de resultado de Timeline | `timeline-resultado-*` | corte de palabra | `packages/games/timeline/src/client/` |
-| G-6 | Los números de línea del código usan `#4F5A66` (2,7:1 según `color.md`) | `code-block.tsx` | `big-o-partida`, `bug-hunt-partida` | 2,7:1 (dato de `color.md`; axe lo marcó `incomplete`, no violación) | `packages/games/{big-o,bug-hunt}/src/client/code-block.tsx` |
+### games — Cerrado (plan games de S-059)
+
+| # | Hallazgo | Dónde | Escenarios (`mobile`) | Valor medido | Origen | corrección / resolución | estado |
+|---|---|---|---|---|---|---|---|
+| G-1 | Teclas de Devdle de 20–31 px de ancho | `keyboard.tsx` | `devdle-partida`, `devdle-o01` | 20–31 × 54 | `packages/games/devdle/src/client/keyboard.tsx` | Excepción aceptada (P-2): sin cambio de código; medida real 20,2–31,0 × 54 px, pitch mínimo 26,2 px; el test `keyboard.test.tsx` fija `gap-1.5` y el tamaño de tecla | excepción aceptada |
+| G-2 | Asas de Timeline de 21–22 px de ancho | `sortable-row.tsx` | `timeline-partida` | 21–22 × 44 | `packages/games/timeline/src/client/sortable-row.tsx` | `sortable-row.tsx`: asa y ↑ ↓ con `shrink-0`; fila `flex-wrap` bajo `@xs` con el nombre en una segunda línea (`basis-full order-last`); tests TS-1 a TS-3 en `game.test.tsx`; medido 44×44 en las 5 filas | corregido |
+| G-3 | Líneas elegibles de Bug Hunt de 40 px de alto | `code-block.tsx` | `bug-hunt-partida` | 254–435 × 40 | `packages/games/bug-hunt/src/client/code-block.tsx` | `bug-hunt/code-block.tsx`: líneas elegibles `min-h-11`; test `code-block.test.tsx`; medido ≥ 44 | corregido |
+| G-4 | Pestañas de lenguaje de 40 px de alto | `code-block.tsx` de Big O y Bug Hunt | `big-o-*`, `bug-hunt-*` | 48–112 × 40 | `packages/games/{big-o,bug-hunt}/src/client/code-block.tsx` | `big-o/code-block.tsx` y `bug-hunt/code-block.tsx`: pestañas `min-h-11`; tests de pestañas de ambos; medido ≥ 44 (cierra UI-3) | corregido |
+| G-5 | «Kubernetes» se parte en «Kuberne/tes» a 320 px en la fila de resultado | fila de resultado de Timeline | `timeline-resultado-*` | corte de palabra | `packages/games/timeline/src/client/` | `your-order.tsx`: nombre y badge en un grupo `flex-wrap`, la fila con `py-2`; test TS-5 en `result.test.tsx`; «Kubernetes» entero a 320 px | corregido |
+| G-6 | Los números de línea del código usan `#4F5A66` (2,7:1 según `color.md`) | `code-block.tsx` | `big-o-partida`, `bug-hunt-partida` | 2,7:1 (dato de `color.md`; axe lo marcó `incomplete`, no violación) | `packages/games/{big-o,bug-hunt}/src/client/code-block.tsx` | No se reproduce: los números de línea ya usan `text-text-dim` (≈ 6,4:1); guardia `text-line-number` en `client-styles.test.ts` de Big O y Bug Hunt y aserción de color en `big-o/code-block.test.tsx` | no se reproduce |
 
 ## Cómo repetir la auditoría
 
@@ -282,5 +300,17 @@ Cerrado en `admin` (2026-11-20):
 - Hash del lockfile idéntico al previo (`6bda4924…0e79`), `git diff` de `pnpm-lock.yaml` vacío; resultados temporales fuera del repo borrados.
 - Exit 0: `pnpm install --frozen-lockfile`, `pnpm lint`, `pnpm typecheck`, `pnpm test`.
 - `docs/architectures/admin/conventions/testing-e2e.md`: coherente (no hay suite, Playwright no es herramienta vigente, remite a este informe, D3 abierta); sin cambios.
-### games — Pendiente
+### games
+
+Cerrado en `games` (2026-11-25):
+
+- Correcciones: `packages/games/timeline/src/client/{sortable-row,your-order}.tsx` (G-2, G-5), `packages/games/{big-o,bug-hunt}/src/client/code-block.tsx` (G-3, G-4 = UI-3); tests de regresión en `timeline/{game,result}.test.tsx`, `big-o/code-block.test.tsx`, `bug-hunt/code-block.test.tsx`, `{big-o,bug-hunt}/client-styles.test.ts` (guardia de G-6) y `devdle/keyboard.test.tsx` (excepción G-1). G-1 excepción aceptada; G-6 no se reproduce.
+- DS `web` 1.12.0 (`code-block` 1.3.0, `game-boards` 1.8.0); ver `docs/design-system/web/CHANGELOG.md`.
+- Auditoría: 10 escenarios (19 corridas) + 3 teclado + movimiento reducido; axe 0 violaciones.
+- Retiro: `pnpm --filter web remove @playwright/test @axe-core/playwright`, borrados `apps/web/playwright.config.ts` y `apps/web/e2e/`; `apps/web/package.json` y `tsconfig.json` sin cambios.
+- `grep "@playwright/test\|@axe-core/playwright"` sobre los `package.json` y `pnpm-lock.yaml`: sin coincidencias; `apps/web/playwright.config.ts` y `apps/web/e2e/` no existen; `grep -rn playwright apps/web` (sin `node_modules`, `dist`) vacío.
+- Hash del lockfile idéntico al previo (`6bda4924…0e79`), `git diff -- apps pnpm-lock.yaml` vacío; resultados temporales fuera del repo borrados.
+- Exit 0: `pnpm install --frozen-lockfile`, `pnpm lint`, `pnpm typecheck`, `pnpm test` (con la corrida en paralelo completa hubo timeouts de axe y Shiki bajo carga en Devdle, Bug Hunt y Timeline; los mismos tests pasan en aislamiento y con `--concurrency=2`).
+- `docs/architectures/{web,admin}/conventions/testing-e2e.md`: coherentes (no hay suite, Playwright no es herramienta vigente, remiten a este informe, D3 abierta); sin cambios.
+
 ### ui — Pendiente

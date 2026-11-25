@@ -1,8 +1,8 @@
 ---
 component: code-block
-version: 1.2.1
+version: 1.3.0
 status: active
-last_updated: 2026-11-15
+last_updated: 2026-11-25
 source: docs/nerdose.html
 related: [panel, terminal-window]
 ---
@@ -21,7 +21,7 @@ related: [panel, terminal-window]
 
 1. **Container** — borde `border.default`, fondo `bg.surface.sunken` (`#0D1116`), `radius.panel` (14), `overflow: hidden`.
 2. **Barra de pestañas** — `role="tablist"`, flex-wrap, `space-between`, gap 4, padding 8, `border-bottom` `border.subtle`, fondo `bg.toolbar` (`#11161C`):
-   - **Pestañas** — `min-height: 40px; padding: 0 16px; radius: 8`, sin borde, `type.label.tab` (Mono 13; 700 seleccionada). "JavaScript", "Go", "Java".
+   - **Pestañas** — `min-height: 44px` (antes 40; S-059, objetivo de toque 44×44); padding: 0 16px; radius: 8`, sin borde, `type.label.tab` (Mono 13; 700 seleccionada). "JavaScript", "Go", "Java".
    - **Nombre de archivo** — `type.meta` (Mono 12) `text.dim`, padding 0 10: `max-index.js` / `max_index.go` / `MaxIndex.java` (L777).
 3. **Cuerpo** — `overflow-x: auto`, padding vertical 14 (Bug Hunt) o 18 (Big O); en Bug Hunt `role="radiogroup"`.
 4. **Línea** — flex, `align-items: center`, padding 0 18, `type.code` (Mono 15 / lh 2, `tab-size: 4`), `text.primary`; texto `white-space: pre`.
@@ -61,7 +61,7 @@ Caja `radius.inset` (12), `bg.surface.sunken`, borde `border.default`, `overflow
 
 ## Sizes
 
-Único. Línea interactiva: `min-height: 40px`.
+Único. Línea interactiva: `min-height: 44px`.
 
 ## States
 
@@ -134,3 +134,4 @@ Caja `radius.inset` (12), `bg.surface.sunken`, borde `border.default`, `overflow
 - 2026-11-14 v1.1.0 — Story S-046: variante de resaltado con tema desde tokens y fallback sin color, números de línea en `text.dim`, nota bajo la línea en bloques angostos, pestañas bloqueadas y mapeo provisorio de los tokens Big O ausentes en `@nerdose/ui`.
 - 2026-11-15 v1.2.0 — Story S-051: resaltado en `selectable` y modo resultado de Bug Hunt (tema desde tokens de Bug Hunt con AA sobre los cuatro fondos de línea, no elegibles sin color), glifo `◀` fijo en bloques angostos, números de línea en `text.dim`, teclado de las líneas y mapeo provisorio del diff.
 - 2026-11-15 v1.2.1 — Diff con `status.*.diff-text`: los tokens ya están en `@nerdose/ui` y se elimina el mapeo provisorio.
+- 2026-11-25 v1.3.0 — Story S-059 (plan `games`): pestañas y línea interactiva a `min-height: 44px` (objetivo de toque del proyecto); números de línea confirmados en `text.dim` (el `text.line-number` no se usa).

@@ -3,6 +3,24 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.12.0] - 2026-11-25
+
+**MINOR.** Auditoría de accesibilidad (story S-059, plan `games`). Ningún token se agrega ni cambia.
+
+### Cambiado
+- `components/code-block.md` 1.3.0: pestañas y línea interactiva a `min-height: 44px` (antes 40).
+- `patterns/game-boards.md` 1.8.0: `bug-hunt.line` a `min-height: 44px`; `timeline.row` de partida en dos líneas bajo 20rem con controles `flex-shrink: 0`; `timeline.row` de resultado con el badge que baja bajo el nombre; `devdle.key` cita la medida de la auditoría (20,2–31,0 × 54 px, pitch mínimo 26,2 px).
+
+### Código alineado con el spec
+- `@nerdose/game-timeline/client`: `sortable-row.tsx` y `your-order.tsx`.
+- `@nerdose/game-big-o/client` y `@nerdose/game-bug-hunt/client`: `code-block.tsx` (pestañas y, en Bug Hunt, líneas elegibles a 44px).
+
+### Notas para limpiar en otros docs
+- `docs/ux/surfaces/web/screens/bug-hunt-partida.md` (bloque `codigo`: «`min-height: 40px`» pasa a 44), `docs/ux/surfaces/web/screens/timeline-partida.md` (Accesibilidad: «al menos 40 px» pasa a 44; `lista-hitos` a 320 px en dos líneas) y los wireframes de `web` de esas pantallas.
+- `--color-text-line-number` sigue en `@nerdose/ui` sin uso (candidato a limpieza en una story de `ui`).
+
+---
+
 ## [1.11.1] - 2026-11-15
 
 **PATCH.** Se resuelven las notas de la 1.11.0 sobre tokens y textos del host. Ningún valor definido cambia: el código pasa a usar los tokens que el DS ya tenía.
