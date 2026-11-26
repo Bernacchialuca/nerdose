@@ -246,6 +246,9 @@ describe('Métricas (P-05): rango y estados', () => {
     const button = screen.getByRole('button', { name: 'Consultando…' });
     expect(button).toHaveAttribute('aria-disabled', 'true');
     NO_DATA();
+    // Espera a que el handler pendiente reciba el request: si no, con la máquina cargada
+    // llega tarde y lo atiende el handler del test siguiente.
+    await waitFor(() => expect(requestsTo('GET', PATH)).toHaveLength(1));
   });
 
   it('error de sistema con «Reintentar» (TS-21)', async () => {

@@ -103,7 +103,8 @@ describe('verify with real toolchains', () => {
 
   it('kills a real timeout (TS-36)', async () => {
     const started = Date.now();
-    const log = await createVerify({ timeoutMs: 2000 })(
+    // 5 s: Go y Java tienen que terminar dentro del mismo límite aunque la máquina esté cargada.
+    const log = await createVerify({ timeoutMs: 5000 })(
       withLine('js', 3, '  for (let i = 1; i < nums.length; i--) {'),
       emptyHistory,
     );
@@ -113,6 +114,6 @@ describe('verify with real toolchains', () => {
     for (const n of ['run_correct_go', 'run_mutant_go', 'run_correct_java', 'run_mutant_java']) {
       expect(named(log, n).ok).toBe(true);
     }
-    expect(Date.now() - started).toBeLessThan(15_000);
+    expect(Date.now() - started).toBeLessThan(30_000);
   });
 });

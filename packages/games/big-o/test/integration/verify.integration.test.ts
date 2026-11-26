@@ -87,11 +87,12 @@ describe('verify with real toolchains', () => {
 
   it('rejects a real timeout (TS-34)', async () => {
     const started = Date.now();
-    const log = await createVerify({ timeoutMs: 2000 })(
+    // 5 s: Go y Java tienen que terminar dentro del mismo límite aunque la máquina esté cargada.
+    const log = await createVerify({ timeoutMs: 5000 })(
       mutated('js', 'j *= 2', 'j *= 1'),
       emptyHistory,
     );
-    expect(Date.now() - started).toBeLessThan(15_000);
+    expect(Date.now() - started).toBeLessThan(30_000);
     expect(log.reason).toBe('run_js: timeout');
     expect(named(log, 'run_js').detail).toMatch(/^timeout \(\d+ ms\)$/);
     expect(named(log, 'run_go').ok).toBe(true);

@@ -11,7 +11,7 @@
     "build": "turbo run build",
     "lint": "turbo run lint lint:workspace",
     "typecheck": "turbo run typecheck typecheck:workspace",
-    "test": "turbo run test test:workspace",
+    "test": "turbo run test test:workspace --concurrency=3 -- --maxWorkers=4",
     "lint:workspace": "eslint eslint.config.js vitest.config.ts test",
     "typecheck:workspace": "tsc -p tsconfig.json",
     "test:workspace": "vitest run --config test/vitest.config.ts",
