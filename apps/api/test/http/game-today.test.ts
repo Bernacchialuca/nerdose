@@ -278,6 +278,7 @@ describe('GET /api/games/{game_id}/today', () => {
         definition: 'Combinar los cambios de dos ramas en una.',
         summary: 'Operación de Git que integra historias.',
         guesses: [G_REACT, G_MERGE],
+        hint: null,
       },
       game_stats: { game_id: 'devdle', ...STATS },
     });
