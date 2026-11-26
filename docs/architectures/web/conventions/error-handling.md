@@ -60,17 +60,30 @@ onError: (err) => {
 ### Route error screen
 
 ```tsx
-// src/app/route-error.tsx
+// src/app/route-error.tsx — it replaces the whole shell (it is its errorElement)
 export function RouteError() {
   const error = useRouteError();
+  useEffect(() => { console.error(error); }, [error]);
   return (
-    <main role="alert">
-      <h1>{t('errors.title')}</h1>
-      <button onClick={() => location.reload()}>{t('errors.retry')}</button>
-    </main>
+    <div className="flex min-h-dvh flex-col">
+      <AppHeader brand={<a href="/"><BrandMark label={t('shell.brand')} /></a>} />  {/* no session, no queries */}
+      <main><div role="alert">
+        <ErrorTerminal command="nerdose --play" output={describeError(error, t('errors.terminalOutput'))}
+          exitCode={1} title={t('errors.title')} message={t('errors.message')}
+          actions={<>
+            <button onClick={() => location.reload()} className={buttonClass({ fullWidth: true })}>{t('errors.retry')}</button>
+            <a href="/" className={buttonClass({ variant: 'secondary', fullWidth: true })}>← {t('errors.back')}</a>
+          </>} />
+      </div></main>
+      <SiteFooter />
+    </div>
   );
 }
+// describeError: the real `Name: message` only when import.meta.env.MODE === 'development'; otherwise the i18n fallback
 ```
+
+- `RouteError` builds its own minimal header (brand only) and footer: whatever broke may be the session or a query, so it depends on neither. Its links are plain `<a>` (not `<Link>`) to force a clean reload of the app.
+- `ErrorTerminal` (`src/components/error-terminal.tsx`) is shared with the 404 (`NotFound`, command `cd <path>`): a decorative terminal transcript (`aria-hidden`) above the `h1`, the message and the actions, so the prose says the same as the transcript (REQ-012/S-060, UX screens `error-inesperado` and `no-encontrado`).
 
 ### Query errors in a section
 

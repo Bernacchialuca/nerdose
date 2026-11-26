@@ -27,7 +27,7 @@ src/modules/upcoming/
     └── preview-error-boundary.tsx    # if a Preview throws, shows a warning Banner + the generic payload view
 ```
 
-The generic fallback is `PayloadBilingual`, exported by the `reports` module (`@/modules/reports`).
+The generic fallback is `PayloadTexts` (Spanish texts of the payload; `PayloadBilingual` until REQ-012), exported by the `reports` module (`@/modules/reports`).
 
 ## Configuration
 
@@ -54,29 +54,24 @@ export function previewComponent(id: GameId) { /* React.lazy over the entry, cac
 
 ## How to use
 
-### Side-by-side preview
+### Preview (Spanish only, REQ-012)
 
 ```tsx
 export function ChallengePreview({ gameId, payload }: ChallengePreviewProps) {
-  if (!hasPreview(gameId)) return <PayloadBilingual payload={payload} />;
-  const LazyPreview = previewComponent(gameId);
+  if (!hasPreview(gameId)) return <PayloadTexts payload={payload} />;
   return (
     <PreviewErrorBoundary payload={payload}>
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        {(['es', 'en'] as const).map((language) => (
-          <Panel key={language} title={language.toUpperCase()} titleLevel={3}>
-            <Suspense fallback={<p role="status">Cargando preview…</p>}>
-              <LazyPreview payload={payload} language={language} />
-            </Suspense>
-          </Panel>
-        ))}
-      </div>
+      <Panel title="Vista previa" titleLevel={3}>
+        <Suspense fallback={<p role="status">Cargando preview…</p>}>
+          {createElement(previewComponent(gameId), { payload, language: 'es' })}
+        </Suspense>
+      </Panel>
     </PreviewErrorBoundary>
   );
 }
 ```
 
-- The two panels stack on narrow screens and sit side by side from `lg` up (the drawer is narrower than the page).
+- One panel, always `language: 'es'`: the admin is Spanish-only, including the challenge texts. That both languages exist is guaranteed by the generator's verification (`texts_bilingual`), not by a human review. (Until REQ-012 the drawer showed ES and EN side by side.)
 - Each `Preview` translates its own texts with the game package's i18n resources according to `language`, and sets `lang` on its root. The admin does **not** initialize i18next nor wrap previews in `I18nextProvider`; the admin UI is plain Spanish.
 - Give the drawer's preview a `key={challenge.id}` so a regenerated challenge remounts it (and resets the error boundary).
 - The preview is read-only: it never sends moves, starts plays or calls player endpoints.
@@ -84,15 +79,16 @@ export function ChallengePreview({ gameId, payload }: ChallengePreviewProps) {
 
 ### Fallbacks
 
-- No `Preview` for the game -> `PayloadBilingual`. Today all 5 games ship `Preview`, so this is a defensive path for a `game_id` added to `GameId` before its package exports `Preview` (covered by `challenge-preview.test.tsx` with a mocked registry).
-- `Preview` throws (e.g. payload does not match the game's schema) -> `PreviewErrorBoundary` logs the error and shows a warning `Banner` plus `PayloadBilingual`, so the drawer stays usable (regenerate still works).
+- No `Preview` for the game -> `PayloadTexts`. Today all 5 games ship `Preview`, so this is a defensive path for a `game_id` added to `GameId` before its package exports `Preview` (covered by `challenge-preview.test.tsx` with a mocked registry).
+- `Preview` throws (e.g. payload does not match the game's schema) -> `PreviewErrorBoundary` logs the error and shows a warning `Banner` plus `PayloadTexts`, so the drawer stays usable (regenerate still works).
 
 ## Rules
 
 - Import only `@nerdose/game-<game_id>/client`; never `./definition`, `./generator` or `@nerdose/polyglot`.
 - The registry is the only place that lists games; no `if`/`switch` by `game_id` in `apps/admin`.
 - Each game is a dynamic `import()` loaded only when its preview opens.
-- Previews always show Spanish and English together; a challenge is not reviewable with one language only.
+- Previews and payload texts are shown in Spanish only (REQ-012/S-068).
+- Vite must pre-scan the game clients: `optimizeDeps.entries` includes `../../packages/games/*/src/client/index.ts` (see `_base`, REQ-012/S-069).
 - Previews never send requests to player endpoints (`/api/games/*`, `/api/session`); they render from the admin payload.
 - A failing preview must never break the drawer: always wrap it in `PreviewErrorBoundary` with the generic payload fallback.
 - Heavy dependencies (Shiki, dnd-kit) stay inside the game packages and load lazily.

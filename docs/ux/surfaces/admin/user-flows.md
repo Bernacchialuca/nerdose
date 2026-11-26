@@ -1,8 +1,8 @@
 ---
 document: UX User Flows
 surface: admin
-version: "1.3"
-date: 2026-11-15
+version: "1.4"
+date: 2026-11-25
 status: Draft - Punto de partida para discusión
 flows_count: 5
 ---
@@ -14,7 +14,7 @@ flows_count: 5
 > flujos derivan de estos o son operaciones secundarias. Si un flujo cruza
 > a otra superficie, vive en `cross-surface-flows.md`, no acá.
 
-> Todo lo que sigue es hipótesis hasta validar con el responsable. Los pasos se apoyan en las pantallas y overlays de `product-map.md` (P-01..P-05, O-01..O-03). Donde el PRD no define el comportamiento, se marca como supuesto o remite a una pregunta abierta del product-map.
+> Todo lo que sigue es hipótesis hasta validar con el responsable. Los pasos se apoyan en las pantallas y overlays de `product-map.md` (P-01..P-06, O-01..O-03). Donde el PRD no define el comportamiento, se marca como supuesto o remite a una pregunta abierta del product-map.
 
 ## Flujos Documentados
 
@@ -74,8 +74,8 @@ El responsable está en P-02 con el encabezado de navegación visible y el token
 
 ### Happy path
 
-1. Con sesión activa, el responsable entra a P-02 (Reportes). Ve grupos por desafío: los alertados primero (marcados "alertado"), luego los más reportados y luego los más recientes, con filtro en `open` por defecto. `[fuente: REQ-007 CA 14]`
-2. Abre un grupo (fila) y se despliega O-02 (Detalle del desafío): la solución completa en ES y EN lado a lado (vista genérica del `payload` hasta FG-7), los datos del desafío, el log de verificación y cada reporte con motivo, mensaje, idioma, contexto y `player_ref`.
+1. Con sesión activa, el responsable entra a P-02 (Reportes). Ve grupos por desafío: los alertados primero (marcados "alertado"), luego los más reportados y luego los más recientes, con filtro en `open` por defecto; la lista se pagina de a 20 grupos («‹ Anterior · Siguiente ›», solo si hay más de una página; REQ-012). `[fuente: REQ-007 CA 14]`
+2. Abre un grupo (fila) y se despliega O-02 (Detalle del desafío): la solución completa con sus textos en español (vista genérica del `payload`; desde REQ-012 el admin no muestra la versión en inglés), los datos del desafío, el log de verificación y cada reporte con motivo, mensaje, idioma, contexto y `player_ref`.
 3. Concluye que el error es real y pulsa "Anular". Se abre O-01 (Anular desafío).
 4. Completa `void_reason` (obligatorio, hasta 500 caracteres) y elige el culpable de una lista: los términos o hechos del propio desafío por nombre (`culprits`), "La plantilla del juego" o "Ninguno". No se tipea ningún id. `[fuente: REQ-007 decisión 3]`
 5. O-01 muestra el resumen de consecuencias irreversibles: el desafío deja de aceptar jugadas y muestra el mensaje de anulación, las Play pasan a `voided`, los reportes abiertos pasan a `resolved`, el culpable pasa a `rejected` si es término o hecho, y se recalculan los agregados de los jugadores. `[fuente: PRD C-41]`
@@ -106,7 +106,7 @@ El grupo desaparece de la cola de abiertos en P-02 y aparece bajo "resueltos" si
 
 ### Criterios de éxito
 
-- El responsable decide si anula sin salir de P-02 ni consultar otra fuente (solución, ES/EN, motivos y contexto en un solo lugar). `[fuente: benchmark - Modqueue de Reddit, a evitar]`
+- El responsable decide si anula sin salir de P-02 ni consultar otra fuente (solución, textos, motivos y contexto en un solo lugar; los textos solo en español desde REQ-012). `[fuente: benchmark - Modqueue de Reddit, a evitar]`
 - Ve las consecuencias irreversibles antes de confirmar. `[fuente: benchmark - Django admin, a evitar]`
 - No ejecuta la anulación dos veces por un error de red.
 
@@ -120,7 +120,7 @@ El grupo desaparece de la cola de abiertos en P-02 y aparece bajo "resueltos" si
 
 ### Happy path
 
-1. En P-02 (filtro `open`), el responsable abre un grupo con O-02 y lee solución, ES/EN y motivos.
+1. En P-02 (filtro `open`), el responsable abre un grupo con O-02 y lee solución, textos y motivos.
 2. Para cada reporte decide: si no hay error en el desafío, "Descartar"; si el reporte era válido y ya se atendió, "Resolver".
 3. El sistema pasa ese reporte a `dismissed` o `resolved` (estados terminales, solo desde `open`), sin tocar el desafío ni las partidas. El drawer sigue abierto con el resto. `[fuente: REQ-007 CA 15]`
 4. Cuando no quedan reportes abiertos en el grupo, el grupo sale de la cola de abiertos y el contador del encabezado baja.
@@ -161,17 +161,17 @@ Los reportes tratados quedan `resolved` o `dismissed` y visibles bajo su filtro;
 
 1. El responsable entra a P-03 (Próximos desafíos) desde el encabezado («Próximos», con el número de fallas activas si hay).
 2. Ve la grilla de mañana a +14 días × juegos registrados con el estado de cada celda: aprobado, sin desafío (con su falla de generación), regeneración pendiente, regeneración fallida o «usa un ítem rechazado». Hoy no aparece. `[fuente: REQ-008 CA 1]`
-3. Abre una celda aprobada que le parece dudosa: O-02 muestra la preview del juego en modo solución (como la ve el jugador, con la solución superpuesta) en ES y EN lado a lado, el intento, la versión del generador y el log de verificación, sin el seed. `[fuente: REQ-008 CA 2]`
-4. Pulsa «Regenerar». O-03 explica que el pedido se atiende en segundo plano y pide confirmar (solo `approved` con fecha posterior a hoy).
+3. Abre una celda aprobada que le parece dudosa con su tarjeta «Ver detalle ›»: O-02 muestra la preview del juego en modo solución (como la ve el jugador, con la solución superpuesta) en un solo panel «Vista previa» en español (REQ-012), el intento, la versión del generador y el log de verificación, sin el seed. `[fuente: REQ-008 CA 2]`
+4. Pulsa «Regenerar» (solo está dentro de O-02 desde REQ-012). O-03 explica que el pedido se atiende en segundo plano y pide confirmar (solo `approved` con fecha posterior a hoy).
 5. Confirma. La celda (y O-02 si está abierto) pasa a «regeneración pendiente»; el desafío actual sigue aprobado. P-03 hace polling cada 5 s. `[fuente: REQ-008 CA 3]`
 6. El reemplazo pasa la verificación: la celda vuelve a «aprobado» con el desafío nuevo (el viejo pasa a `rejected` en la misma operación) y el polling se corta.
 
 ### Caminos alternativos
 
 - **Revisión sin intervención** — Recorre la grilla, no ve huecos ni avisos y sale. Es el caso esperado la mayoría de los días (hipótesis `inferida-PRD`).
-- **Desafío que usa un ítem rechazado** — La celda y O-02 muestran «Usa un ítem rechazado: <término o hecho>» con «Regenerar» disponible. No se regenera solo: el responsable decide. `[fuente: REQ-008 CA 10]`
+- **Desafío que usa un ítem rechazado** — La celda y O-02 muestran «Usa un ítem rechazado: <término o hecho>» y O-02 ofrece «Regenerar». No se regenera solo: el responsable decide. `[fuente: REQ-008 CA 10]`
 - **Celda sin desafío por una falla de generación** — Muestra los intentos (20) y el último motivo, destacada, y el aviso de la sección la resume. No admite «Regenerar» (C-44 solo aplica a `approved`): la próxima corrida del generador lo reintenta. Cuando una corrida lo logra, la falla deja de mostrarse sola. `[fuente: REQ-008 CA 8, 9]`
-- **Regenerar desde la celda sin abrir el detalle** — Acción directa que abre O-03.
+- ~~**Regenerar desde la celda sin abrir el detalle** — Acción directa que abre O-03.~~ **Quitado en REQ-012 (S-068):** la celda solo abre el detalle; regenerar exige ver antes el desafío en O-02.
 - **Pedir de nuevo con una regeneración pendiente** — «Regenerar» no está disponible; si un doble clic llega a la API, devuelve el pedido existente y no se crea otro. `[fuente: REQ-008 CA 4]`
 - **Salir de la pantalla durante la regeneración** — El pedido sigue en el servidor; al volver a P-03 la celda muestra su estado real y el polling se retoma si sigue pendiente.
 - **Llega la fecha antes de que se atienda el pedido** — El pedido se cancela, el desafío original se publica sin cambios y el día sale de la grilla (pasa a ser hoy). `[fuente: REQ-008 CA 7]`
@@ -193,7 +193,7 @@ La grilla refleja que cada celda dudosa fue reemplazada (desafío nuevo aprobado
 ### Criterios de éxito
 
 - Detecta de un vistazo qué días de los próximos 14 quedan sin desafío en cada juego, y por qué. `[fuente: PRD §F-12 C-43, C-49]`
-- Puede revisar un desafío futuro como lo verá el jugador (solución, ES/EN, log) sin cargar nada a mano.
+- Puede revisar un desafío futuro como lo verá el jugador (solución en español, log) sin cargar nada a mano.
 - Una regeneración fallida o cancelada nunca deja una celda sin desafío.
 - Se entera de una falla de generación desde cualquier pantalla del admin por el contador del encabezado, sin mail.
 
@@ -208,7 +208,7 @@ La grilla refleja que cada celda dudosa fue reemplazada (desafío nuevo aprobado
 ### Happy path
 
 1. El responsable abre P-04 (Stock de contenido) desde el encabezado.
-2. Ve la última carga del dataset (fecha, versión, insertados, actualizados) y, por banco (términos desglosado por Devdle y Grep Grid; hechos para Tech Timeline): ítems aprobados disponibles y totales, rechazados con motivo, días de stock estimados y si alcanza para ciclar respetando la ventana anti-repetición de cada juego. Además el top 50 de palabras rechazadas en Devdle por cantidad de jugadores distintos, solo lectura. `[fuente: REQ-008 CA 11-13]`
+2. Ve la última carga del dataset (fecha, versión, insertados, actualizados) y, por banco (términos desglosado por Devdle y Grep Grid; hechos para Tech Timeline): ítems aprobados disponibles y totales, rechazados, días de stock estimados y si alcanza para ciclar respetando la ventana anti-repetición de cada juego; desde REQ-012 los disponibles, los días y el ciclo de Devdle no cuentan los términos que Devdle nunca elige. Un resumen «Ítems rechazados» da el total por banco con «Ver en Bancos →». Además el top 50 de palabras rechazadas en Devdle por cantidad de jugadores distintos, paginado de a 10, solo lectura. `[fuente: REQ-008 CA 11-13; REQ-012]`
 3. Concluye que el stock es suficiente y abre P-05 (Métricas).
 4. P-05 abre con los últimos 30 días UTC; si quiere, cambia `from` y `to` y toca «Consultar». Ve cuatro cifras resumen (jugadores únicos, retención D1 y D7, partidas completadas) y las tablas: jugadores diarios total y por juego, retención D1/D7 por cohorte, distribución de rachas vivas a hoy y calidad por desafío. Cada tabla define su métrica al pie. `[fuente: C-46; REQ-011 RF 11-16]`
 5. Ordena la tabla de calidad por «Completado», «Victorias» o «Reportes», identifica un desafío con tasa baja o muchos reportes y decide si revisarlo (ver camino alternativo). `[fuente: REQ-011 decisión de diseño de P-05]`
@@ -216,10 +216,12 @@ La grilla refleja que cada celda dudosa fue reemplazada (desafío nuevo aprobado
 ### Caminos alternativos
 
 - **Solo métricas** — Entra directo a P-05 sin pasar por P-04.
+- **Revisar los ítems de un banco** — Desde «Ver en Bancos →» de P-04 (o desde «Bancos» del encabezado) llega a P-06 filtrado por los rechazados de ese banco; ve cada ítem con su motivo, su último uso por juego y si Devdle lo excluye. Busca por texto (la búsqueda se aplica sola tras una pausa al tipear o con Enter), filtra por estado y categoría y pagina de a 25; los filtros quedan en la URL. Cambiar de pestaña (Términos / Hechos) limpia los filtros. Solo lectura. `[fuente: REQ-012 (S-067, S-068)]`
+- **Tablas largas de Métricas** — Jugadores diarios y calidad se paginan de a 15 filas; ordenar la tabla de calidad vuelve a la página 1. `[fuente: REQ-012]`
 - **Un desafío de baja calidad** — La fila de calidad no enlaza a Reportes ni al desafío (pregunta 6, resuelta por REQ-011: no en v1). El responsable va a P-02 por el encabezado para investigar. Un desafío anulado sigue en la tabla con estado «anulado», y sus partidas anuladas no cuentan en terminadas ni en victorias. `[fuente: REQ-011 CA 17]`
 - **Banco por agotarse** — P-04 muestra días de stock bajos o «Alcanza para ciclar: No» con un aviso que dice qué juego no alcanza; la acción es externa a la superficie (solo lectura, C-45). Alimenta el Flujo 4 si empiezan a aparecer huecos.
 - **Palabra rechazada que debería aceptarse** — El responsable la ve en el top 50 y la suma a la lista base fuera del admin (cambio de código, F-15): no hay acción en P-04.
-- **Sin carga registrada o sin rechazos** — P-04 muestra «Sin datos de carga» y «Sin rechazos» como estados vacíos, no como error. `[fuente: REQ-008 CA 14]`
+- **Sin carga registrada o sin rechazos** — P-04 muestra «Sin datos de carga» y, en el top de palabras, «Sin rechazos…» como estados vacíos, no como error; un banco sin ítems rechazados dice «0 rechazados» sin enlace. En P-06, una búsqueda sin resultados dice «Ningún ítem coincide con los filtros.». `[fuente: REQ-008 CA 14; REQ-012]`
 - **Cambiar el rango** — Reconsultar con otro rango; todas las cifras y tablas lo respetan salvo la distribución de rachas, que es una foto a hoy y lo aclara al pie. El rango queda en la URL: recargar o volver atrás conserva lo consultado. `[fuente: REQ-011 supuesto «Distribución de rachas»]`
 - **Cohorte reciente** — D1 o D7 se ve «—» si ese día todavía no terminó, no 0 %. `[fuente: REQ-011 CA 15]`
 
@@ -227,7 +229,8 @@ La grilla refleja que cada celda dudosa fue reemplazada (desafío nuevo aprobado
 
 - **Rango inválido** (vacío, `from` > `to`, fechas futuras o más de 366 días) — P-05 marca el campo, muestra el motivo y no consulta ni muestra datos. Si el servidor rechaza un rango que el navegador aceptó (reloj desfasado), se muestra el mensaje del servidor. Recuperación: corregir el rango. `[fuente: REQ-011 CA 20]`
 - **Rango sin Play** — Cifras en 0 y «—», y cada tabla dependiente del rango dice «Sin datos en el rango.», distinto de error de carga; la distribución de rachas sigue con datos. Recuperación: ampliar el rango. `[fuente: REQ-011 CA 19]`
-- **Error de carga o API caída** — Cada pantalla muestra el error con reintento, sin mostrar cifras viejas como actuales.
+- **Error de carga o API caída** — Cada pantalla muestra el error con reintento, sin mostrar cifras viejas como actuales (P-06: «No pudimos cargar el banco. Probá de nuevo.» con «Reintentar»; mientras llega otra página se sigue viendo la anterior).
+- **Filtros inválidos en la URL de P-06** — Un `bank`, `status`, `category` o `page` inválido cae al valor por defecto en lugar de romper la pantalla. `[fuente: REQ-012]`
 - **Sesión vencida** — Ver Flujo 1; tras ingresar, el rango elegido se pierde (el login lleva a P-02).
 - **Cifra que no cuadra con lo que el responsable espera** — La definición de cada métrica está al pie de su tabla (cohorte, tramos de rachas, anuladas, total diario no sumable; REQ-011). Si no basta, no hay otra fuente dentro de la superficie. A validar.
 

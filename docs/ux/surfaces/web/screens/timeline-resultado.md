@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.2"
-date: 2026-11-11
+version: "1.3"
+date: 2026-11-25
 ---
 
 # Pantalla: Tech Timeline · Resultado
@@ -20,12 +20,17 @@ date: 2026-11-11
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
 - **JTBD / Propósito:** Ver cuántas posiciones acertó (`N/5`, victoria solo con 5/5), contrastar su orden con el correcto posición por posición, aprender la fecha y una nota breve de cada hito, ver las rachas actualizadas y compartir `N/5` sin revelar los hechos.
 - **Viewports:**
-  - **mobile** — consigna, veredicto y puntaje arriba; «// tu orden», «// orden correcto» con fechas y notas, rachas y la barra de cierre al pie, en una columna.
-  - **desktop** — consigna y veredicto a la izquierda con el puntaje grande a la derecha; «// tu orden» (`1 1 320px`) y «// orden correcto» (`2 1 520px`) lado a lado, como el prototipo; la card de cierre (rachas en una línea + cuenta regresiva y salidas) debajo. Al ganar (5/5) festeja un confeti violeta del juego; el título del veredicto se mantiene porque es el mismo para todos los desenlaces. «Compartir» solo en el header.
+  - **mobile** — veredicto (banner con el puntaje) arriba; «// tu orden», la card de cierre (rachas + salidas), «// orden correcto» con fechas y notas y el reporte, en una columna en el orden del DOM.
+  - **desktop** — veredicto (banner con el puntaje grande como acción) a todo el ancho; debajo, «// tu orden» y la card de cierre en la columna principal (7/12) y «// orden correcto» y el reporte en el lateral (5/12) (patrón común de resultado, REQ-012). Al ganar (5/5) festeja un confeti violeta del juego. «Compartir» solo en el header.
 
 > **Actualización 2026-11-11 (revisión visual del usuario).** Prevalece sobre lo de abajo donde difieran:
 > - El veredicto (`h1`) ya no repite el puntaje, que queda solo en el número grande: 5/5 «Orden perfecto», 3/5 «Casi: solo dos hitos cruzados» (con 5 hitos un 3/5 es exactamente un par cruzado y 4/5 no existe), 2/5 «A mitad de camino», 1/5 «La historia es traicionera», 0/5 «Hoy ganó la historia».
 > - Desktop: «// tu orden» y, debajo, la card de cierre del host (rachas, cuenta regresiva, «Siguiente juego», volver) en la columna izquierda (5/12); «// orden correcto» a la derecha (7/12). Mobile: tu orden, orden correcto y la card de cierre, en ese orden.
+
+> **Actualización 2026-11-25 (REQ-012, S-064: patrón común de resultado, implementado fuera del workflow).** Prevalece sobre todo lo anterior donde difieran:
+> - El veredicto es un `Banner` de `@nerdose/ui` con `titleAs="h1"`, siempre visible arriba y a ancho completo: `success` con 5/5 y `failure` con 0–4. El título es el mismo texto por puntaje de la actualización anterior (sin ✓ en el `h1`); el detalle es «Repasá la fecha y la historia de cada hito.» al ganar y «Mirá el orden correcto: cada hito trae su fecha y un poco de historia.» al perder. El puntaje grande `N/5` va como `action` del banner.
+> - Se quita la línea de comentario `// consigna: del más antiguo al más reciente` del resultado.
+> - Columnas: principal 7/12 = «// tu orden» + card de cierre; lateral 5/12 = «// orden correcto» + reporte (siempre último). Mobile en el orden del DOM: tu orden, card de cierre, orden correcto, reporte.
 
 ## Entrada y salida
 
@@ -50,9 +55,8 @@ date: 2026-11-11
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
 | 1 | header | header | game-header · finished | layout | ambos | — | Breadcrumb `> nerdose / tech-timeline`, «desafío del dd/mm», Compartir activo, idioma y racha |
-| 2 | consigna | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Comentario de consigna fijo (`// consigna: del más antiguo al más reciente`; sin categoría del día desde 2026-11-11) |
-| 3 | veredicto | heading | h1 | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: perdió, cero aciertos, anulado | Veredicto de la partida, con texto además del color |
-| 4 | puntaje | paragraph | body | content | ambos | hidden_in_states: loading, error de sistema, anulado | Puntaje grande `N/5` «posiciones correctas» |
+| 3 | veredicto | banner | success · h1 | feedback | ambos | hidden_in_states: loading, error de sistema; state_overrides: perdió, cero aciertos, anulado | Veredicto siempre visible: `banner` con el título como `h1`, un detalle corto y el puntaje como acción |
+| 4 | puntaje | paragraph | body | content | ambos | hidden_in_states: loading, error de sistema, anulado | Puntaje grande `N/5` «posiciones correctas», dentro del banner (`action`) |
 | 5 | alerta-anulado | alert | warning | feedback | ambos | visible_only_in_states: anulado | Aviso de anulación |
 | 6 | lista-tu-orden | list | timeline.row | content | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: perdió, cero aciertos | Panel «// tu orden»: el orden confirmado con acierto o error por posición (ícono + texto + borde) |
 | 7 | lista-correcto | list | timeline.rail | content | ambos | hidden_in_states: loading, error de sistema, anulado | Panel «// orden correcto»: línea de tiempo con la fecha (según precisión), el nombre, la categoría y la nota de cada hito |
@@ -70,36 +74,29 @@ date: 2026-11-11
 ## Layout por viewport
 
 ### mobile · 400px
-- consigna
-- veredicto
-- puntaje
+- veredicto (con puntaje)
 - alerta-anulado
 - loader
 - alerta-sistema
 - btn-reintentar
 - lista-tu-orden
-- lista-correcto
 - card-rachas
 - link-stats
-- link-reportar
 - cuenta-regresiva
 - btn-siguiente
 - link-volver
+- lista-correcto
+- link-reportar
 
 ### desktop · 1200px
 - alerta-anulado
 - loader
 - alerta-sistema
 - btn-reintentar
-- row `titulo`
-  - col 8/12: consigna, veredicto
-  - col 4/12: puntaje
+- veredicto (12/12; puntaje a la derecha, como acción del banner)
 - row `resultado`
-  - col 4/12: lista-tu-orden
-  - col 8/12: lista-correcto
-- row `cierre`
-  - col 4/12: card-rachas, link-stats
-  - col 8/12: barra `salida` (banner neutral: cuenta-regresiva a la izquierda; btn-siguiente y link-volver a la derecha), link-reportar
+  - col 7/12: lista-tu-orden, card de cierre (card-rachas con link-stats; cuenta-regresiva, btn-siguiente y link-volver)
+  - col 5/12: lista-correcto, link-reportar (siempre último)
 
 ## Contenido
 
@@ -108,20 +105,15 @@ date: 2026-11-11
 - Icono: nada
 - Annotation: `game-header` variant `finished` (REQ-006, como el prototipo): Compartir activo con el acento del juego (`#C39BFF` sobre `#160E26`), único botón de compartir de la pantalla. Texto en tres líneas: «⏳ Tech Timeline #8», «🟩🟥🟥🟩🟩 3/5» (un cuadrado por posición, en el orden confirmado) y «nerdose.dev»; nunca nombres, fechas ni el orden (CA 3, RF 9). «Estadísticas» → `estadisticas`; ES|EN cambia notas, fechas, consigna y categoría; píldora con la racha global ya actualizada. «Cómo se juega» no se muestra en el resultado. Sin nav global ni `nav-movil`
 
-### consigna
-- Texto/label: // consigna: del más antiguo al más reciente · lenguajes de programación
-- Icono: nada
-- Annotation: comentario `//` del prototipo (Mono 13 `text.dim`), en el idioma activo
-
 ### veredicto
-- Texto/label: Orden perfecto
+- Texto/label: Orden perfecto · Repasá la fecha y la historia de cada hito.
 - Icono: check
-- Annotation: `h1` Mono 34 con tracking negativo, como el título del prototipo; al ganar lleva ✓ en verde. Victoria solo con 5/5 (RF 6). El veredicto se dice con texto, no solo con el color del puntaje (NFR-U04)
+- Annotation: `Banner` de `@nerdose/ui` con `titleAs="h1"` (REQ-012): `success` con 5/5, `failure` con 0–4 (detalle «Mirá el orden correcto: cada hito trae su fecha y un poco de historia.»); ningún detalle dice «abajo» ni «a la derecha». El `puntaje` va en el slot `action`. Victoria solo con 5/5 (RF 6). El veredicto se dice con texto, no solo con el color (NFR-U04)
 
 ### puntaje
 - Texto/label: 5/5 · posiciones correctas
 - Icono: nada
-- Annotation: `streak-number` variant `score` del DS (Mono 800 56 en el acento violeta, unidad «posiciones / correctas» en dos líneas), a la derecha del título en desktop y debajo en mobile, como el prototipo (L1003-1005). No es una racha: no usa ámbar
+- Annotation: `streak-number` variant `score` del DS (Mono 800 56 en el acento violeta, unidad «posiciones / correctas» en dos líneas), dentro del banner del veredicto como `action` (REQ-012; antes a la derecha del título, como el prototipo L1003-1005). No es una racha: no usa ámbar
 
 ### alerta-anulado
 - Texto/label: Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.
@@ -202,7 +194,7 @@ date: 2026-11-11
 - Aplica: Sí (sub-estado de default)
 - Mensaje: Casi: solo dos hitos cruzados. Este es el orden correcto, con la fecha y la historia de cada hito.
 - Cambios:
-  - veredicto: content="Casi: solo dos hitos cruzados", icon="nada", annotation="sin drama ni rojo: la partida perdida también suma a la racha (RF 6)" (state_override)
+  - veredicto: content="Casi: solo dos hitos cruzados · Mirá el orden correcto: cada hito trae su fecha y un poco de historia.", variant="failure", icon="nada", annotation="banner `failure` (REQ-012); la partida perdida también suma a la racha (RF 6)" (state_override)
   - puntaje: content="3/5 · posiciones correctas" (state_override)
   - lista-tu-orden: annotation="Python ✓ bien · Go ✗ va en 3° · Java ✗ va en 2° · Docker ✓ bien · Kubernetes ✓ bien (CA 3)" (state_override)
 
@@ -247,7 +239,6 @@ date: 2026-11-11
 - Aplica: Sí
 - Mensaje: $ cargando tu resultado de tech-timeline…
 - Cambios:
-  - consigna: oculto en este estado (hidden_in_states)
   - veredicto: oculto en este estado (hidden_in_states)
   - puntaje: oculto en este estado (hidden_in_states)
   - lista-tu-orden: oculto en este estado (hidden_in_states)
@@ -265,7 +256,6 @@ date: 2026-11-11
 - Aplica: Sí
 - Mensaje: No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.
 - Cambios:
-  - consigna: oculto en este estado (hidden_in_states)
   - veredicto: oculto en este estado (hidden_in_states)
   - puntaje: oculto en este estado (hidden_in_states)
   - lista-tu-orden: oculto en este estado (hidden_in_states)
@@ -283,7 +273,7 @@ date: 2026-11-11
 ## Interacciones
 
 **Eventos:**
-- Compartir del header · on click → share nativo con «⏳ Tech Timeline #8 / 🟩🟥🟥🟩🟩 3/5 / nerdose.dev» o copia al portapapeles (estado success); registra `share:timeline`
+- Compartir del header · on click → share nativo con «⏳ Tech Timeline #8 / 🟩🟥🟥🟩🟩 3/5 / nerdose.dev» o copia al portapapeles (estado success); no emite ningún evento (analítica retirada en REQ-011)
 - ES|EN · on change → notas, formato de las fechas, consigna y etiquetas de categoría pasan al otro idioma; los nombres de los hitos, el puntaje y los aciertos no cambian
 - btn-siguiente · on click → siguiente juego pendiente
 - link-volver · on click → `home`
@@ -297,7 +287,7 @@ date: 2026-11-11
 
 ## Accesibilidad
 
-- **Orden de foco:** header → veredicto → puntaje → tu orden (lectura) → orden correcto (lectura) → rachas → link-stats → link-reportar → salidas (Compartir va en el header).
+- **Orden de foco:** header → veredicto y puntaje → tu orden (lectura) → card de cierre (rachas, link-stats y salidas) → orden correcto (lectura) → link-reportar (Compartir va en el header).
 - **Landmarks y jerarquía:** `h1` es el veredicto; las secciones `//` (tu orden, orden correcto, rachas) son `h2`. Landmarks: header (breadcrumb como `nav` con nombre), main, footer.
 - **Foco y teclado:** O-01 atrapa el foco y lo devuelve a `link-reportar`. Las listas no son interactivas: se recorren como lectura.
 - **Propio de esta composición:** cada fila de «tu orden» dice acierto o error con ícono y texto («✓ bien», «✗ va en 3°») y con borde sólido o punteado, nunca solo con color (NFR-U04, CA 9). El riel es decorativo (`aria-hidden`); la fecha se lee como texto antes del nombre. La confirmación «Copiado» se anuncia con `role=status`.
@@ -315,6 +305,7 @@ date: 2026-11-11
 - REQ-006: se mantiene `card-rachas` además de la barra de cierre, como en Devdle y Grep Grid, porque suma la racha global y el récord que la barra del prototipo no muestra. La stat propia (acierto por categoría, por hito) va en `estadisticas` (FG-10).
 - REQ-006: «Siguiente juego» solo aparece si queda un juego con desafío sin completar, como en Devdle y Grep Grid.
 - REQ-007: «Reportar un problema» se renderiza en los tres juegos (deja de estar oculto hasta FG-6). Es un enlace secundario al final de la columna lateral, no un botón, para no competir con la acción del juego; el estado «ya reportado» se lee de `GameToday.reported` para no ofrecer un intento que va a fallar.
+- REQ-012 (S-064, patrón común de resultado): el veredicto pasa a `banner` `success`/`failure` con el puntaje como acción, igual que en los otros cuatro juegos; se quita el comentario de consigna y el armado con `contents` + `order`; tu orden y la card de cierre van en la principal (7/12) y el orden correcto y el reporte en el lateral (5/12). Supera la alternativa descartada «Banner como veredicto» de REQ-006 y la nota del 2026-11-11.
 - REQ-007 resuelve la pregunta 2 del product-map: `anulado` es una sola variante mínima (aviso + rachas, sin Compartir ni solución) haya o no jugado el jugador antes de la anulación. `GameToday` devuelve la Play `voided` con `result: null` y `public_view: null` (decisión 5 del diseño técnico). «Reportar un problema» sigue visible.
 
 **Alternativas descartadas:**
@@ -330,4 +321,4 @@ date: 2026-11-11
 
 ## Trazabilidad
 
-- C-25, C-12, C-13, C-33, C-36, C-41 · REQ-006 (RF 6-9, 21; CA 3-5, 8, 9, 36) · flujos 1, 3, 4 y 5 de `user-flows.md` · REQ-007 (RF 1, 9; CA 1-3, 24).
+- C-25, C-12, C-13, C-33, C-36, C-41 · REQ-006 (RF 6-9, 21; CA 3-5, 8, 9, 36) · flujos 1, 3, 4 y 5 de `user-flows.md` · REQ-007 (RF 1, 9; CA 1-3, 24) · REQ-012 (S-064).

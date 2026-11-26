@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.2"
-date: 2026-11-11
+version: "1.3"
+date: 2026-11-25
 ---
 
 # Pantalla: Grep Grid · Partida
@@ -20,8 +20,8 @@ date: 2026-11-11
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
 - **JTBD / Propósito:** Encontrar las 8 palabras de la lista en la grilla de 12×12 tocando (o marcando con el teclado) la primera y la última letra de cada una, leer la definición de cada palabra encontrada, seguir el contador `N/8`, sin tiempo y con «Rendirse» siempre disponible.
 - **Viewports:**
-  - **mobile** — grilla 12×12 escalada al ancho (sin scroll horizontal desde 320 px), hint de consola, lista de palabras y «Rendirse» en una columna; «Rendirse» queda separado de la grilla para evitar un toque accidental.
-  - **desktop** — título y consigna a todo el ancho; debajo, grilla y hint a la izquierda (7/12) y lista de palabras (con el contador `N/8` en su encabezado), «Rendirse» y reporte a la derecha (5/12), con la grilla y la lista alineadas arriba.
+  - **mobile** — línea de comentario y título, grilla 12×12 escalada al ancho (sin scroll horizontal desde 320 px), hint de consola, panel «// cómo se juega», lista de palabras, «Rendirse» y reporte en una columna, en el orden del DOM; «Rendirse» queda separado de la grilla para evitar un toque accidental.
+  - **desktop** — bloque de título (comentario + `h1`) a todo el ancho; debajo, grilla y hint en la columna principal (7/12) y, en el lateral (5/12), «// cómo se juega», la lista de palabras (con el contador `N/8` en su encabezado), «Rendirse» y el reporte, en ese orden, alineados arriba (patrón común de partida, REQ-012).
 
 ## Entrada y salida
 
@@ -46,15 +46,16 @@ date: 2026-11-11
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
 | 1 | header | header | game-header · playing | layout | ambos | — | Breadcrumb `> nerdose / grep-grid`, «desafío del dd/mm», acciones de juego, idioma y racha |
-| 2 | titulo | heading | h1 | content | ambos | hidden_in_states: loading, error de sistema | Nombre del juego |
-| 3 | consigna | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Prompt de terminal y consigna de la partida |
+| 2 | consigna | paragraph | label-comment | content | ambos | hidden_in_states: loading, error de sistema | Línea de comentario `// ` arriba del `h1`: prompt de terminal y consigna de la partida |
+| 3 | titulo | heading | h1 | content | ambos | hidden_in_states: loading, error de sistema | Consigna principal de la partida |
 | 4 | contador | card | counter | content | ambos | hidden_in_states: loading, error de sistema | Contador `N/8 encontradas` (reemplaza el reloj; sin cronómetro en ningún punto) |
 | 5 | grilla | image | grep-grid.cell | content | ambos | hidden_in_states: loading, error de sistema | Grilla 12×12 de letras, `role="grid"`, celdas tocables y navegables con teclado |
 | 6 | hint-jugada | paragraph | caption | feedback | ambos | hidden_in_states: loading, error de sistema; state_overrides: primera letra marcada, error de validación, selección inválida, límite de jugadas | Línea de consola `grep-grid.hint`: guía los dos toques y anuncia el resultado de cada selección; nunca penaliza |
 | 7 | alerta-anulado | alert | warning | feedback | ambos | visible_only_in_states: anulado | Aviso de desafío anulado durante la partida |
 | 8 | banner-cookies | alert | warning | feedback | ambos | visible_only_in_states: sin sesión | Explica que hace falta la cookie funcional (`no_session`) |
+| 8b | panel-ayuda | card | panel | content | ambos | hidden_in_states: loading, error de sistema | Panel «// cómo se juega» (ancla del «?» del header, `HELP_TARGET_ID`), primero del lateral: las 3 reglas de la partida |
 | 9 | lista-palabras | list | grep-grid.word | content | ambos | hidden_in_states: loading, error de sistema | Las 8 palabras en orden fijo: pendientes con su largo; encontradas tachadas, con ✓ y su definición |
-| 10 | btn-rendirse | button | error | input | ambos | hidden_in_states: loading, error de sistema, anulado | Abre O-04 para cerrar la partida como perdida con `N/8` (C-20) |
+| 10 | btn-rendirse | button | error-outline | input | ambos | hidden_in_states: loading, error de sistema, anulado | Abre O-04 para cerrar la partida como perdida con `N/8` (C-20) |
 | 11 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema; state_overrides: ya reportado | Abre O-01 para avisar que el desafío está mal (C-36); deshabilitado si el jugador ya reportó este desafío |
 | 12 | loader | loader | — | feedback | ambos | visible_only_in_states: loading | Indicador de carga |
 | 13 | alerta-sistema | alert | error | feedback | ambos | visible_only_in_states: error de sistema | Error de carga con causa y salida |
@@ -65,8 +66,8 @@ date: 2026-11-11
 
 ### mobile · 400px
 - banner-cookies
-- titulo
 - consigna
+- titulo
 - loader
 - alerta-sistema
 - btn-reintentar
@@ -74,6 +75,7 @@ date: 2026-11-11
 - contador
 - grilla
 - hint-jugada
+- panel-ayuda
 - lista-palabras
 - btn-rendirse
 - link-reportar
@@ -84,26 +86,26 @@ date: 2026-11-11
 - alerta-sistema
 - btn-reintentar
 - row `juego`
-  - col 12/12: titulo, consigna, alerta-anulado
+  - col 12/12: consigna, titulo, alerta-anulado
   - col 7/12: grilla, hint-jugada
-  - col 5/12: lista-palabras (contador `N/8` en el encabezado), btn-rendirse, link-reportar
+  - col 5/12: panel-ayuda, lista-palabras (contador `N/8` en el encabezado), btn-rendirse, link-reportar
 
 ## Contenido
 
 ### header
 - Texto/label: > nerdose / grep-grid · desafío del 30/10 · [?] [stats] [Compartir] ES|EN · 🔥 4
 - Icono: nada
-- Annotation: `game-header` variant `playing` (REQ-005): «Cómo se juega» lleva a la consigna y al hint de esta misma pantalla (con la Play en curso el servidor no vuelve a mostrar la fase de instrucciones); «Estadísticas» → `estadisticas`; Compartir deshabilitado («disponible al terminar la partida»); ES|EN cambia el idioma sin perder la partida: las definiciones de las encontradas se recargan en el idioma nuevo, la grilla y las palabras no cambian (CA 19); píldora con la racha global. Sin nav global ni `nav-movil`
+- Annotation: `game-header` variant `playing` (REQ-005): «Cómo se juega» lleva al panel `panel-ayuda` («// cómo se juega») del lateral de esta misma pantalla (con la Play en curso el servidor no vuelve a mostrar la fase de instrucciones); «Estadísticas» → `estadisticas`; Compartir deshabilitado («disponible al terminar la partida»); ES|EN cambia el idioma sin perder la partida: las definiciones de las encontradas se recargan en el idioma nuevo, la grilla y las palabras no cambian (CA 19); píldora con la racha global. Sin nav global ni `nav-movil`
+
+### consigna
+- Texto/label: // $ grep -o '[A-Z]*' hoy.txt · tocá la primera y la última letra de cada palabra
+- Icono: nada
+- Annotation: línea de comentario del bloque de título, **arriba** del `h1` (patrón común, REQ-012): toda la línea en Mono `label-comment` `text.dim`, con el `// ` decorativo (`aria-hidden`). Sin «tu tiempo final es tu puntaje» (se elimina: el puntaje son las palabras encontradas, C-22)
 
 ### titulo
 - Texto/label: Encontrá las 8 palabras escondidas
 - Icono: nada
-- Annotation: la consigna es el `h1` de la partida (como Devdle y Tech Timeline); el nombre del juego queda para las instrucciones y el breadcrumb
-
-### consigna
-- Texto/label: $ grep -o '[A-Z]*' hoy.txt · tocá la primera y la última letra de cada palabra
-- Icono: nada
-- Annotation: prompt del prototipo en Mono 13 `text.dim`; la segunda parte es la consigna en Inter. Sin «tu tiempo final es tu puntaje» (se elimina: el puntaje son las palabras encontradas, C-22)
+- Annotation: la consigna es el `h1` de la partida (como Devdle y Tech Timeline); el nombre del juego queda para las instrucciones y el breadcrumb. Alineado a la izquierda, a ancho completo
 
 ### contador
 - Texto/label: 3/8 (en el encabezado de `lista-palabras`; «encontradas» `sr-only`)
@@ -131,6 +133,11 @@ date: 2026-11-11
 - Icono: warning
 - Annotation: banner `warning` (O-03); aparece si una selección responde `no_session` (CA 23). La selección no se procesa
 
+### panel-ayuda
+- Texto/label: // cómo se juega · Tocá la primera letra de una palabra y después la última. Tocar de nuevo el inicio cancela la selección. · Van en 4 direcciones, siempre hacia adelante: → horizontal, ↓ vertical, ↘ y ↗ en diagonal. Nunca al revés. · No hay reloj. Podés rendirte cuando quieras y ver las palabras que faltaban.
+- Icono: nada
+- Annotation: `SectionPanel` del juego con `id = HELP_TARGET_ID` (destino del «?» del header), cabecera `h2` «// cómo se juega» y las reglas en `body-sm`. Es el primer bloque del lateral (patrón común, REQ-012). Sigue visible en `anulado`
+
 ### lista-palabras
 - Texto/label: // palabras de hoy
 - Forma: lista de 8 filas en el orden fijo que envía el servidor; cada fila: nombre de la palabra + etiqueta («{n} letras» si está pendiente; «✓» si fue encontrada) + definición breve solo en las encontradas
@@ -139,8 +146,8 @@ date: 2026-11-11
 
 ### btn-rendirse
 - Texto/label: Rendirse
-- Icono: close
-- Annotation: `button` `outline-tinted` con tinte de error del DS (destructiva suave, sin relleno rojo), `md`. Separado de la grilla por la lista de palabras (mobile) o en la columna lateral (desktop) para evitar un toque accidental (CA 36). Abre O-04; disponible desde 0/8 (CA 12). Mientras se envía la rendición queda deshabilitado
+- Icono: flag (⚑, decorativo)
+- Annotation: `buttonClass({ variant: 'error-outline', fullWidth: true })` (REQ-012, S-066): borde `status.error.border`, texto `status.error.soft`, sin relleno; hover con fondo `status.error.bg`. A ancho completo del lateral, debajo de la lista de palabras y arriba del reporte. Separado de la grilla por la lista de palabras (mobile) o en la columna lateral (desktop) para evitar un toque accidental (CA 36). Abre O-04; disponible desde 0/8 (CA 12). Mientras se envía la rendición queda `aria-disabled`. Es el mismo botón que «⚑ Rendirse» de Devdle
 
 ### link-reportar
 - Texto/label: Reportar un problema
@@ -229,6 +236,7 @@ date: 2026-11-11
   - contador: oculto en este estado (hidden_in_states)
   - grilla: oculto en este estado (hidden_in_states)
   - hint-jugada: oculto en este estado (hidden_in_states)
+  - panel-ayuda: oculto en este estado (hidden_in_states)
   - lista-palabras: oculto en este estado (hidden_in_states)
   - btn-rendirse: oculto en este estado (hidden_in_states)
   - link-reportar: oculto en este estado (hidden_in_states)
@@ -243,6 +251,7 @@ date: 2026-11-11
   - contador: oculto en este estado (hidden_in_states)
   - grilla: oculto en este estado (hidden_in_states)
   - hint-jugada: oculto en este estado (hidden_in_states)
+  - panel-ayuda: oculto en este estado (hidden_in_states)
   - lista-palabras: oculto en este estado (hidden_in_states)
   - btn-rendirse: oculto en este estado (hidden_in_states)
   - link-reportar: oculto en este estado (hidden_in_states)
@@ -277,8 +286,8 @@ date: 2026-11-11
 
 ## Accesibilidad
 
-- **Orden de foco:** header → titulo → grilla (una sola parada de tabulación; dentro, las flechas) → hint → lista-palabras (lectura) → btn-rendirse → link-reportar.
-- **Landmarks y jerarquía:** `h1` con el nombre del juego; la cabecera `// palabras de hoy` es `h2`. Landmarks: header (breadcrumb como `nav` con nombre), main, footer.
+- **Orden de foco:** header → titulo → grilla (una sola parada de tabulación; dentro, las flechas) → hint → panel-ayuda y lista-palabras (lectura) → btn-rendirse → link-reportar.
+- **Landmarks y jerarquía:** `h1` con la consigna; las cabeceras `// cómo se juega` y `// palabras de hoy` son `h2`. Landmarks: header (breadcrumb como `nav` con nombre), main, footer.
 - **Foco y teclado:** la grilla es `role="grid"` con roving tabindex: las flechas mueven el foco entre las 144 celdas, Enter o Espacio marcan la primera y la última celda, Escape cancela la celda inicial (NFR-U03, CA 35). O-04 atrapa el foco y lo devuelve a `btn-rendirse` al cerrarse (CA 11). O-01, cuando exista, igual.
 - **Propio de esta composición:** cada celda anuncia «{letra}, fila {r}, columna {c}, {encontrada|inicio|libre}»; el resultado de cada selección (encontrada, no es una palabra, selección inválida, límite) se anuncia una sola vez en `hint-jugada` (`aria-live=polite`), y el contador en `role=status`. Las celdas encontradas se distinguen por relleno más peso/glifo, nunca solo por color (NFR-U04). Textos cortos para que la región viva no sea ruidosa con 144 celdas.
 
@@ -297,6 +306,8 @@ date: 2026-11-11
 - REQ-005: anti-spoiler en la vista: la grilla y la lista solo conocen posiciones y definiciones de lo ya encontrado (RF 2, CA 15); por eso la lista no muestra definiciones pendientes ni «pistas» de posición.
 - REQ-005: «Reportar un problema» queda documentado pero no se renderiza hasta FG-6. Superado por REQ-007.
 - REQ-007: «Reportar un problema» se renderiza en los tres juegos (deja de estar oculto hasta FG-6). Es un enlace secundario al final de la columna lateral, no un botón, para no competir con la acción del juego; el estado «ya reportado» se lee de `GameToday.reported` para no ofrecer un intento que va a fallar.
+- REQ-012 (S-064, patrón común de partida, implementado fuera del workflow el 2026-11-25): la línea de comentario pasa arriba del `h1` y en una sola pieza Mono; el ancla de «Cómo se juega» deja de ser el bloque de título y pasa al panel nuevo `panel-ayuda`, primero del lateral; el lateral queda «cómo se juega» → lista → «Rendirse» → reporte (siempre último).
+- REQ-012 (S-066): «Rendirse» usa la variant nueva `error-outline` de `buttonClass` (reemplaza la clase ad-hoc `outline-tinted` de error del paquete), a ancho completo y con el glifo ⚑ en vez de ✕; la confirmación de O-04 usa `error` (relleno rojo). Supera la decisión de REQ-005 sobre `outline-tinted`.
 
 **Alternativas descartadas:**
 - Modal de instrucciones dentro de la partida: las reglas quedan en la fase de instrucciones; durante la partida, «Cómo se juega» del header lleva a la consigna y al hint de esta pantalla.
@@ -311,4 +322,4 @@ date: 2026-11-11
 
 ## Trazabilidad
 
-- F-05, C-19, C-20, C-10, C-11, C-36 · REQ-005 (RF 2-11, 19, 22; CA 2-8, 11, 13, 14, 19, 20, 22-25, 35, 36) · flujos 1 y 2 de `user-flows.md` · REQ-007 (RF 1, 9; CA 1-3, 24).
+- F-05, C-19, C-20, C-10, C-11, C-36 · REQ-005 (RF 2-11, 19, 22; CA 2-8, 11, 13, 14, 19, 20, 22-25, 35, 36) · flujos 1 y 2 de `user-flows.md` · REQ-007 (RF 1, 9; CA 1-3, 24) · REQ-012 (S-064, S-066).

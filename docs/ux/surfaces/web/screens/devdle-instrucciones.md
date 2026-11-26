@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.1"
-date: 2026-11-06
+version: "1.2"
+date: 2026-11-25
 ---
 
 # Pantalla: Devdle · Instrucciones
@@ -157,7 +157,7 @@ date: 2026-11-06
 
 ### paso-3
 - Texto/label: 3 · Mirá las categorías
-- Texto secundario: Te mostramos las 8 categorías del banco —son siempre las mismas— para orientarte. La del día, la definición y un resumen se revelan al terminar.
+- Texto secundario: Te mostramos las 8 categorías del banco —son siempre las mismas— para orientarte. La del día, la definición y un resumen se revelan al terminar. Si te trabás, tenés una pista por partida: revela la letra de la posición que elijas.
 - Icono: nada
 - Annotation: la lista es fija y no filtra la categoría del día (REQ-004, supuesto «Vista pública»)
 
@@ -306,6 +306,7 @@ date: 2026-11-06
 - REQ-004: estado `día nuevo` con aviso explícito tras `challenge_expired` (supuesto «Jugada tardía»: «la interfaz carga el desafío nuevo y avisa»). Resuelve la decisión pendiente del flujo 2 de `user-flows.md`.
 - REQ-004: `sin sesión` explica la cookie funcional y ofrece «Reintentar» (CA 19), en lugar de dejar solo el CTA deshabilitado.
 - REQ-004: los avisos informativos (`aviso-dia-nuevo`, `alerta-sin-desafio`) se implementan con `banner` del DS, porque `alert` del DS es solo para errores del sistema.
+- REQ-012 (implementado fuera del workflow el 2026-11-25, documentado en retrospectiva; S-063): el paso 3 suma una oración sobre la pista de letra (una por partida). El resto de la pantalla no cambia: las instrucciones ya eran iguales en los 5 juegos.
 
 **Alternativas descartadas:**
 - Mostrar las instrucciones solo la primera vez: requiere preferencia en el navegador y un acceso «¿Cómo se juega?» desde la partida.
@@ -316,4 +317,4 @@ date: 2026-11-06
 
 ## Trazabilidad
 
-- F-04, C-08, C-09, C-14, C-41, C-42, C-02, C-11 · REQ-004 (RF 1, 3, 17; CA 1, 2, 16, 17, 18, 19) · flujos 1, 2 y 3 de `user-flows.md`.
+- F-04, C-08, C-09, C-14, C-41, C-42, C-02, C-11 · REQ-004 (RF 1, 3, 17; CA 1, 2, 16, 17, 18, 19) · flujos 1, 2 y 3 de `user-flows.md` · REQ-012 (S-063).

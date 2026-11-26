@@ -8,11 +8,11 @@ audiences:
   - responsable
 fidelity: mid
 status: diseñada
-version: "1.1"
-date: 2026-11-13
+version: "1.2"
+date: 2026-11-25
 overlay: true
 overlay_type: modal
-triggered_by: proximos-desafios
+triggered_by: o-02-detalle-desafio
 ---
 
 # Pantalla: O-03 · Regenerar desafío
@@ -27,11 +27,10 @@ triggered_by: proximos-desafios
 ## Entrada y salida
 
 **Entradas:**
-- `proximos-desafios` · acción «Regenerar» de la celda
-- `o-02-detalle-desafio` · «Regenerar»
+- `o-02-detalle-desafio` · «Regenerar» (abierto desde una celda de `proximos-desafios`). Desde REQ-012 la celda ya no tiene «Regenerar»: este es el único camino
 
 **Salidas user-driven:**
-- A `proximos-desafios` (o a `o-02-detalle-desafio` si se abrió desde ahí) · «Regenerar» (la celda pasa a «regeneración pendiente») o «Cancelar»
+- A `o-02-detalle-desafio`, que sigue abierto · «Regenerar» (el detalle y la celda pasan a «regeneración pendiente») o «Cancelar»; el foco vuelve a «Regenerar» / «Regenerando…» del detalle
 
 **Salidas automáticas:**
 - A `login` · `401` por token vencido (borra el token).
@@ -125,10 +124,10 @@ triggered_by: proximos-desafios
 ## Interacciones
 
 **Eventos:**
-- btn-regenerar · on click → `POST /api/admin/challenges/{id}/regenerate`; con `202` cierra, marca la celda como pendiente y Próximos inicia el polling. Si ya había un pedido pendiente, la respuesta es ese mismo pedido: no se crea otro (idempotente)
+- btn-regenerar · on click → `POST /api/admin/challenges/{id}/regenerate`; con `202` cierra, el detalle (que sigue abierto) y la celda pasan a pendiente y Próximos inicia el polling. Si ya había un pedido pendiente, la respuesta es ese mismo pedido: no se crea otro (idempotente)
 - respuesta `409 not_regenerable` → estado `no disponible`
-- respuesta `404 not_found` → cierra y refresca Próximos
-- btn-cancelar · on click → cierra sin cambios
+- respuesta `404 not_found` → cierra el modal y el detalle, sin mensaje, y refresca Próximos
+- btn-cancelar · on click (o Esc) → cierra sin cambios y devuelve el foco al «Regenerar» del detalle
 
 **Validaciones:**
 - Solo `approved` con fecha posterior a hoy (C-44); si no se cumple, no se confirma y se explica por qué.
@@ -146,7 +145,8 @@ triggered_by: proximos-desafios
 **Decisiones tomadas:**
 - La acción no es destructiva (el actual queda si el reemplazo falla), por eso el botón es primario y no `error`.
 - REQ-008: el texto avisa que el pedido es asíncrono y que, si llega la fecha antes del reemplazo, se publica el actual (CA 7).
-- REQ-008: repetir el pedido no duplica nada (CA 4), por eso no hace falta un estado propio para «ya pendiente»: la celda ya no ofrece «Regenerar» y, si se cuela un doble clic, la API devuelve el pedido existente.
+- REQ-008: repetir el pedido no duplica nada (CA 4), por eso no hace falta un estado propio para «ya pendiente»: el detalle muestra «Regenerando…» deshabilitado y, si se cuela un doble clic, la API devuelve el pedido existente.
+- REQ-012 (S-068, implementado fuera del workflow): O-03 solo se abre desde el detalle; al cerrarse, el foco vuelve al detalle y no a la grilla.
 - REQ-008: el mensaje de `not_regenerable` es el del diseño técnico («solo se puede regenerar un desafío aprobado de una fecha futura»).
 
 **Alternativas descartadas:**
@@ -157,4 +157,4 @@ triggered_by: proximos-desafios
 
 ## Trazabilidad
 
-- C-44 · REQ-008 (RF 3, 5; CA 3-5, 7) · flujo 4 de `user-flows.md`.
+- C-44 · REQ-008 (RF 3, 5; CA 3-5, 7) · REQ-012 (S-068) · flujo 4 de `user-flows.md`.

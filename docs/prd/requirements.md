@@ -1,6 +1,6 @@
 ---
 created: 2026-11-03
-last_updated: 2026-11-14
+last_updated: 2026-11-25
 status: "Draft - In Definition"
 ---
 
@@ -67,7 +67,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
 
   | game_id | State | Fin de partida | Score | Win | Etiqueta en el historial |
   |---|---|---|---|---|---|
-  | devdle | guesses (con feedback por letra) | adivina o 6 intentos válidos | intentos usados (1–6) | adivinó | "✓ 4/6" / "✗ X/6" |
+  | devdle | guesses (con feedback por letra), hint (la pista revelada, opt), gave_up (opt) — REQ-012 | adivina, 6 intentos válidos o se rinde | intentos usados (1–6; 6 al perder o rendirse) | adivinó | "✓ 4/6" / "✗ X/6" |
   | grep-grid | found_words, gave_up | 8 encontradas o se rinde | palabras encontradas (0–8) | 8/8 | "8/8" / "5/8" |
   | timeline | order (vacío hasta confirmar; los 5 opaque_id confirmados) | 1 confirmación | posiciones correctas (0–5) | 5/5 | "3/5" |
   | big-o | vacío hasta confirmar; `{ language, option }` confirmados (REQ-009) | 1 confirmación | 1/0 | opción correcta | "✓ O(n log n)" / "✗" |
@@ -96,7 +96,7 @@ Vocabulario compartido de todo el PRD. Los requerimientos referencian estas enti
 ### Term
 - **Key attributes:** id (uuid, req), term (string, req, único, solo A–Z en mayúsculas, 4–12 letras), category (enum: programming_languages/git/databases/networking/linux/apis/security/software_engineering, req), definition (json `{es,en}`, req), summary (json `{es,en}`, req), example (json `{es,en}`, opt, futuro), wikidata_id (string, req, único), sitelinks (int, req), status (enum: draft/approved/rejected, default: draft), rejection_reason (string, opt), last_used_devdle (date, opt), last_used_grep (date, opt)
 - **Relationships:** referenced_by Challenge (devdle, grep-grid)
-- **Notes:** Término técnico del banco que usan Devdle y Grep Grid. Solo los `approved` se usan. Para aprobarse necesita los dos idiomas, artículo de Wikipedia en ES y EN, un mínimo de `sitelinks` y no estar en la lista de exclusión. Lo llena solo el Sistema desde Wikidata. Pasa a `rejected` si un Challenge anulado lo señala como causa.
+- **Notes:** Término técnico del banco que usan Devdle y Grep Grid. Solo los `approved` se usan. Para aprobarse necesita los dos idiomas, artículo de Wikipedia en ES y EN, un mínimo de `sitelinks` y no estar en la lista de exclusión. Lo llena solo el Sistema desde Wikidata. Aparte, Devdle tiene su propia lista de términos de nicho que nunca elige como respuesta (115, REQ-012): siguen `approved`, Grep Grid los usa y valen como intento en Devdle. Pasa a `rejected` si un Challenge anulado lo señala como causa.
 
 ### TimelineFact
 - **Key attributes:** id (uuid, req), label (string, req), category (enum: programming_languages/frameworks/companies/operating_systems/hardware/video_games/databases/software_tools, req), event_date (date, req), date_precision (enum: year/month/day, req), note (json `{es,en}`, req), wikidata_id (string, req, único), sitelinks (int, req), status (enum: draft/approved/rejected, default: draft), rejection_reason (string, opt), last_used (date, opt)
@@ -296,10 +296,12 @@ para poner a prueba mi vocabulario tech en un par de minutos.
 
 | ID | Capability | Actor | Entity | Operation | Key Fields | Business Rules |
 |----|-----------|-------|--------|-----------|------------|----------------|
-| C-15 | Intentar una palabra | U-01 | Play | UPDATE | move.guess (string, req, solo A–Z, largo = `length` de la vista pública) | Mayúsculas y minúsculas indistintas; el input ignora los caracteres que no son A–Z; una palabra de otra longitud no se envía (aviso del front). Fuera de la lista válida → `not_in_word_list`: no consume intento ni cambia el estado. Válida → feedback por letra (enum: correct/present/absent) con el manejo estándar de letras repetidas. Termina al adivinar (won) o con 6 intentos válidos (lost). Sin modo difícil |
+| C-15 | Intentar una palabra | U-01 | Play | UPDATE | move.guess (string, req, solo A–Z, largo = `length` de la vista pública) | Mayúsculas y minúsculas indistintas; el input ignora los caracteres que no son A–Z; una palabra de otra longitud no se envía (aviso del front). Fuera de la lista válida → `not_in_word_list`: no consume intento ni cambia el estado. Válida → feedback por letra (enum: correct/present/absent) con el manejo estándar de letras repetidas. Termina al adivinar (won), con 6 intentos válidos (lost) o al rendirse (lost, C-55). Sin modo difícil |
 | C-16 | Registrar un intento rechazado | Sistema | RejectedGuess | CREATE | word (string, req, A–Z), player_id (uuid, req) | Una fila por (word, player_id): cuenta jugadores distintos, no intentos |
-| C-17 | Elegir la respuesta del día | Sistema | Challenge, Term | CREATE | term_id (uuid, req) | Term `approved` no usado en Devdle en los últimos 365 días, con categoría distinta de las de los últimos 3 días. La vista pública muestra la longitud y la lista de categorías posibles (no la del día). Las respuestas posibles nunca se envían al cliente |
-| C-18 | Ver el resultado de Devdle | U-01 | Play | READ | result: word, category, definition, summary | Muestra la palabra, su categoría, una definición breve y un resumen. Share: grilla 🟩🟨⬛ por intento y `N/6` (o `X/6`). Stat propia: distribución de intentos (1–6 y derrotas) |
+| C-17 | Elegir la respuesta del día | Sistema | Challenge, Term | CREATE | term_id (uuid, req) | Term `approved` no usado en Devdle en los últimos 365 días y fuera de la lista de términos de nicho de Devdle. La rotación de categoría es una **preferencia** (REQ-012): se evita la categoría de los últimos 3 días; si eso deja sin candidatos, solo la de ayer; si tampoco hay, ninguna. La vista pública muestra la longitud y la lista de categorías posibles (no la del día). Las respuestas posibles nunca se envían al cliente |
+| C-18 | Ver el resultado de Devdle | U-01 | Play | READ | result: word, category, definition, summary, hint (opt), gave_up (opt) | Muestra la palabra, su categoría, una definición breve y un resumen; si usó la pista, cuál fue; si se rindió, el veredicto «Te rendiste: X/6». Share: grilla 🟩🟨⬛ por intento y `N/6` (o `X/6`), con 💡 si usó la pista (sin decir qué letra). Stat propia: distribución de intentos (1–6 y derrotas) |
+| C-54 | Pedir una pista de letra | U-01 | Play | UPDATE | move.hint (int, req, posición base 0 < `length`) | **Agregada en REQ-012.** Una por partida; revela la letra de la posición elegida y **no consume intento**. Una segunda pista o una posición fuera de la palabra → `invalid_move`. Se guarda en el estado (sobrevive al retomar). La interfaz solo ofrece las posiciones de la fila actual que todavía no están resueltas |
+| C-55 | Rendirse en Devdle | U-01 | Play | UPDATE | move.give_up (true, req) | **Agregada en REQ-012.** Con confirmación. Cierra la Play como `lost` con `X/6`, cuenta para la racha y para la distribución como derrota, y revela la palabra con su explicación |
 
 **Criterios de Aceptación:**
 - DADO que la respuesta del día es `REACT`
@@ -318,6 +320,18 @@ para poner a prueba mi vocabulario tech en un par de minutos.
 - DADO que Devdle usó términos de las categorías `git`, `databases` y `linux` en los últimos 3 días
   CUANDO el Sistema elige la respuesta de mañana
   ENTONCES elige un Term de una categoría distinta de esas tres, no usado en Devdle en los últimos 365 días.
+- DADO que las únicas categorías con términos disponibles son `programming_languages`, `networking` y `linux`, y salieron en los últimos 3 días (`linux` ayer)
+  CUANDO el Sistema elige la respuesta de mañana
+  ENTONCES elige igual un Term de `programming_languages` o `networking` (nunca de `linux`), en vez de quedarse sin desafío (REQ-012).
+- DADO un Term `approved` de la lista de nicho de Devdle (por ejemplo, `MALBOLGE`)
+  CUANDO el Sistema elige la respuesta de Devdle
+  ENTONCES nunca lo elige, y la verificación rechaza un candidato con ese término (`not_excluded`); en Grep Grid sí puede salir (REQ-012).
+- DADO que la respuesta es `REACT` y el jugador usó 1 intento sin pista
+  CUANDO pide la pista de la posición 5
+  ENTONCES ve la `T` en esa casilla, sigue con 1 intento usado y ya no puede pedir otra pista (C-54).
+- DADO que el jugador usó 3 intentos sin acertar
+  CUANDO toca "Rendirse" y confirma
+  ENTONCES la Play pasa a `lost`, ve "Te rendiste: X/6" con la palabra y su explicación, su racha de Devdle suma el día y la distribución suma una derrota (C-55).
 
 **Prioridad:** Alta
 
@@ -448,7 +462,7 @@ para entrenar la lectura atenta de código y el razonamiento sobre casos borde.
 | ID | Capability | Actor | Entity | Operation | Key Fields | Business Rules |
 |----|-----------|-------|--------|-----------|------------|----------------|
 | C-30 | Elegir la línea y confirmar | U-01 | Play | UPDATE | move.language (enum: js/go/java, req), move.line (int, req, ∈ `pickable_lines`) | No se pueden elegir la firma de la función ni las líneas que solo tienen llaves (`invalid_move`). Seleccionar y después confirmar; **un solo intento**. El cambio de lenguaje es solo una vista (C-26). Se guarda el lenguaje en `Play.code_language` y como `Player.preferred_code_language` |
-| C-31 | Generar el desafío del día | Sistema | Challenge | CREATE | template, params, mutation, bug_type (enum), spec `{es,en}`, code `{js,go,java}`, pickable_lines, visible_tests, failing_test, fix, explanation `{es,en}` | Plantilla de función correcta con parámetros al azar + **una** mutación. Función de 8 a 15 líneas; una sentencia cae en la misma línea en los 3 lenguajes. Se acepta solo si: la versión correcta da el mismo resultado en los 3 lenguajes; la mutada falla al menos un test con el mismo resultado en los 3; al menos 2 tests siguen pasando (son los visibles); no es un mutante equivalente. Test oculto = el más chico que falla. No se repite la combinación plantilla + parámetros + mutación en 60 días |
+| C-31 | Generar el desafío del día | Sistema | Challenge | CREATE | template, params, mutation, bug_type (enum), spec `{es,en}`, code `{js,go,java}`, pickable_lines, visible_tests, failing_test, fix, explanation `{es,en}` | Plantilla de función correcta con parámetros al azar + **una** mutación. Función de 8 a 15 líneas; una sentencia cae en la misma línea en los 3 lenguajes. Se acepta solo si: la versión correcta da el mismo resultado en los 3 lenguajes; la mutada falla al menos un test con el mismo resultado en los 3; al menos 2 tests siguen pasando (son los visibles); no es un mutante equivalente. Test oculto = el más chico que falla. No se repite la combinación plantilla + parámetros + mutación en 60 días. El catálogo tiene 18 plantillas con formas distintas (loops anidados, `while` con la condición como lógica, dos loops seguidos, dos punteros, respuesta calculada después del loop) para que el bug no caiga siempre en el `if` de un único loop (REQ-012) |
 | C-32 | Ver el resultado de Bug Hunt | U-01 | Play | READ | result: line, failing_test (input, expected, actual), fix (diff), explanation | La línea correcta, el test que falla (esperado vs. obtenido), el fix como diff y una explicación paso a paso. Share: `🐛 Bug Hunt #N · <lenguaje>` y `🟩 bug encontrado` / `🟥 se me escapó`, sin revelar la línea. Stats propias: aciertos por `code_language` y por `bug_type` |
 
 **Criterios de Aceptación:**
@@ -556,7 +570,7 @@ para que un error del generador no castigue a los jugadores.
 | ID | Capability | Actor | Entity | Operation | Key Fields | Business Rules |
 |----|-----------|-------|--------|-----------|------------|----------------|
 | C-38 | Iniciar sesión en el admin | U-02 | — | ACTION | password (string, req) | Contraseña única. Sesión de 8 horas. Credencial inválida, vencida o ausente → 401 y vuelta al login. Límite: 5 intentos por IP cada 15 min |
-| C-39 | Ver reportes agrupados | U-02 | ChallengeReport, Challenge | READ | status (enum: open/resolved/dismissed, opt, default: open) | Agrupados por Challenge y ordenados por cantidad (desc). Los Challenge que alcanzaron el umbral (`alerted_at`) se marcan como alertados: es el aviso al Responsable. Para cada uno: el Challenge completo con su solución, en ES y EN, y los motivos, mensajes y contexto |
+| C-39 | Ver reportes agrupados | U-02 | ChallengeReport, Challenge | READ | status (enum: open/resolved/dismissed, opt, default: open) | Agrupados por Challenge y ordenados por cantidad (desc). Los Challenge que alcanzaron el umbral (`alerted_at`) se marcan como alertados: es el aviso al Responsable. Para cada uno: el Challenge completo con su solución y los motivos, mensajes y contexto. Lista paginada de a 20. El admin muestra los textos solo en español (REQ-012); que existan en los dos idiomas lo garantiza la verificación del generator |
 | C-40 | Resolver o descartar un reporte | U-02 | ChallengeReport | UPDATE | status (enum: resolved/dismissed, req) | Solo desde `open`; ambos estados son terminales |
 | C-41 | Anular un desafío | U-02 | Challenge, Play, ChallengeReport, Term, TimelineFact | ACTION | void_reason (string, req), culprit.kind (enum: term/timeline_fact/template/none, req), culprit.id (uuid, opt, req si kind ∈ term/timeline_fact) | Solo un Challenge `published`, y siempre manual. Efectos: deja de aceptar jugadas y muestra "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada"; todas sus Play pasan a `voided` (las terminadas conservan su `result`; las en curso se cierran como completadas); los reportes `open` pasan a `resolved`; si el culpable es un Term o TimelineFact, pasa a `rejected`; se recalculan los agregados de los jugadores afectados (C-35) |
 | C-42 | Marcar un desafío anulado como completado | U-01 | Play | CREATE | challenge_number (int, req) | Solo para el Challenge `voided` de hoy y si el jugador no tenía Play. Crea una Play `voided`: cuenta para las rachas y `total_completed`, no para `played`, `wins` ni `extra` |
@@ -584,7 +598,7 @@ para que un error del generador no castigue a los jugadores.
 
 ### F-12: Admin — próximos desafíos y stock de contenido
 
-**Descripción:** El Responsable ve los próximos 14 días de cada juego, con la solución y el log de verificación, y puede regenerar uno. También ve el stock de contenido de los bancos, la última carga del dataset y las palabras más rechazadas en Devdle.
+**Descripción:** El Responsable ve los próximos 14 días de cada juego, con la solución y el log de verificación, y puede regenerar uno. También ve el stock de contenido de los bancos, la última carga del dataset y las palabras más rechazadas en Devdle, y puede explorar los ítems de cada banco (pantalla «Bancos», REQ-012).
 
 **Historia de usuario:**
 Como responsable de la plataforma,
@@ -595,9 +609,10 @@ para anticipar problemas sin tener que cargar nada a mano.
 
 | ID | Capability | Actor | Entity | Operation | Key Fields | Business Rules |
 |----|-----------|-------|--------|-----------|------------|----------------|
-| C-43 | Ver los próximos desafíos | U-02 | Challenge | READ | days (int, opt, default: 14) | Por día y por juego: preview real (como la ve el jugador, con la solución superpuesta), en ES y EN, con su log de verificación. Indica los días sin desafío, las fallas de generación registradas (intentos y motivo del último rechazo) y las regeneraciones pendientes |
+| C-43 | Ver los próximos desafíos | U-02 | Challenge | READ | days (int, opt, default: 14) | Por día y por juego: una tarjeta por celda que abre el detalle con la preview real (como la ve el jugador, con la solución superpuesta), en español, y su log de verificación; «Regenerar» está solo dentro del detalle (REQ-012). Indica los días sin desafío, las fallas de generación registradas (intentos y motivo del último rechazo) y las regeneraciones pendientes |
 | C-44 | Regenerar un desafío | U-02 | Challenge | ACTION | challenge_id (uuid, req) | Solo un Challenge `approved` con `date` > hoy. El actual sigue `approved` hasta que su reemplazo pasa la verificación; el reemplazo es atómico (el viejo pasa a `rejected`). Si la regeneración falla, queda el actual |
-| C-45 | Ver el stock de contenido | U-02 | Term, TimelineFact, RejectedGuess | READ | — | Por banco: ítems aprobados disponibles, aprobados totales, rechazados (con su motivo), días de stock estimados, si el banco alcanza para ciclar respetando la ventana anti-repetición, y la última carga del dataset (fecha, versión, insertados, actualizados). Además, las 50 palabras más rechazadas en Devdle por cantidad de jugadores distintos. Solo lectura |
+| C-45 | Ver el stock de contenido | U-02 | Term, TimelineFact, RejectedGuess | READ | — | Por banco: ítems aprobados disponibles, aprobados totales, rechazados (resumen por motivo, con enlace a Bancos para verlos), días de stock estimados, si el banco alcanza para ciclar respetando la ventana anti-repetición, y la última carga del dataset (fecha, versión, insertados, actualizados). Los disponibles, los días de stock y el ciclo de cada juego **no cuentan los ítems que su generator excluye** (los 115 términos de nicho de Devdle siguen contando para Grep Grid; REQ-012). Además, las 50 palabras más rechazadas en Devdle por cantidad de jugadores distintos, paginadas de a 10. Solo lectura |
+| C-56 | Explorar los bancos de contenido | U-02 | Term, TimelineFact | READ | bank (enum: terms/timeline_facts, req), q (string, opt, ≤ 50), status (enum: approved/rejected, opt), category (enum del banco, opt), page (int, ≥ 1), page_size (int, 10–100, default 25) | **Agregada en REQ-012.** Pantalla «Bancos»: términos o hechos con búsqueda por texto (contiene, sin distinguir mayúsculas), filtros de estado y categoría, paginado en el servidor. Cada ítem muestra categoría, estado y motivo de rechazo, descripción en español, fecha (hechos), sitelinks, último uso por juego y si algún juego lo excluye. Una categoría que no es del banco → `validation_error`. Solo lectura |
 
 **Criterios de Aceptación:**
 - DADO que hoy es 2026-12-01
@@ -610,6 +625,12 @@ para anticipar problemas sin tener que cargar nada a mano.
 - DADO el Challenge `published` de hoy
   CUANDO el Responsable intenta regenerarlo
   ENTONCES se rechaza.
+- DADO un banco `terms` con 4.000 aprobados disponibles, 115 de ellos en la lista de nicho de Devdle
+  CUANDO el Responsable abre Stock
+  ENTONCES Devdle muestra 3.885 disponibles y Grep Grid 4.000 (REQ-012).
+- DADO el banco de términos
+  CUANDO el Responsable busca `sql` con el filtro «rechazado» en Bancos
+  ENTONCES ve, de a 25, los términos rechazados que contienen «sql», con su motivo, su último uso por juego y si Devdle los excluye (C-56).
 
 **Prioridad:** Media
 
@@ -771,7 +792,8 @@ sin agregar cookies ni un banner.
 | NFR-S05 | Transporte | HTTPS obligatorio | Configuración verificable |
 | NFR-S06 | Cookie de jugador | HttpOnly, Secure, SameSite=Lax; sin PII | Inspección de la cookie |
 | NFR-S07 | Acceso al admin | Contraseña única guardada hasheada; sesión de 8 h; 5 intentos de login por IP cada 15 min | Test funcional |
-| NFR-S08 | Rate limiting | Sesión: 20/10 min por IP · Jugadas: 60/min por jugador y 300/min por IP · Reportes: 1 por jugador y desafío + 10/h por IP · Lecturas: 600/min por IP. HTTP 429 con mensaje genérico, sin captcha | Test funcional (verificar 429) |
+| NFR-S08 | Rate limiting | Sesión: 20/10 min por IP · Jugadas: 60/min por jugador y 300/min por IP · Reportes: 1 por jugador y desafío + 10/h por IP · Lecturas: 600/min por IP. HTTP 429 con mensaje genérico, sin captcha. La IP no es falsificable por el cliente: sale del header del proxy de confianza (con `X-Forwarded-For`, la entrada que agregó el proxy, contando desde la derecha) o, sin proxy, de la conexión; nunca un balde compartido por todos (REQ-012) | Test funcional (verificar 429, incluido un `X-Forwarded-For` inventado) |
+| NFR-S09 | Logs sin credenciales | El `player_id` (la credencial de la cookie) nunca aparece crudo en los logs: se loguea `player_ref` (primeros 8 hex de su sha256), la misma referencia que muestra el admin (REQ-012) | Tests de logs de la `api` |
 
 ### Privacidad
 

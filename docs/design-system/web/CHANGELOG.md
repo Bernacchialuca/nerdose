@@ -3,6 +3,29 @@
 Sigue el formato [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/)
 y el versionado [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.14.0] - 2026-11-25
+
+**MINOR.** REQ-012 (ajustes posteriores a v1, implementados fuera del workflow y documentados retroactivamente; stories S-060, S-063, S-064 y S-066). Ningún token se agrega ni cambia.
+
+### Agregado
+- `patterns/game-screens.md` 1.0.0: composición común de partida y resultado de los 5 juegos (bloque de título, principal 7 | lateral 5, CTA a ancho completo bajo el área de juego, ayuda primero y reporte último en el lateral, veredicto siempre con `banner` `h1`).
+- `components/button.md` 1.4.0: variant `error-outline` (disparador de una acción destructiva que se confirma después: «⚑ Rendirse» en Devdle y Grep Grid) y regla base de `cursor: pointer` para `<button>` y `[role=button]` habilitados (`tokens.css`).
+- `patterns/game-boards.md` 1.9.0: estados «pista» y «elegible para pista» de `devdle.cell`; aside de Devdle con «💡 Pista» y «⚑ Rendirse».
+
+### Cambiado
+- `components/code-block.md` 1.4.0: las líneas largas saltan con sangría colgante en lugar de scrollear de costado (`CodeText` en Big O y Bug Hunt).
+- `patterns/game-boards.md` 1.9.0: `grep-grid.surrender` pasa de la constante local `outline-tinted` a `buttonClass({ variant: 'error-outline' })`; la confirmación de O-04 es `error`; el resultado de Bug Hunt ya no muestra chips (el de tipo queda en la preview del admin).
+
+### Código alineado con el spec
+- `@nerdose/ui`: `button-class.ts` (`error-outline`) y `tokens.css` (cursor).
+- `@nerdose/game-*/client`: `game.tsx` y `result.tsx` de los 5 juegos; `code-text.tsx` de Big O y Bug Hunt; `letter-hint-button.tsx`, `surrender.tsx` y `board.tsx` de Devdle.
+- `apps/web`: `ErrorTerminal` (404 y error inesperado) reusa la estética de `terminal-window` sin cambiar el componente.
+
+### Notas para limpiar en otros docs
+- `docs/ux/surfaces/web/screens.json` y `wireframes.html` siguen con el layout anterior de las 10 pantallas de partida y resultado, de `no-encontrado` y sin `error-inesperado`: hay que regenerarlos con `/product-ux-wireframes web`.
+
+---
+
 ## [1.13.0] - 2026-11-25
 
 **MINOR.** Auditoría de accesibilidad (story S-059, plan `ui`). Ningún token se agrega ni cambia.

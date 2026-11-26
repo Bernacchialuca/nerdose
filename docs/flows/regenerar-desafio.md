@@ -4,8 +4,8 @@ title: Regenerar un desafío desde el admin
 type: feature
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-14
-stories: [S-035, S-036, S-037, S-038, S-039, S-045, S-046, S-050]
+last_updated: 2026-11-25
+stories: [S-035, S-036, S-037, S-038, S-039, S-045, S-046, S-050, S-068]
 ---
 
 # Regenerar un desafío desde el admin
@@ -13,12 +13,12 @@ stories: [S-035, S-036, S-037, S-038, S-039, S-045, S-046, S-050]
 **Tipo:** Feature
 **Status:** Draft
 **Creado:** 2026-11-03
-**Última actualización:** 2026-11-14
-**Stories:** S-035, S-036, S-037, S-038, S-039, S-045, S-046
+**Última actualización:** 2026-11-25
+**Stories:** S-035, S-036, S-037, S-038, S-039, S-045, S-046, S-050, S-068
 
 ## Descripción
 
-El responsable pide regenerar un desafío `approved` de una fecha futura. La `api` encola el pedido en `generation_requests` y avisa con `NOTIFY`. El `generator` genera y verifica uno nuevo, y reemplaza al viejo en una transacción. El viejo sigue `approved` hasta que el nuevo está verificado. Es el único mensaje entre `api` y `generator`. Cubre C-43 y C-44 (F8, ADR-005).
+El responsable pide regenerar un desafío `approved` de una fecha futura, desde el detalle del desafío en Próximos (la celda solo abre el detalle; desde REQ-012 «Regenerar» está únicamente ahí). La `api` encola el pedido en `generation_requests` y avisa con `NOTIFY`. El `generator` genera y verifica uno nuevo, y reemplaza al viejo en una transacción. El viejo sigue `approved` hasta que el nuevo está verificado. Es el único mensaje entre `api` y `generator`. Cubre C-43 y C-44 (F8, ADR-005).
 
 ## Servicios Involucrados
 
@@ -185,6 +185,8 @@ El orden 1 → 2 respeta el índice único parcial `uq_challenges_active_game_da
 - Un `published` (hoy) nunca se regenera (invariante 6). Si tiene errores, se anula (`anulacion-de-desafio`).
 - Big O no tiene banco (`culprits = []`, `bankUsage = null`): el paso 4.3 no toca ninguna tabla y `rejected_items` va vacío. El admin muestra el desafío con la `Preview` de big-o (código en los 3 lenguajes, respuesta, trampa y explicación) y el `VerificationLog` con los checks y el detalle del ajuste.
 - Bug Hunt tampoco tiene banco (`culprits = []`, `bankUsage = null`): el paso 4.3 no toca ninguna tabla y `rejected_items` va vacío.
+
+> Actualizado por REQ-012 (story S-068): «Regenerar» solo dentro del detalle (O-02); la preview del detalle es solo en español.
 
 > Actualizado por REQ-009 (stories S-045 y S-046): historia sin la fila de `D` en la regeneración, verificación por ejecución de Big O y su preview en el admin.
 

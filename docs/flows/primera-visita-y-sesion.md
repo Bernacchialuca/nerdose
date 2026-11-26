@@ -4,8 +4,8 @@ title: Primera visita, sesión anónima y home
 type: feature
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-04
-stories: [S-006, S-007, S-008, S-009, S-010]
+last_updated: 2026-11-25
+stories: [S-006, S-007, S-008, S-009, S-010, S-061]
 ---
 
 # Primera visita, sesión anónima y home
@@ -118,7 +118,7 @@ sequenceDiagram
 - **Operación:** INSERT
 - **Campos:** `id` (gen_random_uuid), `locale` (de `Accept-Language` si es `es` o `en`, si no `es`), `preferred_code_language = 'js'`, `created_at`, `last_seen_at`
 
-**Evento de dominio:** `PlayerCreated` (`player_id`, `locale`). Solo se registra en los logs; no hay bus de eventos.
+**Evento de dominio:** `PlayerCreated` (`player_ref`, `locale`). Solo se registra en los logs; no hay bus de eventos. `player_ref` = primeros 8 hex de `sha256(player_id)`: el id es la credencial de la cookie y nunca se loguea crudo (REQ-012, S-061).
 
 **Response (éxito):**
 - **Status:** 200
@@ -174,7 +174,7 @@ sequenceDiagram
 | Paso | Error | Código | Response | Comportamiento |
 |------|-------|--------|----------|---------------|
 | 1, 3 | Exceso de lecturas por IP (600/min) | 429 | `{ "error": { "code": "rate_limited", "message": "…" } }` + `Retry-After` | web reintenta después de `Retry-After` |
-| 2 | Exceso de creación de sesión por IP (20/10 min) | 429 | `{ "error": { "code": "rate_limited", … } }` | web muestra el catálogo sin sesión y reintenta en la próxima carga |
+| 2 | Exceso de creación de sesión por IP (20/10 min) | 429 | `{ "error": { "code": "rate_limited", … } }` | web muestra el catálogo sin sesión y reintenta en la próxima carga. La IP sale de `TRUST_PROXY_HEADER` (con `X-Forwarded-For`, la entrada que agregó el proxy, contando `TRUST_PROXY_HOPS` desde la derecha) o, sin header, de la conexión (ADR-012, REQ-012/S-061) |
 | 2 | `Origin` distinto de `https://nerdose.dev` | 403 | `{ "error": { "code": "forbidden_origin", … } }` | No aplica a un navegador legítimo |
 | 2 | Falta `Content-Type: application/json` | 415 | `{ "error": { "code": "unsupported_media_type", … } }` | Error de programación del front |
 | 3 | Cookies bloqueadas (`has_session: false` después del paso 2) | 200 | `Today` con `has_session: false` | web muestra el aviso y deshabilita "Jugar" |

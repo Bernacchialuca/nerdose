@@ -10,23 +10,25 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **DevdlePayload / DevdleMove / DevdleGuess / DevdleFeedback / DevdleState / DevdlePublicView / DevdleResult / DevdleStats / LetterMark** (packages/games/devdle/src/definition/schemas.ts) - Types inferred from the schemas
 - **PAYLOAD_REACT / PAYLOAD_MERGE / ALL_VALID / NONE_VALID / NOW** (packages/games/devdle/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry; `ALL_VALID` / `NONE_VALID` carry `locale: 'es'` (required by `MoveContext`)
 
-## Devdle client (12 items) - see devdle.md
+## Devdle client (13 items) - see devdle.md
 - **StatsSummary / StatsSummaryProps / distributionRows / gamesCount / formatPercent / DistributionBars** (packages/games/devdle/src/client/{stats-summary.tsx,stats.ts,distribution-bars.tsx,types.ts}) - Own stats from `GameStatsView.extra`: attempts distribution 1..6 and X (`DistributionBars` extracted from `Distribution`, `highlight?` for the "today" bar); `stats.none` without games; pure functions in `stats.ts`
 - **Preview / PreviewProps / translatorFor** (packages/games/devdle/src/client/{preview.tsx,types.ts,translate.ts}) - Read-only solution-mode preview `{ payload: unknown; language: Locale }` for the admin (one solved `Board` row + `WordCard`, `h3` headings, root `lang`); parses with `payloadSchema`; `translatorFor(language)` is the production translator (returns the key if missing). `SectionPanel` gained `headingLevel?: 2 | 3`; `WordCard` takes `Pick<DevdleResult, 'word'|'category'|'definition'|'summary'>` and `headingLevel?`
 - **Instructions / Game / Result** (packages/games/devdle/src/client/{instructions,game,result}.tsx) - React screens of the `./client` entry; game data props are `unknown` and parsed with the definition schemas
-- **share** (packages/games/devdle/src/client/share.ts) - `share(result, number)`: `🟩 Devdle #N · k/6`, one emoji row per try, `nerdose.dev`; never the solution
+- **share** (packages/games/devdle/src/client/share.ts) - `share(result, number)`: `🟩 Devdle #N · k/6` (plus ` 💡` if the hint was used), one emoji row per try, `nerdose.dev`; never the solution
 - **i18n** (packages/games/devdle/src/client/i18n/index.ts) - `{ namespace: 'devdle', resources: { es, en } }` for web to register
 - **HELP_TARGET_ID** (packages/games/devdle/src/client/help-target.ts) - `'game-help'`
 - **Translate / ClientBaseProps / InstructionsProps / GameProps / ResultProps / MoveErrorInfo / GameStatsView** (packages/games/devdle/src/client/types.ts) - Prop contract
 - **SectionPanel** (packages/games/devdle/src/client/section-panel.tsx) - Panel with a `//` header as `h2`
-- **Board** (packages/games/devdle/src/client/board.tsx) - Scalable 4-12 column grid with non-chromatic glyphs
+- **Board** (packages/games/devdle/src/client/board.tsx) - Scalable 4-12 column grid with non-chromatic glyphs; `hinted` cell and pickable positions for the letter hint (REQ-012)
+- **LetterHintButton / SurrenderButton / SurrenderDialog** (packages/games/devdle/src/client/{letter-hint-button,surrender}.tsx) - Aside «💡 Pista» trigger and «⚑ Rendirse» (`error-outline`) with its confirmation dialog (REQ-012)
 - **useDevdleInput** (packages/games/devdle/src/client/use-devdle-input.ts) - Physical keyboard normalized into letter/backspace/submit/invalid
 - **keyStates / isFinished / MARK_EMOJI / MARK_GLYPH** (packages/games/devdle/src/client/marks.ts) - Pure helpers
 
-## Devdle generator (5 items) - see devdle.md
+## Devdle generator (6 items) - see devdle.md
 - **generator / DevdleTerm** (packages/games/devdle/src/generator/index.ts) - `GameGenerator<DevdlePayload, DevdleTerm>` with `historySpec`, `usedBankItems`, `generate`, `verify` (`verify` is the synchronous `verifyPayload`, typed `VerificationLog | Promise<VerificationLog>` by the contract: tests use `verifyPayload` for checks and `await generator.verify` through the contract; no `aheadDays`)
 - **verifyPayload** (packages/games/devdle/src/generator/verify.ts) - Five ordered checks returning a `VerificationLog`
-- **eligibleTerms / sortByTerm / isReusable / REUSE_WINDOW_DAYS / RECENT_DAYS** (packages/games/devdle/src/generator/eligibility.ts) - 365-day and category-rotation filter, ordinal ordering by `term`
+- **eligibleTerms / blockedCategories / isExcluded / sortByTerm / isReusable / REUSE_WINDOW_DAYS / RECENT_DAYS** (packages/games/devdle/src/generator/eligibility.ts) - 365-day filter, exclusion list and 3-tier category rotation (last 3 days → yesterday → none, the strictest tier that leaves a candidate), ordinal ordering by `term` (REQ-012)
+- **DEVDLE_EXCLUDED_TERMS** (packages/games/devdle/src/shared/excluded.ts) - 115 niche bank terms Devdle never picks as the answer (still used by Grep Grid and accepted as guesses); imported by the generator (`eligibility.ts`) and by the definition (`bankUsage.excludedItems`). `src/shared` imports nothing outside itself (boundaries test). Moved from `src/generator/` in S-067
 - **addDays / isValidDate** (packages/games/devdle/src/generator/dates.ts) - Clock-free `YYYY-MM-DD` arithmetic in UTC
 - **BANK / seed / payloadFrom / RECENT_GIT_DB_LINUX** (packages/games/devdle/src/generator/test-fixtures.ts) - Test-only fixtures (`seed(n)` is a SHA-256 digest: uniform seeds collapse to a zero state in `rngFrom`)
 
@@ -121,13 +123,14 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **BigOPayload / BigOPayloadExplanation / BigOMove / BigOState / BigOPublicView / BigOFeedback / BigOResult / BigOExplanation / BigOStats / CodeByLanguage** (packages/games/big-o/src/definition/schemas.ts) - Types inferred from the schemas
 - **PAYLOAD / PAYLOAD_RECURSION / WON_JAVA / LOST_GO / withAnswer / NOW / CTX_ES / CTX_EN / S0 / CODE_NLOGN** (packages/games/big-o/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry
 
-## Big O client (14 items) - see big-o.md
+## Big O client (15 items) - see big-o.md
 - **StatsSummary / StatsSummaryProps / categoryRates / gamesCount / formatPercent / StatBar / parseStats** (packages/games/big-o/src/client/{stats-summary.tsx,stats.ts,stat-bar.tsx,parse.ts,types.ts}) - Own stats: hits per recipe category (`N de M`, bar, %), labels in `stats.categories.*` of the i18n
 - **Instructions / Game / Result** (packages/games/big-o/src/client/{instructions,game,result}.tsx) - Screens: once-per-attempt "Start"; code tabs + 8-option radiogroup + confirm (`moveSchema.parse` then `onMove`); verdict, code with line notes, marked options and step-by-step panel
 - **Preview / translatorFor** (packages/games/big-o/src/client/{preview.tsx,translate.ts}) - Read-only plain-text solution mode `{ payload, language }` for the admin (answer and `trap_option` marked, `h3` headings, root `lang`)
 - **share** (packages/games/big-o/src/client/share.ts) - `🧮 Big O #N` / `🟩|🟥 <Language>` / `nerdose.dev`, spoiler-free
 - **i18n / HELP_TARGET_ID / parse* / contract types** (packages/games/big-o/src/client/{i18n/index.ts,help-target.ts,parse.ts,types.ts}) - Namespace `big-o`, help anchor, schema parsers and props types (`codeLanguage?` optional)
 - **CodeBlock** (packages/games/big-o/src/client/code-block.tsx) - Read-only tabbed code block with numbered lines, per-line notes (container query) and optional Shiki color with plain fallback
+- **CodeText** (packages/games/big-o/src/client/code-text.tsx) - Code line with a fixed indent and hanging-indent wrap, no horizontal scroll (REQ-012)
 - **loadTokenizer / SHIKI_VARS / useTokenizer** (packages/games/big-o/src/client/{highlight.ts,shiki-vars.ts,use-tokenizer.ts}) - Dynamic memoised Shiki loader, `css-variables` theme mapped to DS tokens, tokenizer hook
 - **OptionsGroup / Question** (packages/games/big-o/src/client/{options-group.tsx,question.tsx}) - Radiogroup of the 8 options with roving tabindex; fixed question with `f(n)` accent
 - **ResultOptions / Explanation** (packages/games/big-o/src/client/{result-options.tsx,explanation.tsx}) - Marked read-only options and "Paso a paso" panel shared by result and preview
@@ -161,7 +164,7 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **BugHuntPayload / BugHuntMove / BugHuntState / BugHuntPublicView / BugHuntFeedback / BugHuntResult / BugHuntLineFix / BugHuntExplanation / BugHuntStats / BugHuntTestCase / BugHuntVisibleTest / CodeByLanguage** (packages/games/bug-hunt/src/definition/schemas.ts) - Types inferred from the schemas
 - **PAYLOAD / PAYLOAD_BOOL / WON_JAVA / LOST_GO / WON_BOOL_JS / NON_PICKABLE / NOW / CTX_ES / CTX_EN / S0** (packages/games/bug-hunt/src/definition/test-fixtures.ts) - Test-only fixtures, not exported from the entry
 
-## Bug Hunt client (15 items) - see bug-hunt.md
+## Bug Hunt client (16 items) - see bug-hunt.md
 - **StatsSummary / StatsSummaryProps / languageRates / bugTypeRates / gamesCount / formatPercent / StatBar / parseStats** (packages/games/bug-hunt/src/client/{stats-summary.tsx,stats.ts,stat-bar.tsx,parse.ts,types.ts}) - Own stats: hits by language and by bug type (`N de M`, bar, %), labels from `LANGUAGE_LABEL` / `BUG_TYPE_LABEL`
 - **Instructions / Game / Result** (packages/games/bug-hunt/src/client/{instructions,game,result}.tsx) - React screens of the `./client` entry; data props are `unknown` and parsed with the definition schemas; `Game` validates `moveSchema.parse({ language, line })` before `onMove`
 - **Preview / PreviewProps / translatorFor** (packages/games/bug-hunt/src/client/{preview.tsx,types.ts,translate.ts}) - Read-only solution-mode preview `{ payload: unknown; language: Locale }` for the admin (plain-text code with the bug line, type and mutation chips, tests, failing test, fix, steps; `h3` headings, root `lang`)
@@ -169,6 +172,7 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **i18n / HELP_TARGET_ID** (packages/games/bug-hunt/src/client/{i18n/index.ts,help-target.ts}) - `{ namespace: 'bug-hunt', resources: { es, en } }` and `'game-help'`
 - **Translate / ClientBaseProps / InstructionsProps / GameProps / ResultProps / MoveErrorInfo / GameStatsView** (packages/games/bug-hunt/src/client/types.ts) - Prop contract (`codeLanguage?` optional, default `'js'`)
 - **CodeBlock** (packages/games/bug-hunt/src/client/code-block.tsx) - Tabs plus `select` / `result` / `preview` modes; eligible lines as roving-tabindex radios, marks with glyph + text tags, same tree with or without Shiki color
+- **CodeText** (packages/games/bug-hunt/src/client/code-text.tsx) - Same hanging-indent code line as Big O, used by `CodeBlock` and `FixDiff` (REQ-012)
 - **FixDiff** (packages/games/bug-hunt/src/client/fix-diff.tsx) - One-line `-` / `+` diff of the active tab's language
 - **Statement / TestsCard / FailingTest / WhyPanel / TypeChip / Question** (packages/games/bug-hunt/src/client/{statement,tests-card,failing-test,why-panel,question}.tsx) - Blocks shared by `Game`, `Result` and `Preview`
 - **loadTokenizer / SHIKI_VARS / useTokenizer** (packages/games/bug-hunt/src/client/{highlight,shiki-vars,use-tokenizer}.ts) - Copies of Big O's Shiki infrastructure with the `nerdose-bug-hunt` theme; Shiki only through `import()`
@@ -180,7 +184,7 @@ Packages `@nerdose/game-devdle` (`packages/games/devdle`), entries `./definition
 - **generate / createGenerate / historySpec / usedBankItems / MAX_COMBOS** (packages/games/bug-hunt/src/generator/generate.ts) - Deterministic `generate({ date, seed, history })` (rng order: bug type, then per attempt template, parameters, random test inputs, candidate shuffle; up to `MAX_COMBOS = 30` attempts, then the best fallback so `verify` rejects it); `createGenerate(templates)` injects test templates; `historySpec` `{ bank: null, lastUsedField: '', recentDays: 60, aheadDays: 60 }`; `usedBankItems` `[]`.
 - **generator / verify / createVerify / VERIFY_CHECKS / Runner** (packages/games/bug-hunt/src/generator/{index,verify}.ts) - `GameGenerator<BugHuntPayload>` consumed by `apps/generator`; async `verify` with the 13 checks (5 in memory, 6 runs with an injectable runner, `correct_agrees`, `mutant_agrees`), skip rule and `reason` format (`run_<variant>_<lang>: <kind>`, `tests_consistent: equivalent_mutant`)
 - **correctCode / testSignature / buildSources / parseValues / Sources** (packages/games/bug-hunt/src/generator/harness.ts) - Pure harness: correct version from `code` + `fix`, signature from the tests, the 6 `wrapFunction` programs and the strict reading of the output
-- **TEMPLATES / templateById / bugTypesOf / combosFor / Template / TemplateId / TemplateParams / TestInput / MutationSite / BuiltTemplate** (packages/games/bug-hunt/src/generator/catalog/index.ts, packages/games/bug-hunt/src/generator/types.ts) - 12 templates (48 parameter combinations) sorted by `id`, each with `build`, `spec`, `edgeCases`, `randomInput` and an independent TypeScript `reference`; `bugTypesOf` / `combosFor` derive the admitted bug types from the declared sites
+- **TEMPLATES / templateById / bugTypesOf / combosFor / Template / TemplateId / TemplateParams / TestInput / MutationSite / BuiltTemplate** (packages/games/bug-hunt/src/generator/catalog/index.ts, packages/games/bug-hunt/src/generator/types.ts) - 18 templates (62 parameter combinations, 6 added in REQ-012 to vary where the bug lands) sorted by `id`, each with `build`, `spec`, `edgeCases`, `randomInput` and an independent TypeScript `reference`; `bugTypesOf` / `combosFor` derive the admitted bug types from the declared sites
 - **OPERATORS / OPERATOR_IDS / OperatorId / mutationsOf / MutationCandidate** (packages/games/bug-hunt/src/generator/mutation/{operators,candidates}.ts) - 15 mutation operators over `replaceNode`; `mutationsOf(built, bugType)` lists the candidates in a stable order
 - **neutralExpr / neutralStmt** (packages/games/bug-hunt/src/generator/mutation/neutral.ts) - Language-neutral notation for `mutation.from` / `to` (`len(nums)`, `==`, `best = i`)
 - **TEST_COUNT / MAX_TEST_DRAWS / EVAL_STEP_LIMIT / testSize / buildTests / selectTests** (packages/games/bug-hunt/src/generator/tests.ts) - 10 distinct generated tests with `expected` from `evaluate`; hidden test (smallest failing) and visible tests (smallest passing)

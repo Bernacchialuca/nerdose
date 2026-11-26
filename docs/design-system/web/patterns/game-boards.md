@@ -1,6 +1,6 @@
 ---
 pattern: game-boards
-version: 1.8.0
+version: 1.9.0
 status: active
 last_updated: 2026-11-25
 source: docs/nerdose.html
@@ -27,6 +27,8 @@ Reúne las piezas **propias de un solo juego**: celdas, teclas, filas y opciones
 
 Layout: tablero (`flex: 999 1 560px`, columna centrada, gap 28) + aside (`1 1 300px`, máx. 380, gap 16) con gap 40 (L451-480). Encabezado centrado: `// término técnico · 6 letras · intento 4 de 6` + `h1` 34px.
 
+**1.9.0 (REQ-012):** la composición sigue [`game-screens`](game-screens.md): el bloque de título va alineado a la izquierda y a ancho completo; el teclado va en la columna del tablero; el aside queda «// cómo se juega» (leyenda, `HELP_TARGET_ID`) → pista de categoría → distribución (si hay stats) → «💡 Pista» (`button` `secondary`, ancho completo) → «⚑ Rendirse» (`button` `error-outline`, ancho completo, abre O-04) → «Reportar un problema». Con la partida anulada se ocultan teclado, Pista y Rendirse.
+
 ### `devdle.cell` — celda del tablero (L529-537)
 
 64×64, `radius.tile` (8), `type.game.tile.lg` (Mono 800 28), borde 2px. Grilla `repeat(6, 64px)`, gap 8; 6 filas con gap 8 (`role="grid"`).
@@ -38,8 +40,12 @@ Layout: tablero (`flex: 999 1 560px`, columna centrada, gap 28) + aside (`1 1 30
 | no está | `#1A2028` | `#8D99A6` | 2px solid `#1A2028` | L533 |
 | escrita (fila actual) | `#0F1318` | `#E6EDF3` | 2px solid `#5A6573` | L534 |
 | vacía | transparente | — | 2px solid `#222A33` | L535 |
+| pista (1.9.0) | transparente | `game.devdle.muted` | **2px dashed** `game.devdle.border` | REQ-012 |
+| elegible para pista (1.9.0) | hover `game.devdle.tint` | — | **2px dashed** `game.devdle.accent` | REQ-012 |
 
-`aria-label` por celda: "{letra|casilla}, {correcta|en otra posición|no está|escrita|vacía}" (L537).
+`aria-label` por celda: "{letra|casilla}, {correcta|en otra posición|no está|escrita|pista|vacía}" (L537).
+
+**Pista de letra (1.9.0, REQ-012):** la letra revelada se muestra como guía en la celda vacía de esa posición en la fila actual (estado «pista», sin glifo); al escribir encima, la celda pasa a «escrita». Mientras el jugador elige, cada posición libre de la fila actual (las ya resueltas en verde quedan afuera) suma un `<button>` que cubre la celda con nombre «Revelar la letra N», borde punteado del acento y foco visible; Escape, «Cancelar» o escribir cancelan la elección.
 
 **Adaptaciones requeridas:**
 - **NFR-U04:** "en otra posición" tiene patrón (punteado). "Correcta" vs "no está" se distinguen por relleno claro/oscuro (9,2:1) y `aria-label`, pero no por ícono o patrón. **Resuelto (1.1.0):** glifo en la esquina superior derecha de cada celda evaluada: `✓` correcta, `~` en otra posición, `✗` no está (`aria-hidden`, mismo color que la letra, tamaño `--tile-mark` = 40% de la letra, mín 8px, máx 12px). Las celdas escrita y vacía no llevan glifo.
@@ -126,7 +132,7 @@ Cabecera del panel: "// tests" + "input → esperado" (Mono 12). Nota al pie Int
 
 - **Test que falla:** caja `error` (radio 12, padding 14 16, Mono 14): llamada + "esperado **0** · obtenido **2**" (verde / rojo en `<b>`).
 - **Fix:** [code-block](../components/code-block.md) `diff`.
-- **Por qué falla:** `h2` 20px + pasos numerados (abajo) + chips "tipo: comparación" (`chip.accent`) y "mutación: > → >=" (`chip.neutral`).
+- **Por qué falla:** `h2` 20px + pasos numerados (abajo) + chips "tipo: comparación" (`chip.accent`) y "mutación: > → >=" (`chip.neutral`). **1.9.0 (REQ-012):** el resultado del jugador ya no muestra ningún chip; el chip de tipo queda solo en la preview del admin.
 - **Lo que compartís** (descartado por las pantallas de S-051: el texto lo arma el host con `share()`): caja `neutral` Mono 14/1.7, `pre-line`: "🐛 Bug Hunt #128 · JavaScript / 🟩 bug encontrado / nerdose.dev".
 - **↺ reiniciar demo** (descartado por las pantallas de S-051): [button](../components/button.md) `ghost` (es del prototipo como demo; en producto **Pendiente** si existe).
 
@@ -263,13 +269,13 @@ Encontrada, revelada y solución suman la **definición** (Inter 13/1.5 `text.bo
 
 El contador es el dato a la derecha de «// palabras de hoy» en `grep-grid.word-list`: valor `font-mono text-mono-body font-bold text-game-grep-grid` ("3/8") y la etiqueta «encontradas» `sr-only`. Mismo tamaño durante la partida y en el resultado. **No es live region**: el avance se anuncia en la región del hint. (Hasta 1.3.0 era una `card` `counter` sobre la grilla; se quitó para que la grilla arranque a la altura del título y entre en pantalla.)
 
-### `grep-grid.surrender` — botón «Rendirse» (`outline-tinted`, 1.2.0)
+### `grep-grid.surrender` — botón «Rendirse» (`error-outline`, 1.9.0)
 
-`button` `outline-tinted` de error implementado como constante local (`SURRENDER_BUTTON`), candidata a `buttonClass`: `min-h-11 rounded-control border border-status-error-border px-4 font-mono text-button-md font-medium text-text`, hover `border-status-error`, foco outline 2px del acento del juego. Ícono `✕` `aria-hidden`. Deshabilitado: estilo neutro + `aria-disabled`.
+**1.9.0 (REQ-012):** `buttonClass({ variant: 'error-outline', fullWidth: true })` de `@nerdose/ui` (borde `status.error.border`, texto `status.error.soft`, sin relleno; hover con borde `status.error` y fondo `status.error.bg`; peso 500), con el glifo `⚑` `aria-hidden`. Es el mismo botón que «Rendirse» de Devdle y reemplaza a la constante local `SURRENDER_BUTTON` (`outline-tinted` con texto neutro e ícono `✕`, 1.2.0). Deshabilitado: estilo neutro + `aria-disabled`.
 
 ### `grep-grid.surrender-dialog` — O-04 «¿Rendirte?» (1.2.0)
 
-Gap de DS aceptado en REQ-005: el DS no define modales; se deriva de `panel` + `button` según la guía de identidad. Overlay `fixed inset-0 z-50 flex items-center justify-center bg-header px-4` (clic en el overlay = «Seguir jugando»); panel `role="alertdialog" aria-modal="true"` `flex w-full max-w-xl flex-col gap-4 rounded-panel border border-border bg-surface p-6`; cabecera con `h2` Mono `text-title-panel` y botón cerrar `buttonClass({ variant: 'icon' })`; texto `font-sans text-body text-text-body`; acciones `flex flex-wrap gap-3` con cada botón `grow basis-50` («Seguir jugando» `primary` primero; «Sí, rendirme» `outline-tinted`). Foco inicial en «Seguir jugando» (nunca en la destructiva), trampa de foco, Escape / cerrar / overlay cierran salvo en `loading` («Cerrando…», ambos botones `aria-disabled`), el foco vuelve a «Rendirse» y el contenido de la partida queda `inert`. Sin animación.
+Gap de DS aceptado en REQ-005: el DS no define modales; se deriva de `panel` + `button` según la guía de identidad. Overlay `fixed inset-0 z-50 flex items-center justify-center bg-header px-4` (clic en el overlay = «Seguir jugando»); panel `role="alertdialog" aria-modal="true"` `flex w-full max-w-xl flex-col gap-4 rounded-panel border border-border bg-surface p-6`; cabecera con `h2` Mono `text-title-panel` y botón cerrar `buttonClass({ variant: 'icon' })`; texto `font-sans text-body text-text-body`; acciones `flex flex-wrap gap-3` con cada botón `grow basis-50` («Seguir jugando» `primary` primero; «Sí, rendirme» `error`, relleno rojo, desde REQ-012; antes `outline-tinted`). Devdle usa el mismo contenido y acciones con el `Dialog` de `@nerdose/ui` (`surrender.tsx`) y su propio texto («Vas a cerrar la partida con N de 6 intentos usados…»). Foco inicial en «Seguir jugando» (nunca en la destructiva), trampa de foco, Escape / cerrar / overlay cierran salvo en `loading` («Cerrando…», ambos botones `aria-disabled`), el foco vuelve a «Rendirse» y el contenido de la partida queda `inert`. Sin animación.
 
 ## Modo solución — preview del admin (1.5.0)
 
@@ -336,3 +342,4 @@ Cabecera de 150px de la [tarjeta de juego](../components/card.md), `aria-hidden`
 - 2026-11-15 v1.7.0 — Story S-051: mapeo de `bug-hunt.line` / `bug-hunt.test` / `bug-hunt.confirm` a tokens existentes, tags responsivos, fila Bug Hunt del modo solución con la excepción de las pestañas y «Lo que compartís» / «↺ reiniciar demo» marcados como descartados.
 - 2026-11-15 v1.7.1 — `bug-hunt.line` y `bug-hunt.confirm` usan `game.bug-hunt.tint-hover` y `game.bug-hunt.disabled.*`, ya en `@nerdose/ui`.
 - 2026-11-25 v1.8.0 — Story S-059 (plan `games`): `bug-hunt.line` a 44px, fila de partida de Timeline en dos líneas bajo 20rem con controles que no se achican, badge que envuelve en la fila de resultado y medida de la excepción de `devdle.key`.
+- 2026-11-25 v1.9.0 — REQ-012 (S-063, S-064, S-066; implementado fuera del workflow): layout de Devdle según `game-screens`, estados «pista» y «elegible para pista» de `devdle.cell`, «Rendirse» con `error-outline` (Devdle y Grep Grid) y confirmación `error`, resultado de Bug Hunt sin chips.

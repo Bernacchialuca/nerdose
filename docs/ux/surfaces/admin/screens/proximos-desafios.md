@@ -8,8 +8,8 @@ audiences:
   - responsable
 fidelity: mid
 status: diseñada
-version: "1.3"
-date: 2026-11-14
+version: "1.4"
+date: 2026-11-25
 ---
 
 # Pantalla: P-03 · Próximos desafíos
@@ -17,9 +17,9 @@ date: 2026-11-14
 ## Identidad
 
 - **Audiencia primaria:** [responsable](../../../audiences/responsable/research-context.md)
-- **JTBD / Propósito:** Ver de un vistazo qué se publica desde mañana hasta los próximos 14 días en cada juego registrado: los días sin desafío (con su falla de generación), las regeneraciones pendientes o fallidas y los desafíos que usan un ítem rechazado; abrir el detalle y pedir una regeneración.
+- **JTBD / Propósito:** Ver de un vistazo qué se publica desde mañana hasta los próximos 14 días en cada juego registrado: los días sin desafío (con su falla de generación), las regeneraciones pendientes o fallidas y los desafíos que usan un ítem rechazado; abrir el detalle y, desde ahí, pedir una regeneración.
 - **Viewports:**
-  - **desktop** — Panel único a todo el ancho con la grilla día × juego como tabla; cada celda con desafío abre el detalle. (único viewport de la superficie; no hay caso mobile relevado).
+  - **desktop** — Panel único a todo el ancho con la grilla día × juego como tabla; cada celda con desafío es una tarjeta «Ver detalle ›» que abre el detalle (REQ-012). (único viewport de la superficie; no hay caso mobile relevado).
 
 ## Entrada y salida
 
@@ -29,9 +29,8 @@ date: 2026-11-14
 - `o-02-detalle-desafio` · cierre
 
 **Salidas user-driven:**
-- A `o-02-detalle-desafio` · clic en una celda con desafío
-- A `o-03-regenerar-desafio` · acción «Regenerar» de la celda (solo `approved` con fecha futura y sin regeneración pendiente)
-- A `reportes`, `stock-contenido`, `metricas` · encabezado
+- A `o-02-detalle-desafio` · tarjeta «Ver detalle ›» de una celda con desafío (desde REQ-012 «Regenerar» solo está dentro del detalle)
+- A `reportes`, `bancos`, `stock-contenido`, `metricas` · encabezado
 - A `login` · «Cerrar sesión»
 
 **Salidas automáticas:**
@@ -44,8 +43,9 @@ date: 2026-11-14
 | 1 | header | header | — | layout | desktop | — | Marca del panel |
 | 2 | nav-reportes | link | — | navigation | desktop | — | Navegación a Reportes, con el contador de grupos abiertos |
 | 3 | nav-proximos | link | — | navigation | desktop | state_overrides: falla de generación | Navegación a Próximos, con el contador de fallas de generación activas |
+| 4b | nav-bancos | link | — | navigation | desktop | — | Navegación a Bancos (REQ-012) |
 | 4 | nav-stock | link | — | navigation | desktop | — | Navegación a Stock |
-| 5 | nav-metricas | link | — | navigation | desktop | — | Navegación a Métricas (FG-10) |
+| 5 | nav-metricas | link | — | navigation | desktop | — | Navegación a Métricas |
 | 6 | nav-cerrar-sesion | link | — | navigation | desktop | — | Cierra la sesión: borra el token y va a Login |
 | 7 | titulo | heading | h1 | content | desktop | — | Título |
 | 8 | subtitulo | paragraph | caption | content | desktop | — | Ventana (mañana a +14 días, UTC) y juegos registrados |
@@ -56,7 +56,7 @@ date: 2026-11-14
 | 13 | alerta-sistema | alert | error | feedback | desktop | visible_only_in_states: error de sistema | Falla de carga |
 | 14 | btn-reintentar | button | variant=secondary | input | desktop | visible_only_in_states: error de sistema | Reintenta la carga |
 | 15 | cargando | loader | — | feedback | desktop | visible_only_in_states: loading | Carga de la grilla |
-| 16 | grilla | table | — | content | desktop | hidden_in_states: loading, error de sistema; state_overrides: falla de generación, regeneración pendiente, regeneración fallida | Grilla de 14 días × juegos registrados; la celda abre el detalle |
+| 16 | grilla | table | — | content | desktop | hidden_in_states: loading, error de sistema; state_overrides: falla de generación, regeneración pendiente, regeneración fallida | Grilla de 14 días × juegos registrados; cada celda con desafío es una tarjeta-botón «Ver detalle ›» |
 
 ## Layout por viewport
 
@@ -67,12 +67,13 @@ date: 2026-11-14
   - col 2/12:
     - nav-proximos
   - col 2/12:
+    - nav-bancos
+  - col 2/12:
     - nav-stock
   - col 2/12:
     - nav-metricas
   - col 2/12:
     - nav-cerrar-sesion
-  - col 2/12: (vacía)
 - row `titulos`
   - col 12/12:
     - titulo
@@ -107,6 +108,11 @@ date: 2026-11-14
 - Icono: nada
 - Annotation: sección actual. Con fallas de generación activas suma el contador: «Próximos (1)» (`GET /api/admin/generation-failures`, `aria-label` «1 falla de generación activa»). Sin fallas, sin número
 
+### nav-bancos
+- Texto/label: Bancos
+- Icono: nada
+- Annotation: REQ-012; entre Próximos y Stock
+
 ### nav-stock
 - Texto/label: Stock
 - Icono: nada
@@ -115,7 +121,7 @@ date: 2026-11-14
 ### nav-metricas
 - Texto/label: Métricas
 - Icono: nada
-- Annotation: no se renderiza hasta FG-10
+- Annotation: nada (REQ-011)
 
 ### nav-cerrar-sesion
 - Texto/label: Cerrar sesión
@@ -170,7 +176,7 @@ date: 2026-11-14
 ### grilla
 - Texto/label: ver columnas
 - Icono: nada
-- Annotation: una fila por día (mañana a +14) con su número de desafío; una columna por juego registrado, en el orden del registry. Celda con desafío: estado + «Regenerar» (solo `approved`, fecha futura y sin pedido pendiente); clic → detalle. «Sin desafío» no tiene acción y, si hay falla registrada, muestra «20 intentos · <motivo>». «Usa un ítem rechazado: <término o hecho>» marca el desafío para regenerarlo a mano (nunca se regenera solo). Polling cada 5 s solo mientras haya alguna regeneración pendiente
+- Annotation: una fila por día (mañana a +14) con su número de desafío; una columna por juego registrado, en el orden del registry. Celda con desafío (REQ-012): una sola tarjeta-botón con borde (`p-2.5`, hover con fondo hundido) que muestra el estado y, al pie, «Ver detalle ›» (`aria-hidden`); su nombre accesible es «Ver {Juego} #{n}, {fecha}: {estado}» y abre el detalle. La celda ya no tiene «Regenerar»: se pide dentro del detalle. «Sin desafío» no tiene acción y, si hay falla registrada, muestra «20 intentos · <motivo>». «Usa un ítem rechazado: <término o hecho>» marca el desafío para regenerarlo a mano (nunca se regenera solo). Polling cada 5 s solo mientras haya alguna regeneración pendiente
 - Columnas: Día, Devdle, Grep Grid, Tech Timeline, Big O, Bug Hunt
 - Filas de ejemplo: «02/12 #32 · Aprobado · Aprobado · Aprobado · Aprobado · Aprobado» / «05/12 #35 · Usa un ítem rechazado: CAP theorem · Aprobado · Aprobado · Aprobado · Aprobado» / «15/12 #45 · Aprobado · Aprobado · Aprobado · Aprobado · Sin desafío — 20 intentos · variety_combo» / resto «Aprobado»
 
@@ -188,21 +194,21 @@ date: 2026-11-14
 - Cambios:
   - alerta-fallas: visible solo acá.
   - nav-proximos: content="Próximos (1)".
-  - grilla: la celda Devdle del 02/12 muestra «Sin desafío · Falla de generación · 20 intentos · no_valid_term», destacada; sin acción.
+  - grilla: la celda Devdle del 02/12 muestra «Sin desafío · Falla de generación · 20 intentos · no_valid_term», destacada; sin tarjeta ni acción.
 
 ### regeneración pendiente
 - Aplica: Sí
 - Mensaje: Hay una regeneración en curso. La grilla se actualiza sola cada 5 segundos.
 - Cambios:
   - alerta-pendiente: visible solo acá.
-  - grilla: la celda Grep Grid del 05/12 muestra «Regenerando…» y no admite «Regenerar».
+  - grilla: la tarjeta de Grep Grid del 05/12 muestra «Regenerando…»; en su detalle, «Regenerando…» queda deshabilitado.
 
 ### regeneración fallida
 - Aplica: Sí
 - Mensaje: No se pudo regenerar Grep Grid del 2026-12-05: ningún reemplazo pasó la verificación (overlap_conflict). Queda el actual.
 - Cambios:
   - alerta-regeneracion: visible solo acá.
-  - grilla: la celda Grep Grid del 05/12 muestra «Aprobado · Regeneración fallida» y vuelve a admitir «Regenerar».
+  - grilla: la tarjeta de Grep Grid del 05/12 muestra «Aprobado · Regeneración fallida»; su detalle vuelve a admitir «Regenerar».
 
 ### loading
 - Aplica: Sí
@@ -220,13 +226,12 @@ date: 2026-11-14
 ## Interacciones
 
 **Eventos:**
-- grilla · on click celda con desafío → abre `o-02-detalle-desafio` (desde próximos)
-- grilla · acción «Regenerar» de la celda → abre `o-03-regenerar-desafio`
+- grilla · on click en la tarjeta «Ver detalle ›» → abre `o-02-detalle-desafio` (desde próximos); «Regenerar» de O-02 → `o-03-regenerar-desafio` (REQ-012)
 - polling cada 5 s de `GET /api/admin/challenges/upcoming` solo mientras alguna celda tenga una regeneración pendiente; se corta cuando ninguna queda pendiente
 - btn-reintentar · on click → reconsulta
 
 **Validaciones:**
-- Ninguna: no hay campos de entrada. «Regenerar» solo aparece en desafíos aprobados con fecha futura y sin pedido pendiente.
+- Ninguna: no hay campos de entrada. «Regenerar» vive en O-02 y solo se habilita en desafíos aprobados con fecha futura y sin pedido pendiente.
 
 **Feedback:**
 - Una regeneración fallida nunca deja una celda sin desafío: queda el actual y se muestra el motivo.
@@ -235,7 +240,7 @@ date: 2026-11-14
 
 ## Accesibilidad
 
-- **Orden de foco:** encabezado → leyenda → avisos → grilla (fila por fila, celda por celda; dentro de la celda, apertura del detalle → «Regenerar»).
+- **Orden de foco:** encabezado → leyenda → avisos → grilla (fila por fila; una sola parada de Tab por celda con desafío: la tarjeta «Ver detalle ›»). Tras confirmar o cancelar O-03 el foco vuelve al «Regenerar» del detalle, que sigue abierto.
 - **Landmarks y jerarquía:** `main` con un h1; la grilla es una tabla con encabezados de fila (día) y de columna (juego).
 - **Propio de esta composición:** el estado de la celda se comunica con texto, no solo con color; los cambios por polling y las fallas se anuncian con `aria-live="polite"`.
 
@@ -250,9 +255,11 @@ date: 2026-11-14
 - REQ-008: «Usa un ítem rechazado» es solo un aviso; el desafío no se regenera solo (CA 10).
 - REQ-008: polling confirmado en 5 s, solo mientras hay pendientes (decisión 14 del diseño técnico).
 - REQ-009: Big O aparece como cuarta columna sin rediseño. Es el primer juego cuya generación puede fallar por ejecución: el motivo de la falla o de la regeneración fallida se muestra como llega (`ambiguous_fit`, `run_go: timeout`, `variety_recipe`…), igual que en los otros juegos. Su regeneración tarda unos segundos más (ejecuta código en 3 lenguajes por candidato) y el polling de 5 s ya lo cubre: no se agrega un estado nuevo.
+- REQ-012 (S-068, implementado fuera del workflow): cada celda con desafío es una tarjeta «Ver detalle ›» y «Regenerar» sale de la grilla: solo se pide dentro del detalle, después de ver el desafío. La celda queda con una sola parada de Tab y la grilla, más liviana (padding de celda más chico).
 - REQ-010: Bug Hunt aparece como quinta columna sin rediseño; con los 5 juegos la grilla sigue entrando en el ancho de desktop. Sus motivos de falla también se muestran como llegan (`tests_consistent`, `variety_combo`, `run_mutant_java: compile_error`, `correct_agrees`…) y su regeneración ejecuta 6 procesos por candidato, cubierta por el mismo polling (CA 17, 19). Sin estados nuevos.
 
 **Alternativas descartadas:**
+- «Regenerar» en la celda (REQ-008 a REQ-011): se quitó en REQ-012 para que nadie regenere sin abrir el detalle.
 - Lista por día con preview inline: repetiría ES/EN 42 veces (14 × 3) y crecería con cada juego.
 - Columnas fijas para los 5 juegos: mostraría columnas vacías de juegos que todavía no existen.
 - Botón para completar un día sin desafío: el admin no carga ni genera contenido (fuera de alcance).
@@ -262,4 +269,4 @@ date: 2026-11-14
 
 ## Trazabilidad
 
-- C-43, C-44, C-49 · REQ-008 (RF 1-3, 6; CA 1, 3, 4, 6-10) · REQ-010 (RF 14; CA 17, 19) · flujo 4 de `user-flows.md`.
+- C-43, C-44, C-49 · REQ-008 (RF 1-3, 6; CA 1, 3, 4, 6-10) · REQ-010 (RF 14; CA 17, 19) · REQ-012 (S-068) · flujo 4 de `user-flows.md`.

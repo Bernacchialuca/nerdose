@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.2"
-date: 2026-11-11
+version: "1.3"
+date: 2026-11-25
 ---
 
 # Pantalla: Grep Grid · Resultado
@@ -20,8 +20,8 @@ date: 2026-11-11
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
 - **JTBD / Propósito:** Ver el veredicto `N/8` (victoria solo con 8/8), la grilla con las 8 palabras marcadas distinguiendo las encontradas de las reveladas, la lista de las 8 palabras con su definición y las rachas actualizadas; compartir `N/8` sin revelar las palabras.
 - **Viewports:**
-  - **mobile** — veredicto arriba, grilla final, lista de palabras con definiciones y la card de cierre (rachas + salidas) al pie, en una columna.
-  - **desktop** — grilla final y card de cierre (rachas + salidas) a la izquierda (7/12); veredicto y lista de palabras con definiciones a la derecha (5/12). Las dos columnas arrancan arriba para que la grilla y la racha entren en pantalla. «Compartir» solo en el header.
+  - **mobile** — veredicto (banner) arriba, grilla final, card de cierre (rachas + salidas), lista de palabras con definiciones y reporte, en una columna en el orden del DOM (principal y después lateral).
+  - **desktop** — veredicto (banner) a todo el ancho; debajo, grilla final y card de cierre (rachas + salidas) en la columna principal (7/12) y lista de palabras con definiciones y reporte en el lateral (5/12), alineadas arriba (patrón común de resultado, REQ-012). «Compartir» solo en el header.
 
 ## Entrada y salida
 
@@ -46,7 +46,7 @@ date: 2026-11-11
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
 | 1 | header | header | game-header · finished | layout | ambos | — | Breadcrumb `> nerdose / grep-grid`, «desafío del dd/mm», Compartir activo, idioma y racha |
-| 2 | veredicto | heading | h1 | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: perdió, anulado | Veredicto y resultado `N/8` de la partida |
+| 2 | veredicto | banner | success · h1 | feedback | ambos | hidden_in_states: loading, error de sistema; state_overrides: perdió, anulado | Veredicto siempre visible: `banner` del DS con el título como `h1` y un detalle corto |
 | 3 | alerta-anulado | alert | warning | feedback | ambos | visible_only_in_states: anulado | Aviso de anulación |
 | 4 | grilla-final | image | grep-grid.cell | content | ambos | hidden_in_states: loading, error de sistema, anulado | Grilla 12×12 con las 8 palabras marcadas: encontradas y reveladas, distinguidas por algo más que el color |
 | 5 | lista-palabras | list | grep-grid.word | content | ambos | hidden_in_states: loading, error de sistema, anulado | Las 8 palabras con su definición en el idioma activo; las reveladas marcadas como no encontradas |
@@ -70,22 +70,23 @@ date: 2026-11-11
 - alerta-sistema
 - btn-reintentar
 - grilla-final
-- lista-palabras
 - card-rachas
 - link-stats
-- link-reportar
 - cuenta-regresiva
 - btn-siguiente
 - link-volver
+- lista-palabras
+- link-reportar
 
 ### desktop · 1200px
+- veredicto (12/12)
 - alerta-anulado
 - loader
 - alerta-sistema
 - btn-reintentar
 - row `resultado`
   - col 7/12: grilla-final, card de cierre (rachas en una línea con link-stats; debajo cuenta-regresiva a la izquierda y btn-siguiente + link-volver a la derecha)
-  - col 5/12: veredicto (solo al rendirse; al ganar es un `h1` `sr-only` y festeja el confeti), lista-palabras (con `N/8` en su encabezado), link-reportar
+  - col 5/12: lista-palabras (con definiciones), link-reportar (siempre último)
 
 ## Contenido
 
@@ -95,9 +96,9 @@ date: 2026-11-11
 - Annotation: `game-header` variant `finished` (REQ-005): Compartir activo con el acento del juego (único botón de compartir de la pantalla; texto en tres líneas: «🔎 Grep Grid #8», «5/8» y «nerdose.dev», nunca las palabras ni si el jugador se rindió, CA 16); «Estadísticas» → `estadisticas`; ES|EN cambia solo las definiciones; píldora con la racha global ya actualizada. «Cómo se juega» no se muestra en el resultado. Sin nav global ni `nav-movil`
 
 ### veredicto
-- Texto/label: 8/8: las encontraste todas
+- Texto/label: 8/8: las encontraste todas · Repasá qué significa cada una.
 - Icono: check
-- Annotation: al ganar, sin banner: confeti rosa del juego y `h1` `sr-only` («8/8: las encontraste todas»); al rendirse, banner `failure` del DS, sin drama, con el veredicto en texto además del color. Victoria solo con 8/8 (RF 13)
+- Annotation: `Banner` de `@nerdose/ui` con `titleAs="h1"`, siempre visible arriba y a ancho completo (patrón común, REQ-012): `success` al ganar (detalle «Repasá qué significa cada una.») y `failure` al rendirse (detalle «Estas son las palabras que faltaban.»), sin drama, con el veredicto en texto además del color. El confeti del host sigue al ganar. Ya no hay `h1` `sr-only`. Victoria solo con 8/8 (RF 13)
 
 ### alerta-anulado
 - Texto/label: Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.
@@ -178,7 +179,7 @@ date: 2026-11-11
 - Aplica: Sí (sub-estado de default)
 - Mensaje: Te rendiste con 5/8. Estas son las palabras que faltaban.
 - Cambios:
-  - veredicto: content="Te rendiste con 5/8", icon="x", annotation="banner `failure`; rendirse también suma a la racha. Con 0/8 dice «Te rendiste con 0/8» (CA 12)" (state_override)
+  - veredicto: content="Te rendiste con 5/8 · Estas son las palabras que faltaban.", variant="failure", icon="x", annotation="banner `failure`; rendirse también suma a la racha. Con 0/8 dice «Te rendiste con 0/8» (CA 12)" (state_override)
   - grilla-final: annotation="las 3 palabras faltantes aparecen reveladas: borde punteado + ○, distintas de las 5 encontradas (CA 10)" (state_override)
   - lista-palabras: las 3 palabras no encontradas llevan la etiqueta «○ no la encontraste» en lugar de «✓ encontrada» (state_override)
 
@@ -246,7 +247,7 @@ date: 2026-11-11
 ## Interacciones
 
 **Eventos:**
-- Compartir del header · on click → share nativo con «🔎 Grep Grid #8 / 5/8 / nerdose.dev» o copia al portapapeles (estado success); registra `share:grep-grid`
+- Compartir del header · on click → share nativo con «🔎 Grep Grid #8 / 5/8 / nerdose.dev» o copia al portapapeles (estado success); no emite ningún evento (analítica retirada en REQ-011)
 - ES|EN · on change → recarga las definiciones en el otro idioma; grilla, palabras, encontradas y reveladas no cambian (CA 19)
 - btn-siguiente · on click → siguiente juego pendiente
 - link-reportar · on click → abre O-01 desde el resultado (también el anulado), sin el aviso de spoilers; al cerrarlo el foco vuelve al enlace y la pantalla sigue igual. Tras «Gracias, recibimos tu reporte» o `already_reported` → estado `ya reportado` (REQ-007)
@@ -259,7 +260,7 @@ date: 2026-11-11
 
 ## Accesibilidad
 
-- **Orden de foco:** header → veredicto → grilla final (lectura) → lista de palabras (lectura) → rachas → link-reportar → salidas (Compartir va en el header).
+- **Orden de foco:** header → veredicto → grilla final (lectura) → card de cierre (rachas y salidas) → lista de palabras (lectura) → link-reportar (Compartir va en el header).
 - **Landmarks y jerarquía:** `h1` es el veredicto; las secciones `//` (palabras de hoy, rachas) son `h2`. Landmarks: header (breadcrumb como `nav` con nombre), main, footer.
 - **Foco y teclado:** O-01 atrapa el foco y lo devuelve a `link-reportar`. La grilla final no es interactiva: se recorre como lectura, con `aria-label` por celda.
 - **Propio de esta composición:** La confirmación «Copiado» se anuncia con `role=status`; el veredicto, y la diferencia entre palabras encontradas y reveladas, se comunican con texto y glifo además del color (NFR-U04, RF 13).
@@ -277,6 +278,7 @@ date: 2026-11-11
 - REQ-005: «Siguiente juego» solo aparece si queda un juego con desafío sin completar, como en Devdle.
 - REQ-005: la grilla final va en la columna principal y la lista con definiciones en la lateral, como el layout tablero + aside del prototipo; en mobile la lista sigue a la grilla porque es el momento de aprendizaje.
 - REQ-007: «Reportar un problema» se renderiza en los tres juegos (deja de estar oculto hasta FG-6). Es un enlace secundario al final de la columna lateral, no un botón, para no competir con la acción del juego; el estado «ya reportado» se lee de `GameToday.reported` para no ofrecer un intento que va a fallar.
+- REQ-012 (S-064, patrón común de resultado, implementado fuera del workflow el 2026-11-25): el veredicto vuelve a ser siempre visible como `banner` (también al ganar, con detalle nuevo «Repasá qué significa cada una.»), arriba y a ancho completo; se quita el `h1` `sr-only` y el armado con `contents` + `order`. Principal (7/12): grilla y card de cierre; lateral (5/12): lista con definiciones y reporte, siempre último. En mobile el orden es el del DOM, así que la card de cierre queda antes de la lista. Supera la nota del 2026-11-11 sobre el banner al ganar.
 - REQ-007 resuelve la pregunta 2 del product-map: `anulado` es una sola variante mínima (aviso + rachas, sin Compartir ni solución) haya o no jugado el jugador antes de la anulación. `GameToday` devuelve la Play `voided` con `result: null` y `public_view: null` (decisión 5 del diseño técnico). «Reportar un problema» sigue visible.
 
 **Alternativas descartadas:**
@@ -292,4 +294,4 @@ date: 2026-11-11
 
 ## Trazabilidad
 
-- C-22, C-12, C-13, C-33, C-36, C-41 · REQ-005 (RF 12-14, 22; CA 9, 10, 12, 16-19) · flujos 1, 3, 4 y 5 de `user-flows.md` · REQ-007 (RF 1, 9; CA 1-3, 24).
+- C-22, C-12, C-13, C-33, C-36, C-41 · REQ-005 (RF 12-14, 22; CA 9, 10, 12, 16-19) · flujos 1, 3, 4 y 5 de `user-flows.md` · REQ-007 (RF 1, 9; CA 1-3, 24) · REQ-012 (S-064).

@@ -35,6 +35,7 @@ src/
     ├── auth/routes/login.tsx                 # /login
     ├── reports/routes/reports.tsx            # /reports
     ├── upcoming/routes/upcoming.tsx          # /upcoming
+    ├── banks/routes/banks.tsx                # /banks (REQ-012)
     ├── content-stock/routes/content.tsx      # /content
     └── metrics/routes/metrics.tsx            # /metrics
 ```
@@ -47,7 +48,8 @@ src/
 | `/` | `shell` | protected | Redirects to `/reports` |
 | `/reports` | `reports` | protected | Player reports; resolve, dismiss and void challenges |
 | `/upcoming` | `upcoming` | protected | Next 14 days: solution preview and regenerate, with polling |
-| `/content` | `content-stock` | protected | Stock of the content banks |
+| `/banks` | `banks` | protected | Bank items (terms / facts): search, filters in the URL, server-side pages of 25 (REQ-012) |
+| `/content` | `content-stock` | protected | Stock of the content banks (nav label «Stock») |
 | `/metrics` | `metrics` | protected | Metrics as HTML tables |
 | `*` | `shell` | protected | Not found |
 
@@ -64,6 +66,7 @@ export const router = createBrowserRouter([
       { index: true, element: <Navigate to="/reports" replace /> },
       { path: 'reports', lazy: () => import('@/modules/reports/routes/reports') },
       { path: 'upcoming', lazy: () => import('@/modules/upcoming/routes/upcoming') },
+      { path: 'banks', lazy: () => import('@/modules/banks/routes/banks') },
       { path: 'content', lazy: () => import('@/modules/content-stock/routes/content') },
       { path: 'metrics', lazy: () => import('@/modules/metrics/routes/metrics') },
       { path: '*', element: <NotFound /> },
@@ -89,7 +92,7 @@ export function RequireAuth({ children }: PropsWithChildren) {
 
 ### Heavy sections
 
-- The `upcoming` route loads the game `client` packages lazily for the preview (see `game-clients`); `metrics`, `reports` and `content` do not import any game code.
+- The `upcoming` route loads the game `client` packages lazily for the preview (see `game-clients`); `metrics`, `reports`, `banks` and `content` do not import any game code.
 
 ### Navigation and focus
 

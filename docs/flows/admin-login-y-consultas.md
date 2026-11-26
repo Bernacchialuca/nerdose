@@ -1,29 +1,30 @@
 ---
 id: admin-login-y-consultas
-title: Admin — login, reportes, stock y métricas
+title: Admin — login, reportes, bancos, stock y métricas
 type: feature
 status: Active
 created: 2026-11-03
-last_updated: 2026-11-13
-stories: [S-032, S-033, S-037, S-039, S-040, S-052, S-053, S-054]
+last_updated: 2026-11-25
+stories: [S-032, S-033, S-037, S-039, S-040, S-052, S-053, S-054, S-067, S-068]
 ---
 
-# Admin — login, reportes, stock y métricas
+# Admin — login, reportes, bancos, stock y métricas
 
 **Tipo:** Feature
 **Status:** Draft
 **Creado:** 2026-11-03
-**Última actualización:** 2026-11-03
-**Stories:** —
+**Última actualización:** 2026-11-25
+**Stories:** S-032, S-033, S-037, S-039, S-040, S-052, S-053, S-054, S-067, S-068
 
 ## Descripción
 
 El responsable entra a `admin.nerdose.dev` con la contraseña única y opera con un JWT de 8 h:
 - revisa los reportes agrupados por desafío y los resuelve o descarta;
 - consulta el stock de contenido y las palabras más rechazadas;
+- explora los ítems de los bancos (pantalla «Bancos», REQ-012);
 - consulta las métricas.
 
-La anulación y la regeneración tienen sus propios flujos. Cubre C-38, C-39, C-40, C-45 y C-46 (F11, ADR-010, ADR-014).
+La anulación y la regeneración tienen sus propios flujos. Cubre C-38, C-39, C-40, C-45, C-46 y C-56 (F11, ADR-010, ADR-014).
 
 ## Servicios Involucrados
 
@@ -57,6 +58,9 @@ sequenceDiagram
     AD->>A: GET /api/admin/content/stock
     A->>DB: SELECT terms, timeline_facts, job_runs (sync_banks), rejected_guesses
     A-->>AD: 200 { banks[] (con consumers), last_sync, top_rejected_guesses[] }
+    AD->>A: GET /api/admin/content/items?bank&q&status&category&page&page_size=25 (Bancos)
+    A->>DB: SELECT terms | timeline_facts (ILIKE, filtros, LIMIT/OFFSET) + COUNT
+    A-->>AD: 200 { bank, page, page_size, total, total_pages, items[] }
     AD->>A: GET /api/admin/generation-failures (contador "Próximos (n)")
     A->>DB: SELECT generation_failures + challenges vigentes
     A-->>AD: 200 { failures[] }
@@ -150,7 +154,7 @@ sequenceDiagram
 **Request:** `GET /api/admin/content/stock`
 
 **Operación de BD:**
-- **Tabla:** `terms` / `timeline_facts` — conteos por `status`. por consumidor (`GameDefinition.bankUsage`): `approved_available` = `approved` con `last_used_* IS NULL OR <= today - windowDays`, `days_of_stock = floor(approved_available / itemsPerChallenge)`, `cycle_ok = approved_total >= itemsPerChallenge × windowDays`; a nivel banco: disponibles para todos los consumidores, mínimo de días y todos `cycle_ok`. `rejections` ORDER BY `updated_at` DESC. `rejections` = `wikidata_id`, `term`/`label`, `rejection_reason` de los `rejected` (máximo 200).
+- **Tabla:** `terms` / `timeline_facts` — conteos por `status`. por consumidor (`GameDefinition.bankUsage`): `approved_available` = `approved` con `last_used_* IS NULL OR <= today - windowDays` y fuera de `bankUsage.excludedItems` (REQ-012/S-067: los 115 términos de nicho de Devdle no cuentan para Devdle, sí para Grep Grid), `days_of_stock = floor(approved_available / itemsPerChallenge)`, `cycle_ok = approved elegibles (approved menos excluidos de ese juego) >= itemsPerChallenge × windowDays`; a nivel banco: disponibles para todos los consumidores, mínimo de días y todos `cycle_ok`. `rejections` ORDER BY `updated_at` DESC. `rejections` = `wikidata_id`, `term`/`label`, `rejection_reason` de los `rejected` (máximo 200).
 - **Tabla:** `job_runs` — última fila con `job = 'sync_banks'` y `status = 'success'` (`finished_at`, `summary`); `null` si nunca hubo.
 - **Nuevo paso (REQ-008):** `GET /api/admin/generation-failures` devuelve las fallas activas (sin `payload`) para el contador del shell.
 - **Tabla:** `rejected_guesses` — `word`, `count(*) AS distinct_players` GROUP BY `word` ORDER BY 2 DESC, `word` ASC LIMIT 50.
@@ -166,7 +170,28 @@ sequenceDiagram
   }
   ```
 
+El admin (REQ-012) muestra de `rejections` solo un resumen por banco con enlace a Bancos, y el top 50 de rechazadas paginado de a 10.
+
 **Ref:** `docs/apis/api.yaml` GET /api/admin/content/stock (`BankStock`)
+
+---
+
+### Paso 4b: Bancos (REQ-012, S-067 y S-068)
+
+**Origen:** admin
+**Destino:** api
+**Tipo:** REST
+
+**Request:** `GET /api/admin/content/items?bank=terms|timeline_facts[&q][&status=approved|rejected][&category][&page][&page_size=10..100]` (el admin pide de a 25; la búsqueda espera 300 ms y los filtros viven en la URL).
+
+**Validación:** `contentItemsQuerySchema`; una `category` que no es del banco, `page < 1` o `page_size` fuera de 10–100 → `422 validation_error`.
+
+**Operación de BD:**
+- **Tabla:** `terms` (orden por `term`) o `timeline_facts` (orden por `label`, `id`) — `q` recortado como `ILIKE '%q%'` con `%`, `_` y `\` escapados; filtros de `status` y `category`; `LIMIT/OFFSET` y un `COUNT` con los mismos filtros. Una página más allá del final devuelve `items: []` con los totales reales.
+
+**Response (éxito):** `200 { bank, page, page_size, total, total_pages, items: ContentItem[] }`; cada ítem trae `last_used` por juego que consume el banco y `excluded_from` (juegos cuyo `bankUsage.excludedItems` lo contiene).
+
+**Ref:** `docs/apis/api.yaml` GET /api/admin/content/items (`ContentItem`)
 
 ---
 
@@ -219,5 +244,7 @@ sequenceDiagram
 - Las rutas de admin no usan la cookie `nd_pid` ni CORS: van en el mismo origen, `admin.nerdose.dev/api/admin/*`.
 - Rotar `ADMIN_JWT_SECRET` invalida todas las sesiones.
 - Las métricas salen solo de la base; no hay analítica web (ADR-014).
+
+> Actualizado por REQ-012 (stories S-067 y S-068, implementadas fuera del workflow el 2026-11-25): stock sin los ítems que cada juego excluye, paso nuevo de Bancos (`GET /api/admin/content/items`) y paginado en el cliente de reportes (20), métricas (15) y rechazadas (10).
 
 > Actualizado por REQ-011 (stories S-052, S-053 y S-054): el paso 5 valida el rango con `validateMetricsRange` de core (admin y api, 422 si falla); la api lee las vistas `metrics_*` y consulta `plays` para `summary`; `d1`/`d7` y los tramos vivos de `streak_distribution` se calculan en la api con su reloj y core; la respuesta suma `summary` y trae siempre los 5 tramos.

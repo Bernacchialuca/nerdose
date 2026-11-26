@@ -107,7 +107,7 @@ ADMIN_JWT_SECRET=      # required, >= 32 random bytes
 
 - **orm**: `DATABASE_URL` is validated here.
 - **auth-jwt**: `ADMIN_PASSWORD_HASH`, `ADMIN_JWT_SECRET` (api).
-- **security**: `TRUST_PROXY_HEADER`, `WEB_ORIGIN`, `ADMIN_ORIGIN` (api).
+- **security**: `TRUST_PROXY_HEADER`, `TRUST_PROXY_HOPS`, `WEB_ORIGIN`, `ADMIN_ORIGIN` (api).
 - **logging**: `LOG_LEVEL`, `SERVICE_NAME`.
 - **Report alerts (ADR-017)**: `REPORT_ALERT_*` thresholds (api).
 - **scheduler-jobs** (generator): `GENERATION_MAX_ATTEMPTS`, `GENERATOR_SECRET`.

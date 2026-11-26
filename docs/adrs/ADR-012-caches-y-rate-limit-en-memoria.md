@@ -93,3 +93,4 @@ Hacen falta límites para evitar abusos (NFR-S08), sin captcha. No hay Redis (AD
 
 - `docs/discovery/analisis-tecnico.md` — S3 api, Rate limiting, Patrón 6, F10 (sin la ampliación automática, ver ADR-016), Arq-16, Arq-17
 - `docs/prd/requirements.md` — NFR-P01, NFR-P03, NFR-S08, NFR-SC01, NFR-SC03
+- `docs/requests/REQ-012.ajustes-post-v1.md` — corrección de la IP del rate limit (2026-11-25, story S-061)

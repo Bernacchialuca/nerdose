@@ -1,6 +1,6 @@
 ---
 created: 2026-11-03
-last_updated: 2026-11-03
+last_updated: 2026-11-25
 status: "Draft - In Definition"
 ---
 
@@ -113,6 +113,8 @@ Decisiones de producto tomadas en el discovery, con su porqué. El registro comp
 | 30 | Analítica web | **Retirada en REQ-011** por decisión del usuario: con un solo evento (`share:<game_id>`) no vale la pena; v1 no tiene analítica web. Decisión original: Plausible Community Edition self-hosted, integrado desde v1 pero apagado por defecto (flag de build) |
 | 31 | Diseño UI/UX | El prototipo `docs/nerdose.html` es la fuente de verdad visual (identidad, tipografía, layout, componentes, tono) y se formaliza en el Design System de `web`. No es una copia obligada píxel a píxel: los agentes pueden decidir y crear piezas nuevas siempre que respeten la identidad. Revisado el 2026-11-05: antes era solo una referencia y las primeras pantallas se apartaron de él. En datos, métricas, reglas, textos y accesibilidad manda el PRD. Detalle en NFR-U07 de `requirements.md` |
 | 32 | Bancos de contenido | Dataset versionado en el repo, generado offline desde Wikidata y Wikipedia por un script con reglas automáticas, y cargado por el generator al arrancar. Sin APIs de Wikimedia en producción. Los bancos se reutilizan al vencer su ventana anti-repetición, así que no se agotan (análisis de la fase técnica) |
+| 33 | Devdle: pista y rendirse | **Agregada en REQ-012 (después de v1).** Una pista por partida que revela la letra de una posición sin consumir intento (el share lo marca con 💡) y «Rendirse» con confirmación, que cierra como derrota y cuenta para la racha, como en Grep Grid (#7). Ayudan a terminar la partida sin cambiar las reglas de victoria |
+| 34 | Devdle: términos y rotación | **Agregada en REQ-012.** Devdle no elige 115 términos de nicho (siguen en el banco para Grep Grid, donde la definición está a la vista). La rotación de categoría es una preferencia (3 días → ayer → ninguna): con la regla estricta, Devdle se quedaba sin palabra cerca del día 330 |
 
 ## Alcance
 

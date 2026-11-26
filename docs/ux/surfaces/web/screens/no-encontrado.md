@@ -69,7 +69,7 @@ date: 2026-11-25
 ### terminal
 - Texto/label: $ cd /ruta-pedida · bash: cd: /ruta-pedida: No existe el archivo o el directorio · exit 1▌
 - Icono: nada
-- Annotation: ventana de terminal (barra con tres puntos y `nerdose — bash`, sombra `window`), Mono `code-terminal`; la ruta es la real. Es decorativa: el `h1` y el mensaje dicen lo mismo en prosa. La misma ventana se usa en la pantalla de error inesperado (`$ nerdose --play`)
+- Annotation: ventana de terminal (barra con tres puntos y `nerdose — bash`, sombra `window`), Mono `code-terminal`; la ruta es la real. Es decorativa: el `h1` y el mensaje dicen lo mismo en prosa. La misma ventana (componente `ErrorTerminal` de `web`) se usa en [`error-inesperado`](error-inesperado.md) (`$ nerdose --play`)
 
 ### codigo
 - Texto/label: 404 · página no encontrada
@@ -124,6 +124,7 @@ date: 2026-11-25
 - Un único CTA: la navegación del header ya ofrece `./stats` y `./about`; repetirlos sumaría opciones sin ayudar a volver.
 - Mismo contenido en ambos viewports; en desktop se centra en 6/12 solo para acotar el largo de línea.
 
+- REQ-012 (2026-11-25, story S-060): el panel se reemplaza por la ventana de terminal de la marca (`ErrorTerminal`) con la transcripción `$ cd <ruta>` decorativa; el contenido en prosa no cambia.
 - REQ-003: se alinea al DS 1.0.0 sin cambiar contenido: el mensaje va dentro de un `panel` (radio 14), el título usa la tipografía de página del DS, el botón sigue `button.md` y el header es el `app-header` `default`. La tira `nav-movil` se elimina: la nav vive siempre en el header con `flex-wrap` (cambio solo de mobile).
 
 **Alternativas descartadas:**
@@ -137,3 +138,4 @@ date: 2026-11-25
 
 - REQ-002 · supuesto «Navegación» · product-map, pregunta abierta 4 (resuelta).
 - REQ-003: RF 4, 6, 8, 11 · CA 2.
+- REQ-012 · S-060: ventana de terminal (`apps/web/src/components/not-found.tsx`, `error-terminal.tsx`).

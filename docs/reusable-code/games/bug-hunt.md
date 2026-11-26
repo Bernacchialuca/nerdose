@@ -43,12 +43,12 @@ Entry `./client` (React 19, Shiki loaded dynamically). Same props contract as Bi
 
 ### Game
 - **Location:** packages/games/bug-hunt/src/client/game.tsx
-- **Description:** Playing screen: consigna, question `h1`, `Statement`, `TestsCard` (visible tests as calls plus the hidden-test row), `CodeBlock mode="select"` starting at `codeLanguage ?? 'js'`, hint line with a polite live region, "Confirmar línea N" and the rules card (`#game-help`). Line and visible language are local state that survives a tab or locale change and restarts when the code changes (`state = {}` always starts without a selection). `onMove(moveSchema.parse({ language, line }))` once per attempt; `pending` locks tabs and lines; `invalid_move` keeps the line; `locked` hides the board. DOM in mobile order, `lg:` placement for desktop.
+- **Description:** Playing screen: consigna, question `h1`, `Statement`, `TestsCard` (visible tests as calls plus the hidden-test row), `CodeBlock mode="select"` starting at `codeLanguage ?? 'js'`, hint line with a polite live region and "Confirmar línea N →" full width at every breakpoint (disabled label «Elegí una línea»); aside: rules card «// cómo se juega» (`#game-help`), tests card, report slot (REQ-012 common pattern). Line and visible language are local state that survives a tab or locale change and restarts when the code changes (`state = {}` always starts without a selection). `onMove(moveSchema.parse({ language, line }))` once per attempt; `pending` locks tabs and lines; `invalid_move` keeps the line; `locked` hides the board. DOM in mobile order, `lg:` placement for desktop.
 - **Signature:** `Game(props: GameProps)`
 
 ### Result
 - **Location:** packages/games/bug-hunt/src/client/result.tsx
-- **Description:** Verdict (`sr-only` `h1` on a win, `Banner` `failure` otherwise), question `h2`, `Statement`, `CodeBlock mode="result"` at `result.code_language` with the bug / wrong-pick marks, and the "Por qué falla" `aside` (`WhyPanel`: failing test, fix of the active tab, steps and the "tipo: …" chip). Without `publicView` the question, spec and code are omitted and the fix stays in `code_language`. Slots `notices`, `footer`, `aside`.
+- **Description:** Verdict always as a `Banner` `titleAs="h1"` (`success` with its own detail on a win, `failure` otherwise; REQ-012), question `h2`, `Statement`, `CodeBlock mode="result"` at `result.code_language` with the bug / wrong-pick marks, and the "Por qué falla" `aside` (`WhyPanel`: failing test, fix of the active tab and steps; since REQ-012 the result passes no chips, the "tipo: …" chip is only in `Preview`). Without `publicView` the question, spec and code are omitted and the fix stays in `code_language`. Slots `notices`, `footer`, `aside`.
 - **Signature:** `Result(props: ResultProps)`
 
 ### Preview
@@ -70,9 +70,14 @@ Entry `./client` (React 19, Shiki loaded dynamically). Same props contract as Bi
 - **Description:** Code block with `tablist` JavaScript / Go / Java (arrows, Home, End, wrap; `aria-disabled` when locked), file name from `fileNames(name)` and three modes. `select`: `radiogroup` where only `pickable` lines are `role="radio"` (roving tabindex; arrows move focus, Space picks, Enter does nothing), the rest plain `text-text-dim` text, `◀` tag fixed at the visible edge (text from `@lg`). `result`: marks `found` / `bug` / `wrong` with glyph + text tags under the line below 32rem and at the margin from there, tied by `aria-describedby`. `preview`: as `result` with plain text. Same tree with or without color (Shiki tokens only after the tokenizer loads; non-eligible lines never colored in `select`/`preview`).
 - **Signature:** `CodeBlock({ mode, name, code, initialLanguage, t, pickable?, selected?, onSelect?, marks?, markLabel?, highlight?, disabled?, onLanguageChange?, className? })`
 
+### CodeText
+- **Location:** packages/games/bug-hunt/src/client/code-text.tsx
+- **Description:** Same helper as Big O's: a code line whose indent stays fixed and whose rest wraps aligned with the code, so lines never scroll sideways (REQ-012/S-066). Used by `CodeBlock` and `FixDiff`.
+- **Signature:** `CodeText({ text, tokens? })`
+
 ### FixDiff
 - **Location:** packages/games/bug-hunt/src/client/fix-diff.tsx
-- **Description:** `diff` code block of the one-line fix: `- ` / `+ ` literal prefixes with error / success tinted rows, own horizontal scroll (keyboard reachable), heading `h2` or `h3`.
+- **Description:** `diff` code block of the one-line fix: `- ` / `+ ` literal prefixes with error / success tinted rows, lines wrapped with a hanging indent through `CodeText` (REQ-012; the container stays keyboard reachable), heading `h2` or `h3`.
 - **Signature:** `FixDiff({ line, fix: { before, after }, language, t, headingLevel })`
 
 ### Statement / TestsCard / FailingTest / WhyPanel / TypeChip / Question

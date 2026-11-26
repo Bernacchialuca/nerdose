@@ -8,7 +8,7 @@
 
 ## AppDeps / AppEnv
 - **Location:** apps/api/src/http/types.ts
-- **Signature:** `AppDeps = { logger; health; config: Pick<ApiEnv, 'WEB_ORIGIN' | 'ADMIN_ORIGIN' | 'TRUST_PROXY_HEADER'>; identity: IdentityService }`; `AppEnv = { Variables: { requestId; logger; locale: Locale; player: Player | null } }`
+- **Signature:** `AppDeps = { logger; health; config: Pick<ApiEnv, 'WEB_ORIGIN' | 'ADMIN_ORIGIN' | 'TRUST_PROXY_HEADER' | 'TRUST_PROXY_HOPS'>; identity: IdentityService }`; `AppEnv = { Variables: { requestId; logger; locale: Locale; player: Player | null } }`
 - **Usage:** new dependencies are added to `AppDeps` and injected in `src/index.ts`; handlers type their factory as `createFactory<AppEnv>()`
 
 ## registerRoutes
@@ -47,14 +47,14 @@
 
 ## limit / clientIp
 - **Location:** apps/api/src/http/middleware/rate-limit.ts
-- **Signature:** `limit({ windowMs, limit, key: (c) => string }): MiddlewareHandler<AppEnv>`; `clientIp(trustHeader?: string): (c) => string`
-- **Description:** in-memory `hono-rate-limiter`; `429 rate_limited` with `Retry-After`. `clientIp` takes the first IP of the trusted header, else `'unknown'`. Create limiters per app instance (inside route factories), not at module level.
-- **Usage:** `limit({ windowMs: 600_000, limit: 20, key: clientIp(deps.config.TRUST_PROXY_HEADER) })`
+- **Signature:** `limit({ windowMs, limit, key: (c) => string }): MiddlewareHandler<AppEnv>`; `clientIp(config: ClientIpConfig): (c) => string` with `ClientIpConfig = { TRUST_PROXY_HEADER?: string; TRUST_PROXY_HOPS?: number }`
+- **Description:** in-memory `hono-rate-limiter`; `429 rate_limited` with `Retry-After`. `clientIp` (REQ-012/S-061): without a configured header, the connection IP (`getConnInfo`); with `X-Forwarded-For`, the entry the trusted proxy appended, counting `TRUST_PROXY_HOPS` (default 1) from the right; with any other header (`X-Real-IP`, `CF-Connecting-IP`…), its whole value; if the request lacks the header, the connection IP. `'unknown'` only when there is no socket (`app.request` in tests). Create limiters per app instance (inside route factories), not at module level.
+- **Usage:** `limit({ windowMs: 600_000, limit: 20, key: clientIp(deps.config) })`
 
 ## playerSession
 - **Location:** apps/api/src/http/middleware/player-session.ts
 - **Signature:** `playerSession(identity: IdentityService, mode: 'required' | 'optional'): MiddlewareHandler<AppEnv>`
-- **Description:** resolves cookie `nd_pid` to `c.var.player`; `required` throws `no_session`; adds `playerId` to the logger and recomputes `c.var.locale`
+- **Description:** resolves cookie `nd_pid` to `c.var.player`; `required` throws `no_session`; adds `player_ref` (never the raw id) to the logger and recomputes `c.var.locale`
 - **Usage:** `factory.createHandlers(playerSession(deps.identity, 'required'), handler)`
 
 ## validationHook
@@ -88,14 +88,14 @@
 ## AdminService / AdminRepository
 - **Location:** apps/api/src/domain/admin/
 - **Signature:** `login(password, log)`, `listReportGroups(status)`, `updateReport(reportId, status, log)`; `playerRef(playerId)`
-- **Description:** report groups are ordered alerted first, `report_count` desc, `challenge.date` desc; `player_ref` is the first 8 hex of `sha256(player_id)`; games without a registered definition yield `culprits: []`
+- **Description:** report groups are ordered alerted first, `report_count` desc, `challenge.date` desc; `player_ref` is the first 8 hex of `sha256(player_id)` (`playerRef` lives in `apps/api/src/shared/player-ref.ts` since REQ-012 and is re-exported here; logs use the same reference); games without a registered definition yield `culprits: []`
 - **Usage:** `const { groups } = await deps.admin.listReportGroups('open')`
 
-## AdminContentService / BANK_COLUMNS / resolveBankConsumers / buildBankStock
-- **Location:** apps/api/src/domain/admin/admin-content.service.ts, bank-columns.ts, bank-stock.ts
-- **Signature:** `new AdminContentService({ repo, games, clock, launchDate })` with `upcoming(days)`, `generationFailures()`, `stock()`; `resolveBankConsumers(games): Array<{ bank, consumers: Array<{ gameId, usage, column }> }>`; `buildBankStock({ bank, approvedTotal, rejectedTotal, available, availableAll, consumers })`
-- **Description:** admin reads that never use `TodayCache`. `BANK_COLUMNS` maps each bank (not each game) to its Drizzle table, label and `last_used_*` columns; `resolveBankConsumers` throws `Unknown bank usage: <bank>.<field>` at construction. `buildBankStock` is pure (per-consumer `days_of_stock`/`cycle_ok`, bank-level min/all).
-- **Usage:** `deps.adminContent.upcoming(14)`; routes `GET /api/admin/challenges/upcoming`, `/generation-failures`, `/content/stock`
+## AdminContentService / BANK_COLUMNS / resolveBankConsumers / buildBankStock / bank-items
+- **Location:** apps/api/src/domain/admin/admin-content.service.ts, bank-columns.ts, bank-stock.ts, bank-items.ts
+- **Signature:** `new AdminContentService({ repo, games, clock, launchDate })` with `upcoming(days)`, `generationFailures()`, `stock()`, `items(query: ContentItemsQuery)` (REQ-012); `resolveBankConsumers(games): Array<{ bank, consumers: Array<{ gameId, usage, column }> }>`; `buildBankStock({ bank, approvedTotal, rejectedTotal, available, availableAll, approvedEligible, consumers })`; `escapeLike(value)`, `totalPages(total, pageSize)`, `excludedFrom(label, consumers)`
+- **Description:** admin reads that never use `TodayCache`. `BANK_COLUMNS` maps each bank (not each game) to its Drizzle table, label and `last_used_*` columns; `resolveBankConsumers` throws `Unknown bank usage: <bank>.<field>` at construction. `buildBankStock` is pure (per-consumer `days_of_stock`/`cycle_ok`, bank-level min/all); since REQ-012/S-067 `available` and `approvedEligible` arrive without each consumer's `bankUsage.excludedItems`, and `cycle_ok` uses `approvedEligible` instead of `approvedTotal`. `items` lists a bank page (`ILIKE` with `escapeLike`, status, per-bank category, `LIMIT/OFFSET` + `COUNT`), with `last_used` per consuming game and `excluded_from`; `BANK_COLUMNS` also maps `category`, `description` (`definition`/`note`), `eventDate` and `sitelinks`. Query validated by `contentItemsQuerySchema` (422 `validation_error`).
+- **Usage:** `deps.adminContent.upcoming(14)`; routes `GET /api/admin/challenges/upcoming`, `/generation-failures`, `/content/stock`, `/content/items`
 
 ## AdminMetricsService / metricsQuerySchema
 - **Location:** apps/api/src/domain/admin/admin-metrics.service.ts, admin.schema.ts

@@ -44,7 +44,9 @@ App `apps/web` (not a package; imported through the `@/` alias).
 - **CTA y links** - use `buttonClass` / `linkClass` from `@nerdose/ui` (see docs/reusable-code/ui/helpers.md)
 - **MainNav** (apps/web/src/components/main-nav.tsx) - Primary navigation `<nav>` (always in the header, `navItemClass`)
 - **SiteFooter** (apps/web/src/components/site-footer.tsx) - Tagline, `exit 0`, privacy notice and link to About
-- **NotFound** (apps/web/src/components/not-found.tsx) - 404 screen
+- **NotFound** (apps/web/src/components/not-found.tsx) - 404 screen (terminal window with `cd <path>`)
+- **ErrorTerminal** (apps/web/src/components/error-terminal.tsx) - Terminal-window error layout shared by the 404 and `RouteError` (REQ-012)
+- **RouteError** (apps/web/src/app/route-error.tsx) - Root `errorElement` with its own minimal header/footer, retry and back home; real message only in `vite dev`
 - **useDocumentTitle** (apps/web/src/hooks/use-document-title.ts) - Sets `document.title` for a route
 
 ## Testing utils (additional) - see components.md
