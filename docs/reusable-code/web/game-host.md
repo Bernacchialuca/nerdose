@@ -34,7 +34,7 @@
 
 ## ShareButton / ClientShareButton
 - **Location:** apps/web/src/modules/game-host/components/share-button.tsx
-- **Description:** Web Share API with clipboard fallback, `✓ Copiado` for 3 s (`role="status"`) and `track('share:<game_id>')` only after success; `AbortError` is ignored. The text always comes from the game's `share()`.
+- **Description:** Web Share API with clipboard fallback, `✓ Copiado` for 3 s (`role="status"`) and `track('share:<game_id>')` only after success; `AbortError` is ignored. The result text always comes from the game's `share()`; `ClientShareButton` appends the site line with `withSite(text, host = window.location.host)`, so no domain is hard-coded.
 - **Signature:** `ShareButton({ gameId, getText, variant: 'body' | 'header' })`; `ClientShareButton({ gameId, result, number, locale, variant })`; `GameHostHeader` passes `useSession().locale` and the text is built on click, so it follows the active language (only Bug Hunt's share has words; the others ignore the third argument)
 
 ## ResultExits / Confetti

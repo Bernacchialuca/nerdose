@@ -53,7 +53,7 @@ Entry `./client` (React 19, Shiki loaded dynamically). Same props contract as Ti
 
 ### share
 - **Location:** packages/games/big-o/src/client/share.ts
-- **Description:** `🧮 Big O #N` / `🟩|🟥 <Language>` / `nerdose.dev`, identical in es and en, never the chosen option or the answer. Throws `ZodError` on an invalid result.
+- **Description:** `🧮 Big O #N` / `🟩|🟥 <Language>` (the host appends the site line), identical in es and en, never the chosen option or the answer. Throws `ZodError` on an invalid result.
 - **Signature:** `share(result: unknown, number: number): string`
 
 ### i18n / HELP_TARGET_ID / contract types / parsers

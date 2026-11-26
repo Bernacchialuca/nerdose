@@ -64,7 +64,7 @@ Entry `./client` (React 19, dnd-kit). Same props contract as Devdle and Grep Gri
 
 ### share
 - **Location:** packages/games/timeline/src/client/share.ts
-- **Description:** Spoiler-free text `⏳ Tech Timeline #N` / `🟩🟥🟥🟩🟩 3/5` / `nerdose.dev`, identical in es/en; parses with `resultSchema`.
+- **Description:** Spoiler-free text `⏳ Tech Timeline #N` / `🟩🟥🟥🟩🟩 3/5` (the host appends the site line), identical in es/en; parses with `resultSchema`.
 - **Signature:** `share(result: unknown, number: number): string`
 
 ### i18n / HELP_TARGET_ID / types

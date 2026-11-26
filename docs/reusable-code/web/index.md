@@ -17,7 +17,7 @@ App `apps/web` (not a package; imported through the `@/` alias).
 - **gameTodayKeys / fetchGameToday / useGameToday / useStartPlay / useSubmitMove / withSessionRetry** (apps/web/src/modules/game-host/api/) - Query/mutation layer for a game's day
 - **deriveGameView / toMoveError** (apps/web/src/modules/game-host/game-view.ts) - Pure screen selector and error mapping
 - **GameHostHeader** (apps/web/src/modules/game-host/components/game-host-header.tsx) - `GameHeader` for the game screens
-- **ShareButton / ClientShareButton** (apps/web/src/modules/game-host/components/share-button.tsx) - Share with clipboard fallback; the header passes the session locale to the game's `share(result, number, locale)`
+- **ShareButton / ClientShareButton** (apps/web/src/modules/game-host/components/share-button.tsx) - Share with clipboard fallback; appends the site line (`withSite`, `window.location.host`); the header passes the session locale to the game's `share(result, number, locale)`
 - **ResultExits / Confetti** (apps/web/src/modules/game-host/components/) - Result closing card (streaks + countdown + exits) and win confetti
 - **useReport / useAcknowledgeVoid** (apps/web/src/modules/game-host/api/) - Mutations for reporting a challenge and acknowledging a voided one
 - **ReportDialog / ReportLink** (apps/web/src/modules/game-host/components/) - O-01 report form and its trigger (generic, no per-game logic)

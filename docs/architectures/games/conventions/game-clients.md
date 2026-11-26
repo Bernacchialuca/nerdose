@@ -104,7 +104,7 @@ const Client = lazy(clientRegistry[gameId]);
 
 ## Update (REQ-010)
 
-- `GameClient.share(result, number, locale)`: the host (`share-button.tsx`) passes the active language; the games whose share text has no words ignore the third argument. Bug Hunt builds `🐛 Bug Hunt #N · <Language>` / `🟩 bug encontrado | 🟥 se me escapó` / `nerdose.dev` in `locale`, never the line nor the bug type.
+- `GameClient.share(result, number, locale)`: the host (`share-button.tsx`) passes the active language; the games whose share text has no words ignore the third argument. The host appends the site line (`withSite`, `window.location.host`). Bug Hunt builds `🐛 Bug Hunt #N · <Language>` / `🟩 bug encontrado | 🟥 se me escapó` in `locale`, never the line nor the bug type.
 - Bug Hunt's `Preview` shows the code in plain text (never loads Shiki) with local-view language tabs, the bug line tagged "línea del bug", non-eligible lines dimmed, the "tipo" and "mutación: from → to" chips, the visible tests (without the hidden row), the failing test, the fix of the active tab and the steps in `language`. The tabs are the only controls (no radios, hints or live regions).
 - Bug Hunt's `Game` renders the eligible lines as a `radiogroup` (roving tabindex; arrows move focus, Space picks, Enter belongs to "Confirmar línea") and validates `moveSchema.parse({ language, line })` before `onMove`; the selected line is local state and is never restored on resume.
 

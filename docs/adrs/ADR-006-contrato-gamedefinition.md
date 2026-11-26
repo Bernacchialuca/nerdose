@@ -1,7 +1,7 @@
 # ADR-006: Contrato `GameDefinition` y juegos como paquetes enchufables
 
 **Estado:** Accepted
-**Fecha:** 2026-11-03 (actualizado 2026-11-15: `culprits`, `bankUsage`, `Preview`, `codeLanguage`, `verify` asíncrono, `aheadDays`, `StatsSummary`; 2026-11-25: `BankUsage.excludedItems`)
+**Fecha:** 2026-11-03 (actualizado 2026-11-15: `culprits`, `bankUsage`, `Preview`, `codeLanguage`, `verify` asíncrono, `aheadDays`, `StatsSummary`; 2026-11-25: `BankUsage.excludedItems`; 2026-11-26: la línea del sitio del share la agrega el host)
 **Decisores:** Responsable de nerdose
 **Etiquetas:** juegos, contrato, extensibilidad, anti-spoiler
 
@@ -82,7 +82,7 @@ Hay un **registry** en `api`, en `web`/`admin` y en `generator` que mapea `game_
 - `toPublic` MUST NOT incluir: la palabra de Devdle, `placements` de Grep Grid, `correct_order`/`event_date`/`fact_id` de Timeline, `answer` de Big O, ni `bug_line`/`bug_type`/`mutation`/`fix`/`failing_test`/`tests`/`template`/`params`/`explanation` de Bug Hunt.
 - Cada juego MUST tener un test de contrato anti-spoiler: se serializa `toPublic(payload)` (sin estado y con estados intermedios, si el juego usa `state`) y toda respuesta pre-resultado, y se verifica que no contienen ningún valor de la solución.
 - `moveSchema` MUST usarse tanto en `web` (antes de enviar) como en la `api` (`@hono/zod-validator`). Si el parse falla, la respuesta es `422 invalid_move`.
-- `share(result, number, locale)` MUST NOT incluir la solución y MUST terminar en `nerdose.dev`.
+- `share(result, number, locale)` MUST NOT incluir la solución ni el sitio. El host de `web` agrega como última línea el host de la dirección abierta (`window.location.host`): ningún dominio queda fijo en el código ni depende de una variable de entorno (actualizado 2026-11-26).
 - `bankUsage` MUST coincidir con `historySpec` del generator del mismo juego (banco y campo `last_used_*`); un test del paquete lo verifica. Los juegos sin banco declaran `null` (REQ-008).
 - Si el generator de un juego excluye ítems del banco, `bankUsage.excludedItems` MUST ser **el mismo** `Set` que usa el generator (importado de `src/shared` del paquete), para que el stock de la `api` no los cuente como disponibles para ese juego ni en su `cycle_ok`. Hoy solo Devdle lo declara (`DEVDLE_EXCLUDED_TERMS`, REQ-012/S-067).
 - `culprits(p)` MUST devolver solo ítems de banco presentes en el payload; un juego sin banco devuelve `[]` (REQ-007).

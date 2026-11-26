@@ -27,7 +27,7 @@ Package `@nerdose/game-grep-grid` (`packages/games/grep-grid`). Entries: `./defi
 
 ### Instructions / Game / Result / share / i18n / HELP_TARGET_ID
 - **Location:** packages/games/grep-grid/src/client/index.ts
-- **Description:** The `./client` contract. `Game` consumes `feedback` (last `MoveResponse.feedback`) by identity after mount, learns definitions and cells from `feedback.found`, and hosts the O-04 dialog. `Result` takes an optional `publicView` (the 144 letters); without it, cells outside the words show a placeholder dot. `share` returns `🔎 Grep Grid #N\nS/8\nnerdose.dev`.
+- **Description:** The `./client` contract. `Game` consumes `feedback` (last `MoveResponse.feedback`) by identity after mount, learns definitions and cells from `feedback.found`, and hosts the O-04 dialog. `Result` takes an optional `publicView` (the 144 letters); without it, cells outside the words show a placeholder dot. `share` returns `🔎 Grep Grid #N\nS/8` (the host appends the site line).
 - **Signature:** `Game(props: GameProps)`; `Result(props: ResultProps)`; `Instructions(props: InstructionsProps)`; `share(result: unknown, number: number): string`; `i18n = { namespace: 'grep-grid', resources: { es, en } }`
 - **Usage:** `<Game number={8} locale="es" t={t} publicView={today.public_view} state={play.state} feedback={move.data?.feedback ?? null} onMove={send} pending={false} moveError={null} />`
 

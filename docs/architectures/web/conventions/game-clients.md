@@ -100,7 +100,7 @@ const Client = lazy(clientRegistry[gameId]);
 
 ## Update (REQ-010)
 
-- `GameClient.share(result, number, locale)`: `ClientShareButton` receives the session locale from `GameHostHeader` and builds the text on click; games whose share text has no words ignore the third argument. The five games have a client; the registry stays `Partial` so a new game can be added before its client.
+- `GameClient.share(result, number, locale)`: `ClientShareButton` receives the session locale from `GameHostHeader` and builds the text on click, appending the site line (`withSite`, `window.location.host`); games whose share text has no words ignore the third argument. The five games have a client; the registry stays `Partial` so a new game can be added before its client.
 
 ## Update (REQ-011)
 
