@@ -20,6 +20,9 @@ type BoardProps = {
   draft?: string;
   /** Revealed hint: shown as a guide in the empty cell of the active row. */
   hint?: DevdleRevealedHint;
+  /** Hint picking: positions of the active row the player can tap to reveal. */
+  pickable?: ReadonlySet<number>;
+  onPick?: (position: number) => void;
   rows?: number;
   label: string;
   t: Translate;
@@ -51,13 +54,29 @@ function rowCells(
   });
 }
 
-export function Board({ length, guesses, draft, hint, rows = MAX_GUESSES, label, t }: BoardProps) {
-  const gapPx = length <= 8 ? 8 : 4;
+const boardGapPx = (length: number): number => (length <= 8 ? 8 : 4);
+
+/** Max width of the board, so the row below it (hint and move message) can line up with it. */
+export const boardMaxWidth = (length: number): string =>
+  `calc(${length} * 64px + ${length - 1} * ${boardGapPx(length)}px)`;
+
+export function Board({
+  length,
+  guesses,
+  draft,
+  hint,
+  pickable,
+  onPick,
+  rows = MAX_GUESSES,
+  label,
+  t,
+}: BoardProps) {
+  const gapPx = boardGapPx(length);
   const gapClass = length <= 8 ? 'gap-2' : 'gap-1';
   const inner = `(100cqi - ${(length - 1) * gapPx}px) / ${length}`;
   const vars = {
     '--board-cols': `repeat(${length}, minmax(0, 1fr))`,
-    '--board-max': `calc(${length} * 64px + ${length - 1} * ${gapPx}px)`,
+    '--board-max': boardMaxWidth(length),
     '--tile-font': `clamp(10px, calc(${inner} * 0.4375), 28px)`,
     '--tile-mark': `clamp(8px, calc(${inner} * 0.175), 12px)`,
   } as CSSProperties;
@@ -99,6 +118,14 @@ export function Board({ length, guesses, draft, hint, rows = MAX_GUESSES, label,
                 )}
               >
                 {cell.letter}
+                {active && pickable?.has(c) ? (
+                  <button
+                    type="button"
+                    aria-label={t('letterHint.position', { n: c + 1 })}
+                    onClick={() => onPick?.(c)}
+                    className="absolute inset-0 rounded-tile border-2 border-dashed border-game-devdle hover:bg-game-devdle-tint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  />
+                ) : null}
                 {cell.state === 'correct' || cell.state === 'present' || cell.state === 'absent' ? (
                   <span
                     aria-hidden="true"
