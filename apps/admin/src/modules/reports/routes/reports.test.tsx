@@ -50,7 +50,7 @@ describe('Reportes (P-02)', () => {
     expect(within(r3).queryByRole('button', { name: /Anular/ })).toBeNull();
   });
 
-  it('tabla accesible y sin paginación (TS-26)', async () => {
+  it('tabla accesible y sin paginado con hasta 20 grupos (TS-26)', async () => {
     server.use(adminHandlers.reports('open', OPEN_GROUPS));
     open();
     const table = await screen.findByRole('table', { name: 'Grupos de reportes' });
@@ -69,6 +69,52 @@ describe('Reportes (P-02)', () => {
       'Acción',
     ]);
     expect(screen.queryByRole('button', { name: /siguiente|anterior|página/i })).toBeNull();
+  });
+
+  it('pagina de a 20 grupos con «Anterior» y «Siguiente»', async () => {
+    const groups = Array.from({ length: 45 }, (_, i) => ({
+      ...DEVDLE_GROUP,
+      challenge: {
+        ...DEVDLE_GROUP.challenge,
+        id: `00000000-0000-4000-8000-${String(i + 1).padStart(12, '0')}`,
+        number: i + 1,
+      },
+    }));
+    server.use(adminHandlers.reports('open', { groups }));
+    const { user } = open();
+    const table = await screen.findByRole('table', { name: 'Grupos de reportes' });
+    const bodyRows = () => within(table).getAllByRole('row').slice(1);
+    expect(bodyRows()).toHaveLength(20);
+    expect(
+      within(bodyRows()[0] as HTMLElement).getByRole('button', { name: 'Devdle #1' }),
+    ).toBeInTheDocument();
+    const nav = screen.getByRole('navigation', { name: 'Paginado de reportes' });
+    expect(nav).toHaveTextContent('1–20 de 45 desafíos reportados · página 1 de 3');
+    const prev = within(nav).getByRole('button', { name: 'Anterior' });
+    const next = within(nav).getByRole('button', { name: 'Siguiente' });
+    expect(prev).toHaveAttribute('aria-disabled', 'true');
+    expect(next).not.toHaveAttribute('aria-disabled');
+
+    await user.click(next);
+    expect(nav).toHaveTextContent('21–40 de 45 desafíos reportados · página 2 de 3');
+    expect(bodyRows()).toHaveLength(20);
+    expect(
+      within(bodyRows()[0] as HTMLElement).getByRole('button', { name: 'Devdle #21' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Devdle #1' })).toBeNull();
+
+    await user.click(next);
+    expect(nav).toHaveTextContent('41–45 de 45 desafíos reportados · página 3 de 3');
+    expect(bodyRows()).toHaveLength(5);
+    expect(next).toHaveAttribute('aria-disabled', 'true');
+    await user.click(next);
+    expect(nav).toHaveTextContent('página 3 de 3');
+
+    await user.click(prev);
+    expect(nav).toHaveTextContent('página 2 de 3');
+    // Las filas de otras páginas siguen abriendo el detalle.
+    await user.click(screen.getByRole('button', { name: 'Devdle #25' }));
+    expect(await screen.findByRole('dialog', { name: 'Devdle #25' })).toBeInTheDocument();
   });
 
   it('el contador sigue siendo de abiertos con otra pestaña (TS-24, TS-27)', async () => {

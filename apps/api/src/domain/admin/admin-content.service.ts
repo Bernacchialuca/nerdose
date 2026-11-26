@@ -10,8 +10,10 @@ import type { Clock } from '@/shared/clock';
 import { shiftDay } from '@/shared/day';
 
 import type { AdminRepository } from './admin.repository';
-import { syncSummarySchema } from './admin.schema';
+import { syncSummarySchema, type ContentItemsQuery } from './admin.schema';
 import type {
+  ContentItem,
+  ContentItemsPage,
   ContentStock,
   FailureView,
   GenerationFailureView,
@@ -23,6 +25,7 @@ import type {
   UpcomingGame,
 } from './admin.types';
 import { resolveBankConsumers, type BankConsumers } from './bank-columns';
+import { excludedFrom, totalPages } from './bank-items';
 import { buildBankStock } from './bank-stock';
 
 type Repo = Pick<
@@ -32,6 +35,8 @@ type Repo = Pick<
   | 'findLatestRequests'
   | 'findRejectedBankItems'
   | 'countBank'
+  | 'listBankItems'
+  | 'countBankItems'
   | 'findRejections'
   | 'findLastSuccessfulSync'
   | 'topRejectedGuesses'
@@ -182,6 +187,7 @@ export class AdminContentService {
             consumers.map((c) => ({
               column: c.column,
               cutoff: shiftDay(day, -c.usage.windowDays),
+              excluded: [...(c.usage.excludedItems ?? [])],
             })),
           ),
           repo.findRejections(bank),
@@ -193,6 +199,7 @@ export class AdminContentService {
             rejectedTotal: counts.rejectedTotal,
             available: counts.available,
             availableAll: counts.availableAll,
+            approvedEligible: counts.approvedEligible,
             consumers: consumers.map((c) => ({
               gameId: c.gameId,
               windowDays: c.usage.windowDays,
@@ -217,6 +224,50 @@ export class AdminContentService {
       banks,
       last_sync: lastSync,
       top_rejected_guesses: await repo.topRejectedGuesses(50),
+    };
+  }
+
+  /** Pantalla Contenido: una consulta para la página y un COUNT con los mismos filtros. */
+  async items(query: ContentItemsQuery): Promise<ContentItemsPage> {
+    const { repo } = this.deps;
+    const { bank, page, page_size: pageSize } = query;
+    const consumers = this.banks.find((b) => b.bank === bank)?.consumers ?? [];
+    const filters = { q: query.q, status: query.status, category: query.category };
+    const [rows, total] = await Promise.all([
+      repo.listBankItems(
+        bank,
+        filters,
+        consumers.map((c) => c.column),
+        { limit: pageSize, offset: (page - 1) * pageSize },
+      ),
+      repo.countBankItems(bank, filters),
+    ]);
+    const exclusions = consumers.map((c) => ({
+      gameId: c.gameId,
+      excludedItems: c.usage.excludedItems,
+    }));
+    const items: ContentItem[] = rows.map((r) => ({
+      id: r.id,
+      label: r.label,
+      category: r.category,
+      status: r.status,
+      rejection_reason: r.rejectionReason,
+      sitelinks: r.sitelinks,
+      wikidata_id: r.wikidataId,
+      description: r.description,
+      event_date: r.eventDate,
+      last_used: Object.fromEntries(
+        consumers.map((c, i) => [c.gameId, r.lastUsed[i] ?? null] as const),
+      ),
+      excluded_from: excludedFrom(r.label, exclusions),
+    }));
+    return {
+      bank,
+      page,
+      page_size: pageSize,
+      total,
+      total_pages: totalPages(total, pageSize),
+      items,
     };
   }
 }

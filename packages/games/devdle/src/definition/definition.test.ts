@@ -2,6 +2,7 @@ import { createGameRegistry } from '@nerdose/core';
 import type { CodeLanguage, Culprit } from '@nerdose/core';
 import { describe, expect, expectTypeOf, it, vi } from 'vitest';
 
+import { DEVDLE_EXCLUDED_TERMS } from '../shared/excluded';
 import { definition, devdle, payloadSchema, resultSchema, stateSchema } from './index';
 import type { DevdleMove, DevdleState } from './index';
 import { ALL_VALID, NONE_VALID, NOW, PAYLOAD_MERGE, PAYLOAD_REACT } from './test-fixtures';
@@ -25,18 +26,15 @@ describe('devdle definition', () => {
     expect(definition).toBe(devdle);
     expect(devdle.id).toBe('devdle');
     expect(devdle.version).toBe(1);
-    expect(devdle.bankUsage).toEqual({
+    const usage = {
       bank: 'terms',
       lastUsedField: 'last_used_devdle',
       windowDays: 365,
       itemsPerChallenge: 1,
-    });
-    expect(createGameRegistry([devdle]).get('devdle').bankUsage).toEqual({
-      bank: 'terms',
-      lastUsedField: 'last_used_devdle',
-      windowDays: 365,
-      itemsPerChallenge: 1,
-    });
+      excludedItems: DEVDLE_EXCLUDED_TERMS,
+    };
+    expect(devdle.bankUsage).toEqual(usage);
+    expect(createGameRegistry([devdle]).get('devdle').bankUsage).toEqual(usage);
     expect(createGameRegistry([devdle]).ids()).toEqual(['devdle']);
   });
 

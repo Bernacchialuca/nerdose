@@ -52,14 +52,17 @@ describe('drawer de detalle (O-02)', () => {
     }
   });
 
-  it('PayloadView muestra ES y EN lado a lado y los datos comunes (TS-34)', async () => {
+  it('PayloadView muestra los textos en español y los datos comunes (TS-34)', async () => {
     const { dialog } = await openDrawer();
-    const es = within(dialog).getByRole('region', { name: 'ES' });
-    const en = within(dialog).getByRole('region', { name: 'EN' });
-    expect(es).toHaveTextContent('Almacén de datos en memoria');
-    expect(es).toHaveTextContent('Base clave-valor');
-    expect(en).toHaveTextContent('In-memory data store');
-    expect(en).toHaveTextContent('Key-value database');
+    const texts = within(dialog).getByRole('region', { name: 'Textos' });
+    expect(texts).toHaveTextContent('definition');
+    expect(texts).toHaveTextContent('Almacén de datos en memoria');
+    expect(texts).toHaveTextContent('Base clave-valor');
+    // El admin es solo en español: ni panel EN ni los textos en inglés.
+    expect(within(dialog).queryByRole('region', { name: 'ES' })).toBeNull();
+    expect(within(dialog).queryByRole('region', { name: 'EN' })).toBeNull();
+    expect(dialog).not.toHaveTextContent('In-memory data store');
+    expect(dialog).not.toHaveTextContent('Key-value database');
     const common = within(dialog).getByRole('region', { name: 'Datos del desafío' });
     expect(common).toHaveTextContent('term_id');
     expect(common).toHaveTextContent('a3f1c2d4-5b6e-4f70-8a91-b2c3d4e5f601');
@@ -68,6 +71,14 @@ describe('drawer de detalle (O-02)', () => {
     expect(common).toHaveTextContent('databases');
     expect(common).toHaveTextContent('Culpables posibles');
     expect(common).toHaveTextContent('Término · REDIS');
+  });
+
+  it('sin campos bilingües no hay panel «Textos» (TS-34)', async () => {
+    const { dialog } = await openDrawer('Grep Grid #6');
+    expect(within(dialog).queryByRole('region', { name: 'Textos' })).toBeNull();
+    expect(within(dialog).getByRole('region', { name: 'Datos del desafío' })).toHaveTextContent(
+      'NGINX',
+    );
   });
 
   it('log de verificación con glifo y texto, y forma cruda (TS-36)', async () => {

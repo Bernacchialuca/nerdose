@@ -10,15 +10,25 @@ import { renderWithProviders } from '@/test/render';
 
 const UPCOMING_PATH = '/api/admin/challenges/upcoming';
 const REGENERATE_PATH = `/api/admin/challenges/${GG('05')}/regenerate`;
-const CELL_BUTTON = 'Regenerar Grep Grid #35';
+const CELL = /^Ver Grep Grid #35, 2026-12-05:/;
+const DRAWER = 'Grep Grid #35';
 
 const render = () => renderWithProviders({ route: '/upcoming', session: SESSION });
 
+// «Regenerar» solo vive en el drawer de la celda: la grilla no tiene botón propio.
 async function openModal(user: ReturnType<typeof render>['user']) {
-  await screen.findByRole('table');
-  await user.click(screen.getByRole('button', { name: CELL_BUTTON }));
+  if (!screen.queryByRole('dialog', { name: DRAWER })) {
+    await user.click(await screen.findByRole('button', { name: CELL }));
+  }
+  const drawer = await screen.findByRole('dialog', { name: DRAWER });
+  await user.click(within(drawer).getByRole('button', { name: 'Regenerar' }));
   return screen.findByRole('dialog', { name: 'Regenerar desafío' });
 }
+
+const drawerRegenerate = () =>
+  within(screen.getByRole('dialog', { name: DRAWER })).getByRole('button', {
+    name: /^Regenera(r|ndo…)$/,
+  });
 
 describe('modal O-03', () => {
   it('abre con el texto asíncrono, foco en Regenerar y sin pedir nada todavía (TS-37)', async () => {
@@ -39,7 +49,7 @@ describe('modal O-03', () => {
     expect(requestsTo('POST', REGENERATE_PATH)).toHaveLength(0);
   });
 
-  it('confirmar deja la celda pendiente, cierra, enfoca la celda y retoma el polling (TS-38)', async () => {
+  it('confirmar cierra el modal, deja el detalle pendiente y retoma el polling (TS-38)', async () => {
     useUpcomingClock();
     server.use(
       adminHandlers.upcomingSequence([UPCOMING_OK, UPCOMING_PENDING]),
@@ -49,15 +59,15 @@ describe('modal O-03', () => {
     const dialog = await openModal(user);
     await user.click(within(dialog).getByRole('button', { name: 'Regenerar' }));
     await waitFor(() => {
-      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(screen.queryByRole('dialog', { name: 'Regenerar desafío' })).toBeNull();
     });
     expect(requestsTo('POST', REGENERATE_PATH)).toHaveLength(1);
-    const opener = await screen.findByRole('button', { name: /Regenerando….*pendiente/ });
+    // El drawer sigue abierto y pasa a pendiente con la data nueva del polling.
+    expect(screen.getByRole('dialog', { name: DRAWER })).toBeInTheDocument();
     await waitFor(() => {
-      expect(opener).toHaveFocus();
+      expect(drawerRegenerate()).toHaveTextContent('Regenerando…');
     });
-    expect(screen.queryByRole('button', { name: CELL_BUTTON })).toBeNull();
-    expect(screen.getByText(/Hay una regeneración en curso/)).toBeInTheDocument();
+    expect(drawerRegenerate()).toHaveAttribute('aria-disabled', 'true');
     const before = requestsTo('GET', UPCOMING_PATH).length;
     await vi.advanceTimersByTimeAsync(5_000);
     await waitFor(() => {
@@ -109,7 +119,7 @@ describe('modal O-03', () => {
     expect(screen.getByRole('dialog', { name: 'Regenerar desafío' })).toBeInTheDocument();
   });
 
-  it('404 cierra sin mensaje y refresca (TS-41)', async () => {
+  it('404 cierra el modal y el detalle sin mensaje y refresca (TS-41)', async () => {
     server.use(
       adminHandlers.upcoming(UPCOMING_OK),
       adminHandlers.regenerate(GG('05'), apiError('not_found', 'No encontrado'), { status: 404 }),
@@ -121,6 +131,7 @@ describe('modal O-03', () => {
     await waitFor(() => {
       expect(screen.queryByRole('dialog')).toBeNull();
     });
+    expect(screen.queryByRole('dialog', { name: DRAWER })).toBeNull();
     expect(screen.queryByRole('alert')).toBeNull();
     await waitFor(() => {
       expect(requestsTo('GET', UPCOMING_PATH).length).toBeGreaterThan(before);
@@ -140,7 +151,7 @@ describe('modal O-03', () => {
     server.use(adminHandlers.regenerate(GG('05'), REGEN_202, { status: 202 }));
     await user.click(retry);
     await waitFor(() => {
-      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(screen.queryByRole('dialog', { name: 'Regenerar desafío' })).toBeNull();
     });
     expect(requestsTo('POST', REGENERATE_PATH)).toHaveLength(2);
   });
@@ -163,17 +174,18 @@ describe('modal O-03', () => {
     expect(screen.queryByText(/No pudimos pedir la regeneración/)).toBeNull();
   });
 
-  it('Cancelar y Escape no piden nada y devuelven el foco (TS-44)', async () => {
+  it('Cancelar y Escape no piden nada y devuelven el foco al «Regenerar» del drawer (TS-44)', async () => {
     server.use(adminHandlers.upcoming(UPCOMING_OK));
     const { user } = render();
     const dialog = await openModal(user);
     await user.click(within(dialog).getByRole('button', { name: 'Cancelar' }));
-    expect(screen.queryByRole('dialog')).toBeNull();
-    expect(screen.getByRole('button', { name: CELL_BUTTON })).toHaveFocus();
+    expect(screen.queryByRole('dialog', { name: 'Regenerar desafío' })).toBeNull();
+    expect(drawerRegenerate()).toHaveFocus();
     await openModal(user);
     await user.keyboard('{Escape}');
-    expect(screen.queryByRole('dialog')).toBeNull();
-    expect(screen.getByRole('button', { name: CELL_BUTTON })).toHaveFocus();
+    expect(screen.queryByRole('dialog', { name: 'Regenerar desafío' })).toBeNull();
+    expect(screen.getByRole('dialog', { name: DRAWER })).toBeInTheDocument();
+    expect(drawerRegenerate()).toHaveFocus();
     expect(requestsTo('POST', REGENERATE_PATH)).toHaveLength(0);
   });
 
@@ -185,7 +197,7 @@ describe('modal O-03', () => {
     );
     const { user } = render();
     await screen.findByRole('table');
-    await user.click(screen.getByRole('button', { name: /Grep Grid #35, 2026-12-05/ }));
+    await user.click(screen.getByRole('button', { name: CELL }));
     const drawer = await screen.findByRole('dialog', { name: 'Grep Grid #35' });
     await user.click(within(drawer).getByRole('button', { name: 'Regenerar' }));
     const modal = await screen.findByRole('dialog', { name: 'Regenerar desafío' });

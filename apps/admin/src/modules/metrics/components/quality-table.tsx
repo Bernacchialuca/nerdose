@@ -2,6 +2,7 @@ import { useId, useState } from 'react';
 
 import { Panel, cn, dataTableClass } from '@nerdose/ui';
 
+import { Pagination, usePagination } from '@/components/pagination';
 import { TableRegion } from '@/components/table-region';
 import { formatCount } from '@/lib/format-number';
 import { CHALLENGE_STATUS_LABELS, GAME_LABELS } from '@/modules/reports';
@@ -9,6 +10,7 @@ import { CHALLENGE_STATUS_LABELS, GAME_LABELS } from '@/modules/reports';
 import type { ChallengeQualityRow } from '../api/types';
 import {
   DEFAULT_QUALITY_SORT,
+  METRICS_PAGE_SIZE,
   NOTES,
   QUALITY_COLUMNS,
   challengeCell,
@@ -24,6 +26,7 @@ export function QualityTable({ quality }: { quality: ChallengeQualityRow[] }) {
   const c = dataTableClass();
   const [sort, setSort] = useState<QualitySort>(DEFAULT_QUALITY_SORT);
   const rows = sortQuality(quality, sort);
+  const pages = usePagination(rows, METRICS_PAGE_SIZE);
   return (
     <Panel title="Calidad por desafío">
       <TableRegion label="Tabla de calidad por desafío">
@@ -42,6 +45,7 @@ export function QualityTable({ quality }: { quality: ChallengeQualityRow[] }) {
                     type="button"
                     onClick={() => {
                       setSort(nextSort(sort, col.key));
+                      pages.setPage(1);
                     }}
                     className="min-h-11 w-full text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                   >
@@ -55,7 +59,7 @@ export function QualityTable({ quality }: { quality: ChallengeQualityRow[] }) {
             {rows.length === 0 ? (
               <EmptyRow colSpan={QUALITY_COLUMNS.length} />
             ) : (
-              rows.map((row) => (
+              pages.pageItems.map((row) => (
                 <tr key={row.challenge_id}>
                   <th scope="row" className={cn(c.td, 'text-left font-normal')}>
                     {challengeCell(row)}
@@ -73,6 +77,15 @@ export function QualityTable({ quality }: { quality: ChallengeQualityRow[] }) {
           </tbody>
         </table>
       </TableRegion>
+      <Pagination
+        page={pages.page}
+        totalPages={pages.totalPages}
+        total={pages.total}
+        pageSize={pages.pageSize}
+        noun="desafíos"
+        onChange={pages.setPage}
+        label="Paginado de calidad por desafío"
+      />
       <p id={noteId} className="font-sans text-caption text-text-muted">
         {NOTES.quality}
       </p>

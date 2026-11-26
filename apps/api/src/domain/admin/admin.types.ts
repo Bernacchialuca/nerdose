@@ -115,6 +115,33 @@ export type ContentStock = {
   top_rejected_guesses: Array<{ word: string; distinct_players: number }>;
 };
 
+export type ContentItem = {
+  id: string;
+  label: string;
+  category: string;
+  status: 'approved' | 'rejected';
+  rejection_reason: string | null;
+  sitelinks: number;
+  wikidata_id: string;
+  /** `definition.es` (terms) o `note.es` (timeline_facts). */
+  description: string | null;
+  /** Solo timeline_facts; null en terms. */
+  event_date: string | null;
+  /** Por juego que consume el banco (`bankUsage`), en el orden del registry. */
+  last_used: Partial<Record<GameId, string | null>>;
+  /** Juegos cuyo generator nunca elige este ítem (`bankUsage.excludedItems`). */
+  excluded_from: GameId[];
+};
+
+export type ContentItemsPage = {
+  bank: 'terms' | 'timeline_facts';
+  page: number;
+  page_size: number;
+  total: number;
+  total_pages: number;
+  items: ContentItem[];
+};
+
 export type StreakBucket = '0' | '1' | '2-6' | '7-29' | '30+';
 
 export type MetricsSummary = {

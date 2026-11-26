@@ -15,16 +15,23 @@ describe('P-04: teclado (TS-30)', () => {
     await waitFor(() => {
       expect(h1).toHaveFocus();
     });
-    // El nav del encabezado queda antes del h1 en el DOM: desde el h1 solo hay regiones.
-    for (const name of [
-      'Tabla de términos por juego',
-      'Tabla de hechos por juego',
-      'Tabla de ítems rechazados',
-      'Tabla de palabras rechazadas',
+    // El nav del encabezado queda antes del h1 en el DOM: desde el h1 siguen las tablas de los
+    // bancos, los enlaces a Bancos, el top de rechazadas y su paginado.
+    const [termsLink, factsLink] = screen.getAllByRole('link', { name: 'Ver en Bancos' });
+    for (const target of [
+      screen.getByRole('region', { name: 'Tabla de términos por juego' }),
+      screen.getByRole('region', { name: 'Tabla de hechos por juego' }),
+      termsLink,
+      factsLink,
+      screen.getByRole('region', { name: 'Tabla de palabras rechazadas' }),
+      screen.getByRole('button', { name: 'Anterior' }),
+      screen.getByRole('button', { name: 'Siguiente' }),
     ]) {
       await user.tab();
-      expect(screen.getByRole('region', { name })).toHaveFocus();
+      expect(target).toHaveFocus();
     }
+    expect(termsLink).toHaveAttribute('href', '/banks?bank=terms&status=rejected');
+    expect(factsLink).toHaveAttribute('href', '/banks?bank=timeline_facts&status=rejected');
   });
 
   it('con error el foco va a «Reintentar» y Enter recarga', async () => {

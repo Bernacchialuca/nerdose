@@ -5,12 +5,14 @@ import { axe } from 'vitest-axe';
 import { OPEN_GROUPS, SESSION, SESSION_KEY } from '@/test/fixtures/reports';
 import {
   STOCK_EMPTY,
+  FACTS_BANK,
   STOCK_LOW,
-  STOCK_NO_REASON,
   STOCK_OK,
   STOCK_TERMS_LOW,
+  TERMS_BANK,
   stock,
 } from '@/test/fixtures/content-stock';
+import { BANK_TERMS_PAGE } from '@/test/fixtures/banks';
 import { useFixedClock } from '@/test/helpers';
 import { renderWithProviders } from '@/test/render';
 import { adminHandlers, apiError, requests, requestsTo, server } from '@/test/msw';
@@ -150,13 +152,14 @@ describe('Stock de contenido (P-04)', () => {
     expect(rows(table)).toEqual([['Tech Timeline', '90 días', '5', '310', '62', 'Sí']]);
   });
 
-  it('bancos lado a lado (TS-13)', async () => {
+  it('bancos apilados a todo el ancho (TS-13)', async () => {
     await renderStock();
     const terms = screen.getByRole('region', { name: 'Banco de términos' });
     const facts = screen.getByRole('region', { name: 'Banco de hechos' });
     const grid = terms.parentElement;
     expect(grid).toBe(facts.parentElement);
-    expect(grid).toHaveClass('grid', 'grid-cols-1', 'lg:grid-cols-2');
+    expect(grid).toHaveClass('grid', 'grid-cols-1');
+    expect(grid?.className).not.toMatch(/grid-cols-[2-9]/);
     expect(grid?.firstElementChild).toBe(terms);
     for (const name of ['Última carga del dataset', 'Ítems rechazados']) {
       expect(grid).not.toContainElement(screen.getByRole('region', { name }));
@@ -212,30 +215,42 @@ describe('Stock de contenido (P-04)', () => {
     expect(p).toContainEqual(['Alcanza para ciclar', '⚠ No']);
   });
 
-  it('ítems rechazados con motivo (TS-16)', async () => {
-    await renderStock();
+  it('ítems rechazados: total por banco y acceso a Bancos (TS-16)', async () => {
+    await renderStock(stock({ banks: [{ ...TERMS_BANK, rejected_total: 1230 }, FACTS_BANK] }));
     const panel = screen.getByRole('region', { name: 'Ítems rechazados' });
-    const table = within(panel).getByRole('table', { name: 'Ítems rechazados de los bancos' });
+    expect(within(panel).queryByRole('table')).toBeNull();
+    const items = within(panel).getAllByRole('listitem');
+    expect(items).toHaveLength(2);
+    expect(items[0]).toHaveTextContent('Términos: 1.230 rechazados');
+    expect(items[1]).toHaveTextContent('Hechos: 3 rechazados');
     expect(
-      within(panel).getByRole('region', { name: 'Tabla de ítems rechazados' }),
-    ).toContainElement(table);
+      within(items[0] as HTMLElement).getByRole('link', { name: 'Ver en Bancos' }),
+    ).toHaveAttribute('href', '/banks?bank=terms&status=rejected');
     expect(
-      within(table)
-        .getAllByRole('columnheader')
-        .map((c) => c.textContent),
-    ).toEqual(['Banco', 'Ítem', 'Motivo']);
-    expect(rows(table)).toEqual([
-      ['Términos', 'CAP theorem', 'definición incorrecta (anulación Devdle #8)'],
-      ['Hechos', 'Lanzamiento de Java 1.0', 'fecha incorrecta'],
-    ]);
+      within(items[1] as HTMLElement).getByRole('link', { name: 'Ver en Bancos' }),
+    ).toHaveAttribute('href', '/banks?bank=timeline_facts&status=rejected');
+    // La lista completa con motivos vive en Bancos: acá no se muestran ítems sueltos.
+    expect(panel).not.toHaveTextContent('CAP theorem');
   });
 
-  it('rechazado sin motivo (TS-17)', async () => {
-    await renderStock(STOCK_NO_REASON);
-    const table = within(screen.getByRole('region', { name: 'Ítems rechazados' })).getByRole(
-      'table',
+  it('«Ver en Bancos» abre Bancos filtrado por los rechazados del banco (TS-17)', async () => {
+    const { user, router } = await renderStock();
+    server.use(adminHandlers.bankItems(BANK_TERMS_PAGE));
+    const panel = screen.getByRole('region', { name: 'Ítems rechazados' });
+    await user.click(
+      within(panel).getAllByRole('link', { name: 'Ver en Bancos' })[0] as HTMLElement,
     );
-    expect(rows(table)[0]).toEqual(['Términos', 'CACHE', 'Sin motivo registrado']);
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe('/banks');
+    });
+    expect(router.state.location.search).toBe('?bank=terms&status=rejected');
+    await screen.findByRole('heading', { level: 1, name: 'Bancos de contenido' });
+    await waitFor(() => {
+      expect(requestsTo('GET', '/api/admin/content/items')).toHaveLength(1);
+    });
+    const params = new URLSearchParams(requestsTo('GET', '/api/admin/content/items')[0]?.search);
+    expect(params.get('bank')).toBe('terms');
+    expect(params.get('status')).toBe('rejected');
   });
 
   it('top 50 de solo lectura (TS-18)', async () => {
@@ -249,18 +264,42 @@ describe('Stock de contenido (P-04)', () => {
         .getAllByRole('columnheader')
         .map((c) => c.textContent),
     ).toEqual(['#', 'Palabra', 'Jugadores distintos']);
-    const body = rows(table);
-    expect(body).toHaveLength(50);
-    expect(body.slice(0, 3)).toEqual([
+    expect(rows(table)).toHaveLength(10);
+    expect(rows(table).slice(0, 3)).toEqual([
       ['1', 'KAFKA', '41'],
       ['2', 'REACT', '37'],
       ['3', 'CRONS', '22'],
     ]);
-    expect(body[49]).toEqual(['50', 'ZZBU', '20']);
-    expect(within(panel).queryByRole('button')).toBeNull();
     expect(within(panel).queryByRole('link')).toBeNull();
     expect(within(panel).queryByRole('textbox')).toBeNull();
-    expect(panel.textContent).not.toMatch(/página|siguiente|agregar/i);
+    expect(panel.textContent).not.toMatch(/agregar/i);
+  });
+
+  it('top 50 paginado de a 10, con la numeración corrida entre páginas (TS-18)', async () => {
+    const { user } = await renderStock();
+    const panel = screen.getByRole('region', { name: 'Top 50 de palabras rechazadas en Devdle' });
+    const nav = within(panel).getByRole('navigation', { name: 'Paginado de palabras rechazadas' });
+    expect(nav).toHaveTextContent('1–10 de 50 palabras · página 1 de 5');
+    expect(
+      within(nav)
+        .getAllByRole('button')
+        .map((b) => b.textContent),
+    ).toEqual(['‹ Anterior', 'Siguiente ›']);
+    await user.click(within(nav).getByRole('button', { name: 'Siguiente' }));
+    expect(nav).toHaveTextContent('11–20 de 50 palabras · página 2 de 5');
+    const page2 = rows(within(panel).getByRole('table'));
+    expect(page2).toHaveLength(10);
+    expect(page2[0]?.[0]).toBe('11');
+    expect(page2[9]?.[0]).toBe('20');
+    for (let i = 0; i < 3; i++) {
+      await user.click(within(nav).getByRole('button', { name: 'Siguiente' }));
+    }
+    expect(nav).toHaveTextContent('41–50 de 50 palabras · página 5 de 5');
+    expect(rows(within(panel).getByRole('table')).at(-1)).toEqual(['50', 'ZZBU', '20']);
+    expect(within(nav).getByRole('button', { name: 'Siguiente' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
   });
 
   it('estados vacíos (TS-19)', async () => {
@@ -275,8 +314,12 @@ describe('Stock de contenido (P-04)', () => {
     expect(top.querySelector('span[aria-hidden="true"]')).toHaveTextContent('✓');
     expect(within(top).queryByRole('table')).toBeNull();
     const rej = screen.getByRole('region', { name: 'Ítems rechazados' });
-    expect(rej).toHaveTextContent('Ningún ítem rechazado');
+    expect(rej).toHaveTextContent('Términos: 0 rechazados');
+    expect(rej).toHaveTextContent('Hechos: 0 rechazados');
     expect(within(rej).queryByRole('table')).toBeNull();
+    expect(
+      screen.queryByRole('navigation', { name: 'Paginado de palabras rechazadas' }),
+    ).toBeNull();
     for (const name of ['Banco de términos', 'Banco de hechos']) {
       expect(within(screen.getByRole('region', { name })).getByRole('table')).toBeInTheDocument();
     }
@@ -287,7 +330,10 @@ describe('Stock de contenido (P-04)', () => {
     const first = await renderStock(stock({ last_sync: null }));
     expect(screen.getByText(/Sin datos de carga/)).toBeInTheDocument();
     const top = screen.getByRole('region', { name: 'Top 50 de palabras rechazadas en Devdle' });
-    expect(rows(within(top).getByRole('table'))).toHaveLength(50);
+    expect(rows(within(top).getByRole('table'))).toHaveLength(10);
+    expect(
+      within(top).getByRole('navigation', { name: 'Paginado de palabras rechazadas' }),
+    ).toHaveTextContent('página 1 de 5');
     first.unmount();
 
     await renderStock(stock({ top_rejected_guesses: [] }));
@@ -303,9 +349,9 @@ describe('Stock de contenido (P-04)', () => {
     await renderStock(stock({ banks: [] }));
     expect(screen.queryByRole('heading', { name: 'Banco de términos' })).toBeNull();
     expect(screen.queryByRole('heading', { name: 'Banco de hechos' })).toBeNull();
-    expect(screen.getByRole('region', { name: 'Ítems rechazados' })).toHaveTextContent(
-      'Ningún ítem rechazado',
-    );
+    const rej = screen.getByRole('region', { name: 'Ítems rechazados' });
+    expect(within(rej).queryAllByRole('listitem')).toHaveLength(0);
+    expect(within(rej).queryByRole('link')).toBeNull();
     expect(screen.queryByRole('status')).toBeNull();
     expect(
       rows(
@@ -313,7 +359,7 @@ describe('Stock de contenido (P-04)', () => {
           screen.getByRole('region', { name: 'Top 50 de palabras rechazadas en Devdle' }),
         ).getByRole('table'),
       ),
-    ).toHaveLength(50);
+    ).toHaveLength(10);
     expect(spy).not.toHaveBeenCalled();
     spy.mockRestore();
   });
@@ -378,12 +424,22 @@ describe('Stock de contenido (P-04)', () => {
     expect(requestsTo('GET', PATH)).toHaveLength(0);
   });
 
-  it('solo lectura (TS-27)', async () => {
+  it('solo lectura: solo paginado y enlaces a Bancos (TS-27)', async () => {
     await renderStock();
     const main = screen.getByRole('main');
-    for (const role of ['button', 'link', 'textbox', 'combobox']) {
+    for (const role of ['textbox', 'combobox', 'checkbox']) {
       expect(within(main).queryByRole(role)).toBeNull();
     }
+    expect(
+      within(main)
+        .getAllByRole('button')
+        .map((b) => b.textContent),
+    ).toEqual(['‹ Anterior', 'Siguiente ›']);
+    expect(
+      within(main)
+        .getAllByRole('link')
+        .map((l) => l.getAttribute('href')),
+    ).toEqual(['/banks?bank=terms&status=rejected', '/banks?bank=timeline_facts&status=rejected']);
     expect(requests.every((r) => r.method === 'GET')).toBe(true);
   });
 

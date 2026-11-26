@@ -1,6 +1,7 @@
 import { TERM_CATEGORIES } from '@nerdose/core';
 import type { GameDefinition } from '@nerdose/core';
 
+import { DEVDLE_EXCLUDED_TERMS } from '../shared/excluded';
 import { scoreGuess } from './feedback';
 import {
   MAX_GUESSES,
@@ -43,6 +44,7 @@ export const devdle: GameDefinition<
     lastUsedField: 'last_used_devdle',
     windowDays: 365,
     itemsPerChallenge: 1,
+    excludedItems: DEVDLE_EXCLUDED_TERMS,
   },
 
   toPublic: (p) => ({

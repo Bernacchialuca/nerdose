@@ -6,6 +6,12 @@ export type BankColumns = {
   table: PgTable;
   id: PgColumn;
   label: PgColumn;
+  category: PgColumn;
+  /** jsonb `{ es, en }` que el admin ve como descripción: `definition` / `note`. */
+  description: PgColumn;
+  /** Solo `timeline_facts`. */
+  eventDate: PgColumn | null;
+  sitelinks: PgColumn;
   wikidataId: PgColumn;
   status: PgColumn;
   rejectionReason: PgColumn;
@@ -20,6 +26,10 @@ export const BANK_COLUMNS: Record<BankName, BankColumns> = {
     table: terms,
     id: terms.id,
     label: terms.term,
+    category: terms.category,
+    description: terms.definition,
+    eventDate: null,
+    sitelinks: terms.sitelinks,
     wikidataId: terms.wikidataId,
     status: terms.status,
     rejectionReason: terms.rejectionReason,
@@ -30,6 +40,10 @@ export const BANK_COLUMNS: Record<BankName, BankColumns> = {
     table: timelineFacts,
     id: timelineFacts.id,
     label: timelineFacts.label,
+    category: timelineFacts.category,
+    description: timelineFacts.note,
+    eventDate: timelineFacts.eventDate,
+    sitelinks: timelineFacts.sitelinks,
     wikidataId: timelineFacts.wikidataId,
     status: timelineFacts.status,
     rejectionReason: timelineFacts.rejectionReason,

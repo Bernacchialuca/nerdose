@@ -10,10 +10,18 @@ export type BankStockInput = {
   available: number[];
   /** Disponibles para todos los consumidores a la vez. */
   availableAll: number;
+  /**
+   * Approved que cada consumidor puede elegir alguna vez (sin los `excludedItems` de su
+   * `bankUsage`), en el orden de `consumers`. Es la base de su `cycle_ok`.
+   */
+  approvedEligible: number[];
   consumers: Array<{ gameId: GameId; windowDays: number; itemsPerChallenge: number }>;
 };
 
-/** Fórmulas de stock (REQ-008, decisión 12): pura, sin base. `rejections` lo completa el servicio. */
+/**
+ * Fórmulas de stock (REQ-008, decisión 12): pura, sin base. `rejections` lo completa el servicio.
+ * Los ítems excluidos de un juego ya vienen descontados de `available` y `approvedEligible`.
+ */
 export function buildBankStock(input: BankStockInput): Omit<BankStock, 'rejections'> {
   const consumers: BankConsumerStock[] = input.consumers.map((c, i) => {
     const available = input.available[i] ?? 0;
@@ -23,7 +31,7 @@ export function buildBankStock(input: BankStockInput): Omit<BankStock, 'rejectio
       items_per_challenge: c.itemsPerChallenge,
       approved_available: available,
       days_of_stock: Math.floor(available / c.itemsPerChallenge),
-      cycle_ok: input.approvedTotal >= c.itemsPerChallenge * c.windowDays,
+      cycle_ok: (input.approvedEligible[i] ?? 0) >= c.itemsPerChallenge * c.windowDays,
     };
   });
   return {

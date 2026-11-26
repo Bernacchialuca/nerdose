@@ -6,6 +6,7 @@ import type { AppDeps, AppEnv } from '@/http/types';
 import { validationHook } from '@/http/validation-hook';
 
 import {
+  contentItemsQuerySchema,
   loginBodySchema,
   metricsQuerySchema,
   reportParamSchema,
@@ -53,6 +54,11 @@ export const listGenerationFailures = (deps: AppDeps) =>
 
 export const getContentStock = (deps: AppDeps) =>
   factory.createHandlers(async (c) => c.json(await deps.adminContent.stock()));
+
+export const listContentItems = (deps: AppDeps) =>
+  factory.createHandlers(zValidator('query', contentItemsQuerySchema, validationHook), async (c) =>
+    c.json(await deps.adminContent.items(c.req.valid('query'))),
+  );
 
 export const getMetrics = (deps: AppDeps) =>
   factory.createHandlers(

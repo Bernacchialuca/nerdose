@@ -28,13 +28,25 @@ describe('game-devdle entry boundaries (TS-3, TS-4)', () => {
     expect(files.length).toBeGreaterThan(0);
   });
 
+  it('shared only imports itself (no packages)', () => {
+    for (const { file, text } of files.filter((f) => f.file.startsWith('shared/'))) {
+      for (const spec of importsOf(text)) {
+        expect(
+          spec.startsWith('.') && resolveRelative(file, spec).startsWith('src/shared'),
+          `${file} -> ${spec}`,
+        ).toBe(true);
+      }
+    }
+  });
+
   it.each(['definition', 'generator'])('%s only imports allowed packages', (entry) => {
     for (const { file, text } of files.filter((f) => f.file.startsWith(`${entry}/`))) {
       for (const spec of importsOf(text)) {
         if (spec.startsWith('.')) {
           const normalized = resolveRelative(file, spec);
           expect(normalized.startsWith('src/client'), `${file} -> ${spec}`).toBe(false);
-          const okDefinition = normalized.startsWith('src/definition');
+          const okDefinition =
+            normalized.startsWith('src/definition') || normalized.startsWith('src/shared');
           const okGenerator = entry === 'generator' && normalized.startsWith('src/generator');
           if (entry === 'definition') expect(okDefinition, `${file} -> ${spec}`).toBe(true);
           else expect(okGenerator || okDefinition, `${file} -> ${spec}`).toBe(true);

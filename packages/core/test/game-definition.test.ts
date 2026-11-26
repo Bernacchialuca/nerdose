@@ -102,8 +102,9 @@ describe('bankUsage', () => {
 
   it('declares the BankUsage shape (TS-1)', () => {
     expectTypeOf<keyof BankUsage>().toEqualTypeOf<
-      'bank' | 'lastUsedField' | 'windowDays' | 'itemsPerChallenge'
+      'bank' | 'lastUsedField' | 'windowDays' | 'itemsPerChallenge' | 'excludedItems'
     >();
+    expectTypeOf<BankUsage['excludedItems']>().toEqualTypeOf<ReadonlySet<string> | undefined>();
     expectTypeOf<BankUsage['bank']>().toEqualTypeOf<'terms' | 'timeline_facts'>();
     expectTypeOf<BankUsage['lastUsedField']>().toEqualTypeOf<string>();
     expectTypeOf<BankUsage['windowDays']>().toEqualTypeOf<number>();

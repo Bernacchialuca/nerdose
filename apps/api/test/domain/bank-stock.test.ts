@@ -16,6 +16,7 @@ describe('buildBankStock', () => {
       rejectedTotal: 0,
       available: [400, 300],
       availableAll: 250,
+      approvedEligible: [500, 500],
       consumers: CONSUMERS,
     });
     expect(r.consumers[0]).toMatchObject({
@@ -38,6 +39,7 @@ describe('buildBankStock', () => {
       rejectedTotal: 0,
       available: [10, 300],
       availableAll: 10,
+      approvedEligible: [300, 300],
       consumers: CONSUMERS,
     });
     expect(r.consumers[0]!.cycle_ok).toBe(false);
@@ -52,9 +54,26 @@ describe('buildBankStock', () => {
       rejectedTotal: 0,
       available: [0, 0],
       availableAll: 0,
+      approvedEligible: [0, 0],
       consumers: CONSUMERS,
     });
     expect(r).toMatchObject({ approved_available: 0, days_of_stock: 0, cycle_ok: false });
+  });
+
+  it('cycle_ok por consumidor usa sus approved elegibles (sin excluidos)', () => {
+    const r = buildBankStock({
+      bank: 'terms',
+      approvedTotal: 400,
+      rejectedTotal: 0,
+      available: [300, 390],
+      availableAll: 300,
+      approvedEligible: [300, 400],
+      consumers: CONSUMERS,
+    });
+    expect(r.approved_total).toBe(400);
+    expect(r.consumers[0]).toMatchObject({ approved_available: 300, cycle_ok: false });
+    expect(r.consumers[1]).toMatchObject({ approved_available: 390, cycle_ok: true });
+    expect(r.cycle_ok).toBe(false);
   });
 
   it('un solo consumidor', () => {
@@ -64,6 +83,7 @@ describe('buildBankStock', () => {
       rejectedTotal: 1,
       available: [12],
       availableAll: 12,
+      approvedEligible: [450],
       consumers: [{ gameId: 'timeline', windowDays: 90, itemsPerChallenge: 5 }],
     });
     expect(r).toMatchObject({ days_of_stock: 2, cycle_ok: true, rejected_total: 1 });

@@ -1,4 +1,6 @@
 import { screen, within } from '@testing-library/react';
+
+import type { ChallengeQualityRow } from '@/modules/metrics/api/types';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { axe } from 'vitest-axe';
 
@@ -264,5 +266,85 @@ describe('Métricas (P-05): cifras y tablas', () => {
     expect(retention).toHaveClass('lg:col-span-7');
     expect(streaks).toHaveClass('lg:col-span-5');
     expect(figures).toHaveClass('lg:grid-cols-4');
+  });
+});
+
+describe('Métricas (P-05): paginado de las tablas largas', () => {
+  // 44 días: 15 + 15 + 14 filas.
+  const LONG_RANGE = '/metrics?from=2026-10-27&to=2026-12-09';
+
+  it('«Jugadores diarios» pagina de a 15 días', async () => {
+    const { user } = await renderMetrics(
+      metrics({ daily_players: [{ date: '2026-12-09', game_id: null, players: 3 }] }),
+      LONG_RANGE,
+    );
+    const t = table('Jugadores diarios');
+    const nav = screen.getByRole('navigation', { name: 'Paginado de jugadores diarios' });
+    expect(nav).toHaveTextContent('1–15 de 44 días · página 1 de 3');
+    expect(firstCol(t)).toHaveLength(15);
+    expect(firstCol(t)[0]).toBe('09/12/2026');
+    expect(firstCol(t)[14]).toBe('25/11/2026');
+    expect(within(nav).getByRole('button', { name: 'Anterior' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+
+    await user.click(within(nav).getByRole('button', { name: 'Siguiente' }));
+    expect(nav).toHaveTextContent('16–30 de 44 días · página 2 de 3');
+    expect(firstCol(t)[0]).toBe('24/11/2026');
+
+    await user.click(within(nav).getByRole('button', { name: 'Siguiente' }));
+    expect(nav).toHaveTextContent('31–44 de 44 días · página 3 de 3');
+    expect(firstCol(t)).toHaveLength(14);
+    expect(firstCol(t).at(-1)).toBe('27/10/2026');
+    expect(within(nav).getByRole('button', { name: 'Siguiente' })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+    // El paginado no vuelve a pedir datos.
+    expect(requestsTo('GET', '/api/admin/metrics')).toHaveLength(1);
+  });
+
+  it('con 15 filas o menos no hay paginado', async () => {
+    await renderMetrics();
+    expect(screen.queryByRole('navigation', { name: 'Paginado de jugadores diarios' })).toBeNull();
+    expect(
+      screen.queryByRole('navigation', { name: 'Paginado de calidad por desafío' }),
+    ).toBeNull();
+  });
+
+  const QUALITY_20: ChallengeQualityRow[] = Array.from({ length: 20 }, (_, i) => ({
+    challenge_id: `c0000000-0000-4000-8000-${String(i + 1).padStart(12, '0')}`,
+    game_id: 'devdle',
+    // Del 14/11 al 03/12, uno por día.
+    date: new Date(Date.UTC(2026, 10, 14 + i)).toISOString().slice(0, 10),
+    number: i + 1,
+    started: 10,
+    finished: 5,
+    completion_rate: 0.5,
+    win_rate: 0.5,
+    reports: i + 1,
+    status: 'published',
+  }));
+
+  it('«Calidad por desafío» pagina de a 15 y ordenar vuelve a la página 1', async () => {
+    const { user } = await renderMetrics(metrics({ challenge_quality: QUALITY_20 }));
+    const t = table('Calidad por desafío');
+    const nav = screen.getByRole('navigation', { name: 'Paginado de calidad por desafío' });
+    expect(nav).toHaveTextContent('1–15 de 20 desafíos · página 1 de 2');
+    expect(firstCol(t)).toHaveLength(15);
+    expect(firstCol(t)[0]).toMatch(/^#20 · /);
+    expect(firstCol(t)[14]).toMatch(/^#6 · /);
+
+    await user.click(within(nav).getByRole('button', { name: 'Siguiente' }));
+    expect(nav).toHaveTextContent('16–20 de 20 desafíos · página 2 de 2');
+    expect(firstCol(t).map((c) => c?.split(' ')[0])).toEqual(['#5', '#4', '#3', '#2', '#1']);
+
+    await user.click(within(t).getByRole('button', { name: 'Reportes' }));
+    expect(nav).toHaveTextContent('1–15 de 20 desafíos · página 1 de 2');
+    // Ascendente por reportes: el de menos reportes primero.
+    expect(firstCol(t)[0]).toMatch(/^#1 · /);
+    expect(firstCol(t)[14]).toMatch(/^#15 · /);
+    expect(requestsTo('GET', '/api/admin/metrics')).toHaveLength(1);
   });
 });

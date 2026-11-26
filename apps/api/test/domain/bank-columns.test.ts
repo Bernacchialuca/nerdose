@@ -12,6 +12,8 @@ describe('resolveBankConsumers', () => {
     expect(r[0]!.consumers.map((c) => c.gameId)).toEqual(['devdle', 'grep-grid']);
     expect(r[1]!.consumers.map((c) => c.gameId)).toEqual(['timeline']);
     expect(r[0]!.consumers[0]!.column).toBe(BANK_COLUMNS.terms.lastUsed.last_used_devdle);
+    expect(r[0]!.consumers[0]!.usage.excludedItems?.has('SLITAZ')).toBe(true);
+    expect(r[0]!.consumers[1]!.usage.excludedItems).toBeUndefined();
   });
 
   it('omite los juegos con bankUsage null', () => {

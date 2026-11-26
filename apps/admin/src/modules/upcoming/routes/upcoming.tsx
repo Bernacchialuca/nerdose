@@ -10,7 +10,7 @@ import { RegenerateDialog } from '../components/regenerate-dialog';
 import type { RegenerateTarget } from '../components/regenerate-dialog';
 import { UpcomingAlerts } from '../components/upcoming-alerts';
 import { UpcomingChallengeDrawer } from '../components/upcoming-challenge-drawer';
-import { UpcomingGrid, cellKey } from '../components/upcoming-grid';
+import { UpcomingGrid } from '../components/upcoming-grid';
 import type { CellRef } from '../components/upcoming-grid';
 
 export function Component() {
@@ -45,22 +45,7 @@ export function Component() {
 
   let content;
   if (data) {
-    content = (
-      <UpcomingGrid
-        data={data}
-        openRefs={openRefs}
-        onOpen={setSelected}
-        onRegenerate={(d, g) => {
-          if (g.challenge === null) return;
-          setRegenTarget({
-            challenge_id: g.challenge.id,
-            game_id: g.game_id,
-            number: d.number,
-            date: d.date,
-          });
-        }}
-      />
-    );
+    content = <UpcomingGrid data={data} openRefs={openRefs} onOpen={setSelected} />;
   } else if (query.isError) {
     content = (
       <Alert
@@ -131,8 +116,6 @@ export function Component() {
             setRegenTarget(null);
           }}
           onRequested={() => {
-            // Desde la celda el botón «Regenerar» desaparece (pendiente): el foco va a la apertura.
-            if (!drawerOpen) setFocusRequest({ cell: cellKey(regenTarget) });
             setRegenTarget(null);
           }}
           onGone={() => {
