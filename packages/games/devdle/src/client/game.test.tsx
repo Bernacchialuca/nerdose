@@ -294,10 +294,11 @@ describe('Game', () => {
     const heads = within(aside)
       .getAllByRole('heading', { level: 2 })
       .map((h) => h.textContent);
-    // Orden del prototipo: pistas, categoría y, si hay stats, tus intentos.
+    // Orden del prototipo: pistas, categoría, pista de letra y, si hay stats, tus intentos.
     expect(heads[0]).toMatch(/cómo leer/);
     expect(heads[1]).toMatch(/pista de categoría/);
-    expect(heads).toHaveLength(2);
+    expect(heads[2]).toMatch(/pista de letra/);
+    expect(heads).toHaveLength(3);
   });
 
   it('titles the game like the prototype', () => {
@@ -313,7 +314,7 @@ describe('Game', () => {
     const heads = within(aside)
       .getAllByRole('heading', { level: 2 })
       .map((h) => h.textContent);
-    expect(heads[2]).toMatch(/tus intentos/);
+    expect(heads[3]).toMatch(/tus intentos/);
     expect(within(aside).getByText('racha 3')).toBeInTheDocument();
     // Partida en curso: ninguna barra se marca como la de hoy.
     expect(within(aside).queryByText(/· hoy/)).toBeNull();
@@ -359,5 +360,55 @@ describe('Game', () => {
         .fill(null)
         .map((_, i) => `${'PARSER'[i]}, correcta`),
     );
+  });
+
+  describe('letter hint', () => {
+    const panel = () =>
+      screen.getByRole('heading', { level: 2, name: /pista de letra/ }).closest('section')!;
+
+    it('needs a position before revealing, then sends the hint move', async () => {
+      const onMove = vi.fn();
+      render(<Game {...base({ onMove })} />);
+      const reveal = within(panel()).getByRole('button', { name: 'Elegí una posición' });
+      expect(reveal).toHaveAttribute('aria-disabled', 'true');
+      await userEvent.click(reveal);
+      expect(onMove).not.toHaveBeenCalled();
+
+      await userEvent.click(within(panel()).getByRole('button', { name: 'Posición 2' }));
+      expect(within(panel()).getByRole('button', { name: 'Posición 2' })).toHaveAttribute(
+        'aria-pressed',
+        'true',
+      );
+      await userEvent.click(within(panel()).getByRole('button', { name: 'Revelar la letra 2' }));
+      expect(onMove).toHaveBeenCalledWith({ hint: 1 });
+    });
+
+    it('disables positions the player already solved', () => {
+      render(<Game {...base()} />);
+      const known = within(panel()).getAllByRole('button', { name: /ya sabés que es/ });
+      expect(known.length).toBeGreaterThan(0);
+      for (const b of known) expect(b).toBeDisabled();
+    });
+
+    it('shows the revealed letter in the panel and in the active row', () => {
+      render(<Game {...base({ state: { ...STATE_2, hint: { position: 5, letter: 'R' } } })} />);
+      expect(within(panel()).getByText('La letra 6 es R.')).toBeInTheDocument();
+      expect(within(panel()).queryByRole('button')).toBeNull();
+      expect(labels(3)[5]).toBe('R, pista');
+    });
+
+    it('typing over the hinted cell replaces the guide', async () => {
+      render(<Game {...base({ state: { ...STATE_2, hint: { position: 0, letter: 'P' } } })} />);
+      expect(labels(3)[0]).toBe('P, pista');
+      await userEvent.keyboard('x');
+      expect(labels(3)[0]).toBe('X, escrita');
+    });
+
+    it('blocks the hint while a move is pending', () => {
+      render(<Game {...base({ pending: true })} />);
+      for (const b of within(panel()).getAllByRole('button', { name: /^Posición/ })) {
+        expect(b).toBeDisabled();
+      }
+    });
   });
 });

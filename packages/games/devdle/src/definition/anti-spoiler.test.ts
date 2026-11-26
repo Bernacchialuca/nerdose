@@ -69,7 +69,18 @@ describe('devdle anti-spoiler contract (NFR-S01)', () => {
     const r = devdle.applyMove(PAYLOAD_REACT, { guesses: [] }, { guess: 'CACHE' }, NOW, ALL_VALID);
     if ('error' in r) throw new Error(r.error);
     expect(Object.keys(r.feedback).sort()).toEqual(['guess', 'marks']);
+    if (!('marks' in r.feedback)) throw new Error('expected guess feedback');
     expect(r.feedback.marks).toHaveLength(5);
     for (const m of r.feedback.marks) expect(['correct', 'present', 'absent']).toContain(m);
+  });
+
+  it('a hint reveals only the letter at the chosen position', () => {
+    const r = devdle.applyMove(PAYLOAD_REACT, { guesses: [] }, { hint: 2 }, NOW, ALL_VALID);
+    if ('error' in r) throw new Error(r.error);
+    expect(r.feedback).toEqual({ hint: { position: 2, letter: 'A' } });
+    const json = JSON.stringify(r);
+    expect(json).not.toContain(PAYLOAD_REACT.word);
+    expect(json).not.toContain(PAYLOAD_REACT.category);
+    expect(json).not.toContain(PAYLOAD_REACT.term_id);
   });
 });

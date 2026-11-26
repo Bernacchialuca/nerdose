@@ -189,6 +189,32 @@ describe('POST /api/games/{game_id}/today/move', () => {
     expect(await count('rejected_guesses')).toBe(1);
   });
 
+  it('pista de Devdle: revela una letra, no gasta intento y solo vale una vez', async () => {
+    const challenge = await publish();
+    const player = await dbs.insertPlayer();
+    await seedPlay(challenge.id, player.id, [G_REACT]);
+    const { app } = await buildDbApp(dbs);
+    const hint = { position: 2, letter: 'R' };
+    const res = await post(app, { challenge_number: 8, move: { hint: 2 } }, player);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({
+      feedback: { hint },
+      play: {
+        status: 'in_progress',
+        state: { guesses: [G_REACT], hint },
+        score: null,
+        code_language: null,
+      },
+      result: null,
+      streaks: null,
+      game_stats: null,
+    });
+    const again = await post(app, { challenge_number: 8, move: { hint: 0 } }, player);
+    expect(again.status).toBe(422);
+    expect(await again.json()).toEqual(err('invalid_move', 'Jugada inválida.'));
+    expect((await playRows())[0]!.state).toEqual({ guesses: [G_REACT], hint });
+  });
+
   it('TS-7 largo incorrecto devuelve invalid_move sin registro', async () => {
     const challenge = await publish();
     const player = await dbs.insertPlayer();
@@ -248,6 +274,7 @@ describe('POST /api/games/{game_id}/today/move', () => {
       definition: 'Combinar los cambios de dos ramas en una.',
       summary: 'Operación de Git que integra historias.',
       guesses,
+      hint: null,
     };
     const gameStats = {
       game_id: 'devdle',

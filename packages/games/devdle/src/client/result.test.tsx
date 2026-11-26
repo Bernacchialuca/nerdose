@@ -40,6 +40,16 @@ describe('Result', () => {
     expect(screen.queryByRole('group', { name: 'Teclado' })).toBeNull();
   });
 
+  it('mentions the hint when it was used', () => {
+    render(<Result {...base({ result: { ...RESULT_WIN, hint: { position: 1, letter: 'A' } } })} />);
+    expect(screen.getByText('Usaste la pista: la letra 2 era A.')).toBeInTheDocument();
+  });
+
+  it('shows no hint line for a game without hint', () => {
+    render(<Result {...base()} />);
+    expect(screen.queryByText(/Usaste la pista/)).toBeNull();
+  });
+
   it('shows a loss (TS-51)', () => {
     render(<Result {...base({ result: RESULT_LOSS })} />);
     expect(screen.getByRole('heading', { level: 1, name: 'No salió: X/6' })).toBeInTheDocument();

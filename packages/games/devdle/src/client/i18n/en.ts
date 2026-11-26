@@ -15,7 +15,7 @@ export const en: Resources = {
     },
     step3: {
       kicker: '3 · Check the categories',
-      body: "We show you the 8 categories of the bank —always the same ones— to guide you. Today's category, the definition and a summary are revealed at the end.",
+      body: "We show you the 8 categories of the bank —always the same ones— to guide you. Today's category, the definition and a summary are revealed at the end. If you get stuck, you have one hint per game: it reveals the letter at the position you choose.",
     },
     countNotice:
       "The game doesn't count until you finish it. Winning or losing adds to your streak.",
@@ -37,6 +37,7 @@ export const en: Resources = {
     present: 'in another position',
     absent: 'not in the word',
     written: 'typed',
+    hinted: 'hint',
     empty: 'empty',
   },
   keyboard: {
@@ -71,6 +72,18 @@ export const en: Resources = {
     security: 'security',
     software_engineering: 'software engineering',
   },
+  letterHint: {
+    title: 'letter hint',
+    available: '1 available',
+    used: 'used',
+    note: 'One per game: pick a position and reveal its letter. It does not cost an attempt.',
+    positions: 'Positions in the word',
+    position: 'Position {{n}}',
+    knownPosition: 'Position {{n}}: you already know it is {{letter}}',
+    pick: 'Pick a position',
+    reveal: 'Reveal letter {{n}}',
+    revealed: 'Letter {{n}} is {{letter}}.',
+  },
   legend: {
     title: 'how to read the clues',
     correct: 'Right letter in the right place.',
@@ -78,6 +91,7 @@ export const en: Resources = {
     absent: 'Not in the word.',
   },
   result: {
+    hintUsed: 'You used the hint: letter {{n}} was {{letter}}.',
     won: 'You won in {{score}}/{{max}}',
     lost: 'Not this time: X/{{max}}',
     lostDetail: 'Here is the word and its explanation.',

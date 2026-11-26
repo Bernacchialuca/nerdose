@@ -25,7 +25,7 @@ export function Result({ t, notices, result, gameStats, aside, footer }: ResultP
           </Banner>
         )}
         {notices}
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center gap-3">
           <Board
             length={r.word.length}
             guesses={r.guesses}
@@ -33,6 +33,12 @@ export function Result({ t, notices, result, gameStats, aside, footer }: ResultP
             label={t('board.resultLabel')}
             t={t}
           />
+          {r.hint ? (
+            <p className="font-mono text-label-comment text-text-muted">
+              <span aria-hidden="true">💡 </span>
+              {t('result.hintUsed', { n: r.hint.position + 1, letter: r.hint.letter })}
+            </p>
+          ) : null}
         </div>
         <WordCard result={r} t={t} />
         {footer}
