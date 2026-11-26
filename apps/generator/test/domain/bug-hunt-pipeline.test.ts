@@ -135,7 +135,7 @@ describe('generateForDate con bug-hunt', () => {
       'TS-5 un solo test que pasa',
       onePassingOf,
       'tests_consistent: not_enough_passing',
-      'not_enough_passing: 1 passing, 3 visible',
+      'not_enough_passing: 1 passing, 3 visible; failing_test is not the smallest failing test (expected lastBelow([], -7))',
     ],
   ])('%s: rechaza sin ejecutar y reintenta', async (_name, mutate, reason, detail) => {
     const { deps, lines } = setup();
