@@ -29,10 +29,11 @@ const base = (over: Partial<ResultProps> = {}): ResultProps => ({
 describe('Result', () => {
   it('shows a win (TS-63)', () => {
     render(<Result {...base()} />);
-    // Al ganar no hay banner (festeja el confeti del host): el h1 queda para lectores de pantalla.
+    // Veredicto siempre visible: banner success con el h1 y un detalle corto.
     const h1 = screen.getByRole('heading', { level: 1, name: '8/8: las encontraste todas' });
-    expect(h1).toHaveClass('sr-only');
-    expect(h1.closest('[role="status"]')).toBeNull();
+    expect(h1).not.toHaveClass('sr-only');
+    expect(h1.closest('[role="status"]')).toHaveClass('border-status-success-border');
+    expect(screen.getByText('Repasá qué significa cada una.')).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { level: 2, name: 'palabras de hoy' }).parentElement,
     ).toHaveTextContent('8/8');
@@ -129,39 +130,22 @@ describe('Result', () => {
       />,
     );
     const root = container.firstElementChild as HTMLElement;
-    expect(root.firstElementChild).toHaveTextContent('nota');
-    const layout = root.querySelector('.lg\\:grid-cols-12') as HTMLElement;
-    const [side, main] = Array.from(layout.children) as HTMLElement[];
-    // Desktop: grilla y cierre a la izquierda (7/12), veredicto y lista a la derecha (5/12).
-    expect(main).toHaveClass('contents', 'lg:col-span-7', 'lg:col-start-1', 'lg:flex');
-    expect(side).toHaveClass('contents', 'lg:col-span-5', 'lg:col-start-8', 'lg:flex');
-    expect(main).toContainElement(screen.getByRole('table'));
-    expect(main).toContainElement(screen.getByText('salidas'));
-    expect(side).toContainElement(screen.getByRole('heading', { level: 1 }));
-    expect(side).toContainElement(screen.getByRole('list'));
-    expect(side).toContainElement(screen.getByText('rachas'));
-    // Mobile (una columna): veredicto, grilla, lista, cierre y aside, por `order`.
-    const orderOf = (el: Element) => {
-      for (let node: Element | null = el; node; node = node.parentElement) {
-        const m = /(?:^|\s)order-(\d)(?:\s|$)/.exec(node.className);
-        if (m) return Number(m[1]);
-      }
-      return null;
-    };
     const banner = screen.getByRole('heading', { level: 1 }).closest('[role="status"]')!;
-    expect(
-      [
-        banner,
-        screen.getByRole('table'),
-        screen.getByRole('list'),
-        screen.getByText('salidas'),
-        screen.getByText('rachas'),
-      ].map(orderOf),
-    ).toEqual([1, 2, 3, 4, 5]);
-    // En el DOM el h1 va antes que la grilla.
-    expect(
-      banner.compareDocumentPosition(screen.getByRole('table')) & Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
+    // Veredicto arriba a todo el ancho, después notices y después las dos columnas.
+    const [first, second, layout] = Array.from(root.children) as HTMLElement[];
+    expect(first).toBe(banner);
+    expect(second).toHaveTextContent('nota');
+    expect(layout).toHaveClass('lg:grid-cols-12');
+    const [main, side] = Array.from(layout!.children) as HTMLElement[];
+    expect(main).toHaveClass('min-w-0', 'lg:col-span-7');
+    expect(side).toHaveClass('min-w-0', 'lg:col-span-5');
+    // Principal: grilla y al final la card de cierre. Lateral: lista con definiciones y aside último.
+    expect(main!.firstElementChild).toContainElement(screen.getByRole('table'));
+    expect(main!.lastElementChild).toHaveTextContent('salidas');
+    expect(side!.firstElementChild).toContainElement(screen.getByRole('list'));
+    expect(side!.lastElementChild).toHaveTextContent('rachas');
+    // Sin `order`: mobile sigue el orden del DOM.
+    expect(container.innerHTML).not.toMatch(/(?:^|\s|")(?:lg:)?order-/);
   });
 
   it('throws on an invalid result (TS-69)', () => {

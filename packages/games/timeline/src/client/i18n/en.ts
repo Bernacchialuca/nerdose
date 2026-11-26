@@ -39,8 +39,7 @@ export const en: Shape<typeof es> = {
     listTitle: 'your order',
     axisBefore: 'before',
     axisAfter: 'after',
-    rulesTitle: 'rules',
-    streak: 'streak {{count}}',
+    rulesTitle: 'how to play',
     rule1: 'Five milestones from different categories. Dates are revealed when you confirm.',
     rule2: 'You get a single try. Each milestone in place scores 1 point.',
     rule3: 'At the end, each milestone shows its date and a bit of history.',
@@ -64,6 +63,7 @@ export const en: Shape<typeof es> = {
     cancel: '{{label}} went back to position {{position}} of {{total}}.',
   },
   hint: {
+    idle: '> drag a milestone by its handle ⠿ or use ↑ ↓ to move it',
     over: '> {{label}}, position {{position}} of {{total}}',
     moved: '> you moved {{label}} to position {{position}} of {{total}}',
     invalidMove: '> we could not save that order. Check it and confirm again',
@@ -74,8 +74,9 @@ export const en: Shape<typeof es> = {
     prompt: 'task: {{prompt}}',
   },
   result: {
-    comment: 'task: from oldest to newest',
     won: 'Perfect order',
+    wonDetail: 'Go over the date and history of each milestone.',
+    lostDetail: 'Check the correct order: each milestone comes with its date and a bit of history.',
     verdict3: 'So close: just two milestones swapped',
     verdict2: 'Halfway there',
     verdict1: 'History is tricky',

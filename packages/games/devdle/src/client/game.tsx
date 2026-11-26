@@ -124,60 +124,62 @@ export function Game({
   const attempt = Math.min(guesses.length + 1, MAX_GUESSES);
 
   return (
-    <div className="flex flex-wrap justify-center gap-10">
-      <section
-        aria-labelledby={titleId}
-        className="flex min-w-0 grow-999 basis-140 flex-col items-center gap-7"
-      >
-        <div className="flex flex-col items-center gap-2 text-center">
-          <h1 id={titleId} className="font-mono text-title-game text-text">
-            {t('game.title')}
-          </h1>
-          <p className="font-mono text-label-comment text-text-dim">
-            <span aria-hidden="true">// </span>
-            {t('game.prompt', { length, attempt, max: MAX_GUESSES })}
-          </p>
-        </div>
-        {notices}
-        <Board
-          length={length}
-          guesses={guesses}
-          draft={draft}
-          hint={play.hint}
-          label={t('board.label', { max: MAX_GUESSES, length })}
-          t={t}
-        />
-        <MoveHint text={hint} />
-        {locked ? null : (
-          <Keyboard
-            states={keyStates(guesses)}
-            onLetter={onLetter}
-            onBackspace={onBackspace}
-            onSubmit={onSubmit}
-            submitDisabled={pending}
-            t={t}
-          />
-        )}
-        <p aria-live="polite" className="sr-only">
-          {announcement}
+    <div className="flex flex-col gap-7">
+      <div className="flex flex-col gap-2">
+        <p className="font-mono text-label-comment text-text-dim">
+          <span aria-hidden="true">// </span>
+          {t('game.prompt', { length, attempt, max: MAX_GUESSES })}
         </p>
-      </section>
-      <aside className="flex min-w-0 max-w-devdle-aside grow basis-75 flex-col gap-4">
-        <Legend t={t} />
-        <CategoryHint categories={view.possible_categories} t={t} />
-        {locked ? null : (
-          <LetterHint
+        <h1 id={titleId} className="font-mono text-title-game text-text">
+          {t('game.title')}
+        </h1>
+      </div>
+      {notices}
+      <div className="flex flex-wrap justify-center gap-10">
+        <section
+          aria-labelledby={titleId}
+          className="flex min-w-0 grow-999 basis-140 flex-col items-center gap-7"
+        >
+          <Board
             length={length}
+            guesses={guesses}
+            draft={draft}
             hint={play.hint}
-            known={known}
-            disabled={inputBlocked}
-            onReveal={onReveal}
+            label={t('board.label', { max: MAX_GUESSES, length })}
             t={t}
           />
-        )}
-        {gameStats ? <Distribution stats={gameStats} t={t} /> : null}
-        {aside}
-      </aside>
+          <MoveHint text={hint} />
+          {locked ? null : (
+            <Keyboard
+              states={keyStates(guesses)}
+              onLetter={onLetter}
+              onBackspace={onBackspace}
+              onSubmit={onSubmit}
+              submitDisabled={pending}
+              t={t}
+            />
+          )}
+          <p aria-live="polite" className="sr-only">
+            {announcement}
+          </p>
+        </section>
+        <aside className="flex min-w-0 max-w-devdle-aside grow basis-75 flex-col gap-4">
+          <Legend t={t} />
+          <CategoryHint categories={view.possible_categories} t={t} />
+          {locked ? null : (
+            <LetterHint
+              length={length}
+              hint={play.hint}
+              known={known}
+              disabled={inputBlocked}
+              onReveal={onReveal}
+              t={t}
+            />
+          )}
+          {gameStats ? <Distribution stats={gameStats} t={t} /> : null}
+          {aside}
+        </aside>
+      </div>
     </div>
   );
 }

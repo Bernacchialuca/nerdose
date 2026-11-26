@@ -85,7 +85,7 @@ export const en: Resources = {
     revealed: 'Letter {{n}} is {{letter}}.',
   },
   legend: {
-    title: 'how to read the clues',
+    title: 'how to play',
     correct: 'Right letter in the right place.',
     present: 'It is in the word, but in another position.',
     absent: 'Not in the word.',
@@ -93,6 +93,7 @@ export const en: Resources = {
   result: {
     hintUsed: 'You used the hint: letter {{n}} was {{letter}}.',
     won: 'You won in {{score}}/{{max}}',
+    wonDetail: 'Go over the word of the day and its definition.',
     lost: 'Not this time: X/{{max}}',
     lostDetail: 'Here is the word and its explanation.',
     wordTitle: 'word of the day',

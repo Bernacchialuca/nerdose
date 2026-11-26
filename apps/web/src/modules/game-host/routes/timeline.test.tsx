@@ -150,9 +150,7 @@ describe('abrir /timeline', () => {
     const starts = calls.filter((c) => c.method === 'POST' && c.path.endsWith('/start'));
     expect(starts).toHaveLength(1);
     expect(starts[0]?.body).toEqual({ challenge_number: 128 });
-    expect(
-      screen.getByText('// un solo intento · 1 punto por posición correcta'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('un solo intento · 1 punto por posición correcta')).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: 'tu orden' })).toBeInTheDocument();
     expect(labels()).toEqual(['Go', 'Kubernetes', 'Python', 'Docker', 'Java']);
     expect(confirmButton()).not.toHaveAttribute('aria-disabled');
@@ -289,7 +287,9 @@ describe('confirmación y resultado', () => {
     view();
     const heading = await h1('Casi: solo dos hitos cruzados');
     expect(heading).not.toHaveTextContent('✓');
-    expect(screen.getByText('// consigna: del más antiguo al más reciente')).toBeInTheDocument();
+    expect(
+      screen.getByText('Mirá el orden correcto: cada hito trae su fecha y un poco de historia.'),
+    ).toBeInTheDocument();
     expect(screen.getAllByText('3/5').length).toBeGreaterThan(0);
     expect(screen.getByText(/posiciones/)).toHaveTextContent(/posiciones\s*correctas/);
     const yours = screen.getByRole('heading', { level: 2, name: 'tu orden' }).closest('section');
@@ -329,8 +329,11 @@ describe('confirmación y resultado', () => {
       expect(idx, piece).toBeGreaterThan(at);
       at = idx;
     }
-    const main = screen.getByRole('main');
-    expect(main.innerHTML).not.toMatch(/class="[^"]*(error|danger)/);
+    // El banner de derrota es rojo (patrón común); la lista «tu orden» no usa rojo.
+    const yourOrder = screen
+      .getByRole('heading', { level: 2, name: 'tu orden' })
+      .closest('section');
+    expect((yourOrder as HTMLElement).innerHTML).not.toMatch(/class="[^"]*(error|danger)/);
     expect(screen.queryByRole('button', { name: /Empezar/ })).toBeNull();
     expect(screen.queryByRole('button', { name: /Confirmar orden/ })).toBeNull();
   });
@@ -339,7 +342,8 @@ describe('confirmación y resultado', () => {
     server.use(handlers.today(timelineWon));
     view();
     const heading = await h1('Orden perfecto');
-    expect(heading.querySelector('[aria-hidden="true"]')).toHaveTextContent('✓');
+    // Veredicto en el banner de éxito del patrón común (sin ✓ en el h1).
+    expect(heading.closest('[role="status"]')).toHaveClass('border-status-success-border');
     expect(screen.getAllByText('5/5').length).toBeGreaterThan(0);
     expect(screen.getAllByText('✓ bien')).toHaveLength(5);
     expect(screen.queryByText(/✗/)).toBeNull();
@@ -731,7 +735,11 @@ describe('idioma y retomar', () => {
     );
     await user.click(lang('EN'));
     expect(await h1('So close: just two milestones swapped')).toBeInTheDocument();
-    expect(screen.getByText('// task: from oldest to newest')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Check the correct order: each milestone comes with its date and a bit of history.',
+      ),
+    ).toBeInTheDocument();
     expect(screen.getByText(/February 20, 1991/)).toBeInTheDocument();
     expect(screen.getByText('2009')).toBeInTheDocument();
     expect(screen.getByText(/June 2014/)).toBeInTheDocument();
@@ -765,7 +773,7 @@ describe('idioma y retomar', () => {
       expect(scroll).toHaveBeenCalledTimes(1);
       const target = scroll.mock.contexts[0] as HTMLElement;
       expect(target.id).toBe('game-help');
-      expect(target).toHaveTextContent(/^\/\/ reglas/);
+      expect(target).toHaveTextContent(/^\/\/ cómo se juega/);
       expect(target).toHaveTextContent(/Arrastrá cada fila/);
       expect(scroll).toHaveBeenCalledWith({ behavior: 'auto', block: 'start' });
       server.use(movePost(tlMove3));

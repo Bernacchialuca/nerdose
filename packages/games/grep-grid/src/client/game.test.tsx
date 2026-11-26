@@ -39,6 +39,7 @@ const fresh = (over: Partial<GameProps> = {}) =>
   base({ publicView: PUBLIC_VIEW_0, state: STATE_0, ...over });
 
 const cell = (name: string) => screen.getByRole('button', { name });
+const words = (name = 'palabras de hoy') => screen.getByRole('region', { name });
 const live = (container: HTMLElement) => container.querySelectorAll('[aria-live] > p');
 
 describe('Game board (accessibility)', () => {
@@ -347,7 +348,7 @@ describe('Game words and locale', () => {
   it('resumes with definitions (TS-40)', () => {
     render(<Game {...base()} />);
     expect(screen.getByRole('heading', { level: 2, name: /palabras de hoy/ })).toBeInTheDocument();
-    const items = screen.getAllByRole('listitem');
+    const items = within(words()).getAllByRole('listitem');
     expect(items.map((li) => li.querySelector('span')?.textContent)).toEqual([
       'CACHE',
       'DOCKER',
@@ -398,7 +399,9 @@ describe('Game words and locale', () => {
     expect(screen.queryByText('definición de DOCKER')).toBeNull();
     expect(screen.getByText('4/8')).toBeInTheDocument();
     expect(
-      screen.getAllByRole('listitem').map((li) => li.querySelector('span')?.textContent),
+      within(words("today's words"))
+        .getAllByRole('listitem')
+        .map((li) => li.querySelector('span')?.textContent),
     ).toEqual(['CACHE', 'DOCKER', 'KERNEL', 'KUBERNETES', 'MERGE', 'OAUTH', 'PYTHON', 'REDIS']);
     expect(screen.getAllByRole('button')).toHaveLength(144 + 1);
     expect(screen.getAllByRole('button', { name: /, found$/ })).toHaveLength(22);
@@ -552,8 +555,8 @@ describe('Game layout and style', () => {
     expect(btn.querySelector('[aria-hidden="true"]')).toHaveTextContent('✕');
   });
 
-  it('lays out the prompt full width, then board 7/12 and word list 5/12 aligned (TS-54)', () => {
-    const { container } = render(<Game {...base()} />);
+  it('lays out the title block full width, then board 7/12 and side column 5/12 (TS-54)', () => {
+    const { container } = render(<Game {...base({ aside: <p>reportar</p> })} />);
     const root = container.querySelector('.lg\\:grid-cols-12') as HTMLElement;
     expect(root).toHaveClass('flex', 'flex-col', 'lg:grid', 'lg:items-start');
     const [head, main, side] = Array.from(root.children) as HTMLElement[];
@@ -562,31 +565,56 @@ describe('Game layout and style', () => {
     expect(side).toHaveClass('min-w-0', 'lg:col-span-5');
     const before = (x: Element | null, y: Element | null) =>
       expect(x!.compareDocumentPosition(y!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    // La consigna (no el nombre del juego) es el h1 de la partida, como en Devdle y Timeline.
+    // Patrón común: primero la línea de comentario `//` y después el h1 con la consigna.
+    const comment = head!.querySelector('p');
     const h1 = head!.querySelector('h1');
     expect(h1).toHaveTextContent('Encontrá las 8 palabras escondidas');
-    const help = head!.querySelector('#game-help p');
+    before(comment, h1);
     const grid = main!.querySelector('[role="grid"]');
     const hint = screen.getByText('> tocá la primera letra de una palabra');
-    before(h1, help);
-    before(help, grid);
+    before(h1, grid);
     before(grid, hint);
     expect(main).toContainElement(hint);
-    // El contador N/8 vive en el encabezado de la lista (columna lateral), no sobre la grilla.
+    // Lateral: cómo se juega (ancla del «?»), lista con el contador N/8, Rendirse y aside último.
+    const help = screen.getByRole('region', { name: 'cómo se juega' });
+    expect(help).toHaveAttribute('id', 'game-help');
+    expect(side!.firstElementChild).toBe(help);
     expect(side).toContainElement(screen.getByText('3/8'));
-    before(side!.querySelector('ul'), screen.getByRole('button', { name: /Rendirse/ }));
-    expect(side!.lastElementChild).toHaveTextContent('Rendirse');
+    const surrender = screen.getByRole('button', { name: /Rendirse/ });
+    before(help, words());
+    before(words(), surrender);
+    before(surrender, screen.getByText('reportar'));
+    expect(side!.lastElementChild).toHaveTextContent('reportar');
   });
 
-  it('shows the prompt in Mono and the instruction in Inter (TS-55)', () => {
+  it('keeps the side column order when locked (TS-54)', () => {
+    render(<Game {...base({ locked: true, aside: <p>reportar</p> })} />);
+    expect(screen.queryByRole('button', { name: /Rendirse/ })).toBeNull();
+    const help = screen.getByRole('region', { name: 'cómo se juega' });
+    const side = help.parentElement!;
+    expect(side.firstElementChild).toBe(help);
+    expect(side.lastElementChild).toHaveTextContent('reportar');
+  });
+
+  it('shows the how-to-play rules in Inter body-sm (P3)', () => {
     render(<Game {...base()} />);
-    expect(screen.getByText("$ grep -o '[A-Z]*' hoy.txt")).toHaveClass(
-      'font-mono',
-      'text-text-dim',
-    );
-    expect(screen.getByText('tocá la primera y la última letra de cada palabra')).toHaveClass(
-      'font-sans',
-    );
+    const help = screen.getByRole('region', { name: 'cómo se juega' });
+    const rules = within(help).getAllByRole('listitem');
+    expect(rules).toHaveLength(3);
+    for (const li of rules) expect(li).toHaveClass('font-sans', 'text-body-sm');
+    expect(rules[1]).toHaveTextContent(/4 direcciones/);
+    expect(rules[2]).toHaveTextContent(/rendirte/);
+  });
+
+  it('shows the comment line in Mono with the prompt and the instruction (TS-55)', () => {
+    const { container } = render(<Game {...base()} />);
+    const comment = container.querySelector('h1')!.previousElementSibling!;
+    expect(comment.tagName).toBe('P');
+    expect(comment).toHaveClass('font-mono', 'text-label-comment', 'text-text-dim');
+    expect(comment.firstElementChild).toHaveAttribute('aria-hidden', 'true');
+    expect(comment.firstElementChild).toHaveTextContent('//');
+    expect(comment).toHaveTextContent("$ grep -o '[A-Z]*' hoy.txt");
+    expect(comment).toHaveTextContent('tocá la primera y la última letra de cada palabra');
   });
 
   it('has no axe violations (TS-56)', async () => {

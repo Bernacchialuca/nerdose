@@ -62,6 +62,8 @@ export const es = {
   },
   result: {
     won: 'Bug encontrado en la línea {{line}}',
+    wonDetail:
+      'Lo encontraste en {{language}}. Repasá el test que falla y el fix para ver por qué.',
     lost: 'El bug estaba en la línea {{bug}}, no en la {{chosen}}',
     lostDetail:
       'Elegiste la línea {{chosen}} en {{language}}. Desafío completado: tus rachas siguen en pie.',

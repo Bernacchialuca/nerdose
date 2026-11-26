@@ -37,9 +37,14 @@ const hasIdle = () => screen.getAllByText(IDLE).length > 0;
 describe('Game initial structure (TS-33)', () => {
   it('renders the spec, tests and code without spoilers', () => {
     const { container } = render(<Game {...base()} />);
-    expect(
-      screen.getByText('// un solo intento · la firma y las líneas con solo llaves no cuentan'),
-    ).toBeInTheDocument();
+    const comment = screen.getByText(
+      'un solo intento · la firma y las líneas con solo llaves no cuentan',
+    );
+    expect(comment).toHaveTextContent(
+      '// un solo intento · la firma y las líneas con solo llaves no cuentan',
+    );
+    expect(comment).toHaveClass('font-mono', 'text-label-comment', 'text-text-dim');
+    expect(within(comment).getByText('//')).toHaveAttribute('aria-hidden', 'true');
     expect(
       screen.getByRole('heading', { level: 1, name: '¿En qué línea está el bug?' }),
     ).toBeInTheDocument();
@@ -88,6 +93,8 @@ describe('Game initial structure (TS-33)', () => {
     for (const n of ['01', '02', '03']) expect(help).toHaveTextContent(n);
     expect(within(help).getByText('un solo intento')).toHaveClass('text-game-bug-hunt');
     expect(help).toHaveTextContent('Con teclado: flechas ← →');
+    expect(within(help).getByText(/Tocá la línea donde/)).toHaveClass('text-body-sm');
+    expect(within(help).getByText('un solo intento').parentElement).toHaveClass('text-body-sm');
   });
 
   it('starts in the preferred code language (TS-34)', () => {
@@ -327,13 +334,13 @@ describe('Game layout (TS-49, TS-50)', () => {
       screen.getByRole('heading', { level: 1 }),
       screen.getByText('aviso'),
       screen.getByRole('heading', { level: 2, name: /qué debería hacer/ }),
-      screen.getByRole('heading', { level: 2, name: /tests/ }),
       screen.getByRole('tablist'),
       screen.getByRole('radiogroup'),
       document.querySelector('[aria-live="polite"]')!.previousElementSibling as HTMLElement,
       screen.getByRole('button', { name: 'Elegí una línea' }),
       screen.getByText(/El bug es el mismo/),
       screen.getByRole('heading', { level: 2, name: /cómo se juega/ }),
+      screen.getByRole('heading', { level: 2, name: /tests/ }),
       screen.getByText('Reportar'),
     ];
     seq.slice(1).forEach((el, i) => {
@@ -343,20 +350,20 @@ describe('Game layout (TS-49, TS-50)', () => {
       ).toBeTruthy();
     });
     expect(container.querySelector('.lg\\:grid-cols-12')).not.toBeNull();
-    expect(
-      screen.getByRole('heading', { name: /qué debería hacer/ }).closest('section'),
-    ).toHaveClass('lg:col-span-7', 'lg:row-start-1');
-    expect(screen.getByRole('heading', { name: /tests/ }).closest('section')).toHaveClass(
-      'lg:col-start-8',
-      'lg:row-start-1',
-      'lg:row-span-2',
-    );
-    expect(screen.getByRole('tablist').closest('.lg\\:col-span-7')).toHaveClass('lg:row-start-2');
-    expect(screen.getByRole('heading', { name: /cómo se juega/ }).closest('section')).toHaveClass(
-      'lg:col-start-8',
-      'lg:row-start-3',
-    );
-    expect(screen.getByRole('button', { name: 'Elegí una línea' })).toHaveClass('w-full');
+    const main = screen
+      .getByRole('heading', { name: /qué debería hacer/ })
+      .closest('section')!.parentElement!;
+    expect(main).toHaveClass('lg:col-span-7');
+    for (const el of [screen.getByRole('tablist'), confirmButton('Elegí una línea')])
+      expect(main).toContainElement(el);
+    const side = document.getElementById('game-help')!.parentElement!;
+    expect(side).toHaveClass('lg:col-span-5');
+    expect(side.firstElementChild).toBe(document.getElementById('game-help'));
+    expect(side).toContainElement(screen.getByRole('heading', { name: /tests/ }));
+    expect(side.lastElementChild).toContainElement(screen.getByText('Reportar'));
+    const cta = confirmButton('Elegí una línea');
+    expect(cta).toHaveClass('w-full');
+    expect(cta.className).not.toMatch(/lg:w-auto/);
     const scrollers = [...container.querySelectorAll('.overflow-x-auto')];
     expect(scrollers).toHaveLength(1);
     expect(scrollers[0]).toBe(screen.getByRole('tabpanel'));

@@ -66,6 +66,7 @@ export const en: Widen<typeof es> = {
   },
   result: {
     won: 'Bug found on line {{line}}',
+    wonDetail: 'You found it in {{language}}. Review the failing test and the fix to see why.',
     lost: 'The bug was on line {{bug}}, not line {{chosen}}',
     lostDetail:
       'You picked line {{chosen}} in {{language}}. Challenge completed: your streaks are still standing.',

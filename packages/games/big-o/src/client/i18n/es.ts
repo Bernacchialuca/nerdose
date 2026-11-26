@@ -41,8 +41,8 @@ export const es = {
     },
     confirm: 'Confirmar respuesta',
     confirming: 'Confirmando…',
-    confirmDisabled: 'Elegí una opción para confirmar',
-    rulesTitle: 'reglas',
+    confirmIdle: 'Elegí una opción',
+    rulesTitle: 'cómo se juega',
     rule1: 'Peor caso: cómo crecen las operaciones cuando n crece.',
     rule2: 'Un solo intento: elegí y confirmá.',
     rule3:
@@ -52,7 +52,8 @@ export const es = {
   result: {
     won: 'Correcto: {{answer}}',
     lost: 'Incorrecto: era {{answer}}',
-    lostDetail: 'Elegiste {{chosen}} en {{language}}. Abajo, paso a paso por qué.',
+    wonDetail: 'Confirmaste en {{language}}. El paso a paso repasa por qué es {{answer}}.',
+    lostDetail: 'Elegiste {{chosen}} en {{language}}. El paso a paso explica por qué.',
     optionsTitle: 'tu respuesta · confirmada en {{language}}',
     correct: 'correcta',
     yours: 'tu respuesta',

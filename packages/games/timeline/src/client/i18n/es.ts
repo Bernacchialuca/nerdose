@@ -35,8 +35,7 @@ export const es = {
     listTitle: 'tu orden',
     axisBefore: 'antes',
     axisAfter: 'después',
-    rulesTitle: 'reglas',
-    streak: 'racha {{count}}',
+    rulesTitle: 'cómo se juega',
     rule1: 'Cinco hitos de distintas categorías. Las fechas se revelan al confirmar.',
     rule2: 'Tenés un solo intento. Cada hito en su lugar suma 1 punto.',
     rule3: 'Al terminar, cada hito muestra su fecha y un poco de historia.',
@@ -60,6 +59,7 @@ export const es = {
     cancel: '{{label}} volvió a la posición {{position}} de {{total}}.',
   },
   hint: {
+    idle: '> arrastrá un hito desde su asa ⠿ o usá ↑ ↓ para moverlo',
     over: '> {{label}}, posición {{position}} de {{total}}',
     moved: '> moviste {{label}} a la posición {{position}} de {{total}}',
     invalidMove: '> no pudimos registrar ese orden. Revisalo y confirmá de nuevo',
@@ -70,8 +70,9 @@ export const es = {
     prompt: 'consigna: {{prompt}}',
   },
   result: {
-    comment: 'consigna: del más antiguo al más reciente',
     won: 'Orden perfecto',
+    wonDetail: 'Repasá la fecha y la historia de cada hito.',
+    lostDetail: 'Mirá el orden correcto: cada hito trae su fecha y un poco de historia.',
     verdict3: 'Casi: solo dos hitos cruzados',
     verdict2: 'A mitad de camino',
     verdict1: 'La historia es traicionera',

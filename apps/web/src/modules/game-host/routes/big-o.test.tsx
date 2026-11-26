@@ -58,7 +58,8 @@ const radio = (name: string, groupName?: string) =>
   within(group(groupName)).getByRole('radio', { name });
 const tab = (name: string) => screen.getByRole('tab', { name });
 const panel = (name?: string) => screen.getByRole('tabpanel', name ? { name } : undefined);
-const confirmButton = () => screen.getByRole('button', { name: /Confirmar respuesta|Confirmando/ });
+const confirmButton = () =>
+  screen.getByRole('button', { name: /Confirmar respuesta|Confirmando|Elegí una opción/ });
 const hint = () => screen.getAllByText(/^> /)[0] as HTMLElement;
 const polite = () =>
   Array.from(document.querySelectorAll('main [aria-live="polite"]')).find((n) =>
@@ -136,7 +137,7 @@ describe('abrir /big-o', () => {
     const starts = calls.filter((c) => c.method === 'POST' && c.path.endsWith('/start'));
     expect(starts).toHaveLength(1);
     expect(starts[0]?.body).toEqual({ challenge_number: 128 });
-    expect(screen.getByText('// peor caso · un solo intento')).toBeInTheDocument();
+    expect(screen.getByText('peor caso · un solo intento')).toBeInTheDocument();
     const tablist = screen.getByRole('tablist', { name: 'Lenguaje del código' });
     expect(
       within(tablist)
@@ -283,7 +284,7 @@ describe('confirmación y resultado', () => {
     const heading = await h1('Incorrecto: era O(n log n)');
     expect(heading.closest('[role="status"]')).not.toBeNull();
     expect(
-      screen.getByText('Elegiste O(n²) en Go. Abajo, paso a paso por qué.'),
+      screen.getByText('Elegiste O(n²) en Go. El paso a paso explica por qué.'),
     ).toBeInTheDocument();
     expect(tab('Go')).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByText('O(n²), tu respuesta, incorrecta')).toBeInTheDocument();
@@ -487,7 +488,7 @@ describe('«Cómo se juega», sin desafío y teclado', () => {
       expect(scroll).toHaveBeenCalledTimes(1);
       const target = scroll.mock.contexts[0] as HTMLElement;
       expect(target.id).toBe('game-help');
-      expect(target).toHaveTextContent(/reglas/);
+      expect(target).toHaveTextContent(/cómo se juega/);
       expect(scroll).toHaveBeenCalledWith({ behavior: 'auto', block: 'start' });
       server.use(movePost(boMove('o_n_log_n', 'js')));
       await user.click(radio('O(n log n)'));

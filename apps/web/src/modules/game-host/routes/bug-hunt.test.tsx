@@ -144,7 +144,7 @@ describe('abrir /bug-hunt', () => {
     expect(starts).toHaveLength(1);
     expect(starts[0]?.body).toEqual({ challenge_number: 128 });
     expect(
-      screen.getByText('// un solo intento · la firma y las líneas con solo llaves no cuentan'),
+      screen.getByText('un solo intento · la firma y las líneas con solo llaves no cuentan'),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { level: 2, name: 'qué debería hacer' }),

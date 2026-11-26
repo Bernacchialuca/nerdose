@@ -82,7 +82,7 @@ export const es = {
     revealed: 'La letra {{n}} es {{letter}}.',
   },
   legend: {
-    title: 'cómo leer las pistas',
+    title: 'cómo se juega',
     correct: 'Letra correcta en el lugar correcto.',
     present: 'Está en la palabra, pero en otra posición.',
     absent: 'No está en la palabra.',
@@ -90,6 +90,7 @@ export const es = {
   result: {
     hintUsed: 'Usaste la pista: la letra {{n}} era {{letter}}.',
     won: 'Ganaste en {{score}}/{{max}}',
+    wonDetail: 'Repasá la palabra del día y su definición.',
     lost: 'No salió: X/{{max}}',
     lostDetail: 'Mostramos la palabra y su explicación.',
     wordTitle: 'palabra del día',

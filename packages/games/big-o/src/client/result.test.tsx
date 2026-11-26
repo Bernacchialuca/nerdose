@@ -45,7 +45,12 @@ describe('Result won (TS-48)', () => {
   it('shows the verdict, code with notes, marked options and the explanation', () => {
     renderResult();
     const h1 = screen.getByRole('heading', { level: 1, name: 'Correcto: O(n log n)' });
-    expect(h1).toHaveClass('sr-only');
+    expect(h1).not.toHaveClass('sr-only');
+    expect(h1.closest('.bg-status-success-bg')).not.toBeNull();
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
+    expect(
+      screen.getByText('Confirmaste en Java. El paso a paso repasa por qué es O(n log n).'),
+    ).toBeInTheDocument();
     expect(screen.queryByText(/Incorrecto/)).not.toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: QUESTION_ES })).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'Java' })).toHaveAttribute('aria-selected', 'true');
@@ -93,10 +98,12 @@ describe('Result lost (TS-49)', () => {
   it('shows the failure banner and marks both options', () => {
     renderResult({ result: RESULT_LOST_GO_ES });
     expect(
-      screen.getByRole('heading', { level: 1, name: 'Incorrecto: era O(n log n)' }),
-    ).toBeInTheDocument();
+      screen
+        .getByRole('heading', { level: 1, name: 'Incorrecto: era O(n log n)' })
+        .closest('.bg-status-error-bg'),
+    ).not.toBeNull();
     expect(
-      screen.getByText('Elegiste O(n²) en Go. Abajo, paso a paso por qué.'),
+      screen.getByText('Elegiste O(n²) en Go. El paso a paso explica por qué.'),
     ).toBeInTheDocument();
     expect(screen.getByRole('tab', { name: 'Go' })).toHaveAttribute('aria-selected', 'true');
     expect(
@@ -202,18 +209,21 @@ describe('Result layout (TS-54)', () => {
       screen.getByRole('heading', { level: 2, name: QUESTION_ES }),
       screen.getByRole('tablist'),
       screen.getByRole('list', { name: /tu respuesta/ }),
-      screen.getByRole('complementary', { name: 'Paso a paso' }),
       screen.getByText('cierre'),
+      screen.getByRole('complementary', { name: 'Paso a paso' }),
       screen.getByText('Reportar'),
     ];
     order.slice(1).forEach((el, i) => {
       const prev = order[i] as HTMLElement;
       expect(prev.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     });
-    expect(screen.getByRole('tablist').closest('.lg\\:col-span-7')).toBeInTheDocument();
-    const panelCol = screen.getByRole('complementary').parentElement;
-    expect(panelCol).toHaveClass('lg:col-start-8', 'lg:row-span-2');
-    expect(screen.getByText('cierre').parentElement).toHaveClass('lg:row-start-2');
+    const main = screen.getByRole('tablist').closest('.lg\\:col-span-7');
+    expect(main).toContainElement(screen.getByText('cierre'));
+    expect(main?.lastElementChild).toContainElement(screen.getByText('cierre'));
+    const side = screen.getByRole('complementary').parentElement;
+    expect(side).toHaveClass('lg:col-span-5');
+    expect(side?.lastElementChild).toBe(screen.getByText('Reportar'));
+    expect(container.querySelector('[class*="row-start"]')).toBeNull();
     expect(screen.getByRole('list', { name: /tu respuesta/ })).toHaveClass(
       'grid-cols-2',
       'lg:grid-cols-4',

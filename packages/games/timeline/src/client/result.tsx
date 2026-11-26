@@ -1,3 +1,5 @@
+import { Banner } from '@nerdose/ui';
+
 import { ITEMS_COUNT } from '../definition/schemas';
 
 import { positionMarks } from './marks';
@@ -22,42 +24,31 @@ export function Result({ locale, t, notices, result, aside, footer }: ResultProp
   const r = parseResult(result);
   const marks = positionMarks(r);
 
-  // Mobile: title, your order, correct order and the host's closing card, in one column.
-  // Desktop: your order with the closing card below it on the left (5/12), the rail on the right
-  // (7/12). `contents` + `order` build the mobile column from the desktop DOM.
+  // Main column (7/12): your order and the host's closing card. Aside (5/12): the correct order
+  // and the host's aside slot, last. On mobile the DOM order is the reading order.
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <div className="flex min-w-0 grow-2 basis-130 flex-col gap-2">
-          <p className="font-mono text-label-comment text-text-dim">
-            {`// ${t('result.comment')}`}
-          </p>
-          <h1 className="font-mono text-title-game text-text">
-            {r.win ? (
-              <span aria-hidden="true" className="text-status-success">
-                ✓{' '}
-              </span>
-            ) : null}
-            {t(verdictKey(r.score))}
-          </h1>
-        </div>
-        <Score score={r.score} t={t} />
-      </div>
+      <Banner
+        variant={r.win ? 'success' : 'failure'}
+        titleAs="h1"
+        title={t(verdictKey(r.score))}
+        action={<Score score={r.score} t={t} />}
+      >
+        {r.win ? t('result.wonDetail') : t('result.lostDetail')}
+      </Banner>
       {notices}
       <div className="flex flex-col gap-6 lg:grid lg:grid-cols-12 lg:items-start">
-        <div className="contents lg:col-span-5 lg:flex lg:flex-col lg:gap-6">
-          <div className="order-1 min-w-0 lg:order-none">
-            <SectionPanel title={t('result.yourOrder')}>
-              <YourOrder marks={marks} t={t} />
-            </SectionPanel>
-          </div>
-          {aside ? <div className="order-3 min-w-0 lg:order-none">{aside}</div> : null}
-          {footer ? <div className="order-4 min-w-0 lg:order-none">{footer}</div> : null}
+        <div className="flex min-w-0 flex-col gap-6 lg:col-span-7">
+          <SectionPanel title={t('result.yourOrder')}>
+            <YourOrder marks={marks} t={t} />
+          </SectionPanel>
+          {footer}
         </div>
-        <div className="order-2 min-w-0 lg:order-none lg:col-span-7">
+        <div className="flex min-w-0 flex-col gap-4 lg:col-span-5">
           <SectionPanel title={t('result.correctOrder')}>
             <Rail items={r.items} locale={locale} t={t} />
           </SectionPanel>
+          {aside}
         </div>
       </div>
     </div>

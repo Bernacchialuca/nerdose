@@ -41,8 +41,13 @@ describe('Result won (TS-51)', () => {
   it('shows the found line, the failing test, the fix and the steps', () => {
     renderResult();
     const h1 = screen.getByRole('heading', { level: 1, name: 'Bug encontrado en la línea 4' });
-    expect(h1).toHaveClass('sr-only');
-    expect(screen.queryByRole('status')).toBeNull();
+    expect(h1).not.toHaveClass('sr-only');
+    const banner = screen.getByRole('status');
+    expect(banner).toContainElement(h1);
+    expect(banner).toHaveClass('bg-status-success-bg');
+    expect(banner).toHaveTextContent(
+      'Lo encontraste en Java. Repasá el test que falla y el fix para ver por qué.',
+    );
     expect(
       screen.getByRole('heading', { level: 2, name: '¿En qué línea está el bug?' }),
     ).toBeInTheDocument();
@@ -85,6 +90,7 @@ describe('Result lost (TS-52)', () => {
     expect(
       screen.getByText('Elegiste la línea 5 en Go. Desafío completado: tus rachas siguen en pie.'),
     ).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveClass('bg-status-error-bg');
     expect(screen.getByRole('tab', { name: 'Go' })).toHaveAttribute('aria-selected', 'true');
     expect(tagOf(4)).toHaveTextContent('🐛 acá estaba el bug');
     expect(line(4)).toHaveClass('bg-game-bug-hunt-tint');
@@ -181,8 +187,8 @@ describe('Result layout (TS-57, TS-59)', () => {
       screen.getByText('aviso'),
       screen.getByRole('heading', { level: 2, name: '¿En qué línea está el bug?' }),
       screen.getByRole('tablist'),
-      panel('Por qué falla'),
       screen.getByText('cierre'),
+      panel('Por qué falla'),
       screen.getByText('Reportar'),
     ];
     seq.slice(1).forEach((el, i) => {
@@ -191,9 +197,13 @@ describe('Result layout (TS-57, TS-59)', () => {
         `step ${i}`,
       ).toBeTruthy();
     });
-    expect(screen.getByRole('tablist').closest('.lg\\:col-span-7')).toBeInTheDocument();
-    expect(panel('Por qué falla').parentElement).toHaveClass('lg:col-start-8', 'lg:row-span-2');
-    expect(screen.getByText('cierre').parentElement).toHaveClass('lg:row-start-2');
+    const main = screen.getByRole('tablist').closest('.lg\\:col-span-7') as HTMLElement;
+    expect(main).toBeInTheDocument();
+    expect(main.lastElementChild).toContainElement(screen.getByText('cierre'));
+    const side = panel('Por qué falla').parentElement!;
+    expect(side).toHaveClass('lg:col-span-5');
+    expect(side.firstElementChild).toBe(panel('Por qué falla'));
+    expect(side.lastElementChild).toContainElement(screen.getByText('Reportar'));
     const scrollers = [...container.querySelectorAll('.overflow-x-auto')];
     expect(scrollers).toHaveLength(2);
   });

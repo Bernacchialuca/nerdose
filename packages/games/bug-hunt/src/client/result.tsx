@@ -27,13 +27,14 @@ export function Result({ t, locale, notices, result, publicView, aside, footer }
         ? { glyph: '🐛', text: t('result.tag.found') }
         : { glyph: '✗', text: t('result.tag.wrong') };
 
-  // DOM in mobile order (question/code, explanation, closing card, aside); the desktop arrangement is
-  // placed with `lg:` classes. When the player wins there is no banner: the host throws confetti and the
-  // `h1` stays for screen readers.
+  // DOM in mobile order: verdict, notices, main column (question, statement, code, closing card) and
+  // then the side column (explanation, aside). On desktop the columns sit side by side, 7 | 5.
   return (
     <div className="flex flex-col gap-6">
       {r.win ? (
-        <h1 className="sr-only">{t('result.won', { line: r.bug_line })}</h1>
+        <Banner variant="success" titleAs="h1" title={t('result.won', { line: r.bug_line })}>
+          {t('result.wonDetail', { language: LANGUAGE_LABEL[r.code_language] })}
+        </Banner>
       ) : (
         <Banner
           variant="failure"
@@ -48,24 +49,27 @@ export function Result({ t, locale, notices, result, publicView, aside, footer }
       )}
       {notices}
       <div className="flex flex-col gap-6 lg:grid lg:grid-cols-12 lg:items-start">
-        {view ? (
-          <div className="flex min-w-0 flex-col gap-4 lg:col-span-7 lg:col-start-1 lg:row-start-1">
-            <Question t={t} as="h2" />
-            <Statement spec={view.spec} t={t} headingLevel={null} />
-            <CodeBlock
-              mode="result"
-              name={r.function_name}
-              code={view.code}
-              initialLanguage={r.code_language}
-              t={t}
-              pickable={view.pickable_lines}
-              marks={resultLineMarks(r)}
-              markLabel={markLabel}
-              onLanguageChange={setLanguage}
-            />
-          </div>
-        ) : null}
-        <div className="min-w-0 lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1">
+        <div className="flex min-w-0 flex-col gap-6 lg:col-span-7">
+          {view ? (
+            <div className="flex min-w-0 flex-col gap-4">
+              <Question t={t} as="h2" />
+              <Statement spec={view.spec} t={t} headingLevel={null} />
+              <CodeBlock
+                mode="result"
+                name={r.function_name}
+                code={view.code}
+                initialLanguage={r.code_language}
+                t={t}
+                pickable={view.pickable_lines}
+                marks={resultLineMarks(r)}
+                markLabel={markLabel}
+                onLanguageChange={setLanguage}
+              />
+            </div>
+          ) : null}
+          {footer ? <div className="min-w-0">{footer}</div> : null}
+        </div>
+        <div className="flex min-w-0 flex-col gap-6 lg:col-span-5">
           <WhyPanel
             name={r.function_name}
             failing={r.failing_test}
@@ -81,13 +85,8 @@ export function Result({ t, locale, notices, result, publicView, aside, footer }
             t={t}
             headingLevel={2}
           />
+          {aside ? <div className="min-w-0">{aside}</div> : null}
         </div>
-        {footer ? (
-          <div className="min-w-0 lg:col-span-7 lg:col-start-1 lg:row-start-2">{footer}</div>
-        ) : null}
-        {aside ? (
-          <div className="min-w-0 lg:col-span-5 lg:col-start-8 lg:row-start-3">{aside}</div>
-        ) : null}
       </div>
     </div>
   );

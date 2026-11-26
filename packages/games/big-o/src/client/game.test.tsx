@@ -34,16 +34,21 @@ const firstLine = () =>
   screen.getByRole('tabpanel').querySelector('[data-line="1"] .whitespace-pre')?.textContent;
 const confirmButton = (name = 'Confirmar respuesta') => screen.getByRole('button', { name });
 const QUESTION = '¿Cuál es la complejidad temporal (peor caso) de f(n)?';
+const comment = () =>
+  screen.getByText(
+    (_, el) => el?.tagName === 'P' && el.textContent === '// peor caso · un solo intento',
+  );
 
 describe('Game initial structure (TS-32)', () => {
   it('renders the question, code and 8 options without spoilers', () => {
     const { container } = render(<Game {...base()} />);
-    expect(screen.getByText('// peor caso · un solo intento')).toBeInTheDocument();
+    expect(comment()).toBeInTheDocument();
+    expect(comment().firstElementChild).toHaveAttribute('aria-hidden', 'true');
     const h1 = screen.getByRole('heading', { level: 1, name: QUESTION });
     expect(within(h1).getByText('f(n)')).toHaveClass('text-game-big-o');
     expect(tab('JavaScript')).toHaveAttribute('aria-selected', 'true');
     expect(screen.getByRole('heading', { level: 2, name: /tu respuesta/ })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { level: 2, name: /reglas/ })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2, name: /cómo se juega/ })).toBeInTheDocument();
     const group = screen.getByRole('radiogroup', { name: 'Complejidad temporal de f(n)' });
     const radios = within(group).getAllByRole('radio');
     expect(radios.map((r) => r.textContent)).toEqual(LABELS);
@@ -51,9 +56,9 @@ describe('Game initial structure (TS-32)', () => {
     expect(radios[0]).toHaveAttribute('tabindex', '0');
     radios.slice(1).forEach((r) => expect(r).toHaveAttribute('tabindex', '-1'));
     expect(screen.getAllByText('> elegí una de las 8 opciones').length).toBeGreaterThan(0);
-    const confirm = confirmButton();
+    const confirm = confirmButton('Elegí una opción');
     expect(confirm).toHaveAttribute('aria-disabled', 'true');
-    expect(confirm).toHaveAccessibleDescription('Elegí una opción para confirmar');
+    expect(confirm).not.toHaveTextContent('→');
     const help = container.querySelector('#game-help') as HTMLElement;
     expect(help).toHaveTextContent('01');
     expect(help).toHaveTextContent('02');
@@ -91,6 +96,7 @@ describe('Game selection', () => {
       true,
     );
     expect(confirmButton()).not.toHaveAttribute('aria-disabled');
+    expect(confirmButton()).toHaveTextContent('Confirmar respuesta →');
     await user.click(radio('O(n log n)'));
     expect(radio('O(n²)')).toHaveAttribute('aria-checked', 'false');
     expect(radio('O(n log n)')).toHaveAttribute('aria-checked', 'true');
@@ -109,7 +115,7 @@ describe('Game selection', () => {
     await user.tab();
     expect(radio('O(1)')).toHaveFocus();
     await user.tab();
-    expect(confirmButton()).toHaveFocus();
+    expect(confirmButton('Elegí una opción')).toHaveFocus();
     await user.tab({ shift: true });
     expect(radio('O(1)')).toHaveFocus();
     await user.keyboard(' ');
@@ -161,8 +167,8 @@ describe('Game confirm', () => {
     const user = userEvent.setup();
     const onMove = vi.fn();
     render(<Game {...base({ onMove })} />);
-    await user.click(confirmButton());
-    confirmButton().focus();
+    await user.click(confirmButton('Elegí una opción'));
+    confirmButton('Elegí una opción').focus();
     await user.keyboard('{Enter}');
     expect(onMove).not.toHaveBeenCalled();
     expect(screen.getAllByText('> elegí una de las 8 opciones').length).toBeGreaterThan(0);
@@ -287,7 +293,7 @@ describe('Game locked and invalid data', () => {
     expect(screen.queryByRole('tablist')).not.toBeInTheDocument();
     expect(screen.queryByRole('radiogroup')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Confirmar respuesta' })).not.toBeInTheDocument();
-    expect(screen.queryByRole('heading', { name: /reglas/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /cómo se juega/ })).not.toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
     expect(screen.getByText('anulado host')).toBeInTheDocument();
     expect(screen.getByText('Reportar')).toBeInTheDocument();
@@ -309,12 +315,13 @@ describe('Game layout (TS-46)', () => {
       <Game {...base({ notices: <p>aviso</p>, aside: <a href="#r">Reportar</a> })} />,
     );
     const order = [
+      comment(),
       screen.getByRole('heading', { level: 1 }),
       screen.getByText('aviso'),
       screen.getByRole('tablist'),
       screen.getByRole('radiogroup'),
       container.querySelector('p.min-h-5') as HTMLElement,
-      confirmButton(),
+      confirmButton('Elegí una opción'),
       container.querySelector('#game-help') as HTMLElement,
       screen.getByText('Reportar'),
     ];
@@ -324,8 +331,14 @@ describe('Game layout (TS-46)', () => {
     });
     expect(screen.getByRole('radiogroup')).toHaveClass('grid-cols-2', 'lg:grid-cols-4');
     expect(container.querySelector('.lg\\:grid-cols-12')).toBeInTheDocument();
-    expect(container.querySelector('#game-help')).toHaveClass('lg:col-start-8', 'lg:row-start-1');
-    expect(confirmButton().parentElement).toHaveClass('lg:row-start-2');
+    const main = screen.getByRole('radiogroup').closest('.lg\\:col-span-7');
+    expect(main).toContainElement(confirmButton('Elegí una opción'));
+    expect(confirmButton('Elegí una opción')).toHaveClass('w-full');
+    const side = container.querySelector('#game-help')?.parentElement;
+    expect(side).toHaveClass('lg:col-span-5');
+    expect(side).toContainElement(screen.getByText('Reportar'));
+    expect(side?.lastElementChild).toBe(screen.getByText('Reportar'));
+    expect(container.querySelector('[class*="row-start"]')).toBeNull();
     const scrollers = [...container.querySelectorAll('*')].filter((el) =>
       el.className.toString().includes('overflow-x-auto'),
     );

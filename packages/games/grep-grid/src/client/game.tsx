@@ -10,6 +10,7 @@ import { cellKey, playCells } from './cells';
 import { ConsoleHint, type HintAnnouncement } from './console-hint';
 import { HELP_TARGET_ID } from './help-target';
 import { parseFeedback, parsePublicView, parseState } from './parse';
+import { SectionPanel } from './section-panel';
 import { SURRENDER_BUTTON } from './surrender-button';
 import { SurrenderDialog } from './surrender-dialog';
 import type { GameProps } from './types';
@@ -23,6 +24,7 @@ type Hint =
 type Dialog = 'closed' | 'open' | 'submitting';
 
 const IDLE: Hint = { key: 'idle' };
+const HELP_RULES = ['help.select', 'help.directions', 'help.giveUp'] as const;
 
 export function Game({
   locale,
@@ -151,26 +153,23 @@ export function Game({
 
   return (
     <div className="relative">
-      {/* Mobile: una columna en orden de lectura. Desktop: consigna a todo el ancho y, debajo,
-          tablero 7/12 (grilla, hint) y lista 5/12 (con el contador N/8 en su encabezado) y
-          «Rendirse», alineados arriba. */}
+      {/* Mobile: una columna en orden de lectura. Desktop: comentario y consigna a todo el ancho y,
+          debajo, tablero 7/12 (grilla, hint) y lateral 5/12 (cómo se juega, lista con el contador
+          N/8 en su encabezado, «Rendirse» y el aside del host), alineados arriba. */}
       <div
         inert={dialog !== 'closed'}
         className="flex flex-col gap-3.5 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-7 lg:gap-y-3.5"
       >
-        {/* Consigna a todo el ancho: la grilla y la lista arrancan a la misma altura debajo. */}
+        {/* Bloque de título a todo el ancho: la grilla y el lateral arrancan a la misma altura. */}
         <div className="flex min-w-0 flex-col gap-3.5 lg:col-span-12">
-          <div id={HELP_TARGET_ID} className="flex w-full flex-col gap-2">
+          <div className="flex w-full flex-col gap-2">
+            <p className="font-mono text-label-comment text-text-dim">
+              <span aria-hidden="true">// </span>
+              {t('game.prompt')} <span aria-hidden="true">·</span> {t('game.instruction')}
+            </p>
             <h1 className="font-mono text-title-game text-text">
               {t('game.title', { total: WORDS_COUNT })}
             </h1>
-            <p>
-              <span className="font-mono text-label-comment text-text-dim">{t('game.prompt')}</span>{' '}
-              <span aria-hidden="true">·</span>{' '}
-              <span className="font-sans text-caption text-text-muted">
-                {t('game.instruction')}
-              </span>
-            </p>
           </div>
           {notices}
         </div>
@@ -187,6 +186,15 @@ export function Game({
           <ConsoleHint text={text(hint)} announcement={announcement} />
         </div>
         <div className="mt-3.5 flex min-w-0 flex-col gap-4 lg:col-span-5 lg:mt-0">
+          <SectionPanel id={HELP_TARGET_ID} title={t('instructions.rulesTitle')}>
+            <ul className="flex flex-col gap-2">
+              {HELP_RULES.map((key) => (
+                <li key={key} className="font-sans text-body-sm text-text-body">
+                  {t(key)}
+                </li>
+              ))}
+            </ul>
+          </SectionPanel>
           <WordList rows={rows} mode="play" t={t} />
           {locked ? null : (
             <button

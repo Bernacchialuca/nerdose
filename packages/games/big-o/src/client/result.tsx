@@ -16,21 +16,22 @@ export function Result({ t, locale, notices, result, publicView, aside, footer }
   const answer = OPTION_LABEL[r.answer];
   const language = LANGUAGE_LABEL[r.code_language];
 
-  // DOM in mobile order (question/code/options, explanation, closing card, aside); the desktop
-  // arrangement is placed with `lg:` classes. When the player wins there is no banner: the host
-  // throws confetti and the `h1` stays for screen readers.
+  // Two real columns: main (question, code, your answer, closing card) and side (explanation,
+  // report). In mobile the main one comes first, then the side one.
   return (
     <div className="flex flex-col gap-6">
-      {r.win ? (
-        <h1 className="sr-only">{t('result.won', { answer })}</h1>
-      ) : (
-        <Banner variant="failure" titleAs="h1" title={t('result.lost', { answer })}>
-          {t('result.lostDetail', { chosen: OPTION_LABEL[r.chosen_option], language })}
-        </Banner>
-      )}
+      <Banner
+        variant={r.win ? 'success' : 'failure'}
+        titleAs="h1"
+        title={r.win ? t('result.won', { answer }) : t('result.lost', { answer })}
+      >
+        {r.win
+          ? t('result.wonDetail', { answer, language })
+          : t('result.lostDetail', { chosen: OPTION_LABEL[r.chosen_option], language })}
+      </Banner>
       {notices}
       <div className="flex flex-col gap-6 lg:grid lg:grid-cols-12 lg:items-start">
-        <div className="flex min-w-0 flex-col gap-4 lg:col-span-7 lg:col-start-1 lg:row-start-1">
+        <div className="flex min-w-0 flex-col gap-4 lg:col-span-7">
           {view ? (
             <>
               <Question t={t} as="h2" />
@@ -48,8 +49,9 @@ export function Result({ t, locale, notices, result, publicView, aside, footer }
             headingLevel={2}
             t={t}
           />
+          {footer ? <div className="mt-2 min-w-0">{footer}</div> : null}
         </div>
-        <div className="min-w-0 lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1">
+        <div className="flex min-w-0 flex-col gap-6 lg:col-span-5">
           <Explanation
             steps={r.explanation.steps}
             tip={r.explanation.tip}
@@ -59,13 +61,8 @@ export function Result({ t, locale, notices, result, publicView, aside, footer }
             t={t}
             headingLevel={2}
           />
+          {aside}
         </div>
-        {footer ? (
-          <div className="min-w-0 lg:col-span-7 lg:col-start-1 lg:row-start-2">{footer}</div>
-        ) : null}
-        {aside ? (
-          <div className="min-w-0 lg:col-span-5 lg:col-start-8 lg:row-start-3">{aside}</div>
-        ) : null}
       </div>
     </div>
   );
