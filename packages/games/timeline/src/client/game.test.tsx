@@ -84,9 +84,13 @@ describe('Game structure', () => {
         name: 'Ordená estos hitos del más antiguo al más reciente',
       }),
     ).toBeInTheDocument();
+    const comment = screen.getByText('un solo intento · 1 punto por posición correcta');
+    expect(comment).toHaveTextContent('// un solo intento');
+    expect(within(comment).getByText('//')).toHaveAttribute('aria-hidden', 'true');
     expect(
-      screen.getByText('// un solo intento · 1 punto por posición correcta'),
-    ).toBeInTheDocument();
+      comment.compareDocumentPosition(screen.getByRole('heading', { level: 1 })) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
     expect(screen.getByRole('heading', { level: 2, name: /tu orden/ })).toBeInTheDocument();
     expect(within(orderList()).getAllByRole('listitem')).toHaveLength(5);
     expect(names()).toEqual(INITIAL_ORDER);
@@ -98,6 +102,9 @@ describe('Game structure', () => {
     expect(screen.getByRole('button', { name: 'Confirmar orden' })).not.toHaveAttribute(
       'aria-disabled',
     );
+    expect(
+      screen.getByText('> arrastrá un hito desde su asa ⠿ o usá ↑ ↓ para moverlo'),
+    ).toBeVisible();
     expect(liveRegion()).toBeEmptyDOMElement();
     for (const leak of ['1991', '2009', 'nota de', 'correct_order']) {
       expect(container.innerHTML.includes(leak), leak).toBe(false);
@@ -231,7 +238,7 @@ describe('Game confirm', () => {
     expect(screen.queryByRole('button', { name: 'Reiniciar' })).not.toBeInTheDocument();
   });
 
-  it('shows the rules card with the streak, and no averages', () => {
+  it('shows the «cómo se juega» card without the streak nor averages', () => {
     const gameStats = {
       game_id: 'timeline',
       current_streak: 3,
@@ -242,10 +249,13 @@ describe('Game confirm', () => {
       extra: null,
     };
     render(<Game {...base({ gameStats })} />);
-    const rules = screen.getByRole('region', { name: /reglas/ });
+    const rules = screen.getByRole('region', { name: /cómo se juega/ });
     expect(rules).toHaveAttribute('id', 'game-help');
-    expect(within(rules).getByText('racha 3')).toBeInTheDocument();
+    expect(screen.queryByText(/racha/)).not.toBeInTheDocument();
     expect(within(rules).getAllByRole('listitem')).toHaveLength(3);
+    within(rules)
+      .getAllByRole('listitem')
+      .forEach((li) => expect(li.lastElementChild).toHaveClass('text-body-sm'));
     expect(screen.queryByText(/promedio/)).not.toBeInTheDocument();
   });
 
@@ -298,6 +308,7 @@ describe('Game confirm', () => {
     expect(screen.getByText('anulado host')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Confirmar orden' })).not.toBeInTheDocument();
     expect(document.getElementById('game-help')).toBeNull();
+    expect(screen.queryByText(/^> arrastrá un hito/)).not.toBeInTheDocument();
     screen
       .getAllByRole('button', { name: /posición \d de 5|^(Subir|Bajar) / })
       .forEach((b) => expect(b).toBeDisabled());
@@ -397,15 +408,25 @@ describe('Game local order lifecycle', () => {
 });
 
 describe('Game layout and styles', () => {
-  it('lays out two wrapping columns (TS-39)', () => {
-    const { container } = render(<Game {...base()} />);
+  it('lays out two wrapping columns: list + hint + CTA, then help + aside (TS-39)', () => {
+    const { container } = render(<Game {...base({ aside: <p>reportar host</p> })} />);
     const cols = container.querySelector('.flex-wrap') as HTMLElement;
     expect(cols).toHaveClass('flex', 'flex-wrap', 'gap-6');
-    const [listCol, sideCol] = Array.from(cols.children);
+    const [listCol, sideCol] = Array.from(cols.children) as [HTMLElement, HTMLElement];
     expect(listCol).toHaveClass('grow-7', 'basis-130', 'min-w-0');
     expect(sideCol).toHaveClass('grow-5', 'basis-80', 'min-w-0');
-    expect(document.getElementById('game-help')).toHaveTextContent(/Arrastrá cada fila/);
-    expect(screen.getByRole('button', { name: 'Confirmar orden' })).toHaveClass('w-full');
+    const confirm = screen.getByRole('button', { name: 'Confirmar orden' });
+    expect(confirm).toHaveClass('w-full');
+    expect(confirm.className).not.toMatch(/lg:w-auto/);
+    expect(within(confirm).getByText('→')).toHaveAttribute('aria-hidden', 'true');
+    expect(confirm.parentElement).toBe(listCol);
+    expect(listCol.lastElementChild).toBe(confirm);
+    const hint = screen.getByText(/^> arrastrá un hito/);
+    expect(hint.compareDocumentPosition(confirm) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const help = document.getElementById('game-help') as HTMLElement;
+    expect(help).toHaveTextContent(/Arrastrá cada fila/);
+    expect(sideCol.firstElementChild).toBe(help);
+    expect(sideCol.lastElementChild).toHaveTextContent('reportar host');
   });
 
   it('keeps 44px controls that never shrink (TS-1)', () => {

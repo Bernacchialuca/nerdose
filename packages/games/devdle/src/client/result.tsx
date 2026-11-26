@@ -11,41 +11,45 @@ import { WordCard } from './word-card';
 export function Result({ t, notices, result, gameStats, aside, footer }: ResultProps) {
   const r = parseResult(result);
   return (
-    <div className="flex flex-wrap justify-center gap-10">
-      {/* Columna principal: veredicto, tablero, palabra y salidas comparten borde; la columna
-          lateral (intentos y rachas) queda como sección aparte. Sin items-center: solo el tablero,
-          más angosto, va centrado. */}
-      <div className="flex min-w-0 grow-999 basis-140 flex-col gap-7">
-        {/* Al ganar no hay banner: festeja el confeti del host y el `h1` queda para lectores. */}
-        {r.win ? (
-          <h1 className="sr-only">{t('result.won', { score: r.score, max: MAX_GUESSES })}</h1>
-        ) : (
-          <Banner variant="failure" titleAs="h1" title={t('result.lost', { max: MAX_GUESSES })}>
-            {t('result.lostDetail')}
-          </Banner>
-        )}
-        {notices}
-        <div className="flex flex-col items-center gap-3">
-          <Board
-            length={r.word.length}
-            guesses={r.guesses}
-            rows={r.guesses.length}
-            label={t('board.resultLabel')}
-            t={t}
-          />
-          {r.hint ? (
-            <p className="font-mono text-label-comment text-text-muted">
-              <span aria-hidden="true">💡 </span>
-              {t('result.hintUsed', { n: r.hint.position + 1, letter: r.hint.letter })}
-            </p>
-          ) : null}
+    <div className="flex flex-col gap-7">
+      <Banner
+        variant={r.win ? 'success' : 'failure'}
+        titleAs="h1"
+        title={
+          r.win
+            ? t('result.won', { score: r.score, max: MAX_GUESSES })
+            : t('result.lost', { max: MAX_GUESSES })
+        }
+      >
+        {r.win ? t('result.wonDetail') : t('result.lostDetail')}
+      </Banner>
+      {notices}
+      <div className="flex flex-wrap justify-center gap-10">
+        {/* Principal: lo que jugaste y la card de cierre. Lateral: la explicación (palabra),
+            las stats y el reporte, en ese orden. */}
+        <div className="flex min-w-0 grow-999 basis-140 flex-col gap-7">
+          <div className="flex flex-col items-center gap-3">
+            <Board
+              length={r.word.length}
+              guesses={r.guesses}
+              rows={r.guesses.length}
+              label={t('board.resultLabel')}
+              t={t}
+            />
+            {r.hint ? (
+              <p className="font-mono text-label-comment text-text-muted">
+                <span aria-hidden="true">💡 </span>
+                {t('result.hintUsed', { n: r.hint.position + 1, letter: r.hint.letter })}
+              </p>
+            ) : null}
+          </div>
+          {footer}
         </div>
-        <WordCard result={r} t={t} />
-        {footer}
-      </div>
-      <div className="flex min-w-0 max-w-devdle-aside grow basis-75 flex-col gap-4">
-        {gameStats ? <Distribution result={r} stats={gameStats} t={t} /> : null}
-        {aside}
+        <div className="flex min-w-0 max-w-devdle-aside grow basis-75 flex-col gap-4">
+          <WordCard result={r} t={t} />
+          {gameStats ? <Distribution result={r} stats={gameStats} t={t} /> : null}
+          {aside}
+        </div>
       </div>
     </div>
   );

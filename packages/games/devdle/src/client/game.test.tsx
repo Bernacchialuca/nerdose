@@ -118,7 +118,7 @@ describe('Game', () => {
       screen.getByText('La categoría y la definición se revelan al terminar.'),
     ).toBeInTheDocument();
     const legend = screen
-      .getByRole('heading', { level: 2, name: /cómo leer las pistas/ })
+      .getByRole('heading', { level: 2, name: /cómo se juega/ })
       .closest('section');
     expect(legend).toHaveAttribute('id', 'game-help');
     expect(legend).toHaveTextContent('Letra correcta en el lugar correcto.');
@@ -283,11 +283,17 @@ describe('Game', () => {
 
   it('lays out board column and aside (TS-38)', () => {
     const { container } = render(<Game {...base()} />);
-    const root = container.firstElementChild as HTMLElement;
+    const page = container.firstElementChild as HTMLElement;
+    // Patrón común: comentario arriba del h1, alineado a la izquierda y a ancho completo.
+    const titleBlock = page.firstElementChild as HTMLElement;
+    expect(titleBlock).not.toHaveClass('text-center', 'items-center');
+    expect(titleBlock.firstElementChild).toHaveTextContent(/término técnico/);
+    expect(titleBlock.lastElementChild).toBe(screen.getByRole('heading', { level: 1 }));
+    const root = page.lastElementChild as HTMLElement;
     expect(root).toHaveClass('flex', 'flex-wrap', 'gap-10');
     const col = root.firstElementChild as HTMLElement;
     expect(col).toHaveClass('basis-140', 'grow-999', 'min-w-0');
-    expect(within(col).getByRole('heading', { level: 1 })).toBeInTheDocument();
+    expect(col).toHaveAttribute('aria-labelledby', screen.getByRole('heading', { level: 1 }).id);
     expect(within(col).getByRole('group', { name: 'Teclado' })).toHaveClass('max-w-keyboard');
     const aside = container.querySelector('aside') as HTMLElement;
     expect(aside).toHaveClass('basis-75', 'grow', 'max-w-devdle-aside', 'min-w-0');
@@ -295,7 +301,7 @@ describe('Game', () => {
       .getAllByRole('heading', { level: 2 })
       .map((h) => h.textContent);
     // Orden del prototipo: pistas, categoría, pista de letra y, si hay stats, tus intentos.
-    expect(heads[0]).toMatch(/cómo leer/);
+    expect(heads[0]).toMatch(/cómo se juega/);
     expect(heads[1]).toMatch(/pista de categoría/);
     expect(heads[2]).toMatch(/pista de letra/);
     expect(heads).toHaveLength(3);

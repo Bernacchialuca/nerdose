@@ -24,6 +24,13 @@ export const es = {
     prompt: "$ grep -o '[A-Z]*' hoy.txt",
     instruction: 'tocá la primera y la última letra de cada palabra',
   },
+  help: {
+    select:
+      'Tocá la primera letra de una palabra y después la última. Tocar de nuevo el inicio cancela la selección.',
+    directions:
+      'Van en 4 direcciones, siempre hacia adelante: → horizontal, ↓ vertical, ↘ y ↗ en diagonal. Nunca al revés.',
+    giveUp: 'No hay reloj. Podés rendirte cuando quieras y ver las palabras que faltaban.',
+  },
   counter: { value: '{{found}}/{{total}}', label: 'encontradas' },
   board: {
     label: 'Grilla de 12 por 12',
@@ -71,6 +78,7 @@ export const es = {
   },
   result: {
     won: '{{total}}/{{total}}: las encontraste todas',
+    wonDetail: 'Repasá qué significa cada una.',
     gaveUp: 'Te rendiste con {{score}}/{{total}}',
     gaveUpDetail: 'Estas son las palabras que faltaban.',
   },

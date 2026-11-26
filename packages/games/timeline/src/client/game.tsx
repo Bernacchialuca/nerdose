@@ -43,7 +43,6 @@ export function Game({
   pending,
   moveError,
   locked = false,
-  gameStats = null,
   aside,
 }: GameProps) {
   const view = parsePublicView(publicView);
@@ -70,7 +69,7 @@ export function Game({
     const at = (id: string) => ord.indexOf(id) + 1;
     switch (h.key) {
       case 'idle':
-        return '';
+        return locked ? '' : t('hint.idle');
       case 'moved':
         return t('hint.moved', { label: labelOf(h.id), position: at(h.id), total: ITEMS_COUNT });
       case 'over':
@@ -159,13 +158,15 @@ export function Game({
     onMove(moveSchema.parse({ order }));
   };
 
-  const streak = gameStats?.current_streak ?? 0;
   const rules = ['game.rule1', 'game.rule2', 'game.rule3'];
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <p className="font-mono text-label-comment text-text-dim">{`// ${t('game.comment')}`}</p>
+        <p className="font-mono text-label-comment text-text-dim">
+          <span aria-hidden="true">// </span>
+          {t('game.comment')}
+        </p>
         <h1 className="font-mono text-title-game text-text">{view.prompt}</h1>
         <p className="font-sans text-lede text-text-lede">{t('game.lede')}</p>
       </div>
@@ -212,43 +213,39 @@ export function Game({
             </DndContext>
           </div>
           <ConsoleHint text={text(hint, order)} announcement={announcement} />
+          {locked ? null : (
+            <button
+              type="button"
+              aria-disabled={pending || undefined}
+              onClick={confirm}
+              className={buttonClass({
+                variant: 'accent',
+                game: 'timeline',
+                size: 'lg',
+                fullWidth: true,
+                disabled: pending,
+              })}
+            >
+              {pending ? t('game.confirming') : t('game.confirm')}
+              <span aria-hidden="true">→</span>
+            </button>
+          )}
         </div>
         <div className="flex min-w-0 grow-5 basis-80 flex-col gap-4">
           {locked ? null : (
-            <>
-              <SectionPanel
-                id={HELP_TARGET_ID}
-                title={t('game.rulesTitle')}
-                datum={streak > 0 ? t('game.streak', { count: streak }) : undefined}
-              >
-                <ol className="flex flex-col gap-3">
-                  {rules.map((key, i) => (
-                    <li key={key} className="flex gap-3">
-                      <span className="shrink-0 font-mono text-label-comment text-game-timeline">
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
-                      <span className="font-sans text-body-sm text-text-body">{t(key)}</span>
-                    </li>
-                  ))}
-                </ol>
-                <p className="font-sans text-caption text-text-muted">{t('game.help')}</p>
-              </SectionPanel>
-              <button
-                type="button"
-                aria-disabled={pending || undefined}
-                onClick={confirm}
-                className={buttonClass({
-                  variant: 'accent',
-                  game: 'timeline',
-                  size: 'lg',
-                  fullWidth: true,
-                  disabled: pending,
-                })}
-              >
-                {pending ? t('game.confirming') : t('game.confirm')}
-                <span aria-hidden="true">→</span>
-              </button>
-            </>
+            <SectionPanel id={HELP_TARGET_ID} title={t('game.rulesTitle')}>
+              <ol className="flex flex-col gap-3">
+                {rules.map((key, i) => (
+                  <li key={key} className="flex gap-3">
+                    <span className="shrink-0 font-mono text-label-comment text-game-timeline">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <span className="font-sans text-body-sm text-text-body">{t(key)}</span>
+                  </li>
+                ))}
+              </ol>
+              <p className="font-sans text-body-sm text-text-muted">{t('game.help')}</p>
+            </SectionPanel>
           )}
           {aside}
         </div>

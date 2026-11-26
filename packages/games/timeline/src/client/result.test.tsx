@@ -21,22 +21,28 @@ const base = (over: Partial<ResultProps> = {}): ResultProps => ({
 const lists = () => screen.getAllByRole('list');
 
 describe('Result 3/5', () => {
-  it('shows comment, verdict, score and headings (TS-43)', () => {
+  it('shows the failure banner with verdict, detail, score and headings (TS-43)', () => {
     render(<Result {...base()} />);
-    expect(screen.getByText('// consigna: del más antiguo al más reciente')).toBeInTheDocument();
-    const h1 = screen.getByRole('heading', { level: 1 });
+    const banner = screen.getByRole('status');
+    expect(banner).toHaveClass('border-status-error-border');
+    const h1 = within(banner).getByRole('heading', { level: 1 });
     expect(h1).toHaveTextContent('Casi: solo dos hitos cruzados');
     expect(h1).not.toHaveTextContent('3');
-    expect(h1).not.toHaveTextContent('✓');
-    const score = screen.getByText('3/5').closest('p') as HTMLElement;
+    expect(
+      within(banner).getByText(
+        'Mirá el orden correcto: cada hito trae su fecha y un poco de historia.',
+      ),
+    ).toBeInTheDocument();
+    const score = within(banner).getByText('3/5').closest('p') as HTMLElement;
     expect(score).toHaveTextContent('posiciones');
     expect(score).toHaveTextContent('correctas');
+    expect(screen.getAllByRole('heading', { level: 1 })).toHaveLength(1);
     expect(screen.getByRole('heading', { level: 2, name: /tu orden/ })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: /orden correcto/ })).toBeInTheDocument();
   });
 
   it('marks each submitted position without red (TS-44)', () => {
-    const { container } = render(<Result {...base()} />);
+    render(<Result {...base()} />);
     const rows = within(lists()[0] as HTMLElement).getAllByRole('listitem');
     expect(rows).toHaveLength(5);
     const sr = [
@@ -54,7 +60,8 @@ describe('Result 3/5', () => {
       expect(rows[i]).toHaveClass('border-dashed', 'border-status-misplaced-border');
     });
     [0, 3, 4].forEach((i) => expect(rows[i]).toHaveClass('border-status-success-border'));
-    expect(container.innerHTML).not.toContain('status-error');
+    // The misplaced rows are never red (the failure banner above them is).
+    expect((lists()[0] as HTMLElement).innerHTML).not.toContain('status-error');
   });
 
   it('wraps name and badge in one flex-wrap group so the badge drops below (TS-5)', () => {
@@ -133,12 +140,15 @@ describe('Result variants', () => {
 
   it('shows the win (TS-47)', () => {
     render(<Result {...base({ result: RESULT_5_ES })} />);
-    const h1 = screen.getByRole('heading', { level: 1 });
+    const banner = screen.getByRole('status');
+    expect(banner).toHaveClass('border-status-success-border');
+    const h1 = within(banner).getByRole('heading', { level: 1 });
     expect(h1).toHaveTextContent('Orden perfecto');
-    const check = within(h1).getByText('✓');
-    expect(check).toHaveAttribute('aria-hidden', 'true');
-    expect(check).toHaveClass('text-status-success');
-    expect(screen.getByText('5/5')).toBeInTheDocument();
+    expect(
+      within(banner).getByText('Repasá la fecha y la historia de cada hito.'),
+    ).toBeInTheDocument();
+    expect(within(banner).getByText('5/5')).toBeInTheDocument();
+    expect(screen.queryByText(/abajo|a la derecha/)).not.toBeInTheDocument();
     expect(screen.getAllByText('✓ bien')).toHaveLength(5);
   });
 
@@ -161,22 +171,23 @@ describe('Result variants', () => {
         })}
       />,
     );
-    // The host's cards go right below «tu orden» (left column on desktop, after the rail on mobile).
+    // Main (7/12): «tu orden» then the closing card. Aside (5/12): the rail then the host's aside.
+    // No `order` tricks: the DOM order is the mobile reading order.
+    const banner = screen.getByRole('status');
+    const notice = screen.getByText('aviso');
+    expect(banner.nextElementSibling).toBe(notice);
     const yourOrder = screen.getByRole('region', { name: /tu orden/ });
-    const leftCol = yourOrder.parentElement?.parentElement as HTMLElement;
-    expect(leftCol).toHaveClass('contents', 'lg:col-span-5');
-    for (const text of ['rachas host', 'cierre host']) {
-      const slot = screen.getByText(text).parentElement as HTMLElement;
-      expect(slot.parentElement).toBe(leftCol);
-      expect(slot.className).toMatch(/order-[34]/);
-      expect(
-        yourOrder.compareDocumentPosition(slot) & Node.DOCUMENT_POSITION_FOLLOWING,
-      ).toBeTruthy();
-    }
-    const rail = screen.getByRole('region', { name: /orden correcto/ }).parentElement;
-    expect(rail).toHaveClass('order-2', 'lg:col-span-7');
-    const rows = container.querySelectorAll('.flex-wrap');
-    expect(rows[0]).toHaveClass('items-end', 'justify-between');
+    const mainCol = yourOrder.parentElement as HTMLElement;
+    expect(mainCol).toHaveClass('lg:col-span-7');
+    expect(mainCol.firstElementChild).toBe(yourOrder);
+    expect(mainCol.lastElementChild).toHaveTextContent('cierre host');
+    const rail = screen.getByRole('region', { name: /orden correcto/ });
+    const asideCol = rail.parentElement as HTMLElement;
+    expect(asideCol).toHaveClass('lg:col-span-5');
+    expect(asideCol.firstElementChild).toBe(rail);
+    expect(asideCol.lastElementChild).toHaveTextContent('rachas host');
+    expect(mainCol.nextElementSibling).toBe(asideCol);
+    expect(container.innerHTML).not.toMatch(/\border-(\d|none)/);
     rerender(<Result {...base()} />);
     expect(screen.queryByText('cierre host')).not.toBeInTheDocument();
   });

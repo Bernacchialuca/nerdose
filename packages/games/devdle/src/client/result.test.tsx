@@ -27,10 +27,11 @@ const bar = (label: string) => {
 describe('Result', () => {
   it('shows a win (TS-50)', () => {
     render(<Result {...base()} />);
-    // Al ganar no hay banner (festeja el confeti del host): el h1 queda para lectores de pantalla.
+    // Patrón común: el veredicto siempre visible, en un banner de éxito.
     const h1 = screen.getByRole('heading', { level: 1, name: 'Ganaste en 3/6' });
-    expect(h1).toHaveClass('sr-only');
-    expect(h1.closest('[role="status"]')).toBeNull();
+    expect(h1).not.toHaveClass('sr-only');
+    expect(h1.closest('[role="status"]')).toHaveClass('border-status-success-border');
+    expect(screen.getByText('Repasá la palabra del día y su definición.')).toBeInTheDocument();
     expect(screen.getByRole('grid', { name: 'Tus intentos' })).toBeInTheDocument();
     expect(screen.getAllByRole('gridcell')).toHaveLength(18);
     const row3 = within(screen.getAllByRole('row')[2] as HTMLElement).getAllByRole('gridcell');
@@ -165,15 +166,20 @@ describe('Result', () => {
     const banner = screen.getByRole('heading', { level: 1 });
     const nota = screen.getByText('nota');
     expect(banner.compareDocumentPosition(nota) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    const cols = (container.firstElementChild as HTMLElement).children;
+    const page = container.firstElementChild as HTMLElement;
+    // El banner va arriba a ancho completo, fuera de las columnas.
+    expect(page.firstElementChild).toContainElement(banner);
+    const cols = (page.lastElementChild as HTMLElement).children;
     expect(cols[0]).toHaveClass('basis-140', 'grow-999');
-    // Veredicto y salidas van en la columna principal: la lateral queda como sección aparte.
-    expect(cols[0]).toContainElement(banner);
+    expect(cols[0]).toContainElement(screen.getByRole('grid'));
     expect((cols[0] as HTMLElement).lastElementChild).toHaveTextContent('salidas');
     expect(cols[1]).toHaveClass('basis-75', 'max-w-devdle-aside');
     const aside = cols[1] as HTMLElement;
+    // Lateral: explicación (palabra del día) primero y el reporte al final.
+    expect(within(aside).getAllByRole('heading', { level: 2 })[0]).toHaveTextContent(
+      /palabra del día/,
+    );
     expect(aside.lastElementChild).toHaveTextContent('rachas');
-    expect(within(aside).getByRole('heading', { level: 2 })).toBeInTheDocument();
   });
 
   it('throws on invalid result (TS-59)', () => {

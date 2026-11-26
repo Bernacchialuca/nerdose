@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import type { CodeLanguage } from '@nerdose/core';
-import { buttonClass, cn } from '@nerdose/ui';
+import { buttonClass } from '@nerdose/ui';
 
 import { moveSchema } from '../definition/schemas';
 
@@ -108,7 +108,10 @@ export function Game({
 
   const header = (
     <div className="flex flex-col gap-2">
-      <p className="font-mono text-label-comment text-text-dim">{`// ${t('game.comment')}`}</p>
+      <p className="font-mono text-label-comment text-text-dim">
+        <span aria-hidden="true">// </span>
+        {t('game.comment')}
+      </p>
       <Question t={t} as="h1" />
     </div>
   );
@@ -133,85 +136,75 @@ export function Game({
     <div className="flex flex-col gap-6">
       {header}
       {notices}
+      {/* DOM in mobile order: main column (statement, code, CTA) and then the side column (help,
+          tests, aside). On desktop they sit side by side, 7 | 5. */}
       <div className="flex flex-col gap-6 lg:grid lg:grid-cols-12 lg:items-start">
-        <Statement
-          spec={view.spec}
-          t={t}
-          headingLevel={2}
-          className="min-w-0 lg:col-span-7 lg:col-start-1 lg:row-start-1"
-        />
-        <TestsCard
-          name={view.function_name}
-          tests={view.visible_tests}
-          t={t}
-          headingLevel={2}
-          showHidden
-          className="min-w-0 lg:col-span-5 lg:col-start-8 lg:row-span-2 lg:row-start-1"
-        />
-        <div className="flex min-w-0 flex-col gap-4 lg:col-span-7 lg:col-start-1 lg:row-span-3 lg:row-start-2">
-          <CodeBlock
-            key={codeKey}
-            mode="select"
-            name={view.function_name}
-            code={view.code}
-            initialLanguage={initialLanguage}
-            t={t}
-            pickable={view.pickable_lines}
-            selected={selected}
-            onSelect={select}
-            disabled={pending}
-            onLanguageChange={setLanguage}
-          />
-          <ConsoleHint text={text(hint)} announcement={announcement} />
-          <div className="flex flex-wrap items-center gap-3.5">
+        <div className="flex min-w-0 flex-col gap-6 lg:col-span-7">
+          <Statement spec={view.spec} t={t} headingLevel={2} />
+          <div className="flex min-w-0 flex-col gap-4">
+            <CodeBlock
+              key={codeKey}
+              mode="select"
+              name={view.function_name}
+              code={view.code}
+              initialLanguage={initialLanguage}
+              t={t}
+              pickable={view.pickable_lines}
+              selected={selected}
+              onSelect={select}
+              disabled={pending}
+              onLanguageChange={setLanguage}
+            />
+            <ConsoleHint text={text(hint)} announcement={announcement} />
             <button
               type="button"
               aria-disabled={noSelection || pending || undefined}
               onClick={confirm}
-              className={cn(
-                buttonClass({
-                  variant: 'accent',
-                  game: 'bug-hunt',
-                  size: 'lg',
-                  disabled: noSelection || pending,
-                }),
-                'w-full lg:w-auto',
-              )}
+              className={buttonClass({
+                variant: 'accent',
+                game: 'bug-hunt',
+                size: 'lg',
+                fullWidth: true,
+                disabled: noSelection || pending,
+              })}
             >
               {label}
               {noSelection || pending ? null : <span aria-hidden="true"> →</span>}
             </button>
+            <p className="font-sans text-caption text-text-muted">{t('game.languagesNote')}</p>
           </div>
-          <p className="font-sans text-caption text-text-muted">{t('game.languagesNote')}</p>
         </div>
-        <SectionPanel
-          id={HELP_TARGET_ID}
-          title={t('game.rulesTitle')}
-          className="min-w-0 lg:col-span-5 lg:col-start-8 lg:row-start-3"
-        >
-          <ol className="flex flex-col gap-3">
-            {RULES.map((key, i) => (
-              <li key={key} className="flex gap-3">
-                <span className="shrink-0 font-mono text-label-comment text-game-bug-hunt">
-                  {String(i + 1).padStart(2, '0')}
+        <div className="flex min-w-0 flex-col gap-6 lg:col-span-5">
+          <SectionPanel id={HELP_TARGET_ID} title={t('game.rulesTitle')}>
+            <ol className="flex flex-col gap-3">
+              {RULES.map((key, i) => (
+                <li key={key} className="flex gap-3">
+                  <span className="shrink-0 font-mono text-label-comment text-game-bug-hunt">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span className="font-sans text-body-sm text-text-body">{t(key)}</span>
+                </li>
+              ))}
+              <li className="flex gap-3">
+                <span className="shrink-0 font-mono text-label-comment text-game-bug-hunt">03</span>
+                <span className="font-sans text-body-sm text-text-body">
+                  {t('game.rule3.before')}
+                  <b className="font-bold text-game-bug-hunt">{t('game.rule3.strong')}</b>
+                  {t('game.rule3.after')}
                 </span>
-                <span className="font-sans text-body text-text-body">{t(key)}</span>
               </li>
-            ))}
-            <li className="flex gap-3">
-              <span className="shrink-0 font-mono text-label-comment text-game-bug-hunt">03</span>
-              <span className="font-sans text-body text-text-body">
-                {t('game.rule3.before')}
-                <b className="font-bold text-game-bug-hunt">{t('game.rule3.strong')}</b>
-                {t('game.rule3.after')}
-              </span>
-            </li>
-          </ol>
-          <p className="font-sans text-caption text-text-muted">{t('game.help')}</p>
-        </SectionPanel>
-        {aside ? (
-          <div className="min-w-0 lg:col-span-5 lg:col-start-8 lg:row-start-4">{aside}</div>
-        ) : null}
+            </ol>
+            <p className="font-sans text-caption text-text-muted">{t('game.help')}</p>
+          </SectionPanel>
+          <TestsCard
+            name={view.function_name}
+            tests={view.visible_tests}
+            t={t}
+            headingLevel={2}
+            showHidden
+          />
+          {aside ? <div className="min-w-0">{aside}</div> : null}
+        </div>
       </div>
     </div>
   );

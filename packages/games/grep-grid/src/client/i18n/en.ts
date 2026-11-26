@@ -26,6 +26,13 @@ export const en: Resources = {
     prompt: "$ grep -o '[A-Z]*' today.txt",
     instruction: 'tap the first and last letter of each word',
   },
+  help: {
+    select:
+      'Tap the first letter of a word, then the last one. Tapping the start again cancels the selection.',
+    directions:
+      'Words run in 4 directions, always forward: → horizontal, ↓ vertical, ↘ and ↗ diagonal. Never backwards.',
+    giveUp: 'There is no clock. You can give up whenever you want and see the missing words.',
+  },
   counter: { value: '{{found}}/{{total}}', label: 'found' },
   board: {
     label: '12 by 12 grid',
@@ -73,6 +80,7 @@ export const en: Resources = {
   },
   result: {
     won: '{{total}}/{{total}}: you found them all',
+    wonDetail: 'Go over what each one means.',
     gaveUp: 'You gave up with {{score}}/{{total}}',
     gaveUpDetail: 'These are the words you were missing.',
   },

@@ -49,7 +49,6 @@ export function Game({
   const [prevError, setPrevError] = useState(moveError);
   const submittedRef = useRef(false);
   const optionsTitleId = useId();
-  const disabledReasonId = useId();
 
   const text = (h: Hint): string => {
     switch (h.key) {
@@ -110,7 +109,10 @@ export function Game({
 
   const header = (
     <div className="flex flex-col gap-2">
-      <p className="font-mono text-label-comment text-text-dim">{`// ${t('game.comment')}`}</p>
+      <p className="font-mono text-label-comment text-text-dim">
+        <span aria-hidden="true">// </span>
+        {t('game.comment')}
+      </p>
       <Question t={t} as="h1" />
     </div>
   );
@@ -126,12 +128,18 @@ export function Game({
   }
 
   const noSelection = selected === null;
+  const confirmLabel = pending
+    ? t('game.confirming')
+    : noSelection
+      ? t('game.confirmIdle')
+      : t('game.confirm');
+  // Two real columns: in mobile the main one (code, options, CTA) comes first, then the side one.
   return (
     <div className="flex flex-col gap-6">
       {header}
       {notices}
       <div className="flex flex-col gap-6 lg:grid lg:grid-cols-12 lg:items-start">
-        <div className="flex min-w-0 flex-col gap-4 lg:col-span-7 lg:col-start-1 lg:row-span-3 lg:row-start-1">
+        <div className="flex min-w-0 flex-col gap-4 lg:col-span-7">
           <CodeBlock
             key={codeKey}
             code={view.code}
@@ -152,12 +160,9 @@ export function Game({
             t={t}
           />
           <ConsoleHint text={text(hint)} announcement={announcement} />
-        </div>
-        <div className="lg:col-span-5 lg:col-start-8 lg:row-start-2">
           <button
             type="button"
             aria-disabled={noSelection || pending || undefined}
-            aria-describedby={noSelection ? disabledReasonId : undefined}
             onClick={confirm}
             className={buttonClass({
               variant: 'accent',
@@ -167,33 +172,26 @@ export function Game({
               disabled: noSelection || pending,
             })}
           >
-            {pending ? t('game.confirming') : t('game.confirm')}
-            <span aria-hidden="true">✓</span>
+            {confirmLabel}
+            {noSelection || pending ? null : <span aria-hidden="true"> →</span>}
           </button>
-          {noSelection ? (
-            <span id={disabledReasonId} className="sr-only">
-              {t('game.confirmDisabled')}
-            </span>
-          ) : null}
         </div>
-        <SectionPanel
-          id={HELP_TARGET_ID}
-          title={t('game.rulesTitle')}
-          className="lg:col-span-5 lg:col-start-8 lg:row-start-1"
-        >
-          <ol className="flex flex-col gap-3">
-            {RULES.map((key, i) => (
-              <li key={key} className="flex gap-3">
-                <span className="shrink-0 font-mono text-label-comment text-game-big-o">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <span className="font-sans text-body-sm text-text-body">{t(key)}</span>
-              </li>
-            ))}
-          </ol>
-          <p className="font-sans text-caption text-text-muted">{t('game.help')}</p>
-        </SectionPanel>
-        {aside ? <div className="lg:col-span-5 lg:col-start-8 lg:row-start-3">{aside}</div> : null}
+        <div className="flex min-w-0 flex-col gap-6 lg:col-span-5">
+          <SectionPanel id={HELP_TARGET_ID} title={t('game.rulesTitle')}>
+            <ol className="flex flex-col gap-3">
+              {RULES.map((key, i) => (
+                <li key={key} className="flex gap-3">
+                  <span className="shrink-0 font-mono text-label-comment text-game-big-o">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span className="font-sans text-body-sm text-text-body">{t(key)}</span>
+                </li>
+              ))}
+            </ol>
+            <p className="font-sans text-caption text-text-muted">{t('game.help')}</p>
+          </SectionPanel>
+          {aside}
+        </div>
       </div>
     </div>
   );
