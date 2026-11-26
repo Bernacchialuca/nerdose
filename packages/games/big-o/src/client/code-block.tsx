@@ -6,6 +6,7 @@ import { cn } from '@nerdose/ui';
 import type { CodeByLanguage } from '../definition/schemas';
 import { LANGUAGE_LABEL } from '../shared/labels';
 
+import { CodeText } from './code-text';
 import type { HighlightToken, Tokenizer } from './highlight';
 import { codeLines, notesByLine } from './lines';
 import { moveRadio } from './radio';
@@ -157,22 +158,16 @@ export function CodeBlock({
               data-line={number}
               aria-describedby={note === undefined ? undefined : noteId}
               className={cn(
-                'flex w-max min-w-full flex-wrap items-center px-4.5 font-mono text-body leading-loose text-text @lg:flex-nowrap',
+                'flex w-full flex-wrap items-baseline px-4.5 font-mono text-body leading-loose text-text @lg:flex-nowrap',
                 note !== undefined &&
                   'bg-game-big-o-tint shadow-[inset_3px_0_0_var(--color-game-big-o)]',
               )}
             >
-              <span aria-hidden="true" className="w-7.5 flex-none text-text-dim">
-                {number}
-              </span>
-              <span className="whitespace-pre">
-                {lineTokens
-                  ? lineTokens.map((token, k) => (
-                      <span key={k} style={token.color ? { color: token.color } : undefined}>
-                        {token.content}
-                      </span>
-                    ))
-                  : text}
+              <span className="flex min-w-0 basis-full items-baseline @lg:flex-1 @lg:basis-0">
+                <span aria-hidden="true" className="w-7.5 flex-none text-text-dim">
+                  {number}
+                </span>
+                <CodeText text={text} tokens={lineTokens} />
               </span>
               {note === undefined ? null : (
                 <span

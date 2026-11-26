@@ -77,7 +77,8 @@ describe('Result won (TS-51)', () => {
       expect(items[i]!.querySelector('span')).toHaveTextContent(String(i + 1));
     });
     expect(within(items[0]!).getByText('1')).toHaveClass('bg-game-bug-hunt-tint-strong');
-    expect(why.getByText('tipo: comparación')).toHaveClass('text-game-bug-hunt');
+    // El tipo de bug no se muestra al jugador (solo en la vista previa del admin).
+    expect(why.queryByText(/^tipo:/)).toBeNull();
   });
 });
 
@@ -136,7 +137,7 @@ describe('Result variants', () => {
     expect(why.getByText(/got/)).toBeInTheDocument();
     expect(why.getByRole('heading', { name: /the fix · line 4/ })).toBeInTheDocument();
     expect(why.getByText(RESULT_WON_JAVA_EN.explanation.steps[0]!)).toBeInTheDocument();
-    expect(why.getByText('type: comparison')).toBeInTheDocument();
+    expect(why.queryByText(/^type:/)).toBeNull();
   });
 
   it('handles two arguments and booleans (TS-55)', () => {
@@ -154,7 +155,7 @@ describe('Result variants', () => {
     expect(region.textContent).toContain('  let found = true;');
     expect(region.textContent).toContain('  let found = false;');
     expect(why.getAllByRole('listitem')).toHaveLength(2);
-    expect(why.getByText('tipo: valor inicial')).toBeInTheDocument();
+    expect(why.queryByText(/^tipo:/)).toBeNull();
   });
 
   it('works without a public view (TS-56)', () => {
@@ -165,7 +166,7 @@ describe('Result variants', () => {
     const why = within(panel('Por qué falla'));
     expect(why.getByRole('region', { name: 'Fix de la línea 4 en Java' })).toBeInTheDocument();
     expect(why.getAllByRole('listitem')).toHaveLength(3);
-    expect(why.getByText('tipo: comparación')).toBeInTheDocument();
+    expect(why.queryByText(/^tipo:/)).toBeNull();
   });
 
   it('throws on an invalid result (TS-58)', () => {

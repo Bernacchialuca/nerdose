@@ -6,6 +6,7 @@ import { cn } from '@nerdose/ui';
 import type { CodeByLanguage } from '../definition/schemas';
 import { LANGUAGE_LABEL } from '../shared/labels';
 
+import { CodeText } from './code-text';
 import { fileNames } from './files';
 import type { HighlightToken, Tokenizer } from './highlight';
 import { codeLines } from './lines';
@@ -157,20 +158,13 @@ export function CodeBlock({
     lineRefs.current.get(target)?.focus();
   };
 
-  const renderText = (text: string, i: number, colored: boolean) => {
-    const lineTokens = colored ? tokens?.[i] : undefined;
-    return (
-      <span className="whitespace-pre">
-        {lineTokens
-          ? lineTokens.map((token, k) => (
-              <span key={k} style={token.color ? { color: token.color } : undefined}>
-                {token.content}
-              </span>
-            ))
-          : text}
-      </span>
-    );
-  };
+  // Número y texto van juntos: si la línea salta, el número queda arriba a la izquierda.
+  const renderLine = (number: number, text: string, i: number, colored: boolean) => (
+    <span className="flex min-w-0 basis-full items-baseline @lg:flex-1 @lg:basis-0">
+      {lineNumber(number)}
+      <CodeText text={text} tokens={colored ? tokens?.[i] : undefined} />
+    </span>
+  );
 
   const lineNumber = (n: number) => (
     <span
@@ -183,14 +177,13 @@ export function CodeBlock({
 
   const body = lines.map((text, i) => {
     const number = i + 1;
-    const rowBase = 'flex w-max min-w-full items-center px-4.5 font-mono text-body leading-loose';
+    const rowBase = 'flex w-full items-center px-4.5 font-mono text-body leading-loose';
 
     if (interactive) {
       if (!eligible.includes(number)) {
         return (
           <div key={number} data-line={number} className={cn(rowBase, 'text-text-dim')}>
-            {lineNumber(number)}
-            <span className="whitespace-pre">{text}</span>
+            {renderLine(number, text, i, false)}
           </div>
         );
       }
@@ -220,8 +213,7 @@ export function CodeBlock({
             isSelected && 'bg-game-bug-hunt-tint shadow-bar-bug-hunt',
           )}
         >
-          {lineNumber(number)}
-          {renderText(text, i, true)}
+          {renderLine(number, text, i, true)}
           {isSelected ? (
             <span
               aria-hidden="true"
@@ -251,8 +243,7 @@ export function CodeBlock({
           mark && MARK_CLASS[mark],
         )}
       >
-        {lineNumber(number)}
-        {renderText(text, i, mode === 'result' || !dim)}
+        {renderLine(number, text, i, mode === 'result' || !dim)}
         {mark && tag ? (
           <span
             id={tagId}

@@ -324,7 +324,7 @@ describe('confirmación y resultado', () => {
     ).toBeInTheDocument();
     expect(within(why).getAllByRole('listitem')).toHaveLength(3);
     expect(why).toHaveTextContent('La condición que decide si best cambia usa >= en lugar de >');
-    expect(why).toHaveTextContent('tipo: comparación');
+    expect(why).not.toHaveTextContent('tipo:');
     expect(
       within(screen.getByRole('banner')).getByRole('button', { name: 'Compartir' }),
     ).not.toHaveAttribute('aria-disabled');
@@ -382,7 +382,7 @@ describe('confirmación y resultado', () => {
     expect(panel('Go')).toHaveTextContent('acá estaba el bug');
     expect(panel('Go')).toHaveTextContent('✗');
     expect(panel('Go')).toHaveTextContent('tu elección');
-    expect(screen.getByText('tipo: comparación')).toBeInTheDocument();
+    expect(screen.queryByText(/tipo:/)).toBeNull();
     expect(screen.queryByTestId('confetti')).toBeNull();
   });
 });
@@ -719,7 +719,7 @@ describe('inglés', () => {
     ).toBeInTheDocument();
     expect(why).toHaveTextContent('The condition that decides whether best changes uses >=');
     expect(why).toHaveTextContent('The visible tests never repeat the maximum');
-    expect(why).toHaveTextContent('type: comparison');
+    expect(why).not.toHaveTextContent('type:');
     const write = vi.spyOn(navigator.clipboard, 'writeText');
     await user.click(
       within(screen.getByRole('banner')).getByRole('button', { name: /Share|Compartir/ }),
