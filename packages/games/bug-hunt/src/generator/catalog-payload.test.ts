@@ -9,8 +9,8 @@ import { assertValidPayload, catalogPayload } from './test-utils';
 describe('catalogPayload (TS-30)', () => {
   const pairs = TEMPLATES.flatMap((t) => bugTypesOf(t).map((b) => [t, b] as const));
 
-  it('covers the 62 pairs of the catalog', () => {
-    expect(pairs).toHaveLength(62);
+  it('covers the 95 pairs of the catalog', () => {
+    expect(pairs).toHaveLength(95);
   });
 
   it.each(pairs.map(([t, b]) => [t.id, b, t] as const))(

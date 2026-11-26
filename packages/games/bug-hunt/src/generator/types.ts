@@ -8,14 +8,20 @@ export type TemplateId =
   | 'any_where'
   | 'binary_search'
   | 'count_equal_neighbors'
+  | 'count_pairs'
   | 'count_where'
   | 'extreme_index'
   | 'first_index_where'
   | 'is_palindrome'
   | 'is_sorted'
   | 'last_index_where'
+  | 'longest_run'
   | 'max_window_sum'
-  | 'sum_range';
+  | 'prefix_within_budget'
+  | 'split_difference'
+  | 'sum_range'
+  | 'trim_length'
+  | 'value_range';
 
 export type TemplateParams = Readonly<Record<string, string | number | boolean>>;
 export type TestArg = number | readonly number[];

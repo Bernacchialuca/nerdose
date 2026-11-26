@@ -8,14 +8,20 @@ import { allWhere } from './all-where';
 import { anyWhere } from './any-where';
 import { binarySearch } from './binary-search';
 import { countEqualNeighbors } from './count-equal-neighbors';
+import { countPairs } from './count-pairs';
 import { countWhere } from './count-where';
 import { extremeIndex } from './extreme-index';
 import { firstIndexWhere } from './first-index-where';
 import { isPalindrome } from './is-palindrome';
 import { isSorted } from './is-sorted';
 import { lastIndexWhere } from './last-index-where';
+import { longestRun } from './longest-run';
 import { maxWindowSum } from './max-window-sum';
+import { prefixWithinBudget } from './prefix-within-budget';
+import { splitDifference } from './split-difference';
 import { sumRange } from './sum-range';
+import { trimLength } from './trim-length';
+import { valueRange } from './value-range';
 
 /** Ordered by `id`. */
 export const TEMPLATES: readonly Template[] = [
@@ -23,14 +29,20 @@ export const TEMPLATES: readonly Template[] = [
   anyWhere,
   binarySearch,
   countEqualNeighbors,
+  countPairs,
   countWhere,
   extremeIndex,
   firstIndexWhere,
   isPalindrome,
   isSorted,
   lastIndexWhere,
+  longestRun,
   maxWindowSum,
+  prefixWithinBudget,
+  splitDifference,
   sumRange,
+  trimLength,
+  valueRange,
 ];
 
 export function templateById(id: string): Template {
