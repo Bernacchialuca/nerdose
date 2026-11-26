@@ -1,8 +1,8 @@
 ---
 component: button
-version: 1.3.1
+version: 1.4.0
 status: active
-last_updated: 2026-11-09
+last_updated: 2026-11-25
 source: docs/nerdose.html
 related: [link, card, banner, alert, game-header]
 ---
@@ -67,6 +67,7 @@ related: [link, card, banner, alert, game-header]
 | focus | **Requisito** de accesibilidad: foco visible con ≥ 3:1. Único precedente del prototipo: `outline 2px solid <acento>; outline-offset: -2px` (L756). Estética global **Pendiente**. | `button.focus.outline` |
 | active | **Pendiente — el prototipo no lo define.** | — |
 | disabled (neutro) | Fondo `bg.control`, borde `border.control`, texto `text.disabled`, `cursor: not-allowed` (Compartir, L445) | `button.disabled.*` |
+| cursor (1.4.0) | Todo `<button>` y `[role=button]` habilitado muestra `cursor: pointer` (regla base de `tokens.css`; Tailwind v4 no lo pone): una tecla de Devdle o un botón con estilo de link («Reportar») tienen que parecer cliqueables. Los deshabilitados (`disabled` o `aria-disabled`) quedan afuera | — |
 | disabled (`accent` de Bug Hunt) | Fondo `#2A2416`, texto `#8A7856`, label que explica qué falta ("Elegí una línea") (L836) | `button.accent.disabled.*` |
 | loading | **Pendiente — el prototipo no lo define.** | — |
 
@@ -120,7 +121,7 @@ related: [link, card, banner, alert, game-header]
 
 | Prop | Tipo | Default | Descripción |
 |---|---|---|---|
-| `variant` | `'primary' \| 'secondary' \| 'accent' \| 'outline-tinted' \| 'ghost' \| 'icon'` | `'primary'` | Variant visual |
+| `variant` | `'primary' \| 'secondary' \| 'accent' \| 'outline-tinted' \| 'error' \| 'error-outline' \| 'ghost' \| 'icon'` | `'primary'` | Variant visual (`buttonClass` de `@nerdose/ui` implementa `primary`, `secondary`, `accent`, `error`, `error-outline` e `icon`) |
 | `size` | `'lg' \| 'md' \| 'share' \| 'sm'` | `'md'` | Tamaño (`sm` solo con `ghost`) |
 | `game` | `GameId` | — | Acento para `accent` y `outline-tinted` |
 | `tint` | `'error' \| 'game'` | `'game'` | Origen del borde de `outline-tinted` |

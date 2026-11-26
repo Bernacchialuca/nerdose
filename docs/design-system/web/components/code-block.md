@@ -1,6 +1,6 @@
 ---
 component: code-block
-version: 1.3.0
+version: 1.4.0
 status: active
 last_updated: 2026-11-25
 source: docs/nerdose.html
@@ -73,16 +73,16 @@ Caja `radius.inset` (12), `bg.surface.sunken`, borde `border.default`, `overflow
 
 ## Spacing & sizing rules
 
-- Código con `white-space: pre` y scroll horizontal del cuerpo (no envuelve).
+- **1.4.0 (REQ-012):** una línea que no entra **salta de línea con sangría colgante** en vez de obligar a scrollear de costado: la sangría inicial queda fija a la izquierda (`flex-none`, `white-space: pre`) y la continuación arranca alineada con el código de esa línea (`white-space: pre-wrap`, `overflow-wrap: anywhere`). El número de línea, la barra y los tags no se mueven; el texto completo de la línea sigue en el contenedor. Implementado por `CodeText` en Big O y Bug Hunt (código, resultado y fix). Antes: `white-space: pre` y scroll horizontal del cuerpo.
 - Ligaduras desactivadas (`font-variant-ligatures: none`): `>=` se lee como dos caracteres (L757).
 
 ## Accesibilidad
 
 - **Pestañas:** patrón `tablist` / `tab` / `tabpanel` con `aria-selected` y flechas izquierda/derecha. El prototipo solo declara `role="tablist"`.
 - **Líneas seleccionables:** `role="radiogroup"` + `role="radio"` con `aria-checked`; navegación con flechas; nombre accesible que incluya el número de línea.
-- **Scroll horizontal:** el cuerpo con `overflow-x: auto` tiene que ser alcanzable con teclado (`tabindex="0"` + nombre) cuando desborda.
+- **Scroll horizontal:** con el salto de línea (1.4.0) el cuerpo ya no desborda en la práctica; conserva `overflow-x: auto` alcanzable con teclado (`tabindex="0"` + nombre) como resguardo.
 - **Contraste:** código `#E6EDF3`/`#0D1116` 16,0:1; nombre de archivo 6,3:1; pestaña inactiva `#9AA6B2`/`#11161C` 7,3:1; anotación 9,6:1; diff 11,0 y 13,4:1. **Números de línea `#4F5A66`/`#0D1116` 2,7:1: adaptación requerida** (≥ 4,5:1; **1.1.0:** en `readonly` usan `text.dim` `#8D99A6`, ≈ 6,4:1).
-- **Zoom/reflow:** el código no envuelve; su scroll horizontal es interno al bloque (excepción WCAG 1.4.10 para código).
+- **Zoom/reflow:** desde 1.4.0 el código envuelve con sangría colgante, así que cumple 1.4.10 sin recurrir a la excepción para código.
 
 ## Guidelines de contenido
 
@@ -135,3 +135,4 @@ Caja `radius.inset` (12), `bg.surface.sunken`, borde `border.default`, `overflow
 - 2026-11-15 v1.2.0 — Story S-051: resaltado en `selectable` y modo resultado de Bug Hunt (tema desde tokens de Bug Hunt con AA sobre los cuatro fondos de línea, no elegibles sin color), glifo `◀` fijo en bloques angostos, números de línea en `text.dim`, teclado de las líneas y mapeo provisorio del diff.
 - 2026-11-15 v1.2.1 — Diff con `status.*.diff-text`: los tokens ya están en `@nerdose/ui` y se elimina el mapeo provisorio.
 - 2026-11-25 v1.3.0 — Story S-059 (plan `games`): pestañas y línea interactiva a `min-height: 44px` (objetivo de toque del proyecto); números de línea confirmados en `text.dim` (el `text.line-number` no se usa).
+- 2026-11-25 v1.4.0 — REQ-012 (S-066, implementado fuera del workflow): las líneas largas saltan con sangría colgante (`CodeText`) en lugar de scrollear de costado.

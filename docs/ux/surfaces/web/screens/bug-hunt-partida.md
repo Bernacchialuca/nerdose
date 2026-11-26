@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "2.0"
-date: 2026-11-14
+version: "2.1"
+date: 2026-11-25
 ---
 
 # Pantalla: Bug Hunt · Partida
@@ -20,8 +20,8 @@ date: 2026-11-14
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
 - **JTBD / Propósito:** Leer la especificación de una función de 8 a 15 líneas y sus tests visibles, buscar la línea con el bug en el lenguaje que prefiera (JavaScript, Go o Java, solo una vista), elegirla y confirmar en un solo intento. Antes del cierre el jugador solo recibe la especificación, el código en los 3 lenguajes, las líneas elegibles y los tests que pasan: la línea del bug, el tipo de bug, el test que falla, el fix y la explicación llegan recién al confirmar (NFR-S01, NFR-S04).
 - **Viewports:**
-  - **mobile** — consigna y pregunta arriba; especificación, tests y el código a ancho completo (el código scrollea en horizontal dentro de su bloque, nunca la página); «Confirmar línea» justo debajo del código, alcanzable con el pulgar, y las reglas al final. Sin scroll horizontal de página desde 320 px.
-  - **desktop** — consigna y pregunta a ancho completo; especificación, código y confirmación a la izquierda (7/12); tests, reglas y el reporte a la derecha (5/12), como el prototipo, todo a la vista sin scroll para funciones de hasta 15 líneas.
+  - **mobile** — consigna y pregunta arriba; especificación y código a ancho completo (una línea que no entra salta de línea con sangría colgante, sin scroll horizontal); «Confirmar línea» a ancho completo justo debajo del código, alcanzable con el pulgar; después «// cómo se juega», los tests y el reporte (orden del DOM: principal y después lateral). Sin scroll horizontal desde 320 px.
+  - **desktop** — consigna y pregunta a ancho completo; especificación, código y confirmación (a ancho completo) a la izquierda (7/12); «// cómo se juega», los tests y el reporte a la derecha (5/12), todo a la vista sin scroll para funciones de hasta 15 líneas (REQ-012, patrón común de partida).
 
 ## Entrada y salida
 
@@ -52,12 +52,12 @@ date: 2026-11-14
 | 6 | especificacion | card | bug-hunt.statement | content | ambos | hidden_in_states: loading, error de sistema, anulado | «// qué debería hacer»: la especificación de la función en el idioma activo |
 | 7 | card-tests | card | bug-hunt.test | content | ambos | hidden_in_states: loading, error de sistema, anulado | «// tests»: los tests visibles que pasan como llamadas y la fila del test oculto que falla |
 | 8 | tabs-lenguaje | tabs | code-block · tablist | navigation | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: confirmando | Pestañas JavaScript / Go / Java del bloque de código (solo vista, C-26) |
-| 9 | codigo | image | code-block · selectable | input | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: selección hecha, confirmando; viewport_overrides: mobile→tag compacto | La función con numeración y resaltado; las líneas elegibles forman un grupo de selección única |
+| 9 | codigo | image | code-block · selectable | input | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: selección hecha, confirmando; viewport_overrides: mobile→tag compacto | La función con numeración y resaltado; las líneas elegibles forman un grupo de selección única; las líneas largas saltan con sangría colgante |
 | 10 | seleccion | paragraph | caption | feedback | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: selección hecha, error de validación, límite de jugadas | Línea de aviso del juego: la línea elegida y los rechazos del servidor, sin penalizar |
-| 11 | btn-confirmar | button | accent | input | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: default, selección hecha, confirmando | Segundo paso: envía la línea elegida y el lenguaje visible (un solo intento, decisión #26) |
+| 11 | btn-confirmar | button | accent | input | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: default, selección hecha, confirmando | Segundo paso: envía la línea elegida y el lenguaje visible (un solo intento, decisión #26). CTA principal a ancho completo debajo del código |
 | 12 | nota-lenguajes | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema, anulado | Recuerda que el bug es el mismo en los tres lenguajes |
-| 13 | card-reglas | card | — | content | ambos | hidden_in_states: loading, error de sistema, anulado | «// cómo se juega»: tres reglas cortas y la ayuda de teclado; destino de «Cómo se juega» |
-| 14 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema; state_overrides: ya reportado | Abre O-01 para avisar que el desafío está mal (C-36); deshabilitado si el jugador ya reportó este desafío |
+| 13 | card-reglas | card | — | content | ambos | hidden_in_states: loading, error de sistema, anulado | «// cómo se juega»: tres reglas cortas y la ayuda de teclado; destino de «Cómo se juega»; primer panel del lateral |
+| 14 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema; state_overrides: ya reportado | Abre O-01 para avisar que el desafío está mal (C-36); deshabilitado si el jugador ya reportó este desafío. Siempre último del lateral |
 | 15 | loader | loader | — | feedback | ambos | visible_only_in_states: loading | Indicador de carga |
 | 16 | alerta-sistema | alert | error | feedback | ambos | visible_only_in_states: error de sistema | Error de carga con causa y salida |
 | 17 | btn-reintentar | button | secondary | input | ambos | visible_only_in_states: error de sistema, sin sesión; state_overrides: sin sesión | Reintentar la carga o recrear la sesión |
@@ -74,13 +74,13 @@ date: 2026-11-14
 - btn-reintentar
 - alerta-anulado
 - especificacion
-- card-tests
 - tabs-lenguaje
 - codigo
 - seleccion
 - btn-confirmar
 - nota-lenguajes
 - card-reglas
+- card-tests
 - link-reportar
 
 ### desktop · 1200px
@@ -93,7 +93,7 @@ date: 2026-11-14
 - alerta-anulado
 - row `juego`
   - col 7/12: especificacion, tabs-lenguaje, codigo, seleccion, btn-confirmar, nota-lenguajes
-  - col 5/12: card-tests, card-reglas, link-reportar
+  - col 5/12: card-reglas, card-tests, link-reportar
 
 ## Contenido
 
@@ -144,7 +144,7 @@ date: 2026-11-14
 - Texto/label: function maxIndex(nums) { … } · 9 líneas con numeración; elegibles 2, 3, 4, 5 y 8
 - Asset: placeholder 4:3 (8 a 15 líneas)
 - Icono: nada
-- Annotation: `code-block` `selectable` del DS con el pattern `bug-hunt.line`. El cuerpo es un `role="radiogroup"` con nombre «Líneas de maxIndex en {lenguaje}»; **solo las líneas de `pickable_lines` son `role="radio"`** (botón de ancho completo, `min-height: 44px`, Mono 15/2): la firma (línea 1), las líneas con solo llaves y cualquier otra fuera de `pickable_lines` son texto plano en `text.dim`, sin hover, no enfocables ni seleccionables (C-30, CA 6). Elegible: hover `#15110A`, foco `outline 2px #FFB547` (offset −2). Elegida: fondo `#1A140A`, barra `inset 3px #FFB547` y el tag «◀ tu elección» (Mono 700 12, ámbar). Tocar otra línea cambia la elección; ninguna se envía hasta confirmar. Resaltado de sintaxis con Shiki cargado en el chunk de `/bug-hunt` (ADR-002) y un tema por variables CSS apuntadas a tokens de Bug Hunt con contraste AA sobre `bg.surface.sunken` y sobre la línea elegida; mientras carga, o si falla, el mismo código sin color y sin saltos de layout (ver «Design System» en la Revisión UX de REQ-010). Números de línea con contraste ≥ 4,5:1 y `aria-hidden`; el nombre accesible de cada radio incluye el número («Línea 4: if (nums[i] > nums[best]) {»). Ligaduras desactivadas (`>=` se lee como dos caracteres). El cuerpo tiene scroll horizontal propio; la página nunca scrollea en horizontal (CA 23, 320 px). El código no lleva comentarios. **mobile:** con el bloque angosto (< 32rem) el tag «◀ tu elección» se reduce al glifo `◀` fijo al borde derecho visible del bloque (no queda fuera de la vista dentro del scroll); el texto completo lo dicen `seleccion` y la etiqueta del botón
+- Annotation: `code-block` `selectable` del DS con el pattern `bug-hunt.line`. El cuerpo es un `role="radiogroup"` con nombre «Líneas de maxIndex en {lenguaje}»; **solo las líneas de `pickable_lines` son `role="radio"`** (botón de ancho completo, `min-height: 44px`, Mono 15/2): la firma (línea 1), las líneas con solo llaves y cualquier otra fuera de `pickable_lines` son texto plano en `text.dim`, sin hover, no enfocables ni seleccionables (C-30, CA 6). Elegible: hover `#15110A`, foco `outline 2px #FFB547` (offset −2). Elegida: fondo `#1A140A`, barra `inset 3px #FFB547` y el tag «◀ tu elección» (Mono 700 12, ámbar). Tocar otra línea cambia la elección; ninguna se envía hasta confirmar. Resaltado de sintaxis con Shiki cargado en el chunk de `/bug-hunt` (ADR-002) y un tema por variables CSS apuntadas a tokens de Bug Hunt con contraste AA sobre `bg.surface.sunken` y sobre la línea elegida; mientras carga, o si falla, el mismo código sin color y sin saltos de layout (ver «Design System» en la Revisión UX de REQ-010). Números de línea con contraste ≥ 4,5:1 y `aria-hidden`; el nombre accesible de cada radio incluye el número («Línea 4: if (nums[i] > nums[best]) {»). Ligaduras desactivadas (`>=` se lee como dos caracteres). Cada línea que no entra salta de línea (soft-wrap) con sangría colgante: el número y la sangría original quedan fijos a la izquierda y la continuación arranca alineada con el código de esa línea (`CodeText`, REQ-012 / S-066). No hay scroll horizontal ni en el bloque ni en la página (CA 23, 320 px). El código no lleva comentarios. **mobile:** con el bloque angosto (< 32rem) el tag «◀ tu elección» se reduce al glifo `◀` fijo al borde derecho del bloque; el texto completo lo dicen `seleccion` y la etiqueta del botón
 
 ### seleccion
 - Texto/label: > tocá la línea donde creés que está el bug
@@ -154,23 +154,23 @@ date: 2026-11-14
 ### btn-confirmar
 - Texto/label: Elegí una línea
 - Icono: nada
-- Annotation: pattern `bug-hunt.confirm`: `button` `accent` de Bug Hunt (`#FFB547` / `#1A1206`), tamaño `lg`, ancho completo en mobile. Sin línea elegida: deshabilitado con la etiqueta «Elegí una línea» (`#2A2416` / `#8A7856`, `aria-disabled`). Con una línea: «Confirmar línea 4 →». Al tocarlo se valida `{ language, line }` y se envía una sola vez; mientras responde pasa a «Confirmando…» y las líneas y las pestañas quedan bloqueadas. Sin diálogo de confirmación: la selección y la confirmación ya son dos pasos (decisión #26)
+- Annotation: pattern `bug-hunt.confirm`: `button` `accent` de Bug Hunt (`#FFB547` / `#1A1206`), tamaño `lg`, **ancho completo en todos los breakpoints** (antes `lg:w-auto`), justo debajo de `seleccion` en la columna principal (REQ-012, patrón común). Sin línea elegida: deshabilitado con la etiqueta «Elegí una línea» (`#2A2416` / `#8A7856`, `aria-disabled`). Con una línea: «Confirmar línea 4 →». Al tocarlo se valida `{ language, line }` y se envía una sola vez; mientras responde pasa a «Confirmando…» y las líneas y las pestañas quedan bloqueadas. Sin diálogo de confirmación: la selección y la confirmación ya son dos pasos (decisión #26)
 
 ### nota-lenguajes
 - Texto/label: El bug es el mismo en los tres lenguajes: cambiar de pestaña no cambia la respuesta.
 - Icono: nada
-- Annotation: nota del pattern `bug-hunt.confirm` (Inter 13 `text.muted`), junto al botón en desktop y debajo en mobile
+- Annotation: nota del pattern `bug-hunt.confirm` (Inter 13 `text.muted`), debajo del botón en todos los breakpoints
 
 ### card-reglas
 - Texto/label: // cómo se juega
 - Texto secundario: 01 · Leé qué debería hacer la función y mirá los tests. · 02 · Tocá la línea donde creés que está el bug. · 03 · Confirmá: tenés **un solo intento**. El lenguaje que tengas abierto queda como tu preferido. — Con teclado: flechas ← → para cambiar de lenguaje, Tab hasta el código, flechas ↑ ↓ para recorrer las líneas elegibles, Espacio para elegir y Enter en «Confirmar línea».
 - Icono: nada
-- Annotation: `card` con cabecera `//`, como la card «// cómo se juega» del prototipo y la «// reglas» de Big O y Tech Timeline; es el destino de «Cómo se juega» del header (`#game-help`). Inter 14 `text.body`; «un solo intento» en `<b>` con el acento
+- Annotation: `SectionPanel` con cabecera `//` y `id={HELP_TARGET_ID}`, como la card «// cómo se juega» del prototipo; es el destino de «Cómo se juega» del header (`#game-help`) y el primer panel del lateral, con el mismo título en los cinco juegos (REQ-012). Inter 14 (`text-body-sm`) `text.body`; «un solo intento» en `<b>` con el acento
 
 ### link-reportar
 - Texto/label: Reportar un problema
 - Icono: warning
-- Annotation: abre O-01 (bottom-sheet en mobile, modal en desktop) con el aviso «No incluyas la respuesta si todavía estás jugando»; el contexto del reporte incluye el lenguaje visible (`code_language`). Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007)
+- Annotation: slot `aside` del host, siempre último del lateral (debajo de `card-tests`). Abre O-01 (bottom-sheet en mobile, modal en desktop) con el aviso «No incluyas la respuesta si todavía estás jugando»; el contexto del reporte incluye el lenguaje visible (`code_language`). Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007)
 
 ### loader
 - Texto/label: $ cargando tu partida de bug-hunt…
@@ -310,7 +310,7 @@ date: 2026-11-14
 
 ## Accesibilidad
 
-- **Orden de foco:** header → titulo → especificación y tests (lectura) → pestañas de lenguaje → grupo de líneas (una sola parada de Tab; roving tabindex entre elegibles) → btn-confirmar → card-reglas (lectura) → link-reportar. En desktop el DOM sigue el orden visual: columna izquierda (especificación, código, confirmar) y luego la derecha (tests, reglas, reporte); en mobile los tests van antes del código.
+- **Orden de foco:** header → titulo → especificación (lectura) → pestañas de lenguaje → grupo de líneas (una sola parada de Tab; roving tabindex entre elegibles) → btn-confirmar → card-reglas y tests (lectura) → link-reportar. El orden del DOM es el mismo en mobile y desktop: columna principal (especificación, código, confirmar) y luego el lateral (cómo se juega, tests, reporte).
 - **Landmarks y jerarquía:** `h1` es la pregunta; «qué debería hacer», «tests» y «cómo se juega» son `h2` (la cabecera `//` de cada bloque). Landmarks: header (breadcrumb como `nav` con nombre), main, footer.
 - **Foco y teclado:** pestañas con el patrón `tablist`/`tab`/`tabpanel` (flechas ← →, `aria-selected`, foco visible). Líneas como `radiogroup`: Tab entra y sale del grupo, ↑ ↓ recorren solo las elegibles (las demás no están en el orden de foco), Espacio elige. Enter o Espacio en «Confirmar línea» envía. O-01 atrapa el foco y lo devuelve a `link-reportar`. Toda la partida se completa sin mouse (RF 15, CA 23).
 - **Propio de esta composición:** la línea elegida se distingue con barra lateral, tag «◀ tu elección» (o glifo `◀`) y el número en el botón, no solo con color (NFR-U04, CA 23). Las líneas no elegibles se anuncian como texto del código, no como opciones deshabilitadas, para no alargar el grupo. Los tests se leen como lista: «maxIndex de [3, 7, 2] da 1, pasa»; el oculto: «1 test oculto falla».
@@ -325,11 +325,14 @@ date: 2026-11-14
 - REQ-010: las líneas son un `radiogroup` en el que solo las de `pickable_lines` son opciones; la firma y las líneas de llaves son texto no interactivo. Se elimina `alerta-linea` («Esa línea no se puede elegir»): una línea que no se puede tocar no necesita un mensaje de error, y la regla está en la consigna, las instrucciones y las reglas. El único rechazo posible es `invalid_move` del servidor, que va a la línea de aviso.
 - REQ-010: la línea elegida sobrevive al cambio de pestaña y de idioma porque es el mismo número de línea en los 3 lenguajes (decisión 1 del diseño técnico; corrige el supuesto del REQ que hablaba de conservar el nodo). La línea elegida no se guarda en el servidor: al retomar se ve el código sin selección (CA 8).
 - REQ-010: los tests visibles se muestran como llamadas (`maxIndex([3, 7, 2]) → 1`) con `function_name`, que el diseño técnico suma a la vista pública para esto (decisión 3); el prototipo los muestra solo como `[3, 7, 2] → 1`, que no funciona para funciones de dos argumentos. La sintaxis es la misma en las 3 pestañas para no recalcular los tests al cambiar de lenguaje.
-- REQ-010: en mobile los tests van antes del código: la especificación y los tests forman el enunciado y tienen que leerse antes de buscar; así «Confirmar línea» queda pegado al código, donde está el pulgar al elegir. En desktop los tests van a la derecha, a la vista, como el prototipo.
+- ~~REQ-010: en mobile los tests van antes del código~~ (reemplazado por REQ-012): los tests son un panel del lateral, después de «// cómo se juega», y en mobile quedan después de «Confirmar línea», en el orden del DOM. En desktop siguen a la derecha, a la vista, como el prototipo.
 - REQ-010 (pendiente del diseño técnico: selección de líneas en mobile): cada línea elegible es un blanco de 44 px de alto y ancho completo del bloque; en el bloque angosto el tag «◀ tu elección» se reduce al glifo `◀` fijo al borde derecho visible, para que no quede fuera de la vista dentro del scroll horizontal. El texto completo lo dan la línea de aviso y la etiqueta «Confirmar línea 4 →».
 - REQ-010: el código lleva resaltado de sintaxis (ADR-002: Shiki solo en los chunks de big-o y bug-hunt) con un tema desde los tokens de Bug Hunt y fallback sin color, como Big O; el DS define el tema solo para Big O `readonly`, gap anotado en la Revisión UX.
 - REQ-010: se suma `card-reglas` («// cómo se juega» del prototipo) como destino de «Cómo se juega» del header, con la ayuda de teclado, como en Big O y Tech Timeline. En mobile va después de confirmar para no empujar el código hacia abajo.
 - REQ-010: estados `confirmando`, `error de validación` (`invalid_move`, CA 6), `límite de jugadas`, `anulado` (`challenge_voided`, CA 20), `sin sesión` y `ya reportado`, como en los otros juegos.
+
+- REQ-012 (2026-11-25, patrón común de partida, S-064): dos columnas reales, principal 7 (especificación, código, línea de aviso, «Confirmar línea» a ancho completo en todos los breakpoints y la nota de lenguajes) y lateral 5 (`card-reglas` primero, `card-tests` y el reporte siempre último); en mobile se apilan en ese orden. El `//` de la consigna es `aria-hidden`.
+- REQ-012 (S-066): el código no scrollea en horizontal: las líneas largas saltan con sangría colgante.
 
 **Alternativas descartadas:**
 - Tabs de lenguaje como overlay: es una vista inline (C-26).
@@ -344,4 +347,4 @@ date: 2026-11-14
 
 ## Trazabilidad
 
-- F-08, C-26, C-30, C-36, C-10, C-11 · REQ-010 (RF 2-5, 8, 15; CA 2, 3, 6-8, 15, 20-23) · flujos 1, 2 y 4 de `user-flows.md`.
+- F-08, C-26, C-30, C-36, C-10, C-11 · REQ-010 (RF 2-5, 8, 15; CA 2, 3, 6-8, 15, 20-23) · REQ-012 (S-064, S-066) · flujos 1, 2 y 4 de `user-flows.md`.

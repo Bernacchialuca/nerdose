@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "2.0"
-date: 2026-11-14
+version: "2.1"
+date: 2026-11-25
 ---
 
 # Pantalla: Big O · Resultado
@@ -20,8 +20,8 @@ date: 2026-11-14
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
 - **JTBD / Propósito:** Ver si acertó, la opción correcta junto a la elegida (con ícono y texto, no solo color), el código con una nota en cada loop o llamada, la explicación paso a paso (costo de cada bloque, reglas de anidamiento y secuencia, simplificación final), el recuadro «en números» y el consejo si la receta tenía trampa; ver las rachas actualizadas y compartir sin revelar la respuesta.
 - **Viewports:**
-  - **mobile** — veredicto arriba; pregunta, pestañas, código con notas y la grilla de opciones (2 columnas); después la explicación completa y la card de cierre (rachas + salidas) al pie, en una columna. El código scrollea dentro de su bloque y las notas bajan a una segunda fila bajo su línea.
-  - **desktop** — veredicto a ancho completo; código, opciones (4 columnas) y la card de cierre a la izquierda (7/12); la explicación «// por qué · Paso a paso» como panel a la derecha (5/12), como el prototipo. «Compartir» solo en el header.
+  - **mobile** — veredicto (banner) arriba; pregunta, pestañas, código con notas, la grilla de opciones (2 columnas) y la card de cierre (rachas + salidas); después la explicación completa y el reporte, en una columna (orden del DOM: principal y después lateral). Las líneas largas del código saltan con sangría colgante (sin scroll horizontal) y las notas bajan a una segunda fila bajo su línea.
+  - **desktop** — veredicto a ancho completo; código, opciones (4 columnas) y la card de cierre a la izquierda (7/12); la explicación «// por qué · Paso a paso» como panel a la derecha (5/12), como el prototipo, y debajo el reporte. «Compartir» solo en el header.
 
 ## Entrada y salida
 
@@ -46,11 +46,11 @@ date: 2026-11-14
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
 | 1 | header | header | game-header · finished | layout | ambos | — | Breadcrumb `> nerdose / big-o`, «desafío del dd/mm», Compartir activo, idioma y racha |
-| 2 | veredicto | heading | h1 | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: perdió, anulado | Veredicto de la partida con la respuesta correcta, en texto además del color |
+| 2 | veredicto | banner | success · h1 | feedback | ambos | hidden_in_states: loading, error de sistema; state_overrides: perdió, anulado | Veredicto siempre visible (`Banner` con `titleAs="h1"`): la respuesta correcta y un detalle, en texto además del color |
 | 3 | alerta-anulado | alert | warning | feedback | ambos | visible_only_in_states: anulado | Aviso de anulación |
 | 4 | pregunta | heading | h2 | content | ambos | hidden_in_states: loading, error de sistema, anulado | La pregunta del juego, como en la partida |
 | 5 | tabs-lenguaje | tabs | code-block · tablist | navigation | ambos | hidden_in_states: loading, error de sistema, anulado | Pestañas JavaScript / Go / Java (solo vista); arranca en el lenguaje con el que confirmó |
-| 6 | codigo | image | code-block · readonly | content | ambos | hidden_in_states: loading, error de sistema, anulado; viewport_overrides: mobile→notas bajo la línea | El código con las líneas de cada loop o llamada resaltadas y su nota («n veces») |
+| 6 | codigo | image | code-block · readonly | content | ambos | hidden_in_states: loading, error de sistema, anulado; viewport_overrides: mobile→notas bajo la línea | El código con las líneas de cada loop o llamada resaltadas y su nota («n veces»); las líneas largas saltan con sangría colgante |
 | 7 | opciones-resultado | chips | big-o.option · resultado | content | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: perdió | Las 8 opciones con la correcta y la elegida marcadas con ícono y texto |
 | 8 | explicacion-titulo | heading | h2 | content | ambos | hidden_in_states: loading, error de sistema, anulado | Cabecera del panel de explicación: «// por qué» + «Paso a paso» |
 | 9 | lista-pasos | list | big-o.step | content | ambos | hidden_in_states: loading, error de sistema, anulado | De 2 a 6 pasos numerados: costo de cada bloque, reglas de composición y simplificación final |
@@ -58,7 +58,7 @@ date: 2026-11-14
 | 11 | consejo | paragraph | body | content | ambos | hidden_in_states: loading, error de sistema, anulado, sin ejemplo | Consejo para las recetas con trampa |
 | 12 | card-rachas | card | — | content | ambos | hidden_in_states: loading, error de sistema | Rachas de Big O y global actualizadas (fila superior de la card de cierre) |
 | 13 | link-stats | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Ir a estadísticas |
-| 14 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema; state_overrides: ya reportado | Abre O-01 para avisar que el desafío está mal (C-36); deshabilitado si el jugador ya reportó este desafío |
+| 14 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema; state_overrides: ya reportado | Abre O-01 para avisar que el desafío está mal (C-36); deshabilitado si el jugador ya reportó este desafío. Siempre último del lateral |
 | 15 | cuenta-regresiva | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Cuenta regresiva al próximo desafío |
 | 16 | btn-siguiente | button | primary | input | ambos | hidden_in_states: loading, error de sistema, sin juegos pendientes | Lleva al siguiente juego pendiente |
 | 17 | link-volver | link | — | navigation | ambos | hidden_in_states: loading, error de sistema | Salida a la home |
@@ -79,15 +79,15 @@ date: 2026-11-14
 - tabs-lenguaje
 - codigo
 - opciones-resultado
-- explicacion-titulo
-- lista-pasos
-- caja-numeros
-- consejo
 - card-rachas
 - link-stats
 - cuenta-regresiva
 - btn-siguiente
 - link-volver
+- explicacion-titulo
+- lista-pasos
+- caja-numeros
+- consejo
 - link-reportar
 
 ### desktop · 1200px
@@ -109,8 +109,9 @@ date: 2026-11-14
 
 ### veredicto
 - Texto/label: Correcto: O(n log n)
+- Texto secundario: Confirmaste en Java. El paso a paso repasa por qué es O(n log n).
 - Icono: check
-- Annotation: al ganar, sin banner: confeti azul del juego (host `web`, solo en la transición partida → resultado ganado, sin animación con `prefers-reduced-motion`) y `h1` `sr-only` («Correcto: O(n log n)»), como Devdle, Grep Grid y Tech Timeline; la señal visible con ícono y texto es la grilla de opciones («✓ correcta · tu respuesta»). Al perder, banner `failure` del DS, sin drama (ver estado `perdió`)
+- Annotation: `Banner` `success` de `@nerdose/ui` con `titleAs="h1"`, siempre visible arriba y a ancho completo (REQ-012, patrón común de resultado; reemplaza el `h1` `sr-only` del caso ganador). El confeti azul del juego sigue igual (host `web`, solo en la transición partida → resultado ganado, sin animación con `prefers-reduced-motion`). Al perder, banner `failure` del DS, sin drama (ver estado `perdió`). El detalle no dice «abajo» ni «a la derecha»: la posición del paso a paso cambia según el viewport
 
 ### alerta-anulado
 - Texto/label: Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.
@@ -132,7 +133,7 @@ date: 2026-11-14
 - Texto/label: function f(n) { … } · líneas 3 y 4 resaltadas con «n veces» y «log n veces»
 - Asset: placeholder 4:3 (hasta ~15 líneas)
 - Icono: nada
-- Annotation: `code-block` `readonly` del DS: las líneas de `explanation.line_notes` llevan fondo `game.big-o.line-highlight` (`#0E1D2E`) + barra `inset 3px` `#5EB1FF` y la nota en `game.big-o.light` (`#8CC8FF`, Mono 12), en el idioma activo. En desktop la nota va al margen derecho de su línea, como el prototipo; **en mobile baja a una segunda fila bajo su línea**, alineada con el código, para que no quede fuera de la vista dentro del scroll horizontal (`viewport_override`; ver «Design System» en la Revisión UX). Mismo resaltado de sintaxis y fallback sin color que en la partida; texto seleccionable; el cuerpo scrollea en horizontal dentro del bloque, la página no (CA 21)
+- Annotation: `code-block` `readonly` del DS: las líneas de `explanation.line_notes` llevan fondo `game.big-o.line-highlight` (`#0E1D2E`) + barra `inset 3px` `#5EB1FF` y la nota en `game.big-o.light` (`#8CC8FF`, Mono 12), en el idioma activo. En desktop la nota va al margen derecho de su línea, como el prototipo; **en mobile baja a una segunda fila bajo su línea**, alineada con el código, para que no compita por el ancho con el código (`viewport_override`; ver «Design System» en la Revisión UX). Mismo resaltado de sintaxis y fallback sin color que en la partida; texto seleccionable. Las líneas largas saltan con sangría colgante (`CodeText`, REQ-012 / S-066): no hay scroll horizontal ni en el bloque ni en la página (CA 21)
 
 ### opciones-resultado
 - Texto/label: // tu respuesta · confirmada en Java
@@ -177,7 +178,7 @@ date: 2026-11-14
 ### link-reportar
 - Texto/label: Reportar un problema
 - Icono: warning
-- Annotation: abre O-01 (bottom-sheet en mobile, modal en desktop) desde el resultado (también el anulado), sin el aviso de spoilers. Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007)
+- Annotation: slot `aside` del host, siempre último del lateral (debajo del panel de explicación). Abre O-01 (bottom-sheet en mobile, modal en desktop) desde el resultado (también el anulado), sin el aviso de spoilers. Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007)
 
 ### cuenta-regresiva
 - Texto/label: Próximo desafío en 05:42:10
@@ -218,14 +219,14 @@ date: 2026-11-14
 
 ### default
 - Aplica: Sí
-- Mensaje: Correcto: O(n log n). Confeti y la opción marcada «✓ correcta · tu respuesta».
+- Mensaje: Correcto: O(n log n). Confirmaste en Java. El paso a paso repasa por qué es O(n log n). Banner `success`, confeti y la opción marcada «✓ correcta · tu respuesta».
 - Cambios: ninguno respecto de default.
 
 ### perdió
 - Aplica: Sí (sub-estado de default)
-- Mensaje: Incorrecto: era O(n log n). Elegiste O(n²) en Go. Abajo, paso a paso por qué.
+- Mensaje: Incorrecto: era O(n log n). Elegiste O(n²) en Go. El paso a paso explica por qué.
 - Cambios:
-  - veredicto: content="Incorrecto: era O(n log n)", icon="x", annotation="banner `failure` del DS, sin drama; subtítulo «Elegiste O(n²) en Go. Abajo, paso a paso por qué.»; sin confeti. Perder también suma a la racha" (state_override)
+  - veredicto: content="Incorrecto: era O(n log n)", icon="x", annotation="banner `failure` del DS, sin drama; subtítulo «Elegiste O(n²) en Go. El paso a paso explica por qué.»; sin confeti. Perder también suma a la racha" (state_override)
   - opciones-resultado: content="// tu respuesta · confirmada en Go", annotation="O(n log n) ✓ correcta (relleno verde) · O(n²) ✗ tu respuesta (borde 2px de error, sin relleno) (CA 5)" (state_override)
 
 ### sin ejemplo
@@ -318,7 +319,7 @@ date: 2026-11-14
 ## Interacciones
 
 **Eventos:**
-- Compartir del header · on click → share nativo con «🧮 Big O #8 / 🟩 Java / nerdose.dev» o copia al portapapeles (estado success); registra `share:big-o`
+- Compartir del header · on click → share nativo con «🧮 Big O #8 / 🟩 Java / nerdose.dev» o copia al portapapeles (estado success); no emite ningún evento (sin analítica desde REQ-011)
 - tabs-lenguaje · tocar pestaña o flechas ← → → el mismo código en otro lenguaje, con las mismas notas por línea; no cambia la preferencia
 - ES|EN · on change → veredicto, pasos, notas por línea, «en números» y consejo pasan al otro idioma; el código, las opciones y el lenguaje no cambian (CA 22)
 - btn-siguiente · on click → siguiente juego pendiente
@@ -333,8 +334,8 @@ date: 2026-11-14
 
 ## Accesibilidad
 
-- **Orden de foco:** header → veredicto → pestañas de lenguaje → cuerpo del código (si desborda) → opciones (lectura) → explicación (lectura) → card de cierre (link-stats → btn-siguiente → link-volver) → link-reportar (Compartir va en el header). En desktop el DOM sigue el orden visual: columna izquierda y luego el panel de explicación.
-- **Landmarks y jerarquía:** `h1` es el veredicto (`sr-only` al ganar); la pregunta, «tu respuesta», «Paso a paso» y rachas son `h2`. Landmarks: header (breadcrumb como `nav` con nombre), main (el panel de explicación como `aside` con nombre «Paso a paso»), footer.
+- **Orden de foco:** header → veredicto → pestañas de lenguaje → cuerpo del código → opciones (lectura) → card de cierre (link-stats → btn-siguiente → link-volver) → explicación (lectura) → link-reportar (Compartir va en el header). El orden del DOM es el mismo en mobile y desktop: columna principal y luego el lateral.
+- **Landmarks y jerarquía:** `h1` es el título del banner del veredicto (visible también al ganar); la pregunta, «tu respuesta», «Paso a paso» y rachas son `h2`. Landmarks: header (breadcrumb como `nav` con nombre), main (el panel de explicación como `aside` con nombre «Paso a paso»), footer.
 - **Foco y teclado:** O-01 atrapa el foco y lo devuelve a `link-reportar`. Las opciones del resultado no son interactivas: se recorren como lectura.
 - **Propio de esta composición:** la correcta y la elegida se distinguen con ✓/✗ y las etiquetas «correcta» / «tu respuesta», no solo con color (CA 5, 21, NFR-U04). Cada nota de línea se asocia a su línea (`aria-describedby`) para que el lector la lea junto al código. La confirmación «Copiado» se anuncia con `role=status`. El confeti es `aria-hidden` y respeta `prefers-reduced-motion`.
 
@@ -353,10 +354,13 @@ date: 2026-11-14
 - REQ-009: `card-rachas` dentro de la card de cierre, como en Devdle, Grep Grid y Tech Timeline. Las stats por categoría de receta van en `estadisticas` (FG-10).
 - REQ-007: «Reportar un problema» es un enlace secundario al final; el estado «ya reportado» se lee de `GameToday.reported`. `anulado` es una sola variante mínima (aviso + rachas, sin código, solución ni Compartir).
 
+- REQ-012 (2026-11-25, patrón común de resultado, S-064): el veredicto es siempre un `Banner` visible (`success` al ganar, con el detalle nuevo «Confirmaste en {lenguaje}. El paso a paso repasa por qué es {respuesta}.»; `failure` al perder), con el confeti del host igual; reemplaza el `h1` `sr-only` del criterio del 2026-11-11. Dos columnas reales: principal (pregunta, código, opciones y card de cierre) y lateral (explicación y reporte, siempre último); en mobile la card de cierre queda antes de la explicación. Los detalles no dicen «abajo».
+- REQ-012 (S-066): el código no scrollea en horizontal: las líneas largas saltan con sangría colgante.
+
 **Alternativas descartadas:**
-- Banner `success` al ganar (como el prototipo): el criterio común del 2026-11-11 lo reemplaza por el confeti en todos los juegos.
+- ~~Banner `success` al ganar (como el prototipo): el criterio común del 2026-11-11 lo reemplaza por el confeti en todos los juegos.~~ Revertido por REQ-012: el banner `success` vuelve, junto con el confeti.
 - Mantener `card-respuesta` («Respuesta correcta: …, elegiste …»): duplica lo que la grilla ya muestra con ícono y texto, y en mobile empuja el código hacia abajo.
-- Las notas por línea siempre al margen derecho también en mobile: a 320 px quedan fuera de la vista dentro del scroll horizontal del código.
+- Las notas por línea siempre al margen derecho también en mobile: a 320 px le quitan casi todo el ancho al código.
 - Mostrar la categoría de la receta («loops anidados») en el resultado: no está en C-29 y el header del prototipo la usa como metadato también durante la partida, donde sería pista; queda para las stats por categoría (FG-10).
 - Toast «Copiado»: requiere un componente nuevo del DS para un solo uso.
 
@@ -365,4 +369,4 @@ date: 2026-11-14
 
 ## Trazabilidad
 
-- C-29, C-12, C-13, C-26, C-33, C-36, C-41 · REQ-009 (RF 5-8, 15; CA 4, 5, 9, 10, 16, 21, 22) · flujos 1, 3, 4 y 5 de `user-flows.md` · REQ-007 (RF 1, 9).
+- C-29, C-12, C-13, C-26, C-33, C-36, C-41 · REQ-009 (RF 5-8, 15; CA 4, 5, 9, 10, 16, 21, 22) · REQ-012 (S-064, S-066) · flujos 1, 3, 4 y 5 de `user-flows.md` · REQ-007 (RF 1, 9).

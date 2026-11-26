@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "2.0"
-date: 2026-11-14
+version: "2.1"
+date: 2026-11-25
 ---
 
 # Pantalla: Big O · Partida
@@ -20,8 +20,8 @@ date: 2026-11-14
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
 - **JTBD / Propósito:** Leer la función `f(n)` en el lenguaje que prefiera (JavaScript, Go o Java, solo una vista), elegir una de las 8 complejidades fijas y confirmar en un solo intento. Antes del cierre el jugador solo recibe el código en los 3 lenguajes y las 8 opciones: la respuesta, la explicación y la receta llegan recién al confirmar.
 - **Viewports:**
-  - **mobile** — consigna y pregunta arriba; pestañas y código a ancho completo (el código scrollea en horizontal dentro de su bloque, nunca la página); las 8 opciones en 2 columnas; «Confirmar respuesta» alcanzable con el pulgar y las reglas al final. Sin scroll horizontal de página desde 320 px.
-  - **desktop** — consigna y pregunta a ancho completo; código y opciones (4 columnas, como el prototipo) a la izquierda (7/12); reglas, «Confirmar respuesta» y el reporte a la derecha (5/12), a la vista sin scroll.
+  - **mobile** — consigna y pregunta arriba; pestañas y código a ancho completo (una línea que no entra salta de línea con sangría colgante, sin scroll horizontal); las 8 opciones en 2 columnas; «Confirmar respuesta» a ancho completo debajo de las opciones; después «// cómo se juega» y el reporte. Sin scroll horizontal desde 320 px.
+  - **desktop** — consigna y pregunta a ancho completo; columna principal (7/12) con código, opciones (4 columnas, como el prototipo), la línea de aviso y «Confirmar respuesta» a ancho completo; lateral (5/12) con «// cómo se juega» y el reporte (REQ-012, patrón común de partida).
 
 ## Entrada y salida
 
@@ -50,12 +50,12 @@ date: 2026-11-14
 | 4 | alerta-anulado | alert | warning | feedback | ambos | visible_only_in_states: anulado | Aviso de desafío anulado durante la partida |
 | 5 | banner-cookies | alert | warning | feedback | ambos | visible_only_in_states: sin sesión | Explica que hace falta la cookie funcional (`no_session`) |
 | 6 | tabs-lenguaje | tabs | code-block · tablist | navigation | ambos | hidden_in_states: loading, error de sistema, anulado | Pestañas JavaScript / Go / Java del bloque de código (solo vista, C-26) |
-| 7 | codigo | image | code-block · readonly | content | ambos | hidden_in_states: loading, error de sistema, anulado | La función `f(n)` con numeración de líneas y resaltado de sintaxis, sin anotaciones |
+| 7 | codigo | image | code-block · readonly | content | ambos | hidden_in_states: loading, error de sistema, anulado | La función `f(n)` con numeración de líneas y resaltado de sintaxis, sin anotaciones; las líneas largas saltan con sangría colgante |
 | 8 | opciones | chips | big-o.option · radiogroup | input | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: selección hecha, confirmando | Las 8 complejidades fijas, de selección única |
 | 9 | seleccion | paragraph | caption | feedback | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: selección hecha, error de validación, límite de jugadas | Línea de aviso del juego: la opción elegida y los rechazos del servidor, sin penalizar |
-| 10 | btn-confirmar | button | accent | input | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: default, confirmando | Segundo paso: envía la opción elegida y el lenguaje visible (un solo intento, decisión #26) |
-| 11 | card-reglas | card | — | content | ambos | hidden_in_states: loading, error de sistema, anulado | «// reglas»: tres reglas cortas y la ayuda de teclado; destino de «Cómo se juega» |
-| 12 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema; state_overrides: ya reportado | Abre O-01 para avisar que el desafío está mal (C-36); deshabilitado si el jugador ya reportó este desafío |
+| 10 | btn-confirmar | button | accent | input | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: default, confirmando | Segundo paso: envía la opción elegida y el lenguaje visible (un solo intento, decisión #26). CTA principal a ancho completo debajo del área de juego |
+| 11 | card-reglas | card | — | content | ambos | hidden_in_states: loading, error de sistema, anulado | «// cómo se juega»: tres reglas cortas y la ayuda de teclado; destino de «Cómo se juega»; primer panel del lateral |
+| 12 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema; state_overrides: ya reportado | Abre O-01 para avisar que el desafío está mal (C-36); deshabilitado si el jugador ya reportó este desafío. Siempre último del lateral |
 | 13 | loader | loader | — | feedback | ambos | visible_only_in_states: loading | Indicador de carga |
 | 14 | alerta-sistema | alert | error | feedback | ambos | visible_only_in_states: error de sistema | Error de carga con causa y salida |
 | 15 | btn-reintentar | button | secondary | input | ambos | visible_only_in_states: error de sistema, sin sesión; state_overrides: sin sesión | Reintentar la carga o recrear la sesión |
@@ -88,8 +88,8 @@ date: 2026-11-14
 - btn-reintentar
 - alerta-anulado
 - row `juego`
-  - col 7/12: tabs-lenguaje, codigo, opciones, seleccion
-  - col 5/12: card-reglas, btn-confirmar, link-reportar
+  - col 7/12: tabs-lenguaje, codigo, opciones, seleccion, btn-confirmar
+  - col 5/12: card-reglas, link-reportar
 
 ## Contenido
 
@@ -128,7 +128,7 @@ date: 2026-11-14
 - Texto/label: function f(n) { … } · código del desafío con numeración de líneas
 - Asset: placeholder 4:3 (hasta ~15 líneas)
 - Icono: nada
-- Annotation: `code-block` `readonly` sin líneas resaltadas ni anotaciones (las notas «n veces» son del resultado: durante la partida serían la respuesta). Texto seleccionable, Mono 15/2, sin ligaduras; resaltado de sintaxis con Shiki cargado en el chunk de `/big-o` (ADR-002) y un tema que sale de los tokens del DS con contraste AA sobre `bg.surface.sunken`; mientras carga, o si falla, se muestra el mismo código sin color, sin saltos de layout (ver «Design System» en la Revisión UX de REQ-009). Números de línea con contraste ≥ 4,5:1. El cuerpo tiene scroll horizontal propio, alcanzable con teclado (`tabindex="0"` y nombre «Código de f(n) en {lenguaje}»); la página nunca scrollea en horizontal (CA 21, 320 px). El código no lleva comentarios
+- Annotation: `code-block` `readonly` sin líneas resaltadas ni anotaciones (las notas «n veces» son del resultado: durante la partida serían la respuesta). Texto seleccionable, Mono 15/2, sin ligaduras; resaltado de sintaxis con Shiki cargado en el chunk de `/big-o` (ADR-002) y un tema que sale de los tokens del DS con contraste AA sobre `bg.surface.sunken`; mientras carga, o si falla, se muestra el mismo código sin color, sin saltos de layout (ver «Design System» en la Revisión UX de REQ-009). Números de línea con contraste ≥ 4,5:1. Cada línea que no entra salta de línea (soft-wrap) con sangría colgante: la sangría original queda fija a la izquierda y la continuación arranca alineada con el código de esa línea (`CodeText`, REQ-012 / S-066); el número de línea no se repite. No hay scroll horizontal ni en el bloque ni en la página (CA 21, 320 px). El cuerpo sigue siendo enfocable (`tabindex="0"` y nombre «Código de f(n) en {lenguaje}»). El código no lleva comentarios
 
 ### opciones
 - Texto/label: // tu respuesta
@@ -142,15 +142,15 @@ date: 2026-11-14
 - Annotation: línea de aviso del juego (Mono 13), siempre montada con `min-height` para no mover el layout; repite el último anuncio de la región viva `sr-only` (`aria-live="polite"`). Sin rojo ni shake: un rechazo no consume el intento. Textos: «> elegiste O(n²). Podés cambiarla hasta confirmar.», «> no pudimos registrar tu respuesta. Elegí una opción y confirmá de nuevo: no perdiste tu intento.» (`invalid_move`, CA 7), «> vas muy rápido. Esperá unos segundos y probá de nuevo.» (429)
 
 ### btn-confirmar
-- Texto/label: Confirmar respuesta
-- Icono: check
-- Annotation: `button` `accent` de Big O (`#5EB1FF` / `#06121F`), tamaño `lg`, ancho completo en mobile. Deshabilitado hasta elegir una opción (`aria-disabled` con el motivo «Elegí una opción para confirmar»). Al tocarlo se valida `{ language, option }` y se envía una sola vez; mientras responde pasa a «Confirmando…» y las opciones y las pestañas quedan bloqueadas. Sin diálogo de confirmación: la selección y la confirmación ya son dos pasos (decisión #26)
+- Texto/label: Confirmar respuesta →
+- Icono: nada (glifo final `→`, `aria-hidden`)
+- Annotation: `button` `accent` de Big O (`#5EB1FF` / `#06121F`), tamaño `lg`, **ancho completo en todos los breakpoints**, en la columna principal justo debajo de `seleccion` (REQ-012, patrón común). Deshabilitado hasta elegir una opción: `aria-disabled="true"` y la etiqueta pasa a ser la instrucción «Elegí una opción», sin `→`; al elegir muestra «Confirmar respuesta →». Al tocarlo se valida `{ language, option }` y se envía una sola vez; mientras responde pasa a «Confirmando…» y las opciones y las pestañas quedan bloqueadas. Sin diálogo de confirmación: la selección y la confirmación ya son dos pasos (decisión #26)
 
 ### card-reglas
-- Texto/label: // reglas
+- Texto/label: // cómo se juega
 - Texto secundario: 01 · Peor caso: cómo crecen las operaciones cuando n crece. · 02 · Un solo intento: elegí y confirmá. · 03 · El lenguaje es solo una vista: el que tengas abierto al confirmar queda como tu preferido. — Con teclado: flechas ← → para cambiar de lenguaje, Tab hasta las opciones, flechas para elegir y Enter en «Confirmar respuesta».
 - Icono: nada
-- Annotation: `card` con cabecera `//`, como la card «// reglas» de Tech Timeline; es el destino de «Cómo se juega» del header (`#game-help`). Inter 14 `text.body`; las reglas numeradas en Mono
+- Annotation: `SectionPanel` con cabecera `//` y `id={HELP_TARGET_ID}`: es el destino de «Cómo se juega» del header (`#game-help`) y el primer panel del lateral, con el mismo título que en los otros cuatro juegos (REQ-012). Inter 14 (`text-body-sm`) `text.body`; las reglas numeradas en Mono
 
 ### link-reportar
 - Texto/label: Reportar un problema
@@ -181,9 +181,9 @@ date: 2026-11-14
 
 ### default
 - Aplica: Sí
-- Mensaje: > elegí una de las 8 opciones. «Confirmar respuesta» está deshabilitado.
+- Mensaje: > elegí una de las 8 opciones. El botón dice «Elegí una opción» y está deshabilitado.
 - Cambios:
-  - btn-confirmar: variant="disabled", annotation="deshabilitado hasta elegir una opción" (state_override)
+  - btn-confirmar: content="Elegí una opción", variant="disabled", annotation="deshabilitado hasta elegir una opción" (state_override)
 
 ### selección hecha
 - Aplica: Sí (sub-estado de default)
@@ -191,7 +191,7 @@ date: 2026-11-14
 - Cambios:
   - opciones: annotation="O(n²) elegida: fondo `#0B1522`, borde 2px `#5EB1FF`, `●` y `aria-checked=true`" (state_override)
   - seleccion: content="> elegiste O(n²). Podés cambiarla hasta confirmar." (state_override)
-  - btn-confirmar: variant="accent" (habilitado)
+  - btn-confirmar: content="Confirmar respuesta →", variant="accent" (habilitado)
 
 ### confirmando
 - Aplica: Sí (sub-estado de selección hecha)
@@ -288,8 +288,8 @@ date: 2026-11-14
 
 ## Accesibilidad
 
-- **Orden de foco:** header → titulo → pestañas de lenguaje → cuerpo del código (si desborda) → grupo de opciones → btn-confirmar → card-reglas (lectura) → link-reportar. En desktop el orden del DOM sigue el visual: columna izquierda y luego derecha.
-- **Landmarks y jerarquía:** `h1` es la pregunta; «tu respuesta» y «reglas» son `h2` (la cabecera `//` de cada bloque). Landmarks: header (breadcrumb como `nav` con nombre), main, footer.
+- **Orden de foco:** header → titulo → pestañas de lenguaje → cuerpo del código → grupo de opciones → btn-confirmar → card-reglas (lectura) → link-reportar. El orden del DOM es el mismo en mobile y desktop: columna principal y luego lateral.
+- **Landmarks y jerarquía:** `h1` es la pregunta; «tu respuesta» y «cómo se juega» son `h2` (la cabecera `//` de cada bloque). Landmarks: header (breadcrumb como `nav` con nombre), main, footer.
 - **Foco y teclado:** pestañas con el patrón `tablist`/`tab`/`tabpanel` (flechas ← →, `aria-selected`, foco visible). Opciones como `radiogroup`: Tab entra y sale del grupo, las flechas mueven la elección (roving tabindex). Enter o Espacio en «Confirmar respuesta» envía. O-01 atrapa el foco y lo devuelve a `link-reportar`. Toda la partida se completa sin mouse (RF 15, CA 21).
 - **Propio de esta composición:** la opción elegida se distingue con borde, peso y `●`, no solo con color (NFR-U04). El código es texto real, seleccionable y legible por lector de pantalla línea a línea; los números de línea son `aria-hidden`.
 
@@ -308,6 +308,9 @@ date: 2026-11-14
 - REQ-009: se suma `card-reglas` como destino de «Cómo se juega» del header (como la card «// reglas» de Tech Timeline), con la ayuda de teclado. En desktop ocupa la columna derecha sobre «Confirmar respuesta»; en mobile va después de confirmar para no empujar el código hacia abajo.
 - REQ-009: estados `confirmando`, `error de validación` (`invalid_move`, CA 7), `límite de jugadas`, `anulado` (`challenge_voided`, CA 20), `sin sesión` y `ya reportado`, como en los otros juegos. La opción elegida no se guarda en el servidor: al retomar se ve el código sin selección (CA 8).
 
+- REQ-012 (2026-11-25, patrón común de partida, S-064): «Confirmar respuesta» pasa a la columna principal, debajo de las opciones, a ancho completo en todos los breakpoints, con `→` y con la etiqueta «Elegí una opción» mientras está deshabilitado (reemplaza el `✓` y el motivo `sr-only`). El lateral queda «// cómo se juega» (antes «// reglas») y el reporte, siempre último. En mobile el orden es el del DOM: principal y después lateral.
+- REQ-012 (S-066): el código no scrollea en horizontal: las líneas largas saltan con sangría colgante.
+
 **Alternativas descartadas:**
 - Tabs de lenguaje como overlay: es una vista inline (C-26).
 - Opciones como `chips` en una sola fila con wrap: el ancho variable de cada opción mueve las posiciones al cambiar de ancho y dificulta encontrar una opción por posición.
@@ -319,4 +322,4 @@ date: 2026-11-14
 
 ## Trazabilidad
 
-- F-07, C-26, C-27, C-36, C-10, C-11 · REQ-009 (RF 2-5, 8, 15; CA 2, 3, 6-8, 18, 20-22) · flujos 1, 2 y 4 de `user-flows.md`.
+- F-07, C-26, C-27, C-36, C-10, C-11 · REQ-009 (RF 2-5, 8, 15; CA 2, 3, 6-8, 18, 20-22) · REQ-012 (S-064, S-066) · flujos 1, 2 y 4 de `user-flows.md`.

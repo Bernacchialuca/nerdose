@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.2"
-date: 2026-11-11
+version: "1.3"
+date: 2026-11-25
 ---
 
 # Pantalla: Tech Timeline · Partida
@@ -20,13 +20,20 @@ date: 2026-11-11
 - **Audiencia primaria:** [jugador](../../../audiences/jugador/research-context.md)
 - **JTBD / Propósito:** Ordenar los 5 hitos del día del más antiguo al más reciente, moviéndolos con el dedo desde el asa, con los botones ↑ ↓ o con el teclado, y confirmar el orden en un solo intento. El jugador solo ve la consigna fija y el nombre y la categoría de cada hito (el desafío mezcla categorías, 2026-11-11): las fechas, las notas y el orden correcto llegan recién al cerrar.
 - **Viewports:**
-  - **mobile** — consigna arriba, lista vertical de 5 filas a ancho completo (asa · posición · nombre · ↑ ↓), la ayuda de cómo mover y «Confirmar orden» al final, alcanzable con el pulgar. Sin scroll horizontal desde 320 px.
-  - **desktop** — consigna a ancho completo; la lista «// tu orden» a la izquierda (7/12) con el hint debajo, y la ayuda de cómo mover más «Confirmar orden» a la derecha (5/12), a la vista sin scroll.
+  - **mobile** — comentario, consigna (`h1`) y lede arriba, lista vertical de 5 filas a ancho completo (asa · posición · nombre · ↑ ↓), hint y «Confirmar orden» a ancho completo debajo de la lista; después el panel «// cómo se juega» y el reporte. Sin scroll horizontal desde 320 px.
+  - **desktop** — bloque de título a ancho completo; la lista «// tu orden» en la columna principal (~7/12) con el hint y «Confirmar orden →» a ancho completo debajo, y en el lateral (~5/12) el panel «// cómo se juega» y el reporte, a la vista sin scroll.
 
 > **Actualización 2026-11-11 (revisión visual del usuario).** Prevalece sobre la estructura de abajo donde difieran:
 > - Encabezado: comentario `// un solo intento · 1 punto por posición correcta`, la consigna como `h1` y un lede «Arriba el más antiguo, abajo el más reciente. Arrastrá cada tarjeta o usá las flechas.».
 > - Lista: cada hito es una tarjeta propia (tinte y borde del juego), sin panel contenedor; el `h2` «tu orden» queda solo para lectores de pantalla y rotula la lista. A la izquierda, un eje decorativo vertical «antes» → «después». Cada tarjeta muestra `????` donde irá la fecha (decorativo, desde 384 px de contenedor).
 > - Columna derecha: card «// reglas» (es el destino de «Cómo se juega», `#game-help`) con la racha del juego en el dato de la cabecera cuando es > 0, tres reglas numeradas 01–03 y la ayuda de teclado; debajo, «Confirmar orden →» y «Reiniciar» (vuelve a la mezcla inicial y lo anuncia en el hint). No hay card de promedios. Con el desafío anulado se oculta toda la columna.
+
+> **Actualización 2026-11-25 (REQ-012, S-064: patrón común de partida, implementado fuera del workflow).** Prevalece sobre la actualización anterior:
+> - La card del lateral se llama «// cómo se juega» (antes «// reglas»), sigue siendo el destino de «Cómo se juega» (`HELP_TARGET_ID`) y es el primer bloque del lateral; **ya no muestra la racha** en el dato de la cabecera. La ayuda de teclado pasa a `body-sm`.
+> - «Confirmar orden →» pasa a la **columna principal**, a ancho completo y justo debajo del hint, en todos los breakpoints. El lateral queda «cómo se juega» → reporte (siempre último).
+> - El hint ya no arranca vacío: en reposo dice «> arrastrá un hito desde su asa ⠿ o usá ↑ ↓ para moverlo» (vacío solo con el desafío anulado).
+> - No existe «Reiniciar» en el código (un test fija que no hay ese botón): la mención de arriba no se implementó.
+> - Con el desafío anulado se ocultan la card y el CTA; el reporte sigue visible.
 
 ## Entrada y salida
 
@@ -50,13 +57,13 @@ date: 2026-11-11
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
 | 1 | header | header | game-header · playing | layout | ambos | — | Breadcrumb `> nerdose / tech-timeline`, «desafío del dd/mm», acciones de juego, idioma y racha |
-| 2 | consigna | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema | Comentario de consigna y la regla de un solo intento |
+| 2 | consigna | paragraph | label-comment | content | ambos | hidden_in_states: loading, error de sistema | Línea de comentario `// ` arriba del `h1`: un solo intento y 1 punto por posición |
 | 3 | titulo | heading | h1 | content | ambos | hidden_in_states: loading, error de sistema | La consigna del día en el idioma activo |
 | 4 | alerta-anulado | alert | warning | feedback | ambos | visible_only_in_states: anulado | Aviso de desafío anulado durante la partida |
 | 5 | banner-cookies | alert | warning | feedback | ambos | visible_only_in_states: sin sesión | Explica que hace falta la cookie funcional (`no_session`) |
 | 6 | lista-hitos | list | timeline.row | content | ambos | hidden_in_states: loading, error de sistema; state_overrides: moviendo, confirmando, anulado | Panel «// tu orden»: 5 filas reordenables con asa, posición, nombre + etiqueta de categoría y botones ↑ ↓ |
 | 7 | hint-jugada | paragraph | caption | feedback | ambos | hidden_in_states: loading, error de sistema; state_overrides: moviendo, error de validación, límite de jugadas | Línea de aviso del juego: anuncia el último movimiento y los rechazos del servidor, sin penalizar |
-| 8 | ayuda-mover | paragraph | caption | content | ambos | hidden_in_states: loading, error de sistema, anulado | Las tres formas de mover un hito |
+| 8 | ayuda-mover | card | panel | content | ambos | hidden_in_states: loading, error de sistema, anulado | Panel «// cómo se juega» (`HELP_TARGET_ID`), primero del lateral: 3 reglas numeradas y las tres formas de mover un hito |
 | 9 | btn-confirmar | button | accent | input | ambos | hidden_in_states: loading, error de sistema, anulado; state_overrides: confirmando | Envía el orden armado (un solo intento) |
 | 10 | link-reportar | link | — | navigation | ambos | hidden_in_states: loading, error de sistema; state_overrides: ya reportado | Abre O-01 para avisar que el desafío está mal (C-36); deshabilitado si el jugador ya reportó este desafío |
 | 11 | loader | loader | — | feedback | ambos | visible_only_in_states: loading | Indicador de carga |
@@ -76,8 +83,8 @@ date: 2026-11-11
 - alerta-anulado
 - lista-hitos
 - hint-jugada
-- ayuda-mover
 - btn-confirmar
+- ayuda-mover
 - link-reportar
 
 ### desktop · 1200px
@@ -89,20 +96,20 @@ date: 2026-11-11
 - btn-reintentar
 - alerta-anulado
 - row `juego`
-  - col 7/12: lista-hitos, hint-jugada
-  - col 5/12: ayuda-mover, btn-confirmar, link-reportar
+  - col 7/12: lista-hitos, hint-jugada, btn-confirmar (ancho completo)
+  - col 5/12: ayuda-mover («// cómo se juega»), link-reportar (siempre último)
 
 ## Contenido
 
 ### header
 - Texto/label: > nerdose / tech-timeline · desafío del 30/10 · lenguajes de programación · [?] [stats] [Compartir] ES|EN · 🔥 4
 - Icono: nada
-- Annotation: `game-header` variant `playing` (REQ-006): el metadato es «desafío del dd/mm»; desde 2026-11-11 el desafío no tiene categoría propia (mezcla categorías), así que no se muestra una categoría del día. «Cómo se juega» lleva a `ayuda-mover` de esta misma pantalla (con la Play en curso el servidor no vuelve a mostrar las instrucciones); «Estadísticas» → `estadisticas`; Compartir deshabilitado («disponible al terminar la partida»); ES|EN cambia la consigna y las etiquetas de categoría sin perder el orden armado (CA 36); píldora con la racha global. Sin nav global ni `nav-movil`
+- Annotation: `game-header` variant `playing` (REQ-006): el metadato es «desafío del dd/mm»; desde 2026-11-11 el desafío no tiene categoría propia (mezcla categorías), así que no se muestra una categoría del día. «Cómo se juega» lleva a `ayuda-mover` («// cómo se juega», primer panel del lateral) de esta misma pantalla (con la Play en curso el servidor no vuelve a mostrar las instrucciones); «Estadísticas» → `estadisticas`; Compartir deshabilitado («disponible al terminar la partida»); ES|EN cambia la consigna y las etiquetas de categoría sin perder el orden armado (CA 36); píldora con la racha global. Sin nav global ni `nav-movil`
 
 ### consigna
-- Texto/label: // consigna: del más antiguo al más reciente · un solo intento
+- Texto/label: // un solo intento · 1 punto por posición correcta
 - Icono: nada
-- Annotation: comentario `//` del prototipo (Mono 13 `text.dim`)
+- Annotation: línea de comentario del bloque de título, arriba del `h1` (Mono `label-comment` `text.dim`, `// ` decorativo con `aria-hidden`); debajo del `h1` va el lede «Arriba el más antiguo, abajo el más reciente. Arrastrá cada tarjeta o usá las flechas.»
 
 ### titulo
 - Texto/label: Ordená estos lenguajes del más antiguo al más reciente
@@ -128,17 +135,17 @@ date: 2026-11-11
 ### hint-jugada
 - Texto/label: > moviste Go a la posición 3 de 5
 - Icono: nada
-- Annotation: línea de aviso del juego (Mono 13), siempre montada con `min-height` para no mover el layout; la línea visible repite el último anuncio de la región viva `sr-only` (`aria-live="polite"`). Sin rojo ni shake: un rechazo no consume el intento. Vacía al entrar. Textos: «> moviste {hito} a la posición {n} de 5», «> no pudimos registrar ese orden. Revisalo y confirmá de nuevo» (`invalid_move`), «> vas muy rápido. Esperá unos segundos y probá de nuevo» (429)
+- Annotation: línea de aviso del juego (Mono 13), siempre montada con `min-height` para no mover el layout; la línea visible repite el último anuncio de la región viva `sr-only` (`aria-live="polite"`). Sin rojo ni shake: un rechazo no consume el intento. En reposo: «> arrastrá un hito desde su asa ⠿ o usá ↑ ↓ para moverlo» (vacía solo en `anulado`). Textos: «> moviste {hito} a la posición {n} de 5», «> no pudimos registrar ese orden. Revisalo y confirmá de nuevo» (`invalid_move`), «> vas muy rápido. Esperá unos segundos y probá de nuevo» (429)
 
 ### ayuda-mover
-- Texto/label: Arrastrá cada fila desde su asa ⠿ o usá ↑ ↓. Con teclado: Espacio para tomar un hito, flechas para moverlo, Espacio para soltarlo y Escape para devolverlo a su lugar.
+- Texto/label: // cómo se juega · 01 Cinco hitos de distintas categorías. Las fechas se revelan al confirmar. · 02 Tenés un solo intento. Cada hito en su lugar suma 1 punto. · 03 Al terminar, cada hito muestra su fecha y un poco de historia. · Arrastrá cada fila desde su asa ⠿ o usá ↑ ↓. Con teclado: Espacio para tomar un hito, flechas para moverlo, Espacio para soltarlo y Escape para devolverlo a su lugar.
 - Icono: nada
-- Annotation: deriva de la nota del prototipo («Se arrastra y se suelta. En pantallas táctiles, cada fila también tiene flechas para subir y bajar.»), sumando el teclado (CA 10, NFR-U03). Inter 13 `text.muted`
+- Annotation: `SectionPanel` con `id = HELP_TARGET_ID` y cabecera `h2` «// cómo se juega» (REQ-012; antes «// reglas» con la racha en el dato, que se quitó). Reglas numeradas 01–03 con el acento del juego y la ayuda de mover en Inter `body-sm` `text.muted`; la ayuda deriva de la nota del prototipo, sumando el teclado (CA 10, NFR-U03). Primer bloque del lateral
 
 ### btn-confirmar
 - Texto/label: Confirmar orden
-- Icono: check
-- Annotation: `button` `accent` con el acento del juego (`#C39BFF`), `lg`, ancho completo en mobile. Siempre habilitado: el orden inicial ya es un orden válido que se puede confirmar (supuesto «Confirmación única»). Separado de la lista por la ayuda (mobile) o en la columna lateral (desktop) para que un toque accidental al mover no confirme. Sin segundo diálogo de confirmación
+- Icono: arrow-right (→ final, decorativo)
+- Annotation: `buttonClass({ variant: 'accent', game: 'timeline', size: 'lg', fullWidth: true })`, a ancho completo en todos los breakpoints, en la columna principal justo debajo de `hint-jugada` (patrón común, REQ-012). Siempre habilitado: el orden inicial ya es un orden válido que se puede confirmar (supuesto «Confirmación única»), así que no tiene la etiqueta-instrucción del estado deshabilitado del patrón; solo pasa a «Confirmando…» mientras se envía. Sin segundo diálogo de confirmación
 
 ### link-reportar
 - Texto/label: Reportar un problema
@@ -270,8 +277,8 @@ date: 2026-11-11
 
 ## Accesibilidad
 
-- **Orden de foco:** header → titulo → lista-hitos (por fila: asa → ↑ → ↓) → ayuda-mover (lectura) → btn-confirmar → link-reportar.
-- **Landmarks y jerarquía:** `h1` es la consigna del día; la cabecera `// tu orden` es `h2`. Landmarks: header (breadcrumb como `nav` con nombre), main, footer.
+- **Orden de foco:** header → titulo → lista-hitos (por fila: asa → ↑ → ↓) → btn-confirmar → ayuda-mover (lectura) → link-reportar.
+- **Landmarks y jerarquía:** `h1` es la consigna del día; `// tu orden` (`sr-only`) y `// cómo se juega` son `h2`. Landmarks: header (breadcrumb como `nav` con nombre), main, footer.
 - **Foco y teclado:** todo el reordenamiento funciona con teclado (NFR-U03): `KeyboardSensor` de dnd-kit sobre el asa (Espacio/Enter toma y suelta, flechas mueven, Escape cancela) y, como alternativa sin modo «tomado», los botones ↑ ↓ con Tab. El foco visible se mantiene sobre el hito movido. Las instrucciones para lector de pantalla del arrastre (`screenReaderInstructions`) y los anuncios están en ES y EN.
 - **Propio de esta composición:** cada fila expone su posición («3 de 5»); los movimientos se anuncian en una región `aria-live="polite"` `sr-only` con textos cortos. La fila tomada se distingue por borde y anuncio, no solo por color (NFR-U04). Con `prefers-reduced-motion` no hay transición de reacomodo ni animación de soltado. Áreas táctiles: asa y ↑ ↓ de al menos 44 px de lado incluso a 320 px; a 320 px `lista-hitos` va en dos líneas por fila (posición, nombre y etiqueta arriba; asa y ↑ ↓ abajo) y los controles no se achican.
 
@@ -289,6 +296,7 @@ date: 2026-11-11
 - REQ-006: al retomar, la lista vuelve al orden inicial mezclado, porque el orden en construcción no se guarda (supuesto «Estado de la partida y retomar», CA 12). Lo avisan las instrucciones.
 - REQ-006: «Reportar un problema» queda documentado pero no se renderiza hasta FG-6. Superado por REQ-007.
 - REQ-007: «Reportar un problema» se renderiza en los tres juegos (deja de estar oculto hasta FG-6). Es un enlace secundario al final de la columna lateral, no un botón, para no competir con la acción del juego; el estado «ya reportado» se lee de `GameToday.reported` para no ofrecer un intento que va a fallar.
+- REQ-012 (S-064, patrón común de partida): el CTA pasa a la columna principal debajo del área de juego, a ancho completo; el panel de ayuda se llama «// cómo se juega», va primero en el lateral y pierde el dato de racha. El layout sigue con `flex-wrap` (`grow-7 basis-130` / `grow-5 basis-80`) en lugar de la grilla de 12: el patrón lo admite si respeta el orden y el reparto principal/lateral. Supera la decisión de REQ-006 de separar el CTA de la lista con la ayuda.
 
 **Alternativas descartadas:**
 - Arrastrar desde toda la fila: en el teléfono compite con el scroll de la página (CA 11).
@@ -301,4 +309,4 @@ date: 2026-11-11
 
 ## Trazabilidad
 
-- F-06, C-23, C-10, C-11, C-36, NFR-U01, NFR-U03, NFR-U04 · REQ-006 (RF 2-5, 10, 18, 21; CA 2, 6, 7, 10-14, 16-18, 36) · flujos 1 y 2 de `user-flows.md` · REQ-007 (RF 1, 9; CA 1-3, 24).
+- F-06, C-23, C-10, C-11, C-36, NFR-U01, NFR-U03, NFR-U04 · REQ-006 (RF 2-5, 10, 18, 21; CA 2, 6, 7, 10-14, 16-18, 36) · flujos 1 y 2 de `user-flows.md` · REQ-007 (RF 1, 9; CA 1-3, 24) · REQ-012 (S-064).
