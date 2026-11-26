@@ -2,7 +2,7 @@ import { useEffect, useId, useMemo, useState } from 'react';
 
 import { MAX_GUESSES, giveUpMoveSchema, hintMoveSchema, moveSchema } from '../definition/schemas';
 
-import { Board, boardMaxWidth } from './board';
+import { Board } from './board';
 import { CategoryHint } from './category-hint';
 import { Distribution } from './distribution';
 import { Keyboard } from './keyboard';
@@ -180,23 +180,7 @@ export function Game({
             label={t('board.label', { max: MAX_GUESSES, length })}
             t={t}
           />
-          <div
-            className="flex w-full items-center justify-between gap-3"
-            style={{ maxWidth: boardMaxWidth(length) }}
-          >
-            <MoveHint text={hint} className="min-w-0 flex-1 text-left" />
-            {locked ? null : (
-              <LetterHintButton
-                hint={play.hint}
-                picking={canPick}
-                disabled={inputBlocked}
-                onToggle={() => {
-                  setPicking(!picking);
-                }}
-                t={t}
-              />
-            )}
-          </div>
+          <MoveHint text={hint} />
           {locked ? null : (
             <Keyboard
               states={keyStates(guesses)}
@@ -215,6 +199,17 @@ export function Game({
           <Legend t={t} />
           <CategoryHint categories={view.possible_categories} t={t} />
           {gameStats ? <Distribution stats={gameStats} t={t} /> : null}
+          {locked ? null : (
+            <LetterHintButton
+              hint={play.hint}
+              picking={canPick}
+              disabled={inputBlocked}
+              onToggle={() => {
+                setPicking(!picking);
+              }}
+              t={t}
+            />
+          )}
           {locked ? null : (
             <SurrenderButton
               disabled={inputBlocked}

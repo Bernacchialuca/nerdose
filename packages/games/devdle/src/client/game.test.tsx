@@ -370,14 +370,13 @@ describe('Game', () => {
   describe('letter hint', () => {
     const hintButton = () => screen.getByRole('button', { name: /Pista: revelar una letra/ });
 
-    it('is a small button under the board, not a panel', () => {
+    it('sits in the aside right above Rendirse, just as wide', () => {
       render(<Game {...base()} />);
       expect(screen.queryByRole('heading', { name: /pista de letra/ })).toBeNull();
-      const grid = screen.getByRole('grid');
-      expect(
-        grid.compareDocumentPosition(hintButton()) & Node.DOCUMENT_POSITION_FOLLOWING,
-      ).toBeTruthy();
-      expect(hintButton().closest('aside')).toBeNull();
+      const surrender = screen.getByRole('button', { name: /Rendirse/ });
+      expect(hintButton().closest('aside')).toContainElement(surrender);
+      expect(hintButton().nextElementSibling).toBe(surrender);
+      expect(hintButton()).toHaveClass('w-full');
     });
 
     it('picking marks the free cells of the current row and tapping one sends the hint', async () => {

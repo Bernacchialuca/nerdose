@@ -5,7 +5,7 @@ import type { DevdleRevealedHint } from '../definition/schemas';
 import type { Translate } from './types';
 
 /**
- * Hint trigger under the board: «💡 Pista» → «Cancelar» while picking a cell → «💡 Letra N: X»
+ * Hint trigger in the aside, right above «Rendirse» and as wide: «💡 Pista» → «Cancelar» while picking a cell → «💡 Letra N: X»
  * (disabled) once used. One hint per game.
  */
 export function LetterHintButton({
@@ -27,7 +27,7 @@ export function LetterHintButton({
         type="button"
         aria-disabled="true"
         aria-label={t('letterHint.usedLabel', { n: hint.position + 1, letter: hint.letter })}
-        className={buttonClass({ variant: 'secondary', disabled: true })}
+        className={buttonClass({ variant: 'secondary', fullWidth: true, disabled: true })}
       >
         <span aria-hidden="true">💡</span>
         {t('letterHint.used', { n: hint.position + 1, letter: hint.letter })}
@@ -43,7 +43,7 @@ export function LetterHintButton({
       onClick={() => {
         if (!disabled) onToggle();
       }}
-      className={buttonClass({ variant: 'secondary', disabled })}
+      className={buttonClass({ variant: 'secondary', fullWidth: true, disabled })}
     >
       {picking ? null : <span aria-hidden="true">💡</span>}
       {picking ? t('letterHint.cancel') : t('letterHint.button')}
