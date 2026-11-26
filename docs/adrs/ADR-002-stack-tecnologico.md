@@ -49,7 +49,7 @@ Vamos a usar **TypeScript en todo**, con Node.js 24 LTS en el backend.
 - Diccionario ENABLE (dominio público).
 - pino.
 
-**Testing:** Vitest (unit y contrato) + Playwright (e2e).
+**Testing:** Vitest (unit, contrato y componentes con Testing Library + axe en jsdom). Sin e2e en navegador por ahora (deuda D3); Playwright se usó solo de forma temporal en la auditoría de REQ-011 y se desinstaló.
 
 ## Reglas de Implementación
 
@@ -63,7 +63,7 @@ Vamos a usar **TypeScript en todo**, con Node.js 24 LTS en el backend.
 - Los estilos MUST ser Tailwind CSS v4, con los tokens en `@theme`. MUST NOT cargarse fuentes ni CSS de CDNs de terceros.
 - Los textos de UI MUST pasar por i18next con claves en `es` y `en`. Los textos de contenido MUST venir resueltos desde la `api`.
 - El PRNG del `generator` MUST ser `pure-rand` (xoroshiro128+). MUST NOT usarse `Math.random()` en la generación de desafíos.
-- Los tests MUST usar Vitest; los e2e, Playwright.
+- Los tests MUST usar Vitest. MUST NOT agregarse un runner e2e de navegador sin un ADR que lo decida (deuda D3).
 
 ## Consecuencias
 
