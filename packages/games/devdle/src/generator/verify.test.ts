@@ -5,7 +5,7 @@ import type { DevdlePayload } from '../definition';
 import { generator } from './index';
 import type { DevdleTerm } from './index';
 import { verifyPayload } from './verify';
-import { BANK, T_OAUTH, T_REACT, T_REDIS, payloadFrom } from './test-fixtures';
+import { BANK, T_OAUTH, T_REACT, T_REDIS, T_ROUTER, payloadFrom } from './test-fixtures';
 
 const h: GeneratorHistory<DevdlePayload, DevdleTerm> = { bankItems: BANK, recentChallenges: [] };
 const p = payloadFrom(T_REACT);
@@ -22,6 +22,7 @@ describe('generator.verify', () => {
         { name: 'term_in_bank', ok: true },
         { name: 'not_used_365', ok: true },
         { name: 'category_rotation', ok: true },
+        { name: 'not_excluded', ok: true },
       ],
     });
     expect(JSON.parse(JSON.stringify(log))).toEqual(log);
@@ -72,6 +73,42 @@ describe('generator.verify', () => {
     expect(log.reason).toBe('category_rotation');
   });
 
+  it('accepts a recent category when no other category has terms left', () => {
+    // Solo queda REACT reutilizable: la rotación cede antes que dejar el día sin palabra.
+    const log = verify(p, {
+      bankItems: [T_REACT, T_REDIS],
+      recentChallenges: [
+        { date: '2026-12-01', payload: { ...p, category: 'programming_languages' } },
+      ],
+    });
+    expect(log.ok).toBe(true);
+  });
+
+  it('prefers a category other than yesterday when the 3-day rule has no candidates', () => {
+    const recent = [
+      {
+        date: '2026-11-30',
+        payload: { ...payloadFrom(T_ROUTER), category: 'networking' as const },
+      },
+      { date: '2026-12-01', payload: { ...p, category: 'programming_languages' as const } },
+    ];
+    const bank = [T_REACT, T_ROUTER];
+    // ROUTER (networking, hace 2 días) gana sobre REACT (lenguajes, ayer).
+    expect(verify(payloadFrom(T_ROUTER), { bankItems: bank, recentChallenges: recent }).ok).toBe(
+      true,
+    );
+    expect(verify(p, { bankItems: bank, recentChallenges: recent }).reason).toBe(
+      'category_rotation',
+    );
+  });
+
+  it('rejects a term excluded from Devdle', () => {
+    const niche = { ...T_ROUTER, id: '77777777-7777-4777-8777-777777777777', term: 'MALBOLGE' };
+    const log = verify(payloadFrom(niche), { bankItems: [niche], recentChallenges: [] });
+    expect(log.ok).toBe(false);
+    expect(log.reason).toBe('not_excluded');
+  });
+
   it('rejects unknown or inconsistent terms (TS-49)', () => {
     for (const bad of [
       { ...p, term_id: '99999999-9999-4999-8999-999999999999' },
@@ -91,6 +128,7 @@ describe('generator.verify', () => {
       'term_in_bank',
       'not_used_365',
       'category_rotation',
+      'not_excluded',
     ]);
     expect(log.reason).toBe('word_shape');
   });

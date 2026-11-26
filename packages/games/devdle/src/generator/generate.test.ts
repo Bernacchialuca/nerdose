@@ -9,7 +9,9 @@ import {
   T_KERNEL,
   T_REACT,
   T_REDIS,
+  T_ROUTER,
   payloadFrom,
+  recent as recent3,
   seed,
 } from './test-fixtures';
 
@@ -60,6 +62,22 @@ describe('generator.generate', () => {
     for (const x of words(history(BANK, RECENT_GIT_DB_LINUX))) {
       expect(['REACT', 'ROUTER']).toContain(x);
     }
+  });
+
+  it('never picks a term excluded from Devdle', () => {
+    const niche = { ...T_ROUTER, id: '77777777-7777-4777-8777-777777777777', term: 'MALBOLGE' };
+    for (const x of words(history([...BANK, niche]))) expect(x).not.toBe('MALBOLGE');
+  });
+
+  it('relaxes the rotation instead of running out of words', () => {
+    // Las 3 categorías con stock salieron en los últimos 3 días: elige igual, evitando la de ayer.
+    const recent = [
+      recent3('2026-11-29', 'programming_languages'),
+      recent3('2026-11-30', 'networking'),
+      recent3('2026-12-01', 'linux'),
+    ];
+    const w = words(history([T_REACT, T_ROUTER, T_KERNEL], recent));
+    for (const x of w) expect(['REACT', 'ROUTER']).toContain(x);
   });
 
   it('builds the exact payload with a single eligible (TS-39)', () => {

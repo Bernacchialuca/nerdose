@@ -68,7 +68,7 @@ describe('generateForDate', () => {
     });
     const verification = row!.verification as { ok: boolean; checks: unknown[] };
     expect(verification.ok).toBe(true);
-    expect(verification.checks).toHaveLength(5);
+    expect(verification.checks).toHaveLength(6);
     const payload = payloadSchema.parse(row!.payload);
     expect(payload.date).toBe('2026-12-02');
     const used = await t.owner.db

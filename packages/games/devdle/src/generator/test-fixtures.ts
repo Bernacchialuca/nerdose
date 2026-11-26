@@ -57,7 +57,7 @@ export const payloadFrom = (t: DevdleTerm, date = DATE): DevdlePayload => ({
   date,
 });
 
-const recent = (
+export const recent = (
   date: string,
   category: DevdleTerm['category'],
 ): RecentChallenge<DevdlePayload> => ({
