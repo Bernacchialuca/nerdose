@@ -42,7 +42,7 @@ export function buildApp(deps: AppDeps) {
   const playerReads = limit({
     windowMs: 60_000,
     limit: 600,
-    key: clientIp(deps.config.TRUST_PROXY_HEADER),
+    key: clientIp(deps.config),
   });
   app.use('/api/*', (c, next) =>
     c.req.method === 'GET' && !isAdminPath(c.req.path) ? playerReads(c, next) : next(),

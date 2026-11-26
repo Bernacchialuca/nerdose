@@ -3,6 +3,8 @@ import { randomUUID } from 'node:crypto';
 import { scoreGuess } from '@nerdose/game-devdle/definition';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { playerRef } from '@/shared/player-ref';
+
 import { buildDbApp, MUTATION_HEADERS } from '../helpers/app';
 import { PAYLOAD, useDatabases } from '../helpers/db';
 import { registryWithoutBugHunt } from '../helpers/registries';
@@ -173,7 +175,7 @@ describe('POST /api/games/{game_id}/today/move', () => {
     expect(rej).toHaveLength(1);
     expect(rej[0]).toMatchObject({ word: 'ZZZZZ', player_id: player.id });
     const rejected = lines().filter((l) => l.event === 'GuessRejected');
-    expect(rejected[0]).toMatchObject({ level: 'info', player_id: player.id });
+    expect(rejected[0]).toMatchObject({ level: 'info', player_ref: playerRef(player.id) });
     expect(JSON.stringify(lines())).not.toContain('ZZZZZ');
   });
 

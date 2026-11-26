@@ -8,6 +8,7 @@ import { playerSession } from '@/http/middleware/player-session';
 import type { AppDeps, AppEnv } from '@/http/types';
 import { validationHook } from '@/http/validation-hook';
 import { isLocale } from '@/shared/locale';
+import { playerRef } from '@/shared/player-ref';
 
 import { preferencesUpdateSchema } from './identity.schema';
 import { SESSION_COOKIE, issuePlayerCookie } from './session-cookie';
@@ -21,7 +22,7 @@ const toPreferences = (p: Player) => ({
 
 export const createSession = (deps: AppDeps) =>
   factory.createHandlers(
-    limit({ windowMs: 600_000, limit: 20, key: clientIp(deps.config.TRUST_PROXY_HEADER) }),
+    limit({ windowMs: 600_000, limit: 20, key: clientIp(deps.config) }),
     async (c) => {
       const { player, created } = await deps.identity.startSession({
         pid: getCookie(c, SESSION_COOKIE),
@@ -31,7 +32,7 @@ export const createSession = (deps: AppDeps) =>
       if (created) {
         if (!isLocale(c.req.query('lang'))) c.set('locale', player.locale);
         c.var.logger.info(
-          { event: 'PlayerCreated', player_id: player.id, locale: player.locale },
+          { event: 'PlayerCreated', player_ref: playerRef(player.id), locale: player.locale },
           'Player created',
         );
       }
@@ -53,7 +54,7 @@ export const updatePreferences = (deps: AppDeps) =>
       c.var.logger.info(
         {
           event: 'PlayerPreferencesChanged',
-          player_id: player.id,
+          player_ref: playerRef(player.id),
           locale: player.locale,
           preferred_code_language: player.preferredCodeLanguage,
         },

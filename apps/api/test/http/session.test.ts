@@ -4,6 +4,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import type { AppDeps } from '@/http/types';
 
+import { playerRef } from '@/shared/player-ref';
+
 import { MUTATION_HEADERS, TEST_CONFIG, buildTestApp } from '../helpers/app';
 import { COOKIE_ATTRS, parseSetCookie, useDatabases } from '../helpers/db';
 import { captureLogger } from '../helpers/logger';
@@ -128,15 +130,14 @@ describe('POST /api/session', () => {
       expect.objectContaining({
         level: 'info',
         event: 'PlayerCreated',
-        player_id: id,
+        player_ref: playerRef(id!),
         locale: 'en',
       }),
     );
     const text = JSON.stringify(lines());
     expect(text).not.toContain('203.0.113.250');
-    expect(text.split(id!).length - 1).toBe(
-      lines().filter((l) => JSON.stringify(l).includes(id!)).length,
-    );
+    // El id es la credencial de la cookie: nunca aparece crudo en los logs.
+    expect(text).not.toContain(id!);
   });
 
   it('limita a 20 sesiones por IP y no crea el Player 21', async () => {
@@ -155,13 +156,13 @@ describe('POST /api/session', () => {
     expect((await session({}, '198.51.100.9')).status).toBe(200);
   });
 
-  it('la clave es la primera IP de X-Forwarded-For', async () => {
+  it('la clave es la IP que agregó el proxy: inventar la primera no saltea el límite', async () => {
     const { session } = setup();
-    for (let i = 0; i < 20; i++) await session({}, '203.0.113.201, 10.0.0.1');
-    expect((await session({}, '203.0.113.201, 10.0.0.2')).status).toBe(429);
+    for (let i = 0; i < 20; i++) await session({}, `10.9.0.${i}, 203.0.113.201`);
+    expect((await session({}, '10.9.0.99, 203.0.113.201')).status).toBe(429);
   });
 
-  it('sin TRUST_PROXY_HEADER todos comparten el balde', async () => {
+  it('sin TRUST_PROXY_HEADER usa la IP de la conexión (app.request no tiene socket)', async () => {
     const { session } = setup({ ...TEST_CONFIG, TRUST_PROXY_HEADER: undefined });
     for (let i = 1; i <= 20; i++) await session({}, `192.0.2.${i}`);
     expect((await session({}, '192.0.2.99')).status).toBe(429);

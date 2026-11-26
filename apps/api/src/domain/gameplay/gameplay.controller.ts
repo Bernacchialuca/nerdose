@@ -37,7 +37,7 @@ export const startPlay = (deps: AppDeps) =>
 
 export const makeMove = (deps: AppDeps) =>
   factory.createHandlers(
-    limit({ windowMs: 60_000, limit: 300, key: clientIp(deps.config.TRUST_PROXY_HEADER) }),
+    limit({ windowMs: 60_000, limit: 300, key: clientIp(deps.config) }),
     playerSession(deps.identity, 'required'),
     limit({ windowMs: 60_000, limit: 60, key: (c) => c.var.player!.id }),
     zValidator('param', gameParamSchema, validationHook),

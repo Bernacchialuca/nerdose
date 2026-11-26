@@ -73,7 +73,7 @@ export const playerSession = (mode: 'required' | 'optional') => createMiddleware
   const player = pid && isUuid(pid) ? await c.var.deps.identity.find(pid) : null;
   if (!player && mode === 'required') throw new AppError('no_session');
   c.set('player', player);
-  if (player) c.set('logger', c.var.logger.child({ playerId: player.id }));
+  if (player) c.set('logger', c.var.logger.child({ player_ref: playerRef(player.id) }));
   await next();
 });
 ```
@@ -92,6 +92,7 @@ Order: query `?lang=es|en` -> `players.locale` -> `Accept-Language` -> `es`. All
 - Player routes that require identity answer `401 no_session` without a valid cookie. `GET /api/today` works without a cookie and returns `has_session: false`.
 - No PII is stored in `players` (no IP, email or fingerprint). The `user_agent` is stored only in the `context` of a report.
 - The `api` never trusts a `player_id` from the body, query or headers. The only source is the cookie.
+- The `player_id` is the cookie credential: it is never logged raw. Logs carry `player_ref` (first 8 hex of its sha256, `@/shared/player-ref`), the same reference the admin shows.
 - `players.user_id` is reserved for a future `User` and is never set in v1.
 - Admin routes never read or emit `nd_pid`.
 

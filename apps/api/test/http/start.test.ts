@@ -2,6 +2,8 @@ import { randomUUID } from 'node:crypto';
 
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { playerRef } from '@/shared/player-ref';
+
 import { buildDbApp, MUTATION_HEADERS } from '../helpers/app';
 import { PAYLOAD, useDatabases } from '../helpers/db';
 import { registryWithoutBugHunt } from '../helpers/registries';
@@ -58,7 +60,8 @@ describe('POST /api/games/{game_id}/today/start', () => {
     expect(await plays()).toBe(1);
     const started = lines().filter((l) => l.event === 'PlayStarted');
     expect(started).toHaveLength(1);
-    expect(started[0]).toMatchObject({ player_id: player.id });
+    expect(started[0]).toMatchObject({ player_ref: playerRef(player.id) });
+    expect(JSON.stringify(lines())).not.toContain(player.id);
   });
 
   it('TS-29 concurrente con la misma cookie', async () => {

@@ -19,7 +19,7 @@ const factory = createFactory<AppEnv>();
 export const login = (deps: AppDeps) =>
   factory.createHandlers(
     // Cuenta todos los intentos (correctos e incorrectos), antes de evaluar la contraseña.
-    limit({ windowMs: 900_000, limit: 5, key: clientIp(deps.config.TRUST_PROXY_HEADER) }),
+    limit({ windowMs: 900_000, limit: 5, key: clientIp(deps.config) }),
     zValidator('json', loginBodySchema, validationHook),
     async (c) => c.json(await deps.admin.login(c.req.valid('json').password, c.var.logger)),
   );

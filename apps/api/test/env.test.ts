@@ -48,6 +48,7 @@ describe('loadEnv', () => {
       PORT: 3000,
       LOG_LEVEL: 'info',
       SERVICE_NAME: 'api',
+      TRUST_PROXY_HOPS: 1,
       REPORT_ALERT_COUNT: 3,
       REPORT_ALERT_RATIO: 0.05,
       REPORT_ALERT_RATIO_MIN_COUNT: 2,

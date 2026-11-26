@@ -1,5 +1,7 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { playerRef } from '@/shared/player-ref';
+
 import { buildDbApp, MUTATION_HEADERS } from '../helpers/app';
 import { PAYLOAD, useDatabases } from '../helpers/db';
 
@@ -99,11 +101,15 @@ describe('POST /api/games/{game_id}/today/acknowledge-void', () => {
       total_completed: 11,
     });
     expect(lines().filter((l) => l.event === 'PlayVoidAcknowledged')).toEqual([
-      expect.objectContaining({ play_id: play!.id, player_id: player.id, game_id: 'devdle' }),
+      expect.objectContaining({
+        play_id: play!.id,
+        player_ref: playerRef(player.id),
+        game_id: 'devdle',
+      }),
     ]);
     expect(lines().filter((l) => l.event === 'StreaksUpdated')).toEqual([
       expect.objectContaining({
-        player_id: player.id,
+        player_ref: playerRef(player.id),
         game_id: 'devdle',
         current_streak: 4,
         max_streak: 9,

@@ -26,6 +26,7 @@ describe('.env.example', () => {
       'ADMIN_PASSWORD_HASH',
       'ADMIN_JWT_SECRET',
       'TRUST_PROXY_HEADER',
+      'TRUST_PROXY_HOPS',
       'REPORT_ALERT_COUNT',
       'REPORT_ALERT_RATIO',
       'REPORT_ALERT_RATIO_MIN_COUNT',
