@@ -21,22 +21,28 @@ const all = TEMPLATES.flatMap((t) =>
 );
 
 describe('catalog shape (TS-4)', () => {
-  it('has 12 templates ordered by id and 48 combinations', () => {
+  it('has 18 templates ordered by id and 62 combinations', () => {
     expect(TEMPLATES.map((t) => [t.id, t.combos.length])).toEqual([
       ['all_where', 4],
       ['any_where', 4],
       ['binary_search', 2],
       ['count_equal_neighbors', 3],
+      ['count_pairs', 3],
       ['count_where', 7],
       ['extreme_index', 4],
       ['first_index_where', 8],
       ['is_palindrome', 2],
       ['is_sorted', 4],
       ['last_index_where', 4],
+      ['longest_run', 3],
       ['max_window_sum', 2],
+      ['prefix_within_budget', 2],
+      ['split_difference', 2],
       ['sum_range', 4],
+      ['trim_length', 2],
+      ['value_range', 2],
     ]);
-    expect(all).toHaveLength(48);
+    expect(all).toHaveLength(62);
     expect(() => templateById('nope')).toThrow('bug-hunt: unknown template nope');
   });
 });
@@ -58,6 +64,12 @@ describe('reference vs tree (TS-5)', () => {
         expect(input[1] as number).toBeGreaterThanOrEqual(1);
         expect(input[1] as number).toBeLessThanOrEqual(nums.length);
       }
+      if (t.id === 'split_difference') {
+        expect(input[1] as number).toBeGreaterThanOrEqual(0);
+        expect(input[1] as number).toBeLessThanOrEqual(nums.length);
+      }
+      if (t.id === 'value_range') expect(nums.length).toBeGreaterThanOrEqual(1);
+      if (t.id === 'prefix_within_budget') expect(nums.every((v) => v >= 0)).toBe(true);
       inputs.push(input);
     }
     for (const input of inputs) {
@@ -102,6 +114,10 @@ describe('bug type coverage (TS-8)', () => {
       'binary_search',
       'is_sorted',
       'count_equal_neighbors',
+      'count_pairs',
+      'longest_run',
+      'prefix_within_budget',
+      'trim_length',
     ],
     wrong_operator: [
       'count_where',
@@ -109,6 +125,12 @@ describe('bug type coverage (TS-8)', () => {
       'first_index_where',
       'max_window_sum',
       'count_equal_neighbors',
+      'count_pairs',
+      'longest_run',
+      'prefix_within_budget',
+      'split_difference',
+      'trim_length',
+      'value_range',
     ],
     wrong_variable: [
       'extreme_index',
@@ -118,6 +140,12 @@ describe('bug type coverage (TS-8)', () => {
       'is_palindrome',
       'max_window_sum',
       'count_equal_neighbors',
+      'count_pairs',
+      'longest_run',
+      'prefix_within_budget',
+      'split_difference',
+      'trim_length',
+      'value_range',
     ],
     bad_initialization: [
       'extreme_index',
@@ -127,10 +155,18 @@ describe('bug type coverage (TS-8)', () => {
       'any_where',
       'binary_search',
       'is_palindrome',
+      'longest_run',
+      'prefix_within_budget',
+      'trim_length',
     ],
-    misplaced_return: TEMPLATES.map((t) => t.id).filter((id) => id !== 'is_sorted'),
+    misplaced_return: TEMPLATES.map((t) => t.id).filter(
+      (id) => !['is_sorted', 'trim_length', 'value_range'].includes(id),
+    ),
     inverted_condition: TEMPLATES.map((t) => t.id).filter(
-      (id) => id !== 'binary_search' && id !== 'last_index_where',
+      (id) =>
+        !['binary_search', 'last_index_where', 'prefix_within_budget', 'split_difference'].includes(
+          id,
+        ),
     ),
   };
 

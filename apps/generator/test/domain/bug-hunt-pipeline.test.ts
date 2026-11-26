@@ -94,16 +94,16 @@ describe('generateForDate con bug-hunt', () => {
     });
     expect(row.payload).toMatchObject({
       date: D0,
-      template: 'max_window_sum',
+      template: 'last_index_where',
       bug_type: 'off_by_one',
-      function_name: 'minWindowSum',
-      bug_line: 7,
-      mutation: { operator: 'bound_plus_one', node: 'n13', from: 'k', to: 'k + 1' },
-      failing_test: { input: [[2, -1, 4], 1], expected: -1, actual: 2 },
+      function_name: 'lastBelow',
+      bug_line: 3,
+      mutation: { operator: 'loop_start_shift', node: 'n10', from: '0', to: '1' },
+      failing_test: { input: [[1, 5, 9], 4], expected: 0, actual: -1 },
     });
     const payload = row.payload as { tests: unknown[]; code: { js: string } };
     expect(payload.tests).toHaveLength(10);
-    expect(payload.code.js.split('\n')).toHaveLength(14);
+    expect(payload.code.js.split('\n')).toHaveLength(9);
     const v = row.verification as Verification;
     expect(v.ok).toBe(true);
     expect(v.checks.map((c) => c.name)).toEqual(BH_CHECKS);
@@ -162,7 +162,7 @@ describe('generateForDate con bug-hunt', () => {
       BH_CHECKS.slice(5).map((name) => ({ name, ok: false, detail: 'skipped' })),
     );
     expect(second).toMatchObject({ status: 'approved', seed: seedHex(D0, 1) });
-    expect((second!.payload as { template: string }).template).toBe('is_sorted');
+    expect((second!.payload as { template: string }).template).toBe('any_where');
     expect((second!.verification as Verification).ok).toBe(true);
     expect(c.calls()).toBe(6);
     expect(lines()).toContainEqual(
@@ -185,7 +185,7 @@ describe('generateForDate con bug-hunt', () => {
       failing_test: unknown;
     };
     expect(p.tests.every((x) => x.actual === x.expected)).toBe(true);
-    expect(p.failing_test).toEqual({ input: [[5], 1], expected: 5, actual: 5 });
+    expect(p.failing_test).toEqual({ input: [[], 3], expected: -1, actual: -1 });
   });
 
   it.each([
@@ -195,7 +195,7 @@ describe('generateForDate con bug-hunt', () => {
         round === 0 && variant === 'correct' && lang === 'java' ? real().then(bump) : undefined,
       ),
       'correct_agrees',
-      'differs at tests[9] minWindowSum([13, 20, 18], 1): js=13 go=13 java=14',
+      'differs at tests[9] lastBelow([14, -2], 13): js=1 go=1 java=2',
       ['mutant_agrees', '10 tests'],
     ],
     [
@@ -204,7 +204,7 @@ describe('generateForDate con bug-hunt', () => {
         round === 0 && variant === 'mutant' && lang === 'go' ? real().then(bump) : undefined,
       ),
       'mutant_agrees',
-      'differs at tests[9] minWindowSum([13, 20, 18], 1): js=11 go=12 java=11',
+      'differs at tests[9] lastBelow([14, -2], 13): js=1 go=2 java=1',
       ['correct_agrees', '10 tests'],
     ],
   ])('%s', async (_name, run, name, detail, [otherCheck, otherDetail]) => {
@@ -222,16 +222,14 @@ describe('generateForDate con bug-hunt', () => {
     });
     const [first, second] = await rowsFor(D0);
     expect(first).toMatchObject({ status: 'rejected', attempt: 0 });
-    expect((first!.payload as { template: string }).template).toBe('max_window_sum');
+    expect((first!.payload as { template: string }).template).toBe('last_index_where');
     const v = first!.verification as Verification;
     expect(v.reason).toBe(name);
     expect(check(v, name)).toMatchObject({ ok: false, detail });
     expect(check(v, otherCheck!)).toMatchObject({ ok: true, detail: otherDetail });
     expect(checksOf(v, 5, 11).every((c) => c.ok)).toBe(true);
     expect(second).toMatchObject({ status: 'approved', seed: seedHex(D0, 1) });
-    expect((second!.payload as { function_name: string }).function_name).toBe(
-      'isStrictlyAscending',
-    );
+    expect((second!.payload as { function_name: string }).function_name).toBe('anyBelow');
     expect((await rowsFor(D0)).filter((r) => r.status === 'approved')).toHaveLength(1);
   });
 
@@ -295,7 +293,7 @@ describe('generateForDate con bug-hunt', () => {
     });
     const [first, second] = await rowsFor(D0);
     expect(first).toMatchObject({ status: 'rejected', attempt: 0 });
-    expect((first!.payload as { template: string }).template).toBe('max_window_sum');
+    expect((first!.payload as { template: string }).template).toBe('last_index_where');
     const v = first!.verification as Verification;
     expect(v.reason).toBe(reason);
     expect(check(v, checkName)).toMatchObject({ ok: false, detail });
@@ -307,9 +305,7 @@ describe('generateForDate con bug-hunt', () => {
     expect(check(v, 'correct_agrees').ok).toBe(agrees.correct_agrees !== 'skipped');
     expect(check(v, 'mutant_agrees').ok).toBe(agrees.mutant_agrees !== 'skipped');
     expect(second).toMatchObject({ status: 'approved', attempt: 1 });
-    expect((second!.payload as { function_name: string }).function_name).toBe(
-      'isStrictlyAscending',
-    );
+    expect((second!.payload as { function_name: string }).function_name).toBe('anyBelow');
     expect((await rowsFor(D0)).filter((r) => r.status === 'approved')).toHaveLength(1);
   });
 });
@@ -332,8 +328,8 @@ describe('regeneración con bug-hunt', () => {
     await approveBugHunt(t.svc.db, D);
     const old = (await rowsFor(D))[0]!;
     expect(old.payload).toMatchObject({
-      template: 'last_index_where',
-      function_name: 'lastEven',
+      template: 'prefix_within_budget',
+      function_name: 'itemsBelowBudget',
     });
     await requestFor(t.owner.db, old.id);
 
@@ -358,9 +354,9 @@ describe('regeneración con bug-hunt', () => {
       generatorVersion: 'bug-hunt@1',
     });
     expect(nuevo.payload).toMatchObject({
-      template: 'count_where',
+      template: 'last_index_where',
       bug_type: 'off_by_one',
-      function_name: 'countEven',
+      function_name: 'lastNegative',
       bug_line: 3,
     });
     const v = nuevo.verification as Verification;
