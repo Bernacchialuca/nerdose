@@ -4,7 +4,14 @@ type Resources = typeof es;
 
 export const en: Resources = {
   shell: { brand: 'nerdose', title: 'nerdose' },
-  errors: { title: 'Something went wrong', retry: 'Try again' },
+  errors: {
+    title: 'Something went wrong',
+    message:
+      'We hit an unexpected error. Your progress is saved: try again or go back to the games.',
+    retry: 'Try again',
+    back: 'Back to the games',
+    terminalOutput: 'error: something broke on our side',
+  },
   nav: {
     label: 'Main navigation',
     games: './games',
@@ -49,6 +56,7 @@ export const en: Resources = {
   },
   notFound: {
     documentTitle: 'Page not found · nerdose',
+    terminalOutput: 'bash: cd: {{path}}: No such file or directory',
     title: '404 · page not found',
     message:
       "This address doesn't exist on nerdose. Today's challenges are waiting for you on the home page.",

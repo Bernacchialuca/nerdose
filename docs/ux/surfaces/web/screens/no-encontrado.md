@@ -9,8 +9,8 @@ audiences:
   - jugador
 fidelity: mid
 status: diseñada
-version: "1.1"
-date: 2026-11-06
+version: "1.2"
+date: 2026-11-25
 ---
 
 # Pantalla: No encontrado (404)
@@ -41,6 +41,7 @@ date: 2026-11-06
 | # | Nombre | Tipo | Variant/Level/State | Categoría | Viewports | Visibilidad | Propósito |
 |---|--------|------|---------------------|-----------|-----------|-------------|-----------|
 | 1 | header | header | — | layout | ambos | — | Marca, nav, #número e idioma (`app-header` variant `default`) |
+| 1b | terminal | code | — | content | ambos | — | Transcripción decorativa (`aria-hidden`): `$ cd <ruta>`, el error de bash en rojo y `exit 1`, con la barra de ventana de la terminal de la home |
 | 2 | codigo | heading | h1 | content | ambos | — | Indica el error en el tono terminal de la marca |
 | 3 | mensaje | paragraph | body | content | ambos | — | Explica qué pasó |
 | 4 | btn-home | button | primary | input | ambos | — | Vuelve a la home |
@@ -50,12 +51,12 @@ date: 2026-11-06
 
 ### mobile · 400px
 - row `panel` (card)
-  - col 12/12: codigo, mensaje, btn-home
+  - col 12/12: terminal, codigo, mensaje, btn-home
 
 ### desktop · 1200px
 - row `centrado`
   - col 3/12: (vacía, margen)
-  - col 6/12 (card): codigo, mensaje, btn-home
+  - col 6/12 (card): terminal, codigo, mensaje, btn-home
   - col 3/12: (vacía, margen)
 
 ## Contenido
@@ -65,10 +66,15 @@ date: 2026-11-06
 - Icono: nada
 - Annotation: `app-header` variant `default` del shell (sin píldora de racha, cursor estático, ningún ítem de nav activo); el #número se oculta si el servidor no lo informa. En mobile se acomoda con `flex-wrap`
 
+### terminal
+- Texto/label: $ cd /ruta-pedida · bash: cd: /ruta-pedida: No existe el archivo o el directorio · exit 1▌
+- Icono: nada
+- Annotation: ventana de terminal (barra con tres puntos y `nerdose — bash`, sombra `window`), Mono `code-terminal`; la ruta es la real. Es decorativa: el `h1` y el mensaje dicen lo mismo en prosa. La misma ventana se usa en la pantalla de error inesperado (`$ nerdose --play`)
+
 ### codigo
 - Texto/label: 404 · página no encontrada
 - Icono: nada
-- Annotation: título de página del DS (Mono 800, tracking negativo, sin peso 600), dentro de un `panel` `default` (radio 14)
+- Annotation: título de página del DS (Mono 800, tracking negativo, sin peso 600), debajo de la transcripción, separado por una línea punteada, dentro de la misma ventana (radio 14)
 
 ### mensaje
 - Texto/label: Esta dirección no existe en nerdose. Los desafíos de hoy te esperan en la home.
