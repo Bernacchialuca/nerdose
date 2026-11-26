@@ -352,3 +352,13 @@
     color: var(--color-accent);
   }
 }
+
+/* Tailwind v4 dejó los <button> con el cursor por defecto: sin la mano, un botón con estilo de
+   link (Reportar) o una tecla del teclado de Devdle no parecen cliqueables. Los deshabilitados
+   (`disabled` o `aria-disabled`) quedan afuera. */
+@layer base {
+  button:not(:disabled, [aria-disabled='true']),
+  [role='button']:not(:disabled, [aria-disabled='true']) {
+    cursor: pointer;
+  }
+}
