@@ -2,7 +2,7 @@ import type { GeneratorHistory, VerificationCheck, VerificationLog } from '@nerd
 
 import { WORD_PATTERN, type DevdlePayload } from '../definition';
 import { addDays, isValidDate } from './dates';
-import { REUSE_WINDOW_DAYS } from './eligibility';
+import { REUSE_WINDOW_DAYS, blockedCategories, isExcluded } from './eligibility';
 import type { DevdleTerm } from './index';
 
 const filled = (v: unknown): boolean => typeof v === 'string' && v.trim().length > 0;
@@ -40,7 +40,9 @@ export function verifyPayload(
     }
   }
 
-  const recent = history.recentChallenges.some((c) => c.payload.category === p.category);
+  const recent =
+    isValidDate(p.date) &&
+    blockedCategories(history.bankItems, p.date, history.recentChallenges).has(p.category);
 
   const checks = [
     check('word_shape', WORD_PATTERN.test(p.word) ? null : `invalid word ${p.word}`),
@@ -51,6 +53,7 @@ export function verifyPayload(
     check('term_in_bank', termInBank),
     check('not_used_365', notUsed),
     check('category_rotation', recent ? `category ${p.category} used in the last days` : null),
+    check('not_excluded', isExcluded(p.word) ? `${p.word} is excluded from Devdle` : null),
   ];
   const failed = checks.find((c) => !c.ok);
   return failed ? { ok: false, checks, reason: failed.name } : { ok: true, checks };
