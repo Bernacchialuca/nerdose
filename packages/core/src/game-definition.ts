@@ -34,6 +34,11 @@ export interface BankUsage {
   lastUsedField: string;
   windowDays: number;
   itemsPerChallenge: number;
+  /**
+   * Ítems del banco que el generator de este juego nunca elige, por su texto (`terms.term`,
+   * `timeline_facts.label`). La api no los cuenta en el stock de este juego.
+   */
+  excludedItems?: ReadonlySet<string>;
 }
 
 export interface GameDefinition<Payload, PublicView, State, Move, Feedback, Result, Stats> {

@@ -34,7 +34,7 @@ export type AppDeps = {
   quality: Pick<QualityService, 'report'>;
   admin: Pick<AdminService, 'login' | 'listReportGroups' | 'updateReport'>;
   voids: Pick<VoidService, 'void'>;
-  adminContent: Pick<AdminContentService, 'upcoming' | 'generationFailures' | 'stock'>;
+  adminContent: Pick<AdminContentService, 'upcoming' | 'generationFailures' | 'stock' | 'items'>;
   adminMetrics: Pick<AdminMetricsService, 'currentDay' | 'metrics'>;
   myStats: Pick<MyStatsService, 'currentDay' | 'myStats'>;
   regeneration: Pick<RegenerationService, 'regenerate'>;

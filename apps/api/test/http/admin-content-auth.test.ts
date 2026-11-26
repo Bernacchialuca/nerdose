@@ -28,6 +28,7 @@ const call = (
     ['POST', `/api/admin/challenges/${id}/regenerate`],
     ['GET', '/api/admin/generation-failures'],
     ['GET', '/api/admin/content/stock'],
+    ['GET', '/api/admin/content/items?bank=terms'],
   ] as const;
   const [method, path] = targets[n]!;
   return app.request(path, {
@@ -54,7 +55,7 @@ describe('401 en los endpoints nuevos del admin', () => {
     it(`TS-38/39/40 ${name}`, async () => {
       const { app } = await buildDbApp(dbs);
       const headers = await auth();
-      for (let n = 0; n < 4; n++) {
+      for (let n = 0; n < 5; n++) {
         const res = await call(app, n, headers);
         expect(res.status).toBe(401);
         expect(await res.json()).toEqual(UNAUTHORIZED);

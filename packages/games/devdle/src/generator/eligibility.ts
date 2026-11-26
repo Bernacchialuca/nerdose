@@ -2,7 +2,7 @@ import type { RecentChallenge } from '@nerdose/core';
 
 import type { DevdlePayload } from '../definition';
 import { addDays } from './dates';
-import { DEVDLE_EXCLUDED_TERMS } from './excluded';
+import { DEVDLE_EXCLUDED_TERMS } from '../shared/excluded';
 import type { DevdleTerm } from './index';
 
 export const REUSE_WINDOW_DAYS = 365;

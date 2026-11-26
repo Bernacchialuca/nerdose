@@ -77,6 +77,23 @@ describe('GET /api/admin/content/stock', () => {
     });
   });
 
+  it('no cuenta para Devdle los términos que su generator excluye', async () => {
+    await dbs.insertTerm({ term: 'REDIS', status: 'approved' });
+    await dbs.insertTerm({ term: 'SLITAZ', status: 'approved', category: 'linux' });
+    await dbs.insertTerm({ term: 'PCLINUXOS', status: 'approved', category: 'linux' });
+    const body = (await (await stock()).json()) as Json;
+    expect(body.banks[0]).toMatchObject({
+      bank: 'terms',
+      approved_total: 3,
+      approved_available: 1,
+      days_of_stock: 0,
+    });
+    expect(body.banks[0].consumers).toMatchObject([
+      { game_id: 'devdle', approved_available: 1, days_of_stock: 1 },
+      { game_id: 'grep-grid', approved_available: 3, days_of_stock: 0 },
+    ]);
+  });
+
   it('TS-31 timeline_facts', async () => {
     const f = (n: number, lastUsed: string | null) =>
       dbs.insertTimelineFact({

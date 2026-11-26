@@ -11,11 +11,23 @@ import {
   timelineFacts,
 } from '@nerdose/db';
 import type { Db, Tx } from '@nerdose/db';
-import { and, asc, between, desc, eq, inArray, notExists, sql, type SQL } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  between,
+  desc,
+  eq,
+  inArray,
+  notExists,
+  notInArray,
+  sql,
+  type SQL,
+} from 'drizzle-orm';
 import type { PgColumn } from 'drizzle-orm/pg-core';
 
 import type { StreakBucket } from './admin.types';
 import { BANK_COLUMNS } from './bank-columns';
+import { escapeLike } from './bank-items';
 
 export type DailyPlayersRow = { date: string; gameId: GameId | null; players: number };
 export type RetentionRow = {
@@ -74,7 +86,40 @@ export type BankCounts = {
   rejectedTotal: number;
   available: number[];
   availableAll: number;
+  /** Approved que cada consumidor puede elegir alguna vez (sin sus `excluded`). */
+  approvedEligible: number[];
 };
+
+export type BankCountConsumer = { column: PgColumn; cutoff: string; excluded: readonly string[] };
+
+export type BankItemFilters = {
+  q?: string;
+  status?: 'approved' | 'rejected';
+  category?: string;
+};
+
+export type BankItemRow = {
+  id: string;
+  label: string;
+  category: string;
+  status: 'approved' | 'rejected';
+  rejectionReason: string | null;
+  sitelinks: number;
+  wikidataId: string;
+  description: string | null;
+  eventDate: string | null;
+  /** En el orden de las columnas pedidas. */
+  lastUsed: Array<string | null>;
+};
+
+function bankItemsWhere(bank: BankName, f: BankItemFilters): SQL | undefined {
+  const cols = BANK_COLUMNS[bank];
+  const conditions: SQL[] = [];
+  if (f.q) conditions.push(sql`${cols.label} ILIKE ${`%${escapeLike(f.q)}%`}`);
+  if (f.status) conditions.push(sql`${cols.status} = ${f.status}`);
+  if (f.category) conditions.push(sql`${cols.category} = ${f.category}`);
+  return conditions.length ? and(...conditions) : undefined;
+}
 
 export class AdminRepository {
   constructor(private readonly db: Db | Tx) {}
@@ -215,15 +260,17 @@ export class AdminRepository {
       .orderBy(asc(generationFailures.date), asc(sql`${generationFailures.gameId}::text`));
   }
 
-  /** Un solo SELECT por banco; las columnas vienen de `BANK_COLUMNS`, nunca de strings libres. */
-  async countBank(
-    bank: BankName,
-    consumers: Array<{ column: PgColumn; cutoff: string }>,
-  ): Promise<BankCounts> {
+  /**
+   * Un solo SELECT por banco; las columnas vienen de `BANK_COLUMNS`, nunca de strings libres.
+   * `excluded`: textos que el generator de ese consumidor nunca elige; no cuentan para él.
+   */
+  async countBank(bank: BankName, consumers: BankCountConsumer[]): Promise<BankCounts> {
     const cols = BANK_COLUMNS[bank];
     const isApproved: SQL = sql`${cols.status} = 'approved'`;
-    const free = (c: { column: PgColumn; cutoff: string }): SQL =>
-      sql`(${c.column} IS NULL OR ${c.column} <= ${c.cutoff})`;
+    const eligible = (c: BankCountConsumer): SQL =>
+      c.excluded.length ? notInArray(cols.label, [...c.excluded]) : sql`true`;
+    const free = (c: BankCountConsumer): SQL =>
+      sql`(${c.column} IS NULL OR ${c.column} <= ${c.cutoff}) and ${eligible(c)}`;
     const selection: Record<string, SQL<number>> = {
       approvedTotal: sql<number>`(count(*) filter (where ${isApproved}))::int`,
       rejectedTotal: sql<number>`(count(*) filter (where ${cols.status} = 'rejected'))::int`,
@@ -234,6 +281,8 @@ export class AdminRepository {
     };
     consumers.forEach((c, i) => {
       selection[`c${i}`] = sql<number>`(count(*) filter (where ${isApproved} and ${free(c)}))::int`;
+      selection[`e${i}`] =
+        sql<number>`(count(*) filter (where ${isApproved} and ${eligible(c)}))::int`;
     });
     const [row] = await this.db.select(selection).from(cols.table);
     return {
@@ -241,7 +290,63 @@ export class AdminRepository {
       rejectedTotal: row?.rejectedTotal ?? 0,
       availableAll: row?.availableAll ?? 0,
       available: consumers.map((_, i) => row?.[`c${i}`] ?? 0),
+      approvedEligible: consumers.map((_, i) => row?.[`e${i}`] ?? 0),
     };
+  }
+
+  /** Página de un banco para la pantalla Contenido; `lastUsed` en el orden de `lastUsedColumns`. */
+  async listBankItems(
+    bank: BankName,
+    filters: BankItemFilters,
+    lastUsedColumns: PgColumn[],
+    page: { limit: number; offset: number },
+  ): Promise<BankItemRow[]> {
+    const cols = BANK_COLUMNS[bank];
+    const selection: Record<string, SQL> = {
+      id: sql<string>`${cols.id}`,
+      label: sql<string>`${cols.label}`,
+      category: sql<string>`${cols.category}::text`,
+      status: sql<'approved' | 'rejected'>`${cols.status}::text`,
+      rejectionReason: sql<string | null>`${cols.rejectionReason}`,
+      sitelinks: sql<number>`${cols.sitelinks}`,
+      wikidataId: sql<string>`${cols.wikidataId}`,
+      description: sql<string | null>`${cols.description} ->> 'es'`,
+      eventDate: cols.eventDate
+        ? sql<string | null>`to_char(${cols.eventDate}, 'YYYY-MM-DD')`
+        : sql<string | null>`null`,
+    };
+    lastUsedColumns.forEach((column, i) => {
+      selection[`lu${i}`] = sql<string | null>`to_char(${column}, 'YYYY-MM-DD')`;
+    });
+    const rows = (await this.db
+      .select(selection)
+      .from(cols.table)
+      .where(bankItemsWhere(bank, filters))
+      .orderBy(asc(cols.label), asc(cols.id))
+      .limit(page.limit)
+      .offset(page.offset)) as Array<Record<string, unknown>>;
+    return rows.map((r) => ({
+      id: r.id as string,
+      label: r.label as string,
+      category: r.category as string,
+      status: r.status as 'approved' | 'rejected',
+      rejectionReason: (r.rejectionReason as string | null) ?? null,
+      sitelinks: r.sitelinks as number,
+      wikidataId: r.wikidataId as string,
+      description: (r.description as string | null) ?? null,
+      eventDate: (r.eventDate as string | null) ?? null,
+      lastUsed: lastUsedColumns.map((_, i) => (r[`lu${i}`] as string | null) ?? null),
+    }));
+  }
+
+  /** Mismos filtros que `listBankItems`. */
+  async countBankItems(bank: BankName, filters: BankItemFilters): Promise<number> {
+    const cols = BANK_COLUMNS[bank];
+    const [row] = await this.db
+      .select({ total: sql<number>`count(*)::int` })
+      .from(cols.table)
+      .where(bankItemsWhere(bank, filters));
+    return row?.total ?? 0;
   }
 
   async findRejections(
