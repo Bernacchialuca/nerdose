@@ -1,24 +1,32 @@
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 
-import { Panel, buttonClass } from '@nerdose/ui';
+import { buttonClass } from '@nerdose/ui';
 
 import { useDocumentTitle } from '@/hooks/use-document-title';
 
+import { ErrorTerminal } from './error-terminal';
+
 export function NotFound() {
   const { t } = useTranslation();
+  const { pathname } = useLocation();
   useDocumentTitle(t('notFound.documentTitle'));
 
   return (
-    <Panel className="mx-auto w-full max-w-lede">
-      <h1 tabIndex={-1} className="font-mono text-title-page break-words text-text">
-        {t('notFound.title')}
-      </h1>
-      <p className="text-body text-text-lede">{t('notFound.message')}</p>
-      <Link to="/" className={buttonClass({ fullWidth: true })}>
-        <span aria-hidden="true">←</span>
-        {t('notFound.back')}
-      </Link>
-    </Panel>
+    <div className="mx-auto w-full max-w-lede">
+      <ErrorTerminal
+        command={`cd ${pathname}`}
+        output={t('notFound.terminalOutput', { path: pathname })}
+        exitCode={1}
+        title={t('notFound.title')}
+        message={t('notFound.message')}
+        actions={
+          <Link to="/" className={buttonClass({ fullWidth: true })}>
+            <span aria-hidden="true">←</span>
+            {t('notFound.back')}
+          </Link>
+        }
+      />
+    </div>
   );
 }

@@ -1,6 +1,13 @@
 export const es = {
   shell: { brand: 'nerdose', title: 'nerdose' },
-  errors: { title: 'Algo salió mal', retry: 'Reintentar' },
+  errors: {
+    title: 'Algo salió mal',
+    message:
+      'Tuvimos un error inesperado. Tu progreso está guardado: reintentá o volvé a los juegos.',
+    retry: 'Reintentar',
+    back: 'Volver a los juegos',
+    terminalOutput: 'error: algo se rompió de nuestro lado',
+  },
   nav: {
     label: 'Navegación principal',
     games: './juegos',
@@ -45,6 +52,7 @@ export const es = {
   },
   notFound: {
     documentTitle: 'Página no encontrada · nerdose',
+    terminalOutput: 'bash: cd: {{path}}: No existe el archivo o el directorio',
     title: '404 · página no encontrada',
     message: 'Esta dirección no existe en nerdose. Los desafíos de hoy te esperan en la home.',
     back: 'Volver a los juegos',

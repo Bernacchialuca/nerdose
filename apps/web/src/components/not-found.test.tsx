@@ -28,6 +28,14 @@ describe('NotFound', () => {
     expect(screen.queryByRole('alert')).toBeNull();
   });
 
+  it('la terminal muestra la ruta pedida', () => {
+    view();
+    expect(screen.getByText('cd /no-existe')).toBeInTheDocument();
+    expect(
+      screen.getByText('bash: cd: /no-existe: No existe el archivo o el directorio'),
+    ).toBeInTheDocument();
+  });
+
   it('TS-34 en inglés', async () => {
     server.use(
       http.post('/api/session', () => HttpResponse.json({ ...sessionFixture, locale: 'en' })),
