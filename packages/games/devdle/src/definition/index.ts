@@ -51,13 +51,18 @@ export const devdle: GameDefinition<
 
   applyMove(p, s, m, _now, ctx) {
     if (isWon(s) || s.guesses.length >= MAX_GUESSES) return { error: 'invalid_move' };
+    if ('hint' in m) {
+      if (s.hint !== undefined || m.hint >= p.word.length) return { error: 'invalid_move' };
+      const hint = { position: m.hint, letter: p.word.charAt(m.hint) };
+      return { state: { ...s, hint }, feedback: { hint } };
+    }
     if (!WORD_PATTERN.test(m.guess) || m.guess.length !== p.word.length) {
       return { error: 'invalid_move' };
     }
     // La respuesta del día se acepta aunque la lista válida no la contenga.
     if (m.guess !== p.word && !ctx.isValidWord(m.guess)) return { error: 'not_in_word_list' };
     const feedback: DevdleFeedback = { guess: m.guess, marks: scoreGuess(p.word, m.guess) };
-    return { state: { guesses: [...s.guesses, feedback] }, feedback };
+    return { state: { ...s, guesses: [...s.guesses, feedback] }, feedback };
   },
 
   isFinished: (s) => isWon(s) || s.guesses.length >= MAX_GUESSES,
@@ -72,6 +77,7 @@ export const devdle: GameDefinition<
       definition: p.definition[locale],
       summary: p.summary[locale],
       guesses: s.guesses,
+      hint: s.hint ?? null,
     };
   },
 
@@ -96,12 +102,15 @@ export { scoreGuess } from './feedback';
 export {
   MAX_GUESSES,
   WORD_PATTERN,
+  guessMoveSchema,
   guessSchema,
+  hintMoveSchema,
   letterMarkSchema,
   moveSchema,
   payloadSchema,
   publicViewSchema,
   resultSchema,
+  revealedHintSchema,
   stateSchema,
   statsSchema,
 } from './schemas';
@@ -112,6 +121,7 @@ export type {
   DevdlePayload,
   DevdlePublicView,
   DevdleResult,
+  DevdleRevealedHint,
   DevdleState,
   DevdleStats,
   LetterMark,

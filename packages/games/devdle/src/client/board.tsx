@@ -2,17 +2,24 @@ import type { CSSProperties } from 'react';
 
 import { cn } from '@nerdose/ui';
 
-import { MAX_GUESSES, type DevdleGuess, type LetterMark } from '../definition/schemas';
+import {
+  MAX_GUESSES,
+  type DevdleGuess,
+  type DevdleRevealedHint,
+  type LetterMark,
+} from '../definition/schemas';
 
 import { MARK_GLYPH } from './marks';
 import type { Translate } from './types';
 
-type CellState = LetterMark | 'written' | 'empty';
+type CellState = LetterMark | 'written' | 'hinted' | 'empty';
 
 type BoardProps = {
   length: number;
   guesses: readonly DevdleGuess[];
   draft?: string;
+  /** Revealed hint: shown as a guide in the empty cell of the active row. */
+  hint?: DevdleRevealedHint;
   rows?: number;
   label: string;
   t: Translate;
@@ -23,6 +30,7 @@ const CELL_CLASS: Record<CellState, string> = {
   present: 'border-2 border-dashed border-status-present text-status-present',
   absent: 'border-2 border-status-absent-bg bg-status-absent-bg text-status-absent-text',
   written: 'border-2 border-border-emphasis bg-surface text-text',
+  hinted: 'border-2 border-dashed border-game-devdle-border text-game-devdle-muted',
   empty: 'border-2 border-border',
 };
 
@@ -32,15 +40,18 @@ function rowCells(
   length: number,
   guess: DevdleGuess | undefined,
   draft: string | undefined,
+  hint: DevdleRevealedHint | undefined,
 ): Cell[] {
   return Array.from({ length }, (_, i): Cell => {
     if (guess) return { letter: guess.guess[i] ?? '', state: guess.marks[i] ?? 'absent' };
     const letter = draft?.[i];
-    return letter ? { letter, state: 'written' } : { letter: '', state: 'empty' };
+    if (letter) return { letter, state: 'written' };
+    if (hint?.position === i) return { letter: hint.letter, state: 'hinted' };
+    return { letter: '', state: 'empty' };
   });
 }
 
-export function Board({ length, guesses, draft, rows = MAX_GUESSES, label, t }: BoardProps) {
+export function Board({ length, guesses, draft, hint, rows = MAX_GUESSES, label, t }: BoardProps) {
   const gapPx = length <= 8 ? 8 : 4;
   const gapClass = length <= 8 ? 'gap-2' : 'gap-1';
   const inner = `(100cqi - ${(length - 1) * gapPx}px) / ${length}`;
@@ -60,7 +71,13 @@ export function Board({ length, guesses, draft, rows = MAX_GUESSES, label, t }: 
     >
       {Array.from({ length: rows }, (_, r) => {
         const guess = guesses[r];
-        const cells = rowCells(length, guess, r === guesses.length ? draft : undefined);
+        const active = r === guesses.length;
+        const cells = rowCells(
+          length,
+          guess,
+          active ? draft : undefined,
+          active ? hint : undefined,
+        );
         return (
           <div
             key={r}

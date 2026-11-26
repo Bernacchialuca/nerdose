@@ -57,6 +57,11 @@ describe('devdle definition', () => {
       { guess: 'REA CT' },
       {},
       { guess: 5 },
+      { hint: -1 },
+      { hint: 12 },
+      { hint: 1.5 },
+      { hint: '2' },
+      { guess: 'REACT', hint: 1 },
     ];
     for (const b of bad) expect(devdle.moveSchema.safeParse(b).success).toBe(false);
   });
@@ -150,6 +155,7 @@ describe('devdle definition', () => {
       definition: 'biblioteca de JavaScript para construir interfaces de usuario',
       summary: 'React es una biblioteca de código abierto mantenida por Meta.',
       guesses: s4.guesses,
+      hint: null,
     });
     expect(devdle.isWin(r)).toBe(true);
     expect(devdle.score(r)).toBe(4);
@@ -178,6 +184,7 @@ describe('devdle definition', () => {
       definition: 'JavaScript library for building user interfaces',
       summary: 'React is a free and open-source front-end JavaScript library maintained by Meta.',
       guesses: s6.guesses,
+      hint: null,
     });
     expect(devdle.isWin(r)).toBe(false);
     expect(devdle.score(r)).toBe(6);
@@ -245,6 +252,59 @@ describe('devdle definition', () => {
     expect(es.score).toBe(en.score);
     expect(Object.keys(es)).not.toContain('term_id');
     expect(Object.keys(es)).not.toContain('date');
+  });
+
+  describe('hint', () => {
+    const hint = (s: DevdleState, position: number) =>
+      devdle.applyMove(PAYLOAD_REACT, s, { hint: position }, NOW, ALL_VALID);
+
+    it('moveSchema accepts a hint position', () => {
+      expect(devdle.moveSchema.safeParse({ hint: 0 }).success).toBe(true);
+      expect(devdle.moveSchema.safeParse({ hint: 11 }).success).toBe(true);
+    });
+
+    it('reveals the letter at the position without consuming an attempt', () => {
+      const r = hint(play(['CACHE']), 4);
+      if ('error' in r) throw new Error(r.error);
+      expect(r.feedback).toEqual({ hint: { position: 4, letter: 'T' } });
+      expect(r.state.hint).toEqual({ position: 4, letter: 'T' });
+      expect(r.state.guesses).toHaveLength(1);
+      expect(devdle.isFinished(r.state)).toBe(false);
+    });
+
+    it('allows only one hint per game', () => {
+      const r = hint(S0, 0);
+      if ('error' in r) throw new Error(r.error);
+      expect(hint(r.state, 1)).toEqual({ error: 'invalid_move' });
+    });
+
+    it('rejects a position outside the word', () => {
+      expect(hint(S0, 5)).toEqual({ error: 'invalid_move' });
+    });
+
+    it('rejects a hint on a finished game', () => {
+      expect(hint(play(['REACT']), 0)).toEqual({ error: 'invalid_move' });
+    });
+
+    it('keeps the hint across later guesses and in the result', () => {
+      const r = hint(S0, 1);
+      if ('error' in r) throw new Error(r.error);
+      const next = devdle.applyMove(PAYLOAD_REACT, r.state, { guess: 'REACT' }, NOW, ALL_VALID);
+      if ('error' in next) throw new Error(next.error);
+      expect(next.state.hint).toEqual({ position: 1, letter: 'E' });
+      expect(devdle.result(PAYLOAD_REACT, next.state, 'es').hint).toEqual({
+        position: 1,
+        letter: 'E',
+      });
+      expect(devdle.result(PAYLOAD_REACT, play(['REACT']), 'es').hint).toBeNull();
+    });
+
+    it('parses states and results saved before the hint existed', () => {
+      expect(stateSchema.parse({ guesses: [] })).toEqual({ guesses: [] });
+      const legacy: Record<string, unknown> = devdle.result(PAYLOAD_REACT, play(['REACT']), 'es');
+      delete legacy.hint;
+      expect(resultSchema.safeParse(legacy).success).toBe(true);
+    });
   });
 
   it('payloadSchema parses the fixture', () => {

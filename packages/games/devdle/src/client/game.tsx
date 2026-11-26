@@ -1,12 +1,13 @@
 import { useId, useMemo, useState } from 'react';
 
-import { MAX_GUESSES, moveSchema } from '../definition/schemas';
+import { MAX_GUESSES, hintMoveSchema, moveSchema } from '../definition/schemas';
 
 import { Board } from './board';
 import { CategoryHint } from './category-hint';
 import { Distribution } from './distribution';
 import { Keyboard } from './keyboard';
 import { Legend } from './legend';
+import { LetterHint } from './letter-hint';
 import { isFinished, keyStates } from './marks';
 import { MoveHint } from './move-hint';
 import { parsePublicView, parseState } from './parse';
@@ -97,6 +98,21 @@ export function Game({
 
   useDevdleInput({ enabled: !locked, onLetter, onBackspace, onSubmit, onInvalid });
 
+  const onReveal = (position: number) => {
+    if (inputBlocked) return;
+    clearHints();
+    onMove(hintMoveSchema.parse({ hint: position }));
+  };
+  const known = useMemo(() => {
+    const out = new Map<number, string>();
+    for (const g of guesses) {
+      g.marks.forEach((m, i) => {
+        if (m === 'correct') out.set(i, g.guess.charAt(i));
+      });
+    }
+    return out;
+  }, [guesses]);
+
   let hint = '';
   if (localHint) hint = t(`hint.${localHint}`, { length });
   else if (moveError && moveError !== dismissedError) {
@@ -127,6 +143,7 @@ export function Game({
           length={length}
           guesses={guesses}
           draft={draft}
+          hint={play.hint}
           label={t('board.label', { max: MAX_GUESSES, length })}
           t={t}
         />
@@ -148,6 +165,16 @@ export function Game({
       <aside className="flex min-w-0 max-w-devdle-aside grow basis-75 flex-col gap-4">
         <Legend t={t} />
         <CategoryHint categories={view.possible_categories} t={t} />
+        {locked ? null : (
+          <LetterHint
+            length={length}
+            hint={play.hint}
+            known={known}
+            disabled={inputBlocked}
+            onReveal={onReveal}
+            t={t}
+          />
+        )}
         {gameStats ? <Distribution stats={gameStats} t={t} /> : null}
         {aside}
       </aside>

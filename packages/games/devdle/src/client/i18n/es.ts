@@ -13,7 +13,7 @@ export const es = {
     },
     step3: {
       kicker: '3 · Mirá las categorías',
-      body: 'Te mostramos las 8 categorías del banco —son siempre las mismas— para orientarte. La del día, la definición y un resumen se revelan al terminar.',
+      body: 'Te mostramos las 8 categorías del banco —son siempre las mismas— para orientarte. La del día, la definición y un resumen se revelan al terminar. Si te trabás, tenés una pista por partida: revela la letra de la posición que elijas.',
     },
     countNotice: 'La partida no cuenta hasta que la completes. Ganar o perder suma a tu racha.',
     start: 'Empezar',
@@ -34,6 +34,7 @@ export const es = {
     present: 'en otra posición',
     absent: 'no está',
     written: 'escrita',
+    hinted: 'pista',
     empty: 'vacía',
   },
   keyboard: {
@@ -68,6 +69,18 @@ export const es = {
     security: 'seguridad',
     software_engineering: 'ingeniería de software',
   },
+  letterHint: {
+    title: 'pista de letra',
+    available: '1 disponible',
+    used: 'usada',
+    note: 'Una por partida: elegí una posición y revelá su letra. No gasta intentos.',
+    positions: 'Posiciones de la palabra',
+    position: 'Posición {{n}}',
+    knownPosition: 'Posición {{n}}: ya sabés que es {{letter}}',
+    pick: 'Elegí una posición',
+    reveal: 'Revelar la letra {{n}}',
+    revealed: 'La letra {{n}} es {{letter}}.',
+  },
   legend: {
     title: 'cómo leer las pistas',
     correct: 'Letra correcta en el lugar correcto.',
@@ -75,6 +88,7 @@ export const es = {
     absent: 'No está en la palabra.',
   },
   result: {
+    hintUsed: 'Usaste la pista: la letra {{n}} era {{letter}}.',
     won: 'Ganaste en {{score}}/{{max}}',
     lost: 'No salió: X/{{max}}',
     lostDetail: 'Mostramos la palabra y su explicación.',

@@ -412,6 +412,8 @@ paths:
             examples:
               devdle:
                 value: { challenge_number: 128, move: { guess: REACT } }
+              devdle_hint:
+                value: { challenge_number: 128, move: { hint: 2 } }
               grep_grid_select:
                 value: { challenge_number: 128, move: { type: select, from: { row: 0, col: 2 }, to: { row: 0, col: 7 } } }
               grep_grid_give_up:
@@ -1530,6 +1532,13 @@ components:
           type: array
           items: { $ref: '#/components/schemas/LetterMark' }
 
+    DevdleRevealedHint:
+      type: object
+      required: [position, letter]
+      properties:
+        position: { type: integer, minimum: 0, maximum: 11, description: 'Base 0' }
+        letter: { type: string, pattern: '^[A-Z]$' }
+
     DevdleState:
       type: object
       required: [guesses]
@@ -1538,6 +1547,9 @@ components:
           type: array
           maxItems: 6
           items: { $ref: '#/components/schemas/DevdleGuess' }
+        hint:
+          allOf: [ { $ref: '#/components/schemas/DevdleRevealedHint' } ]
+          description: La pista revelada, si se usó (una por partida). Ausente en partidas previas a la pista
 
     GrepGridState:
       type: object
@@ -1611,13 +1623,24 @@ components:
 
     # ─────────── Jugadas ───────────
     DevdleMove:
-      type: object
-      required: [guess]
-      properties:
-        guess:
-          type: string
-          pattern: '^[A-Z]{4,12}$'
-          description: En mayúsculas; largo = `public_view.length`
+      oneOf:
+        - type: object
+          additionalProperties: false
+          required: [guess]
+          properties:
+            guess:
+              type: string
+              pattern: '^[A-Z]{4,12}$'
+              description: En mayúsculas; largo = `public_view.length`
+        - type: object
+          additionalProperties: false
+          required: [hint]
+          description: >
+            Pista: revela la letra de `hint` (base 0, menor que `public_view.length`). Una por partida,
+            no consume intento; una segunda pista o una posición fuera de la palabra devuelve
+            `invalid_move`. El `feedback` es `{ hint: DevdleRevealedHint }`.
+          properties:
+            hint: { type: integer, minimum: 0, maximum: 11 }
 
     GrepGridSelectMove:
       type: object
@@ -1726,6 +1749,10 @@ components:
         guesses:
           type: array
           items: { $ref: '#/components/schemas/DevdleGuess' }
+        hint:
+          allOf: [ { $ref: '#/components/schemas/DevdleRevealedHint' } ]
+          nullable: true
+          description: La pista usada, o null. Ausente en resultados previos a la pista
 
     GrepGridResult:
       type: object

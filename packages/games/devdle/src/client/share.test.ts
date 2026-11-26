@@ -11,6 +11,12 @@ describe('share', () => {
     );
   });
 
+  it('marks a game played with the hint, without the letter', () => {
+    const text = share({ ...RESULT_WIN, hint: { position: 0, letter: 'P' } }, 128);
+    expect(text.split('\n')[0]).toBe('🟩 Devdle #128 · 3/6 💡');
+    expect(share({ ...RESULT_WIN, hint: null }, 128).split('\n')[0]).toBe('🟩 Devdle #128 · 3/6');
+  });
+
   it('formats a loss with X/6 (TS-8)', () => {
     const lines = share(RESULT_LOSS, 128).split('\n');
     expect(lines[0]).toBe('🟩 Devdle #128 · X/6');
