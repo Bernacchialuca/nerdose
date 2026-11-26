@@ -1918,29 +1918,37 @@
           "annotation": "`app-header` variant `default` del shell (sin píldora de racha, cursor estático, ningún ítem de nav activo); el #número se oculta si el servidor no lo informa. En mobile se acomoda con `flex-wrap`"
         },
         {
+          "name": "terminal",
+          "type": "card",
+          "category": "content",
+          "content": "$ cd /ruta-pedida",
+          "paragraph": "bash: cd: /ruta-pedida: No existe el archivo o el directorio · exit 1▌",
+          "annotation": "ventana de terminal (barra con tres puntos y `nerdose — bash`, sombra `window`), Mono `code-terminal`; la ruta es la real. Es decorativa: el `h1` y el mensaje dicen lo mismo en prosa. La misma ventana (componente `ErrorTerminal` de `web`) se usa en [`error-inesperado`](error-inesperado.md) (`$ nerdose --play`)"
+        },
+        {
           "name": "codigo",
           "type": "heading",
           "category": "content",
           "content": "404 · página no encontrada",
-          "level": "h1",
-          "annotation": "título de página del DS (Mono 800, tracking negativo, sin peso 600), dentro de un `panel` `default` (radio 14)"
+          "annotation": "título de página del DS (Mono 800, tracking negativo, sin peso 600), debajo de la transcripción, separado por una línea punteada, dentro de la misma ventana (radio 14)",
+          "level": "h1"
         },
         {
           "name": "mensaje",
           "type": "paragraph",
           "category": "content",
           "content": "Esta dirección no existe en nerdose. Los desafíos de hoy te esperan en la home.",
-          "level": "body",
-          "annotation": "prosa en Inter"
+          "annotation": "prosa en Inter",
+          "level": "body"
         },
         {
           "name": "btn-home",
           "type": "button",
           "category": "input",
           "content": "Volver a los juegos",
-          "variant": "primary",
           "icon": "arrow-left",
-          "annotation": "botón `primary` `md` del DS (radio 10); navega a `/`; ancho completo en mobile"
+          "annotation": "botón `primary` `md` del DS (radio 10); navega a `/`; ancho completo en mobile",
+          "variant": "primary"
         },
         {
           "name": "footer",
@@ -1954,17 +1962,18 @@
         "mobile": [
           {
             "row": "panel",
-            "card": true,
             "cols": [
               {
                 "w": 12,
                 "stack": [
+                  "terminal",
                   "codigo",
                   "mensaje",
                   "btn-home"
                 ]
               }
-            ]
+            ],
+            "card": true
           }
         ],
         "desktop": [
@@ -1979,9 +1988,125 @@
                 "w": 6,
                 "card": true,
                 "stack": [
+                  "terminal",
                   "codigo",
                   "mensaje",
                   "btn-home"
+                ]
+              },
+              {
+                "w": 3,
+                "stack": []
+              }
+            ]
+          }
+        ]
+      },
+      "states": [
+        {
+          "name": "default",
+          "applies": true
+        }
+      ]
+    },
+    {
+      "name": "error-inesperado",
+      "displayName": "Error inesperado",
+      "audiences": [
+        "jugador"
+      ],
+      "blocks": [
+        {
+          "name": "header",
+          "type": "header",
+          "category": "layout",
+          "content": "> nerdose_",
+          "annotation": "`AppHeader` de `@nerdose/ui` con solo la marca (`BrandMark`) como `<a href=\"/\">` (no `<Link>`: fuerza una carga limpia). Target de 44 px y foco visible con el acento"
+        },
+        {
+          "name": "terminal",
+          "type": "card",
+          "category": "content",
+          "content": "$ nerdose --play",
+          "paragraph": "error: algo se rompió de nuestro lado · exit 1▌",
+          "annotation": "componente `ErrorTerminal` de `web` (el mismo de `no-encontrado`): barra con tres puntos y `nerdose — bash`, sombra `window`, Mono `code-terminal`, la salida en `status.error` y el cursor `▌` que parpadea solo sin `prefers-reduced-motion`. En `vite dev` la salida es el error real (`Nombre: mensaje`); en build y en tests nunca se muestra (no filtra detalles internos)"
+        },
+        {
+          "name": "titulo",
+          "type": "heading",
+          "category": "content",
+          "level": "h1",
+          "content": "Algo salió mal",
+          "annotation": "título de página del DS (Mono, `title-page`), debajo de la transcripción, separado por una línea punteada, dentro de la misma ventana"
+        },
+        {
+          "name": "mensaje",
+          "type": "paragraph",
+          "category": "content",
+          "level": "body",
+          "content": "Tuvimos un error inesperado. Tu progreso está guardado: reintentá o volvé a los juegos.",
+          "annotation": "prosa en Inter (`body`, `text-lede`). EN: «We hit an unexpected error. Your progress is saved: try again or go back to the games.»"
+        },
+        {
+          "name": "btn-reintentar",
+          "type": "button",
+          "category": "input",
+          "variant": "primary",
+          "content": "Reintentar",
+          "annotation": "`buttonClass` `primary`, ancho completo; `location.reload()`"
+        },
+        {
+          "name": "btn-volver",
+          "type": "button",
+          "category": "navigation",
+          "variant": "secondary",
+          "content": "← Volver a los juegos",
+          "annotation": "`buttonClass` `secondary`, ancho completo; enlace a `/`"
+        },
+        {
+          "name": "footer",
+          "type": "footer",
+          "category": "layout",
+          "content": "> nerdose — una plataforma, múltiples desafíos. · exit 0",
+          "annotation": "`site-footer` del shell, igual que en el resto de las pantallas"
+        }
+      ],
+      "layouts": {
+        "mobile": [
+          {
+            "row": "panel",
+            "cols": [
+              {
+                "w": 12,
+                "stack": [
+                  "terminal",
+                  "titulo",
+                  "mensaje",
+                  "btn-reintentar",
+                  "btn-volver"
+                ]
+              }
+            ],
+            "card": true
+          }
+        ],
+        "desktop": [
+          {
+            "row": "centrado",
+            "cols": [
+              {
+                "w": 3,
+                "stack": []
+              },
+              {
+                "w": 6,
+                "card": true,
+                "stack": [
+                  "terminal",
+                  "titulo",
+                  "mensaje",
+                  "btn-reintentar",
+                  "btn-volver"
                 ]
               },
               {
@@ -2011,7 +2136,7 @@
           "type": "header",
           "category": "layout",
           "content": "> nerdose / devdle · desafío del 30/10 · [?] [stats] [Compartir] ES|EN · 🔥 4",
-          "annotation": "`game-header` variant `playing` (REQ-004): `devdle` en el acento del juego y «desafío del dd/mm» (se oculta si el servidor no lo informa). «Cómo se juega» → reglas de esta pantalla · «Estadísticas» → estadisticas · Compartir deshabilitado («disponible al terminar la partida») · ES|EN inline · racha global. Sin nav global ni `nav-movil`: en mobile las acciones envuelven a su propia fila"
+          "annotation": "`game-header` variant `playing` (REQ-004): breadcrumb con `devdle` en el acento del juego y metadato «desafío del dd/mm» (decisión #12; se oculta si el servidor no lo informa). Acciones: «Cómo se juega» (lleva a «Cómo se juega» de esta misma pantalla), «Estadísticas» → `estadisticas`, Compartir deshabilitado («disponible al terminar la partida»), ES|EN inline y píldora con la racha global. Sin nav global ni tira `nav-movil`: en mobile las acciones envuelven a su propia fila"
         },
         {
           "name": "titulo",
@@ -2035,19 +2160,20 @@
           "name": "aviso-dia-nuevo",
           "type": "alert",
           "category": "feedback",
-          "kind": "info",
           "content": "Empezó el desafío #9. La partida de ayer quedó sin terminar y no cuenta para tu racha.",
+          "annotation": "aparece al llegar desde `devdle-partida` por `challenge_expired` (o al detectar el cambio de día con la pantalla abierta); se descarta al tocar «Empezar» o al salir. Si el día nuevo no tiene desafío, se muestra junto a `alerta-sin-desafio`",
+          "kind": "info",
+          "icon": "info",
           "visible_only_in_states": [
             "día nuevo"
-          ],
-          "annotation": "llega desde devdle-partida por `challenge_expired` (o al detectar el cambio de día); se descarta al tocar «Empezar» o al salir"
+          ]
         },
         {
           "name": "alerta-sin-desafio",
           "type": "alert",
           "category": "feedback",
-          "kind": "info",
           "content": "Hoy no hay desafío de Devdle. Es un día neutro: no suma ni corta tu racha.",
+          "kind": "info",
           "visible_only_in_states": [
             "sin desafío hoy"
           ]
@@ -2056,12 +2182,12 @@
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "annotation": "el modal O-02 se abre solo al entrar en este estado. También se llega acá si «Empezar» responde `challenge_voided`",
+          "kind": "warning",
           "visible_only_in_states": [
             "anulado"
-          ],
-          "annotation": "el modal O-02 se abre solo al entrar en este estado; también si «Empezar» responde `challenge_voided`"
+          ]
         },
         {
           "name": "reglas-titulo",
@@ -2082,13 +2208,13 @@
           "category": "content",
           "content": "1 · Adiviná el término",
           "paragraph": "Es un término de tecnología de 4 a 12 letras, el mismo para todos hoy. Tenés 6 intentos para encontrarlo.",
+          "annotation": "el largo exacto se ve en el tablero al empezar (vista pública `length`)",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ],
-          "annotation": "el largo exacto se ve en el tablero al empezar (vista pública `length`)"
+          ]
         },
         {
           "name": "paso-2",
@@ -2108,21 +2234,21 @@
           "type": "card",
           "category": "content",
           "content": "3 · Mirá las categorías",
-          "paragraph": "Te mostramos las 8 categorías del banco —son siempre las mismas— para orientarte. La del día, la definición y un resumen se revelan al terminar.",
+          "paragraph": "Te mostramos las 8 categorías del banco —son siempre las mismas— para orientarte. La del día, la definición y un resumen se revelan al terminar. Si te trabás, tenés una pista por partida: revela la letra de la posición que elijas.",
+          "annotation": "la lista es fija y no filtra la categoría del día (REQ-004, supuesto «Vista pública»)",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
             "loading",
             "error de sistema"
-          ],
-          "annotation": "la lista es fija y no filtra la categoría del día"
+          ]
         },
         {
           "name": "aviso-conteo",
           "type": "paragraph",
           "category": "content",
-          "level": "caption",
           "content": "La partida no cuenta hasta que la completes. Ganar o perder suma a tu racha.",
+          "level": "caption",
           "hidden_in_states": [
             "sin desafío hoy",
             "anulado",
@@ -2135,32 +2261,33 @@
           "type": "button",
           "category": "input",
           "content": "Empezar",
-          "variant": "primary",
           "icon": "arrow-right",
-          "hidden_in_states": [
-            "sin desafío hoy",
-            "anulado",
-            "loading",
-            "error de sistema"
-          ],
           "annotation": "crea la Play (idempotente: tocar dos veces no crea otra)",
           "state_overrides": {
             "sin sesión": {
               "variant": "disabled",
               "annotation": "deshabilitado mientras no hay sesión (O-03, `no_session`); no se crea ninguna Play"
             }
-          }
+          },
+          "variant": "primary",
+          "hidden_in_states": [
+            "sin desafío hoy",
+            "anulado",
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "banner-cookies",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "content": "Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».",
+          "annotation": "banner `warning` del shell (O-03). También aparece si «Empezar» responde `no_session`",
+          "kind": "warning",
+          "icon": "warning",
           "visible_only_in_states": [
             "sin sesión"
-          ],
-          "annotation": "banner `warning` del shell (O-03); también si «Empezar» responde `no_session`"
+          ]
         },
         {
           "name": "link-volver",
@@ -2182,8 +2309,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "kind": "error",
           "content": "No pudimos cargar el desafío de Devdle. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -2193,17 +2320,18 @@
           "type": "button",
           "category": "input",
           "content": "Reintentar",
-          "variant": "secondary",
           "icon": "refresh",
-          "visible_only_in_states": [
-            "error de sistema",
-            "sin sesión"
-          ],
           "state_overrides": {
             "sin sesión": {
               "annotation": "recrea la sesión y reintenta «Empezar»"
             }
-          }
+          },
+          "variant": "secondary",
+          "annotation": "en `error de sistema` recarga el desafío; en `sin sesión` recrea la sesión y vuelve a intentar «Empezar»",
+          "visible_only_in_states": [
+            "error de sistema",
+            "sin sesión"
+          ]
         },
         {
           "name": "footer",
@@ -2347,30 +2475,31 @@
           "type": "header",
           "category": "layout",
           "content": "> nerdose / devdle · desafío del 30/10 · [?] [stats] [Compartir] ES|EN · 🔥 4",
-          "annotation": "`game-header` variant `playing` (REQ-004): «Cómo se juega» → leyenda de pistas de esta pantalla · «Estadísticas» → estadisticas · Compartir deshabilitado («disponible al terminar la partida») · ES|EN sin perder la partida · racha global. Sin nav global ni `nav-movil`"
+          "annotation": "`game-header` variant `playing` (REQ-004): «Cómo se juega» lleva a la leyenda de pistas de esta pantalla; «Estadísticas» → `estadisticas`; Compartir deshabilitado («disponible al terminar la partida»); ES|EN cambia el idioma sin perder la partida; píldora con la racha global. Sin nav global ni `nav-movil`"
         },
         {
-          "name": "titulo",
-          "type": "heading",
+          "name": "consigna",
+          "type": "paragraph",
           "category": "content",
-          "content": "Devdle",
-          "level": "h1",
+          "content": "// término técnico · 6 letras · intento 4 de 6",
+          "annotation": "línea de comentario `font-mono text-label-comment`, primera del bloque de título (alineado a la izquierda, a ancho completo). El largo sale de la vista pública (`length`, 4 a 12) y el intento del estado de la Play; al retomar muestra el intento real",
+          "level": "caption",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ]
         },
         {
-          "name": "consigna",
-          "type": "paragraph",
+          "name": "titulo",
+          "type": "heading",
           "category": "content",
-          "level": "caption",
-          "content": "// término técnico · 6 letras · intento 4 de 6",
+          "content": "Adiviná el término del día",
+          "level": "h1",
+          "annotation": "`h1` debajo de la línea `//` (patrón común de partida, REQ-012). Después van los avisos (`notices`) del host",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "el largo sale de la vista pública (`length`, 4 a 12); al retomar muestra el intento real"
+          ]
         },
         {
           "name": "grilla-intentos",
@@ -2379,24 +2508,26 @@
           "content": "Tablero de 6 intentos × 6 letras · intentos anteriores con su feedback, fila actual escrita, filas vacías",
           "aspect_ratio": "6:6",
           "h": 260,
+          "annotation": "pattern `devdle.cell` (`role=\"grid\"`). Columnas = largo del término (4 a 12); las celdas escalan al ancho disponible (a 320 px y 12 letras bajan de tamaño y de gap). Cada celda suma símbolo además del color (✓ en su lugar, ~ en otro lugar, ✗ no está, NFR-U04) y `aria-label` «{letra}, {correcta|en otra posición|no está}». Al retomar se pintan los intentos guardados en el servidor (C-10). Si la pista se usó, la casilla de esa posición en la fila actual muestra la letra como guía (borde punteado del acento de Devdle, texto atenuado, `aria-label` «{letra}, pista») mientras el jugador no escriba en ella. En `eligiendo pista`, las casillas libres de la fila actual (sin las posiciones ya resueltas en verde) son botones «Revelar la letra N»",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
-          "annotation": "pattern `devdle.cell` (`role=grid`): 4 a 12 columnas según el término; las celdas escalan al ancho. Símbolo + color (✓ ~ ✗, NFR-U04) y `aria-label` por celda. Al retomar se pintan los intentos guardados (C-10)"
+          "state_overrides": {
+            "eligiendo pista": {
+              "annotation": "las casillas libres de la fila actual son botones «Revelar la letra N» con borde punteado del acento de Devdle; las posiciones resueltas no"
+            },
+            "pista usada": {
+              "annotation": "la casilla 3 de la fila actual muestra «A» como guía mientras esté vacía"
+            }
+          }
         },
         {
           "name": "aviso-jugada",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "content": "No está en la lista. Probá con otro término.",
-          "visible_only_in_states": [
-            "error de validación",
-            "faltan letras",
-            "límite de jugadas"
-          ],
-          "annotation": "hint del juego bajo el tablero (`role=status`): `not_in_word_list` no consume intento ni cambia el tablero. Caracteres fuera de A–Z se ignoran con «Solo letras de la A a la Z.»",
+          "annotation": "hint del juego bajo el tablero (`role=status`), no un error del sistema. En `eligiendo pista` muestra «> tocá una casilla de la fila actual para revelar su letra · Esc cancela». `not_in_word_list` no consume intento ni cambia el tablero; la fila escrita queda para corregir. Caracteres que no son A–Z (números, tildes, símbolos) se ignoran al escribir, con el aviso «Solo letras de la A a la Z.»",
           "state_overrides": {
             "faltan letras": {
               "content": "Faltan letras: el término tiene 6.",
@@ -2405,30 +2536,43 @@
             "límite de jugadas": {
               "content": "Vas muy rápido. Esperá unos segundos y probá de nuevo.",
               "annotation": "HTTP 429 con mensaje genérico; la jugada no se procesa ni consume intento (NFR-S08)"
+            },
+            "eligiendo pista": {
+              "content": "> tocá una casilla de la fila actual para revelar su letra · Esc cancela"
             }
-          }
+          },
+          "kind": "warning",
+          "icon": "warning",
+          "visible_only_in_states": [
+            "error de validación",
+            "faltan letras",
+            "límite de jugadas",
+            "eligiendo pista"
+          ]
         },
         {
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "annotation": "aparece si una jugada responde `challenge_voided`; el teclado se oculta y no se aceptan más jugadas",
+          "kind": "warning",
+          "icon": "warning",
           "visible_only_in_states": [
             "anulado"
-          ],
-          "annotation": "aparece si una jugada responde `challenge_voided`; el teclado se oculta y no se aceptan más jugadas"
+          ]
         },
         {
           "name": "banner-cookies",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "content": "Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».",
+          "annotation": "banner `warning` (O-03); aparece si una jugada responde `no_session`. La jugada no se procesa",
+          "kind": "warning",
+          "icon": "warning",
           "visible_only_in_states": [
             "sin sesión"
-          ],
-          "annotation": "banner `warning` (O-03); aparece si una jugada responde `no_session`. La jugada no se procesa"
+          ]
         },
         {
           "name": "teclado",
@@ -2437,18 +2581,34 @@
           "content": "Teclado QWERTY en pantalla · letras, Enviar y Borrar",
           "aspect_ratio": "10:3",
           "h": 150,
+          "annotation": "pattern `devdle.key`. Cada tecla refleja lo aprendido (correcta, presente, descartada) con texto/estilo además del color. El teclado físico funciona igual (letras, Enter, Backspace) y en mobile no se abre el teclado del sistema. Mientras se envía una jugada, Enviar queda deshabilitado. Va en la columna principal, debajo del tablero y del aviso: Devdle no tiene CTA aparte (Enviar/Enter es la acción principal)",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
+          ]
+        },
+        {
+          "name": "leyenda",
+          "type": "chips",
+          "category": "content",
+          "content": "// cómo se juega",
+          "items": [
+            "✓ Letra correcta en el lugar correcto.",
+            "~ Está en la palabra, pero en otra posición.",
+            "✗ No está en la palabra."
           ],
-          "annotation": "pattern `devdle.key`: cada tecla refleja lo aprendido con texto/estilo además del color. Teclado físico igual (letras, Enter, Backspace); en mobile no abre el teclado del sistema. Enviar se deshabilita mientras se envía"
+          "annotation": "pattern `devdle.legend` en un panel de sección con `id={HELP_TARGET_ID}`, el destino del botón «Cómo se juega» del header. Primero del lateral (patrón común, REQ-012)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "pista-categorias",
           "type": "chips",
           "category": "content",
-          "content": "// categorías posibles",
+          "content": "// pista de categoría",
           "items": [
             "lenguajes",
             "git",
@@ -2459,27 +2619,58 @@
             "seguridad",
             "ingeniería de software"
           ],
+          "annotation": "La categoría y la definición se revelan al terminar. — chips `neutral` informativos (no se tocan). La lista es la misma todos los días y no filtra la del día (REQ-004)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "La categoría y la definición se revelan al terminar. — chips `neutral` informativos (no se tocan); lista fija, no filtra la del día"
+          ]
         },
         {
-          "name": "leyenda",
-          "type": "chips",
+          "name": "distribucion",
+          "type": "card",
           "category": "content",
-          "content": "// cómo leer las pistas",
-          "items": [
-            "✓ en su lugar",
-            "~ en otro lugar",
-            "✗ no está"
-          ],
+          "content": "// tus intentos · racha 3",
+          "paragraph": "12 jugadas · 83% victorias",
+          "annotation": "pattern `devdle.distribution` (barras 1–6 y X). Solo si el host pasa las stats de Devdle del jugador; en la partida no resalta ninguna barra",
           "hidden_in_states": [
             "loading",
             "error de sistema"
+          ]
+        },
+        {
+          "name": "btn-pista",
+          "type": "button",
+          "category": "input",
+          "variant": "secondary",
+          "content": "💡 Pista",
+          "annotation": "`button` `secondary` a ancho completo, en el lateral justo arriba de «Rendirse». Nombre accesible «Pista: revelar una letra (te queda 1)». Al tocarlo pasa a «Cancelar» (`aria-pressed=true`) y entra en `eligiendo pista`: las casillas libres de la fila actual se vuelven elegibles (las posiciones ya resueltas en verde no). Tocar una casilla envía la jugada `{ hint: posición }`; Esc, «Cancelar» o escribir una letra cancelan. Usada: deshabilitado «💡 Letra N: X» (nombre «Pista usada: la letra N es X»). Deshabilitado mientras se envía una jugada o con la partida terminada (REQ-012, S-063 y S-066)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
           ],
-          "annotation": "pattern `devdle.legend`; destino del botón «Cómo se juega» del header"
+          "state_overrides": {
+            "eligiendo pista": {
+              "content": "Cancelar"
+            },
+            "pista usada": {
+              "content": "💡 Letra 3: A",
+              "variant": "disabled"
+            }
+          }
+        },
+        {
+          "name": "btn-rendirse",
+          "type": "button",
+          "category": "input",
+          "variant": "error",
+          "content": "⚑ Rendirse",
+          "annotation": "`button` variant `error-outline` del DS a ancho completo (el mismo que Grep Grid). Abre O-04 en su variante Devdle; con el diálogo abierto el teclado físico no escribe en el tablero. Confirmar envía `{ give_up: true }`: la Play cierra como derrota (cuenta para la racha) y se navega a `devdle-resultado` con «Te rendiste: X/6» (REQ-012, S-066)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "link-reportar",
@@ -2487,11 +2678,7 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
-          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) con el aviso de no incluir la respuesta; visible también en `anulado`",
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) desde la partida, con el aviso de no incluir la respuesta. Visible también en `anulado` (C-36 acepta desafíos `voided`). Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007). Es el slot `aside` del host y va siempre último del lateral",
           "state_overrides": {
             "ya reportado": {
               "content": "Ya reportaste este desafío",
@@ -2499,7 +2686,11 @@
               "icon": "check",
               "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "loader",
@@ -2514,29 +2705,30 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "kind": "error",
           "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.",
+          "annotation": "también cubre una jugada que falla por red o 500: el intento no se registra y el tablero vuelve al último estado del servidor",
+          "kind": "error",
           "visible_only_in_states": [
             "error de sistema"
-          ],
-          "annotation": "también cubre una jugada que falla por red o 500: el intento no se registra y el tablero vuelve al último estado del servidor"
+          ]
         },
         {
           "name": "btn-reintentar",
           "type": "button",
           "category": "input",
           "content": "Reintentar",
-          "variant": "secondary",
           "icon": "refresh",
-          "visible_only_in_states": [
-            "error de sistema",
-            "sin sesión"
-          ],
           "state_overrides": {
             "sin sesión": {
               "annotation": "recrea la sesión y reenvía la jugada"
             }
-          }
+          },
+          "variant": "secondary",
+          "annotation": "en `sin sesión` recrea la sesión y reenvía la jugada",
+          "visible_only_in_states": [
+            "error de sistema",
+            "sin sesión"
+          ]
         },
         {
           "name": "footer",
@@ -2549,32 +2741,19 @@
       "layouts": {
         "mobile": [
           "banner-cookies",
+          "consigna",
           "titulo",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
           "alerta-anulado",
-          "consigna",
           "grilla-intentos",
           "aviso-jugada",
           "teclado",
           {
-            "row": "pista",
-            "card": true,
-            "title": "// categorías posibles",
-            "cols": [
-              {
-                "w": 12,
-                "stack": [
-                  "pista-categorias"
-                ]
-              }
-            ]
-          },
-          {
             "row": "leyenda",
             "card": true,
-            "title": "// cómo leer las pistas",
+            "title": "// cómo se juega",
             "cols": [
               {
                 "w": 12,
@@ -2584,6 +2763,22 @@
               }
             ]
           },
+          {
+            "row": "pista",
+            "card": true,
+            "title": "// pista de categoría",
+            "cols": [
+              {
+                "w": 12,
+                "stack": [
+                  "pista-categorias"
+                ]
+              }
+            ]
+          },
+          "distribucion",
+          "btn-pista",
+          "btn-rendirse",
           "link-reportar"
         ],
         "desktop": [
@@ -2591,39 +2786,27 @@
           "loader",
           "alerta-sistema",
           "btn-reintentar",
+          "consigna",
+          "titulo",
+          "alerta-anulado",
           {
             "row": "juego",
             "cols": [
               {
                 "w": 7,
                 "stack": [
-                  "titulo",
-                  "consigna",
-                  "alerta-anulado",
                   "grilla-intentos",
-                  "aviso-jugada"
+                  "aviso-jugada",
+                  "teclado"
                 ]
               },
               {
                 "w": 5,
                 "stack": [
                   {
-                    "row": "pista",
-                    "card": true,
-                    "title": "// categorías posibles",
-                    "cols": [
-                      {
-                        "w": 12,
-                        "stack": [
-                          "pista-categorias"
-                        ]
-                      }
-                    ]
-                  },
-                  {
                     "row": "leyenda",
                     "card": true,
-                    "title": "// cómo leer las pistas",
+                    "title": "// cómo se juega",
                     "cols": [
                       {
                         "w": 12,
@@ -2633,7 +2816,22 @@
                       }
                     ]
                   },
-                  "teclado",
+                  {
+                    "row": "pista",
+                    "card": true,
+                    "title": "// pista de categoría",
+                    "cols": [
+                      {
+                        "w": 12,
+                        "stack": [
+                          "pista-categorias"
+                        ]
+                      }
+                    ]
+                  },
+                  "distribucion",
+                  "btn-pista",
+                  "btn-rendirse",
                   "link-reportar"
                 ]
               }
@@ -2656,6 +2854,14 @@
         },
         {
           "name": "límite de jugadas",
+          "applies": true
+        },
+        {
+          "name": "eligiendo pista",
+          "applies": true
+        },
+        {
+          "name": "pista usada",
           "applies": true
         },
         {
@@ -2693,28 +2899,38 @@
           "type": "header",
           "category": "layout",
           "content": "> nerdose / devdle · desafío del 30/10 · [stats] [Compartir] ES|EN · 🔥 4",
-          "annotation": "`game-header` variant `finished` (REQ-004): Compartir activo con el acento del juego (único botón de compartir de la pantalla; texto: «🟩 Devdle #8 · 4/6» o «X/6», una línea de 🟩🟨⬛ por intento y «nerdose.dev», nunca la palabra ni la categoría) · «Estadísticas» → estadisticas · ES|EN cambia solo definición y resumen · racha global actualizada. Sin «Cómo se juega», sin nav global ni `nav-movil`"
+          "annotation": "`game-header` variant `finished` (REQ-004): Compartir activo con el acento del juego (único botón de compartir de la pantalla; texto: «🟩 Devdle #8 · 4/6» o «X/6», con « 💡» al final de esa línea si se usó la pista, una línea de 🟩🟨⬛ por intento y «nerdose.dev», nunca la palabra, la categoría ni la letra revelada); «Estadísticas» → `estadisticas`; ES|EN cambia solo la definición y el resumen; píldora con la racha global ya actualizada. «Cómo se juega» no se muestra en el resultado. Sin nav global ni `nav-movil`"
         },
         {
           "name": "veredicto",
-          "type": "heading",
+          "type": "alert",
           "category": "content",
+          "kind": "success",
           "content": "Ganaste en 4/6",
-          "level": "h1",
           "icon": "check",
+          "annotation": "Repasá la palabra del día y su definición. — `banner` del DS con `titleAs=\"h1\"`, siempre visible y a ancho completo (patrón común de resultado, REQ-012): `success` al ganar (el confeti del host sigue igual), `failure` al perder o rendirse, sin drama, con el veredicto en texto además del color. Ya no hay `h1` `sr-only`. Los avisos (`notices`) van justo debajo",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
-          "annotation": "banner `success` del DS; el veredicto se dice con texto además del color",
           "state_overrides": {
             "perdió": {
               "content": "No salió: X/6",
               "icon": "x",
-              "annotation": "banner `failure`; perder también suma a la racha"
+              "annotation": "banner `failure` con el detalle «Mostramos la palabra y su explicación.»; perder también suma a la racha",
+              "kind": "error"
+            },
+            "se rindió": {
+              "content": "Te rendiste: X/6",
+              "icon": "x",
+              "annotation": "banner `failure` (`result.gave_up: true`); cuenta como derrota para la racha y la distribución (X). El share es el mismo que al perder (`X/6`)",
+              "kind": "error"
             },
             "anulado": {
-              "content": "Desafío anulado"
+              "content": "Desafío anulado",
+              "type": "heading",
+              "level": "h1",
+              "icon": null
             }
           }
         },
@@ -2722,12 +2938,13 @@
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "annotation": "`banner` `warning` del DS. Se muestra con la Play `voided` (`challenge_status: voided`): la anulación y «Marcar como completado» llegan con REQ-007",
+          "kind": "warning",
+          "icon": "warning",
           "visible_only_in_states": [
             "anulado"
-          ],
-          "annotation": "`banner` `warning` del DS; se muestra con la Play `voided` (`challenge_status: voided`). Variante mínima: aviso + rachas"
+          ]
         },
         {
           "name": "grilla-resultado",
@@ -2736,12 +2953,25 @@
           "content": "Tus intentos · tablero 4 × 6 letras con feedback",
           "aspect_ratio": "6:4",
           "h": 160,
+          "annotation": "pattern `devdle.cell`, solo lectura; mismo símbolo + color + `aria-label` que en la partida. Muestra solo las filas jugadas (al rendirse, las que llegó a usar)",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "pattern `devdle.cell`, solo lectura; mismo símbolo + color + `aria-label` que en la partida"
+          ]
+        },
+        {
+          "name": "linea-pista",
+          "type": "paragraph",
+          "category": "content",
+          "level": "caption",
+          "content": "💡 Usaste la pista: la letra 3 era R.",
+          "annotation": "Mono `label-comment` atenuado, debajo del tablero. Sale de `result.hint` (null si no se usó; ausente en resultados previos a la pista) (REQ-012, S-063)",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "card-palabra",
@@ -2749,11 +2979,11 @@
           "category": "content",
           "content": "Palabra del día: PARSER",
           "paragraph": "Categoría: ingeniería de software · Programa que analiza una secuencia de texto según una gramática formal. · Resumen: primer párrafo de Wikipedia en el idioma activo, con enlace a la fuente (CC BY-SA).",
+          "annotation": "panel `// palabra del día`, primero del lateral (patrón común: explicación en el lateral). Palabra y categoría no cambian con el idioma; definición y resumen se recalculan en el idioma activo al cambiar ES|EN (CA 15)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "palabra y categoría no cambian con el idioma; definición y resumen siguen ES|EN (CA 15)"
+          ]
         },
         {
           "name": "distribucion",
@@ -2762,12 +2992,12 @@
           "content": "// tus intentos · racha 3",
           "kind": "bar",
           "h": 140,
+          "annotation": "12 jugadas · 92% victorias — pattern `devdle.distribution`, con los datos de `game_stats` (solo vienen con la Play terminada). Barras 1 a 6 y X (derrotas); la barra del intento de hoy se destaca con el acento, con el número visible en la barra (no solo el color); rendirse cuenta como X",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "pattern `devdle.distribution` (`game_stats`): barras 1 · 2 · 3 · 4 · 5 · 6 · X; la de hoy con el acento y su número visible. 12 jugadas · 92% victorias"
+          ]
         },
         {
           "name": "card-rachas",
@@ -2775,11 +3005,11 @@
           "category": "content",
           "content": "// rachas",
           "paragraph": "Devdle: 3 días · Global: 4 días · récord Devdle: 7",
+          "annotation": "rachas que devuelve el cierre (perder y rendirse también suman). Si el jugador reabre el resultado más tarde, se leen con la racha viva. Va dentro de la card de cierre (`footer` del host) al pie de la columna principal",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "rachas que devuelve el cierre (perder también suma); al reabrir se leen con la racha viva"
+          ]
         },
         {
           "name": "link-reportar",
@@ -2787,11 +3017,7 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
-          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) sin el aviso de spoilers; visible también en `anulado` (C-36 acepta desafíos `voided`)",
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) desde el resultado (también el anulado), sin el aviso de spoilers. Visible también en `anulado` (C-36 acepta desafíos `voided`). Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007). Es el slot `aside` del host y va siempre último del lateral",
           "state_overrides": {
             "ya reportado": {
               "content": "Ya reportaste este desafío",
@@ -2799,33 +3025,37 @@
               "icon": "check",
               "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "cuenta-regresiva",
           "type": "paragraph",
           "category": "content",
-          "level": "caption",
           "content": "Próximo desafío en 05:42:10",
+          "annotation": "al llegar a 0 recarga el día (Devdle vuelve a instrucciones del desafío nuevo)",
+          "level": "caption",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "al llegar a 0 recarga el día (Devdle vuelve a instrucciones del desafío nuevo)"
+          ]
         },
         {
           "name": "btn-siguiente",
           "type": "button",
           "category": "input",
           "content": "Siguiente juego",
-          "variant": "secondary",
           "icon": "arrow-right",
+          "annotation": "lleva al próximo juego con desafío y sin completar; si no hay ninguno, no se muestra",
+          "variant": "secondary",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "sin juegos pendientes"
-          ],
-          "annotation": "lleva al próximo juego con desafío y sin completar; si no hay ninguno, no se muestra"
+          ]
         },
         {
           "name": "link-stats",
@@ -2862,8 +3092,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "kind": "error",
           "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -2873,8 +3103,8 @@
           "type": "button",
           "category": "input",
           "content": "Reintentar",
-          "variant": "secondary",
           "icon": "refresh",
+          "variant": "secondary",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -2895,16 +3125,29 @@
           "alerta-sistema",
           "btn-reintentar",
           "grilla-resultado",
+          "linea-pista",
+          {
+            "row": "salida",
+            "card": true,
+            "cols": [
+              {
+                "w": 12,
+                "stack": [
+                  "card-rachas",
+                  "link-stats",
+                  "cuenta-regresiva",
+                  "btn-siguiente",
+                  "link-volver"
+                ]
+              }
+            ]
+          },
           "card-palabra",
           "distribucion",
-          "card-rachas",
-          "link-stats",
-          "link-reportar",
-          "cuenta-regresiva",
-          "btn-siguiente",
-          "link-volver"
+          "link-reportar"
         ],
         "desktop": [
+          "veredicto",
           "alerta-anulado",
           "loader",
           "alerta-sistema",
@@ -2915,29 +3158,50 @@
               {
                 "w": 7,
                 "stack": [
-                  "veredicto",
                   "grilla-resultado",
-                  "card-palabra",
+                  "linea-pista",
                   {
                     "row": "salida",
                     "card": true,
                     "cols": [
                       {
-                        "w": 6,
+                        "w": 12,
                         "stack": [
-                          "cuenta-regresiva"
-                        ]
-                      },
-                      {
-                        "w": 3,
-                        "stack": [
-                          "btn-siguiente"
-                        ]
-                      },
-                      {
-                        "w": 3,
-                        "stack": [
-                          "link-volver"
+                          {
+                            "row": "rachas",
+                            "cols": [
+                              {
+                                "w": 8,
+                                "stack": [
+                                  "card-rachas"
+                                ]
+                              },
+                              {
+                                "w": 4,
+                                "stack": [
+                                  "link-stats"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "row": "acciones",
+                            "cols": [
+                              {
+                                "w": 6,
+                                "stack": [
+                                  "cuenta-regresiva"
+                                ]
+                              },
+                              {
+                                "w": 6,
+                                "stack": [
+                                  "btn-siguiente",
+                                  "link-volver"
+                                ]
+                              }
+                            ]
+                          }
                         ]
                       }
                     ]
@@ -2947,9 +3211,8 @@
               {
                 "w": 5,
                 "stack": [
+                  "card-palabra",
                   "distribucion",
-                  "card-rachas",
-                  "link-stats",
                   "link-reportar"
                 ]
               }
@@ -2964,6 +3227,10 @@
         },
         {
           "name": "perdió",
+          "applies": true
+        },
+        {
+          "name": "se rindió",
           "applies": true
         },
         {
@@ -3350,68 +3617,68 @@
           "type": "header",
           "category": "layout",
           "content": "> nerdose / bug-hunt · desafío del 30/10 · [?] [stats] [Compartir] ES|EN · 🔥 4",
-          "annotation": "`game-header` variant `playing` (REQ-010): «Cómo se juega» → card-reglas de esta pantalla · «Estadísticas» → estadisticas · Compartir deshabilitado («disponible al terminar la partida») · ES|EN cambia la interfaz y la especificación sin perder la línea elegida ni el lenguaje visible (CA 22) · racha global. Sin nav global ni `nav-movil`"
+          "annotation": "`game-header` variant `playing` (REQ-010): «Cómo se juega» lleva a `card-reglas` de esta misma pantalla (con la Play en curso el servidor no vuelve a mostrar las instrucciones); «Estadísticas» → `estadisticas`; Compartir deshabilitado («disponible al terminar la partida»); ES|EN cambia la interfaz y la especificación sin perder la línea elegida ni el lenguaje visible (CA 22); píldora con la racha global. Sin nav global ni `nav-movil`"
         },
         {
           "name": "consigna",
           "type": "paragraph",
           "category": "content",
-          "level": "caption",
           "content": "// un solo intento · la firma y las líneas con solo llaves no cuentan",
+          "annotation": "comentario `//` del prototipo (Mono 13 `text.dim`); suma «la firma» al texto del prototipo porque C-30 también la excluye",
+          "level": "caption",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "comentario `//` del prototipo; suma «la firma» porque C-30 también la excluye"
+          ]
         },
         {
           "name": "titulo",
           "type": "heading",
           "category": "content",
-          "level": "h1",
           "content": "¿En qué línea está el bug?",
+          "annotation": "como en el prototipo (`tpl-BugHunt`), el `h1` es la pregunta y no el nombre del juego, que ya está en el breadcrumb. Mono 34 con tracking negativo en desktop (28 en mobile); fija para todos los días",
+          "level": "h1",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "el `h1` es la pregunta (como `tpl-BugHunt`); el nombre del juego queda en el breadcrumb. Fija para todos los días"
+          ]
         },
         {
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "icon": "warning",
           "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "annotation": "`banner` `warning` del DS; aparece si «Confirmar línea» responde `challenge_voided` (CA 20). La especificación, los tests, el código y la confirmación se ocultan; queda «Reportar un problema»",
+          "kind": "warning",
           "visible_only_in_states": [
             "anulado"
-          ],
-          "annotation": "si «Confirmar línea» responde `challenge_voided` (CA 20); queda «Reportar un problema»"
+          ]
         },
         {
           "name": "banner-cookies",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "icon": "warning",
           "content": "Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».",
+          "annotation": "banner `warning` (O-03); aparece si la confirmación responde `no_session`. La línea elegida y el lenguaje visible se conservan en pantalla para reintentar",
+          "kind": "warning",
           "visible_only_in_states": [
             "sin sesión"
-          ],
-          "annotation": "O-03 (`no_session`); la línea elegida y el lenguaje visible se conservan para reintentar"
+          ]
         },
         {
           "name": "especificacion",
           "type": "card",
           "category": "content",
           "content": "// qué debería hacer",
-          "paragraph": "Devuelve el índice del mayor valor del array. Si el máximo se repite, devuelve el primero.",
+          "paragraph": "Devuelve el índice del mayor valor del array. Si el máximo se repite, devuelve **el primero**.",
+          "annotation": "pattern `bug-hunt.statement` (`panel` `context` ámbar: etiqueta `#C9A46A`, texto Inter 16/1,55 con `<b>`). El texto es `spec` de la vista pública, ya resuelto en el idioma activo (ADR-015); cambia con ES|EN. Resuelve empates y casos borde, que es donde suele estar el bug",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "pattern `bug-hunt.statement` (`panel` `context` ámbar). `spec` ya resuelto en el idioma activo (ADR-015); cambia con ES|EN"
+          ]
         },
         {
           "name": "card-tests",
@@ -3419,12 +3686,12 @@
           "category": "content",
           "content": "// tests · llamada → esperado",
           "paragraph": "✓ maxIndex([3, 7, 2]) → 1 · ✓ maxIndex([4]) → 0 · ✓ maxIndex([-2, -5, 9]) → 2 · ✗ 1 test oculto falla — El test que falla se revela al confirmar. Los que pasan te ayudan a descartar líneas.",
+          "annotation": "pattern `bug-hunt.test`. Entre 2 y 3 tests visibles (todos pasan), cada uno como llamada con `function_name` y sus argumentos (`maxIndex([3, 7, 2]) → 1`), en Mono 14; si la función recibe dos argumentos, `countAbove([3, 7, 2], 4) → 1`. Resultados enteros o `true`/`false`. La sintaxis de la llamada es neutra (la misma en las 3 pestañas: no cambia con el lenguaje). Cada test que pasa lleva `✓` + fondo `#141920` y se anuncia «pasa»; la fila del oculto es punteada `1px dashed #4A2220` con `✗` y el texto «1 test oculto falla», nunca su entrada (CA 15, 21). Nota al pie Inter 13 `text.muted`. La cabecera dice «llamada → esperado» en lugar del «input → esperado» del prototipo porque las filas muestran la llamada completa",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "pattern `bug-hunt.test`: 2 o 3 tests visibles que pasan, como llamadas con `function_name` (sintaxis neutra, igual en las 3 pestañas); la fila del oculto es punteada `#4A2220`, nunca su entrada (CA 15, 21)"
+          ]
         },
         {
           "name": "tabs-lenguaje",
@@ -3436,31 +3703,27 @@
             "Java"
           ],
           "active": 0,
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "barra del `code-block` (`max-index.js` · `max_index.go` · `MaxIndex.java` a la derecha). Arranca en el lenguaje preferido (JS por defecto); cambiar es local, sin requests, y no borra la línea elegida: el bug está en el mismo número de línea en los 3 (C-26, CA 3, decisión 1). Se envía el visible al confirmar",
+          "annotation": "barra de pestañas del `code-block` (pestaña activa con fondo `game.bug-hunt.tint-strong` `#2A1F0B` y texto `#FFB547`, como el prototipo). El nombre de archivo sale de `function_name` con la convención de cada lenguaje. Arranca en el lenguaje preferido de la sesión (`codeLanguage`, JavaScript por defecto) y, al retomar, vuelve a ese lenguaje. Cambiar de pestaña es estado local: no hace requests, no cambia la Play ni la preferencia y **no borra la línea elegida**, porque el bug está en el mismo número de línea en los 3 lenguajes (C-26, CA 3, decisión 1). El lenguaje visible al tocar «Confirmar línea» es el que se envía. Bloqueadas (`aria-disabled`) mientras se confirma",
           "state_overrides": {
             "confirmando": {
               "annotation": "pestañas bloqueadas (`aria-disabled`)"
             }
-          }
+          },
+          "content": "—",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "codigo",
           "type": "image",
           "category": "input",
-          "content": "1  function maxIndex(nums) {\n2    let best = 0\n3    for (let i = 1; i < nums.length; i++) {\n4      if (nums[i] >= nums[best]) {\n5        best = i\n6      }\n7    }\n8    return best\n9  }",
+          "content": "function maxIndex(nums) { … } · 9 líneas con numeración; elegibles 2, 3, 4, 5 y 8",
           "aspect_ratio": "4:3",
           "h": 240,
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "`code-block` `selectable` + pattern `bug-hunt.line`: `radiogroup` «Líneas de maxIndex en {lenguaje}»; solo `pickable_lines` (aquí 2, 3, 4, 5 y 8) son radios de ancho completo y 44 px; firma y llaves en `text.dim`, no enfocables (C-30, CA 6). Elegida: fondo `#1A140A`, barra `inset 3px #FFB547`, «◀ tu elección». Shiki con fallback sin color; scroll horizontal propio, nunca la página (CA 23)",
+          "annotation": "`code-block` `selectable` del DS con el pattern `bug-hunt.line`. El cuerpo es un `role=\"radiogroup\"` con nombre «Líneas de maxIndex en {lenguaje}»; **solo las líneas de `pickable_lines` son `role=\"radio\"`** (botón de ancho completo, `min-height: 44px`, Mono 15/2): la firma (línea 1), las líneas con solo llaves y cualquier otra fuera de `pickable_lines` son texto plano en `text.dim`, sin hover, no enfocables ni seleccionables (C-30, CA 6). Elegible: hover `#15110A`, foco `outline 2px #FFB547` (offset −2). Elegida: fondo `#1A140A`, barra `inset 3px #FFB547` y el tag «◀ tu elección» (Mono 700 12, ámbar). Tocar otra línea cambia la elección; ninguna se envía hasta confirmar. Resaltado de sintaxis con Shiki cargado en el chunk de `/bug-hunt` (ADR-002) y un tema por variables CSS apuntadas a tokens de Bug Hunt con contraste AA sobre `bg.surface.sunken` y sobre la línea elegida; mientras carga, o si falla, el mismo código sin color y sin saltos de layout (ver «Design System» en la Revisión UX de REQ-010). Números de línea con contraste ≥ 4,5:1 y `aria-hidden`; el nombre accesible de cada radio incluye el número («Línea 4: if (nums[i] > nums[best]) {»). Ligaduras desactivadas (`>=` se lee como dos caracteres). Cada línea que no entra salta de línea (soft-wrap) con sangría colgante: el número y la sangría original quedan fijos a la izquierda y la continuación arranca alineada con el código de esa línea (`CodeText`, REQ-012 / S-066). No hay scroll horizontal ni en el bloque ni en la página (CA 23, 320 px). El código no lleva comentarios. **mobile:** con el bloque angosto (< 32rem) el tag «◀ tu elección» se reduce al glifo `◀` fijo al borde derecho del bloque; el texto completo lo dicen `seleccion` y la etiqueta del botón",
           "viewport_overrides": {
             "mobile": {
               "annotation": "bloque angosto (< 32rem): el tag «◀ tu elección» se reduce al glifo `◀` fijo al borde derecho visible; el texto completo lo dan `seleccion` y el botón"
@@ -3484,20 +3747,19 @@
             "sin sesión": {
               "content": "1  function maxIndex(nums) {\n2    let best = 0\n3    for (let i = 1; i < nums.length; i++) {\n4      if (nums[i] >= nums[best]) {   ◀ tu elección\n5        best = i\n6      }\n7    }\n8    return best\n9  }"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "seleccion",
           "type": "paragraph",
           "category": "feedback",
-          "level": "caption",
           "content": "> tocá la línea donde creés que está el bug",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "línea de aviso del juego, siempre montada (`min-height`), espejo de la región `aria-live` polite. Sin rojo ni shake: un rechazo no consume el intento",
+          "annotation": "línea de aviso del juego (Mono 13), siempre montada con `min-height` para no mover el layout; repite el último anuncio de la región viva `sr-only` (`aria-live=\"polite\"`). Sin rojo ni shake: un rechazo no consume el intento. Textos: «> elegiste la línea 4. Podés cambiarla hasta confirmar.», «> no pudimos registrar esa línea. Elegí una y confirmá de nuevo: no perdiste tu intento.» (`invalid_move`, CA 6), «> vas muy rápido. Esperá unos segundos y probá de nuevo.» (429)",
           "state_overrides": {
             "selección hecha": {
               "content": "> elegiste la línea 4. Podés cambiarla hasta confirmar."
@@ -3516,20 +3778,20 @@
               "content": "> vas muy rápido. Esperá unos segundos y probá de nuevo.",
               "annotation": "HTTP 429 genérico; la confirmación no se procesa"
             }
-          }
+          },
+          "level": "caption",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "btn-confirmar",
           "type": "button",
           "category": "input",
-          "content": "Confirmar línea 4 →",
-          "variant": "primary",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "pattern `bug-hunt.confirm`: `button` `accent` de Bug Hunt (`#FFB547` / `#1A1206`), `lg`, ancho completo en mobile. Envía `{ language, line }` una sola vez; sin diálogo (decisión #26)",
+          "content": "Elegí una línea",
+          "annotation": "pattern `bug-hunt.confirm`: `button` `accent` de Bug Hunt (`#FFB547` / `#1A1206`), tamaño `lg`, **ancho completo en todos los breakpoints** (antes `lg:w-auto`), justo debajo de `seleccion` en la columna principal (REQ-012, patrón común). Sin línea elegida: deshabilitado con la etiqueta «Elegí una línea» (`#2A2416` / `#8A7856`, `aria-disabled`). Con una línea: «Confirmar línea 4 →». Al tocarlo se valida `{ language, line }` y se envía una sola vez; mientras responde pasa a «Confirmando…» y las líneas y las pestañas quedan bloqueadas. Sin diálogo de confirmación: la selección y la confirmación ya son dos pasos (decisión #26)",
           "state_overrides": {
             "default": {
               "content": "Elegí una línea",
@@ -3544,34 +3806,44 @@
               "content": "Confirmando…",
               "variant": "disabled",
               "annotation": "`aria-disabled` mientras viaja la jugada; líneas y pestañas bloqueadas"
+            },
+            "selección hecha": {
+              "content": "Confirmar línea 4 →",
+              "variant": "primary"
             }
-          }
+          },
+          "variant": "primary",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "nota-lenguajes",
           "type": "paragraph",
           "category": "content",
-          "level": "caption",
           "content": "El bug es el mismo en los tres lenguajes: cambiar de pestaña no cambia la respuesta.",
+          "annotation": "nota del pattern `bug-hunt.confirm` (Inter 13 `text.muted`), debajo del botón en todos los breakpoints",
+          "level": "caption",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "nota del pattern `bug-hunt.confirm`, junto al botón en desktop y debajo en mobile"
+          ]
         },
         {
           "name": "card-reglas",
           "type": "card",
           "category": "content",
           "content": "// cómo se juega",
-          "paragraph": "01 · Leé qué debería hacer la función y mirá los tests. · 02 · Tocá la línea donde creés que está el bug. · 03 · Confirmá: tenés un solo intento. El lenguaje que tengas abierto queda como tu preferido. — Con teclado: flechas ← → para cambiar de lenguaje, Tab hasta el código, flechas ↑ ↓ para recorrer las líneas elegibles, Espacio para elegir y Enter en «Confirmar línea».",
+          "paragraph": "01 · Leé qué debería hacer la función y mirá los tests. · 02 · Tocá la línea donde creés que está el bug. · 03 · Confirmá: tenés **un solo intento**. El lenguaje que tengas abierto queda como tu preferido. — Con teclado: flechas ← → para cambiar de lenguaje, Tab hasta el código, flechas ↑ ↓ para recorrer las líneas elegibles, Espacio para elegir y Enter en «Confirmar línea».",
+          "annotation": "`SectionPanel` con cabecera `//` y `id={HELP_TARGET_ID}`, como la card «// cómo se juega» del prototipo; es el destino de «Cómo se juega» del header (`#game-help`) y el primer panel del lateral, con el mismo título en los cinco juegos (REQ-012). Inter 14 (`text-body-sm`) `text.body`; «un solo intento» en `<b>` con el acento",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "destino de «Cómo se juega» del header (`#game-help`), como la «// reglas» de Big O y Tech Timeline"
+          ]
         },
         {
           "name": "link-reportar",
@@ -3579,11 +3851,7 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
-          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) con el aviso de no incluir la respuesta; el contexto incluye `code_language`. Visible también en `anulado`",
+          "annotation": "slot `aside` del host, siempre último del lateral (debajo de `card-tests`). Abre O-01 (bottom-sheet en mobile, modal en desktop) con el aviso «No incluyas la respuesta si todavía estás jugando»; el contexto del reporte incluye el lenguaje visible (`code_language`). Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007)",
           "state_overrides": {
             "ya reportado": {
               "content": "Ya reportaste este desafío",
@@ -3591,7 +3859,11 @@
               "icon": "check",
               "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "loader",
@@ -3606,8 +3878,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "kind": "error",
           "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: conservás tu intento.",
+          "kind": "error",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -3617,17 +3889,18 @@
           "type": "button",
           "category": "input",
           "content": "Reintentar",
-          "variant": "secondary",
           "icon": "refresh",
-          "visible_only_in_states": [
-            "error de sistema",
-            "sin sesión"
-          ],
           "state_overrides": {
             "sin sesión": {
               "annotation": "recrea la sesión y vuelve a enviar la línea elegida"
             }
-          }
+          },
+          "variant": "secondary",
+          "annotation": "en `error de sistema` recarga la partida; en `sin sesión` recrea la sesión y vuelve a enviar la línea elegida",
+          "visible_only_in_states": [
+            "error de sistema",
+            "sin sesión"
+          ]
         },
         {
           "name": "footer",
@@ -3647,13 +3920,13 @@
           "btn-reintentar",
           "alerta-anulado",
           "especificacion",
-          "card-tests",
           "tabs-lenguaje",
           "codigo",
           "seleccion",
           "btn-confirmar",
           "nota-lenguajes",
           "card-reglas",
+          "card-tests",
           "link-reportar"
         ],
         "desktop": [
@@ -3681,8 +3954,8 @@
               {
                 "w": 5,
                 "stack": [
-                  "card-tests",
                   "card-reglas",
+                  "card-tests",
                   "link-reportar"
                 ]
               }
@@ -3697,23 +3970,19 @@
         },
         {
           "name": "selección hecha",
-          "applies": true,
-          "parent_state": "default"
+          "applies": true
         },
         {
           "name": "confirmando",
-          "applies": true,
-          "parent_state": "selección hecha"
+          "applies": true
         },
         {
           "name": "error de validación",
-          "applies": true,
-          "parent_state": "selección hecha"
+          "applies": true
         },
         {
           "name": "límite de jugadas",
-          "applies": true,
-          "parent_state": "selección hecha"
+          "applies": true
         },
         {
           "name": "anulado",
@@ -3721,8 +3990,7 @@
         },
         {
           "name": "sin sesión",
-          "applies": true,
-          "parent_state": "selección hecha"
+          "applies": true
         },
         {
           "name": "ya reportado",
@@ -3751,7 +4019,7 @@
           "type": "header",
           "category": "layout",
           "content": "> nerdose / bug-hunt · desafío del 30/10 · [stats] [Compartir] ES|EN · 🔥 17",
-          "annotation": "`game-header` variant `finished` (REQ-010): Compartir activo con el acento del juego (`#FFB547` / `#1A1206`), único botón de compartir. Texto en el idioma activo: «🐛 Bug Hunt #8 · JavaScript» / «🟩 bug encontrado» (🟥 «se me escapó»; en inglés «bug found» / «it got away») / «nerdose.dev»; nunca la línea ni el tipo (CA 10) · «Estadísticas» → estadisticas · ES|EN cambia veredicto, especificación, pasos, tipo y tags · racha global actualizada. Sin «Cómo se juega» ni `nav-movil`",
+          "annotation": "`game-header` variant `finished` (REQ-010, como el prototipo `tpl-BugHunt`): Compartir activo con el acento del juego (`#FFB547` sobre `#1A1206`), único botón de compartir de la pantalla. Texto en tres líneas, en el idioma activo: «🐛 Bug Hunt #8 · JavaScript», «🟩 bug encontrado» (🟥 «se me escapó» si perdió; en inglés «🟩 bug found» / «🟥 it got away») y «nerdose.dev»; el lenguaje es el que se usó al confirmar; nunca la línea ni el tipo de bug (CA 10). «Estadísticas» → `estadisticas`; ES|EN cambia el veredicto, la especificación, los pasos y los tags; píldora con la racha global ya actualizada. «Cómo se juega» no se muestra en el resultado. Sin nav global ni `nav-movil`",
           "state_overrides": {
             "success": {
               "content": "> nerdose / bug-hunt · desafío del 30/10 · [stats] [✓ Copiado] ES|EN · 🔥 17",
@@ -3773,26 +4041,29 @@
         },
         {
           "name": "veredicto",
-          "type": "heading",
-          "category": "content",
-          "level": "h1",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "success",
           "content": "Bug encontrado en la línea 4",
           "icon": "check",
+          "annotation": "Lo encontraste en JavaScript. Repasá el test que falla y el fix para ver por qué. — `Banner` `success` de `@nerdose/ui` con `titleAs=\"h1\"`, siempre visible arriba y a ancho completo (REQ-012, patrón común de resultado; reemplaza el `h1` `sr-only` del caso ganador). El confeti ámbar del juego sigue igual (host `web`, solo en la transición partida → resultado ganado, sin animación con `prefers-reduced-motion`). Al perder, banner `failure` del DS, sin drama (ver estado `perdió`). El detalle no dice «abajo» ni «a la derecha»",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
-          "annotation": "al ganar: confeti ámbar y `h1` `sr-only`, como los otros juegos; la señal visible con ícono y texto es el código («✓ acá estaba el bug»). Sin animación con `prefers-reduced-motion`",
           "state_overrides": {
             "perdió": {
               "content": "El bug estaba en la línea 4, no en la 6",
               "icon": "x",
-              "annotation": "banner `failure` del DS, sin drama; subtítulo «Elegiste la línea 6 en Go. Desafío completado: tus rachas siguen en pie.»; sin confeti. Perder también suma a la racha"
+              "annotation": "banner `failure` del DS, sin drama, con el texto del prototipo; subtítulo «Elegiste la línea 6 en Go. Desafío completado: tus rachas siguen en pie.»; sin confeti. Perder también suma a la racha",
+              "kind": "error"
             },
             "anulado": {
               "content": "Desafío anulado",
-              "icon": null,
-              "annotation": "`h1` visible, sin banner ni confeti"
+              "annotation": "`h1` visible, sin banner ni confeti",
+              "type": "heading",
+              "level": "h1",
+              "icon": null
             }
           }
         },
@@ -3800,26 +4071,26 @@
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "icon": "warning",
           "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "annotation": "`banner` `warning` del DS. Se muestra con la Play `voided` (`challenge_status: voided`); `GameToday` devuelve `result: null` y `public_view: null` (REQ-007)",
+          "kind": "warning",
           "visible_only_in_states": [
             "anulado"
-          ],
-          "annotation": "`banner` `warning` del DS; Play `voided`: `result` y `public_view` nulos (REQ-007). Variante mínima: aviso + rachas"
+          ]
         },
         {
           "name": "pregunta",
-          "type": "card",
+          "type": "heading",
           "category": "content",
+          "level": "h2",
           "content": "¿En qué línea está el bug?",
-          "paragraph": "// qué debería hacer — Devuelve el índice del mayor valor del array. Si el máximo se repite, devuelve el primero.",
+          "annotation": "// qué debería hacer — Devuelve el índice del mayor valor del array. Si el máximo se repite, devuelve el primero. — `h2` Mono 26 (22 en mobile) con la especificación debajo en el pattern `bug-hunt.statement`, compacta; acá es `h2` porque el `h1` es el veredicto. Se repite la especificación porque el fix y la explicación se leen contra ella",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "`h2` Mono 26 (22 en mobile) con la especificación debajo en `bug-hunt.statement` compacta; `h2` porque el `h1` es el veredicto. Se repite porque el fix y la explicación se leen contra ella"
+          ]
         },
         {
           "name": "tabs-lenguaje",
@@ -3831,31 +4102,27 @@
             "Java"
           ],
           "active": 0,
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "arranca en `result.code_language` (el lenguaje con el que confirmó); solo vista, no cambia la preferencia y también cambia el `fix`. Las marcas de línea valen para los 3 lenguajes",
+          "annotation": "arranca en `result.code_language` (el lenguaje con el que confirmó); cambiar de pestaña es solo vista, no cambia la preferencia y también cambia el `fix` al mismo lenguaje. Las marcas de línea valen para los 3 lenguajes (misma línea, decisión 1 del diseño técnico)",
           "state_overrides": {
             "perdió": {
               "active": 1
             }
-          }
+          },
+          "content": "—",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "codigo",
           "type": "image",
           "category": "content",
-          "content": "1  function maxIndex(nums) {\n2    let best = 0\n3    for (let i = 1; i < nums.length; i++) {\n4      if (nums[i] >= nums[best]) {   ✓ acá estaba el bug\n5        best = i\n6      }\n7    }\n8    return best\n9  }",
+          "content": "function maxIndex(nums) { … } · línea 4 «✓ acá estaba el bug»",
           "aspect_ratio": "4:3",
           "h": 240,
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "`code-block` `selectable` en modo resultado, solo lectura (sin foco por línea). Acierto: fondo `#0C1A12`, barra `#3DDC84`, «✓ acá estaba el bug». Cada línea marcada se anuncia con su tag: no depende del color (CA 5, 23, NFR-U04). Scroll horizontal dentro del bloque",
+          "annotation": "`code-block` `selectable` en modo resultado, solo lectura (las líneas ya no son radios: es una lista de líneas, sin foco por línea). Estados del pattern `bug-hunt.line`: **acierto** (elegida = `bug_line`): fondo `#0C1A12`, barra `#3DDC84`, tag «✓ acá estaba el bug». **Perdió**: la línea del bug con fondo `#1A140A`, barra `#FFB547` y tag «🐛 acá estaba el bug»; la elegida con fondo `#1C0F0E`, barra `#FF7B72` y tag «✗ tu elección». El resto sin marca. Cada línea marcada se anuncia con su tag («Línea 4, acá estaba el bug»), así que el resultado no depende del color (CA 5, 23, NFR-U04). Mismo resaltado de sintaxis y fallback sin color que en la partida; texto seleccionable. Las líneas largas saltan con sangría colgante (`CodeText`, REQ-012 / S-066): no hay scroll horizontal ni en el bloque ni en la página. **mobile:** con el bloque angosto (< 32rem) el tag baja a una segunda fila bajo su línea, alineada con el código, como las notas de Big O (`viewport_override`), para no quitarle ancho al código",
           "viewport_overrides": {
             "mobile": {
               "content": "1  function maxIndex(nums) {\n2    let best = 0\n3    for (let i = 1; i < nums.length; i++) {\n4      if (nums[i] >= nums[best]) {\n       ↳ ✓ acá estaba el bug\n5        best = i\n6      }\n7    }\n8    return best\n9  }",
@@ -3865,64 +4132,64 @@
           "state_overrides": {
             "perdió": {
               "content": "1  func maxIndex(nums []int) int {\n2    best := 0\n3    for i := 1; i < len(nums); i++ {\n4      if nums[i] >= nums[best] {     🐛 acá estaba el bug\n5        best = i\n6      }                          ✗ tu elección\n7    }\n8    return best\n9  }",
-              "annotation": "línea 4 «🐛 acá estaba el bug» (fondo `#1A140A`, barra `#FFB547`) y línea 6 «✗ tu elección» (fondo `#1C0F0E`, barra `#FF7B72`); en mobile ambos tags bajo su línea (CA 5)"
+              "annotation": "línea 4 «🐛 acá estaba el bug» (ámbar) y línea 6 «✗ tu elección» (barra y fondo de error); en mobile ambos tags bajo su línea (CA 5)"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "test-falla",
           "type": "card",
           "category": "content",
           "content": "// el test que falla",
-          "paragraph": "maxIndex([5, 1, 5]) · esperado 0 · obtenido 2",
+          "paragraph": "maxIndex([5, 1, 5]) · esperado **0** · obtenido **2**",
+          "annotation": "caja `error` del resultado del pattern de Bug Hunt (radio 12, fondo `#1C0F0E`, borde `#4A2220`, padding 14 16, Mono 14): la llamada en `text.primary` y debajo «esperado» con el valor en `<b>` verde y «obtenido» con el valor en `<b>` rojo; las palabras «esperado» y «obtenido» dicen qué es cada valor, el color solo acompaña. Sale de `failing_test` (`input`, `expected`, `actual`), con la misma sintaxis de llamada que los tests de la partida (CA 4)",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "caja `error` del pattern de Bug Hunt (`#1C0F0E` / `#4A2220`, Mono 14): «esperado» en verde y «obtenido» en rojo, con su palabra (el color solo acompaña). Sale de `failing_test`, misma sintaxis de llamada que en la partida (CA 4)"
+          ]
         },
         {
           "name": "fix",
           "type": "image",
           "category": "content",
-          "content": "// el fix · línea 4\n- if (nums[i] >= nums[best]) {\n+ if (nums[i] > nums[best]) {",
+          "content": "// el fix · línea 4",
           "aspect_ratio": "16:5",
           "h": 90,
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "`code-block` variant `diff`, sin pestañas: prefijos `- ` / `+ ` y fondos `status.error.bg` / `status.success.bg`. Sale de `fix[<pestaña activa>]`: cambia con la pestaña del código. Scroll horizontal propio a 320 px",
+          "annotation": "- if (nums[i] >= nums[best]) { · + if (nums[i] > nums[best]) { — `code-block` variant `diff` del DS, sin pestañas: dos líneas con prefijos literales `- ` / `+ ` y fondos tintados (`status.error.bg` / `status.success.bg`), Mono 14/2, con su indentación. Sale de `fix[<pestaña activa>]` (`before` / `after`), así que cambia con la pestaña del código: el fix siempre está en el lenguaje que el jugador está mirando. Los prefijos `-`/`+` y la cabecera dicen cuál es cuál sin depender del color. Si la línea no entra a 320 px salta con sangría colgante, con el prefijo fijo a la izquierda (`CodeText`, REQ-012 / S-066), sin scroll horizontal",
           "state_overrides": {
             "perdió": {
               "content": "// el fix · línea 4\n- if nums[i] >= nums[best] {\n+ if nums[i] > nums[best] {"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "explicacion-titulo",
           "type": "heading",
           "category": "content",
-          "level": "h2",
           "content": "Por qué falla",
+          "annotation": "`h2` Mono 20 dentro del `panel` de explicación (fondo `#0F1318`, borde `#222A33`, `radius.panel`, padding 24), como el `aside` del prototipo",
+          "level": "h2",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "`h2` Mono 20 dentro del `panel` de explicación (`#0F1318` / `#222A33`), como el `aside` del prototipo"
+          ]
         },
         {
           "name": "lista-pasos",
           "type": "list",
           "category": "content",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
           "items": [
             {
               "title": "1",
@@ -3937,33 +4204,25 @@
               "subtitle": "Los tests visibles no tenían empates, por eso pasaban. Con > solo se actualiza ante un valor estrictamente mayor."
             }
           ],
-          "annotation": "pattern `bug-hunt.step` (número en cuadrado 28×28 `#2A1F0B` / `#FFB547`); 2 a 4 pasos de `explanation.steps`, ya resueltos en el locale (ADR-015); tokens de código neutros, válidos en los 3 lenguajes"
-        },
-        {
-          "name": "chip-tipo",
-          "type": "chips",
-          "category": "content",
-          "items": [
-            "tipo: comparación"
-          ],
+          "annotation": "pattern `bug-hunt.step` (número en cuadrado 28×28 `#2A1F0B` / `#FFB547`, texto Inter 15/1,55 `text.body`; `<code>` Mono `text.primary` sin fondo; `<b>` `text.primary`). El texto llega del servidor ya resuelto en el locale (`explanation.steps`, ADR-015), nunca se arma en el cliente; los fragmentos de código de los pasos usan los tokens neutros del árbol (`>=`, `best`), válidos en los 3 lenguajes",
+          "content": "—",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "`chip` `accent` de Bug Hunt (borde `#5C4419`, texto `#FFB547`). Etiqueta de `bug_type` en el idioma activo. Sin chip «mutación» del prototipo: el fix ya muestra el cambio; el tipo nunca va en el share (CA 10)"
+          ]
         },
         {
           "name": "card-rachas",
           "type": "card",
           "category": "content",
-          "content": "Rachas",
-          "paragraph": "Bug Hunt: 6 días · Global: 17 días · récord Bug Hunt: 9",
+          "content": "(h2 `sr-only`: rachas) — fila superior de la card de cierre",
+          "paragraph": "Bug Hunt: 6 días · Global: 17 días · récord Bug Hunt: 9 · Ver mis estadísticas →",
+          "annotation": "rachas que devuelve el cierre; perder también suma (CA 9). Si el jugador reabre el resultado más tarde, se leen con la racha viva. Las stats propias de Bug Hunt (aciertos por lenguaje y por tipo de bug) se muestran en `estadisticas` (FG-10), no acá (supuesto «Stats propias» del REQ)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "`h2` `sr-only`; rachas que devuelve el cierre, perder también suma (CA 9). Stats por lenguaje y tipo de bug en estadisticas (FG-10)"
+          ]
         },
         {
           "name": "link-stats",
@@ -3982,11 +4241,7 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
-          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) sin el aviso de spoilers; el contexto incluye `code_language`. Visible también en `anulado`",
+          "annotation": "slot `aside` del host, siempre último del lateral (debajo del panel de explicación). Abre O-01 (bottom-sheet en mobile, modal en desktop) desde el resultado (también el anulado), sin el aviso de spoilers; el contexto incluye `code_language`. Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007)",
           "state_overrides": {
             "ya reportado": {
               "content": "Ya reportaste este desafío",
@@ -3994,33 +4249,37 @@
               "icon": "check",
               "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "cuenta-regresiva",
           "type": "paragraph",
           "category": "content",
-          "level": "caption",
           "content": "Próximo desafío en 05:42:10",
+          "annotation": "al llegar a 0 recarga el día (Bug Hunt vuelve a instrucciones del desafío nuevo)",
+          "level": "caption",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "al llegar a 0 recarga el día (vuelve a instrucciones del desafío nuevo)"
+          ]
         },
         {
           "name": "btn-siguiente",
           "type": "button",
           "category": "input",
           "content": "Siguiente juego",
-          "variant": "primary",
           "icon": "arrow-right",
+          "annotation": "`button` `primary` como en el banner del prototipo («Siguiente juego →»); lleva al próximo juego con desafío y sin completar; si no hay ninguno, no se muestra",
+          "variant": "primary",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "sin juegos pendientes"
-          ],
-          "annotation": "solo si queda un juego con desafío sin completar"
+          ]
         },
         {
           "name": "link-volver",
@@ -4046,8 +4305,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "kind": "error",
           "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -4057,8 +4316,8 @@
           "type": "button",
           "category": "input",
           "content": "Reintentar",
-          "variant": "secondary",
           "icon": "refresh",
+          "variant": "secondary",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -4081,16 +4340,15 @@
           "pregunta",
           "tabs-lenguaje",
           "codigo",
-          "test-falla",
-          "fix",
-          "explicacion-titulo",
-          "lista-pasos",
-          "chip-tipo",
           "card-rachas",
           "link-stats",
           "cuenta-regresiva",
           "btn-siguiente",
           "link-volver",
+          "test-falla",
+          "fix",
+          "explicacion-titulo",
+          "lista-pasos",
           "link-reportar"
         ],
         "desktop": [
@@ -4169,8 +4427,7 @@
                           "test-falla",
                           "fix",
                           "explicacion-titulo",
-                          "lista-pasos",
-                          "chip-tipo"
+                          "lista-pasos"
                         ]
                       }
                     ]
@@ -4189,23 +4446,19 @@
         },
         {
           "name": "perdió",
-          "applies": true,
-          "parent_state": "default"
+          "applies": true
         },
         {
           "name": "sin juegos pendientes",
-          "applies": true,
-          "parent_state": "default"
+          "applies": true
         },
         {
           "name": "anulado",
-          "applies": true,
-          "parent_state": "default"
+          "applies": true
         },
         {
           "name": "success",
-          "applies": true,
-          "parent_state": "default"
+          "applies": true
         },
         {
           "name": "ya reportado",
@@ -4578,14 +4831,15 @@
           "type": "header",
           "category": "layout",
           "content": "> nerdose / big-o · desafío del 30/10 · [?] [stats] [Compartir] ES|EN · 🔥 4",
-          "annotation": "`game-header` variant `playing` (REQ-009): «Cómo se juega» → card-reglas de esta pantalla · «Estadísticas» → estadisticas · Compartir deshabilitado («disponible al terminar la partida») · ES|EN cambia la interfaz sin perder la opción elegida ni el lenguaje visible (CA 22) · racha global. Sin categoría de receta (CA 18). Sin nav global ni `nav-movil`"
+          "annotation": "`game-header` variant `playing` (REQ-009): «Cómo se juega» lleva a `card-reglas` de esta misma pantalla (con la Play en curso el servidor no vuelve a mostrar las instrucciones); «Estadísticas» → `estadisticas`; Compartir deshabilitado («disponible al terminar la partida»); ES|EN cambia la interfaz sin perder la opción elegida ni el lenguaje visible (CA 22); píldora con la racha global. Sin categoría de receta en el metadato (CA 18). Sin nav global ni `nav-movil`"
         },
         {
           "name": "consigna",
           "type": "paragraph",
           "category": "content",
-          "level": "caption",
           "content": "// peor caso · un solo intento",
+          "level": "caption",
+          "annotation": "comentario `//` del prototipo (Mono 13 `text.dim`)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
@@ -4595,37 +4849,37 @@
           "name": "titulo",
           "type": "heading",
           "category": "content",
-          "level": "h1",
           "content": "¿Cuál es la complejidad temporal (peor caso) de f(n)?",
+          "annotation": "como en el prototipo (`tpl-BigO`), el `h1` es la pregunta y no el nombre del juego, que ya está en el breadcrumb. Mono 30 con tracking negativo y `f(n)` en el acento `#5EB1FF`; a 320 px envuelve en 2 o 3 líneas. Fija para todos los días",
+          "level": "h1",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "el `h1` es la pregunta (como `tpl-BigO`), con `f(n)` en el acento `#5EB1FF`; el nombre del juego queda en el breadcrumb. A 320 px envuelve en 2-3 líneas"
+          ]
         },
         {
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "icon": "warning",
           "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "annotation": "`banner` `warning` del DS; aparece si «Confirmar respuesta» responde `challenge_voided` (CA 20). El código, las opciones y la confirmación se ocultan; queda «Reportar un problema»",
+          "kind": "warning",
           "visible_only_in_states": [
             "anulado"
-          ],
-          "annotation": "si «Confirmar respuesta» responde `challenge_voided` (CA 20); queda «Reportar un problema»"
+          ]
         },
         {
           "name": "banner-cookies",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "icon": "warning",
           "content": "Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».",
+          "annotation": "banner `warning` (O-03); aparece si la confirmación responde `no_session`. La opción elegida y el lenguaje visible se conservan en pantalla para reintentar",
+          "kind": "warning",
           "visible_only_in_states": [
             "sin sesión"
-          ],
-          "annotation": "O-03 (`no_session`); la opción elegida y el lenguaje visible se conservan para reintentar"
+          ]
         },
         {
           "name": "tabs-lenguaje",
@@ -4637,26 +4891,27 @@
             "Java"
           ],
           "active": 0,
+          "annotation": "barra de pestañas del `code-block` (pestaña activa con el fondo `game.big-o.tab-selected`, como el prototipo). Arranca en el lenguaje preferido de la sesión (`codeLanguage`, JavaScript por defecto) y, al retomar, vuelve a ese lenguaje. Cambiar de pestaña es estado local: no hace requests, no cambia la Play ni la preferencia y **no borra la opción elegida** (C-26, CA 3). El lenguaje visible al tocar «Confirmar respuesta» es el que se envía",
+          "content": "—",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "barra del `code-block` (`f.js` · `f.go` · `F.java` a la derecha). Arranca en el lenguaje preferido (JS por defecto); cambiar es local, sin requests, y no borra la opción elegida (C-26, CA 3). Se envía el visible al confirmar"
+          ]
         },
         {
           "name": "codigo",
           "type": "image",
           "category": "content",
-          "content": "function f(n) {  // 1\n  let ops = 0\n  for (let i = 0; i < n; i++)\n    for (let j = 1; j < n; j *= 2)\n      ops++\n  return ops\n}",
+          "content": "function f(n) { … } · código del desafío con numeración de líneas",
           "aspect_ratio": "4:3",
           "h": 220,
+          "annotation": "`code-block` `readonly` sin líneas resaltadas ni anotaciones (las notas «n veces» son del resultado: durante la partida serían la respuesta). Texto seleccionable, Mono 15/2, sin ligaduras; resaltado de sintaxis con Shiki cargado en el chunk de `/big-o` (ADR-002) y un tema que sale de los tokens del DS con contraste AA sobre `bg.surface.sunken`; mientras carga, o si falla, se muestra el mismo código sin color, sin saltos de layout (ver «Design System» en la Revisión UX de REQ-009). Números de línea con contraste ≥ 4,5:1. Cada línea que no entra salta de línea (soft-wrap) con sangría colgante: la sangría original queda fija a la izquierda y la continuación arranca alineada con el código de esa línea (`CodeText`, REQ-012 / S-066); el número de línea no se repite. No hay scroll horizontal ni en el bloque ni en la página (CA 21, 320 px). El cuerpo sigue siendo enfocable (`tabindex=\"0\"` y nombre «Código de f(n) en {lenguaje}»). El código no lleva comentarios",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "`code-block` `readonly` sin líneas resaltadas ni notas (serían la respuesta). Resaltado Shiki con fallback sin color, sin saltos de layout. Scroll horizontal propio con teclado (`tabindex=0`); la página nunca scrollea en horizontal (CA 21)"
+          ]
         },
         {
           "name": "opciones",
@@ -4673,12 +4928,7 @@
             "O(2ⁿ)",
             "O(n!)"
           ],
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "pattern `big-o.option` como `radiogroup` «Complejidad temporal de f(n)»: siempre las 8, en este orden; 2 columnas en mobile, 4 en desktop (`min-height` 56). Sin elegir: borde `#1E252E`, texto `text.muted`",
+          "annotation": "pattern `big-o.option` (botón Mono 16, `min-height: 56px`, `radius.control`, borde 2px estable). Siempre las mismas 8 en este orden, nunca dependiente de la respuesta. Grilla de 4 columnas en desktop y de 2 columnas en mobile (4 filas): «O(n log n)» entra sin cortar a 320 px. Grupo `role=\"radiogroup\"` con nombre «Complejidad temporal de f(n)»; cada opción es un `role=\"radio\"` con `aria-checked`. **Jugando** (el prototipo solo define el resultado; se deriva de la escala de Big O): sin elegir, fondo `#0F1318` y borde `#1E252E`, texto `text.muted`; elegida, fondo `#0B1522`, borde 2px `#5EB1FF`, texto `text.primary` 700 y un `●` antes del texto, para que la elección no dependa solo del color (NFR-U04). El verde queda reservado a la respuesta correcta del resultado. Tocar otra opción cambia la elección; ninguna opción se envía hasta confirmar",
           "state_overrides": {
             "selección hecha": {
               "items": [
@@ -4691,7 +4941,7 @@
                 "O(2ⁿ)",
                 "O(n!)"
               ],
-              "annotation": "O(n²) elegida: fondo `#0B1522`, borde 2px `#5EB1FF`, `●` y `aria-checked=true`; nunca verde (NFR-U04)"
+              "annotation": "O(n²) elegida: fondo `#0B1522`, borde 2px `#5EB1FF`, `●` y `aria-checked=true`"
             },
             "confirmando": {
               "items": [
@@ -4742,20 +4992,19 @@
                 "O(n!)"
               ]
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "seleccion",
           "type": "paragraph",
           "category": "feedback",
-          "level": "caption",
           "content": "> elegí una de las 8 opciones",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "línea de aviso del juego, siempre montada (`min-height`), espejo de la región `aria-live` polite. Sin rojo ni shake: un rechazo no consume el intento",
+          "annotation": "línea de aviso del juego (Mono 13), siempre montada con `min-height` para no mover el layout; repite el último anuncio de la región viva `sr-only` (`aria-live=\"polite\"`). Sin rojo ni shake: un rechazo no consume el intento. Textos: «> elegiste O(n²). Podés cambiarla hasta confirmar.», «> no pudimos registrar tu respuesta. Elegí una opción y confirmá de nuevo: no perdiste tu intento.» (`invalid_move`, CA 7), «> vas muy rápido. Esperá unos segundos y probá de nuevo.» (429)",
           "state_overrides": {
             "selección hecha": {
               "content": "> elegiste O(n²). Podés cambiarla hasta confirmar."
@@ -4774,25 +5023,25 @@
               "content": "> vas muy rápido. Esperá unos segundos y probá de nuevo.",
               "annotation": "HTTP 429 genérico; la confirmación no se procesa"
             }
-          }
+          },
+          "level": "caption",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "btn-confirmar",
           "type": "button",
           "category": "input",
-          "content": "Confirmar respuesta",
-          "variant": "primary",
-          "icon": "check",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "`button` `accent` de Big O (`#5EB1FF` / `#06121F`), `lg`, ancho completo en mobile. Envía `{ language, option }` una sola vez; sin diálogo (decisión #26)",
+          "content": "Confirmar respuesta →",
+          "annotation": "`button` `accent` de Big O (`#5EB1FF` / `#06121F`), tamaño `lg`, **ancho completo en todos los breakpoints**, en la columna principal justo debajo de `seleccion` (REQ-012, patrón común). Deshabilitado hasta elegir una opción: `aria-disabled=\"true\"` y la etiqueta pasa a ser la instrucción «Elegí una opción», sin `→`; al elegir muestra «Confirmar respuesta →». Al tocarlo se valida `{ language, option }` y se envía una sola vez; mientras responde pasa a «Confirmando…» y las opciones y las pestañas quedan bloqueadas. Sin diálogo de confirmación: la selección y la confirmación ya son dos pasos (decisión #26)",
           "state_overrides": {
             "default": {
               "variant": "disabled",
-              "annotation": "deshabilitado hasta elegir una opción (`aria-disabled`: «Elegí una opción para confirmar»)"
+              "annotation": "deshabilitado hasta elegir una opción",
+              "content": "Elegí una opción"
             },
             "ya reportado": {
               "variant": "disabled",
@@ -4802,21 +5051,31 @@
               "content": "Confirmando…",
               "variant": "disabled",
               "annotation": "`aria-disabled` mientras viaja la jugada; opciones y pestañas bloqueadas"
+            },
+            "selección hecha": {
+              "content": "Confirmar respuesta →",
+              "variant": "primary"
             }
-          }
+          },
+          "variant": "primary",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "card-reglas",
           "type": "card",
           "category": "content",
-          "content": "// reglas",
+          "content": "// cómo se juega",
           "paragraph": "01 · Peor caso: cómo crecen las operaciones cuando n crece. · 02 · Un solo intento: elegí y confirmá. · 03 · El lenguaje es solo una vista: el que tengas abierto al confirmar queda como tu preferido. — Con teclado: flechas ← → para cambiar de lenguaje, Tab hasta las opciones, flechas para elegir y Enter en «Confirmar respuesta».",
+          "annotation": "`SectionPanel` con cabecera `//` y `id={HELP_TARGET_ID}`: es el destino de «Cómo se juega» del header (`#game-help`) y el primer panel del lateral, con el mismo título que en los otros cuatro juegos (REQ-012). Inter 14 (`text-body-sm`) `text.body`; las reglas numeradas en Mono",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "destino de «Cómo se juega» del header (`#game-help`), como la card «// reglas» de Tech Timeline"
+          ]
         },
         {
           "name": "link-reportar",
@@ -4824,11 +5083,7 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
-          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) con el aviso de no incluir la respuesta; el contexto incluye el lenguaje visible. Visible también en `anulado`",
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) con el aviso «No incluyas la respuesta si todavía estás jugando»; el contexto del reporte incluye el lenguaje visible (`code_language`). Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007)",
           "state_overrides": {
             "ya reportado": {
               "content": "Ya reportaste este desafío",
@@ -4836,7 +5091,11 @@
               "icon": "check",
               "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "loader",
@@ -4851,8 +5110,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "kind": "error",
           "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: conservás tu intento.",
+          "kind": "error",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -4862,17 +5121,18 @@
           "type": "button",
           "category": "input",
           "content": "Reintentar",
-          "variant": "secondary",
           "icon": "refresh",
-          "visible_only_in_states": [
-            "error de sistema",
-            "sin sesión"
-          ],
           "state_overrides": {
             "sin sesión": {
               "annotation": "recrea la sesión y vuelve a enviar la respuesta elegida"
             }
-          }
+          },
+          "variant": "secondary",
+          "annotation": "en `error de sistema` recarga la partida; en `sin sesión` recrea la sesión y vuelve a enviar la respuesta elegida",
+          "visible_only_in_states": [
+            "error de sistema",
+            "sin sesión"
+          ]
         },
         {
           "name": "footer",
@@ -4916,14 +5176,14 @@
                   "tabs-lenguaje",
                   "codigo",
                   "opciones",
-                  "seleccion"
+                  "seleccion",
+                  "btn-confirmar"
                 ]
               },
               {
                 "w": 5,
                 "stack": [
                   "card-reglas",
-                  "btn-confirmar",
                   "link-reportar"
                 ]
               }
@@ -4938,23 +5198,19 @@
         },
         {
           "name": "selección hecha",
-          "applies": true,
-          "parent_state": "default"
+          "applies": true
         },
         {
           "name": "confirmando",
-          "applies": true,
-          "parent_state": "selección hecha"
+          "applies": true
         },
         {
           "name": "error de validación",
-          "applies": true,
-          "parent_state": "selección hecha"
+          "applies": true
         },
         {
           "name": "límite de jugadas",
-          "applies": true,
-          "parent_state": "selección hecha"
+          "applies": true
         },
         {
           "name": "anulado",
@@ -4962,8 +5218,7 @@
         },
         {
           "name": "sin sesión",
-          "applies": true,
-          "parent_state": "selección hecha"
+          "applies": true
         },
         {
           "name": "ya reportado",
@@ -4992,7 +5247,7 @@
           "type": "header",
           "category": "layout",
           "content": "> nerdose / big-o · desafío del 30/10 · [stats] [Compartir] ES|EN · 🔥 17",
-          "annotation": "`game-header` variant `finished` (REQ-009): Compartir activo con el acento del juego (`#5EB1FF` / `#06121F`), único botón de compartir. Texto: «🧮 Big O #8» / «🟩 Java» (🟥 si perdió) / «nerdose.dev», nunca la opción elegida ni la correcta (CA 10) · «Estadísticas» → estadisticas · ES|EN cambia veredicto, pasos, notas, «en números» y consejo · racha global actualizada. Sin «Cómo se juega» ni `nav-movil`",
+          "annotation": "`game-header` variant `finished` (REQ-009, como el prototipo `tpl-BigO`): Compartir activo con el acento del juego (`#5EB1FF` sobre `#06121F`), único botón de compartir de la pantalla. Texto en tres líneas: «🧮 Big O #8», «🟩 Java» (🟥 si perdió; el lenguaje con el que confirmó) y «nerdose.dev», igual en ES y EN; nunca la opción elegida ni la correcta (CA 10). «Estadísticas» → `estadisticas`; ES|EN cambia el veredicto, los pasos, las notas, «en números» y el consejo; píldora con la racha global ya actualizada. «Cómo se juega» no se muestra en el resultado. Sin nav global ni `nav-movil`",
           "state_overrides": {
             "success": {
               "content": "> nerdose / big-o · desafío del 30/10 · [stats] [✓ Copiado] ES|EN · 🔥 17",
@@ -5014,26 +5269,29 @@
         },
         {
           "name": "veredicto",
-          "type": "heading",
-          "category": "content",
-          "level": "h1",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "success",
           "content": "Correcto: O(n log n)",
           "icon": "check",
+          "annotation": "Confirmaste en Java. El paso a paso repasa por qué es O(n log n). — `Banner` `success` de `@nerdose/ui` con `titleAs=\"h1\"`, siempre visible arriba y a ancho completo (REQ-012, patrón común de resultado; reemplaza el `h1` `sr-only` del caso ganador). El confeti azul del juego sigue igual (host `web`, solo en la transición partida → resultado ganado, sin animación con `prefers-reduced-motion`). Al perder, banner `failure` del DS, sin drama (ver estado `perdió`). El detalle no dice «abajo» ni «a la derecha»: la posición del paso a paso cambia según el viewport",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
-          "annotation": "al ganar: confeti azul y `h1` `sr-only` (como Devdle, Grep Grid y Tech Timeline); la señal visible con ícono y texto es la grilla de opciones. Sin animación con `prefers-reduced-motion`",
           "state_overrides": {
             "perdió": {
               "content": "Incorrecto: era O(n log n)",
               "icon": "x",
-              "annotation": "banner `failure` del DS, sin drama; subtítulo «Elegiste O(n²) en Go. Abajo, paso a paso por qué.»; sin confeti. Perder también suma a la racha"
+              "annotation": "banner `failure` del DS, sin drama; subtítulo «Elegiste O(n²) en Go. El paso a paso explica por qué.»; sin confeti. Perder también suma a la racha",
+              "kind": "error"
             },
             "anulado": {
               "content": "Desafío anulado",
-              "icon": null,
-              "annotation": "`h1` visible, sin banner ni confeti"
+              "annotation": "`h1` visible, sin banner ni confeti",
+              "type": "heading",
+              "level": "h1",
+              "icon": null
             }
           }
         },
@@ -5041,26 +5299,26 @@
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "icon": "warning",
           "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "annotation": "`banner` `warning` del DS. Se muestra con la Play `voided` (`challenge_status: voided`); `GameToday` devuelve `result: null` y `public_view: null` (REQ-007)",
+          "kind": "warning",
           "visible_only_in_states": [
             "anulado"
-          ],
-          "annotation": "`banner` `warning` del DS; Play `voided`: `result` y `public_view` nulos (REQ-007). Variante mínima: aviso + rachas"
+          ]
         },
         {
           "name": "pregunta",
           "type": "heading",
           "category": "content",
-          "level": "h2",
           "content": "¿Cuál es la complejidad temporal (peor caso) de f(n)?",
+          "annotation": "Mono 30 en desktop (26 en mobile) con `f(n)` en el acento, como el `h1` del prototipo; acá es `h2` porque el `h1` es el veredicto",
+          "level": "h2",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "Mono 30 en desktop (26 en mobile) con `f(n)` en el acento; `h2` porque el `h1` es el veredicto"
+          ]
         },
         {
           "name": "tabs-lenguaje",
@@ -5072,37 +5330,38 @@
             "Java"
           ],
           "active": 2,
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "arranca en `result.code_language` (el lenguaje con el que confirmó); solo vista, no cambia la preferencia. Las notas valen para los 3 lenguajes",
+          "annotation": "arranca en `result.code_language` (el lenguaje con el que confirmó); cambiar de pestaña es solo vista y no cambia la preferencia. Las notas por línea valen para los 3 lenguajes (misma línea por sentencia, decisión 3 del diseño técnico)",
           "state_overrides": {
             "perdió": {
               "active": 1
             }
-          }
+          },
+          "content": "—",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "codigo",
           "type": "image",
           "category": "content",
-          "content": "function f(n) {\n  let ops = 0\n  for (let i = 0; i < n; i++)          ← n veces\n    for (let j = 1; j < n; j *= 2)     ← log n veces\n      ops++\n  return ops\n}",
+          "content": "function f(n) { … } · líneas 3 y 4 resaltadas con «n veces» y «log n veces»",
           "aspect_ratio": "4:3",
           "h": 220,
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "`code-block` `readonly`: líneas de `line_notes` con fondo `#0E1D2E` + barra 3px `#5EB1FF` y la nota en `#8CC8FF` (Mono 12) al margen derecho, en el idioma activo. Scroll horizontal dentro del bloque (CA 21)",
+          "annotation": "`code-block` `readonly` del DS: las líneas de `explanation.line_notes` llevan fondo `game.big-o.line-highlight` (`#0E1D2E`) + barra `inset 3px` `#5EB1FF` y la nota en `game.big-o.light` (`#8CC8FF`, Mono 12), en el idioma activo. En desktop la nota va al margen derecho de su línea, como el prototipo; **en mobile baja a una segunda fila bajo su línea**, alineada con el código, para que no compita por el ancho con el código (`viewport_override`; ver «Design System» en la Revisión UX). Mismo resaltado de sintaxis y fallback sin color que en la partida; texto seleccionable. Las líneas largas saltan con sangría colgante (`CodeText`, REQ-012 / S-066): no hay scroll horizontal ni en el bloque ni en la página (CA 21)",
           "viewport_overrides": {
             "mobile": {
               "content": "function f(n) {\n  let ops = 0\n  for (let i = 0; i < n; i++)\n    ↳ n veces\n  for (let j = 1; j < n; j *= 2)\n    ↳ log n veces\n      ops++\n  return ops\n}",
               "annotation": "en mobile la nota baja a una segunda fila bajo su línea, alineada con el código, para que no quede fuera de la vista dentro del scroll horizontal"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "opciones-resultado",
@@ -5119,12 +5378,7 @@
             "O(2ⁿ)",
             "O(n!)"
           ],
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "pattern `big-o.option` en modo resultado, solo lectura (lista); mismo orden y grilla que la partida (2 col mobile, 4 desktop). Correcta: relleno `#3DDC84` + ✓ «correcta». Elegida e incorrecta: borde 2px `#FF7B72` + ✗ «tu respuesta», nunca relleno rojo. Resto apagadas (CA 5, 21, NFR-U04)",
+          "annotation": "pattern `big-o.option` en modo resultado, solo lectura (lista, no `radiogroup`), en el mismo orden y grilla que la partida (2 columnas en mobile, 4 en desktop). Correcta: relleno `#3DDC84`, texto `#06120B` 800, ✓ y la etiqueta «correcta» debajo del valor (L970 del prototipo). Elegida e incorrecta: fondo `#0F1318`, borde 2px `status.error` (`#FF7B72`), ✗ y la etiqueta «tu respuesta»; nunca relleno rojo. Si coinciden: «✓ correcta · tu respuesta». El resto, apagadas (`text.muted`, borde `#1E252E`). Cada opción marcada se anuncia con su etiqueta («O(n²), tu respuesta, incorrecta»), así que el resultado no depende del color (CA 5, 21, NFR-U04). La cabecera dice con qué lenguaje confirmó",
           "state_overrides": {
             "perdió": {
               "content": "// tu respuesta · confirmada en Go",
@@ -5140,30 +5394,30 @@
               ],
               "annotation": "O(n log n) ✓ correcta (relleno verde) · O(n²) ✗ tu respuesta (borde 2px de error, sin relleno) (CA 5)"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "explicacion-titulo",
           "type": "heading",
           "category": "content",
+          "content": "Paso a paso",
+          "annotation": "// por qué — cabecera del `panel` de explicación (fondo `#0F1318`, borde `#222A33`, `radius.panel`, padding 24), como el `aside` del prototipo: comentario `// por qué` (Mono 13 `text.dim`) arriba del `h2` (Mono 22)",
           "level": "h2",
-          "content": "// por qué · Paso a paso",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "cabecera del `panel` de explicación (`#0F1318` / `#222A33`), como el `aside` del prototipo: `// por qué` (Mono 13 `text.dim`) sobre el `h2` «Paso a paso» (Mono 22)"
+          ]
         },
         {
           "name": "lista-pasos",
           "type": "list",
           "category": "content",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
           "items": [
             {
               "title": "1 · Loop externo",
@@ -5182,7 +5436,13 @@
               "subtitle": "Descartamos constantes y términos menores: O(n log n)."
             }
           ],
-          "annotation": "pattern `big-o.step` (número en cuadrado 28×28 `#11243A` / `#8CC8FF`); 2 a 6 pasos de `explanation.steps`, ya resueltos en el locale por el servidor (ADR-015)"
+          "annotation": "pattern `big-o.step` (número en cuadrado 28×28 `#11243A` / `#8CC8FF`, texto Inter 15/1,55 `text.body`; `<code>` Mono sin fondo; la respuesta en `<b>`). El texto llega del servidor ya resuelto en el locale (`explanation.steps`, ADR-015), nunca se arma en el cliente. En recursión doble un paso aclara que la cota exacta es φⁿ ≈ 1,618ⁿ, dentro de O(2ⁿ) (CA 16)",
+          "content": "—",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "caja-numeros",
@@ -5190,39 +5450,39 @@
           "category": "content",
           "content": "// en números, con n = 1024",
           "paragraph": "f(1024) cuenta 10.240 operaciones · con O(n²) serían 1.048.576",
+          "annotation": "caja «en números» del pattern de Big O (radio 12, `#0B1522` / `#1B2E45`, Mono 13, valores en `<b>` `text.primary`), como el prototipo. Sale de `explanation.example`: `n`, `ops` (comprobado por ejecución) y `trap_ops`; la segunda línea solo aparece si hay trampa (`trap_ops` no nulo) y nombra la `trap_option` («con O(n²) serían…»). Números con separador de miles del idioma activo (`10.240` / `10,240`). Si no hay `example`, no se muestra",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado",
             "sin ejemplo"
-          ],
-          "annotation": "`explanation.example`: `ops` comprobado por ejecución; la segunda línea solo con trampa (`trap_ops`). Separador de miles del idioma activo"
+          ]
         },
         {
           "name": "consejo",
           "type": "paragraph",
           "category": "content",
-          "level": "body",
           "content": "La trampa más común es ver dos for y responder O(n²). Mirá siempre cómo avanza cada variable.",
+          "annotation": "`explanation.tip` en el idioma activo (Inter 14/1,5 `#9AA6B2`, `<code>` en Mono), solo en las recetas con trampa; si es `null`, no se muestra",
+          "level": "body",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado",
             "sin ejemplo"
-          ],
-          "annotation": "`explanation.tip`, solo en recetas con trampa; si es `null`, no se muestra"
+          ]
         },
         {
           "name": "card-rachas",
           "type": "card",
           "category": "content",
-          "content": "Rachas",
-          "paragraph": "Big O: 9 días · Global: 17 días · récord Big O: 12",
+          "content": "(h2 `sr-only`: rachas) — fila superior de la card de cierre",
+          "paragraph": "Big O: 9 días · Global: 17 días · récord Big O: 12 · Ver mis estadísticas →",
+          "annotation": "rachas que devuelve el cierre; perder también suma (CA 9). Si el jugador reabre el resultado más tarde, se leen con la racha viva. Las stats propias de Big O (aciertos por categoría de receta) se muestran en `estadisticas` (FG-10), no acá (supuesto «Stats propias» del REQ)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "`h2` `sr-only`; rachas que devuelve el cierre, perder también suma (CA 9). Stats por categoría de receta en estadisticas (FG-10)"
+          ]
         },
         {
           "name": "link-stats",
@@ -5241,11 +5501,7 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
-          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) sin el aviso de spoilers; visible también en `anulado`",
+          "annotation": "slot `aside` del host, siempre último del lateral (debajo del panel de explicación). Abre O-01 (bottom-sheet en mobile, modal en desktop) desde el resultado (también el anulado), sin el aviso de spoilers. Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007)",
           "state_overrides": {
             "ya reportado": {
               "content": "Ya reportaste este desafío",
@@ -5253,33 +5509,37 @@
               "icon": "check",
               "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "cuenta-regresiva",
           "type": "paragraph",
           "category": "content",
-          "level": "caption",
           "content": "Próximo desafío en 05:42:10",
+          "annotation": "al llegar a 0 recarga el día (Big O vuelve a instrucciones del desafío nuevo)",
+          "level": "caption",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "al llegar a 0 recarga el día (vuelve a instrucciones del desafío nuevo)"
+          ]
         },
         {
           "name": "btn-siguiente",
           "type": "button",
           "category": "input",
           "content": "Siguiente juego",
-          "variant": "primary",
           "icon": "arrow-right",
+          "annotation": "`button` `primary` como en el banner del prototipo («Siguiente juego →»); lleva al próximo juego con desafío y sin completar; si no hay ninguno, no se muestra",
+          "variant": "primary",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "sin juegos pendientes"
-          ],
-          "annotation": "solo si queda un juego con desafío sin completar"
+          ]
         },
         {
           "name": "link-volver",
@@ -5305,8 +5565,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "kind": "error",
           "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -5316,8 +5576,8 @@
           "type": "button",
           "category": "input",
           "content": "Reintentar",
-          "variant": "secondary",
           "icon": "refresh",
+          "variant": "secondary",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -5341,15 +5601,15 @@
           "tabs-lenguaje",
           "codigo",
           "opciones-resultado",
-          "explicacion-titulo",
-          "lista-pasos",
-          "caja-numeros",
-          "consejo",
           "card-rachas",
           "link-stats",
           "cuenta-regresiva",
           "btn-siguiente",
           "link-volver",
+          "explicacion-titulo",
+          "lista-pasos",
+          "caja-numeros",
+          "consejo",
           "link-reportar"
         ],
         "desktop": [
@@ -5448,28 +5708,23 @@
         },
         {
           "name": "perdió",
-          "applies": true,
-          "parent_state": "default"
+          "applies": true
         },
         {
           "name": "sin ejemplo",
-          "applies": true,
-          "parent_state": "default"
+          "applies": true
         },
         {
           "name": "sin juegos pendientes",
-          "applies": true,
-          "parent_state": "default"
+          "applies": true
         },
         {
           "name": "anulado",
-          "applies": true,
-          "parent_state": "default"
+          "applies": true
         },
         {
           "name": "success",
-          "applies": true,
-          "parent_state": "default"
+          "applies": true
         },
         {
           "name": "ya reportado",
@@ -5839,14 +6094,15 @@
           "type": "header",
           "category": "layout",
           "content": "> nerdose / tech-timeline · desafío del 30/10 · lenguajes de programación · [?] [stats] [Compartir] ES|EN · 🔥 4",
-          "annotation": "`game-header` variant `playing` (REQ-006): el metadato suma la categoría del día. «Cómo se juega» → ayuda-mover de esta pantalla · «Estadísticas» → estadisticas · Compartir deshabilitado («disponible al terminar la partida») · ES|EN cambia consigna y categoría sin perder el orden armado (CA 36) · racha global. Sin nav global ni `nav-movil`"
+          "annotation": "`game-header` variant `playing` (REQ-006): el metadato es «desafío del dd/mm»; desde 2026-11-11 el desafío no tiene categoría propia (mezcla categorías), así que no se muestra una categoría del día. «Cómo se juega» lleva a `ayuda-mover` («// cómo se juega», primer panel del lateral) de esta misma pantalla (con la Play en curso el servidor no vuelve a mostrar las instrucciones); «Estadísticas» → `estadisticas`; Compartir deshabilitado («disponible al terminar la partida»); ES|EN cambia la consigna y las etiquetas de categoría sin perder el orden armado (CA 36); píldora con la racha global. Sin nav global ni `nav-movil`"
         },
         {
           "name": "consigna",
           "type": "paragraph",
           "category": "content",
+          "content": "// un solo intento · 1 punto por posición correcta",
           "level": "caption",
-          "content": "// consigna: del más antiguo al más reciente · un solo intento",
+          "annotation": "línea de comentario del bloque de título, arriba del `h1` (Mono `label-comment` `text.dim`, `// ` decorativo con `aria-hidden`); debajo del `h1` va el lede «Arriba el más antiguo, abajo el más reciente. Arrastrá cada tarjeta o usá las flechas.»",
           "hidden_in_states": [
             "loading",
             "error de sistema"
@@ -5856,37 +6112,37 @@
           "name": "titulo",
           "type": "heading",
           "category": "content",
-          "level": "h1",
           "content": "Ordená estos lenguajes del más antiguo al más reciente",
+          "annotation": "`prompt` del desafío en el idioma activo: consigna única y fija para todos los días (actualización 2026-11-11): «Ordená estos hitos del más antiguo al más reciente» / «Order these milestones from oldest to newest». Como en el prototipo, el `h1` es la consigna y no el nombre del juego, que ya está en el breadcrumb. Mono 34 con tracking negativo; a 320 px envuelve en 2 o 3 líneas",
+          "level": "h1",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "`prompt` del desafío en el idioma activo; el nombre del juego queda en el breadcrumb"
+          ]
         },
         {
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "icon": "warning",
           "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "annotation": "aparece si «Confirmar orden» responde `challenge_voided` (CA 14); la lista queda bloqueada y «Confirmar orden» se oculta",
+          "kind": "warning",
           "visible_only_in_states": [
             "anulado"
-          ],
-          "annotation": "si «Confirmar orden» responde `challenge_voided` (CA 14)"
+          ]
         },
         {
           "name": "banner-cookies",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "icon": "warning",
           "content": "Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».",
+          "annotation": "banner `warning` (O-03); aparece si la confirmación responde `no_session` (CA 16). El orden armado se conserva en pantalla para reintentar",
+          "kind": "warning",
           "visible_only_in_states": [
             "sin sesión"
-          ],
-          "annotation": "O-03 (`no_session`, CA 16); el orden armado se conserva para reintentar"
+          ]
         },
         {
           "name": "lista-hitos",
@@ -5915,11 +6171,7 @@
               "subtitle": "↑ ↓"
             }
           ],
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
-          "annotation": "pattern `timeline.row` en `panel` «// tu orden»: asa ⠿ (arrastre, `touch-action: none` solo en el asa, CA 11) · posición · nombre · ↑ ↓ (↑ deshabilitado en la 1.ª, ↓ en la 5.ª). Sin fecha, nota ni badge (RF 2). A 320 px cada fila va en dos líneas (posición, nombre y categoría arriba; asa y ↑ ↓ de 44 px abajo, sin achicarse), sin scroll horizontal",
+          "annotation": "pattern `timeline.row` (fila de 52 px, `radius.control`, gap 8) dentro de un `panel` «// tu orden» (cabecera `h2`). Estado jugando: fondo `surface`, borde 1px `border.subtle`, sin badge (el badge «✓ bien / ✗ va en N°» es solo del resultado). Cada fila anuncia «Go, posición 3 de 5». **Asa** (botón con `aria-roledescription` «elemento reordenable», `touch-action: none` solo en el asa): arrastre con el dedo o el mouse; el resto de la fila deja hacer scroll (CA 11). **Botones ↑ ↓** (`button` `icon`, `aria-label` «Subir Go» / «Bajar Go»): mueven una posición; ↑ deshabilitado en la primera fila y ↓ en la última; el foco sigue al hito movido. Los nombres son los `label` en inglés, iguales en ES y EN. Ninguna fila muestra fecha, nota ni pista (RF 2); la etiqueta de categoría no revela la fecha (2026-11-11). A 320 px la lista ocupa todo el ancho y cada fila va en dos líneas (posición, nombre y etiqueta arriba; asa y ↑ ↓ abajo, de 44 px y sin achicarse); la fila crece en alto, nunca en ancho, y no hay scroll horizontal (CA 11, RF 21)",
           "state_overrides": {
             "moviendo": {
               "items": [
@@ -5944,7 +6196,7 @@
                   "subtitle": "↑ ↓"
                 }
               ],
-              "annotation": "la fila tomada (arrastre o Espacio) lleva borde 2px del acento violeta y el destino un hueco punteado; sin animación con `prefers-reduced-motion`. Escape la devuelve a su lugar (CA 10)"
+              "annotation": "la fila tomada (arrastre o Espacio) se marca con borde 2px del acento violeta y el lugar de destino con un hueco punteado; las demás filas se corren sin animación si `prefers-reduced-motion`. Escape devuelve el hito a su lugar original y lo anuncia (CA 10)"
             },
             "confirmando": {
               "annotation": "bloqueada mientras se confirma: asas y ↑ ↓ deshabilitados"
@@ -5952,39 +6204,44 @@
             "anulado": {
               "annotation": "bloqueada: no acepta arrastre, teclado ni ↑ ↓"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "hint-jugada",
           "type": "paragraph",
           "category": "feedback",
-          "level": "caption",
           "content": "> moviste Go a la posición 3 de 5",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
-          "annotation": "línea de aviso del juego, siempre montada (`min-height`), espejo de la región `aria-live` polite; vacía al entrar. Sin rojo ni shake",
+          "annotation": "línea de aviso del juego (Mono 13), siempre montada con `min-height` para no mover el layout; la línea visible repite el último anuncio de la región viva `sr-only` (`aria-live=\"polite\"`). Sin rojo ni shake: un rechazo no consume el intento. En reposo: «> arrastrá un hito desde su asa ⠿ o usá ↑ ↓ para moverlo» (vacía solo en `anulado`). Textos: «> moviste {hito} a la posición {n} de 5», «> no pudimos registrar ese orden. Revisalo y confirmá de nuevo» (`invalid_move`), «> vas muy rápido. Esperá unos segundos y probá de nuevo» (429)",
           "state_overrides": {
             "moviendo": {
               "content": "> Go, posición 3 de 5"
             },
             "error de validación": {
               "content": "> no pudimos registrar ese orden. Revisalo y confirmá de nuevo",
-              "annotation": "`422 invalid_move`; la partida sigue en curso y el orden armado se mantiene (CA 6, 7)"
+              "annotation": "`422 invalid_move` (ids faltantes, repetidos o de otro desafío; no debería pasar desde la interfaz). La partida sigue en curso, el orden armado se mantiene y se puede confirmar otra vez (CA 6, 7)"
             },
             "límite de jugadas": {
               "content": "> vas muy rápido. Esperá unos segundos y probá de nuevo",
-              "annotation": "HTTP 429 genérico; la confirmación no se procesa (CA 17)"
+              "annotation": "HTTP 429 con mensaje genérico; la confirmación no se procesa (CA 17, NFR-S08)"
             }
-          }
+          },
+          "level": "caption",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "ayuda-mover",
-          "type": "paragraph",
+          "type": "card",
           "category": "content",
-          "level": "caption",
-          "content": "Arrastrá cada fila desde su asa ⠿ o usá ↑ ↓. Con teclado: Espacio para tomar un hito, flechas para moverlo, Espacio para soltarlo y Escape para devolverlo a su lugar.",
+          "content": "// cómo se juega",
+          "paragraph": "01 Cinco hitos de distintas categorías. Las fechas se revelan al confirmar. · 02 Tenés un solo intento. Cada hito en su lugar suma 1 punto. · 03 Al terminar, cada hito muestra su fecha y un poco de historia. · Arrastrá cada fila desde su asa ⠿ o usá ↑ ↓. Con teclado: Espacio para tomar un hito, flechas para moverlo, Espacio para soltarlo y Escape para devolverlo a su lugar.",
+          "annotation": "`SectionPanel` con `id = HELP_TARGET_ID` y cabecera `h2` «// cómo se juega» (REQ-012; antes «// reglas» con la racha en el dato, que se quitó). Reglas numeradas 01–03 con el acento del juego y la ayuda de mover en Inter `body-sm` `text.muted`; la ayuda deriva de la nota del prototipo, sumando el teclado (CA 10, NFR-U03). Primer bloque del lateral",
           "hidden_in_states": [
             "loading",
             "error de sistema",
@@ -5996,21 +6253,21 @@
           "type": "button",
           "category": "input",
           "content": "Confirmar orden",
-          "variant": "primary",
-          "icon": "check",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "`button` `accent` del juego (`#C39BFF`), `lg`; siempre habilitado, sin diálogo de confirmación",
+          "icon": "arrow-right",
+          "annotation": "`buttonClass({ variant: 'accent', game: 'timeline', size: 'lg', fullWidth: true })`, a ancho completo en todos los breakpoints, en la columna principal justo debajo de `hint-jugada` (patrón común, REQ-012). Siempre habilitado: el orden inicial ya es un orden válido que se puede confirmar (supuesto «Confirmación única»), así que no tiene la etiqueta-instrucción del estado deshabilitado del patrón; solo pasa a «Confirmando…» mientras se envía. Sin segundo diálogo de confirmación",
           "state_overrides": {
             "confirmando": {
               "content": "Confirmando…",
               "variant": "disabled",
               "annotation": "`aria-disabled` mientras viaja la jugada; un segundo toque no envía otra"
             }
-          }
+          },
+          "variant": "primary",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "link-reportar",
@@ -6018,11 +6275,7 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
-          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) con el aviso de no incluir la respuesta; visible también en `anulado`",
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) desde la partida, con el aviso de no incluir la respuesta. Visible también en `anulado` (C-36 acepta desafíos `voided`). Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007)",
           "state_overrides": {
             "ya reportado": {
               "content": "Ya reportaste este desafío",
@@ -6030,7 +6283,11 @@
               "icon": "check",
               "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "loader",
@@ -6045,29 +6302,30 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "kind": "error",
           "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo.",
+          "annotation": "también cubre una confirmación que falla por red o 500: la partida sigue en curso y el orden armado se mantiene en pantalla para reintentar",
+          "kind": "error",
           "visible_only_in_states": [
             "error de sistema"
-          ],
-          "annotation": "también cubre una confirmación que falla por red o 500: el orden armado se mantiene"
+          ]
         },
         {
           "name": "btn-reintentar",
           "type": "button",
           "category": "input",
           "content": "Reintentar",
-          "variant": "secondary",
           "icon": "refresh",
-          "visible_only_in_states": [
-            "error de sistema",
-            "sin sesión"
-          ],
           "state_overrides": {
             "sin sesión": {
               "annotation": "recrea la sesión y reenvía la confirmación con el mismo orden"
             }
-          }
+          },
+          "variant": "secondary",
+          "annotation": "en `sin sesión` recrea la sesión y reenvía la confirmación con el mismo orden",
+          "visible_only_in_states": [
+            "error de sistema",
+            "sin sesión"
+          ]
         },
         {
           "name": "footer",
@@ -6088,8 +6346,8 @@
           "alerta-anulado",
           "lista-hitos",
           "hint-jugada",
-          "ayuda-mover",
           "btn-confirmar",
+          "ayuda-mover",
           "link-reportar"
         ],
         "desktop": [
@@ -6107,14 +6365,14 @@
                 "w": 7,
                 "stack": [
                   "lista-hitos",
-                  "hint-jugada"
+                  "hint-jugada",
+                  "btn-confirmar"
                 ]
               },
               {
                 "w": 5,
                 "stack": [
                   "ayuda-mover",
-                  "btn-confirmar",
                   "link-reportar"
                 ]
               }
@@ -6178,7 +6436,7 @@
           "type": "header",
           "category": "layout",
           "content": "> nerdose / tech-timeline · desafío del 30/10 · lenguajes de programación · [stats] [Compartir] ES|EN · 🔥 4",
-          "annotation": "`game-header` variant `finished` (REQ-006): Compartir activo con el acento del juego, único botón de compartir. Texto: «⏳ Tech Timeline #8» / «🟩🟥🟥🟩🟩 3/5» / «nerdose.dev», nunca nombres, fechas ni orden (CA 3, RF 9) · «Estadísticas» → estadisticas · ES|EN cambia notas, fechas, consigna y categoría · racha global actualizada. Sin «Cómo se juega» ni `nav-movil`",
+          "annotation": "`game-header` variant `finished` (REQ-006, como el prototipo): Compartir activo con el acento del juego (`#C39BFF` sobre `#160E26`), único botón de compartir de la pantalla. Texto en tres líneas: «⏳ Tech Timeline #8», «🟩🟥🟥🟩🟩 3/5» (un cuadrado por posición, en el orden confirmado) y «nerdose.dev»; nunca nombres, fechas ni el orden (CA 3, RF 9). «Estadísticas» → `estadisticas`; ES|EN cambia notas, fechas, consigna y categoría; píldora con la racha global ya actualizada. «Cómo se juega» no se muestra en el resultado. Sin nav global ni `nav-movil`",
           "state_overrides": {
             "success": {
               "content": "> nerdose / tech-timeline · desafío del 30/10 · lenguajes de programación · [stats] [✓ Copiado] ES|EN · 🔥 4",
@@ -6199,40 +6457,32 @@
           }
         },
         {
-          "name": "consigna",
-          "type": "paragraph",
-          "category": "content",
-          "level": "caption",
-          "content": "// consigna: del más antiguo al más reciente · lenguajes de programación",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ]
-        },
-        {
           "name": "veredicto",
-          "type": "heading",
-          "category": "content",
-          "level": "h1",
-          "content": "Orden perfecto",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "success",
+          "content": "Orden perfecto · Repasá la fecha y la historia de cada hito.",
           "icon": "check",
+          "annotation": "`Banner` de `@nerdose/ui` con `titleAs=\"h1\"` (REQ-012): `success` con 5/5, `failure` con 0–4 (detalle «Mirá el orden correcto: cada hito trae su fecha y un poco de historia.»); ningún detalle dice «abajo» ni «a la derecha». El `puntaje` va en el slot `action`. Victoria solo con 5/5 (RF 6). El veredicto se dice con texto, no solo con el color (NFR-U04)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
-          "annotation": "victoria solo con 5/5 (RF 6); el veredicto se dice con texto, no solo con color (NFR-U04)",
           "state_overrides": {
             "perdió": {
-              "content": "3 de 5 en su lugar",
+              "content": "Casi: solo dos hitos cruzados · Mirá el orden correcto: cada hito trae su fecha y un poco de historia.",
+              "kind": "error",
               "icon": null,
-              "annotation": "sin drama ni rojo: la partida perdida también suma a la racha (RF 6)"
+              "annotation": "banner `failure` (REQ-012); la partida perdida también suma a la racha (RF 6)"
             },
             "cero aciertos": {
-              "content": "Ninguno en su lugar esta vez",
-              "icon": null
+              "content": "Hoy ganó la historia",
+              "kind": "error"
             },
             "anulado": {
               "content": "Desafío anulado",
+              "type": "heading",
+              "level": "h1",
               "icon": null
             }
           }
@@ -6241,14 +6491,8 @@
           "name": "puntaje",
           "type": "paragraph",
           "category": "content",
-          "level": "body",
           "content": "5/5 · posiciones correctas",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "`streak-number` variant `score` (Mono 800 56 en el acento violeta); no es una racha: no usa ámbar",
+          "annotation": "`streak-number` variant `score` del DS (Mono 800 56 en el acento violeta, unidad «posiciones / correctas» en dos líneas), dentro del banner del veredicto como `action` (REQ-012; antes a la derecha del título, como el prototipo L1003-1005). No es una racha: no usa ámbar",
           "state_overrides": {
             "perdió": {
               "content": "3/5 · posiciones correctas"
@@ -6256,19 +6500,25 @@
             "cero aciertos": {
               "content": "0/5 · posiciones correctas"
             }
-          }
+          },
+          "level": "body",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "icon": "warning",
           "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "annotation": "`banner` `warning` del DS. Se muestra con la Play `voided` (`challenge_status: voided`): la anulación y «Marcar como completado» llegan con REQ-007",
+          "kind": "warning",
           "visible_only_in_states": [
             "anulado"
-          ],
-          "annotation": "`banner` `warning` del DS; se muestra con la Play `voided` (`challenge_status: voided`). Variante mínima: aviso + rachas"
+          ]
         },
         {
           "name": "lista-tu-orden",
@@ -6297,12 +6547,7 @@
               "subtitle": "✓ bien"
             }
           ],
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "pattern `timeline.row` en `panel`: correcta = verde oscuro, borde sólido, chip «✓ bien»; mal ubicada = ámbar oscuro, borde punteado, chip «✗ va en N°». Nunca rojo (NFR-U04)",
+          "annotation": "pattern `timeline.row` dentro de un `panel` (cabecera `h2`). Correcta: fondo verde oscuro, borde 1px sólido y badge `chip` success «✓ bien». Mal ubicada: fondo ámbar oscuro, **borde 1px punteado** y badge `chip` pending «✗ va en N°» con el lugar correcto; nunca rojo (DS `color.md`, NFR-U04). Cada fila anuncia «Go, posición 2: mal ubicado, va en 3°». Sin la nota «Se arrastra y se suelta…» del prototipo: en el resultado ya no se mueve nada",
           "state_overrides": {
             "perdió": {
               "items": [
@@ -6327,7 +6572,7 @@
                   "subtitle": "✓ bien"
                 }
               ],
-              "annotation": "acierto por posición con ícono + texto + borde (CA 3)"
+              "annotation": "Python ✓ bien · Go ✗ va en 3° · Java ✗ va en 2° · Docker ✓ bien · Kubernetes ✓ bien (CA 3)"
             },
             "cero aciertos": {
               "items": [
@@ -6352,9 +6597,14 @@
                   "subtitle": "✗ va en 3°"
                 }
               ],
-              "annotation": "las 5 filas mal ubicadas; la partida cuenta para la racha (CA 5)"
+              "annotation": "las 5 filas mal ubicadas, cada una con «✗ va en N°»; la partida cuenta para la racha (CA 5)"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "lista-correcto",
@@ -6383,12 +6633,12 @@
               "subtitle": "Sale la versión 1.0 estable, con garantías de memoria sin recolector."
             }
           ],
+          "annotation": "pattern `timeline.rail` dentro de un `panel` (cabecera `h2`, padding 20 24 como el prototipo). Fecha en Mono 800 18 violeta, formateada en el idioma activo según su precisión (RF 8, CA 9; supuesto «Formato de fecha»): `year` → «1991»; `month` → «jun 2014» / «Jun 2014»; `day` → «14 mar 2013» / «Mar 14, 2013». Nunca se inventa mes ni día. Nota: texto de Wikipedia/Wikidata en el idioma activo (Inter 14/1.5 `text.lede`), nunca generada; la atribución CC BY-SA está en `acerca-de`. A 320 px la columna de fecha se ajusta a su contenido (ver «Pendientes» en la Revisión UX de REQ-006) y el texto envuelve; sin scroll horizontal",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "pattern `timeline.rail` en `panel`: fecha (Mono 800 18 violeta) según su precisión — año, mes y año, o día — en el idioma activo, sin inventar mes ni día (RF 8, CA 9); nota de Wikipedia/Wikidata, nunca generada"
+          ]
         },
         {
           "name": "card-rachas",
@@ -6396,11 +6646,11 @@
           "category": "content",
           "content": "// rachas",
           "paragraph": "Tech Timeline: 4 días · Global: 6 días · récord Tech Timeline: 9",
+          "annotation": "rachas que devuelve el cierre; 0/5 también suma (decisión #3, CA 5). Si el jugador reabre el resultado más tarde, se leen con la racha viva. La stat propia de Tech Timeline (acierto por categoría, acumulado por hito) se muestra en `estadisticas` (FG-10), no acá (supuesto «Stats propias»)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "rachas que devuelve el cierre; 0/5 también suma (CA 5). La stat propia va en estadisticas (FG-10)"
+          ]
         },
         {
           "name": "link-stats",
@@ -6419,11 +6669,7 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
-          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) sin el aviso de spoilers; visible también en `anulado` (C-36 acepta desafíos `voided`)",
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) desde el resultado (también el anulado), sin el aviso de spoilers. Visible también en `anulado` (C-36 acepta desafíos `voided`). Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007)",
           "state_overrides": {
             "ya reportado": {
               "content": "Ya reportaste este desafío",
@@ -6431,33 +6677,37 @@
               "icon": "check",
               "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "cuenta-regresiva",
           "type": "paragraph",
           "category": "content",
-          "level": "caption",
           "content": "racha de Timeline: 4 días · próximo desafío en 08:12:45",
+          "annotation": "texto de la barra de cierre del prototipo (`banner` `neutral`: Mono 14, la racha en ámbar y la hora en `text.primary`). Al llegar a 0 recarga el día (Tech Timeline vuelve a instrucciones del desafío nuevo)",
+          "level": "caption",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "barra de cierre `banner` `neutral` (racha en ámbar); al llegar a 0 recarga el día"
+          ]
         },
         {
           "name": "btn-siguiente",
           "type": "button",
           "category": "input",
           "content": "Siguiente juego",
-          "variant": "secondary",
           "icon": "arrow-right",
+          "annotation": "lleva al próximo juego con desafío y sin completar; si no hay ninguno, no se muestra",
+          "variant": "secondary",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "sin juegos pendientes"
-          ],
-          "annotation": "solo si queda un juego con desafío sin completar"
+          ]
         },
         {
           "name": "link-volver",
@@ -6465,11 +6715,11 @@
           "category": "navigation",
           "content": "Volver a los juegos",
           "icon": "arrow-left",
+          "annotation": "acción de la barra de cierre (`outline-tinted` con el borde del juego `#3C2E60`, como el prototipo)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "`outline-tinted` con el borde del juego (`#3C2E60`)"
+          ]
         },
         {
           "name": "loader",
@@ -6484,8 +6734,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "kind": "error",
           "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -6495,8 +6745,8 @@
           "type": "button",
           "category": "input",
           "content": "Reintentar",
-          "variant": "secondary",
           "icon": "refresh",
+          "variant": "secondary",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -6511,7 +6761,6 @@
       ],
       "layouts": {
         "mobile": [
-          "consigna",
           "veredicto",
           "puntaje",
           "alerta-anulado",
@@ -6519,13 +6768,13 @@
           "alerta-sistema",
           "btn-reintentar",
           "lista-tu-orden",
-          "lista-correcto",
           "card-rachas",
           "link-stats",
-          "link-reportar",
           "cuenta-regresiva",
           "btn-siguiente",
-          "link-volver"
+          "link-volver",
+          "lista-correcto",
+          "link-reportar"
         ],
         "desktop": [
           "alerta-anulado",
@@ -6533,17 +6782,16 @@
           "alerta-sistema",
           "btn-reintentar",
           {
-            "row": "titulo",
+            "row": "veredicto",
             "cols": [
               {
-                "w": 8,
+                "w": 9,
                 "stack": [
-                  "consigna",
                   "veredicto"
                 ]
               },
               {
-                "w": 4,
+                "w": 3,
                 "stack": [
                   "puntaje"
                 ]
@@ -6554,56 +6802,61 @@
             "row": "resultado",
             "cols": [
               {
-                "w": 4,
+                "w": 7,
                 "stack": [
-                  "lista-tu-orden"
-                ]
-              },
-              {
-                "w": 8,
-                "stack": [
-                  "lista-correcto"
-                ]
-              }
-            ]
-          },
-          {
-            "row": "cierre",
-            "cols": [
-              {
-                "w": 4,
-                "stack": [
-                  "card-rachas",
-                  "link-stats"
-                ]
-              },
-              {
-                "w": 8,
-                "stack": [
+                  "lista-tu-orden",
                   {
-                    "row": "salida",
+                    "row": "cierre",
                     "card": true,
                     "cols": [
                       {
-                        "w": 6,
+                        "w": 12,
                         "stack": [
-                          "cuenta-regresiva"
-                        ]
-                      },
-                      {
-                        "w": 3,
-                        "stack": [
-                          "btn-siguiente"
-                        ]
-                      },
-                      {
-                        "w": 3,
-                        "stack": [
-                          "link-volver"
+                          {
+                            "row": "rachas",
+                            "cols": [
+                              {
+                                "w": 8,
+                                "stack": [
+                                  "card-rachas"
+                                ]
+                              },
+                              {
+                                "w": 4,
+                                "stack": [
+                                  "link-stats"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "row": "salida",
+                            "cols": [
+                              {
+                                "w": 6,
+                                "stack": [
+                                  "cuenta-regresiva"
+                                ]
+                              },
+                              {
+                                "w": 6,
+                                "stack": [
+                                  "btn-siguiente",
+                                  "link-volver"
+                                ]
+                              }
+                            ]
+                          }
                         ]
                       }
                     ]
-                  },
+                  }
+                ]
+              },
+              {
+                "w": 5,
+                "stack": [
+                  "lista-correcto",
                   "link-reportar"
                 ]
               }
@@ -7006,41 +7259,42 @@
           "type": "header",
           "category": "layout",
           "content": "> nerdose / grep-grid · desafío del 30/10 · [?] [stats] [Compartir] ES|EN · 🔥 4",
-          "annotation": "`game-header` variant `playing` (REQ-005): «Cómo se juega» → consigna y hint de esta pantalla · «Estadísticas» → estadisticas · Compartir deshabilitado («disponible al terminar la partida») · ES|EN sin perder la partida: cambian las definiciones de las encontradas, la grilla y las palabras no (CA 19) · racha global. Sin nav global ni `nav-movil`"
+          "annotation": "`game-header` variant `playing` (REQ-005): «Cómo se juega» lleva al panel `panel-ayuda` («// cómo se juega») del lateral de esta misma pantalla (con la Play en curso el servidor no vuelve a mostrar la fase de instrucciones); «Estadísticas» → `estadisticas`; Compartir deshabilitado («disponible al terminar la partida»); ES|EN cambia el idioma sin perder la partida: las definiciones de las encontradas se recargan en el idioma nuevo, la grilla y las palabras no cambian (CA 19); píldora con la racha global. Sin nav global ni `nav-movil`"
         },
         {
-          "name": "titulo",
-          "type": "heading",
+          "name": "consigna",
+          "type": "paragraph",
           "category": "content",
-          "content": "Grep Grid",
-          "level": "h1",
+          "content": "// $ grep -o '[A-Z]*' hoy.txt · tocá la primera y la última letra de cada palabra",
+          "annotation": "línea de comentario del bloque de título, **arriba** del `h1` (patrón común, REQ-012): toda la línea en Mono `label-comment` `text.dim`, con el `// ` decorativo (`aria-hidden`). Sin «tu tiempo final es tu puntaje» (se elimina: el puntaje son las palabras encontradas, C-22)",
+          "level": "caption",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ]
         },
         {
-          "name": "consigna",
-          "type": "paragraph",
+          "name": "titulo",
+          "type": "heading",
           "category": "content",
-          "level": "caption",
-          "content": "$ grep -o '[A-Z]*' hoy.txt · tocá la primera y la última letra de cada palabra",
+          "content": "Encontrá las 8 palabras escondidas",
+          "level": "h1",
+          "annotation": "la consigna es el `h1` de la partida (como Devdle y Tech Timeline); el nombre del juego queda para las instrucciones y el breadcrumb. Alineado a la izquierda, a ancho completo",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "prompt del prototipo en Mono 13 `text.dim`; la segunda parte es la consigna en Inter. Sin «tu tiempo final es tu puntaje» (C-22)"
+          ]
         },
         {
           "name": "contador",
           "type": "card",
           "category": "content",
-          "content": "3/8 encontradas",
+          "content": "3/8 (en el encabezado de `lista-palabras`; «encontradas» `sr-only`)",
+          "annotation": "dato `N/8` en Mono bold con el acento del juego, a la derecha de «// palabras de hoy»; no es live region (el avance lo anuncia `hint-jugada`). Al retomar muestra el valor real de la Play (CA 14). No hay segunda tarjeta de tiempo: el prototipo la mostraba y el PRD la elimina (decisión #6)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "`card` variant `counter` con el valor en el acento del juego; `role=status`. Al retomar muestra el valor real de la Play (CA 14). Sin tarjeta de tiempo (decisión #6)"
+          ]
         },
         {
           "name": "grilla",
@@ -7048,11 +7302,7 @@
           "category": "content",
           "content": "Grilla 12×12 · 144 letras A–Z · las celdas de las palabras encontradas quedan marcadas",
           "aspect_ratio": "1:1",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
-          "annotation": "pattern `grep-grid.board` / `grep-grid.cell` (`role=grid`, roving tabindex). Primer toque marca la celda inicial; el segundo envía `{ from, to }` y el servidor decide; tocar de nuevo la inicial la desmarca. Encontradas: relleno del acento + peso/glifo (NFR-U04). Nunca se pintan palabras no encontradas (RF 2, CA 15). A 320 px las celdas escalan al ancho, sin scroll horizontal (CA 36)",
+          "annotation": "pattern `grep-grid.board` / `grep-grid.cell` (`role=\"grid\"`, 12 filas, roving tabindex). Primer toque marca la celda inicial (estado «inicio seleccionado»); el segundo envía `{ from, to }` al servidor, que decide; tocar de nuevo la inicial la desmarca sin enviar nada. Las celdas encontradas se pintan con el relleno del acento **y** con el peso/glifo del DS (NFR-U04), no solo con el color. Nunca se pintan posiciones de palabras no encontradas: el cliente no las conoce hasta el cierre (RF 2, CA 15). A 320 px las celdas escalan al ancho con `aspect-ratio: 1` y la página no scrollea en horizontal (CA 36); se acepta un área táctil menor a 40 px como adaptación documentada en el DS. Con `locked` (anulado) la grilla no acepta entrada",
           "state_overrides": {
             "primera letra marcada": {
               "annotation": "la celda inicial se muestra en el estado «inicio seleccionado» del DS (tinte + borde del acento); Escape o tocar la misma celda la desmarca sin enviar nada"
@@ -7060,19 +7310,18 @@
             "anulado": {
               "annotation": "bloqueada: no acepta toques ni teclado"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "hint-jugada",
           "type": "paragraph",
           "category": "feedback",
-          "level": "caption",
           "content": "> tocá la primera letra de una palabra",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
-          "annotation": "`grep-grid.hint`: Mono 13 `text.dim`, siempre montada con `min-height`, `aria-live=polite`. Hint del juego, no error: sin rojo ni shake. Al encontrar una palabra anuncia «> DOCKER encontrada · 4/8»; `already_found` no muestra aviso (CA 7)",
+          "annotation": "`grep-grid.hint`: Mono 13 `text.dim`, siempre montada con `min-height` para no mover el layout, `aria-live=\"polite\"`. Es un hint del juego, no un error del sistema: sin rojo ni shake. Cambia según el estado: «> ahora tocá la última letra», «> no es una palabra de la lista, probá de nuevo», «> las palabras se marcan de la primera a la última letra, hacia adelante», «> vas muy rápido. Esperá unos segundos y probá de nuevo». Al encontrar una palabra anuncia «> DOCKER encontrada · 4/8». Una palabra ya encontrada que se vuelve a seleccionar no muestra aviso (`already_found`, CA 7)",
           "state_overrides": {
             "primera letra marcada": {
               "content": "> ahora tocá la última letra"
@@ -7089,31 +7338,48 @@
               "content": "> vas muy rápido. Esperá unos segundos y probá de nuevo",
               "annotation": "HTTP 429 con mensaje genérico; la selección no se procesa (CA 24, NFR-S08)"
             }
-          }
+          },
+          "level": "caption",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "icon": "warning",
           "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "annotation": "aparece si una selección responde `challenge_voided` (CA 22); la grilla queda bloqueada y «Rendirse» se oculta",
+          "kind": "warning",
           "visible_only_in_states": [
             "anulado"
-          ],
-          "annotation": "aparece si una selección responde `challenge_voided` (CA 22); la grilla queda bloqueada y «Rendirse» se oculta"
+          ]
         },
         {
           "name": "banner-cookies",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "icon": "warning",
           "content": "Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».",
+          "annotation": "banner `warning` (O-03); aparece si una selección responde `no_session` (CA 23). La selección no se procesa",
+          "kind": "warning",
           "visible_only_in_states": [
             "sin sesión"
-          ],
-          "annotation": "banner `warning` (O-03); aparece si una selección responde `no_session` (CA 23). La selección no se procesa"
+          ]
+        },
+        {
+          "name": "panel-ayuda",
+          "type": "card",
+          "category": "content",
+          "content": "// cómo se juega",
+          "paragraph": "Tocá la primera letra de una palabra y después la última. Tocar de nuevo el inicio cancela la selección. · Van en 4 direcciones, siempre hacia adelante: → horizontal, ↓ vertical, ↘ y ↗ en diagonal. Nunca al revés. · No hay reloj. Podés rendirte cuando quieras y ver las palabras que faltaban.",
+          "annotation": "`SectionPanel` del juego con `id = HELP_TARGET_ID` (destino del «?» del header), cabecera `h2` «// cómo se juega» y las reglas en `body-sm`. Es el primer bloque del lateral (patrón común, REQ-012). Sigue visible en `anulado`",
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "lista-palabras",
@@ -7154,25 +7420,24 @@
               "subtitle": "6 letras"
             }
           ],
+          "annotation": "pattern `grep-grid.word`. Encontrada = nombre tachado, tinte del acento y definición en el idioma activo (el momento de aprendizaje, RF 4). Las definiciones de las no encontradas no llegan al cliente hasta el cierre (RF 2). El orden de la lista no cambia al encontrar palabras, para que el jugador no pierda la referencia. La cabecera `//` es `h2`",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "pattern `grep-grid.word`, orden fijo del servidor. Pendiente = nombre + «{n} letras»; encontrada = nombre tachado, ✓ y definición en el idioma activo (RF 4). Las definiciones pendientes no llegan al cliente hasta el cierre (RF 2). La cabecera `//` es `h2`"
+          ]
         },
         {
           "name": "btn-rendirse",
           "type": "button",
           "category": "input",
-          "content": "Rendirse",
+          "content": "⚑ Rendirse",
+          "annotation": "`buttonClass({ variant: 'error-outline', fullWidth: true })` (REQ-012, S-066): borde `status.error.border`, texto `status.error.soft`, sin relleno; hover con fondo `status.error.bg`. A ancho completo del lateral, debajo de la lista de palabras y arriba del reporte. Separado de la grilla por la lista de palabras (mobile) o en la columna lateral (desktop) para evitar un toque accidental (CA 36). Abre O-04; disponible desde 0/8 (CA 12). Mientras se envía la rendición queda `aria-disabled`. Es el mismo botón que «⚑ Rendirse» de Devdle",
           "variant": "error",
-          "icon": "close",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "anulado"
-          ],
-          "annotation": "`button` `outline-tinted` con tinte de error (destructiva suave, sin relleno rojo). Separado de la grilla para evitar un toque accidental (CA 36). Abre O-04; disponible desde 0/8 (CA 12). Deshabilitado mientras se envía la rendición"
+          ]
         },
         {
           "name": "link-reportar",
@@ -7180,11 +7445,7 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
-          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) con el aviso de no incluir la respuesta; visible también en `anulado`",
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) desde la partida, con el aviso de no incluir la respuesta. Visible también en `anulado` (C-36 acepta desafíos `voided`). Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007)",
           "state_overrides": {
             "ya reportado": {
               "content": "Ya reportaste este desafío",
@@ -7192,7 +7453,11 @@
               "icon": "check",
               "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "loader",
@@ -7207,29 +7472,30 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "kind": "error",
           "content": "No pudimos cargar tu partida. Revisá tu conexión e intentá de nuevo: retomás desde donde estabas.",
+          "annotation": "también cubre una selección que falla por red o 500: la selección no se registra y la grilla vuelve al último estado del servidor",
+          "kind": "error",
           "visible_only_in_states": [
             "error de sistema"
-          ],
-          "annotation": "también cubre una selección que falla por red o 500: la selección no se registra y la grilla vuelve al último estado del servidor"
+          ]
         },
         {
           "name": "btn-reintentar",
           "type": "button",
           "category": "input",
           "content": "Reintentar",
-          "variant": "secondary",
           "icon": "refresh",
-          "visible_only_in_states": [
-            "error de sistema",
-            "sin sesión"
-          ],
           "state_overrides": {
             "sin sesión": {
               "annotation": "recrea la sesión y reenvía la selección"
             }
-          }
+          },
+          "variant": "secondary",
+          "annotation": "en `sin sesión` recrea la sesión y reenvía la selección",
+          "visible_only_in_states": [
+            "error de sistema",
+            "sin sesión"
+          ]
         },
         {
           "name": "footer",
@@ -7242,15 +7508,15 @@
       "layouts": {
         "mobile": [
           "banner-cookies",
-          "titulo",
           "consigna",
+          "titulo",
           "loader",
           "alerta-sistema",
           "btn-reintentar",
           "alerta-anulado",
-          "contador",
           "grilla",
           "hint-jugada",
+          "panel-ayuda",
           {
             "row": "palabras",
             "card": true,
@@ -7259,6 +7525,7 @@
               {
                 "w": 12,
                 "stack": [
+                  "contador",
                   "lista-palabras"
                 ]
               }
@@ -7272,16 +7539,15 @@
           "loader",
           "alerta-sistema",
           "btn-reintentar",
+          "consigna",
+          "titulo",
+          "alerta-anulado",
           {
             "row": "juego",
             "cols": [
               {
                 "w": 7,
                 "stack": [
-                  "titulo",
-                  "consigna",
-                  "alerta-anulado",
-                  "contador",
                   "grilla",
                   "hint-jugada"
                 ]
@@ -7289,6 +7555,7 @@
               {
                 "w": 5,
                 "stack": [
+                  "panel-ayuda",
                   {
                     "row": "palabras",
                     "card": true,
@@ -7297,6 +7564,7 @@
                       {
                         "w": 12,
                         "stack": [
+                          "contador",
                           "lista-palabras"
                         ]
                       }
@@ -7366,7 +7634,7 @@
           "type": "header",
           "category": "layout",
           "content": "> nerdose / grep-grid · desafío del 30/10 · [stats] [Compartir] ES|EN · 🔥 4",
-          "annotation": "`game-header` variant `finished` (REQ-005): Compartir activo con el acento del juego (único botón de compartir de la pantalla; texto en tres líneas: «🔎 Grep Grid #8», «5/8» y «nerdose.dev», nunca las palabras ni si el jugador se rindió, CA 16) · «Estadísticas» → estadisticas · ES|EN cambia solo las definiciones · racha global actualizada. Sin «Cómo se juega», sin nav global ni `nav-movil`",
+          "annotation": "`game-header` variant `finished` (REQ-005): Compartir activo con el acento del juego (único botón de compartir de la pantalla; texto en tres líneas: «🔎 Grep Grid #8», «5/8» y «nerdose.dev», nunca las palabras ni si el jugador se rindió, CA 16); «Estadísticas» → `estadisticas`; ES|EN cambia solo las definiciones; píldora con la racha global ya actualizada. «Cómo se juega» no se muestra en el resultado. Sin nav global ni `nav-movil`",
           "state_overrides": {
             "success": {
               "content": "> nerdose / grep-grid · desafío del 30/10 · [stats] [✓ Copiado] ES|EN · 🔥 4",
@@ -7388,24 +7656,28 @@
         },
         {
           "name": "veredicto",
-          "type": "heading",
-          "category": "content",
-          "content": "8/8: las encontraste todas",
-          "level": "h1",
+          "type": "alert",
+          "category": "feedback",
+          "kind": "success",
+          "content": "8/8: las encontraste todas · Repasá qué significa cada una.",
           "icon": "check",
+          "annotation": "`Banner` de `@nerdose/ui` con `titleAs=\"h1\"`, siempre visible arriba y a ancho completo (patrón común, REQ-012): `success` al ganar (detalle «Repasá qué significa cada una.») y `failure` al rendirse (detalle «Estas son las palabras que faltaban.»), sin drama, con el veredicto en texto además del color. El confeti del host sigue al ganar. Ya no hay `h1` `sr-only`. Victoria solo con 8/8 (RF 13)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
           ],
-          "annotation": "banner `success` del DS al ganar / `failure` al rendirse, sin drama; el veredicto se dice con texto además del color. Victoria solo con 8/8 (RF 13)",
           "state_overrides": {
             "perdió": {
-              "content": "Te rendiste con 5/8",
+              "content": "Te rendiste con 5/8 · Estas son las palabras que faltaban.",
+              "kind": "error",
               "icon": "x",
               "annotation": "banner `failure`; rendirse también suma a la racha. Con 0/8 dice «Te rendiste con 0/8» (CA 12)"
             },
             "anulado": {
-              "content": "Desafío anulado"
+              "content": "Desafío anulado",
+              "type": "heading",
+              "level": "h1",
+              "icon": null
             }
           }
         },
@@ -7413,13 +7685,13 @@
           "name": "alerta-anulado",
           "type": "alert",
           "category": "feedback",
-          "kind": "warning",
           "icon": "warning",
           "content": "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.",
+          "annotation": "`banner` `warning` del DS. Se muestra con la Play `voided` (`challenge_status: voided`): la anulación y «Marcar como completado» llegan con REQ-007",
+          "kind": "warning",
           "visible_only_in_states": [
             "anulado"
-          ],
-          "annotation": "`banner` `warning` del DS; se muestra con la Play `voided` (`challenge_status: voided`). Variante mínima: aviso + rachas"
+          ]
         },
         {
           "name": "grilla-final",
@@ -7427,17 +7699,17 @@
           "category": "content",
           "content": "Grilla 12×12 · las 8 palabras marcadas · encontradas con relleno y ✓ · reveladas con borde punteado y ○",
           "aspect_ratio": "1:1",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "pattern `grep-grid.cell`, solo lectura. Encontradas: relleno del acento + glifo; reveladas (solo si se rindió): borde punteado del acento + glifo distinto, sin relleno, `aria-label` «{letra}, {encontrada|revelada}» (RF 13, NFR-U04). Las posiciones llegan con el cierre (`result.words[].cells`). Al ganar no hay reveladas",
+          "annotation": "pattern `grep-grid.cell`, solo lectura. Encontradas: relleno del acento + glifo; reveladas (solo si se rindió): borde punteado del acento («todavía no» del DS) + glifo distinto, sin relleno, y `aria-label` «{letra}, {encontrada|revelada}» (RF 13, NFR-U04). Las posiciones llegan recién con el cierre (`result.words[].cells`). Al ganar no hay reveladas",
           "state_overrides": {
             "perdió": {
               "annotation": "las 3 palabras faltantes aparecen reveladas: borde punteado + ○, distintas de las 5 encontradas (CA 10)"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "lista-palabras",
@@ -7478,12 +7750,7 @@
               "subtitle": "Programa que analiza un texto según una gramática formal."
             }
           ],
-          "hidden_in_states": [
-            "loading",
-            "error de sistema",
-            "anulado"
-          ],
-          "annotation": "pattern `grep-grid.word`; las 8 con definición en el idioma activo (RF 13, CA 19). Las reveladas llevan «○ no la encontraste» en lugar del largo: se distinguen por texto y glifo, no solo por color. La cabecera `//` es `h2`",
+          "annotation": "pattern `grep-grid.word`; ahora las 8 tienen definición (RF 13). Las reveladas usan el estilo «pendiente» con la etiqueta «○ no la encontraste» en lugar del largo, para distinguirlas de las encontradas por texto y glifo, no solo por color. La cabecera `//` es `h2`. Las definiciones se recalculan en el idioma activo al cambiar ES|EN (CA 19)",
           "state_overrides": {
             "perdió": {
               "items": [
@@ -7519,21 +7786,27 @@
                   "title": "PARSER · ✓ encontrada",
                   "subtitle": "Programa que analiza un texto según una gramática formal."
                 }
-              ]
+              ],
+              "annotation": "las 3 palabras no encontradas llevan la etiqueta «○ no la encontraste» en lugar de «✓ encontrada»"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema",
+            "anulado"
+          ]
         },
         {
           "name": "card-rachas",
           "type": "card",
           "category": "content",
-          "content": "// rachas",
-          "paragraph": "Grep Grid: 3 días · Global: 4 días · récord Grep Grid: 7",
+          "content": "(h2 `sr-only`: rachas) — fila superior de la card de cierre",
+          "paragraph": "Grep Grid: 3 días · Global: 4 días · récord: 7 · Ver mis estadísticas →",
+          "annotation": "rachas que devuelve el cierre (rendirse también suma, CA 10, 17). Si el jugador reabre el resultado más tarde, se leen con la racha viva. La stat propia de Grep Grid (promedio de palabras y % de 8/8) se muestra en `estadisticas` (FG-10), no acá (supuesto «Stats propias»)",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "rachas que devuelve el cierre (rendirse también suma, CA 10, 17); al reabrir se leen con la racha viva. La stat propia (promedio de palabras y % de 8/8) se muestra en `estadisticas` (FG-10), no acá"
+          ]
         },
         {
           "name": "link-reportar",
@@ -7541,11 +7814,7 @@
           "category": "navigation",
           "content": "Reportar un problema",
           "icon": "warning",
-          "hidden_in_states": [
-            "loading",
-            "error de sistema"
-          ],
-          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) sin el aviso de spoilers; visible también en `anulado` (C-36 acepta desafíos `voided`)",
+          "annotation": "abre O-01 (bottom-sheet en mobile, modal en desktop) desde el resultado (también el anulado), sin el aviso de spoilers. Visible también en `anulado` (C-36 acepta desafíos `voided`). Con `reported: true` en `GameToday`, o tras un envío con éxito o `already_reported`, pasa al estado `ya reportado`: «Ya reportaste este desafío», deshabilitado y sin abrir O-01 (REQ-007)",
           "state_overrides": {
             "ya reportado": {
               "content": "Ya reportaste este desafío",
@@ -7553,33 +7822,37 @@
               "icon": "check",
               "annotation": "deshabilitado: no abre O-01 (`GameToday.reported` o tras el envío)"
             }
-          }
+          },
+          "hidden_in_states": [
+            "loading",
+            "error de sistema"
+          ]
         },
         {
           "name": "cuenta-regresiva",
           "type": "paragraph",
           "category": "content",
-          "level": "caption",
           "content": "Próximo desafío en 05:42:10",
+          "annotation": "al llegar a 0 recarga el día (Grep Grid vuelve a instrucciones del desafío nuevo)",
+          "level": "caption",
           "hidden_in_states": [
             "loading",
             "error de sistema"
-          ],
-          "annotation": "al llegar a 0 recarga el día (Grep Grid vuelve a instrucciones del desafío nuevo)"
+          ]
         },
         {
           "name": "btn-siguiente",
           "type": "button",
           "category": "input",
           "content": "Siguiente juego",
-          "variant": "secondary",
           "icon": "arrow-right",
+          "annotation": "lleva al próximo juego con desafío y sin completar; si no hay ninguno, no se muestra",
+          "variant": "secondary",
           "hidden_in_states": [
             "loading",
             "error de sistema",
             "sin juegos pendientes"
-          ],
-          "annotation": "lleva al próximo juego con desafío y sin completar; si no hay ninguno, no se muestra"
+          ]
         },
         {
           "name": "link-stats",
@@ -7616,8 +7889,8 @@
           "name": "alerta-sistema",
           "type": "alert",
           "category": "feedback",
-          "kind": "error",
           "content": "No pudimos cargar tu resultado. Revisá tu conexión e intentá de nuevo.",
+          "kind": "error",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -7627,8 +7900,8 @@
           "type": "button",
           "category": "input",
           "content": "Reintentar",
-          "variant": "secondary",
           "icon": "refresh",
+          "variant": "secondary",
           "visible_only_in_states": [
             "error de sistema"
           ]
@@ -7649,6 +7922,11 @@
           "alerta-sistema",
           "btn-reintentar",
           "grilla-final",
+          "card-rachas",
+          "link-stats",
+          "cuenta-regresiva",
+          "btn-siguiente",
+          "link-volver",
           {
             "row": "palabras",
             "card": true,
@@ -7662,14 +7940,10 @@
               }
             ]
           },
-          "card-rachas",
-          "link-stats",
-          "link-reportar",
-          "cuenta-regresiva",
-          "btn-siguiente",
-          "link-volver"
+          "link-reportar"
         ],
         "desktop": [
+          "veredicto",
           "alerta-anulado",
           "loader",
           "alerta-sistema",
@@ -7680,28 +7954,49 @@
               {
                 "w": 7,
                 "stack": [
-                  "veredicto",
                   "grilla-final",
                   {
-                    "row": "salida",
+                    "row": "cierre",
                     "card": true,
                     "cols": [
                       {
-                        "w": 6,
+                        "w": 12,
                         "stack": [
-                          "cuenta-regresiva"
-                        ]
-                      },
-                      {
-                        "w": 3,
-                        "stack": [
-                          "btn-siguiente"
-                        ]
-                      },
-                      {
-                        "w": 3,
-                        "stack": [
-                          "link-volver"
+                          {
+                            "row": "rachas",
+                            "cols": [
+                              {
+                                "w": 8,
+                                "stack": [
+                                  "card-rachas"
+                                ]
+                              },
+                              {
+                                "w": 4,
+                                "stack": [
+                                  "link-stats"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "row": "salida",
+                            "cols": [
+                              {
+                                "w": 6,
+                                "stack": [
+                                  "cuenta-regresiva"
+                                ]
+                              },
+                              {
+                                "w": 6,
+                                "stack": [
+                                  "btn-siguiente",
+                                  "link-volver"
+                                ]
+                              }
+                            ]
+                          }
                         ]
                       }
                     ]
@@ -7724,8 +8019,6 @@
                       }
                     ]
                   },
-                  "card-rachas",
-                  "link-stats",
                   "link-reportar"
                 ]
               }
@@ -8246,43 +8539,47 @@
           "name": "texto",
           "type": "paragraph",
           "category": "content",
-          "level": "body",
           "content": "Vas a cerrar la partida con 3/8. Cuenta para tu racha y te mostramos las palabras que faltan. No se puede deshacer.",
-          "annotation": "`N` es el valor real del contador al abrir el modal. Confirmado por REQ-005 (decisión #26 del PRD): rendirse es irreversible",
+          "annotation": "Grep Grid. `N` es el valor real del contador al abrir el modal. En Devdle el texto es el del estado `devdle`. Confirmado por REQ-005 (supuesto «Confirmación de \"Rendirse\"», decisión #26 del PRD): rendirse es irreversible y el PRD pide confirmar lo irreversible",
           "state_overrides": {
             "sin palabras": {
               "content": "Vas a cerrar la partida con 0/8. Cuenta para tu racha igual y te mostramos las 8 palabras. No se puede deshacer.",
               "annotation": "rendirse con 0/8 está permitido y también completa el día (CA 12)"
+            },
+            "devdle": {
+              "content": "Vas a cerrar la partida con 2 de 6 intentos usados. Cuenta para tu racha y te mostramos la palabra. No se puede deshacer.",
+              "annotation": "la cantidad es la de intentos válidos al abrir el modal (0 está permitido); se puede rendir aunque haya usado la pista"
             }
-          }
+          },
+          "level": "body"
         },
         {
           "name": "btn-seguir",
           "type": "button",
           "category": "input",
           "content": "Seguir jugando",
-          "variant": "primary",
-          "annotation": "`button` `primary` del DS (avanzar = verde); foco inicial y salida por defecto (Escape). No envía nada",
+          "annotation": "`button` `primary` del DS (avanzar = verde), `md`; es el foco inicial y la salida por defecto (Escape). No envía nada",
           "state_overrides": {
             "loading": {
               "variant": "disabled"
             }
-          }
+          },
+          "variant": "primary"
         },
         {
           "name": "btn-rendirme",
           "type": "button",
           "category": "input",
           "content": "Sí, rendirme",
-          "variant": "error",
-          "annotation": "`button` `outline-tinted` con tinte de error del DS; envía `{ type: give_up }`",
+          "annotation": "`button` `error` del DS (relleno rojo), `md`: la confirmación de una acción destructiva cuyo disparador es `error-outline` («⚑ Rendirse»). Envía `{ type: give_up }` en Grep Grid y `{ give_up: true }` en Devdle. Mientras responde el servidor queda deshabilitado para no enviar dos veces",
           "state_overrides": {
             "loading": {
               "variant": "disabled",
               "content": "Cerrando…",
               "annotation": "la rendición está en vuelo; el modal no se puede cerrar hasta que responda"
             }
-          }
+          },
+          "variant": "error"
         }
       ],
       "layouts": {
@@ -8337,6 +8634,10 @@
         },
         {
           "name": "sin palabras",
+          "applies": true
+        },
+        {
+          "name": "devdle",
           "applies": true
         },
         {
@@ -8457,6 +8758,14 @@
       "srcBlock": "link-reportar",
       "dst": "o-01-reportar",
       "trigger": "Reportar un problema",
+      "automatic": false
+    },
+    {
+      "src": "devdle-partida",
+      "srcState": "default",
+      "srcBlock": "btn-rendirse",
+      "dst": "o-04-rendirse",
+      "trigger": "⚑ Rendirse",
       "automatic": false
     },
     {
@@ -8949,6 +9258,22 @@
       "automatic": false
     },
     {
+      "src": "o-04-rendirse",
+      "srcState": "devdle",
+      "srcBlock": "btn-rendirme",
+      "dst": "devdle-resultado",
+      "trigger": "Sí, rendirme (Devdle)",
+      "automatic": false
+    },
+    {
+      "src": "o-04-rendirse",
+      "srcState": "devdle",
+      "srcBlock": "btn-seguir",
+      "dst": "devdle-partida",
+      "trigger": "Seguir jugando",
+      "automatic": false
+    },
+    {
       "src": "o-02-anulado",
       "srcState": "default",
       "srcBlock": "btn-marcar",
@@ -8986,6 +9311,22 @@
       "srcBlock": "btn-home",
       "dst": "home",
       "trigger": "Volver a los juegos",
+      "automatic": false
+    },
+    {
+      "src": "error-inesperado",
+      "srcState": "default",
+      "srcBlock": "btn-volver",
+      "dst": "home",
+      "trigger": "← Volver a los juegos",
+      "automatic": false
+    },
+    {
+      "src": "error-inesperado",
+      "srcState": "default",
+      "srcBlock": "header",
+      "dst": "home",
+      "trigger": "marca > nerdose_",
       "automatic": false
     },
     {

@@ -184,27 +184,35 @@
      "type": "link",
      "category": "navigation",
      "content": "Reportes (3)",
-     "annotation": "sección actual; el número es la cantidad de grupos con reportes abiertos"
+     "annotation": "sección actual; el número es la cantidad de grupos con reportes abiertos (se refresca al resolver, descartar o anular)"
     },
     {
      "name": "nav-proximos",
      "type": "link",
      "category": "navigation",
      "content": "Próximos (1)",
-     "annotation": "el número son las fallas de generación activas (`GET /api/admin/generation-failures`); sin fallas, sin número"
+     "annotation": "se renderiza desde REQ-008; el número son las fallas de generación activas (`GET /api/admin/generation-failures`); sin fallas, sin número"
+    },
+    {
+     "name": "nav-bancos",
+     "type": "link",
+     "category": "navigation",
+     "content": "Bancos",
+     "annotation": "se renderiza desde REQ-012"
     },
     {
      "name": "nav-stock",
      "type": "link",
      "category": "navigation",
-     "content": "Stock"
+     "content": "Stock",
+     "annotation": "se renderiza desde REQ-008"
     },
     {
      "name": "nav-metricas",
      "type": "link",
      "category": "navigation",
      "content": "Métricas",
-     "annotation": "no se renderiza en REQ-007; se suma con FG-10"
+     "annotation": "se renderiza desde REQ-011"
     },
     {
      "name": "nav-cerrar-sesion",
@@ -479,7 +487,20 @@
        ]
       }
      },
-     "annotation": "orden fijo: alertados primero, luego cantidad de reportes, luego fecha (sin orden por columna ni paginación). «alertado» es texto + ámbar. Clic o Enter en la fila → detalle; «Anular» solo con el desafío `published`"
+     "annotation": "orden fijo: alertados primero, luego cantidad de reportes descendente, luego fecha del desafío más reciente (sin orden por columna). Desde REQ-012, 20 grupos por página, paginados en el cliente sobre la lista ya ordenada. «alertado» es texto + ámbar. Clic o Enter en la fila → detalle; «Anular» al final de la fila solo con el desafío `published`"
+    },
+    {
+     "name": "paginado",
+     "type": "pagination",
+     "category": "navigation",
+     "content": "‹ Anterior · 1–20 de 34 desafíos reportados · página 1 de 2 · Siguiente ›",
+     "pages": 2,
+     "hidden_in_states": [
+      "empty",
+      "loading",
+      "error de sistema"
+     ],
+     "annotation": "«‹ Anterior · 1–20 de 34 desafíos reportados · página 1 de 2 · Siguiente ›» · `Pagination` común del admin (`nav` «Paginado de reportes», resumen `aria-live=\"polite\"`, `aria-disabled` en los extremos); no se dibuja con 20 grupos o menos (REQ-012)"
     }
    ],
    "layouts": {
@@ -502,6 +523,12 @@
        {
         "w": 2,
         "stack": [
+         "nav-bancos"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
          "nav-stock"
         ]
        },
@@ -510,10 +537,6 @@
         "stack": [
          "nav-metricas"
         ]
-       },
-       {
-        "w": 2,
-        "stack": []
        },
        {
         "w": 2,
@@ -549,7 +572,8 @@
          "btn-reintentar",
          "estado-vacio",
          "cargando",
-         "tabla-grupos"
+         "tabla-grupos",
+         "paginado"
         ]
        }
       ]
@@ -606,19 +630,27 @@
      "name": "nav-reportes",
      "type": "link",
      "category": "navigation",
-     "content": "Reportes (3)"
+     "content": "Reportes (3)",
+     "annotation": "cantidad de grupos con reportes abiertos (REQ-007)"
     },
     {
      "name": "nav-proximos",
      "type": "link",
      "category": "navigation",
      "content": "Próximos",
-     "annotation": "sección actual. con fallas de generación activas suma el contador («Próximos (1)», `aria-label` «1 falla de generación activa»); sin fallas, sin número",
+     "annotation": "sección actual. Con fallas de generación activas suma el contador: «Próximos (1)» (`GET /api/admin/generation-failures`, `aria-label` «1 falla de generación activa»). Sin fallas, sin número",
      "state_overrides": {
       "falla de generación": {
        "content": "Próximos (1)"
       }
      }
+    },
+    {
+     "name": "nav-bancos",
+     "type": "link",
+     "category": "navigation",
+     "content": "Bancos",
+     "annotation": "REQ-012; entre Próximos y Stock"
     },
     {
      "name": "nav-stock",
@@ -631,7 +663,7 @@
      "type": "link",
      "category": "navigation",
      "content": "Métricas",
-     "annotation": "no se renderiza hasta FG-10"
+     "annotation": "REQ-011"
     },
     {
      "name": "nav-cerrar-sesion",
@@ -765,114 +797,114 @@
      "rows": [
       [
        "02/12 #32",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›"
       ],
       [
        "03/12 #33",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›"
       ],
       [
        "04/12 #34",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›"
       ],
       [
        "05/12 #35",
-       "badge:Usa un ítem rechazado: CAP theorem",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
+       "badge:Usa un ítem rechazado: CAP theorem · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›"
       ],
       [
        "06/12 #36",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›"
       ],
       [
        "07/12 #37",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›"
       ],
       [
        "08/12 #38",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›"
       ],
       [
        "09/12 #39",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›"
       ],
       [
        "10/12 #40",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›"
       ],
       [
        "11/12 #41",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›"
       ],
       [
        "12/12 #42",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›"
       ],
       [
        "13/12 #43",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›"
       ],
       [
        "14/12 #44",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado"
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›"
       ],
       [
        "15/12 #45",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
-       "badge:Aprobado",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
+       "badge:Aprobado · Ver detalle ›",
        "badge:Sin desafío — 20 intentos · variety_combo"
       ]
      ],
@@ -886,114 +918,114 @@
         [
          "02/12 #32",
          "badge:Sin desafío · Falla de generación · 20 intentos · no_valid_term",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "03/12 #33",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "04/12 #34",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "05/12 #35",
-         "badge:Usa un ítem rechazado: CAP theorem",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Usa un ítem rechazado: CAP theorem · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "06/12 #36",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "07/12 #37",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "08/12 #38",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "09/12 #39",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "10/12 #40",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "11/12 #41",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "12/12 #42",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "13/12 #43",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "14/12 #44",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "15/12 #45",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ]
        ]
       },
@@ -1001,115 +1033,115 @@
        "rows": [
         [
          "02/12 #32",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "03/12 #33",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "04/12 #34",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "05/12 #35",
-         "badge:Usa un ítem rechazado: CAP theorem",
-         "badge:Regenerando…",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Usa un ítem rechazado: CAP theorem · Ver detalle ›",
+         "badge:Regenerando… · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "06/12 #36",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "07/12 #37",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "08/12 #38",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "09/12 #39",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "10/12 #40",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "11/12 #41",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "12/12 #42",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "13/12 #43",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "14/12 #44",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "15/12 #45",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ]
        ]
       },
@@ -1117,120 +1149,120 @@
        "rows": [
         [
          "02/12 #32",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "03/12 #33",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "04/12 #34",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "05/12 #35",
-         "badge:Usa un ítem rechazado: CAP theorem",
-         "badge:Aprobado · Regeneración fallida",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Usa un ítem rechazado: CAP theorem · Ver detalle ›",
+         "badge:Aprobado · Regeneración fallida · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "06/12 #36",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "07/12 #37",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "08/12 #38",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "09/12 #39",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "10/12 #40",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "11/12 #41",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "12/12 #42",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "13/12 #43",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "14/12 #44",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ],
         [
          "15/12 #45",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado",
-         "badge:Aprobado"
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›",
+         "badge:Aprobado · Ver detalle ›"
         ]
        ]
       }
      },
-     "annotation": "fila por día (mañana a +14) con su número; columna por juego del registry. Celda con desafío: estado + «Regenerar» (solo `approved`, fecha futura, sin pedido pendiente); clic → detalle. «Sin desafío» sin acción. «Usa un ítem rechazado» nunca se regenera solo. Polling 5 s solo con regeneraciones pendientes"
+     "annotation": "fila por día (mañana a +14) con su número; columna por juego del registry. Celda con desafío (REQ-012): una sola tarjeta-botón con el estado y, al pie, «Ver detalle ›»; nombre accesible «Ver {Juego} #{n}, {fecha}: {estado}»; abre el detalle. Ya no tiene «Regenerar»: se pide dentro del detalle. «Sin desafío» sin acción (con falla: «20 intentos · <motivo>»). «Usa un ítem rechazado» nunca se regenera solo. Polling 5 s solo con regeneraciones pendientes"
     }
    ],
    "layouts": {
@@ -1253,6 +1285,12 @@
        {
         "w": 2,
         "stack": [
+         "nav-bancos"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
          "nav-stock"
         ]
        },
@@ -1267,10 +1305,6 @@
         "stack": [
          "nav-cerrar-sesion"
         ]
-       },
-       {
-        "w": 2,
-        "stack": []
        }
       ]
      },
@@ -1363,6 +1397,13 @@
      "annotation": "el número son las fallas de generación activas; sin fallas, sin número"
     },
     {
+     "name": "nav-bancos",
+     "type": "link",
+     "category": "navigation",
+     "content": "Bancos",
+     "annotation": "REQ-012"
+    },
+    {
      "name": "nav-stock",
      "type": "link",
      "category": "navigation",
@@ -1374,7 +1415,7 @@
      "type": "link",
      "category": "navigation",
      "content": "Métricas",
-     "annotation": "no se renderiza hasta FG-10"
+     "annotation": "REQ-011"
     },
     {
      "name": "nav-cerrar-sesion",
@@ -1433,7 +1474,7 @@
        ]
       }
      },
-     "annotation": "última corrida exitosa de la carga de bancos"
+     "annotation": "última corrida exitosa de la carga de bancos; «Sin datos de carga» si nunca hubo una"
     },
     {
      "name": "alerta-stock",
@@ -1507,7 +1548,7 @@
       "loading",
       "error de sistema"
      ],
-     "annotation": "a nivel banco: disponibles para todos sus juegos, días de stock = el menor, alcanza = Sí solo si todos alcanzan"
+     "annotation": "a nivel banco: disponibles para todos sus juegos (y que ninguno excluye), días de stock = el menor, alcanza = Sí solo si todos alcanzan. Desde REQ-012 los 115 términos que Devdle nunca elige no cuentan como disponibles ni para su ciclo; para Grep Grid sí"
     },
     {
      "name": "tabla-terminos",
@@ -1561,7 +1602,7 @@
       "loading",
       "error de sistema"
      ],
-     "annotation": "una fila por juego que usa el banco; ventana y ítems por desafío salen del contrato del juego"
+     "annotation": "una fila por juego que usa el banco; ventana y ítems por desafío salen del contrato del juego. Disponibles, días de stock y ciclo de Devdle descuentan sus términos excluidos (REQ-012)"
     },
     {
      "name": "resumen-hechos",
@@ -1681,50 +1722,36 @@
      "annotation": "una fila por juego que usa el banco"
     },
     {
-     "name": "tabla-rechazos-banco",
-     "type": "table",
+     "name": "resumen-rechazos-banco",
+     "type": "list",
      "category": "content",
-     "columns": [
+     "items": [
       {
-       "label": "Banco",
-       "width": 2
+       "title": "Términos: 1.230 rechazados",
+       "subtitle": "Ver en Bancos →"
       },
       {
-       "label": "Ítem",
-       "width": 4
-      },
-      {
-       "label": "Motivo",
-       "width": 6
+       "title": "Hechos: 3 rechazados",
+       "subtitle": "Ver en Bancos →"
       }
-     ],
-     "rows": [
-      [
-       "Términos",
-       "CAP theorem",
-       "definición incorrecta (anulación Devdle #8)"
-      ],
-      [
-       "Hechos",
-       "Lanzamiento de Java 1.0",
-       "fecha incorrecta"
-      ],
-      [
-       "Términos",
-       "Memoization",
-       "traducción EN incorrecta"
-      ],
-      [
-       "Términos",
-       "Monad",
-       "categoría incorrecta"
-      ]
      ],
      "hidden_in_states": [
       "loading",
       "error de sistema"
      ],
-     "annotation": "rechazados de ambos bancos, más recientes primero (hasta 200); «Ningún ítem rechazado» si no hay"
+     "state_overrides": {
+      "sin datos": {
+       "items": [
+        {
+         "title": "Términos: 0 rechazados"
+        },
+        {
+         "title": "Hechos: 0 rechazados"
+        }
+       ]
+      }
+     },
+     "annotation": "REQ-012: una línea por banco con su `rejected_total`; «Ver en Bancos →» abre Bancos filtrado por los rechazados de ese banco (`/banks?bank=<banco>&status=rejected`) y solo aparece si hay alguno. Reemplaza la tabla «Banco · Ítem · Motivo»"
     },
     {
      "name": "tabla-rechazadas",
@@ -1774,6 +1801,26 @@
        "6",
        "VIMRC",
        "12"
+      ],
+      [
+       "7",
+       "JQUERY",
+       "11"
+      ],
+      [
+       "8",
+       "REGEX",
+       "9"
+      ],
+      [
+       "9",
+       "MUTEX",
+       "8"
+      ],
+      [
+       "10",
+       "SUDOS",
+       "7"
       ]
      ],
      "hidden_in_states": [
@@ -1781,7 +1828,20 @@
       "error de sistema",
       "sin datos"
      ],
-     "annotation": "ordenadas por jugadores distintos (empate: alfabético). Solo lectura: sumar a la lista base es un cambio de código"
+     "annotation": "las 50 palabras que Devdle no aceptó, por jugadores distintos (empate: alfabético), de a 10 por página en el cliente; la numeración sigue entre páginas (la segunda arranca en 11). Solo lectura: sumar a la lista base es un cambio de código"
+    },
+    {
+     "name": "paginado-rechazadas",
+     "type": "pagination",
+     "category": "navigation",
+     "content": "‹ Anterior · 1–10 de 50 palabras · página 1 de 5 · Siguiente ›",
+     "pages": 5,
+     "hidden_in_states": [
+      "loading",
+      "error de sistema",
+      "sin datos"
+     ],
+     "annotation": "«‹ Anterior · 1–10 de 50 palabras · página 1 de 5 · Siguiente ›» · `Pagination` común (`nav` «Paginado de palabras rechazadas», `aria-live=\"polite\"`, `aria-disabled` en los extremos); no se dibuja si todo entra en una página"
     },
     {
      "name": "vacio-rechazadas",
@@ -1814,6 +1874,12 @@
        {
         "w": 2,
         "stack": [
+         "nav-bancos"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
          "nav-stock"
         ]
        },
@@ -1828,10 +1894,6 @@
         "stack": [
          "nav-cerrar-sesion"
         ]
-       },
-       {
-        "w": 2,
-        "stack": []
        }
       ]
      },
@@ -1874,21 +1936,26 @@
       ]
      },
      {
-      "row": "bancos",
+      "row": "banco-terminos",
+      "card": true,
+      "title": "Banco de términos",
       "cols": [
        {
-        "w": 6,
-        "card": true,
-        "title": "Banco de términos",
+        "w": 12,
         "stack": [
          "resumen-terminos",
          "tabla-terminos"
         ]
-       },
+       }
+      ]
+     },
+     {
+      "row": "banco-hechos",
+      "card": true,
+      "title": "Banco de hechos",
+      "cols": [
        {
-        "w": 6,
-        "card": true,
-        "title": "Banco de hechos",
+        "w": 12,
         "stack": [
          "resumen-hechos",
          "tabla-hechos"
@@ -1904,7 +1971,7 @@
        {
         "w": 12,
         "stack": [
-         "tabla-rechazos-banco"
+         "resumen-rechazos-banco"
         ]
        }
       ]
@@ -1918,6 +1985,7 @@
         "w": 12,
         "stack": [
          "tabla-rechazadas",
+         "paginado-rechazadas",
          "vacio-rechazadas"
         ]
        }
@@ -1975,6 +2043,13 @@
      "category": "navigation",
      "content": "Próximos (1)",
      "annotation": "el número son las fallas de generación activas (REQ-008); sin fallas, sin número"
+    },
+    {
+     "name": "nav-bancos",
+     "type": "link",
+     "category": "navigation",
+     "content": "Bancos",
+     "annotation": "se renderiza desde REQ-012"
     },
     {
      "name": "nav-stock",
@@ -2248,9 +2323,18 @@
        "170",
        "195",
        "166"
+      ],
+      [
+       "2026-11-10",
+       "405",
+       "311",
+       "196",
+       "168",
+       "183",
+       "160"
       ]
      ],
-     "annotation": "una fila por día del rango, del más reciente al más antiguo; días sin partidas en 0. Columnas de juego en el orden del catálogo. Pie: «El total cuenta a cada jugador una vez por día: no es la suma de las columnas.»",
+     "annotation": "una fila por día del rango, del más reciente al más antiguo; días sin partidas en 0. Columnas de juego en el orden del catálogo. Desde REQ-012, 15 días por página (paginado en el cliente). Pie: «El total cuenta a cada jugador una vez por día: no es la suma de las columnas.»",
      "hidden_in_states": [
       "loading",
       "error de validación",
@@ -2265,6 +2349,20 @@
        ]
       }
      }
+    },
+    {
+     "name": "paginado-diarios",
+     "type": "pagination",
+     "category": "navigation",
+     "content": "‹ Anterior · 1–15 de 30 días · página 1 de 2 · Siguiente ›",
+     "pages": 2,
+     "hidden_in_states": [
+      "loading",
+      "error de validación",
+      "error de sistema",
+      "empty"
+     ],
+     "annotation": "«‹ Anterior · 1–15 de 30 días · página 1 de 2 · Siguiente ›» · `Pagination` común del admin; no se dibuja si el rango entra en una página (REQ-012)"
     },
     {
      "name": "tabla-retencion",
@@ -2479,7 +2577,7 @@
       "error de validación",
       "error de sistema"
      ],
-     "annotation": "una fila por desafío publicado o anulado del rango, por defecto de la fecha más reciente a la más antigua. Cada encabezado es un botón que ordena por esa columna (asc/desc, `aria-sort`). Completado = terminadas / iniciadas; Victorias = ganadas / terminadas; «—» si el divisor es 0. Sin enlace desde la fila. Pie: «Las partidas anuladas no cuentan en terminadas ni en victorias.»",
+     "annotation": "una fila por desafío publicado o anulado del rango, por defecto de la fecha más reciente a la más antigua. Cada encabezado es un botón que ordena por esa columna (asc/desc, `aria-sort`); ordenar vuelve a la página 1. Desde REQ-012, 15 filas por página. Completado = terminadas / iniciadas; Victorias = ganadas / terminadas; «—» si el divisor es 0. Sin enlace desde la fila. Pie: «Las partidas anuladas no cuentan en terminadas ni en victorias.»",
      "content": "Calidad por desafío",
      "state_overrides": {
       "empty": {
@@ -2490,6 +2588,20 @@
        ]
       }
      }
+    },
+    {
+     "name": "paginado-calidad",
+     "type": "pagination",
+     "category": "navigation",
+     "content": "‹ Anterior · 1–15 de 150 desafíos · página 1 de 10 · Siguiente ›",
+     "pages": 5,
+     "hidden_in_states": [
+      "loading",
+      "error de validación",
+      "error de sistema",
+      "empty"
+     ],
+     "annotation": "«‹ Anterior · 1–15 de 150 desafíos · página 1 de 10 · Siguiente ›» · `Pagination` común del admin (REQ-012)"
     }
    ],
    "layouts": {
@@ -2512,6 +2624,12 @@
        {
         "w": 2,
         "stack": [
+         "nav-bancos"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
          "nav-stock"
         ]
        },
@@ -2526,10 +2644,6 @@
         "stack": [
          "nav-cerrar-sesion"
         ]
-       },
-       {
-        "w": 2,
-        "stack": []
        }
       ]
      },
@@ -2624,7 +2738,8 @@
        {
         "w": 12,
         "stack": [
-         "tabla-diarios"
+         "tabla-diarios",
+         "paginado-diarios"
         ]
        }
       ]
@@ -2658,7 +2773,8 @@
        {
         "w": 12,
         "stack": [
-         "tabla-calidad"
+         "tabla-calidad",
+         "paginado-calidad"
         ]
        }
       ]
@@ -2680,6 +2796,593 @@
     },
     {
      "name": "error de validación",
+     "applies": true
+    },
+    {
+     "name": "error de sistema",
+     "applies": true
+    }
+   ]
+  },
+  {
+   "name": "bancos",
+   "displayName": "P-06 · Bancos de contenido",
+   "audiences": [
+    "responsable"
+   ],
+   "blocks": [
+    {
+     "name": "header",
+     "type": "header",
+     "category": "layout",
+     "content": "> nerdose admin",
+     "icon": "settings"
+    },
+    {
+     "name": "nav-reportes",
+     "type": "link",
+     "category": "navigation",
+     "content": "Reportes (3)"
+    },
+    {
+     "name": "nav-proximos",
+     "type": "link",
+     "category": "navigation",
+     "content": "Próximos (1)",
+     "annotation": "el número son las fallas de generación activas; sin fallas, sin número"
+    },
+    {
+     "name": "nav-bancos",
+     "type": "link",
+     "category": "navigation",
+     "content": "Bancos",
+     "annotation": "sección actual (`aria-current=\"page\"`); entre Próximos y Stock"
+    },
+    {
+     "name": "nav-stock",
+     "type": "link",
+     "category": "navigation",
+     "content": "Stock"
+    },
+    {
+     "name": "nav-metricas",
+     "type": "link",
+     "category": "navigation",
+     "content": "Métricas"
+    },
+    {
+     "name": "nav-cerrar-sesion",
+     "type": "link",
+     "category": "navigation",
+     "content": "Cerrar sesión",
+     "icon": "lock"
+    },
+    {
+     "name": "titulo",
+     "type": "heading",
+     "category": "content",
+     "level": "h1",
+     "content": "Bancos de contenido",
+     "annotation": "`<title>` «Bancos · Admin · nerdose»; recibe el foco al entrar"
+    },
+    {
+     "name": "subtitulo",
+     "type": "paragraph",
+     "category": "content",
+     "level": "caption",
+     "content": "Los términos alimentan Devdle y Grep Grid; los hechos, Tech Timeline. Se cargan del dataset versionado: acá solo se consultan."
+    },
+    {
+     "name": "tabs-banco",
+     "type": "tabs",
+     "category": "navigation",
+     "labels": [
+      "Términos",
+      "Hechos (Timeline)"
+     ],
+     "active": 0,
+     "state_overrides": {
+      "hechos": {
+       "active": 1
+      }
+     },
+     "annotation": "`Tabs` del admin con etiqueta «Banco». Cambiar de pestaña limpia la búsqueda, el estado, la categoría y la página"
+    },
+    {
+     "name": "campo-buscar",
+     "type": "search-bar",
+     "category": "input",
+     "label": "Buscar",
+     "content": "p. ej. kernel",
+     "state": "default",
+     "state_overrides": {
+      "hechos": {
+       "content": "p. ej. linux"
+      }
+     },
+     "annotation": "«contiene», sin distinguir mayúsculas, sobre el término o el nombre del hecho. Se aplica 300 ms después de dejar de tipear o con Enter; vacío no filtra; máx. 50 caracteres. `form` `role=\"search\"` «Filtros del banco»"
+    },
+    {
+     "name": "select-estado",
+     "type": "dropdown",
+     "category": "input",
+     "label": "Estado",
+     "content": "Todos",
+     "state": "closed",
+     "options": [
+      "Todos",
+      "Aprobados",
+      "Rechazados"
+     ],
+     "state_overrides": {
+      "rechazados": {
+       "content": "Rechazados"
+      }
+     }
+    },
+    {
+     "name": "select-categoria",
+     "type": "dropdown",
+     "category": "input",
+     "label": "Categoría",
+     "content": "Todas",
+     "state": "closed",
+     "options": [
+      "Todas",
+      "Lenguajes",
+      "Git y wikis",
+      "Bases de datos",
+      "Redes",
+      "Linux y SO"
+     ],
+     "annotation": "las categorías del banco activo: Lenguajes / Git y wikis / Bases de datos / Redes / Linux y SO / APIs / Seguridad / Ingeniería de software; en hechos: Lenguajes / Frameworks / Empresas / Sistemas operativos / Hardware / Videojuegos / Bases de datos / Herramientas"
+    },
+    {
+     "name": "cargando",
+     "type": "loader",
+     "category": "feedback",
+     "content": "Cargando…",
+     "visible_only_in_states": [
+      "loading"
+     ],
+     "annotation": "solo en la primera carga; al paginar o filtrar se sigue viendo la página anterior (`aria-busy`) hasta que llega la nueva"
+    },
+    {
+     "name": "alerta-sistema",
+     "type": "alert",
+     "category": "feedback",
+     "kind": "error",
+     "content": "No pudimos cargar el banco. Probá de nuevo.",
+     "visible_only_in_states": [
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "btn-reintentar",
+     "type": "button",
+     "category": "input",
+     "variant": "secondary",
+     "content": "Reintentar",
+     "icon": "refresh",
+     "visible_only_in_states": [
+      "error de sistema"
+     ]
+    },
+    {
+     "name": "vacio",
+     "type": "paragraph",
+     "category": "feedback",
+     "level": "body",
+     "content": "Ningún ítem coincide con los filtros.",
+     "visible_only_in_states": [
+      "sin resultados"
+     ],
+     "annotation": "distinto de un error de carga; una página más allá del final también cae acá"
+    },
+    {
+     "name": "tabla-items",
+     "type": "table",
+     "category": "content",
+     "columns": [
+      {
+       "label": "Término",
+       "width": 5
+      },
+      {
+       "label": "Categoría",
+       "width": 2
+      },
+      {
+       "label": "Estado",
+       "width": 2.4
+      },
+      {
+       "label": "Último uso",
+       "width": 3
+      },
+      {
+       "label": "Sitelinks",
+       "width": 1
+      }
+     ],
+     "rows": [
+      [
+       "CACHE — copia rápida de datos de uso frecuente",
+       "Ingeniería de software",
+       "badge:rechazado — poco conocido (sitelinks)",
+       "Devdle: nunca · Grep Grid: nunca",
+       "9"
+      ],
+      [
+       "CHMOD — cambia los permisos de un archivo",
+       "Linux y SO",
+       "badge:aprobado",
+       "Devdle: 28/10/2026 · Grep Grid: 12/11/2026",
+       "31"
+      ],
+      [
+       "DOCKER — plataforma de contenedores",
+       "Ingeniería de software",
+       "badge:aprobado",
+       "Devdle: 09/11/2026 · Grep Grid: nunca",
+       "118"
+      ],
+      [
+       "GOPHER — protocolo de documentos previo a la web · fuera de Devdle",
+       "Redes",
+       "badge:aprobado",
+       "Devdle: nunca · Grep Grid: 21/10/2026",
+       "44"
+      ],
+      [
+       "KERNEL — núcleo de un sistema operativo",
+       "Linux y SO",
+       "badge:aprobado",
+       "Devdle: 02/11/2026 · Grep Grid: nunca",
+       "142"
+      ],
+      [
+       "MALBOLGE — lenguaje esotérico · fuera de Devdle",
+       "Lenguajes",
+       "badge:aprobado",
+       "Devdle: nunca · Grep Grid: 15/10/2026",
+       "38"
+      ],
+      [
+       "MERGE — integra dos ramas en un repositorio",
+       "Git y wikis",
+       "badge:aprobado",
+       "Devdle: 20/11/2026 · Grep Grid: 06/11/2026",
+       "57"
+      ],
+      [
+       "OAUTH — protocolo de autorización delegada",
+       "Seguridad",
+       "badge:aprobado",
+       "Devdle: nunca · Grep Grid: 18/11/2026",
+       "63"
+      ],
+      [
+       "REDIS — almacén de datos en memoria",
+       "Bases de datos",
+       "badge:aprobado",
+       "Devdle: 14/11/2026 · Grep Grid: 30/10/2026",
+       "77"
+      ],
+      [
+       "REGEX — expresión regular para buscar patrones",
+       "Lenguajes",
+       "badge:aprobado",
+       "Devdle: 17/10/2026 · Grep Grid: 25/11/2026",
+       "96"
+      ],
+      [
+       "WEBHOOK — llamada HTTP que dispara un evento",
+       "APIs",
+       "badge:aprobado",
+       "Devdle: nunca · Grep Grid: 04/11/2026",
+       "22"
+      ]
+     ],
+     "hidden_in_states": [
+      "loading",
+      "error de sistema",
+      "sin resultados"
+     ],
+     "state_overrides": {
+      "hechos": {
+       "columns": [
+        {
+         "label": "Hecho",
+         "width": 4.6
+        },
+        {
+         "label": "Categoría",
+         "width": 1.8
+        },
+        {
+         "label": "Fecha",
+         "width": 1.4
+        },
+        {
+         "label": "Estado",
+         "width": 2
+        },
+        {
+         "label": "Último uso",
+         "width": 2.2
+        },
+        {
+         "label": "Sitelinks",
+         "width": 1
+        }
+       ],
+       "rows": [
+        [
+         "Apple presenta el primer iPhone",
+         "Empresas",
+         "09/01/2007",
+         "badge:aprobado",
+         "Tech Timeline: 13/11/2026",
+         "212"
+        ],
+        [
+         "Git publica su primera versión",
+         "Herramientas",
+         "07/04/2005",
+         "badge:aprobado",
+         "Tech Timeline: 02/11/2026",
+         "95"
+        ],
+        [
+         "Lanzamiento de Java 1.0",
+         "Lenguajes",
+         "1996",
+         "badge:rechazado — fecha imprecisa",
+         "Tech Timeline: nunca",
+         "140"
+        ],
+        [
+         "Linus Torvalds publica Linux 0.01",
+         "Sistemas operativos",
+         "17/09/1991",
+         "badge:aprobado",
+         "Tech Timeline: 20/11/2026",
+         "188"
+        ],
+        [
+         "Nintendo lanza la NES en Norteamérica",
+         "Videojuegos",
+         "18/10/1985",
+         "badge:aprobado",
+         "Tech Timeline: nunca",
+         "131"
+        ],
+        [
+         "PostgreSQL 6.0 sale como proyecto abierto",
+         "Bases de datos",
+         "29/01/1997",
+         "badge:aprobado",
+         "Tech Timeline: 25/10/2026",
+         "64"
+        ],
+        [
+         "React se publica como código abierto",
+         "Frameworks",
+         "29/05/2013",
+         "badge:aprobado",
+         "Tech Timeline: 08/11/2026",
+         "103"
+        ]
+       ]
+      },
+      "rechazados": {
+       "rows": [
+        [
+         "BLOB — objeto binario grande en una base de datos",
+         "Bases de datos",
+         "badge:rechazado — poco conocido (sitelinks)",
+         "Devdle: nunca · Grep Grid: nunca",
+         "12"
+        ],
+        [
+         "CACHE — copia rápida de datos de uso frecuente",
+         "Ingeniería de software",
+         "badge:rechazado — poco conocido (sitelinks)",
+         "Devdle: nunca · Grep Grid: nunca",
+         "9"
+        ],
+        [
+         "CAP THEOREM — consistencia, disponibilidad y tolerancia a particiones",
+         "Bases de datos",
+         "badge:rechazado — excluido a mano",
+         "Devdle: 05/12/2026 · Grep Grid: nunca",
+         "48"
+        ],
+        [
+         "CRUFT — código viejo que ya nadie usa",
+         "Ingeniería de software",
+         "badge:rechazado — excluido a mano",
+         "Devdle: nunca · Grep Grid: nunca",
+         "4"
+        ],
+        [
+         "FOOBAR — nombre de relleno en ejemplos",
+         "Lenguajes",
+         "badge:rechazado — excluido a mano",
+         "Devdle: nunca · Grep Grid: nunca",
+         "15"
+        ],
+        [
+         "KLUDGE — arreglo improvisado y frágil",
+         "Ingeniería de software",
+         "badge:rechazado — poco conocido (sitelinks)",
+         "Devdle: nunca · Grep Grid: nunca",
+         "7"
+        ],
+        [
+         "SMURF — ataque de denegación con ICMP",
+         "Seguridad",
+         "badge:rechazado — poco conocido (sitelinks)",
+         "Devdle: nunca · Grep Grid: nunca",
+         "6"
+        ]
+       ]
+      }
+     },
+     "annotation": "una fila por ítem, en orden alfabético. Primera celda (encabezado de fila): el ítem en Mono, su descripción y, si un juego lo excluye, «fuera de Devdle» (115 términos de nicho, REQ-012). Estado: «aprobado» o «rechazado» en texto, con el motivo legible si está rechazado. Último uso: una línea por juego que consume el banco. Región con scroll alcanzable con teclado"
+    },
+    {
+     "name": "paginado",
+     "type": "pagination",
+     "category": "navigation",
+     "content": "‹ Anterior · 1–25 de 4.863 términos · página 1 de 195 · Siguiente ›",
+     "pages": 5,
+     "hidden_in_states": [
+      "loading",
+      "error de sistema",
+      "sin resultados"
+     ],
+     "annotation": "«‹ Anterior · 1–25 de 4.863 términos · página 1 de 195 · Siguiente ›» · `Pagination` común («Paginado del banco», `aria-live=\"polite\"`, `aria-disabled` en los extremos). En el servidor de a 25; la página va en la URL. No se dibuja si todo entra en una página",
+     "state_overrides": {
+      "hechos": {
+       "content": "‹ Anterior · 1–25 de 520 hechos · página 1 de 21 · Siguiente ›",
+       "annotation": "«‹ Anterior · 1–25 de 520 hechos · página 1 de 21 · Siguiente ›» · en el servidor de a 25; la página va en la URL"
+      },
+      "rechazados": {
+       "content": "‹ Anterior · 1–25 de 1.230 términos · página 1 de 50 · Siguiente ›",
+       "annotation": "«‹ Anterior · 1–25 de 1.230 términos · página 1 de 50 · Siguiente ›» · en el servidor de a 25; la página va en la URL"
+      }
+     }
+    }
+   ],
+   "layouts": {
+    "desktop": [
+     {
+      "row": "encabezado",
+      "cols": [
+       {
+        "w": 2,
+        "stack": [
+         "nav-reportes"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-proximos"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-bancos"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-stock"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-metricas"
+        ]
+       },
+       {
+        "w": 2,
+        "stack": [
+         "nav-cerrar-sesion"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "titulos",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "titulo",
+         "subtitulo"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "pestanas",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "tabs-banco"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "filtros",
+      "card": true,
+      "cols": [
+       {
+        "w": 6,
+        "stack": [
+         "campo-buscar"
+        ]
+       },
+       {
+        "w": 3,
+        "stack": [
+         "select-estado"
+        ]
+       },
+       {
+        "w": 3,
+        "stack": [
+         "select-categoria"
+        ]
+       }
+      ]
+     },
+     {
+      "row": "resultados",
+      "cols": [
+       {
+        "w": 12,
+        "stack": [
+         "cargando",
+         "alerta-sistema",
+         "btn-reintentar",
+         "vacio",
+         "tabla-items",
+         "paginado"
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "states": [
+    {
+     "name": "default",
+     "applies": true
+    },
+    {
+     "name": "hechos",
+     "applies": true
+    },
+    {
+     "name": "rechazados",
+     "applies": true
+    },
+    {
+     "name": "sin resultados",
+     "applies": true
+    },
+    {
+     "name": "loading",
      "applies": true
     },
     {
@@ -2994,7 +3697,7 @@
        ]
       }
      },
-     "annotation": "«alertado» solo si alcanzó el umbral (`alerted_at`), con la fecha en el `title`"
+     "annotation": "«alertado» solo si alcanzó el umbral (`alerted_at`), con la fecha en el `title`; en `anulado` el chip dice «anulado». Desde Próximos suma «regenerando…», «regeneración fallida» o «usa un ítem rechazado» según el caso"
     },
     {
      "name": "motivo-anulacion",
@@ -3040,7 +3743,7 @@
      "visible_only_in_states": [
       "regeneración pendiente"
      ],
-     "annotation": "se actualiza con el polling de Próximos (5 s)"
+     "annotation": "el drawer se actualiza con el polling de Próximos (5 s); si el reemplazo pasa la verificación, muestra el desafío nuevo"
     },
     {
      "name": "alerta-regen-fallida",
@@ -3071,7 +3774,7 @@
      "name": "preview-es",
      "type": "card",
      "category": "content",
-     "content": "Preview · modo solución",
+     "content": "Vista previa · modo solución",
      "paragraph": "Grilla 12 × 12 con las 8 palabras resaltadas · Lista: REDIS — almacén de datos en memoria…",
      "h": 220,
      "visible_only_in_states": [
@@ -3085,27 +3788,7 @@
        "paragraph": "CAP theorem · sistemas distribuidos · Definición: no se pueden garantizar a la vez consistencia, disponibilidad y tolerancia a particiones…"
       }
      },
-     "annotation": "`Preview` del `client` en modo solución, solo lectura. Big O (REQ-009): código con pestañas JS / Go / Java en texto plano, sin resaltado, con las líneas de `line_notes` y su nota; respuesta «✓ correcta» y `trap_option` marcada «trampa»; pasos, «en números» y consejo. Sin `Preview` cae a `PayloadView`. Bug Hunt (REQ-010): especificación, código JS / Go / Java en texto plano con líneas no elegibles atenuadas y «🐛 línea del bug», chips «tipo» y «mutación: > → >=» (solo en el admin), tests visibles, test que falla, fix como diff de una línea y «Por qué falla»"
-    },
-    {
-     "name": "preview-en",
-     "type": "card",
-     "category": "content",
-     "content": "Preview · solution mode",
-     "paragraph": "12 × 12 grid with the 8 words highlighted · List: REDIS — in-memory data store…",
-     "h": 220,
-     "visible_only_in_states": [
-      "desde próximos",
-      "regeneración pendiente",
-      "regeneración fallida",
-      "ítem rechazado"
-     ],
-     "state_overrides": {
-      "ítem rechazado": {
-       "paragraph": "CAP theorem · distributed systems · Definition: consistency, availability and partition tolerance cannot all be guaranteed at once…"
-      }
-     },
-     "annotation": "misma preview en inglés, al lado de la española"
+     "annotation": "`Preview` del `client` en modo solución, solo lectura, solo en español (REQ-012). Big O (REQ-009): código con pestañas JS / Go / Java en texto plano, sin resaltado, con las líneas de `line_notes` y su nota; respuesta «✓ correcta» y `trap_option` marcada «trampa»; pasos, «en números» y consejo. Bug Hunt (REQ-010): especificación, código JS / Go / Java en texto plano con líneas no elegibles atenuadas y «🐛 línea del bug», chips «tipo» y «mutación: > → >=» (solo en el admin), tests visibles, test que falla, fix como diff de una línea y «Por qué falla». Sin `Preview` o si falla, cae a `PayloadTexts`"
     },
     {
      "name": "payload-es",
@@ -3137,39 +3820,7 @@
        "subtitle": "Se usa como caché, cola y broker de mensajes…"
       }
      ],
-     "annotation": "vista genérica del `payload` (`PayloadView`), texto plano; desde Próximos la reemplaza la preview (REQ-008)"
-    },
-    {
-     "name": "payload-en",
-     "type": "list",
-     "category": "content",
-     "hidden_in_states": [
-      "loading",
-      "error de sistema",
-      "desde próximos",
-      "regeneración pendiente",
-      "regeneración fallida",
-      "ítem rechazado"
-     ],
-     "items": [
-      {
-       "title": "Word",
-       "subtitle": "REDIS"
-      },
-      {
-       "title": "Category",
-       "subtitle": "databases"
-      },
-      {
-       "title": "Definition",
-       "subtitle": "In-memory key-value data store…"
-      },
-      {
-       "title": "Summary",
-       "subtitle": "Used as a cache, queue and message broker…"
-      }
-     ],
-     "annotation": "alineada fila a fila con ES para comparar la traducción"
+     "annotation": "vista genérica del `payload` (`PayloadView` → `PayloadTexts`, panel «Textos»): cada campo `{ es, en }` con su valor en español, texto plano; sin textos, el panel no se dibuja. Desde Próximos la reemplaza la preview (REQ-008). REQ-012: ya no hay columna en inglés"
     },
     {
      "name": "payload-comun",
@@ -3361,7 +4012,7 @@
        "annotation": "Solo se anulan desafíos publicados."
       }
      },
-     "annotation": "solo con el desafío `published`"
+     "annotation": "solo con el desafío `published`; deshabilitado en otro estado, con el motivo al lado"
     },
     {
      "name": "btn-regenerar",
@@ -3376,7 +4027,7 @@
       "regeneración fallida",
       "ítem rechazado"
      ],
-     "annotation": "solo `approved` con fecha posterior a hoy y sin pedido pendiente",
+     "annotation": "único punto de entrada a O-03 desde REQ-012. Solo `approved` con fecha posterior a hoy y sin pedido pendiente; al cerrar O-03 el foco vuelve acá y el drawer sigue abierto",
      "state_overrides": {
       "regeneración pendiente": {
        "variant": "disabled",
@@ -3409,23 +4060,15 @@
      },
      {
       "row": "solucion",
+      "card": true,
+      "title": "Textos · Vista previa",
+      "annotation": "un solo panel a todo el ancho (REQ-012): se titula «Textos» desde Reportes (`PayloadTexts`) y «Vista previa» desde Próximos (preview del juego); sin versión en inglés",
       "cols": [
        {
-        "w": 6,
-        "card": true,
-        "title": "ES",
+        "w": 12,
         "stack": [
          "preview-es",
          "payload-es"
-        ]
-       },
-       {
-        "w": 6,
-        "card": true,
-        "title": "EN",
-        "stack": [
-         "preview-en",
-         "payload-en"
         ]
        }
       ]
@@ -3555,7 +4198,7 @@
    ],
    "overlay": true,
    "overlay_type": "modal",
-   "triggered_by": "proximos-desafios",
+   "triggered_by": "o-02-detalle-desafio",
    "blocks": [
     {
      "name": "header",
@@ -3607,14 +4250,16 @@
       "no disponible": {
        "variant": "disabled"
       }
-     }
+     },
+     "annotation": "`POST …/regenerate`; con `202` cierra y el detalle (que sigue abierto) y la celda pasan a «regeneración pendiente». Idempotente"
     },
     {
      "name": "btn-cancelar",
      "type": "button",
      "category": "input",
      "variant": "tertiary",
-     "content": "Cancelar"
+     "content": "Cancelar",
+     "annotation": "también con Esc; cierra sin cambios y devuelve el foco al «Regenerar» del detalle"
     }
    ],
    "layouts": {
@@ -3819,7 +4464,7 @@
    "src": "proximos-desafios",
    "srcBlock": "grilla",
    "dst": "o-02-detalle-desafio",
-   "trigger": "Abrir detalle de la celda",
+   "trigger": "Ver detalle ›",
    "automatic": false
   },
   {
@@ -3848,20 +4493,6 @@
    "src": "o-01-anular-desafio",
    "srcBlock": "btn-cancelar",
    "dst": "o-02-detalle-desafio",
-   "trigger": "Cancelar",
-   "automatic": false
-  },
-  {
-   "src": "o-03-regenerar-desafio",
-   "srcBlock": "btn-regenerar",
-   "dst": "proximos-desafios",
-   "trigger": "Confirmar regeneración",
-   "automatic": false
-  },
-  {
-   "src": "o-03-regenerar-desafio",
-   "srcBlock": "btn-cancelar",
-   "dst": "proximos-desafios",
    "trigger": "Cancelar",
    "automatic": false
   },
@@ -3895,6 +4526,96 @@
    "dst": "proximos-desafios",
    "trigger": "404: cierra y refresca",
    "automatic": true
+  },
+  {
+   "src": "reportes",
+   "srcBlock": "nav-bancos",
+   "dst": "bancos",
+   "trigger": "Ir a Bancos",
+   "automatic": false
+  },
+  {
+   "src": "proximos-desafios",
+   "srcBlock": "nav-bancos",
+   "dst": "bancos",
+   "trigger": "Ir a Bancos",
+   "automatic": false
+  },
+  {
+   "src": "stock-contenido",
+   "srcBlock": "nav-bancos",
+   "dst": "bancos",
+   "trigger": "Ir a Bancos",
+   "automatic": false
+  },
+  {
+   "src": "metricas",
+   "srcBlock": "nav-bancos",
+   "dst": "bancos",
+   "trigger": "Ir a Bancos",
+   "automatic": false
+  },
+  {
+   "src": "bancos",
+   "srcBlock": "nav-reportes",
+   "dst": "reportes",
+   "trigger": "Ir a Reportes",
+   "automatic": false
+  },
+  {
+   "src": "bancos",
+   "srcBlock": "nav-proximos",
+   "dst": "proximos-desafios",
+   "trigger": "Ir a Proximos",
+   "automatic": false
+  },
+  {
+   "src": "bancos",
+   "srcBlock": "nav-stock",
+   "dst": "stock-contenido",
+   "trigger": "Ir a Stock",
+   "automatic": false
+  },
+  {
+   "src": "bancos",
+   "srcBlock": "nav-metricas",
+   "dst": "metricas",
+   "trigger": "Ir a Metricas",
+   "automatic": false
+  },
+  {
+   "src": "bancos",
+   "srcBlock": "nav-cerrar-sesion",
+   "dst": "login",
+   "trigger": "Cerrar sesión",
+   "automatic": false
+  },
+  {
+   "src": "bancos",
+   "dst": "login",
+   "trigger": "401: sesión vencida",
+   "automatic": true
+  },
+  {
+   "src": "stock-contenido",
+   "srcBlock": "resumen-rechazos-banco",
+   "dst": "bancos",
+   "trigger": "Ver en Bancos →",
+   "automatic": false
+  },
+  {
+   "src": "o-03-regenerar-desafio",
+   "srcBlock": "btn-regenerar",
+   "dst": "o-02-detalle-desafio",
+   "trigger": "Confirmar regeneración",
+   "automatic": false
+  },
+  {
+   "src": "o-03-regenerar-desafio",
+   "srcBlock": "btn-cancelar",
+   "dst": "o-02-detalle-desafio",
+   "trigger": "Cancelar",
+   "automatic": false
   }
  ]
 }

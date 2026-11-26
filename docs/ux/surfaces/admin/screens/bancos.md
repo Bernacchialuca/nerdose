@@ -49,9 +49,9 @@ date: 2026-11-25
 | 8 | titulo | heading | h1 | content | desktop | — | Título |
 | 9 | subtitulo | paragraph | caption | content | desktop | — | Qué juego usa cada banco y que es solo consulta |
 | 10 | tabs-banco | tabs | active=0 | navigation | desktop | state_overrides: hechos | Términos / Hechos (Timeline) |
-| 11 | campo-buscar | input | type=search | input | desktop | — | Búsqueda por texto del ítem (máx. 50) |
-| 12 | select-estado | select | — | input | desktop | — | Todos / Aprobados / Rechazados |
-| 13 | select-categoria | select | — | input | desktop | state_overrides: hechos | Todas o una categoría del banco activo |
+| 11 | campo-buscar | search-bar | state=default | input | desktop | — | Búsqueda por texto del ítem (máx. 50) |
+| 12 | select-estado | dropdown | state=closed | input | desktop | — | Todos / Aprobados / Rechazados |
+| 13 | select-categoria | dropdown | state=closed | input | desktop | state_overrides: hechos | Todas o una categoría del banco activo |
 | 14 | cargando | loader | — | feedback | desktop | visible_only_in_states: loading | Primera carga |
 | 15 | alerta-sistema | alert | error | feedback | desktop | visible_only_in_states: error de sistema | Falla de carga |
 | 16 | btn-reintentar | button | variant=secondary | input | desktop | visible_only_in_states: error de sistema | Reintenta la carga |
