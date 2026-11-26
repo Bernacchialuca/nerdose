@@ -18,7 +18,9 @@ export function Result({ t, notices, result, gameStats, aside, footer }: ResultP
         title={
           r.win
             ? t('result.won', { score: r.score, max: MAX_GUESSES })
-            : t('result.lost', { max: MAX_GUESSES })
+            : r.gave_up
+              ? t('result.gaveUp', { max: MAX_GUESSES })
+              : t('result.lost', { max: MAX_GUESSES })
         }
       >
         {r.win ? t('result.wonDetail') : t('result.lostDetail')}

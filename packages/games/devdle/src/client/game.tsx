@@ -1,16 +1,17 @@
-import { useId, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useState } from 'react';
 
-import { MAX_GUESSES, hintMoveSchema, moveSchema } from '../definition/schemas';
+import { MAX_GUESSES, giveUpMoveSchema, hintMoveSchema, moveSchema } from '../definition/schemas';
 
 import { Board } from './board';
 import { CategoryHint } from './category-hint';
 import { Distribution } from './distribution';
 import { Keyboard } from './keyboard';
 import { Legend } from './legend';
-import { LetterHint } from './letter-hint';
+import { LetterHintButton } from './letter-hint-button';
 import { isFinished, keyStates } from './marks';
 import { MoveHint } from './move-hint';
 import { parsePublicView, parseState } from './parse';
+import { SurrenderButton, SurrenderDialog } from './surrender';
 import type { GameProps, MoveErrorInfo } from './types';
 import { useDevdleInput } from './use-devdle-input';
 
@@ -41,6 +42,8 @@ export function Game({
   const [announcement, setAnnouncement] = useState('');
   const [prevCount, setPrevCount] = useState(guesses.length);
   const [prevError, setPrevError] = useState(moveError);
+  const [surrender, setSurrender] = useState<'closed' | 'open' | 'submitting'>('closed');
+  const [picking, setPicking] = useState(false);
 
   const listFormat = useMemo(() => new Intl.ListFormat(locale, { type: 'conjunction' }), [locale]);
 
@@ -64,11 +67,14 @@ export function Game({
   if (moveError !== prevError) {
     setPrevError(moveError);
     if (moveError) setLocalHint(null);
+    // Si rendirse falló, el diálogo vuelve a quedar disponible para reintentar o cerrar.
+    if (moveError && surrender === 'submitting') setSurrender('open');
   }
 
   const inputBlocked = locked || pending || isFinished(play);
 
   const clearHints = () => {
+    setPicking(false);
     setLocalHint(null);
     setDismissedError(moveError);
   };
@@ -96,13 +102,32 @@ export function Game({
     else setLocalHint('onlyLetters');
   };
 
-  useDevdleInput({ enabled: !locked, onLetter, onBackspace, onSubmit, onInvalid });
+  useDevdleInput({
+    enabled: !locked && surrender === 'closed',
+    onLetter,
+    onBackspace,
+    onSubmit,
+    onInvalid,
+  });
 
-  const onReveal = (position: number) => {
+  const onPick = (position: number) => {
+    setPicking(false);
     if (inputBlocked) return;
     clearHints();
     onMove(hintMoveSchema.parse({ hint: position }));
   };
+  const canPick = picking && !inputBlocked && play.hint === undefined;
+
+  useEffect(() => {
+    if (!canPick) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setPicking(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [canPick]);
   const known = useMemo(() => {
     const out = new Map<number, string>();
     for (const g of guesses) {
@@ -112,9 +137,14 @@ export function Game({
     }
     return out;
   }, [guesses]);
+  const pickablePositions = useMemo(
+    () => new Set(Array.from({ length }, (_, i) => i).filter((i) => !known.has(i))),
+    [length, known],
+  );
 
   let hint = '';
-  if (localHint) hint = t(`hint.${localHint}`, { length });
+  if (canPick) hint = t('letterHint.pick');
+  else if (localHint) hint = t(`hint.${localHint}`, { length });
   else if (moveError && moveError !== dismissedError) {
     if (moveError.code === 'not_in_word_list') hint = t('hint.notInList');
     else if (moveError.code === 'rate_limited') hint = t('hint.rateLimited');
@@ -145,6 +175,8 @@ export function Game({
             guesses={guesses}
             draft={draft}
             hint={play.hint}
+            pickable={canPick ? pickablePositions : undefined}
+            onPick={onPick}
             label={t('board.label', { max: MAX_GUESSES, length })}
             t={t}
           />
@@ -166,20 +198,44 @@ export function Game({
         <aside className="flex min-w-0 max-w-devdle-aside grow basis-75 flex-col gap-4">
           <Legend t={t} />
           <CategoryHint categories={view.possible_categories} t={t} />
+          {gameStats ? <Distribution stats={gameStats} t={t} /> : null}
           {locked ? null : (
-            <LetterHint
-              length={length}
+            <LetterHintButton
               hint={play.hint}
-              known={known}
+              picking={canPick}
               disabled={inputBlocked}
-              onReveal={onReveal}
+              onToggle={() => {
+                setPicking(!picking);
+              }}
               t={t}
             />
           )}
-          {gameStats ? <Distribution stats={gameStats} t={t} /> : null}
+          {locked ? null : (
+            <SurrenderButton
+              disabled={inputBlocked}
+              onOpen={() => {
+                setSurrender('open');
+              }}
+              t={t}
+            />
+          )}
           {aside}
         </aside>
       </div>
+      {surrender === 'closed' ? null : (
+        <SurrenderDialog
+          used={guesses.length}
+          busy={surrender === 'submitting' && pending}
+          onClose={() => {
+            setSurrender('closed');
+          }}
+          onConfirm={() => {
+            setSurrender('submitting');
+            onMove(giveUpMoveSchema.parse({ give_up: true }));
+          }}
+          t={t}
+        />
+      )}
     </div>
   );
 }

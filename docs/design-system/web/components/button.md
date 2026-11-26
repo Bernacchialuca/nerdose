@@ -39,6 +39,7 @@ related: [link, card, banner, alert, game-header]
 | `secondary` | Alternativa neutra (outline) | `button.secondary.*` (`border.control`, `text.primary`, 500) | "¿Cómo funciona?", "Ver resultado" | L43, L100, L121 |
 | `accent` | Acción principal **dentro del contexto de un juego**: relleno con el acento del juego | `button.accent.*` (`game.{j}.accent` / `game.{j}.on`) | "Jugar →" en la tarjeta de Big O; Compartir activo; Confirmar | L142, L166, L188, L604, L836, L860, L991 |
 | `outline-tinted` | Salida o alternativa con el borde tintado del contexto | `button.outline-tinted.*` | "Volver a los juegos" (violeta), acción del banner de fallo (rojo) | L634, L1043 |
+| `error-outline` | Disparador de una acción destructiva que se confirma después: borde `status.error.border`, texto `status.error.soft`, sin relleno; hover con fondo `status.error.bg`. La confirmación usa `error` (relleno rojo) | `status.error.*` | "⚑ Rendirse" (Devdle, Grep Grid) | — |
 | `ghost` | Acción menor, provisional (borde punteado) | `button.ghost.*` | "↺ reiniciar demo" | L745 |
 | `icon` | Acción solo-ícono de 44×44 | `button.icon.*` | "Cómo se juega" (`circle-help`), "Estadísticas" (`chart`) | L443, L444 |
 
@@ -146,3 +147,4 @@ related: [link, card, banner, alert, game-header]
 - 2026-11-06 v1.2.0 — Hover derivado de `primary`, `accent` y `secondary` (con contraste medido) y helper `buttonClass` en `@nerdose/ui`.
 - 2026-11-09 v1.3.0 — S-021: `icon` (44×44) y tamaño `share` implementados en `buttonClass` de `@nerdose/ui`. Hover de `icon` derivado (`border.control` a `border.control.hover`). `outline-tinted` y `ghost` siguen pendientes de implementación.
 - 2026-11-15 v1.3.1 — `buttonClass` implementa `button.accent.disabled.*` para Bug Hunt (`game.bug-hunt.disabled.*`).
+- 2026-11-25 v1.4.0 — Variant `error-outline` en `buttonClass` para «Rendirse» (Devdle y Grep Grid); reemplaza la clase ad-hoc de Grep Grid. Los `<button>` muestran cursor de mano (regla base en `tokens.css`, salvo deshabilitados).

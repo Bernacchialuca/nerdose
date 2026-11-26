@@ -39,6 +39,7 @@ export function keyStates(guesses: readonly DevdleGuess[]): Partial<Record<strin
 export function isFinished(state: DevdleState): boolean {
   const last = state.guesses.at(-1);
   return (
+    state.gave_up === true ||
     state.guesses.length >= MAX_GUESSES ||
     (last !== undefined && last.marks.every((m) => m === 'correct'))
   );

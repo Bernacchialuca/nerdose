@@ -4,7 +4,6 @@ import { buttonClass, cn } from '@nerdose/ui';
 
 import { WORDS_COUNT } from '../definition/schemas';
 
-import { SURRENDER_BUTTON } from './surrender-button';
 import type { Translate } from './types';
 
 type SurrenderDialogProps = {
@@ -104,7 +103,7 @@ export function SurrenderDialog({ found, busy, t, onClose, onConfirm }: Surrende
               if (!busy) onConfirm();
             }}
             className={cn(
-              busy ? buttonClass({ disabled: true }) : SURRENDER_BUTTON,
+              buttonClass({ variant: 'error', size: 'md', disabled: busy }),
               'grow basis-50',
             )}
           >

@@ -300,11 +300,10 @@ describe('Game', () => {
     const heads = within(aside)
       .getAllByRole('heading', { level: 2 })
       .map((h) => h.textContent);
-    // Orden del prototipo: pistas, categoría, pista de letra y, si hay stats, tus intentos.
+    // Orden del prototipo: cómo se juega, categoría y, si hay stats, tus intentos.
     expect(heads[0]).toMatch(/cómo se juega/);
     expect(heads[1]).toMatch(/pista de categoría/);
-    expect(heads[2]).toMatch(/pista de letra/);
-    expect(heads).toHaveLength(3);
+    expect(heads).toHaveLength(2);
   });
 
   it('titles the game like the prototype', () => {
@@ -320,7 +319,7 @@ describe('Game', () => {
     const heads = within(aside)
       .getAllByRole('heading', { level: 2 })
       .map((h) => h.textContent);
-    expect(heads[3]).toMatch(/tus intentos/);
+    expect(heads[2]).toMatch(/tus intentos/);
     expect(within(aside).getByText('racha 3')).toBeInTheDocument();
     // Partida en curso: ninguna barra se marca como la de hoy.
     expect(within(aside).queryByText(/· hoy/)).toBeNull();
@@ -369,37 +368,58 @@ describe('Game', () => {
   });
 
   describe('letter hint', () => {
-    const panel = () =>
-      screen.getByRole('heading', { level: 2, name: /pista de letra/ }).closest('section')!;
+    const hintButton = () => screen.getByRole('button', { name: /Pista: revelar una letra/ });
 
-    it('needs a position before revealing, then sends the hint move', async () => {
+    it('sits in the aside right above Rendirse, just as wide', () => {
+      render(<Game {...base()} />);
+      expect(screen.queryByRole('heading', { name: /pista de letra/ })).toBeNull();
+      const surrender = screen.getByRole('button', { name: /Rendirse/ });
+      expect(hintButton().closest('aside')).toContainElement(surrender);
+      expect(hintButton().nextElementSibling).toBe(surrender);
+      expect(hintButton()).toHaveClass('w-full');
+    });
+
+    it('picking marks the free cells of the current row and tapping one sends the hint', async () => {
       const onMove = vi.fn();
+      const user = userEvent.setup();
       render(<Game {...base({ onMove })} />);
-      const reveal = within(panel()).getByRole('button', { name: 'Elegí una posición' });
-      expect(reveal).toHaveAttribute('aria-disabled', 'true');
-      await userEvent.click(reveal);
-      expect(onMove).not.toHaveBeenCalled();
-
-      await userEvent.click(within(panel()).getByRole('button', { name: 'Posición 2' }));
-      expect(within(panel()).getByRole('button', { name: 'Posición 2' })).toHaveAttribute(
+      await user.click(hintButton());
+      expect(screen.getByRole('button', { name: 'Cancelar' })).toHaveAttribute(
         'aria-pressed',
         'true',
       );
-      await userEvent.click(within(panel()).getByRole('button', { name: 'Revelar la letra 2' }));
+      expect(hint()).toHaveTextContent('tocá una casilla de la fila actual');
+      // SERVER acertó las posiciones 3, 5 y 6: no se pueden elegir.
+      const cells = within(row(3))
+        .getAllByRole('button')
+        .map((b) => b.getAttribute('aria-label'));
+      expect(cells).toEqual(['Revelar la letra 1', 'Revelar la letra 2', 'Revelar la letra 4']);
+      await user.click(within(row(3)).getByRole('button', { name: 'Revelar la letra 2' }));
       expect(onMove).toHaveBeenCalledWith({ hint: 1 });
+      expect(within(row(3)).queryAllByRole('button')).toHaveLength(0);
     });
 
-    it('disables positions the player already solved', () => {
-      render(<Game {...base()} />);
-      const known = within(panel()).getAllByRole('button', { name: /ya sabés que es/ });
-      expect(known.length).toBeGreaterThan(0);
-      for (const b of known) expect(b).toBeDisabled();
+    it('Esc, Cancelar or typing cancel the picking without a move', async () => {
+      const onMove = vi.fn();
+      const user = userEvent.setup();
+      render(<Game {...base({ onMove })} />);
+      await user.click(hintButton());
+      await user.keyboard('{Escape}');
+      expect(within(row(3)).queryAllByRole('button')).toHaveLength(0);
+      await user.click(hintButton());
+      await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+      expect(within(row(3)).queryAllByRole('button')).toHaveLength(0);
+      await user.click(hintButton());
+      await user.keyboard('x');
+      expect(within(row(3)).queryAllByRole('button')).toHaveLength(0);
+      expect(onMove).not.toHaveBeenCalled();
     });
 
-    it('shows the revealed letter in the panel and in the active row', () => {
+    it('once used shows the revealed letter, disabled, and the guide in the active row', () => {
       render(<Game {...base({ state: { ...STATE_2, hint: { position: 5, letter: 'R' } } })} />);
-      expect(within(panel()).getByText('La letra 6 es R.')).toBeInTheDocument();
-      expect(within(panel()).queryByRole('button')).toBeNull();
+      const used = screen.getByRole('button', { name: 'Pista usada: la letra 6 es R' });
+      expect(used).toHaveAttribute('aria-disabled', 'true');
+      expect(used).toHaveTextContent('Letra 6: R');
       expect(labels(3)[5]).toBe('R, pista');
     });
 
@@ -410,11 +430,53 @@ describe('Game', () => {
       expect(labels(3)[0]).toBe('X, escrita');
     });
 
-    it('blocks the hint while a move is pending', () => {
+    it('is disabled while a move is pending', async () => {
       render(<Game {...base({ pending: true })} />);
-      for (const b of within(panel()).getAllByRole('button', { name: /^Posición/ })) {
-        expect(b).toBeDisabled();
-      }
+      expect(hintButton()).toHaveAttribute('aria-disabled', 'true');
+      await userEvent.click(hintButton());
+      expect(within(row(3)).queryAllByRole('button')).toHaveLength(0);
+    });
+  });
+
+  describe('surrender', () => {
+    it('asks for confirmation and then sends the give up move', async () => {
+      const onMove = vi.fn();
+      const user = userEvent.setup();
+      render(<Game {...base({ onMove })} />);
+      await user.click(screen.getByRole('button', { name: /Rendirse/ }));
+      const dialog = screen.getByRole('alertdialog', { name: '¿Rendirte?' });
+      expect(dialog).toHaveTextContent('2 de 6 intentos usados');
+      expect(within(dialog).getByRole('button', { name: 'Seguir jugando' })).toHaveFocus();
+      await user.click(within(dialog).getByRole('button', { name: 'Sí, rendirme' }));
+      expect(onMove).toHaveBeenCalledWith({ give_up: true });
+    });
+
+    it('keeps playing closes the dialog without a move', async () => {
+      const onMove = vi.fn();
+      const user = userEvent.setup();
+      render(<Game {...base({ onMove })} />);
+      await user.click(screen.getByRole('button', { name: /Rendirse/ }));
+      await user.click(screen.getByRole('button', { name: 'Seguir jugando' }));
+      expect(screen.queryByRole('alertdialog')).toBeNull();
+      expect(onMove).not.toHaveBeenCalled();
+    });
+
+    it('the physical keyboard does not type while the dialog is open', async () => {
+      const user = userEvent.setup();
+      render(<Game {...base()} />);
+      await user.click(screen.getByRole('button', { name: /Rendirse/ }));
+      await user.keyboard('x');
+      expect(labels(3)[0]).toBe('casilla, vacía');
+    });
+
+    it('is a full-width error-outline button, hidden when locked', () => {
+      const { unmount } = render(<Game {...base()} />);
+      const btn = screen.getByRole('button', { name: /Rendirse/ });
+      expect(btn).toHaveClass('border-status-error-border', 'w-full');
+      expect(btn.querySelector('[aria-hidden="true"]')).toHaveTextContent('⚑');
+      unmount();
+      render(<Game {...base({ locked: true })} />);
+      expect(screen.queryByRole('button', { name: /Rendirse/ })).toBeNull();
     });
   });
 });

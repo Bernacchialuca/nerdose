@@ -3,7 +3,7 @@ import { useState } from 'react';
 import type { CodeLanguage } from '@nerdose/core';
 import { Banner } from '@nerdose/ui';
 
-import { BUG_TYPE_LABEL, LANGUAGE_LABEL } from '../shared/labels';
+import { LANGUAGE_LABEL } from '../shared/labels';
 
 import { CodeBlock, type MarkLabel } from './code-block';
 import { resultLineMarks } from './marks';
@@ -11,9 +11,9 @@ import { parsePublicView, parseResult } from './parse';
 import { Question } from './question';
 import { Statement } from './statement';
 import type { ResultProps } from './types';
-import { TypeChip, WhyPanel } from './why-panel';
+import { WhyPanel } from './why-panel';
 
-export function Result({ t, locale, notices, result, publicView, aside, footer }: ResultProps) {
+export function Result({ t, notices, result, publicView, aside, footer }: ResultProps) {
   const r = parseResult(result);
   const view = publicView == null ? null : parsePublicView(publicView);
   const [language, setLanguage] = useState<CodeLanguage>(r.code_language);
@@ -77,11 +77,6 @@ export function Result({ t, locale, notices, result, publicView, aside, footer }
             fix={r.fix[fixLanguage]}
             language={fixLanguage}
             steps={r.explanation.steps}
-            chips={
-              <TypeChip>
-                {t('result.bugType', { type: BUG_TYPE_LABEL[r.bug_type][locale] })}
-              </TypeChip>
-            }
             t={t}
             headingLevel={2}
           />

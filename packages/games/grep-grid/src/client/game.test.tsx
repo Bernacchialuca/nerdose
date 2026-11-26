@@ -547,12 +547,18 @@ describe('Game surrender (O-04)', () => {
 });
 
 describe('Game layout and style', () => {
-  it('Rendirse is an outlined error button (TS-53)', () => {
+  it('Rendirse is a full-width error-outline button (TS-53)', () => {
     render(<Game {...base()} />);
     const btn = screen.getByRole('button', { name: /Rendirse/ });
-    expect(btn).toHaveClass('border-status-error-border', 'font-medium', 'rounded-control');
-    expect(btn.className).not.toMatch(/bg-status-error/);
-    expect(btn.querySelector('[aria-hidden="true"]')).toHaveTextContent('✕');
+    expect(btn).toHaveClass(
+      'border-status-error-border',
+      'text-status-error-soft',
+      'font-medium',
+      'rounded-control',
+      'w-full',
+    );
+    expect(btn.className).not.toMatch(/(^|\s)bg-status-error(\s|$)/);
+    expect(btn.querySelector('[aria-hidden="true"]')).toHaveTextContent('⚑');
   });
 
   it('lays out the title block full width, then board 7/12 and side column 5/12 (TS-54)', () => {
