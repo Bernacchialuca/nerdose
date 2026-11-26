@@ -6,23 +6,15 @@ import { share } from './share';
 
 describe('share', () => {
   it('won in Java (TS-7)', () => {
-    expect(share(RESULT_WON_JAVA_ES, 128, 'es')).toBe(
-      '🐛 Bug Hunt #128 · Java\n🟩 bug encontrado\nnerdose.dev',
-    );
+    expect(share(RESULT_WON_JAVA_ES, 128, 'es')).toBe('🐛 Bug Hunt #128 · Java\n🟩 bug encontrado');
   });
 
   it('lost and in English (TS-8)', () => {
-    expect(share(RESULT_LOST_GO_ES, 8, 'es')).toBe(
-      '🐛 Bug Hunt #8 · Go\n🟥 se me escapó\nnerdose.dev',
-    );
-    expect(share(RESULT_LOST_GO_ES, 8, 'en')).toBe(
-      '🐛 Bug Hunt #8 · Go\n🟥 it got away\nnerdose.dev',
-    );
-    expect(share(RESULT_WON_JAVA_ES, 8, 'en')).toBe(
-      '🐛 Bug Hunt #8 · Java\n🟩 bug found\nnerdose.dev',
-    );
+    expect(share(RESULT_LOST_GO_ES, 8, 'es')).toBe('🐛 Bug Hunt #8 · Go\n🟥 se me escapó');
+    expect(share(RESULT_LOST_GO_ES, 8, 'en')).toBe('🐛 Bug Hunt #8 · Go\n🟥 it got away');
+    expect(share(RESULT_WON_JAVA_ES, 8, 'en')).toBe('🐛 Bug Hunt #8 · Java\n🟩 bug found');
     expect(share({ ...RESULT_LOST_GO_ES, code_language: 'js' }, 8, 'es')).toBe(
-      '🐛 Bug Hunt #8 · JavaScript\n🟥 se me escapó\nnerdose.dev',
+      '🐛 Bug Hunt #8 · JavaScript\n🟥 se me escapó',
     );
   });
 
@@ -30,8 +22,8 @@ describe('share', () => {
     expect(share(RESULT_WON_JAVA_ES, 8)).toBe(share(RESULT_WON_JAVA_ES, 8, 'es'));
     for (const out of [share(RESULT_WON_JAVA_ES, 8), share(RESULT_LOST_GO_ES, 8, 'es')]) {
       const lines = out.split('\n');
-      expect(lines).toHaveLength(3);
-      expect(out.endsWith('nerdose.dev')).toBe(true);
+      expect(lines).toHaveLength(2);
+      expect(out).not.toContain('nerdose');
       for (const s of [
         'L4',
         'línea',
@@ -45,7 +37,6 @@ describe('share', () => {
         expect(out.includes(s), s).toBe(false);
       }
       expect(lines[1]).not.toMatch(/\d/);
-      expect(lines[2]).not.toMatch(/\d/);
     }
   });
 

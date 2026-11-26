@@ -7,7 +7,7 @@ import { share } from './share';
 describe('share', () => {
   it('formats a win (TS-7)', () => {
     expect(share(RESULT_WIN, 128)).toBe(
-      '🟩 Devdle #128 · 3/6\n⬛🟨🟨⬛⬛⬛\n🟨⬛🟩⬛🟩🟩\n🟩🟩🟩🟩🟩🟩\nnerdose.dev',
+      '🟩 Devdle #128 · 3/6\n⬛🟨🟨⬛⬛⬛\n🟨⬛🟩⬛🟩🟩\n🟩🟩🟩🟩🟩🟩',
     );
   });
 
@@ -20,8 +20,8 @@ describe('share', () => {
   it('formats a loss with X/6 (TS-8)', () => {
     const lines = share(RESULT_LOSS, 128).split('\n');
     expect(lines[0]).toBe('🟩 Devdle #128 · X/6');
-    expect(lines).toHaveLength(8);
-    expect(lines.at(-1)).toBe('nerdose.dev');
+    expect(lines).toHaveLength(7);
+    expect(lines.at(-1)).toMatch(/^[🟩🟨⬛]{6}$/u);
   });
 
   it('never leaks the solution (TS-9)', () => {
@@ -36,7 +36,7 @@ describe('share', () => {
       ]) {
         expect(text.includes(secret)).toBe(false);
       }
-      expect(text.endsWith('nerdose.dev')).toBe(true);
+      expect(text).not.toContain('nerdose');
     }
   });
 

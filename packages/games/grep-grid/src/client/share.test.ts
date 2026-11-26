@@ -6,17 +6,17 @@ import { RESULT_GAVE_UP_5, RESULT_WIN, WORD_NAMES } from './test-fixtures';
 
 describe('share', () => {
   it('victory (TS-7)', () => {
-    expect(share(RESULT_WIN, 8)).toBe('🔎 Grep Grid #8\n8/8\nnerdose.dev');
+    expect(share(RESULT_WIN, 8)).toBe('🔎 Grep Grid #8\n8/8');
   });
 
   it('gave up shows only the score (TS-8)', () => {
-    expect(share({ ...RESULT_GAVE_UP_5, score: 6 }, 8)).toBe('🔎 Grep Grid #8\n6/8\nnerdose.dev');
+    expect(share({ ...RESULT_GAVE_UP_5, score: 6 }, 8)).toBe('🔎 Grep Grid #8\n6/8');
   });
 
   it('never leaks words, definitions nor the surrender (TS-9)', () => {
     const text = share(RESULT_GAVE_UP_5, 8);
-    expect(text.split('\n')).toHaveLength(3);
-    expect(text.endsWith('nerdose.dev')).toBe(true);
+    expect(text.split('\n')).toHaveLength(2);
+    expect(text).not.toContain('nerdose');
     for (const w of WORD_NAMES) expect(text).not.toContain(w);
     for (const leak of ['definici', 'rend', 'give', 'gave', '○', '✓']) {
       expect(text).not.toContain(leak);

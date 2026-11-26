@@ -39,8 +39,8 @@ import { renderWithProviders } from '@/test/render';
 const TODAY = '/api/games/grep-grid/today?lang=es';
 const MOVE = '/api/games/grep-grid/today/move?lang=es';
 const START = '/api/games/grep-grid/today/start';
-const SHARE_LOST6 = '🔎 Grep Grid #128\n6/8\nnerdose.dev';
-const SHARE_WON = '🔎 Grep Grid #128\n8/8\nnerdose.dev';
+const SHARE_LOST6 = '🔎 Grep Grid #128\n6/8\nlocalhost:5173';
+const SHARE_WON = '🔎 Grep Grid #128\n8/8\nlocalhost:5173';
 const VOIDED = 'Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.';
 const COOKIES =
   'Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».';

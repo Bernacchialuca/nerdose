@@ -36,9 +36,9 @@ import { renderWithProviders } from '@/test/render';
 const TODAY = '/api/games/bug-hunt/today?lang=es';
 const START = '/api/games/bug-hunt/today/start';
 const MOVE = '/api/games/bug-hunt/today/move?lang=es';
-const SHARE_WON_JAVA_ES = '🐛 Bug Hunt #128 · Java\n🟩 bug encontrado\nnerdose.dev';
-const SHARE_LOST_GO_ES = '🐛 Bug Hunt #128 · Go\n🟥 se me escapó\nnerdose.dev';
-const SHARE_WON_JAVA_EN = '🐛 Bug Hunt #128 · Java\n🟩 bug found\nnerdose.dev';
+const SHARE_WON_JAVA_ES = '🐛 Bug Hunt #128 · Java\n🟩 bug encontrado\nlocalhost:5173';
+const SHARE_LOST_GO_ES = '🐛 Bug Hunt #128 · Go\n🟥 se me escapó\nlocalhost:5173';
+const SHARE_WON_JAVA_EN = '🐛 Bug Hunt #128 · Java\n🟩 bug found\nlocalhost:5173';
 const QUESTION_ES = '¿En qué línea está el bug?';
 const QUESTION_EN = 'Which line has the bug?';
 const VOIDED = 'Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.';
@@ -674,7 +674,9 @@ describe('«Cómo se juega», sin desafío y teclado', () => {
     await tabTo(() => button);
     await user.keyboard('{Enter}');
     await waitFor(() =>
-      expect(write).toHaveBeenCalledWith('🐛 Bug Hunt #128 · Go\n🟩 bug encontrado\nnerdose.dev'),
+      expect(write).toHaveBeenCalledWith(
+        '🐛 Bug Hunt #128 · Go\n🟩 bug encontrado\nlocalhost:5173',
+      ),
     );
   });
 });
