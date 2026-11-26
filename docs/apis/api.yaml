@@ -1081,7 +1081,7 @@ paths:
       tags: [Admin]
       summary: Ítems de un banco de contenido (paginado)
       description: |
-        Pantalla Contenido del admin. Lista paginada de `terms` (orden por `term`) o `timeline_facts`
+        Pantalla Bancos del admin (/banks). Lista paginada de `terms` (orden por `term`) o `timeline_facts`
         (orden por `label` y luego `id`), con búsqueda y filtros. Una consulta para la página
         (`LIMIT/OFFSET`) y un `COUNT` con los mismos filtros. Una página más allá del final devuelve
         `items: []` con los totales reales (no es error). 422 `validation_error` si un parámetro es inválido,
