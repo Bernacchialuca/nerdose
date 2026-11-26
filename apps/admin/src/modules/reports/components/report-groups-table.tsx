@@ -1,5 +1,6 @@
 import { Badge, buttonClass } from '@nerdose/ui';
 
+import { Pagination, usePagination } from '@/components/pagination';
 import { formatInstant, formatRelative } from '@/lib/format-date';
 
 import type { AdminChallenge, ReportGroup } from '../api/types';
@@ -33,80 +34,94 @@ function lastReportAt(group: ReportGroup): string | null {
   );
 }
 
+export const REPORT_GROUPS_PAGE_SIZE = 20;
+
 export function ReportGroupsTable({ groups, onOpen, onVoid }: ReportGroupsTableProps) {
+  const pages = usePagination(groups, REPORT_GROUPS_PAGE_SIZE);
   return (
-    <div
-      role="region"
-      // Región con scroll horizontal: debe ser alcanzable con teclado (WCAG 2.1.1).
-      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
-      tabIndex={0}
-      aria-label="Tabla de grupos de reportes"
-      className="overflow-x-auto rounded-panel border border-border bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-    >
-      <table className="w-full font-mono text-mono-body text-text-body">
-        <caption className="sr-only">Grupos de reportes</caption>
-        <thead>
-          <tr>
-            {COLUMNS.map((name) => (
-              <th key={name} scope="col" className={TH}>
-                {name}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {groups.map((group) => {
-            const { challenge } = group;
-            const last = lastReportAt(group);
-            const name = challengeLabel(challenge);
-            return (
-              <tr key={challenge.id} className="relative hover:bg-surface-2">
-                <td className={TD}>
-                  {group.alerted_at ? (
-                    <Badge tone="pending" strong>
-                      <span title={formatInstant(group.alerted_at)}>alertado</span>
-                    </Badge>
-                  ) : (
-                    '—'
-                  )}
-                </td>
-                <td className={TD}>
-                  <button
-                    type="button"
-                    onClick={(event) => {
-                      onOpen(group, event.currentTarget);
-                    }}
-                    className="text-left font-bold text-text after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-                  >
-                    {name}
-                  </button>
-                </td>
-                <td className={TD}>{challenge.date}</td>
-                <td className={TD}>{group.report_count}</td>
-                <td className={TD}>{reasonsSummary(group.reasons)}</td>
-                <td className={TD}>{last ? formatRelative(last) : '—'}</td>
-                <td className={TD}>{CHALLENGE_STATUS_LABELS[challenge.status]}</td>
-                <td className={TD}>
-                  {challenge.status === 'published' ? (
+    <div className="flex flex-col gap-3">
+      <div
+        role="region"
+        // Región con scroll horizontal: debe ser alcanzable con teclado (WCAG 2.1.1).
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+        tabIndex={0}
+        aria-label="Tabla de grupos de reportes"
+        className="overflow-x-auto rounded-panel border border-border bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+      >
+        <table className="w-full font-mono text-mono-body text-text-body">
+          <caption className="sr-only">Grupos de reportes</caption>
+          <thead>
+            <tr>
+              {COLUMNS.map((name) => (
+                <th key={name} scope="col" className={TH}>
+                  {name}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {pages.pageItems.map((group) => {
+              const { challenge } = group;
+              const last = lastReportAt(group);
+              const name = challengeLabel(challenge);
+              return (
+                <tr key={challenge.id} className="relative hover:bg-surface-2">
+                  <td className={TD}>
+                    {group.alerted_at ? (
+                      <Badge tone="pending" strong>
+                        <span title={formatInstant(group.alerted_at)}>alertado</span>
+                      </Badge>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
+                  <td className={TD}>
                     <button
                       type="button"
-                      aria-label={`Anular ${name}`}
                       onClick={(event) => {
-                        onVoid(challenge, event.currentTarget);
+                        onOpen(group, event.currentTarget);
                       }}
-                      className={`${buttonClass({ variant: 'secondary' })} relative z-10`}
+                      className="text-left font-bold text-text after:absolute after:inset-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
                     >
-                      Anular
+                      {name}
                     </button>
-                  ) : (
-                    '—'
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+                  </td>
+                  <td className={TD}>{challenge.date}</td>
+                  <td className={TD}>{group.report_count}</td>
+                  <td className={TD}>{reasonsSummary(group.reasons)}</td>
+                  <td className={TD}>{last ? formatRelative(last) : '—'}</td>
+                  <td className={TD}>{CHALLENGE_STATUS_LABELS[challenge.status]}</td>
+                  <td className={TD}>
+                    {challenge.status === 'published' ? (
+                      <button
+                        type="button"
+                        aria-label={`Anular ${name}`}
+                        onClick={(event) => {
+                          onVoid(challenge, event.currentTarget);
+                        }}
+                        className={`${buttonClass({ variant: 'secondary' })} relative z-10`}
+                      >
+                        Anular
+                      </button>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <Pagination
+        page={pages.page}
+        totalPages={pages.totalPages}
+        total={pages.total}
+        pageSize={pages.pageSize}
+        noun="desafíos reportados"
+        onChange={pages.setPage}
+        label="Paginado de reportes"
+      />
     </div>
   );
 }

@@ -170,6 +170,18 @@ export const adminHandlers = {
       await record(request);
       return HttpResponse.error();
     }),
+  /** El body puede depender del request (p. ej. del banco o la página pedidos). */
+  bankItems: (body: object | ((url: URL) => object), init?: ResponseInit) =>
+    http.get('/api/admin/content/items', async ({ request }) => {
+      await record(request);
+      const payload = typeof body === 'function' ? body(new URL(request.url)) : body;
+      return HttpResponse.json(payload, init);
+    }),
+  bankItemsNetworkError: () =>
+    http.get('/api/admin/content/items', async ({ request }) => {
+      await record(request);
+      return HttpResponse.error();
+    }),
   generationFailures: (body: unknown, init?: ResponseInit) =>
     http.get('/api/admin/generation-failures', async ({ request }) => {
       await record(request);

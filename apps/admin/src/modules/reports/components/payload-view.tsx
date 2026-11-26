@@ -4,23 +4,21 @@ import { CULPRIT_KIND_LABELS } from '../labels';
 import type { AdminChallenge } from '../api/types';
 import { flattenPayload } from '../payload-view-model';
 
-export function PayloadBilingual({ payload }: { payload: Record<string, unknown> }) {
+/** Los textos del desafío en español (el admin no muestra la versión en inglés). */
+export function PayloadTexts({ payload }: { payload: Record<string, unknown> }) {
   const { bilingual } = flattenPayload(payload);
+  if (bilingual.length === 0) return null;
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-      {(['es', 'en'] as const).map((locale) => (
-        <Panel key={locale} title={locale.toUpperCase()} titleLevel={3}>
-          <dl className="flex flex-col gap-3">
-            {bilingual.map((row) => (
-              <div key={row.path} className="flex flex-col gap-0.5">
-                <dt className="font-mono text-label-comment text-text-dim">{row.path}</dt>
-                <dd className="font-sans text-body-sm text-text-body">{row[locale]}</dd>
-              </div>
-            ))}
-          </dl>
-        </Panel>
-      ))}
-    </div>
+    <Panel title="Textos" titleLevel={3}>
+      <dl className="flex flex-col gap-3">
+        {bilingual.map((row) => (
+          <div key={row.path} className="flex flex-col gap-0.5">
+            <dt className="font-mono text-label-comment text-text-dim">{row.path}</dt>
+            <dd className="font-sans text-body-sm text-text-body">{row.es}</dd>
+          </div>
+        ))}
+      </dl>
+    </Panel>
   );
 }
 
@@ -69,7 +67,7 @@ export function PayloadCommon({ payload, culprits }: PayloadCommonProps) {
 export function PayloadView({ challenge }: { challenge: AdminChallenge }) {
   return (
     <div className="flex flex-col gap-4">
-      <PayloadBilingual payload={challenge.payload} />
+      <PayloadTexts payload={challenge.payload} />
       <PayloadCommon payload={challenge.payload} culprits={challenge.culprits} />
     </div>
   );

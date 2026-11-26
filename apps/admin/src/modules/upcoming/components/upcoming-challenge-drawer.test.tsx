@@ -32,19 +32,29 @@ async function openCell(
   const headers = screen.getAllByRole('columnheader').map((h) => h.textContent);
   const cell = within(row as HTMLElement).getAllByRole('cell')[headers.indexOf(column) - 1];
   await user.click(
-    within(cell as HTMLElement).getByRole('button', { name: /, \d{4}-\d{2}-\d{2}/ }),
+    within(cell as HTMLElement).getByRole('button', { name: /^Ver .+, \d{4}-\d{2}-\d{2}:/ }),
   );
   return screen.findByRole('dialog');
 }
 
+// El admin es solo en español: un único panel «Vista previa» con la Preview del juego en `es`.
 const previewReady = (dialog: HTMLElement) =>
   waitFor(() => {
-    expect(dialog.querySelector('[lang="en"]')).not.toBeNull();
     expect(dialog.querySelector('[lang="es"]')).not.toBeNull();
   });
 
+const previewPanel = (dialog: HTMLElement) =>
+  within(dialog).getByRole('region', { name: 'Vista previa' });
+
+/** Ni paneles por idioma ni nada declarado en inglés. */
+function expectNoEnglish(dialog: HTMLElement) {
+  expect(within(dialog).queryByRole('region', { name: 'ES' })).toBeNull();
+  expect(within(dialog).queryByRole('region', { name: 'EN' })).toBeNull();
+  expect(dialog.querySelector('[lang="en"]')).toBeNull();
+}
+
 describe('drawer O-02 desde Próximos', () => {
-  it('Grep Grid: chips, datos, paneles ES/EN y log, sin seed ni acciones de Reportes (TS-28, TS-54)', async () => {
+  it('Grep Grid: chips, datos, vista previa en español y log, sin seed ni acciones de Reportes (TS-28, TS-54)', async () => {
     server.use(adminHandlers.upcoming(UPCOMING_OK));
     const { user } = render();
     const dialog = await openCell(user, '05/12 #35', 'Grep Grid');
@@ -54,14 +64,12 @@ describe('drawer O-02 desde Próximos', () => {
     }
     expect(within(dialog).getByText('Intento 0 · generator 1.4.0')).toBeInTheDocument();
     await previewReady(dialog);
-    const es = within(dialog).getByRole('region', { name: 'ES' });
-    const en = within(dialog).getByRole('region', { name: 'EN' });
-    expect(es.parentElement).toHaveClass('lg:grid-cols-2');
-    expect(en.parentElement).toBe(es.parentElement);
+    const es = previewPanel(dialog);
+    expect(within(es).getByRole('heading', { level: 3, name: 'Vista previa' })).toBeInTheDocument();
     expect(await within(es).findByText(/definición de REDIS/)).toBeInTheDocument();
-    expect(await within(en).findByText(/definition of REDIS/)).toBeInTheDocument();
     expect(es.querySelector('[lang="es"]')).not.toBeNull();
-    expect(en.querySelector('[lang="en"]')).not.toBeNull();
+    expect(within(dialog).queryByText(/definition of REDIS/)).toBeNull();
+    expectNoEnglish(dialog);
     expect(within(dialog).getByRole('heading', { name: 'Datos del desafío' })).toBeInTheDocument();
     expect(
       within(dialog).getByRole('heading', { name: 'Log de verificación' }),
@@ -76,13 +84,12 @@ describe('drawer O-02 desde Próximos', () => {
     );
   });
 
-  it('Devdle: palabra, definición y resumen en ES y EN (TS-29)', async () => {
+  it('Devdle: palabra, definición y resumen en español, sin el inglés (TS-29)', async () => {
     server.use(adminHandlers.upcoming(UPCOMING_OK));
     const { user } = render();
     const dialog = await openCell(user, '02/12 #32', 'Devdle');
     await previewReady(dialog);
-    const es = within(dialog).getByRole('region', { name: 'ES' });
-    const en = within(dialog).getByRole('region', { name: 'EN' });
+    const es = previewPanel(dialog);
     expect(
       await within(es).findByText(/biblioteca de JavaScript para construir interfaces de usuario/),
     ).toBeInTheDocument();
@@ -91,8 +98,9 @@ describe('drawer O-02 desde Próximos', () => {
     ).toBeInTheDocument();
     expect(within(es).getAllByText(/REACT/).length).toBeGreaterThan(0);
     expect(
-      await within(en).findByText(/JavaScript library for building user interfaces/),
-    ).toBeInTheDocument();
+      within(dialog).queryByText(/JavaScript library for building user interfaces/),
+    ).toBeNull();
+    expectNoEnglish(dialog);
   });
 
   it('Timeline: consigna y 5 hechos en el orden correcto (TS-30)', async () => {
@@ -100,8 +108,7 @@ describe('drawer O-02 desde Próximos', () => {
     const { user } = render();
     const dialog = await openCell(user, '05/12 #35', 'Tech Timeline');
     await previewReady(dialog);
-    const es = within(dialog).getByRole('region', { name: 'ES' });
-    const en = within(dialog).getByRole('region', { name: 'EN' });
+    const es = previewPanel(dialog);
     expect(
       await within(es).findByText(/Ordená estos hitos del más antiguo al más reciente/),
     ).toBeInTheDocument();
@@ -109,10 +116,8 @@ describe('drawer O-02 desde Próximos', () => {
     const positions = labels.map((l) => es.textContent?.indexOf(`nota de ${l}`) ?? -1);
     expect(positions.every((p) => p >= 0)).toBe(true);
     expect([...positions].sort((a, b) => a - b)).toEqual(positions);
-    expect(
-      await within(en).findByText(/Order these milestones from oldest to newest/),
-    ).toBeInTheDocument();
-    expect(within(en).getByText(/note on Python/)).toBeInTheDocument();
+    expect(within(dialog).queryByText(/Order these milestones from oldest to newest/)).toBeNull();
+    expect(within(dialog).queryByText(/note on Python/)).toBeNull();
   });
 
   it('un payload inválido muestra aviso y la vista genérica sin cerrar el detalle (TS-32)', async () => {
@@ -125,7 +130,9 @@ describe('drawer O-02 desde Próximos', () => {
         'No pudimos mostrar la preview del juego. Mostramos los datos del desafío.',
       ),
     ).toBeInTheDocument();
-    expect(within(dialog).getByRole('region', { name: 'ES' })).toBeInTheDocument();
+    // Sin campos bilingües la vista genérica no dibuja «Textos»: quedan los datos comunes.
+    expect(within(dialog).queryByRole('region', { name: 'Textos' })).toBeNull();
+    expect(within(dialog).queryByRole('region', { name: 'Vista previa' })).toBeNull();
     expect(within(dialog).getByRole('region', { name: 'Datos del desafío' })).toHaveTextContent(
       'redis',
     );
@@ -260,7 +267,7 @@ describe('drawer O-02 desde Próximos', () => {
     server.use(adminHandlers.upcoming(UPCOMING_OK));
     const { user } = render();
     await openCell(user, '03/12 #33', 'Devdle');
-    const opener = screen.getByRole('button', { name: /Devdle #33, 2026-12-03/ });
+    const opener = screen.getByRole('button', { name: /^Ver Devdle #33, 2026-12-03:/ });
     await user.keyboard('{Escape}');
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(opener).toHaveFocus();
@@ -273,9 +280,8 @@ describe('Big O desde Próximos (S-046)', () => {
     const view = render();
     const dialog = await openCell(view.user, '02/12 #32', 'Big O');
     await previewReady(dialog);
-    const ES = within(dialog).getByRole('region', { name: 'ES' });
-    const EN = within(dialog).getByRole('region', { name: 'EN' });
-    return { ...view, dialog, ES, EN };
+    const ES = previewPanel(dialog);
+    return { ...view, dialog, ES };
   };
 
   it('cabecera, chips y datos de generación (TS-7)', async () => {
@@ -337,76 +343,54 @@ describe('Big O desde Próximos (S-046)', () => {
     expect(ES).toHaveTextContent('Un loop interno que duplica su variable no es n.');
   });
 
-  it('preview EN equivalente en inglés y mismo código (TS-11)', async () => {
-    const { ES, EN } = await open();
-    expect(EN.querySelector('[lang="en"]')).not.toBeNull();
-    expect(EN).toHaveTextContent('What is the time complexity (worst case) of f(n)?');
-    expect(within(EN).getByRole('heading', { level: 3, name: 'answer' })).toBeInTheDocument();
-    expect(within(EN).getByRole('region', { name: 'Step by step' })).toBeInTheDocument();
-    expect(within(EN).getByText('O(n log n), correct')).toBeInTheDocument();
-    expect(within(EN).getByText('O(n²), trap')).toBeInTheDocument();
-    for (const t of [
-      'n times',
-      'log n times',
-      'The outer loop runs n times.',
-      'with O(n²) it would be 1,048,576',
-      'An inner loop that doubles its variable is not n.',
-    ]) {
-      expect(EN).toHaveTextContent(t);
-    }
-    const enCode = within(EN).getByRole('tabpanel', { name: 'Code of f(n) in JavaScript' });
-    const esCode = within(ES).getByRole('tabpanel', { name: 'Código de f(n) en JavaScript' });
-    const norm = (t: string | null) => (t ?? '').replace(/\s+/g, '');
-    expect(norm((enCode.textContent ?? '').replace(/log n times|n times/g, ''))).toBe(
-      norm((esCode.textContent ?? '').replace(/log n veces|n veces/g, '')),
-    );
-    for (const es of ['Paso a paso', 'trampa', 'correcta']) {
-      expect(EN).not.toHaveTextContent(es);
-    }
+  it('sin versión en inglés: ni preview EN ni sus textos (TS-11)', async () => {
+    const { dialog } = await open();
+    expectNoEnglish(dialog);
+    expect(dialog).not.toHaveTextContent('What is the time complexity (worst case) of f(n)?');
+    expect(within(dialog).queryByRole('region', { name: 'Step by step' })).toBeNull();
+    expect(within(dialog).queryByText('O(n log n), correct')).toBeNull();
+    expect(
+      within(dialog).queryByRole('tabpanel', { name: 'Code of f(n) in JavaScript' }),
+    ).toBeNull();
   });
 
-  it('columnas lado a lado, ES antes que EN (TS-12)', async () => {
-    const { ES, EN } = await open();
-    expect(ES.parentElement).toHaveClass('lg:grid-cols-2');
-    expect(EN.parentElement).toBe(ES.parentElement);
-    expect(ES.compareDocumentPosition(EN) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  it('un solo panel «Vista previa» a todo el ancho (TS-12)', async () => {
+    const { dialog, ES } = await open();
+    expect(within(dialog).getAllByRole('region', { name: 'Vista previa' })).toHaveLength(1);
+    expect(ES.parentElement?.className ?? '').not.toMatch(/grid-cols-2/);
   });
 
   it('jerarquía de encabezados del preview (TS-13)', async () => {
-    const { ES, EN } = await open();
-    for (const col of [ES, EN]) {
-      expect(within(col).queryAllByRole('heading', { level: 1 })).toHaveLength(0);
-      expect(within(col).queryAllByRole('heading', { level: 2 })).toHaveLength(0);
-    }
-    expect(within(ES).getByRole('heading', { level: 3, name: 'ES' })).toBeInTheDocument();
-    expect(within(EN).getByRole('heading', { level: 3, name: 'EN' })).toBeInTheDocument();
+    const { ES } = await open();
+    expect(within(ES).queryAllByRole('heading', { level: 1 })).toHaveLength(0);
+    expect(within(ES).queryAllByRole('heading', { level: 2 })).toHaveLength(0);
+    expect(within(ES).getByRole('heading', { level: 3, name: 'Vista previa' })).toBeInTheDocument();
   });
 
-  it('pestañas independientes y sin efectos (TS-14)', async () => {
-    const { user, ES, EN } = await open();
+  it('pestañas sin efectos (TS-14)', async () => {
+    const { user, ES } = await open();
     await user.click(within(ES).getByRole('tab', { name: 'Go' }));
     expect(within(ES).getByRole('tab', { name: 'Go' })).toHaveAttribute('aria-selected', 'true');
     const panel = within(ES).getByRole('tabpanel', { name: 'Código de f(n) en Go' });
     expect(panel).toHaveTextContent('func f(n int) int {');
     expect(panel).toHaveTextContent('n veces');
-    expect(within(EN).getByRole('tab', { name: 'JavaScript' })).toHaveAttribute(
+    expect(within(ES).getByRole('tab', { name: 'JavaScript' })).toHaveAttribute(
       'aria-selected',
-      'true',
+      'false',
     );
-    expect(within(EN).getByRole('tabpanel', { name: 'Code of f(n) in JavaScript' })).toBeVisible();
     expect(requests.filter((r) => r.pathname !== '/api/admin/challenges/upcoming')).toHaveLength(0);
   });
 
   it('pestañas con teclado (TS-15)', async () => {
-    const { user, ES, EN } = await open();
-    await user.click(within(EN).getByRole('tab', { name: 'JavaScript' }));
+    const { user, ES } = await open();
+    await user.click(within(ES).getByRole('tab', { name: 'JavaScript' }));
     await user.keyboard('{ArrowRight}');
-    const go = within(EN).getByRole('tab', { name: 'Go' });
+    const go = within(ES).getByRole('tab', { name: 'Go' });
     expect(go).toHaveFocus();
     expect(go).toHaveAttribute('aria-selected', 'true');
-    expect(within(EN).getByRole('tabpanel', { name: 'Code of f(n) in Go' })).toBeVisible();
+    expect(within(ES).getByRole('tabpanel', { name: 'Código de f(n) en Go' })).toBeVisible();
     await user.keyboard('{ArrowLeft}');
-    expect(within(EN).getByRole('tab', { name: 'JavaScript' })).toHaveFocus();
+    expect(within(ES).getByRole('tab', { name: 'JavaScript' })).toHaveFocus();
     expect(within(ES).getByRole('tab', { name: 'JavaScript' })).toHaveAttribute(
       'aria-selected',
       'true',
@@ -469,10 +453,11 @@ describe('Big O desde Próximos (S-046)', () => {
         'No pudimos mostrar la preview del juego. Mostramos los datos del desafío.',
       ),
     ).toBeInTheDocument();
-    expect(within(dialog).getByRole('region', { name: 'ES' })).toHaveTextContent(
+    expect(within(dialog).getByRole('region', { name: 'Textos' })).toHaveTextContent(
       'El loop externo corre n veces.',
     );
-    expect(within(dialog).getByRole('region', { name: 'EN' })).toBeInTheDocument();
+    expect(within(dialog).queryByRole('region', { name: 'EN' })).toBeNull();
+    expect(dialog).not.toHaveTextContent('The outer loop runs n times.');
     expect(within(dialog).getByRole('region', { name: 'Datos del desafío' })).toBeInTheDocument();
     expect(within(dialog).getByRole('region', { name: 'Log de verificación' })).toBeInTheDocument();
     expect(within(dialog).getByRole('button', { name: 'Regenerar' })).toBeInTheDocument();
@@ -483,14 +468,12 @@ describe('Big O desde Próximos (S-046)', () => {
     spy.mockRestore();
   });
 
-  it('el admin queda en español y solo el panel EN declara inglés (TS-21)', async () => {
+  it('el admin queda en español y nada declara inglés (TS-21)', async () => {
     const lang = document.documentElement.lang;
-    const { dialog, ES, EN } = await open();
+    const { dialog, ES } = await open();
     expect(document.documentElement.lang).toBe(lang);
-    const en = dialog.querySelectorAll('[lang="en"]');
+    expect(dialog.querySelectorAll('[lang="en"]')).toHaveLength(0);
     const es = dialog.querySelectorAll('[lang="es"]');
-    expect(en).toHaveLength(1);
-    expect(EN.contains(en[0] as Element)).toBe(true);
     expect(es).toHaveLength(1);
     expect(ES.contains(es[0] as Element)).toBe(true);
   });
@@ -499,7 +482,7 @@ describe('Big O desde Próximos (S-046)', () => {
     const { user } = await open();
     await user.keyboard('{Escape}');
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(screen.getByRole('button', { name: /Big O #32, 2026-12-02/ })).toHaveFocus();
+    expect(screen.getByRole('button', { name: /^Ver Big O #32, 2026-12-02:/ })).toHaveFocus();
   });
 });
 
@@ -509,13 +492,11 @@ describe('Bug Hunt desde Próximos (S-051)', () => {
     const view = render();
     const dialog = await openCell(view.user, '02/12 #32', 'Bug Hunt');
     await previewReady(dialog);
-    const ES = within(dialog).getByRole('region', { name: 'ES' });
-    const EN = within(dialog).getByRole('region', { name: 'EN' });
-    return { ...view, dialog, ES, EN };
+    const ES = previewPanel(dialog);
+    return { ...view, dialog, ES };
   };
   const codeES = (ES: HTMLElement) =>
     within(ES).getByRole('tabpanel', { name: 'Código de maxIndex en JavaScript' });
-  const norm = (t: string | null) => (t ?? '').replace(/\s+/g, '');
 
   it('cabecera, chips y datos de generación (TS-8)', async () => {
     server.use(adminHandlers.upcoming(UPCOMING_BUG_HUNT));
@@ -608,65 +589,29 @@ describe('Bug Hunt desde Próximos (S-051)', () => {
     );
   });
 
-  it('preview EN equivalente en inglés con el mismo código, tests y fix (TS-13)', async () => {
-    const { ES, EN } = await open();
-    expect(EN.querySelector('[lang="en"]')).not.toBeNull();
-    expect(
-      within(EN).getByRole('heading', { level: 3, name: 'what it should do' }),
-    ).toBeInTheDocument();
-    expect(
-      within(EN).getByText(
-        'Returns the index of the largest value in nums; if the maximum repeats, the first one. With an empty nums it returns 0.',
-      ),
-    ).toBeInTheDocument();
-    expect(within(EN).getByText('type: comparison')).toBeInTheDocument();
-    expect(within(EN).getByText('mutation: > → >=')).toBeInTheDocument();
-    expect(within(EN).getByRole('heading', { level: 3, name: 'tests' })).toBeInTheDocument();
-    expect(EN).toHaveTextContent('maxIndex of [3, 7, 2] returns 1, passes');
-    expect(
-      within(EN).getByRole('heading', { level: 3, name: 'the failing test' }).parentElement,
-    ).toHaveTextContent('expected 0 · got 2');
-    expect(
-      within(EN).getByRole('heading', { level: 3, name: /the fix · line 4/ }),
-    ).toBeInTheDocument();
-    expect(within(EN).getByRole('region', { name: 'Fix for line 4 in JavaScript' })).toBeVisible();
-    expect(within(EN).getByRole('heading', { level: 3, name: 'Why it fails' })).toBeInTheDocument();
-    expect(
-      within(EN).getByText(
-        'The condition that decides whether best changes uses >= instead of >: on a tie it moves too.',
-      ),
-    ).toBeInTheDocument();
-    const enCode = within(EN).getByRole('tabpanel', { name: 'Code of maxIndex in JavaScript' });
-    expect(enCode).toHaveTextContent('bug line');
-    expect(norm((enCode.textContent ?? '').replace('bug line', ''))).toBe(
-      norm((codeES(ES).textContent ?? '').replace('línea del bug', '')),
+  it('sin versión en inglés: ni preview EN ni sus textos (TS-13)', async () => {
+    const { dialog } = await open();
+    expectNoEnglish(dialog);
+    expect(dialog).not.toHaveTextContent(
+      'Returns the index of the largest value in nums; if the maximum repeats, the first one.',
     );
-    for (const es of [
-      'qué debería hacer',
-      'Por qué falla',
-      'comparación',
-      'línea del bug',
-      'esperado',
-    ]) {
-      expect(EN).not.toHaveTextContent(es);
-    }
+    expect(within(dialog).queryByText('Why it fails')).toBeNull();
+    expect(
+      within(dialog).queryByRole('tabpanel', { name: 'Code of maxIndex in JavaScript' }),
+    ).toBeNull();
   });
 
-  it('columnas lado a lado y jerarquía de encabezados (TS-14)', async () => {
-    const { ES, EN } = await open();
-    expect(ES.parentElement).toHaveClass('lg:grid-cols-2');
-    expect(EN.parentElement).toBe(ES.parentElement);
-    expect(ES.compareDocumentPosition(EN) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    for (const col of [ES, EN]) {
-      expect(within(col).queryAllByRole('heading', { level: 1 })).toHaveLength(0);
-      expect(within(col).queryAllByRole('heading', { level: 2 })).toHaveLength(0);
-    }
-    expect(within(ES).getByRole('heading', { level: 3, name: 'ES' })).toBeInTheDocument();
-    expect(within(EN).getByRole('heading', { level: 3, name: 'EN' })).toBeInTheDocument();
+  it('un solo panel «Vista previa» y jerarquía de encabezados (TS-14)', async () => {
+    const { dialog, ES } = await open();
+    expect(within(dialog).getAllByRole('region', { name: 'Vista previa' })).toHaveLength(1);
+    expect(ES.parentElement?.className ?? '').not.toMatch(/grid-cols-2/);
+    expect(within(ES).queryAllByRole('heading', { level: 1 })).toHaveLength(0);
+    expect(within(ES).queryAllByRole('heading', { level: 2 })).toHaveLength(0);
+    expect(within(ES).getByRole('heading', { level: 3, name: 'Vista previa' })).toBeInTheDocument();
   });
 
-  it('pestañas independientes, el fix sigue a la pestaña, sin efectos (TS-15)', async () => {
-    const { user, ES, EN } = await open();
+  it('el fix sigue a la pestaña, sin efectos (TS-15)', async () => {
+    const { user, ES } = await open();
     await user.click(within(ES).getByRole('tab', { name: 'Go' }));
     expect(within(ES).getByRole('tab', { name: 'Go' })).toHaveAttribute('aria-selected', 'true');
     const panel = within(ES).getByRole('tabpanel', { name: 'Código de maxIndex en Go' });
@@ -676,46 +621,38 @@ describe('Bug Hunt desde Próximos (S-051)', () => {
     expect(within(ES).getByRole('region', { name: 'Fix de la línea 4 en Go' })).toHaveTextContent(
       'if nums[i] > nums[best] {',
     );
-    expect(within(EN).getByRole('tab', { name: 'JavaScript' })).toHaveAttribute(
-      'aria-selected',
-      'true',
-    );
-    expect(within(EN).getByRole('region', { name: 'Fix for line 4 in JavaScript' })).toBeVisible();
+    expect(
+      within(ES).queryByRole('region', { name: 'Fix de la línea 4 en JavaScript' }),
+    ).toBeNull();
     expect(requests.filter((r) => r.pathname !== '/api/admin/challenges/upcoming')).toHaveLength(0);
   });
 
   it('pestañas con teclado (TS-16)', async () => {
-    const { user, ES, EN } = await open();
-    await user.click(within(EN).getByRole('tab', { name: 'JavaScript' }));
+    const { user, ES } = await open();
+    await user.click(within(ES).getByRole('tab', { name: 'JavaScript' }));
     await user.keyboard('{ArrowRight}');
-    const go = within(EN).getByRole('tab', { name: 'Go' });
+    const go = within(ES).getByRole('tab', { name: 'Go' });
     expect(go).toHaveFocus();
     expect(go).toHaveAttribute('aria-selected', 'true');
-    expect(within(EN).getByRole('tabpanel', { name: 'Code of maxIndex in Go' })).toBeVisible();
-    expect(within(EN).getByRole('region', { name: 'Fix for line 4 in Go' })).toBeVisible();
+    expect(within(ES).getByRole('tabpanel', { name: 'Código de maxIndex en Go' })).toBeVisible();
+    expect(within(ES).getByRole('region', { name: 'Fix de la línea 4 en Go' })).toBeVisible();
     await user.keyboard('{ArrowRight}');
-    expect(within(EN).getByRole('tab', { name: 'Java' })).toHaveFocus();
+    expect(within(ES).getByRole('tab', { name: 'Java' })).toHaveFocus();
     expect(
-      within(EN).getByRole('tabpanel', { name: 'Code of maxIndex in Java' }),
+      within(ES).getByRole('tabpanel', { name: 'Código de maxIndex en Java' }),
     ).toHaveTextContent('if (nums[i] >= nums[best]) {');
     await user.keyboard('{ArrowLeft}');
-    expect(within(EN).getByRole('tab', { name: 'Go' })).toHaveFocus();
-    expect(within(ES).getByRole('tab', { name: 'JavaScript' })).toHaveAttribute(
-      'aria-selected',
-      'true',
-    );
+    expect(within(ES).getByRole('tab', { name: 'Go' })).toHaveFocus();
   });
 
   it('solo lectura (TS-17)', async () => {
-    const { ES, EN } = await open();
-    for (const col of [ES, EN]) {
-      expect(within(col).queryAllByRole('button')).toHaveLength(0);
-      expect(within(col).queryAllByRole('radio')).toHaveLength(0);
-      expect(within(col).queryAllByRole('radiogroup')).toHaveLength(0);
-      expect(within(col).getAllByRole('tab')).toHaveLength(3);
-      expect(col.querySelector('[aria-live]')).toBeNull();
-      expect(within(col).getByRole('tabpanel')).toHaveAttribute('tabindex', '0');
-    }
+    const { ES } = await open();
+    expect(within(ES).queryAllByRole('button')).toHaveLength(0);
+    expect(within(ES).queryAllByRole('radio')).toHaveLength(0);
+    expect(within(ES).queryAllByRole('radiogroup')).toHaveLength(0);
+    expect(within(ES).getAllByRole('tab')).toHaveLength(3);
+    expect(ES.querySelector('[aria-live]')).toBeNull();
+    expect(within(ES).getByRole('tabpanel')).toHaveAttribute('tabindex', '0');
     expect(
       within(ES).getByRole('region', { name: 'Fix de la línea 4 en JavaScript' }),
     ).toHaveAttribute('tabindex', '0');
@@ -783,10 +720,11 @@ describe('Bug Hunt desde Próximos (S-051)', () => {
         'No pudimos mostrar la preview del juego. Mostramos los datos del desafío.',
       ),
     ).toBeInTheDocument();
-    const es = within(dialog).getByRole('region', { name: 'ES' });
+    const es = within(dialog).getByRole('region', { name: 'Textos' });
     expect(es).toHaveTextContent('Devuelve el índice del mayor valor de nums');
     expect(es).toHaveTextContent('La condición que decide si best cambia');
-    expect(within(dialog).getByRole('region', { name: 'EN' })).toBeInTheDocument();
+    expect(within(dialog).queryByRole('region', { name: 'EN' })).toBeNull();
+    expect(dialog).not.toHaveTextContent('Returns the index of the largest value in nums');
     expect(within(dialog).getByRole('region', { name: 'Datos del desafío' })).toHaveTextContent(
       'typo',
     );
@@ -806,25 +744,23 @@ describe('Bug Hunt desde Próximos (S-051)', () => {
     const first = render();
     const dialog = await openCell(first.user, '02/12 #32', 'Bug Hunt');
     await previewReady(dialog);
-    await within(dialog).findByText('Why it fails');
+    await within(dialog).findByText('Por qué falla');
     expect(await axe(first.container)).toHaveNoViolations();
     first.unmount();
     server.use(adminHandlers.upcoming(UPCOMING_BIG_O));
     const second = render();
     const bigO = await openCell(second.user, '02/12 #32', 'Big O');
     await previewReady(bigO);
-    await within(bigO).findByText('The outer loop runs n times.');
+    await within(bigO).findByText('El loop externo corre n veces.');
     expect(await axe(second.container)).toHaveNoViolations();
   });
 
-  it('el admin queda en español y solo el panel EN declara inglés (TS-22)', async () => {
+  it('el admin queda en español y nada declara inglés (TS-22)', async () => {
     const before = document.documentElement.lang;
-    const { dialog, ES, EN } = await open();
+    const { dialog, ES } = await open();
     expect(document.documentElement.lang).toBe(before);
-    const en = dialog.querySelectorAll('[lang="en"]');
+    expect(dialog.querySelectorAll('[lang="en"]')).toHaveLength(0);
     const es = dialog.querySelectorAll('[lang="es"]');
-    expect(en).toHaveLength(1);
-    expect(EN.contains(en[0] as Element)).toBe(true);
     expect(es).toHaveLength(1);
     expect(ES.contains(es[0] as Element)).toBe(true);
   });
@@ -833,6 +769,6 @@ describe('Bug Hunt desde Próximos (S-051)', () => {
     const { user } = await open();
     await user.keyboard('{Escape}');
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(screen.getByRole('button', { name: /Bug Hunt #32, 2026-12-02/ })).toHaveFocus();
+    expect(screen.getByRole('button', { name: /^Ver Bug Hunt #32, 2026-12-02:/ })).toHaveFocus();
   });
 });

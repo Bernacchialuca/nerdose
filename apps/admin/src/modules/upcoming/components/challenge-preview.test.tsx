@@ -12,17 +12,19 @@ vi.mock('../registry', async (importOriginal) => ({
 }));
 
 describe('ChallengePreview sin Preview registrada (TS-7)', () => {
-  it('cae a la vista genérica del payload sin aviso', async () => {
+  it('cae a la vista genérica del payload («Textos» en español) sin aviso', async () => {
     const { container } = render(
       <ChallengePreview gameId="bug-hunt" payload={{ ...BUG_HUNT_PAYLOAD, date: '2026-12-02' }} />,
     );
-    expect(within(screen.getByRole('region', { name: 'ES' })).getAllByText('spec')).toHaveLength(1);
-    expect(screen.getByRole('region', { name: 'ES' })).toHaveTextContent(
+    const texts = screen.getByRole('region', { name: 'Textos' });
+    expect(within(texts).getAllByText('spec')).toHaveLength(1);
+    expect(texts).toHaveTextContent(
       'Devuelve el índice del mayor valor de nums; si el máximo se repite, el del primero. Con nums vacío devuelve 0.',
     );
-    expect(screen.getByRole('region', { name: 'EN' })).toHaveTextContent(
-      'Returns the index of the largest value in nums;',
-    );
+    // Solo español: un único panel y sin la versión en inglés.
+    expect(screen.queryByRole('region', { name: 'EN' })).toBeNull();
+    expect(screen.queryByRole('region', { name: 'Vista previa' })).toBeNull();
+    expect(container).not.toHaveTextContent('Returns the index of the largest value in nums;');
     expect(screen.queryByText(/No pudimos mostrar la preview/)).toBeNull();
     expect(screen.queryByText('Cargando preview…')).toBeNull();
     expect(container.querySelector('[lang]')).toBeNull();

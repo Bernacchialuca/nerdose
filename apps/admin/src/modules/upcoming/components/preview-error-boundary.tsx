@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 
 import { Banner } from '@nerdose/ui';
 
-import { PayloadBilingual } from '@/modules/reports';
+import { PayloadTexts } from '@/modules/reports';
 
 type Props = { payload: Record<string, unknown>; children: ReactNode };
 
@@ -28,7 +28,7 @@ export class PreviewErrorBoundary extends Component<Props, { failed: boolean }> 
           announce={false}
           title="No pudimos mostrar la preview del juego. Mostramos los datos del desafío."
         />
-        <PayloadBilingual payload={this.props.payload} />
+        <PayloadTexts payload={this.props.payload} />
       </div>
     );
   }

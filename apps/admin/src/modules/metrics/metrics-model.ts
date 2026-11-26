@@ -134,3 +134,6 @@ export function sortQuality(rows: ChallengeQualityRow[], sort: QualitySort): Cha
 
 export const challengeCell = (row: Pick<ChallengeQualityRow, 'number' | 'date'>): string =>
   `#${row.number} · ${formatDayShort(row.date)}`;
+
+/** Filas por página de las tablas largas de Métricas (jugadores diarios y calidad). */
+export const METRICS_PAGE_SIZE = 15;

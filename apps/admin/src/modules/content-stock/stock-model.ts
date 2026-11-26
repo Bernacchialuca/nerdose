@@ -28,17 +28,3 @@ export function stockAlerts(data: ContentStockResponse): string[] {
   }
   return alerts;
 }
-
-export type RejectionRow = { key: string; bank: string; label: string; reason: string };
-
-// La respuesta no trae fecha por rechazo: no se pueden intercalar los bancos por recencia.
-export function rejectionRows(data: ContentStockResponse): RejectionRow[] {
-  return data.banks.flatMap((bank) =>
-    bank.rejections.map((r) => ({
-      key: `${bank.bank}:${r.wikidata_id}`,
-      bank: BANK_LABELS[bank.bank].short,
-      label: r.label,
-      reason: r.reason === '' ? 'Sin motivo registrado' : r.reason,
-    })),
-  );
-}

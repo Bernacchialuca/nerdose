@@ -46,6 +46,9 @@ export function Shell() {
                 </>
               ) : null}
             </NavLink>
+            <NavLink to="/banks" className={({ isActive }) => navItemClass({ active: isActive })}>
+              Bancos
+            </NavLink>
             <NavLink to="/content" className={({ isActive }) => navItemClass({ active: isActive })}>
               Stock
             </NavLink>

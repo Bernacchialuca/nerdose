@@ -36,6 +36,10 @@ function cellOf(rowName: string, column: string): HTMLElement {
 
 const grid = () => screen.findByRole('table');
 
+/** Cada celda con desafío es una sola tarjeta-botón: «Ver {Juego} #{n}, {fecha}: …». */
+const CARD = /^Ver .+ #\d+, \d{4}-\d{2}-\d{2}:/;
+const cards = () => screen.getAllByRole('button', { name: CARD });
+
 describe('/upcoming · datos y sesión', () => {
   it('pide la ventana completa con Bearer y no toca endpoints de jugador (TS-8)', async () => {
     server.use(adminHandlers.upcoming(UPCOMING_OK));
@@ -83,7 +87,7 @@ describe('/upcoming · datos y sesión', () => {
 });
 
 describe('P-03 · grilla', () => {
-  it('muestra títulos, columnas, filas y un botón Regenerar por celda (TS-17)', async () => {
+  it('muestra títulos, columnas, filas y una tarjeta «Ver detalle» por celda (TS-17)', async () => {
     server.use(adminHandlers.upcoming(UPCOMING_OK));
     render();
     const heading = await screen.findByRole('heading', { level: 1, name: 'Próximos desafíos' });
@@ -107,7 +111,15 @@ describe('P-03 · grilla', () => {
     expect(rows[0]).toBe('02/12 #32');
     expect(rows[13]).toBe('15/12 #45');
     expect(screen.queryByText(/01\/12|2026-12-01/)).toBeNull();
-    expect(screen.getAllByRole('button', { name: /^Regenerar / })).toHaveLength(42);
+    expect(cards()).toHaveLength(42);
+    // «Regenerar» solo vive en el drawer: la grilla no tiene botón propio.
+    expect(screen.queryAllByRole('button', { name: /Regenerar/ })).toHaveLength(0);
+    const card = within(cellOf('02/12 #32', 'Devdle')).getByRole('button');
+    expect(card).toHaveAccessibleName(/^Ver Devdle #32, 2026-12-02:\s*.*Aprobado/);
+    expect(card).not.toHaveAccessibleName(/Ver detalle/);
+    const more = within(card).getByText('Ver detalle ›');
+    expect(more).toHaveAttribute('aria-hidden', 'true');
+    expect(within(cellOf('02/12 #32', 'Devdle')).getAllByRole('button')).toHaveLength(1);
     expect(screen.queryByText(/regeneración en curso|No se pudo regenerar/)).toBeNull();
   });
 
@@ -142,7 +154,8 @@ describe('P-03 · grilla', () => {
       'Bug Hunt',
     ]);
     expect(screen.getByText(/· 5 juegos ·/)).toBeInTheDocument();
-    expect(screen.getAllByRole('button', { name: /^Regenerar / })).toHaveLength(70);
+    expect(cards()).toHaveLength(70);
+    expect(screen.queryAllByRole('button', { name: /Regenerar/ })).toHaveLength(0);
     expect(document.querySelector('[lang="en"]')).toBeNull();
     expect(screen.queryByText('Cargando preview…')).toBeNull();
     expect(screen.queryByRole('tabpanel')).toBeNull();
@@ -221,9 +234,11 @@ describe('P-03 · grilla', () => {
     render();
     await grid();
     expect(
-      screen.getByRole('button', { name: /Regenerando….*regeneración pendiente/ }),
+      screen.getByRole('button', {
+        name: /^Ver Grep Grid #35, 2026-12-05:\s*.*Regenerando….*regeneración pendiente/,
+      }),
     ).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Regenerar Grep Grid #35' })).toBeNull();
+    expect(screen.queryAllByRole('button', { name: /Regenerar/ })).toHaveLength(0);
     expect(
       screen.getByText(
         'Hay una regeneración en curso. La grilla se actualiza sola cada 5 segundos.',
@@ -234,25 +249,34 @@ describe('P-03 · grilla', () => {
 
   it('regeneración fallida en la grilla (TS-25)', async () => {
     server.use(adminHandlers.upcoming(UPCOMING_REGEN_FAILED));
-    render();
+    const { user } = render();
     await grid();
     expect(cellOf('05/12 #35', 'Grep Grid')).toHaveTextContent(
       'Aprobado · Regeneración fallida: overlap_conflict',
     );
-    expect(screen.getByRole('button', { name: 'Regenerar Grep Grid #35' })).toBeEnabled();
     expect(
       screen.getByText(
         'No se pudo regenerar Grep Grid del 2026-12-05: ningún reemplazo pasó la verificación (overlap_conflict). Queda el actual.',
       ),
     ).toBeInTheDocument();
+    // Se puede volver a regenerar desde el detalle de la celda.
+    await user.click(screen.getByRole('button', { name: /^Ver Grep Grid #35, 2026-12-05:/ }));
+    const drawer = await screen.findByRole('dialog', { name: 'Grep Grid #35' });
+    expect(within(drawer).getByRole('button', { name: 'Regenerar' })).not.toHaveAttribute(
+      'aria-disabled',
+    );
   });
 
-  it('ítem rechazado: aviso y Regenerar sin regenerar solo (TS-26)', async () => {
+  it('ítem rechazado: aviso y Regenerar (en el detalle) sin regenerar solo (TS-26)', async () => {
     server.use(adminHandlers.upcoming(UPCOMING_REJECTED_ITEM));
-    render();
+    const { user } = render();
     await grid();
     expect(cellOf('05/12 #35', 'Devdle')).toHaveTextContent('Usa un ítem rechazado: CAP theorem');
-    expect(screen.getByRole('button', { name: 'Regenerar Devdle #35' })).toBeEnabled();
+    await user.click(screen.getByRole('button', { name: /^Ver Devdle #35, 2026-12-05:/ }));
+    const drawer = await screen.findByRole('dialog', { name: 'Devdle #35' });
+    expect(within(drawer).getByRole('button', { name: 'Regenerar' })).not.toHaveAttribute(
+      'aria-disabled',
+    );
     expect(requests.filter((r) => r.method === 'POST')).toHaveLength(0);
   });
 
@@ -300,20 +324,23 @@ describe('P-03 · accesibilidad e idioma', () => {
     expect(await axe(failed.container)).toHaveNoViolations();
   });
 
-  it('el admin queda en español y solo el panel EN declara inglés (TS-50)', async () => {
+  it('el admin queda en español y nada declara inglés (TS-50)', async () => {
     server.use(adminHandlers.upcoming(UPCOMING_OK));
     const initialLang = document.documentElement.lang;
     const { user } = render();
     await grid();
     await user.click(
-      within(cellOf('02/12 #32', 'Devdle')).getByRole('button', { name: /Devdle #32, 2026-12-02/ }),
+      within(cellOf('02/12 #32', 'Devdle')).getByRole('button', {
+        name: /^Ver Devdle #32, 2026-12-02:/,
+      }),
     );
     const dialog = await screen.findByRole('dialog', { name: 'Devdle #32' });
     await waitFor(() => {
-      expect(dialog.querySelector('[lang="en"]')).not.toBeNull();
+      expect(dialog.querySelector('[lang="es"]')).not.toBeNull();
     });
     expect(document.documentElement.lang).toBe(initialLang);
-    expect(dialog.querySelectorAll('[lang="en"]')).toHaveLength(1);
+    expect(dialog.querySelectorAll('[lang="en"]')).toHaveLength(0);
+    expect(within(dialog).getByRole('region', { name: 'Vista previa' })).toBeInTheDocument();
     expect(within(dialog).getByText('Intento 0 · generator 1.4.0')).toBeInTheDocument();
     expect(within(dialog).getByRole('heading', { name: 'Datos del desafío' })).toBeInTheDocument();
     expect(
@@ -356,7 +383,9 @@ describe('P-03 · polling y reemplazo', () => {
     await waitFor(() => {
       expect(cellOf('05/12 #35', 'Grep Grid')).toHaveTextContent(/✓\s*Aprobado/);
     });
-    expect(screen.getByRole('button', { name: 'Regenerar Grep Grid #35' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /^Ver Grep Grid #35, 2026-12-05:/ }),
+    ).not.toHaveAccessibleName(/Regenerando|pendiente/);
     expect(screen.queryByText(/regeneración en curso/)).toBeNull();
     await vi.advanceTimersByTimeAsync(30_000);
     expect(requestsTo('GET', UPCOMING_PATH)).toHaveLength(2);

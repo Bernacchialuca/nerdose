@@ -2,11 +2,14 @@ import { Panel, cn, dataTableClass } from '@nerdose/ui';
 
 import { formatCount } from '@/lib/format-number';
 
-import type { RejectedGuess } from '../api/types';
+import { Pagination, usePagination } from '@/components/pagination';
 import { TableRegion } from '@/components/table-region';
+
+import type { RejectedGuess } from '../api/types';
 
 export function TopRejectedPanel({ guesses }: { guesses: RejectedGuess[] }) {
   const c = dataTableClass();
+  const pages = usePagination(guesses, 10);
   return (
     <Panel title="Top 50 de palabras rechazadas en Devdle">
       {guesses.length === 0 ? (
@@ -30,9 +33,9 @@ export function TopRejectedPanel({ guesses }: { guesses: RejectedGuess[] }) {
               </tr>
             </thead>
             <tbody>
-              {guesses.map((g, i) => (
+              {pages.pageItems.map((g, i) => (
                 <tr key={g.word}>
-                  <td className={c.td}>{i + 1}</td>
+                  <td className={c.td}>{(pages.page - 1) * pages.pageSize + i + 1}</td>
                   <th scope="row" className={cn(c.td, 'text-left font-normal')}>
                     {g.word}
                   </th>
@@ -43,6 +46,15 @@ export function TopRejectedPanel({ guesses }: { guesses: RejectedGuess[] }) {
           </table>
         </TableRegion>
       )}
+      <Pagination
+        page={pages.page}
+        totalPages={pages.totalPages}
+        total={pages.total}
+        pageSize={pages.pageSize}
+        noun="palabras"
+        onChange={pages.setPage}
+        label="Paginado de palabras rechazadas"
+      />
     </Panel>
   );
 }

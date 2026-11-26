@@ -1,7 +1,7 @@
 import type { MutableRefObject } from 'react';
 
 import type { GameId } from '@nerdose/core';
-import { Badge, buttonClass, cn } from '@nerdose/ui';
+import { Badge, cn } from '@nerdose/ui';
 
 import { GAME_LABELS } from '@/modules/reports';
 
@@ -10,7 +10,7 @@ import { cellBadges, cellState, rowLabel } from '../cell-state';
 
 const TH =
   'border-b border-border-subtle px-5 py-3.5 text-left font-mono text-label-comment font-medium text-text-dim';
-const TD = 'border-b border-border-row px-5 py-3.5 align-top';
+const TD = 'border-b border-border-row px-3 py-2.5 align-top';
 
 export type CellRef = { date: string; game_id: GameId };
 
@@ -20,7 +20,6 @@ type UpcomingGridProps = {
   data: UpcomingResponse;
   openRefs: MutableRefObject<Map<string, HTMLButtonElement>>;
   onOpen: (cell: CellRef) => void;
-  onRegenerate: (day: UpcomingDay, game: UpcomingGame, trigger: HTMLElement) => void;
 };
 
 function Cell({
@@ -28,7 +27,6 @@ function Cell({
   game,
   openRefs,
   onOpen,
-  onRegenerate,
 }: Omit<UpcomingGridProps, 'data'> & { day: UpcomingDay; game: UpcomingGame }) {
   const state = cellState(game);
   const label = `${GAME_LABELS[game.game_id]} #${day.number}`;
@@ -53,7 +51,7 @@ function Cell({
   ));
   return (
     <td className={cn(TD, failure && 'border border-status-warning-border bg-status-warning-bg')}>
-      <div className="flex flex-col items-start gap-2">
+      <div className="flex flex-col items-stretch gap-2">
         {state.canOpen ? (
           <button
             type="button"
@@ -64,33 +62,28 @@ function Cell({
             onClick={() => {
               onOpen({ date: day.date, game_id: game.game_id });
             }}
-            className="flex flex-col items-start gap-1 text-left font-mono text-mono-body text-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            className="group flex w-full flex-col items-start gap-2 rounded-control border border-border-subtle p-2.5 text-left font-mono text-mono-body text-text hover:border-border-hover hover:bg-surface-sunken focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
             <span className="sr-only">
-              {label}, {day.date}:{' '}
-            </span>
+              Ver {label}, {day.date}:
+            </span>{' '}
             {lines}
+            <span
+              aria-hidden="true"
+              className="font-mono text-meta text-text-dim group-hover:text-text"
+            >
+              Ver detalle ›
+            </span>
           </button>
         ) : (
           <div className="flex flex-col items-start gap-1">{lines}</div>
         )}
-        {state.canRegenerate ? (
-          <button
-            type="button"
-            onClick={(event) => {
-              onRegenerate(day, game, event.currentTarget);
-            }}
-            className={buttonClass({ variant: 'secondary', size: 'md' })}
-          >
-            Regenerar <span className="sr-only">{label}</span>
-          </button>
-        ) : null}
       </div>
     </td>
   );
 }
 
-export function UpcomingGrid({ data, openRefs, onOpen, onRegenerate }: UpcomingGridProps) {
+export function UpcomingGrid({ data, openRefs, onOpen }: UpcomingGridProps) {
   const columns = data.days.at(0)?.games ?? [];
   return (
     <div
@@ -130,7 +123,6 @@ export function UpcomingGrid({ data, openRefs, onOpen, onRegenerate }: UpcomingG
                     game={game}
                     openRefs={openRefs}
                     onOpen={onOpen}
-                    onRegenerate={onRegenerate}
                   />
                 ) : (
                   <td key={column.game_id} className={TD}>
