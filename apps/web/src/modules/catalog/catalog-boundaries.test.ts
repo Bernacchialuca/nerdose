@@ -28,7 +28,7 @@ describe('catalog boundaries', () => {
     }
   });
 
-  it('TS-1: web depende solo de los paquetes con client (y de zod)', () => {
+  it('TS-1: web depende solo de los paquetes con client', () => {
     const pkg = JSON.parse(readFileSync(join(ROOT, '..', 'package.json'), 'utf8')) as {
       dependencies?: Record<string, string>;
       devDependencies?: Record<string, string>;
@@ -47,6 +47,6 @@ describe('catalog boundaries', () => {
     expect(pkg.dependencies?.['@nerdose/game-grep-grid']).toBe('workspace:*');
     expect(pkg.dependencies?.['@nerdose/game-timeline']).toBe('workspace:*');
     expect(names.filter((n) => n.startsWith(DND_SCOPE))).toEqual([]);
-    expect(pkg.dependencies?.zod).toBe('^4.6.7');
+    expect(pkg.dependencies?.zod).toBeUndefined();
   });
 });
