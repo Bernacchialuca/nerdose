@@ -38,12 +38,12 @@ Entry `./client` (React 19, Shiki loaded dynamically). Same props contract as Ti
 
 ### Game
 - **Location:** packages/games/big-o/src/client/game.tsx
-- **Description:** Playing screen: `// peor caso` line, question `h1`, `CodeBlock` starting at `codeLanguage ?? 'js'`, "// tu respuesta" with the 8 options as a radiogroup, hint line with a polite live region, "Confirmar respuesta" and the "// reglas" card (`#game-help`). Selection and visible language are local state that survives a tab or language change and restarts when the code changes. `onMove(moveSchema.parse({ language, option }))` once per attempt (`submittedRef`, re-armed on `pending` end or `moveError`). `pending` locks the options, the tabs and the button; `locked` keeps only the question and the host slots. DOM in mobile order, desktop placed with `lg:` classes (D5).
+- **Description:** Playing screen: `// peor caso` line, question `h1`, `CodeBlock` starting at `codeLanguage ?? 'js'`, "// tu respuesta" with the 8 options as a radiogroup, hint line with a polite live region, "Confirmar respuesta →" full width right under the options (disabled label «Elegí una opción») and, in the aside, the "// cómo se juega" card (`#game-help`) then the report slot (REQ-012 common pattern). Selection and visible language are local state that survives a tab or language change and restarts when the code changes. `onMove(moveSchema.parse({ language, option }))` once per attempt (`submittedRef`, re-armed on `pending` end or `moveError`). `pending` locks the options, the tabs and the button; `locked` keeps only the question and the host slots. DOM in mobile order, desktop placed with `lg:` classes (D5).
 - **Signature:** `Game(props: GameProps)`
 
 ### Result
 - **Location:** packages/games/big-o/src/client/result.tsx
-- **Description:** Verdict (`sr-only` `h1` on a win, `Banner` `failure` otherwise), question `h2`, `CodeBlock` at `result.code_language` with the line notes (the code comes from `publicView.code`; without `publicView` the question and code are omitted), the 8 marked options and the "Paso a paso" `aside`. Slots `notices`, `footer` and `aside`.
+- **Description:** Verdict always as a `Banner` `titleAs="h1"` (`success` on a win with its own detail, `failure` otherwise; REQ-012 common pattern), question `h2`, `CodeBlock` at `result.code_language` with the line notes (the code comes from `publicView.code`; without `publicView` the question and code are omitted), the 8 marked options and the "Paso a paso" `aside`. Slots `notices`, `footer` and `aside`.
 - **Signature:** `Result(props: ResultProps)`
 
 ### Preview
@@ -62,8 +62,13 @@ Entry `./client` (React 19, Shiki loaded dynamically). Same props contract as Ti
 
 ### CodeBlock
 - **Location:** packages/games/big-o/src/client/code-block.tsx
-- **Description:** Read-only code block: `tablist` of JavaScript / Go / Java (arrows, Home, End; `aria-disabled` when locked), file name, keyboard-reachable `tabpanel` with its own horizontal scroll, `aria-hidden` line numbers, highlighted lines with their note (below the line in blocks narrower than 32rem and at the right margin from there, by container query, D12). Same tree with or without color: Shiki tokens are drawn as `<span style={{ color }}>` once the tokenizer loads; while loading, on failure or when the line count differs the plain text is shown (D11). The root sets `SHIKI_VARS` (D2). Resets the tab when `initialLanguage` or `code` change.
+- **Description:** Read-only code block: `tablist` of JavaScript / Go / Java (arrows, Home, End; `aria-disabled` when locked), file name, keyboard-reachable `tabpanel` (lines wrap through `CodeText` with a hanging indent, so it does not scroll sideways in practice; REQ-012), `aria-hidden` line numbers, highlighted lines with their note (below the line in blocks narrower than 32rem and at the right margin from there, by container query, D12). Same tree with or without color: Shiki tokens are drawn as `<span style={{ color }}>` once the tokenizer loads; while loading, on failure or when the line count differs the plain text is shown (D11). The root sets `SHIKI_VARS` (D2). Resets the tab when `initialLanguage` or `code` change.
 - **Signature:** `CodeBlock({ code, initialLanguage, t, notes?, highlight?, disabled?, onLanguageChange?, className? })`
+
+### CodeText
+- **Location:** packages/games/big-o/src/client/code-text.tsx
+- **Description:** One code line that never forces a horizontal scroll: the leading indent stays fixed (`flex-none`, `whitespace-pre`) and the rest wraps (`whitespace-pre-wrap wrap-anywhere`) aligned with the code of that line; Shiki tokens are trimmed across token boundaries (`dropPrefix`). Same file in Bug Hunt (REQ-012/S-066).
+- **Signature:** `CodeText({ text, tokens? }: { text: string; tokens?: readonly HighlightToken[] })`
 
 ### loadTokenizer / SHIKI_VARS / useTokenizer
 - **Location:** packages/games/big-o/src/client/{highlight.ts,shiki-vars.ts,use-tokenizer.ts}

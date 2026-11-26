@@ -4,8 +4,8 @@ title: Jugada y cierre de partida con rachas
 type: feature
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-14
-stories: [S-022, S-023, S-024, S-042, S-043, S-048]
+last_updated: 2026-11-25
+stories: [S-022, S-023, S-024, S-042, S-043, S-048, S-061, S-063, S-066]
 ---
 
 # Jugada y cierre de partida con rachas
@@ -13,12 +13,12 @@ stories: [S-022, S-023, S-024, S-042, S-043, S-048]
 **Tipo:** Feature
 **Status:** Draft
 **Creado:** 2026-11-03
-**Última actualización:** 2026-11-14
-**Stories:** S-022, S-023, S-024, S-042, S-043, S-048
+**Última actualización:** 2026-11-25
+**Stories:** S-022, S-023, S-024, S-042, S-043, S-048, S-061, S-063, S-066
 
 ## Descripción
 
-El jugador hace una jugada. La `api` la valida con el `moveSchema` del juego, la aplica con `applyMove` y la persiste. Si la jugada termina la partida, en **la misma transacción** cierra la Play, actualiza las rachas y las stats (días neutros, ADR-011) y responde con el resultado. Cubre C-11, C-12, C-15, C-16, C-19, C-20, C-23, C-27, C-30 y C-33 (F3 y F3.1).
+El jugador hace una jugada. La `api` la valida con el `moveSchema` del juego, la aplica con `applyMove` y la persiste. Si la jugada termina la partida, en **la misma transacción** cierra la Play, actualiza las rachas y las stats (días neutros, ADR-011) y responde con el resultado. Cubre C-11, C-12, C-15, C-16, C-19, C-20, C-23, C-27, C-30, C-33, C-54 y C-55 (F3 y F3.1).
 
 ## Servicios Involucrados
 
@@ -80,7 +80,7 @@ sequenceDiagram
 
 | game_id | `move` |
 |---|---|
-| devdle | `{ "guess": "REACT" }` (A–Z, largo = `public_view.length`) |
+| devdle | `{ "guess": "REACT" }` (A–Z, largo = `public_view.length`), `{ "hint": 2 }` (pista: posición base 0, entero 0–11) o `{ "give_up": true }` (rendirse). Los tres son objetos estrictos: una clave de más falla en `moveSchema` (REQ-012) |
 | grep-grid | `{ "type": "select", "from": { "row", "col" }, "to": { "row", "col" } }` o `{ "type": "give_up" }` |
 | timeline | `{ "order": [opaque_id ×5] }` |
 | big-o | `{ "language": "js" \| "go" \| "java", "option": big_o_option }` |
@@ -113,6 +113,8 @@ Big O: `initState → {}` y el estado sigue vacío mientras la Play está `in_pr
 
 Bug Hunt: `initState → {}`; la línea elegida vive solo en el cliente hasta confirmar. La primera jugada válida, con `line ∈ pickable_lines`, devuelve `{ state: { language, line }, feedback: null }` y cierra la partida. Una `line ∉ pickable_lines` devuelve `invalid_move` (ROLLBACK: no crea la Play ni toca la preferencia). Un `line` no entero o `< 1` falla en `moveSchema` antes de la transacción.
 
+Devdle (REQ-012): con la partida terminada (`gave_up`, adivinada o 6 intentos) cualquier jugada devuelve `invalid_move`. `{ hint }`: si ya hay `state.hint` o `hint >= word.length` → `invalid_move`; si no, `state.hint = { position, letter }` (la letra de `word` en esa posición) y `feedback = { hint: { position, letter } }`. No agrega un intento ni cierra la partida, y no se repite en el estado de los intentos siguientes salvo como `state.hint`. Solo revela esa letra: nunca la palabra, la categoría ni el `term_id` (test anti-spoiler). `{ give_up: true }` → `state.gave_up = true`, `feedback = { gave_up: true }` y la partida cierra en el paso 3.
+
 Grep Grid, `move.type = 'select'`: si `from` y `to` coinciden exactamente con la primera y la última celda de una palabra no encontrada, se agrega `{ term_id, cells }` al final de `state.found_words` y `feedback.definition` va en `ctx.locale`. `move.type = 'give_up'`: `state.gave_up = true` y `feedback = null`.
 
 **Eventos de dominio:** `GuessRejected` o `MoveApplied`, solo en los logs.
@@ -126,6 +128,8 @@ Grep Grid, `move.type = 'select'`: si `from` y `to` coinciden exactamente con la
 **Tipo:** Interno (misma transacción que el paso 2)
 
 **Acción:** `result = result(payload, state, locale)`, `win = isWin(result)`, `score = score(result)`.
+
+En Devdle, `isFinished(state) = state.gave_up || adivinó || guesses.length === 6`. `result = { win, score: win ? guesses.length : 6, word, category, definition, summary, guesses, hint: state.hint ?? null }` más `gave_up: true` solo si se rindió (los resultados guardados antes de REQ-012 no traen `hint` ni `gave_up` y siguen siendo válidos). Rendirse es una derrota común: `lost`, cuenta para la racha, `reduceStats` suma `losses + 1` y el historial dice `✗ X/6`. La pista no cambia el puntaje ni las stats.
 
 En Grep Grid, `isFinished(state) = state.gave_up || state.found_words.length === 8`: la octava palabra cierra `won` con `score = 8`; `give_up` cierra `lost` con `score = found_words.length` (0–7), cuenta para la racha y `result` trae `gave_up: true` y las 8 `words` con `found` y `cells`. `extra` de grep-grid = `{ words_found: { "0": n, …, "8": n } }`; `reduceStats` suma 1 en `String(score)`.
 
@@ -175,7 +179,7 @@ Bug Hunt: `result = { win: line === bug_line, score: 1 | 0, chosen_line, code_la
 
 | game_id | `feedback` |
 |---|---|
-| devdle | `{ guess, marks: ("correct" \| "present" \| "absent")[] }` |
+| devdle | `{ guess, marks: ("correct" \| "present" \| "absent")[] }`; `{ hint: { position, letter } }` en la pista; `{ gave_up: true }` al rendirse (REQ-012) |
 | grep-grid | `{ found: true, term_id, word, definition, cells: [{ row, col }] }` o `{ found: false, reason: "not_a_word" \| "already_found" }`; `null` en `give_up` |
 | timeline, big-o, bug-hunt | `null` (la jugada cierra) |
 
@@ -194,7 +198,7 @@ La web copia `play.code_language` a la Play en su cache y, si no es null, actual
 | 1 | `move` no pasa `moveSchema` | 422 | `{ "error": { "code": "invalid_move", … } }` | web muestra "jugada inválida" |
 | 2 | Play terminada | 409 | `{ "error": { "code": "game_finished", … } }` | web pide de nuevo `GET …/today` y muestra el resultado |
 | 2 | Palabra fuera de la lista (Devdle) | 422 | `{ "error": { "code": "not_in_word_list", … } }` | web muestra "no está en la lista"; el intento no cuenta |
-| 2 | Inválida para el estado (selección en reversa, no alineada o de una sola celda en Grep Grid, `line` ∉ `pickable_lines`, faltantes en Timeline) | 422 | `{ "error": { "code": "invalid_move", … } }` | web muestra el error; nada cambia |
+| 2 | Inválida para el estado (selección en reversa, no alineada o de una sola celda en Grep Grid, `line` ∉ `pickable_lines`, faltantes en Timeline, segunda pista o posición fuera de la palabra en Devdle) | 422 | `{ "error": { "code": "invalid_move", … } }` | web muestra el error; nada cambia |
 | 1 | Rate limit (60/min por player, 300/min por IP) | 429 | `{ "error": { "code": "rate_limited", … } }` | Reintento después de `Retry-After` |
 | 2–3 | Error de BD | 500 | `{ "error": { "code": "internal_error", … } }` | ROLLBACK completo: ni la Play ni las rachas quedan a medias |
 
@@ -219,3 +223,5 @@ La web copia `play.code_language` a la Play en su cache y, si no es null, actual
 > Actualizado por REQ-009 (stories S-042 y S-043): `code_language = codeLanguage(state)` del juego (no `move.language`), preferencia actualizada en la misma transacción, `MoveResponse.play.code_language`, estado, resultado y `extra` de Big O.
 
 > Actualizado por REQ-010 (story S-048): `applyMove`, `result`, `extra` y etiqueta del historial de Bug Hunt.
+
+> Actualizado por REQ-012 (stories S-063 y S-066, implementadas fuera del workflow el 2026-11-25): jugadas `hint` y `give_up` de Devdle, `state.hint`, `state.gave_up`, `result.hint` y `result.gave_up`. S-061: los eventos de dominio de este flujo que identifican al jugador (`GuessRejected`, `PlayFinished`, `StreaksUpdated`) se loguean con `player_ref` (8 hex de `sha256(player_id)`), nunca con el `player_id` crudo.

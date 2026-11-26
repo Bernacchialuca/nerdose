@@ -63,8 +63,21 @@ export const limit = (opts: { windowMs: number; limit: number; key: (c: Context)
     },
   });
 
-export const clientIp = (trustHeader?: string) => (c: Context) =>
-  (trustHeader && c.req.header(trustHeader)?.split(',')[0]?.trim()) || 'unknown';
+// IP de la conexión; undefined sin socket (app.request en tests)
+const socketIp = (c: Context) => { try { return getConnInfo(c).remote.address || undefined; } catch { return undefined; } };
+
+export const clientIp =
+  ({ TRUST_PROXY_HEADER: header, TRUST_PROXY_HOPS: hops = 1 }: ClientIpConfig) =>
+  (c: Context): string => {
+    const raw = header ? c.req.header(header)?.trim() : undefined;
+    if (raw) {
+      if (header?.toLowerCase() !== 'x-forwarded-for') return raw; // X-Real-IP, CF-Connecting-IP…: the proxy overwrites it
+      const entries = raw.split(',').map((e) => e.trim()).filter(Boolean);
+      const ip = entries[Math.max(0, entries.length - hops)];     // read from the RIGHT: the left entries are client-written
+      if (ip) return ip;
+    }
+    return socketIp(c) ?? 'unknown'; // header missing (request that skipped the proxy) -> connection IP
+  };
 ```
 
 ## How to use
@@ -111,6 +124,7 @@ app.use(bodyLimit({ maxSize: 64 * 1024, onError: () => { throw new AppError('val
 - A `429` carries `Retry-After` in seconds and the body `{ "error": { "code": "rate_limited", "message": ... } }`.
 - The client IP comes only from the header named by `TRUST_PROXY_HEADER`. Never trust an arbitrary `X-Forwarded-For` that is not configured. With `X-Forwarded-For`, use the entry the trusted proxy appended, counting `TRUST_PROXY_HOPS` from the right (the left entries are client-controlled). Without the header, use the connection IP (`getConnInfo`).
 - Per-`player_id` limits apply after the `nd_pid` cookie is resolved.
+- In production the `api` logs a `warn` at startup if `TRUST_PROXY_HEADER` is not set: behind a proxy every client would share the proxy IP. Prefer a header the proxy overwrites (`X-Real-IP`, `CF-Connecting-IP`, `Fly-Client-IP`) over `X-Forwarded-For`. (Updated 2026-11-25, REQ-012/S-061: before, the first `X-Forwarded-For` entry was used and a missing header fell into one shared `'unknown'` bucket.)
 - Payload size limits are set at the framework level (`bodyLimit`), not in application code.
 - Stack traces and internal messages are never exposed (see `error-handling`).
 - HTTPS is enforced by the infrastructure (deferred). The `api` does not terminate TLS.
@@ -121,5 +135,5 @@ app.use(bodyLimit({ maxSize: 64 * 1024, onError: () => { throw new AppError('val
 - **http-server**: the middleware are registered in `buildApp` before the routes.
 - **player-identity**: the `Secure; SameSite=Lax` cookie and the `player_id` rate-limit key.
 - **auth-jwt**: the stricter limit on `POST /api/admin/login`.
-- **env-config**: `TRUST_PROXY_HEADER`, `WEB_ORIGIN`, `ADMIN_ORIGIN`.
+- **env-config**: `TRUST_PROXY_HEADER`, `TRUST_PROXY_HOPS`, `WEB_ORIGIN`, `ADMIN_ORIGIN`.
 - **error-handling**: `forbidden_origin`, `unsupported_media_type`, `rate_limited`.

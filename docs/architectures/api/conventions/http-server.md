@@ -166,7 +166,7 @@ export const requestContext = (logger: Logger) =>
   });
 ```
 
-Any log inside a handler uses `c.var.logger` (not the global logger) to keep the `requestId`. `player_id` is added to the child logger by `player-session` when the cookie resolves.
+Any log inside a handler uses `c.var.logger` (not the global logger) to keep the `requestId`. `player_ref` (first 8 hex of `sha256(player_id)`, `@/shared/player-ref`) is added to the child logger by `player-session` when the cookie resolves. The raw `player_id` is the cookie credential and never appears in logs, not even in domain events (`PlayStarted`, `PlayFinished`, `StreaksUpdated`, `GuessRejected`, `PlayVoidAcknowledged` log `player_ref`) (REQ-012/S-061, see `player-identity`).
 
 ## Global error handler
 

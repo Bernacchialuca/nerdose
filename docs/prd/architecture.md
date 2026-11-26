@@ -1,6 +1,6 @@
 ---
 created: 2026-11-03
-last_updated: 2026-11-03
+last_updated: 2026-11-25
 status: "Draft"
 ---
 
@@ -108,6 +108,7 @@ El script manda un `User-Agent` descriptivo con un contacto del proyecto, como e
 
 **Logging:**
 - Logs JSON estructurados con pino a stdout en `api` y `generator`. Dónde se recolectan y cuánto se retienen queda diferido con el hosting.
+- Los logs nunca llevan el `player_id` crudo (es la credencial de la cookie): llevan `player_ref`, los primeros 8 hex de su sha256 (NFR-S09, REQ-012).
 - Cada corrida de job del generator queda además en la tabla `job_runs` (consultable desde el admin).
 
 **Monitoreo:**
@@ -117,6 +118,7 @@ El script manda un `User-Agent` descriptivo con un contacto del proyecto, como e
 
 **Error Tracking:**
 - Diferido. En v1 los errores quedan en los logs.
+- En `web`, un error de render nunca deja una página en blanco: la pantalla `error-inesperado` (con header y footer propios, sin depender de la sesión) ofrece reintentar o volver a los juegos, y el mensaje real del error solo se ve en `vite dev` (REQ-012).
 
 **Testing:**
 - Vitest para unit y contrato (incluidos los tests anti-spoiler por juego, NFR-S01/NFR-S04), con relojes falsos para fechas y rachas.
@@ -147,7 +149,7 @@ El script manda un `User-Agent` descriptivo con un contacto del proyecto, como e
 - En `web`: TanStack Query cachea `/api/today` y `/api/me/stats` y los invalida al terminar una partida o al cambiar el día.
 - Cambio de día: una sola ejecución de la publicación (single-flight) y refetch del cliente con jitter de 0–3 s.
 
-**Rate Limiting:** (`hono-rate-limiter`, store en memoria; `429 rate_limited` con `Retry-After`, sin captcha)
+**Rate Limiting:** (`hono-rate-limiter`, store en memoria; `429 rate_limited` con `Retry-After`, sin captcha). La IP del cliente sale del header que nombra `TRUST_PROXY_HEADER`: con `X-Forwarded-For` se toma la entrada que agregó el proxy, contando `TRUST_PROXY_HOPS` (default 1) desde la derecha; otros headers (`X-Real-IP`, `CF-Connecting-IP`) se toman enteros. Sin header configurado, o si el request no lo trae, se usa la IP de la conexión. En producción, sin `TRUST_PROXY_HEADER` la `api` avisa al arrancar (ADR-012, REQ-012).
 
 | Ruta | Clave | Límite |
 |---|---|---|

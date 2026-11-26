@@ -8,7 +8,7 @@
 
 ## AppDeps / AppEnv
 - **Location:** apps/api/src/http/types.ts
-- **Signature:** `AppDeps = { logger; health; config: Pick<ApiEnv, 'WEB_ORIGIN' | 'ADMIN_ORIGIN' | 'TRUST_PROXY_HEADER'>; identity: IdentityService }`; `AppEnv = { Variables: { requestId; logger; locale: Locale; player: Player | null } }`
+- **Signature:** `AppDeps = { logger; health; config: Pick<ApiEnv, 'WEB_ORIGIN' | 'ADMIN_ORIGIN' | 'TRUST_PROXY_HEADER' | 'TRUST_PROXY_HOPS'>; identity: IdentityService }`; `AppEnv = { Variables: { requestId; logger; locale: Locale; player: Player | null } }`
 - **Usage:** new dependencies are added to `AppDeps` and injected in `src/index.ts`; handlers type their factory as `createFactory<AppEnv>()`
 
 ## registerRoutes
@@ -47,14 +47,14 @@
 
 ## limit / clientIp
 - **Location:** apps/api/src/http/middleware/rate-limit.ts
-- **Signature:** `limit({ windowMs, limit, key: (c) => string }): MiddlewareHandler<AppEnv>`; `clientIp(trustHeader?: string): (c) => string`
-- **Description:** in-memory `hono-rate-limiter`; `429 rate_limited` with `Retry-After`. `clientIp` takes the first IP of the trusted header, else `'unknown'`. Create limiters per app instance (inside route factories), not at module level.
-- **Usage:** `limit({ windowMs: 600_000, limit: 20, key: clientIp(deps.config.TRUST_PROXY_HEADER) })`
+- **Signature:** `limit({ windowMs, limit, key: (c) => string }): MiddlewareHandler<AppEnv>`; `clientIp(config: ClientIpConfig): (c) => string` with `ClientIpConfig = { TRUST_PROXY_HEADER?: string; TRUST_PROXY_HOPS?: number }`
+- **Description:** in-memory `hono-rate-limiter`; `429 rate_limited` with `Retry-After`. `clientIp` (REQ-012/S-061): without a configured header, the connection IP (`getConnInfo`); with `X-Forwarded-For`, the entry the trusted proxy appended, counting `TRUST_PROXY_HOPS` (default 1) from the right; with any other header (`X-Real-IP`, `CF-Connecting-IP`…), its whole value; if the request lacks the header, the connection IP. `'unknown'` only when there is no socket (`app.request` in tests). Create limiters per app instance (inside route factories), not at module level.
+- **Usage:** `limit({ windowMs: 600_000, limit: 20, key: clientIp(deps.config) })`
 
 ## playerSession
 - **Location:** apps/api/src/http/middleware/player-session.ts
 - **Signature:** `playerSession(identity: IdentityService, mode: 'required' | 'optional'): MiddlewareHandler<AppEnv>`
-- **Description:** resolves cookie `nd_pid` to `c.var.player`; `required` throws `no_session`; adds `playerId` to the logger and recomputes `c.var.locale`
+- **Description:** resolves cookie `nd_pid` to `c.var.player`; `required` throws `no_session`; adds `player_ref` (never the raw id) to the logger and recomputes `c.var.locale`
 - **Usage:** `factory.createHandlers(playerSession(deps.identity, 'required'), handler)`
 
 ## validationHook
@@ -88,7 +88,7 @@
 ## AdminService / AdminRepository
 - **Location:** apps/api/src/domain/admin/
 - **Signature:** `login(password, log)`, `listReportGroups(status)`, `updateReport(reportId, status, log)`; `playerRef(playerId)`
-- **Description:** report groups are ordered alerted first, `report_count` desc, `challenge.date` desc; `player_ref` is the first 8 hex of `sha256(player_id)`; games without a registered definition yield `culprits: []`
+- **Description:** report groups are ordered alerted first, `report_count` desc, `challenge.date` desc; `player_ref` is the first 8 hex of `sha256(player_id)` (`playerRef` lives in `apps/api/src/shared/player-ref.ts` since REQ-012 and is re-exported here; logs use the same reference); games without a registered definition yield `culprits: []`
 - **Usage:** `const { groups } = await deps.admin.listReportGroups('open')`
 
 ## AdminContentService / BANK_COLUMNS / resolveBankConsumers / buildBankStock

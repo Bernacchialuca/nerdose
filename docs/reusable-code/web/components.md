@@ -11,7 +11,17 @@
 
 ## NotFound
 - **Location:** apps/web/src/components/not-found.tsx
-- **Signature:** `NotFound()` - element of the `*` route
+- **Signature:** `NotFound()` - element of the `*` route; renders `ErrorTerminal` with `cd <pathname>` and the bash "no such file" line
+
+## ErrorTerminal
+- **Location:** apps/web/src/components/error-terminal.tsx
+- **Signature:** `ErrorTerminal({ command, output, exitCode, title, titleRef?, message, actions, className? })`
+- **Description:** terminal-window error screen (title bar, decorative `aria-hidden` transcript `$ command` / red output / `exit N▌`, then `h1`, message and actions). Shared by `NotFound` and `RouteError` (REQ-012/S-060).
+- **Usage:** `<ErrorTerminal command="nerdose --play" output={t('errors.terminalOutput')} exitCode={1} title={t('errors.title')} message={t('errors.message')} actions={<button …/>} />`
+
+## RouteError
+- **Location:** apps/web/src/app/route-error.tsx
+- **Signature:** `RouteError()` - `errorElement` of the root route; own minimal header (brand only) and `SiteFooter`, «Reintentar» (`location.reload()`) and «Volver a los juegos» (`<a href="/">`); the real error text only in `vite dev`
 
 ## useDocumentTitle
 - **Location:** apps/web/src/hooks/use-document-title.ts

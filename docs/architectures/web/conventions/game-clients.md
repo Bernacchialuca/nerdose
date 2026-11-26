@@ -105,3 +105,8 @@ const Client = lazy(clientRegistry[gameId]);
 ## Update (REQ-011)
 
 - Each `client` also exports `StatsSummary` with props `{ extra, locale, t }` (mandatory member, like `Preview`): it shows the game's own stats from `extra` in the player's statistics screen. The derived values (average, percentage of 8/8, success per category, best category) come from pure functions in the package; a percentage with no games in the category is shown as `—`. It never imports the board and `web` loads it with the existing client registry (`load-game-client.ts`), never branching on `game_id` (ADR-006).
+
+## Update (REQ-012)
+
+- The common layout of `Game` and `Result` (title block, main 7 | aside 5, CTA under the play area, help panel first and the host `aside` slot last, verdict always as a `Banner` `h1`) lives in the game packages: `web` only passes `notices`, `aside` (report link) and `footer` (closing card) and does not reorder them. Rules in the `games` copy of this convention and in the DS pattern `game-screens`.
+- Devdle's hint (`{ hint }`) and give up (`{ give_up: true }`) are ordinary moves for the host: same `POST …/move`, same cache update; a give up closes the Play like any losing move (confetti only on win).

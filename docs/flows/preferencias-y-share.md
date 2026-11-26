@@ -4,8 +4,8 @@ title: Preferencias del jugador y compartir resultado
 type: feature
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-15
-stories: [S-007, S-009, S-024, S-046, S-051, S-058]
+last_updated: 2026-11-25
+stories: [S-007, S-009, S-024, S-046, S-051, S-058, S-061, S-063]
 ---
 
 # Preferencias del jugador y compartir resultado
@@ -13,8 +13,8 @@ stories: [S-007, S-009, S-024, S-046, S-051, S-058]
 **Tipo:** Feature
 **Status:** Draft
 **Creado:** 2026-11-03
-**Última actualización:** 2026-11-15
-**Stories:** S-007, S-009, S-024, S-046, S-051, S-058
+**Última actualización:** 2026-11-25
+**Stories:** S-007, S-009, S-024, S-046, S-051, S-058, S-061, S-063
 
 ## Descripción
 
@@ -71,7 +71,7 @@ sequenceDiagram
 - **Operación:** UPDATE
 - **Campos:** `locale` y/o `preferred_code_language` WHERE `id = nd_pid`
 
-**Evento de dominio:** `PlayerPreferencesChanged` (`player_id`, `locale`, `preferred_code_language`), solo en los logs.
+**Evento de dominio:** `PlayerPreferencesChanged` (`player_ref`, `locale`, `preferred_code_language`), solo en los logs; `player_ref` en lugar del `player_id` crudo (REQ-012, S-061).
 
 **Response (éxito):**
 - **Status:** 200
@@ -104,12 +104,12 @@ sequenceDiagram
 **Acción:**
 1. `text = share(result, number, locale)` del `client` del juego (el `locale` es el idioma activo de la sesión; solo el share de Bug Hunt tiene texto y lo traduce). Nunca incluye la solución y termina en `nerdose.dev`. Ejemplo:
    ```
-   🟩 Devdle #128
+   🟩 Devdle #128 · 2/6
    🟩🟨⬛⬛⬛
    🟩🟩🟩🟩🟩
-   2/6
    nerdose.dev
    ```
+   Devdle termina la primera línea en `X/6` si perdió o se rindió, y le suma ` 💡` si usó la pista (`🟩 Devdle #128 · 4/6 💡`), sin decir qué letra reveló (REQ-012, S-063).
    Grep Grid (sin las palabras ni indicio de rendición):
    ```
    🔎 Grep Grid #8
@@ -155,5 +155,7 @@ sequenceDiagram
 - Compartir no hace ningún request a la `api` ni a terceros.
 
 > Actualizado por REQ-009 (story S-046): formato de share de Big O y preferencia de lenguaje reflejada en la cache de la sesión al confirmar.
+
+> Actualizado por REQ-012 (2026-11-25, implementado fuera del workflow): formato real del share de Devdle con ` 💡` cuando se usó la pista (S-063) y `player_ref` en el evento de preferencias (S-061).
 
 > Actualizado por REQ-011 (story S-058): se retira la analítica web (Plausible) por decisión del usuario; compartir ya no emite `share:<game_id>` y el flujo deja de cubrir C-53.

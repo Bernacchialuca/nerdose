@@ -4,8 +4,8 @@ title: Abrir el juego de hoy, empezar y retomar
 type: feature
 status: Draft
 created: 2026-11-03
-last_updated: 2026-11-14
-stories: [S-022, S-023, S-024, S-043, S-046, S-048]
+last_updated: 2026-11-25
+stories: [S-022, S-023, S-024, S-043, S-046, S-048, S-061]
 ---
 
 # Abrir el juego de hoy, empezar y retomar
@@ -13,8 +13,8 @@ stories: [S-022, S-023, S-024, S-043, S-046, S-048]
 **Tipo:** Feature
 **Status:** Draft
 **Creado:** 2026-11-03
-**Última actualización:** 2026-11-14
-**Stories:** S-022, S-023, S-024, S-043, S-046, S-048
+**Última actualización:** 2026-11-25
+**Stories:** S-022, S-023, S-024, S-043, S-046, S-048, S-061
 
 ## Descripción
 
@@ -125,7 +125,7 @@ sequenceDiagram
 
 `state` inicial por juego: devdle `{ guesses: [] }`; grep-grid `{ found_words: [], gave_up: false }`; timeline, big-o y bug-hunt `{}`.
 
-**Evento de dominio:** `PlayStarted` (`play_id`, `player_id`, `challenge_id`), solo en los logs.
+**Evento de dominio:** `PlayStarted` (`play_id`, `player_ref`, `challenge_id`), solo en los logs. `player_ref` = primeros 8 hex de `sha256(player_id)`: el `player_id` es la credencial de la cookie y nunca se loguea crudo (REQ-012, S-061).
 
 **Response (éxito):**
 - **Status:** 200
@@ -156,6 +156,8 @@ sequenceDiagram
 En Big O la opción seleccionada tampoco se guarda en el servidor: `plays.state` sigue `{}` hasta confirmar. La selección sobrevive al cambio de lenguaje y de idioma (el `Game` sigue montado), pero se pierde al salir: al retomar, el jugador ve el código y las 8 opciones sin selección y con su intento intacto.
 
 En Bug Hunt la línea seleccionada tampoco se guarda en el servidor: `plays.state` sigue `{}` hasta confirmar; al retomar no hay selección.
+
+En Devdle la pista usada sí se guarda (`plays.state.hint = { position, letter }`, REQ-012): al retomar, la letra se ve como guía en la fila actual y el botón queda «💡 Letra N: X» deshabilitado. Las Play guardadas antes de la pista no traen `hint` y se leen igual.
 
 ## Manejo de Errores
 

@@ -389,7 +389,10 @@ paths:
         días neutros, ADR-011). `code_language = codeLanguage(state)` del juego (Big O y Bug Hunt; `null` en los demás) y, cuando no es null, se actualiza `players.preferred_code_language` en la misma transacción.
 
         Devdle: un intento fuera de la lista válida responde `422 not_in_word_list`, se registra en
-        `rejected_guesses` y **no** consume intento.
+        `rejected_guesses` y **no** consume intento. `{ hint }` revela la letra de esa posición (una por
+        partida, no consume intento, `feedback: { hint }`; una segunda pista o una posición fuera de la
+        palabra responde `422 invalid_move`). `{ give_up: true }` cierra la Play como `lost` (cuenta para la
+        racha) con `feedback: { gave_up: true }` y `result.gave_up: true` (REQ-012).
 
         Grep Grid: una línea válida hacia adelante que no coincide exactamente con una de las 8 palabras
         (`not_a_word`) y una palabra ya encontrada (`already_found`) responden `200` con el `state` sin
@@ -439,6 +442,16 @@ paths:
                     play:
                       status: in_progress
                       state: { guesses: [ { guess: REDIS, marks: [correct, correct, absent, absent, absent] } ] }
+                      score: null
+                    result: null
+                    streaks: null
+                    game_stats: null
+                devdle_pista:
+                  value:
+                    feedback: { hint: { position: 2, letter: D } }
+                    play:
+                      status: in_progress
+                      state: { guesses: [ { guess: REDIS, marks: [correct, correct, absent, absent, absent] } ], hint: { position: 2, letter: D } }
                       score: null
                     result: null
                     streaks: null
@@ -1647,7 +1660,7 @@ components:
         - type: object
           additionalProperties: false
           required: [give_up]
-          description: Rendirse. Cierra la partida como derrota (cuenta para la racha) y el `result` trae `gave_up: true`.
+          description: 'Rendirse. Cierra la partida como derrota (cuenta para la racha) y el `result` trae `gave_up: true`.'
           properties:
             give_up: { type: boolean, enum: [true] }
 
@@ -1713,7 +1726,17 @@ components:
 
     # ─────────── Feedback ───────────
     DevdleFeedback:
-      $ref: '#/components/schemas/DevdleGuess'
+      description: Intento (`DevdleGuess`), pista revelada (`{ hint }`) o rendición (`{ gave_up }`) (REQ-012)
+      oneOf:
+        - $ref: '#/components/schemas/DevdleGuess'
+        - type: object
+          required: [hint]
+          properties:
+            hint: { $ref: '#/components/schemas/DevdleRevealedHint' }
+        - type: object
+          required: [gave_up]
+          properties:
+            gave_up: { type: boolean, enum: [true] }
 
     GrepGridFeedbackFound:
       type: object
@@ -1737,7 +1760,7 @@ components:
     Feedback:
       description: |
         Feedback de una jugada en curso. `null` en Timeline, Big O y Bug Hunt (la jugada cierra) y en
-        Grep Grid `give_up`.
+        Grep Grid `give_up`. En Devdle `give_up` devuelve `{ gave_up: true }` (REQ-012).
       nullable: true
       oneOf:
         - $ref: '#/components/schemas/DevdleFeedback'

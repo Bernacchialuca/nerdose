@@ -1,6 +1,6 @@
 ---
 created: 2026-11-03
-last_updated: 2026-11-03
+last_updated: 2026-11-25
 status: "Pending Formalization"
 ---
 
@@ -134,6 +134,8 @@ Este grupo valida el contrato `GameDefinition` completo y el ciclo común (empez
 - C-16: Registrar un intento rechazado (de F-04)
 - C-17: Elegir la respuesta del día (de F-04)
 - C-18: Ver el resultado de Devdle (de F-04)
+- C-54: Pedir una pista de letra (de F-04; **agregada después de v1, REQ-012**)
+- C-55: Rendirse en Devdle (de F-04; **agregada después de v1, REQ-012**)
 - C-33: Actualizar rachas y stats al completar (de F-09)
 - C-47: Generar y verificar los próximos 14 días (de F-14)
 - C-48: Publicar el desafío del día (de F-14)

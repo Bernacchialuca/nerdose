@@ -114,3 +114,15 @@ const Client = lazy(clientRegistry[gameId]);
 - A game with no games played renders only its own `stats.none` text (no groups, no rows), so `web` does not decide per game when there are own stats and does not repeat the text (D1).
 - `extra` is parsed with the game's `statsSchema`; an invalid `extra` propagates the error to the card's local boundary in `web` (D4).
 - The groups of `StatsSummary` are `h4` headings and the component has no `lang` nor landmark of its own: it lives inside the `web` page, which already declares the language (D6).
+
+## Update (REQ-012)
+
+Changes made on 2026-11-25 outside the workflow and documented retroactively (REQ-012, stories S-063, S-064, S-066).
+
+- **Common layout of `Game` and `Result`** (DS pattern [`game-screens`](../../../design-system/web/patterns/game-screens.md)): main column 7 | aside 5 on desktop (`lg:grid lg:grid-cols-12`, `lg:col-span-7` / `lg:col-span-5`; an existing `flex-wrap` + `basis` layout is allowed if it keeps the order), one column in DOM order on mobile (no `order`).
+  - `Game`: title block first and full width (`// comment` line, then the `h1`), then `notices`. The main CTA lives in the main column right under the play area and its hint, `buttonClass({ variant: 'accent', game, size: 'lg', fullWidth: true })` at every breakpoint, ending in `→`; when disabled it carries `aria-disabled="true"` and its label says what is missing. The aside order is fixed: help panel (`id={HELP_TARGET_ID}`, title `// cómo se juega`, no streak datum) → game panels → secondary/destructive action → host `aside` slot (report link), always last.
+  - `Result`: the verdict is always a `Banner` from `@nerdose/ui` with `titleAs="h1"` (`success` on win, `failure` on loss or give up) and a short detail that never says "below" or "on the right"; no `sr-only` `h1`. `notices` right under it. Main: what the player played, then the host `footer`. Aside: explanation/solution panel, the game's own stats (Devdle only), then the `aside` slot.
+- **Code lines never scroll sideways** (Big O, Bug Hunt): each line renders through the package's `CodeText`, which keeps the leading indent fixed (`flex-none`, `whitespace-pre`) and wraps the rest (`whitespace-pre-wrap wrap-anywhere`) so the continuation lines up with the code; Shiki tokens are trimmed across token boundaries. The outer element keeps the full line text.
+- **Moves that do not come from the board are still moves:** Devdle's letter hint (`{ hint: position }`) and give up (`{ give_up: true }`) go through `moveSchema.parse` and `onMove` like a guess; the client keeps no hidden state the server does not have (the hint lives in `state.hint`, so it survives a resume). The give-up confirmation dialog stays open if the move fails, so the player can retry or close it.
+- **Destructive triggers** use `buttonClass({ variant: 'error-outline', fullWidth: true })` with the `⚑` glyph (Devdle and Grep Grid «Rendirse»); the confirmation button uses `error`. No local class constants.
+- **Bug Hunt `Result`** no longer renders the bug-type chip; the admin `Preview` still does.
