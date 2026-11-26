@@ -43,7 +43,7 @@ Hacen falta límites para evitar abusos (NFR-S08), sin captcha. No hay Redis (AD
 - La lista válida de Devdle MUST cargarse al arrancar y recargarse al cambiar el día. MUST contener la unión del archivo base del paquete `devdle` y los `terms` `approved`. Sumar `terms` garantiza que toda respuesta posible sea un intento válido.
 - La lista válida MUST NOT enviarse al cliente ni exponerse en ninguna ruta.
 - Los límites MUST ser exactamente los de la tabla, configurados con `hono-rate-limiter` y store en memoria.
-- La IP del cliente MUST tomarse del header del proxy de confianza configurado (`TRUST_PROXY_HEADER`, por ejemplo `X-Forwarded-For`), nunca de un header arbitrario sin configurar.
+- La IP del cliente MUST tomarse del header del proxy de confianza configurado (`TRUST_PROXY_HEADER`), nunca de un header arbitrario sin configurar. Con `X-Forwarded-For` MUST usarse la entrada que agregó el proxy, contando `TRUST_PROXY_HOPS` (default 1) desde la derecha: las de la izquierda las escribe el cliente. Sin header configurado, o si el request no lo trae, MUST usarse la IP de la conexión. (Corregido el 2026-11-25: antes se tomaba la primera entrada y el límite se salteaba inventando una IP por request.)
 - Un `429` MUST incluir `Retry-After` en segundos y el body `{ "error": { "code": "rate_limited", "message": … } }`. MUST NOT haber captcha.
 - El límite por `player_id` MUST aplicarse después de resolver la cookie `nd_pid`. Si no hay cookie, aplica solo el límite por IP.
 

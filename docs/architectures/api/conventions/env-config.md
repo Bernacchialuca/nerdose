@@ -43,6 +43,7 @@ export const env = createEnv({
     ADMIN_PASSWORD_HASH: z.string().startsWith('scrypt$'),
     ADMIN_JWT_SECRET: z.string().min(32),
     TRUST_PROXY_HEADER: z.string().optional(),
+    TRUST_PROXY_HOPS: z.coerce.number().int().min(1).default(1),
     WEB_ORIGIN: z.string().url(),                         // api: origin allowed for player mutations
     ADMIN_ORIGIN: z.string().url(),                       // api: origin allowed for /api/admin/* mutations
     REPORT_ALERT_COUNT: z.coerce.number().int().default(3),

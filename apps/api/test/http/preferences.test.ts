@@ -6,6 +6,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { preferencesUpdateSchema } from '@/domain/identity/identity.schema';
 
+import { playerRef } from '@/shared/player-ref';
+
 import { MUTATION_HEADERS, buildTestApp } from '../helpers/app';
 import { useDatabases } from '../helpers/db';
 import { captureLogger } from '../helpers/logger';
@@ -149,7 +151,7 @@ describe('PATCH /api/me/preferences', () => {
       expect.objectContaining({
         level: 'info',
         event: 'PlayerPreferencesChanged',
-        player_id: p.id,
+        player_ref: playerRef(p.id),
         locale: 'es',
         preferred_code_language: 'go',
       }),

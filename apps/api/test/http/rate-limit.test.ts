@@ -10,18 +10,48 @@ import { useDatabases } from '../helpers/db';
 import { captureLogger } from '../helpers/logger';
 
 describe('clientIp', () => {
-  const ctx = (headers: Record<string, string>) =>
-    ({ req: { header: (n: string) => headers[n] } }) as never;
+  const ctx = (headers: Record<string, string>, remoteAddress?: string) =>
+    ({
+      req: { header: (n: string) => headers[n] },
+      env: remoteAddress ? { incoming: { socket: { remoteAddress } } } : undefined,
+    }) as never;
+  const XFF = { TRUST_PROXY_HEADER: 'x-forwarded-for' };
 
-  it('toma la primera IP del header configurado', () => {
-    expect(clientIp('x-forwarded-for')(ctx({ 'x-forwarded-for': '1.1.1.1' }))).toBe('1.1.1.1');
-    expect(clientIp('x-forwarded-for')(ctx({ 'x-forwarded-for': 'a, b' }))).toBe('a');
+  it('con X-Forwarded-For toma la entrada que agregó el proxy, desde la derecha', () => {
+    expect(clientIp(XFF)(ctx({ 'x-forwarded-for': '1.1.1.1' }))).toBe('1.1.1.1');
+    expect(clientIp(XFF)(ctx({ 'x-forwarded-for': 'a, b' }))).toBe('b');
+    expect(clientIp({ ...XFF, TRUST_PROXY_HOPS: 2 })(ctx({ 'x-forwarded-for': 'a, b, c' }))).toBe(
+      'b',
+    );
   });
 
-  it('devuelve unknown sin header configurado o ausente', () => {
-    expect(clientIp()(ctx({ 'x-forwarded-for': '1.1.1.1' }))).toBe('unknown');
-    expect(clientIp('x-forwarded-for')(ctx({}))).toBe('unknown');
-    expect(clientIp('x-forwarded-for')(ctx({ 'x-forwarded-for': '' }))).toBe('unknown');
+  it('una IP inventada por el cliente a la izquierda no cambia la clave', () => {
+    const key = clientIp(XFF);
+    const real = '203.0.113.7';
+    const keys = ['1.2.3.4', '5.6.7.8', 'lo-que-sea'].map((fake) =>
+      key(ctx({ 'x-forwarded-for': `${fake}, ${real}` })),
+    );
+    expect(new Set(keys)).toEqual(new Set([real]));
+  });
+
+  it('con más hops que entradas usa la primera', () => {
+    expect(clientIp({ ...XFF, TRUST_PROXY_HOPS: 3 })(ctx({ 'x-forwarded-for': 'a' }))).toBe('a');
+  });
+
+  it('otro header de confianza se toma entero', () => {
+    const key = clientIp({ TRUST_PROXY_HEADER: 'x-real-ip' });
+    expect(key(ctx({ 'x-real-ip': ' 198.51.100.4 ' }))).toBe('198.51.100.4');
+  });
+
+  it('sin header configurado o ausente usa la IP de la conexión', () => {
+    expect(clientIp({})(ctx({ 'x-forwarded-for': '1.1.1.1' }, '10.0.0.9'))).toBe('10.0.0.9');
+    expect(clientIp(XFF)(ctx({}, '10.0.0.9'))).toBe('10.0.0.9');
+    expect(clientIp(XFF)(ctx({ 'x-forwarded-for': '' }, '10.0.0.9'))).toBe('10.0.0.9');
+  });
+
+  it('sin socket (app.request) cae a unknown', () => {
+    expect(clientIp({})(ctx({}))).toBe('unknown');
+    expect(clientIp(XFF)(ctx({}))).toBe('unknown');
   });
 });
 

@@ -84,7 +84,7 @@ export const clientIp = (trustHeader?: string) => (c: Context) =>
 
 ```ts
 route.post('/games/:game_id/today/move',
-  limit({ windowMs: 60_000, limit: 300, key: clientIp(env.TRUST_PROXY_HEADER) }),
+  limit({ windowMs: 60_000, limit: 300, key: clientIp(env) }),
   limit({ windowMs: 60_000, limit: 60, key: (c) => c.var.player.id }), // after player-session
   zValidator('json', moveBodySchema, validationHook), controller.move);
 ```
@@ -109,7 +109,7 @@ app.use(bodyLimit({ maxSize: 64 * 1024, onError: () => { throw new AppError('val
 - There is no CSRF token. Protection is same origin + `SameSite=Lax` + the two checks above.
 - The limits are exactly those of the table, with `hono-rate-limiter` and the in-memory store. No captcha.
 - A `429` carries `Retry-After` in seconds and the body `{ "error": { "code": "rate_limited", "message": ... } }`.
-- The client IP comes only from the header named by `TRUST_PROXY_HEADER`. Never trust an arbitrary `X-Forwarded-For` that is not configured.
+- The client IP comes only from the header named by `TRUST_PROXY_HEADER`. Never trust an arbitrary `X-Forwarded-For` that is not configured. With `X-Forwarded-For`, use the entry the trusted proxy appended, counting `TRUST_PROXY_HOPS` from the right (the left entries are client-controlled). Without the header, use the connection IP (`getConnInfo`).
 - Per-`player_id` limits apply after the `nd_pid` cookie is resolved.
 - Payload size limits are set at the framework level (`bodyLimit`), not in application code.
 - Stack traces and internal messages are never exposed (see `error-handling`).

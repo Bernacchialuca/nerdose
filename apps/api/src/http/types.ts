@@ -23,6 +23,7 @@ export type AppDeps = {
     | 'WEB_ORIGIN'
     | 'ADMIN_ORIGIN'
     | 'TRUST_PROXY_HEADER'
+    | 'TRUST_PROXY_HOPS'
     | 'LAUNCH_DATE'
     | 'ADMIN_PASSWORD_HASH'
     | 'ADMIN_JWT_SECRET'

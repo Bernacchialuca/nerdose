@@ -23,6 +23,7 @@ export function loadEnv(runtimeEnv: Record<string, string | undefined> = process
         .regex(/^scrypt\$\d+\$\d+\$\d+\$[A-Za-z0-9+/]+={0,2}\$[A-Za-z0-9+/]+={0,2}$/),
       ADMIN_JWT_SECRET: z.string().min(32),
       TRUST_PROXY_HEADER: z.string().optional(),
+      TRUST_PROXY_HOPS: z.coerce.number().int().min(1).default(1),
       REPORT_ALERT_COUNT: z.coerce.number().int().min(1).default(3),
       REPORT_ALERT_RATIO: z.coerce.number().gt(0).lt(1).default(0.05),
       REPORT_ALERT_RATIO_MIN_COUNT: z.coerce.number().int().min(1).default(2),

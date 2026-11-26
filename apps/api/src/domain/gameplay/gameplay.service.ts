@@ -14,6 +14,7 @@ import type { QualityRepository } from '@/domain/quality/quality.repository';
 import type { TodayCache } from '@/infra/cache/today-cache';
 import type { WordList } from '@/infra/cache/word-list';
 import type { Clock } from '@/shared/clock';
+import { playerRef } from '@/shared/player-ref';
 
 import type { GameplayRepository } from './gameplay.repository';
 import type {
@@ -145,7 +146,7 @@ export class GameplayService {
             {
               event: 'PlayStarted',
               play_id: inserted.id,
-              player_id: player.id,
+              player_ref: playerRef(player.id),
               challenge_id: challenge.id,
             },
             'Play started',
@@ -209,7 +210,7 @@ export class GameplayService {
               {
                 event: 'PlayStarted',
                 play_id: play.id,
-                player_id: player.id,
+                player_ref: playerRef(player.id),
                 challenge_id: challenge.id,
               },
               'Play started',
@@ -261,7 +262,7 @@ export class GameplayService {
               {
                 event: 'PlayFinished',
                 play_id: play.id,
-                player_id: player.id,
+                player_ref: playerRef(player.id),
                 challenge_id: challenge.id,
                 game_id: game.id,
                 status: closed.status,
@@ -273,7 +274,7 @@ export class GameplayService {
             log.info(
               {
                 event: 'StreaksUpdated',
-                player_id: player.id,
+                player_ref: playerRef(player.id),
                 game_id: game.id,
                 current_streak: streaks.game.current,
                 max_streak: streaks.game.max,
@@ -302,7 +303,7 @@ export class GameplayService {
           );
         }
         log.info(
-          { event: 'GuessRejected', player_id: player.id, challenge_id: challenge.id },
+          { event: 'GuessRejected', player_ref: playerRef(player.id), challenge_id: challenge.id },
           'Guess rejected',
         );
       }
@@ -350,7 +351,7 @@ export class GameplayService {
             {
               event: 'PlayVoidAcknowledged',
               play_id: inserted.id,
-              player_id: player.id,
+              player_ref: playerRef(player.id),
               challenge_id: challenge.id,
               game_id: game.id,
             },
@@ -360,7 +361,7 @@ export class GameplayService {
           log.info(
             {
               event: 'StreaksUpdated',
-              player_id: player.id,
+              player_ref: playerRef(player.id),
               game_id: game.id,
               current_streak: applied.streaks.game.current,
               max_streak: applied.streaks.game.max,

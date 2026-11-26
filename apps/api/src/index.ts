@@ -41,6 +41,11 @@ try {
 
 if (env) {
   const logger = createLogger(env);
+  if (env.NODE_ENV === 'production' && !env.TRUST_PROXY_HEADER) {
+    logger.warn(
+      'TRUST_PROXY_HEADER is not set: rate limits use the connection IP; behind a proxy every client shares the proxy IP',
+    );
+  }
   const { sql, db } = createDatabase(env.DATABASE_URL);
   await verifyDbRole(sql, logger);
 
@@ -88,6 +93,7 @@ if (env) {
         WEB_ORIGIN: env.WEB_ORIGIN,
         ADMIN_ORIGIN: env.ADMIN_ORIGIN,
         TRUST_PROXY_HEADER: env.TRUST_PROXY_HEADER,
+        TRUST_PROXY_HOPS: env.TRUST_PROXY_HOPS,
         LAUNCH_DATE: env.LAUNCH_DATE,
         ADMIN_PASSWORD_HASH: env.ADMIN_PASSWORD_HASH,
         ADMIN_JWT_SECRET: env.ADMIN_JWT_SECRET,

@@ -13,7 +13,7 @@ const factory = createFactory<AppEnv>();
 
 export const reportChallenge = (deps: AppDeps) =>
   factory.createHandlers(
-    limit({ windowMs: 3_600_000, limit: 10, key: clientIp(deps.config.TRUST_PROXY_HEADER) }),
+    limit({ windowMs: 3_600_000, limit: 10, key: clientIp(deps.config) }),
     playerSession(deps.identity, 'required'),
     zValidator('param', gameParamSchema, validationHook),
     zValidator('json', reportBodySchema, reportValidationHook),

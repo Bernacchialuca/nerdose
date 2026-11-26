@@ -425,7 +425,7 @@ describe('anti-spoiler de la api (Timeline)', () => {
     }
     const finished = lines().filter((l) => l.event === 'PlayFinished');
     expect(finished).toHaveLength(1);
-    for (const k of ['play_id', 'player_id', 'challenge_id', 'game_id', 'status', 'score']) {
+    for (const k of ['play_id', 'player_ref', 'challenge_id', 'game_id', 'status', 'score']) {
       expect(finished[0]).toHaveProperty(k);
     }
     for (const k of ['result', 'state', 'order', 'payload']) {
@@ -538,7 +538,7 @@ describe('anti-spoiler de la api (Big O)', () => {
     }
     const finished = lines().filter((l) => l.event === 'PlayFinished');
     expect(finished).toHaveLength(1);
-    for (const k of ['play_id', 'player_id', 'challenge_id', 'game_id', 'status', 'score']) {
+    for (const k of ['play_id', 'player_ref', 'challenge_id', 'game_id', 'status', 'score']) {
       expect(finished[0]).toHaveProperty(k);
     }
     for (const k of ['result', 'state', 'option', 'payload']) {
@@ -645,7 +645,7 @@ describe('anti-spoiler de la api (Bug Hunt)', () => {
     }
     const finished = lines().filter((l) => l.event === 'PlayFinished');
     expect(finished).toHaveLength(1);
-    for (const k of ['play_id', 'player_id', 'challenge_id', 'game_id', 'status', 'score']) {
+    for (const k of ['play_id', 'player_ref', 'challenge_id', 'game_id', 'status', 'score']) {
       expect(finished[0]).toHaveProperty(k);
     }
     for (const k of ['result', 'state', 'line', 'payload']) {

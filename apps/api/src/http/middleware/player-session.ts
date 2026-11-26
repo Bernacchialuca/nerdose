@@ -6,6 +6,7 @@ import { SESSION_COOKIE } from '@/domain/identity/session-cookie';
 import type { IdentityService } from '@/domain/identity/identity.service';
 import type { AppEnv } from '@/http/types';
 import { resolveLocale } from '@/shared/locale';
+import { playerRef } from '@/shared/player-ref';
 
 export const playerSession = (identity: IdentityService, mode: 'required' | 'optional') =>
   createMiddleware<AppEnv>(async (c, next) => {
@@ -20,7 +21,7 @@ export const playerSession = (identity: IdentityService, mode: 'required' | 'opt
           acceptLanguage: c.req.header('accept-language'),
         }),
       );
-      c.set('logger', c.var.logger.child({ playerId: player.id }));
+      c.set('logger', c.var.logger.child({ player_ref: playerRef(player.id) }));
     } else if (mode === 'required') {
       throw new AppError('no_session');
     }

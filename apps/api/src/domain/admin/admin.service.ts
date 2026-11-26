@@ -1,9 +1,8 @@
-import { createHash } from 'node:crypto';
-
 import { AppError, type GameRegistry, type ReportReason, type ReportStatus } from '@nerdose/core';
 import type { Logger } from 'pino';
 
 import type { Clock } from '@/shared/clock';
+import { playerRef } from '@/shared/player-ref';
 
 import { signAdminToken, verifyPassword } from './admin-auth';
 import type { AdminRepository, ChallengeRow, ReportRow } from './admin.repository';
@@ -14,9 +13,7 @@ type Repo = Pick<
   'listReportsByStatus' | 'findChallengesByIds' | 'closeReportIfOpen' | 'reportExists'
 >;
 
-/** Primeros 8 hex de sha256(player_id): referencia estable que no expone el id. */
-export const playerRef = (playerId: string): string =>
-  createHash('sha256').update(playerId).digest('hex').slice(0, 8);
+export { playerRef } from '@/shared/player-ref';
 
 const toAdminReport = (row: ReportRow): AdminReport => ({
   id: row.id,
