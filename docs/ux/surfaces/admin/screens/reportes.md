@@ -8,8 +8,8 @@ audiences:
   - responsable
 fidelity: mid
 status: diseñada
-version: "1.2"
-date: 2026-11-13
+version: "1.3"
+date: 2026-11-25
 ---
 
 # Pantalla: P-02 · Reportes
@@ -19,7 +19,7 @@ date: 2026-11-13
 - **Audiencia primaria:** [responsable](../../../audiences/responsable/research-context.md)
 - **JTBD / Propósito:** Cola de reportes agrupados por desafío (alertados primero, luego los más reportados), filtro por estado, acceso al detalle y a anular. Como no hay mail (ADR-017), esta pantalla es el único aviso de un desafío alertado.
 - **Viewports:**
-  - **desktop** — Encabezado fijo de una fila y un panel único con filtro y tabla de grupos a todo el ancho, sin paginación; es la pantalla de aterrizaje de `/`. (único viewport de la superficie; no hay caso mobile relevado).
+  - **desktop** — Encabezado fijo de una fila y un panel único con filtro y tabla de grupos a todo el ancho, paginada de a 20 grupos (REQ-012); es la pantalla de aterrizaje de `/`. (único viewport de la superficie; no hay caso mobile relevado).
 
 ## Entrada y salida
 
@@ -33,7 +33,7 @@ date: 2026-11-13
 **Salidas user-driven:**
 - A `o-02-detalle-desafio` · clic en la fila del grupo
 - A `o-01-anular-desafio` · acción «Anular» de la fila (solo desafío `published`; el recorrido recomendado pasa por el detalle)
-- A `proximos-desafios`, `stock-contenido` · encabezado (REQ-008); a `metricas` cuando exista (FG-10)
+- A `proximos-desafios`, `bancos`, `stock-contenido`, `metricas` · encabezado (REQ-008, REQ-011, REQ-012)
 - A `login` · «Cerrar sesión»
 
 **Salidas automáticas:**
@@ -46,8 +46,9 @@ date: 2026-11-13
 | 1 | header | header | — | layout | desktop | — | Marca del panel |
 | 2 | nav-reportes | link | — | navigation | desktop | — | Navegación a Reportes, con el contador de grupos abiertos |
 | 3 | nav-proximos | link | — | navigation | desktop | — | Navegación a Próximos, con el contador de fallas de generación activas (REQ-008) |
+| 3b | nav-bancos | link | — | navigation | desktop | — | Navegación a Bancos (REQ-012) |
 | 4 | nav-stock | link | — | navigation | desktop | — | Navegación a Stock (REQ-008) |
-| 5 | nav-metricas | link | — | navigation | desktop | — | Navegación a Métricas (FG-10) |
+| 5 | nav-metricas | link | — | navigation | desktop | — | Navegación a Métricas (REQ-011) |
 | 6 | nav-cerrar-sesion | link | — | navigation | desktop | — | Cierra la sesión: borra el token y va a Login |
 | 7 | titulo | heading | h1 | content | desktop | — | Título |
 | 8 | subtitulo | paragraph | caption | content | desktop | — | Criterio de orden de la cola |
@@ -58,6 +59,7 @@ date: 2026-11-13
 | 13 | estado-vacio | empty-state | — | feedback | desktop | visible_only_in_states: empty | Cola sin reportes en el estado filtrado |
 | 14 | cargando | loader | — | feedback | desktop | visible_only_in_states: loading | Carga de la cola |
 | 15 | tabla-grupos | table | — | content | desktop | hidden_in_states: empty, loading, error de sistema; state_overrides: resueltos, descartados | Un grupo por desafío; la fila abre el detalle |
+| 16 | paginado | pagination | — | navigation | desktop | hidden_in_states: empty, loading, error de sistema | «‹ Anterior · 1–20 de N desafíos reportados · página X de Y · Siguiente ›»; solo con más de 20 grupos (REQ-012) |
 
 ## Layout por viewport
 
@@ -68,10 +70,11 @@ date: 2026-11-13
   - col 2/12:
     - nav-proximos
   - col 2/12:
+    - nav-bancos
+  - col 2/12:
     - nav-stock
   - col 2/12:
     - nav-metricas
-  - col 2/12: (vacía)
   - col 2/12:
     - nav-cerrar-sesion
 - row `titulos`
@@ -87,6 +90,7 @@ date: 2026-11-13
     - estado-vacio
     - cargando
     - tabla-grupos
+    - paginado
 
 > `header` es marco de la pantalla y no se lista en el layout.
 
@@ -107,6 +111,11 @@ date: 2026-11-13
 - Icono: nada
 - Annotation: se renderiza desde REQ-008; el número son las fallas de generación activas (`GET /api/admin/generation-failures`); sin fallas, sin número
 
+### nav-bancos
+- Texto/label: Bancos
+- Icono: nada
+- Annotation: se renderiza desde REQ-012
+
 ### nav-stock
 - Texto/label: Stock
 - Icono: nada
@@ -115,7 +124,7 @@ date: 2026-11-13
 ### nav-metricas
 - Texto/label: Métricas
 - Icono: nada
-- Annotation: no se renderiza en REQ-007; se suma con FG-10
+- Annotation: se renderiza desde REQ-011
 
 ### nav-cerrar-sesion
 - Texto/label: Cerrar sesión
@@ -165,9 +174,14 @@ date: 2026-11-13
 ### tabla-grupos
 - Texto/label: ver columnas
 - Icono: nada
-- Annotation: orden fijo: alertados primero, luego cantidad de reportes descendente, luego fecha del desafío más reciente (sin orden por columna ni paginación en v1). La fila alertada lleva la etiqueta «alertado» (texto + color ámbar, no solo color). Clic o Enter en la fila → detalle; acción «Anular» al final de la fila solo con el desafío `published`
+- Annotation: orden fijo: alertados primero, luego cantidad de reportes descendente, luego fecha del desafío más reciente (sin orden por columna). Desde REQ-012 se muestran 20 grupos por página, paginados en el cliente sobre la lista ya ordenada. La fila alertada lleva la etiqueta «alertado» (texto + color ámbar, no solo color). Clic o Enter en la fila → detalle; acción «Anular» al final de la fila solo con el desafío `published`
 - Columnas: Alerta, Desafío, Fecha, Reportes, Motivos, Último reporte, Estado del desafío, Acción
 - Filas de ejemplo: «alertado · Grep Grid #8 · 2026-11-08 · 3 · Respuesta incorrecta ×3 · hace 2 h · publicado · Anular» / «— · Devdle #7 · 2026-11-07 · 5 · Ambiguo ×3, Traducción ×2 · hace 1 día · publicado · Anular» / «— · Tech Timeline #6 · 2026-11-06 · 1 · Error de visualización ×1 · hace 3 días · anulado · —»
+
+### paginado
+- Texto/label: ‹ Anterior · 1–20 de 34 desafíos reportados · página 1 de 2 · Siguiente ›
+- Icono: nada
+- Annotation: componente común `Pagination` del admin (`nav` «Paginado de reportes», resumen `aria-live="polite"`, `aria-disabled` en los extremos); no se dibuja con 20 grupos o menos (REQ-012)
 
 ## Estados
 
@@ -225,6 +239,7 @@ date: 2026-11-13
 - tabs-estado · on change → `GET /api/admin/reports?status=…` con el estado elegido
 - tabla-grupos · on click fila → abre `o-02-detalle-desafio` con el grupo
 - tabla-grupos · acción «Anular» de la fila → abre `o-01-anular-desafio` (solo `published`)
+- paginado · Anterior / Siguiente → cambia de página sin pedir nada al servidor (REQ-012)
 - btn-reintentar · on click → reconsulta
 - nav-cerrar-sesion · on click → borra el token y va a `login`
 - al confirmar una anulación o resolver/descartar en el detalle → se recarga la cola y el contador del encabezado
@@ -238,7 +253,7 @@ date: 2026-11-13
 
 ## Accesibilidad
 
-- **Orden de foco:** encabezado → tabs-estado → tabla-grupos (fila → acción «Anular»).
+- **Orden de foco:** encabezado → tabs-estado → tabla-grupos (fila → acción «Anular») → paginado.
 - **Landmarks y jerarquía:** `nav` para el encabezado, `main` con un h1; la tabla tiene `caption` y encabezados de columna; la fila abre el detalle con Enter.
 - **Foco y teclado:** al cerrar el detalle o el modal, el foco vuelve a la fila; tras anular, el foco va al aviso de anulación confirmada.
 - **Propio de esta composición:** «alertado» es texto además de color; el contador del encabezado tiene `aria-label` «3 grupos de reportes abiertos».
@@ -249,9 +264,11 @@ date: 2026-11-13
 - Un grupo por desafío. Los alertados van primero, después la cantidad de reportes y después la fecha: la primera fila es la más urgente (REQ-007, CA 14).
 - Las etiquetas del encabezado coinciden con los títulos de pantalla.
 - La anulación queda a una fila de distancia, pero el recorrido recomendado pasa por el detalle para ver la solución primero.
-- REQ-007: sin paginación en v1 (volumen bajo, supuesto del request); se quita `paginacion`.
+- ~~REQ-007: sin paginación en v1 (volumen bajo, supuesto del request); se quita `paginacion`.~~ REQ-012 (S-068): paginado de a 20 grupos en el cliente con el `Pagination` común del admin; el orden fijo no cambia y la API sigue devolviendo la lista entera.
 - REQ-007: el encabezado solo muestra Reportes (con el contador de grupos abiertos) y Cerrar sesión. Próximos, Stock y Métricas siguen en el diseño y se renderizan con FG-7 y FG-10. Esto resuelve la pregunta 1 del product-map para reportes: el contador es el aviso, porque no hay mail.
 - REQ-008: el encabezado suma Próximos (con el contador de fallas de generación activas, igual que Reportes) y Stock. Métricas sigue para FG-10.
+- REQ-011 suma Métricas y REQ-012 suma Bancos: el encabezado queda Reportes · Próximos · Bancos · Stock · Métricas · Cerrar sesión.
+- REQ-012: el detalle (O-02) muestra los textos del desafío solo en español.
 - REQ-007: tras anular, un aviso confirma la anulación con la cantidad de partidas afectadas. El grupo desaparece de «Abiertos», y sin el aviso no quedaría rastro visible de que la acción ocurrió.
 - REQ-007: se suma la pestaña «Descartados» como estado propio (antes solo estaba «resueltos»).
 
@@ -264,4 +281,4 @@ date: 2026-11-13
 
 ## Trazabilidad
 
-- C-37, C-39, C-40, C-41 · REQ-007 (RF 6, 7, 12; CA 13-16) · flujos 2 y 3 de `user-flows.md`.
+- C-37, C-39, C-40, C-41 · REQ-007 (RF 6, 7, 12; CA 13-16) · REQ-012 (S-068) · flujos 2 y 3 de `user-flows.md`.

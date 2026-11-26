@@ -8,8 +8,8 @@ audiences:
   - responsable
 fidelity: mid
 status: diseñada
-version: "1.2"
-date: 2026-11-15
+version: "1.3"
+date: 2026-11-25
 ---
 
 # Pantalla: P-05 · Métricas
@@ -28,7 +28,7 @@ date: 2026-11-15
 - URL directa con el rango (`/metrics?from=AAAA-MM-DD&to=AAAA-MM-DD`)
 
 **Salidas user-driven:**
-- A `reportes`, `proximos-desafios`, `stock-contenido` · encabezado
+- A `reportes`, `proximos-desafios`, `bancos`, `stock-contenido` · encabezado
 - A `login` · «Cerrar sesión»
 
 **Salidas automáticas:**
@@ -41,6 +41,7 @@ date: 2026-11-15
 | 1 | header | header | — | layout | desktop | — | Marca del panel |
 | 2 | nav-reportes | link | — | navigation | desktop | — | Navegación del encabezado a Reportes |
 | 3 | nav-proximos | link | — | navigation | desktop | — | Navegación del encabezado a Próximos |
+| 3b | nav-bancos | link | — | navigation | desktop | — | Navegación del encabezado a Bancos (REQ-012) |
 | 4 | nav-stock | link | — | navigation | desktop | — | Navegación del encabezado a Stock |
 | 5 | nav-metricas | link | — | navigation | desktop | — | Navegación del encabezado a Métricas |
 | 6 | nav-cerrar-sesion | link | — | navigation | desktop | — | Cierra la sesión: borra el token y va a Login |
@@ -57,10 +58,12 @@ date: 2026-11-15
 | 17 | cifra-d1 | card | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema; state_overrides: empty | Retención D1 del rango |
 | 18 | cifra-d7 | card | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema; state_overrides: empty | Retención D7 del rango |
 | 19 | cifra-completados | card | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema; state_overrides: empty | Partidas completadas del rango |
-| 20 | tabla-diarios | table | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema; state_overrides: empty | Jugadores únicos por día, total y por juego |
+| 20 | tabla-diarios | table | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema; state_overrides: empty | Jugadores únicos por día, total y por juego, de a 15 días por página |
+| 20b | paginado-diarios | pagination | — | navigation | desktop | hidden_in_states: loading, error de validación, error de sistema, empty | «‹ Anterior · 1–15 de 30 días · página 1 de 2 · Siguiente ›» (REQ-012) |
 | 21 | tabla-retencion | table | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema; state_overrides: empty | Retención D1/D7 por cohorte |
 | 22 | tabla-rachas | table | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema | Distribución de rachas globales vivas a hoy |
-| 23 | tabla-calidad | table | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema; state_overrides: empty | Calidad por desafío, ordenable por columna |
+| 23 | tabla-calidad | table | — | content | desktop | hidden_in_states: loading, error de validación, error de sistema; state_overrides: empty | Calidad por desafío, ordenable por columna, de a 15 filas por página |
+| 24 | paginado-calidad | pagination | — | navigation | desktop | hidden_in_states: loading, error de validación, error de sistema, empty | «‹ Anterior · 1–15 de 150 desafíos · página 1 de 10 · Siguiente ›» (REQ-012) |
 
 ## Layout por viewport
 
@@ -71,12 +74,13 @@ date: 2026-11-15
   - col 2/12:
     - nav-proximos
   - col 2/12:
+    - nav-bancos
+  - col 2/12:
     - nav-stock
   - col 2/12:
     - nav-metricas
   - col 2/12:
     - nav-cerrar-sesion
-  - col 2/12: (vacía)
 - row `titulos`
   - col 12/12:
     - titulo
@@ -107,6 +111,7 @@ date: 2026-11-15
 - row `panel-diarios` (card, título «Jugadores diarios»)
   - col 12/12:
     - tabla-diarios
+    - paginado-diarios
 - row `tablas-1`
   - col 7/12 (card, título «Retención por cohorte»):
     - tabla-retencion
@@ -115,6 +120,7 @@ date: 2026-11-15
 - row `panel-calidad` (card, título «Calidad por desafío»)
   - col 12/12:
     - tabla-calidad
+    - paginado-calidad
 
 > `header` es marco de la pantalla y no se lista en el layout.
 
@@ -134,6 +140,11 @@ date: 2026-11-15
 - Texto/label: Próximos (1)
 - Icono: nada
 - Annotation: el número son las fallas de generación activas (REQ-008); sin fallas, sin número
+
+### nav-bancos
+- Texto/label: Bancos
+- Icono: nada
+- Annotation: se renderiza desde REQ-012
 
 ### nav-stock
 - Texto/label: Stock
@@ -219,7 +230,7 @@ date: 2026-11-15
 - Texto/label: Jugadores diarios
 - Columnas: Fecha / Total / Devdle / Grep Grid / Tech Timeline / Big O / Bug Hunt
 - Icono: nada
-- Annotation: una fila por día del rango, del más reciente al más antiguo; los días sin partidas van en 0. Columnas de juego en el orden del catálogo. Pie de tabla: «El total cuenta a cada jugador una vez por día: no es la suma de las columnas.»
+- Annotation: una fila por día del rango, del más reciente al más antiguo; los días sin partidas van en 0. Columnas de juego en el orden del catálogo. Desde REQ-012 se muestran 15 días por página (paginado en el cliente con el `Pagination` común; no se dibuja si el rango entra en una página). Pie de tabla: «El total cuenta a cada jugador una vez por día: no es la suma de las columnas.»
 
 ### tabla-retencion
 - Texto/label: Retención por cohorte
@@ -237,7 +248,7 @@ date: 2026-11-15
 - Texto/label: Calidad por desafío
 - Columnas: Desafío / Juego / Iniciadas / Terminadas / Completado / Victorias / Reportes / Estado
 - Icono: nada
-- Annotation: una fila por desafío publicado o anulado del rango, por defecto de la fecha más reciente a la más antigua. «Desafío» = «#N · dd/mm». Cada encabezado es un botón que ordena por esa columna (ascendente y descendente, con `aria-sort`), sin recargar. «Completado» = terminadas / iniciadas y «Victorias» = ganadas / terminadas, con un decimal; «—» si el divisor es 0. «Estado» en texto: «publicado» o «anulado». Sin enlace desde la fila (pregunta 6 del product-map, resuelta por REQ-011). Pie de tabla: «Las partidas anuladas no cuentan en terminadas ni en victorias.»
+- Annotation: una fila por desafío publicado o anulado del rango, por defecto de la fecha más reciente a la más antigua. «Desafío» = «#N · dd/mm». Cada encabezado es un botón que ordena por esa columna (ascendente y descendente, con `aria-sort`), sin recargar. «Completado» = terminadas / iniciadas y «Victorias» = ganadas / terminadas, con un decimal; «—» si el divisor es 0. «Estado» en texto: «publicado» o «anulado». Sin enlace desde la fila (pregunta 6 del product-map, resuelta por REQ-011). Desde REQ-012 se muestran 15 filas por página; ordenar por una columna vuelve a la página 1. Pie de tabla: «Las partidas anuladas no cuentan en terminadas ni en victorias.»
 
 ## Estados
 
@@ -290,7 +301,8 @@ date: 2026-11-15
 - btn-consultar · on click → valida el rango; si es válido, lo escribe en la URL y consulta; todas las cifras y tablas se actualizan juntas
 - fecha-desde, fecha-hasta · on change → revalida el rango; con un rango válido se habilita «Consultar»
 - btn-reintentar · on click → reconsulta el mismo rango
-- tabla-calidad · encabezado on click → ordena por esa columna; un segundo click invierte el orden
+- tabla-calidad · encabezado on click → ordena por esa columna; un segundo click invierte el orden; vuelve a la página 1
+- paginado-diarios, paginado-calidad · Anterior / Siguiente → cambian de página sin pedir nada al servidor (REQ-012)
 
 **Validaciones:**
 - `from` o `to` vacío → mensaje «Elegí las dos fechas del rango.»
@@ -304,7 +316,7 @@ date: 2026-11-15
 
 ## Accesibilidad
 
-- **Orden de foco:** encabezado → fecha-desde → fecha-hasta → btn-consultar → cifras → tablas (en la de calidad, los botones de los encabezados).
+- **Orden de foco:** encabezado → fecha-desde → fecha-hasta → btn-consultar → cifras → tablas (en la de calidad, los botones de los encabezados), cada una seguida de su paginado si lo tiene.
 - **Landmarks y jerarquía:** `main` con `h1` «Métricas» y un `h2` por panel («Jugadores diarios», «Retención por cohorte», «Distribución de rachas», «Calidad por desafío»); los errores del rango son `role="alert"`.
 - **Propio de esta composición:** cada tabla es `<table>` con `<caption>` y su pie de definición asociado. El orden activo de la tabla de calidad se anuncia con `aria-sort`. Ninguna celda depende del color: «—», «publicado» y «anulado» van en texto.
 
@@ -321,6 +333,7 @@ date: 2026-11-15
 - REQ-011: cada tabla define su métrica en un pie de tabla (cohorte, tramos, anuladas, total no sumable), porque el flujo 5 deja como riesgo una cifra que no cuadra sin otra fuente dentro del admin.
 - REQ-011: porcentajes con un decimal («96,7 %») y «—» cuando el divisor es 0 o el día todavía no terminó (CA 15, 16).
 - REQ-011: la calidad por desafío se ordena por columna con botones en los encabezados, sin una librería de tablas. Suma «Iniciadas», «Terminadas» y «Estado» (publicado / anulado), que el diseño técnico expone.
+- REQ-012 (S-068, implementado fuera del workflow): jugadores diarios y calidad se paginan de a 15 filas en el cliente (`Pagination` / `usePagination` comunes del admin), porque un rango de 366 días daba cientos de filas seguidas. Retención y rachas no se paginan. El encabezado suma «Bancos».
 
 **Alternativas descartadas:**
 - Selector de rangos predefinidos (7/30/90 días): el PRD define `from` y `to` libres.
@@ -334,3 +347,4 @@ date: 2026-11-15
 
 - C-46 · flujo 5 de `user-flows.md`.
 - REQ-011: RF 11-16 · CA 13-21, 26, 30 · decisiones 1-5 del diseño técnico.
+- REQ-012: S-068 (paginado y nav).

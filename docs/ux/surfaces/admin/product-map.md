@@ -1,8 +1,8 @@
 ---
 document: UX Product Map
 surface: admin
-version: "1.5"
-date: 2026-11-15
+version: "1.6"
+date: 2026-11-25
 status: Draft - Punto de partida para discusión
 audiences: [responsable]
 ---
@@ -18,31 +18,32 @@ audiences: [responsable]
 
 - **responsable** ([research-context](../../audiences/responsable/research-context.md)) — Única persona que opera la plataforma (U-02): revisa reportes, anula desafíos, mira próximos desafíos y stock, consulta métricas. Audiencia única y primaria.
 
-Viewport: `desktop` (único). No hay caso mobile relevado (ver pregunta abierta 4). UI solo en español; el contenido de los desafíos se muestra en ES y EN lado a lado. Identidad visual: extiende el lenguaje oscuro/terminal de `docs/nerdose.html` (acento `#3DDC84`); el prototipo no tiene pantallas de admin, así que el layout es nuevo.
+Viewport: `desktop` (único). No hay caso mobile relevado (ver pregunta abierta 4). UI solo en español; desde REQ-012 (S-068) el contenido de los desafíos también se muestra solo en español (preview y textos sin la versión en inglés; antes iban ES y EN lado a lado). Identidad visual: extiende el lenguaje oscuro/terminal de `docs/nerdose.html` (acento `#3DDC84`); el prototipo no tiene pantallas de admin, así que el layout es nuevo.
 
 ## Inventario de Pantallas
 
 | # | Pantalla | Slug / ruta | Propósito | Audiencia primaria | Viewports | Referencia PRD |
 |---|----------|-------------|-----------|---------------------|-----------|----------------|
 | P-01 | Login | `login` · `/login` | Ingresar con la contraseña única; muestra el motivo si volvió por sesión vencida o por límite de intentos (con los minutos de espera) | responsable | solo desktop | C-38, NFR-S07, REQ-007 |
-| P-02 | Reportes | `reportes` · `/reports` | Cola de reportes agrupados por desafío (alertados primero, luego más reportados, luego más recientes; sin paginación en v1), filtro por estado (abiertos / resueltos / descartados; default `open`), acceso al detalle y a anular; aviso de anulación confirmada | responsable | solo desktop | C-37, C-39, C-40, C-41, REQ-007 |
-| P-03 | Próximos desafíos | `proximos-desafios` · `/upcoming` | Grilla de mañana a +14 días × juegos registrados (5 con Big O, REQ-009, y Bug Hunt, REQ-010) con estado por celda: aprobado, sin desafío con su falla de generación (intentos y motivo), regeneración pendiente, regeneración fallida con su motivo, usa un ítem rechazado. Acceso al detalle y a regenerar; aviso de fallas activas | responsable | solo desktop | C-43, C-44, C-49, REQ-008 |
-| P-04 | Stock de contenido | `stock-contenido` · `/content` | Salud de los bancos (términos desglosado por Devdle y Grep Grid, y hechos): disponibles, totales, rechazados con motivo, días de stock y si alcanza para ciclar; última carga del dataset (fecha, versión, insertados, actualizados) y top 50 de palabras rechazadas en Devdle por jugadores distintos; estados vacíos; solo lectura | responsable | solo desktop | C-45, REQ-008 |
-| P-05 | Métricas | `metricas` · `/metrics` | Rango de fechas en la URL (por defecto, últimos 30 días UTC; hasta 366 días, sin fechas futuras), cuatro cifras resumen (jugadores únicos, D1, D7, partidas completadas) y tablas con su definición al pie: jugadores diarios total y por juego, retención D1/D7 por cohorte, distribución de rachas globales vivas a hoy (5 tramos fijos, no depende del rango) y calidad por desafío ordenable por columna (iniciadas, terminadas, completado, victorias, reportes, estado). Solo tablas, sin gráficos ni datos de jugadores; «Sin datos en el rango» por tabla | responsable | solo desktop | C-46, REQ-011 |
+| P-02 | Reportes | `reportes` · `/reports` | Cola de reportes agrupados por desafío (alertados primero, luego más reportados, luego más recientes; paginada de a 20 grupos en el cliente desde REQ-012), filtro por estado (abiertos / resueltos / descartados; default `open`), acceso al detalle y a anular; aviso de anulación confirmada | responsable | solo desktop | C-37, C-39, C-40, C-41, REQ-007 |
+| P-03 | Próximos desafíos | `proximos-desafios` · `/upcoming` | Grilla de mañana a +14 días × juegos registrados (5 con Big O, REQ-009, y Bug Hunt, REQ-010) con estado por celda: aprobado, sin desafío con su falla de generación (intentos y motivo), regeneración pendiente, regeneración fallida con su motivo, usa un ítem rechazado. Cada celda con desafío es una tarjeta «Ver detalle ›» que abre O-02; «Regenerar» solo dentro del detalle (REQ-012). Aviso de fallas activas | responsable | solo desktop | C-43, C-44, C-49, REQ-008, REQ-012 |
+| P-04 | Stock de contenido | `stock-contenido` · `/content` | Salud de los bancos, uno debajo del otro a ancho completo (términos desglosado por Devdle y Grep Grid, y hechos): disponibles, totales, rechazados, días de stock y si alcanza para ciclar; desde REQ-012 los disponibles, los días y el ciclo de cada juego no cuentan los ítems que su generator excluye (Devdle). Resumen «Ítems rechazados» con el total por banco y «Ver en Bancos →» (la lista con motivos vive en P-06); última carga del dataset (fecha, versión, insertados, actualizados) y top 50 de palabras rechazadas en Devdle, paginado de a 10; estados vacíos; solo lectura | responsable | solo desktop | C-45, REQ-008, REQ-012 |
+| P-05 | Métricas | `metricas` · `/metrics` | Rango de fechas en la URL (por defecto, últimos 30 días UTC; hasta 366 días, sin fechas futuras), cuatro cifras resumen (jugadores únicos, D1, D7, partidas completadas) y tablas con su definición al pie: jugadores diarios total y por juego, retención D1/D7 por cohorte, distribución de rachas globales vivas a hoy (5 tramos fijos, no depende del rango) y calidad por desafío ordenable por columna (iniciadas, terminadas, completado, victorias, reportes, estado). Jugadores diarios y calidad paginadas de a 15 filas (REQ-012). Solo tablas, sin gráficos ni datos de jugadores; «Sin datos en el rango» por tabla | responsable | solo desktop | C-46, REQ-011, REQ-012 |
+| P-06 | Bancos de contenido | `bancos` · `/banks` | Consultar los ítems de los bancos: pestañas Términos / Hechos (Timeline), buscador (con espera de 300 ms) y filtros de estado y categoría en la URL, tabla paginada en el servidor de a 25 con descripción, categoría, fecha (hechos), estado y motivo de rechazo, último uso por juego, sitelinks y la marca «fuera de Devdle» de los términos excluidos. Solo lectura (los bancos se cargan del dataset) | responsable | solo desktop | C-45, ADR-016, REQ-012 |
 
 > `/` redirige a `/reports` (P-02). Cualquier ruta sin sesión redirige a `/login`.
 >
 > Viewport restringido: todas las pantallas son solo desktop por decisión de `product-overview.md` (herramienta interna con tablas y previews en paralelo). Es una decisión de producto, no un detalle de layout; ver pregunta abierta 4.
 >
-> Fuera de alcance deliberado (el PRD no lo pide): dashboard de inicio, ajustes, perfil, gestión de usuarios, edición manual de contenido. Cerrar sesión es una acción del encabezado, no una pantalla.
+> Fuera de alcance deliberado (el PRD no lo pide): dashboard de inicio, ajustes, perfil, gestión de usuarios, edición manual de contenido (P-06 solo consulta). Cerrar sesión es una acción del encabezado, no una pantalla.
 
 ## Inventario de Overlays
 
 | # | Overlay | Slug | Tipo | Trigger | Propósito |
 |---|---------|------|------|---------|-----------|
 | O-01 | Anular desafío | `anular-desafio` | modal | P-02 · acción "Anular" del grupo de reportes y de O-02 | Formulario `void_reason` (req, máx. 500) + culpable elegido de una lista con los ítems del propio desafío (`culprits`: términos o hechos por nombre), "La plantilla del juego" o "Ninguno"; sin tipear ids (REQ-007). Resumen de consecuencias irreversibles que nombra el ítem a rechazar. Avisos propios para `not_voidable` e `invalid_culprit`. Solo si el desafío está `published` (C-41) |
-| O-02 | Detalle del desafío | `detalle-desafio` | drawer ancho (panel lateral) | P-02 · fila del grupo de reportes; P-03 · celda de juego/día | Solución completa ES y EN lado a lado y log de verificación. Desde P-02 la solución se muestra con una vista genérica del `payload` (`PayloadView`, REQ-007) y suma cada reporte (motivo, mensaje en texto plano, idioma, contexto, `player_ref`, fecha) con resolver/descartar **por reporte**, y "Anular desafío". Desde P-03 (REQ-008) muestra la preview del `client` en modo solución (como la ve el jugador, con la solución superpuesta; `PayloadView` si el juego no tiene preview), intento y versión del generador (nunca el seed), el estado de la regeneración y el aviso de ítem rechazado, y suma la acción regenerar |
-| O-03 | Regenerar desafío | `regenerar-desafio` | modal | P-03 · acción "Regenerar" de la celda y de O-02 | Confirma el pedido de regeneración (solo `approved` con fecha > hoy; `not_regenerable` si no). El pedido es asíncrono e idempotente; al confirmar, la celda pasa a "regeneración pendiente" y P-03 hace polling cada 5 s hasta que el reemplazo pasa la verificación, falla (queda el actual, con el motivo) o se cancela porque llegó la fecha (se publica el actual) |
+| O-02 | Detalle del desafío | `detalle-desafio` | drawer ancho (panel lateral) | P-02 · fila del grupo de reportes; P-03 · tarjeta «Ver detalle ›» de la celda | Solución completa en español (un solo panel; sin la versión en inglés desde REQ-012) y log de verificación. Desde P-02 la solución se muestra con una vista genérica del `payload` (`PayloadView`, REQ-007) y suma cada reporte (motivo, mensaje en texto plano, idioma, contexto, `player_ref`, fecha) con resolver/descartar **por reporte**, y "Anular desafío". Desde P-03 (REQ-008) muestra la preview del `client` en modo solución (como la ve el jugador, con la solución superpuesta; `PayloadView` si el juego no tiene preview), intento y versión del generador (nunca el seed), el estado de la regeneración y el aviso de ítem rechazado, y suma la acción regenerar, que desde REQ-012 es el único punto de entrada a O-03 |
+| O-03 | Regenerar desafío | `regenerar-desafio` | modal | O-02 · acción "Regenerar" (desde REQ-012 la celda de P-03 ya no tiene el botón) | Confirma el pedido de regeneración (solo `approved` con fecha > hoy; `not_regenerable` si no). El pedido es asíncrono e idempotente; al confirmar, la celda pasa a "regeneración pendiente" y P-03 hace polling cada 5 s hasta que el reemplazo pasa la verificación, falla (queda el actual, con el motivo) o se cancela porque llegó la fecha (se publica el actual) |
 
 > **Sesión vencida: no es un overlay.** NFR-S07 y C-38 definen que un token vencido devuelve al login. Se resuelve como estado global (ver abajo) con aviso en P-01, no como modal sobre la pantalla vigente.
 >
@@ -52,10 +53,11 @@ Viewport: `desktop` (único). No hay caso mobile relevado (ver pregunta abierta 
 
 ### Navegación principal
 
-Barra superior fija (encabezado único, sin sidebar), visible en P-02 a P-05. **REQ-007 entregó Reportes y Cerrar sesión; REQ-008 suma Próximos y Stock; REQ-011 suma Métricas**:
+Barra superior fija (encabezado único, sin sidebar), visible en P-02 a P-06. **REQ-007 entregó Reportes y Cerrar sesión; REQ-008 suma Próximos y Stock; REQ-011 suma Métricas; REQ-012 suma Bancos** (orden: Reportes · Próximos · Bancos · Stock · Métricas):
 
 - **Reportes** → P-02 (destino de `/`)
 - **Próximos** → P-03, con el contador de fallas de generación activas («Próximos (n)», REQ-008)
+- **Bancos** → P-06 (REQ-012)
 - **Stock** → P-04
 - **Métricas** → P-05
 - **Cerrar sesión** (acción) → borra el token y va a P-01
@@ -66,7 +68,10 @@ Las etiquetas del encabezado y de los títulos de pantalla son idénticas (uso e
 
 Dentro de **Reportes**: filtro de estado (abiertos / resueltos / descartados).
 Dentro de **Métricas**: selector de rango de fechas (`from`, `to`) que aplica a todas las cifras y tablas salvo la distribución de rachas (foto a hoy); el rango vive en la URL (REQ-011). La tabla de calidad se ordena por columna.
-Dentro de **Próximos** y **Stock**: sin navegación secundaria.
+Dentro de **Bancos**: pestañas Términos / Hechos y filtros (búsqueda, estado, categoría, página) en la URL; cambiar de pestaña limpia los filtros (REQ-012).
+Dentro de **Stock**: «Ver en Bancos →» abre P-06 filtrado por los rechazados de ese banco (`/banks?bank=…&status=rejected`).
+Paginado: Reportes (20), Métricas (15), top de rechazadas de Stock (10) y Bancos (25, en el servidor) usan el mismo control «‹ Anterior · 1–25 de N … · página X de Y · Siguiente ›», que no se dibuja si todo entra en una página (REQ-012).
+Dentro de **Próximos**: sin navegación secundaria.
 
 ## Information Architecture
 
@@ -78,9 +83,9 @@ Pantallas: Reportes (P-02); overlays Anular (O-01) y Detalle (O-02).
 
 ### Agrupación: Anticipación (mirar lo que viene)
 
-Pantallas: Próximos desafíos (P-03), Stock de contenido (P-04); overlays Detalle (O-02) y Regenerar (O-03).
+Pantallas: Próximos desafíos (P-03), Stock de contenido (P-04), Bancos de contenido (P-06); overlays Detalle (O-02) y Regenerar (O-03).
 
-**Por qué se agrupan:** JTBD 2. Un hueco en la grilla y un banco por agotarse son el mismo problema (días sin desafío) visto desde dos ángulos; se mantienen como pantallas separadas porque P-03 es por desafío y P-04 es por banco.
+**Por qué se agrupan:** JTBD 2. Un hueco en la grilla y un banco por agotarse son el mismo problema (días sin desafío) visto desde dos ángulos; se mantienen como pantallas separadas porque P-03 es por desafío y P-04 es por banco. P-06 (REQ-012) es el detalle de P-04: ítem por ítem, con búsqueda; reemplaza la tabla de rechazados de P-04, que llegaba a cientos de filas.
 
 ### Agrupación: Medición
 
@@ -121,6 +126,9 @@ flowchart TD
     P02 -.401.-> P01
     P03 -.401.-> P01
     P04 -.401.-> P01
+    Root --> P06[P-06 Bancos /banks]
+    P04 -->|Ver en Bancos| P06
+    P06 -.401.-> P01
     P05 -.401.-> P01
 ```
 
@@ -152,7 +160,7 @@ flowchart TD
 
 7. **¿La preview en modo solución debería reemplazar también a `PayloadView` en O-02 desde Reportes?** (surge de REQ-008, que la limita a Próximos)
    - Si sí: O-02 se ve igual desde ambos orígenes y el responsable juzga un reporte viendo el desafío como lo vio el jugador; el `Preview` pasa a un módulo compartido del admin.
-   - Si no: desde Reportes sigue la vista genérica del `payload`, suficiente para comparar textos ES/EN, y la preview queda en Próximos.
+   - Si no: desde Reportes sigue la vista genérica del `payload` (solo los textos en español desde REQ-012), y la preview queda en Próximos.
 
 ---
 

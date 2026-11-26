@@ -8,8 +8,8 @@ audiences:
   - responsable
 fidelity: mid
 status: diseñada
-version: "1.4"
-date: 2026-11-14
+version: "1.5"
+date: 2026-11-25
 overlay: true
 overlay_type: drawer
 triggered_by: reportes
@@ -20,19 +20,19 @@ triggered_by: reportes
 ## Identidad
 
 - **Audiencia primaria:** [responsable](../../../audiences/responsable/research-context.md)
-- **JTBD / Propósito:** Revisar un desafío (solución completa en ES y EN lado a lado, log de verificación) y actuar según el origen: resolver o descartar cada reporte y anular desde Reportes; desde Próximos, ver el desafío como lo ve el jugador con la solución superpuesta, su estado de regeneración y si usa un ítem rechazado, y regenerarlo (REQ-008).
+- **JTBD / Propósito:** Revisar un desafío (solución completa en español, log de verificación; sin la versión en inglés desde REQ-012) y actuar según el origen: resolver o descartar cada reporte y anular desde Reportes; desde Próximos, ver el desafío como lo ve el jugador con la solución superpuesta, su estado de regeneración y si usa un ítem rechazado, y regenerarlo (REQ-008; desde REQ-012 este es el único lugar donde se pide).
 - **Viewports:**
-  - **desktop** — Drawer ancho (panel lateral) con ES y EN lado a lado (6/6); el contenido de acciones cambia según el origen. (único viewport de la superficie; no hay caso mobile relevado).
+  - **desktop** — Drawer ancho (panel lateral) con la solución en un solo panel a todo el ancho («Vista previa» desde Próximos, «Textos» desde Reportes; REQ-012); el contenido de acciones cambia según el origen. (único viewport de la superficie; no hay caso mobile relevado).
 
 ## Entrada y salida
 
 **Entradas:**
 - `reportes` · fila del grupo (trae el desafío y sus reportes del filtro activo)
-- `proximos-desafios` · celda de juego/día con desafío (REQ-008)
+- `proximos-desafios` · tarjeta «Ver detalle ›» de una celda con desafío (REQ-008, REQ-012)
 
 **Salidas user-driven:**
 - A `o-01-anular-desafio` · «Anular desafío» (solo `published`)
-- A `o-03-regenerar-desafio` · «Regenerar» (desde Próximos)
+- A `o-03-regenerar-desafio` · «Regenerar» (desde Próximos; único punto de entrada a O-03 desde REQ-012)
 - A `reportes` o `proximos-desafios` · cierre (ícono, Escape), según el origen
 
 **Salidas automáticas:**
@@ -50,10 +50,8 @@ triggered_by: reportes
 | 4b | alerta-regen-pendiente | alert | info | feedback | desktop | visible_only_in_states: regeneración pendiente | Hay una regeneración en curso para este desafío |
 | 4c | alerta-regen-fallida | alert | error | feedback | desktop | visible_only_in_states: regeneración fallida | La última regeneración falló; queda el actual |
 | 4d | datos-generacion | paragraph | caption | content | desktop | visible_only_in_states: desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado | Intento y versión del generador (el seed nunca se muestra) |
-| 4e | preview-es | card | — | content | desktop | visible_only_in_states: desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado | Preview del juego en modo solución, en español |
-| 4f | preview-en | card | — | content | desktop | visible_only_in_states: desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado | Preview del juego en modo solución, en inglés |
-| 5 | payload-es | list | — | content | desktop | hidden_in_states: loading, error de sistema, desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado | Textos y solución en español |
-| 6 | payload-en | list | — | content | desktop | hidden_in_states: loading, error de sistema, desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado | Textos y solución en inglés |
+| 4e | preview-es | card | — | content | desktop | visible_only_in_states: desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado | Preview del juego en modo solución, en español (panel «Vista previa», a todo el ancho) |
+| 5 | payload-es | list | — | content | desktop | hidden_in_states: loading, error de sistema, desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado | Textos y solución en español (panel «Textos», `PayloadTexts`) |
 | 7 | payload-comun | list | — | content | desktop | hidden_in_states: loading, error de sistema | Datos del desafío que no dependen del idioma (clave · valor) |
 | 8 | log-verificacion | list | — | content | desktop | hidden_in_states: loading, error de sistema | Log de verificación |
 | 9 | lista-reportes | list | — | content | desktop | hidden_in_states: desde próximos, regeneración pendiente, regeneración fallida, ítem rechazado, loading, error de sistema | Cada reporte con motivo, mensaje, idioma, contexto, jugador y fecha |
@@ -80,13 +78,10 @@ triggered_by: reportes
     - cargando
     - alerta-sistema
     - btn-reintentar
-- row `solucion`
-  - col 6/12 (card, título «ES»):
+- row `solucion` (card, título «Vista previa» desde Próximos o «Textos» desde Reportes; REQ-012)
+  - col 12/12:
     - preview-es
     - payload-es
-  - col 6/12 (card, título «EN»):
-    - preview-en
-    - payload-en
 - row `datos` (card, título «Datos del desafío»)
   - col 12/12:
     - payload-comun
@@ -153,22 +148,12 @@ triggered_by: reportes
 ### preview-es
 - Texto/label: Grilla 12 × 12 con las 8 palabras resaltadas · Lista: REDIS — almacén de datos en memoria…
 - Icono: nada
-- Annotation: `Preview` del `client` del juego en modo solución, solo lectura (no se juega ni se crea una partida). Devdle: la palabra con su categoría, definición y resumen. Grep Grid: la grilla con las 8 palabras resaltadas y la lista con definiciones. Tech Timeline: la consigna y los 5 hechos en el orden correcto con fecha y nota. Big O (REQ-009): la pregunta, el código con pestañas JavaScript / Go / Java (`code-block` `readonly` **en texto plano, sin resaltado**) con las líneas de `line_notes` resaltadas y su nota, la grilla de 8 opciones con la respuesta marcada («✓ correcta») y la `trap_option` marcada como «trampa» (borde punteado, sin relleno), y el panel con los pasos, «en números» y el consejo en el idioma de la columna; el código es el mismo en las dos columnas y lo que cambia es la explicación. Bug Hunt (REQ-010): la especificación, el código con pestañas JavaScript / Go / Java (`code-block` en texto plano, sin resaltado, como Big O) con las líneas no elegibles atenuadas y la línea del bug marcada «🐛 línea del bug», los chips «tipo: comparación» y «mutación: > → >=» (`mutation.from` → `to`; en el admin sí se muestra, porque es lo que se revisa ante un reporte), los tests visibles como llamadas, el test que falla (llamada, esperado y obtenido), el fix como diff de una línea del lenguaje de la pestaña y los pasos de «Por qué falla» en el idioma de la columna; el código, los tests y el fix son iguales en las dos columnas y cambian la especificación, el tipo y la explicación. Si el juego no tiene `Preview` en el admin, cae a la vista genérica del `payload`
-
-### preview-en
-- Texto/label: 12 × 12 grid with the 8 words highlighted · List: REDIS — in-memory data store…
-- Icono: nada
-- Annotation: misma preview con los textos en inglés, al lado de la española para comparar la traducción
+- Annotation: `Preview` del `client` del juego en modo solución, solo lectura (no se juega ni se crea una partida). Devdle: la palabra con su categoría, definición y resumen. Grep Grid: la grilla con las 8 palabras resaltadas y la lista con definiciones. Tech Timeline: la consigna y los 5 hechos en el orden correcto con fecha y nota. Big O (REQ-009): la pregunta, el código con pestañas JavaScript / Go / Java (`code-block` `readonly` **en texto plano, sin resaltado**) con las líneas de `line_notes` resaltadas y su nota, la grilla de 8 opciones con la respuesta marcada («✓ correcta») y la `trap_option` marcada como «trampa» (borde punteado, sin relleno), y el panel con los pasos, «en números» y el consejo; desde REQ-012 se muestra solo en español. Bug Hunt (REQ-010): la especificación, el código con pestañas JavaScript / Go / Java (`code-block` en texto plano, sin resaltado, como Big O) con las líneas no elegibles atenuadas y la línea del bug marcada «🐛 línea del bug», los chips «tipo: comparación» y «mutación: > → >=» (`mutation.from` → `to`; en el admin sí se muestra, porque es lo que se revisa ante un reporte), los tests visibles como llamadas, el test que falla (llamada, esperado y obtenido), el fix como diff de una línea del lenguaje de la pestaña y los pasos de «Por qué falla»; desde REQ-012, solo en español. Si el juego no tiene `Preview` en el admin, o si la preview falla, cae a la vista genérica de los textos (`PayloadTexts`)
 
 ### payload-es
 - Texto/label: Palabra: REDIS · Categoría: bases de datos · Definición: Almacén de datos en memoria… · Resumen: …
 - Icono: nada
-- Annotation: vista genérica del `payload` (`PayloadView`): cada campo `{ es, en }` se muestra en su columna, como texto plano. Desde Próximos la reemplaza la preview del `client` (REQ-008); desde Reportes se mantiene
-
-### payload-en
-- Texto/label: Word: REDIS · Category: databases · Definition: In-memory data store… · Summary: …
-- Icono: nada
-- Annotation: misma estructura que la columna ES, alineada fila a fila para comparar la traducción
+- Annotation: vista genérica del `payload` (`PayloadView` → `PayloadTexts`, panel «Textos»): cada campo `{ es, en }` se muestra con su valor en español, como texto plano; si el `payload` no tiene textos, el panel no se dibuja. Desde Próximos la reemplaza la preview del `client` (REQ-008); desde Reportes se mantiene. REQ-012: ya no hay columna en inglés
 
 ### payload-comun
 - Texto/label: term_id: 3f2a… · length: 5 · categoría: databases
@@ -224,7 +209,7 @@ triggered_by: reportes
 
 ### default
 - Aplica: Sí
-- Mensaje: Detalle desde Reportes: solución ES/EN, datos, log, reportes con resolver/descartar y «Anular desafío».
+- Mensaje: Detalle desde Reportes: textos de la solución en español, datos, log, reportes con resolver/descartar y «Anular desafío».
 - Cambios:
   - ninguno respecto de default.
 
@@ -251,11 +236,11 @@ triggered_by: reportes
 
 ### desde próximos
 - Aplica: Sí
-- Mensaje: Detalle desde Próximos: preview en modo solución ES/EN, datos, intento y log, con la acción regenerar.
+- Mensaje: Detalle desde Próximos: preview en modo solución en español, datos, intento y log, con la acción regenerar.
 - Cambios:
   - estado: content="Grep Grid, #35, 2026-12-05, aprobado"
   - header: content="Grep Grid #35"
-  - preview-es, preview-en y datos-generacion: visibles (reemplazan a payload-es y payload-en).
+  - preview-es y datos-generacion: visibles (reemplazan a payload-es).
   - lista-reportes, btn-resolver, btn-descartar y btn-anular: ocultos.
   - btn-regenerar: visible.
 
@@ -302,7 +287,7 @@ triggered_by: reportes
 - btn-resolver / btn-descartar · on click → cambia ese reporte (`open` → `resolved`/`dismissed`), recarga la cola y el contador; el drawer sigue abierto. Cuando no quedan reportes en el estado filtrado, el grupo sale de la cola y el drawer muestra los reportes con su nuevo estado
 - respuesta `409 report_not_open` o `404 not_found` → estado `reporte ya cerrado` y recarga
 - btn-anular · on click → abre `o-01-anular-desafio` con el desafío y sus `culprits`
-- btn-regenerar · on click → abre `o-03-regenerar-desafio`; al confirmar, el drawer pasa a `regeneración pendiente`
+- btn-regenerar · on click → abre `o-03-regenerar-desafio`; al confirmar, O-03 se cierra, el drawer sigue abierto y pasa a `regeneración pendiente`; al cancelar o confirmar, el foco vuelve a «Regenerar» / «Regenerando…» (REQ-012). Si el desafío ya no existe (`404`), se cierran el modal y el drawer y se refresca Próximos
 - con una regeneración pendiente, el drawer se refresca con el polling de Próximos (5 s): si el reemplazo pasa, muestra el desafío nuevo; si falla, pasa a `regeneración fallida`; si el desafío dejó de estar en la ventana (llegó su fecha), se cierra y vuelve a Próximos
 
 **Validaciones:**
@@ -313,16 +298,16 @@ triggered_by: reportes
 
 ## Accesibilidad
 
-- **Orden de foco:** cierre → solución ES → solución EN → datos → log → reportes (por reporte: Resolver → Descartar) → Anular desafío.
+- **Orden de foco:** cierre → solución (vista previa o textos) → datos → log → reportes (por reporte: Resolver → Descartar) → Anular desafío / Regenerar.
 - **Landmarks y jerarquía:** rol `dialog` con título «Devdle #8»; cada reporte es un `article` con su motivo como encabezado.
 - **Foco y teclado:** Esc cierra y devuelve el foco a la fila de la cola; tras resolver o descartar, el foco pasa al siguiente reporte abierto.
-- **Propio de esta composición:** el mensaje del jugador se muestra como texto plano: nunca se interpreta como HTML.
+- **Propio de esta composición:** el mensaje del jugador se muestra como texto plano: nunca se interpreta como HTML. Desde REQ-012 nada del drawer declara `lang="en"`: todo está en español.
 
 ## Decisiones y descartes
 
 **Decisiones tomadas:**
 - Un solo componente con dos orígenes: lo que cambia es el conjunto de acciones.
-- ES y EN lado a lado para comparar traducciones sin alternar pestañas.
+- ~~ES y EN lado a lado para comparar traducciones sin alternar pestañas.~~ REQ-012 (S-068): el admin es solo en español, también el contenido del desafío; la preview y los textos van en un solo panel a todo el ancho.
 - REQ-007: en lugar de la preview del `client` del juego se muestra `PayloadView`, una vista genérica del `payload` con los campos `{ es, en }` en dos columnas y el resto como clave · valor. El contrato de props del `client` en modo solución es de FG-7 y C-39 se cumple con la solución completa en ES y EN (decisión 12 del diseño técnico).
 - REQ-007: resolver y descartar son por reporte (C-40), no por grupo: cada reporte puede tener un veredicto distinto.
 - REQ-007: el log de verificación también se muestra desde Reportes (resuelve la pregunta 2 del product-map): ayuda a decidir si el error es del generador.
@@ -333,10 +318,11 @@ triggered_by: reportes
 - REQ-008: el estado de la regeneración (pendiente o fallida con su motivo) y el aviso de ítem rechazado viven en la cabecera del drawer, además de la celda.
 - REQ-009: el `Preview` de Big O reutiliza el `code-block` del juego **en texto plano, sin resaltado de sintaxis** (decisión 13 del diseño técnico lo dejaba a la revisión UX): el responsable revisa el código y la explicación, no lo juega, y así el admin no carga Shiki. Marca la respuesta y también la `trap_option` como «trampa», porque es lo que el jugador va a confundir y lo que hay que revisar ante un reporte `ambiguous`. No se agregan bloques: es el mismo `preview-es` / `preview-en`.
 - REQ-009: el log de verificación de Big O no tiene vista propia; el `VerificationLog` genérico ya lista cada check con su `detail` (CA 19). Si el detalle del ajuste resulta ilegible en uso real, se diseña una vista con `/product-ux-wireframes`.
+- REQ-012 (S-068, implementado fuera del workflow): «Regenerar» solo se pide desde este drawer (la celda de Próximos ya no tiene el botón), para que nadie regenere sin ver el desafío. `PayloadBilingual` pasa a `PayloadTexts`.
 - REQ-010: el `Preview` de Bug Hunt sigue el criterio de Big O (código en texto plano, sin Shiki) y muestra todo lo que el jugador ve al terminar más la mutación (`from` → `to`), que el jugador no ve: ante un reporte `wrong_answer` o `ambiguous` el responsable necesita la línea, el cambio aplicado, el test que falla y la especificación juntos para decidir si el bug es real o si la especificación es ambigua. No se agregan bloques: es el mismo `preview-es` / `preview-en`, y el log de verificación es el `VerificationLog` genérico (CA 19).
 
 **Alternativas descartadas:**
-- Pestañas ES/EN: obligan a recordar lo que se vio en la otra (relevante solo si hubiera mobile).
+- Pestañas ES/EN: obligan a recordar lo que se vio en la otra (relevante solo si hubiera mobile). Sin efecto desde REQ-012 (no hay versión en inglés).
 - Resolver/descartar en bloque por grupo: C-40 es por reporte y anular ya resuelve todos los abiertos.
 - Preview del `client` en REQ-007: su contrato no estaba cerrado y era parte de FG-7.
 - REQ-008: extender la preview a Reportes. El diseño técnico la carga solo en el módulo de Próximos; desde Reportes sigue `PayloadView` (ver pregunta abierta).
@@ -346,4 +332,4 @@ triggered_by: reportes
 
 ## Trazabilidad
 
-- C-39, C-40, C-41, C-43, C-44 · REQ-007 (RF 6, 7; CA 14-16) · REQ-008 (RF 1-3; CA 2, 3, 6, 10) · REQ-009 (RF 14; CA 19) · REQ-010 (RF 14; CA 19, 20) · flujos 2, 3 y 4 de `user-flows.md`.
+- C-39, C-40, C-41, C-43, C-44 · REQ-007 (RF 6, 7; CA 14-16) · REQ-008 (RF 1-3; CA 2, 3, 6, 10) · REQ-009 (RF 14; CA 19) · REQ-010 (RF 14; CA 19, 20) · REQ-012 (S-068) · flujos 2, 3 y 4 de `user-flows.md`.
