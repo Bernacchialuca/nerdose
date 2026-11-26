@@ -18,6 +18,7 @@ Always active in `web` and `admin`. Defines what does not vary across modules or
 - Entry point is `index.html` + `src/main.tsx`, which mounts `<App />` inside `StrictMode`.
 - All data comes from the `api` over HTTP (see `data-fetching`). The static build is served by the hosting layer (deferred); the app never assumes a Node runtime.
 - Heavy or per-feature code is split with `React.lazy` + dynamic `import()` (see `routing`).
+- **Game clients and Vite's dependency pre-bundling (REQ-012/S-069):** `apps/web` and `apps/admin` load `packages/games/*/client` with dynamic `import()`, and those clients bring dependencies the apps do not declare (zod, dnd-kit, shiki). Both `vite.config.ts` set `optimizeDeps: { entries: ['index.html', '../../packages/games/*/src/client/index.ts'] }` so Vite scans them at startup. Without it, Vite discovers them only when a game opens, re-optimizes and the dynamic import fails with `504 Outdated Optimize Dep` (web showed «Algo salió mal», the admin preview broke). Keep the glob when adding a game or a new entry point that imports game clients.
 
 ## TypeScript
 

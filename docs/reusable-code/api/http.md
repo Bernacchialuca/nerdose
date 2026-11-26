@@ -91,11 +91,11 @@
 - **Description:** report groups are ordered alerted first, `report_count` desc, `challenge.date` desc; `player_ref` is the first 8 hex of `sha256(player_id)` (`playerRef` lives in `apps/api/src/shared/player-ref.ts` since REQ-012 and is re-exported here; logs use the same reference); games without a registered definition yield `culprits: []`
 - **Usage:** `const { groups } = await deps.admin.listReportGroups('open')`
 
-## AdminContentService / BANK_COLUMNS / resolveBankConsumers / buildBankStock
-- **Location:** apps/api/src/domain/admin/admin-content.service.ts, bank-columns.ts, bank-stock.ts
-- **Signature:** `new AdminContentService({ repo, games, clock, launchDate })` with `upcoming(days)`, `generationFailures()`, `stock()`; `resolveBankConsumers(games): Array<{ bank, consumers: Array<{ gameId, usage, column }> }>`; `buildBankStock({ bank, approvedTotal, rejectedTotal, available, availableAll, consumers })`
-- **Description:** admin reads that never use `TodayCache`. `BANK_COLUMNS` maps each bank (not each game) to its Drizzle table, label and `last_used_*` columns; `resolveBankConsumers` throws `Unknown bank usage: <bank>.<field>` at construction. `buildBankStock` is pure (per-consumer `days_of_stock`/`cycle_ok`, bank-level min/all).
-- **Usage:** `deps.adminContent.upcoming(14)`; routes `GET /api/admin/challenges/upcoming`, `/generation-failures`, `/content/stock`
+## AdminContentService / BANK_COLUMNS / resolveBankConsumers / buildBankStock / bank-items
+- **Location:** apps/api/src/domain/admin/admin-content.service.ts, bank-columns.ts, bank-stock.ts, bank-items.ts
+- **Signature:** `new AdminContentService({ repo, games, clock, launchDate })` with `upcoming(days)`, `generationFailures()`, `stock()`, `items(query: ContentItemsQuery)` (REQ-012); `resolveBankConsumers(games): Array<{ bank, consumers: Array<{ gameId, usage, column }> }>`; `buildBankStock({ bank, approvedTotal, rejectedTotal, available, availableAll, approvedEligible, consumers })`; `escapeLike(value)`, `totalPages(total, pageSize)`, `excludedFrom(label, consumers)`
+- **Description:** admin reads that never use `TodayCache`. `BANK_COLUMNS` maps each bank (not each game) to its Drizzle table, label and `last_used_*` columns; `resolveBankConsumers` throws `Unknown bank usage: <bank>.<field>` at construction. `buildBankStock` is pure (per-consumer `days_of_stock`/`cycle_ok`, bank-level min/all); since REQ-012/S-067 `available` and `approvedEligible` arrive without each consumer's `bankUsage.excludedItems`, and `cycle_ok` uses `approvedEligible` instead of `approvedTotal`. `items` lists a bank page (`ILIKE` with `escapeLike`, status, per-bank category, `LIMIT/OFFSET` + `COUNT`), with `last_used` per consuming game and `excluded_from`; `BANK_COLUMNS` also maps `category`, `description` (`definition`/`note`), `eventDate` and `sitelinks`. Query validated by `contentItemsQuerySchema` (422 `validation_error`).
+- **Usage:** `deps.adminContent.upcoming(14)`; routes `GET /api/admin/challenges/upcoming`, `/generation-failures`, `/content/stock`, `/content/items`
 
 ## AdminMetricsService / metricsQuerySchema
 - **Location:** apps/api/src/domain/admin/admin-metrics.service.ts, admin.schema.ts

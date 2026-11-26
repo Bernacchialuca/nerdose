@@ -20,5 +20,6 @@ modules:
   - auth
   - reports
   - upcoming
+  - banks
   - content-stock
   - metrics

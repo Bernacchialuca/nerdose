@@ -32,5 +32,5 @@
 
 ## BankUsage and GameDefinition.bankUsage
 - **Location:** packages/core/src/game-definition.ts
-- **Signature:** `interface BankUsage { bank: BankName; lastUsedField: string; windowDays: number; itemsPerChallenge: number }`; `GameDefinition.bankUsage: BankUsage | null`
-- **Usage:** Devdle `terms`/`last_used_devdle`/365/1, Grep Grid `terms`/`last_used_grep`/30/8, Timeline `timeline_facts`/`last_used`/90/5; Big O and Bug Hunt `null`. The api builds the content stock from the registry (`reg.ids().map(reg.get).filter(g => g.bankUsage)`), without per-game constants.
+- **Signature:** `interface BankUsage { bank: BankName; lastUsedField: string; windowDays: number; itemsPerChallenge: number; excludedItems?: ReadonlySet<string> }`; `GameDefinition.bankUsage: BankUsage | null`
+- **Usage:** Devdle `terms`/`last_used_devdle`/365/1, Grep Grid `terms`/`last_used_grep`/30/8, Timeline `timeline_facts`/`last_used`/90/5; Big O and Bug Hunt `null`. The api builds the content stock from the registry (`reg.ids().map(reg.get).filter(g => g.bankUsage)`), without per-game constants. `excludedItems` (optional, REQ-012/S-067): item texts (`terms.term`, `timeline_facts.label`) the game's generator never picks; the api leaves them out of that game's stock and lists them as `excluded_from` in `GET /api/admin/content/items` (Devdle: `DEVDLE_EXCLUDED_TERMS`).

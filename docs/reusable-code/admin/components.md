@@ -35,6 +35,12 @@ Styled with Tailwind utilities from the design tokens (`bg-bg`, `text-text`, `te
 - **Signature:** `TextField({ label, error?, invalid?, describedBy?, inputRef?, ...inputProps })` (`invalid` marks the field and `describedBy` links an external alert, without own error text) (same for textarea/select with `textareaRef`/`selectRef`)
 - **Description:** visible label, `aria-invalid`, `aria-describedby` to the error text, `aria-required`.
 
+## Pagination / usePagination
+- **Location:** apps/admin/src/components/pagination.tsx
+- **Signature:** `Pagination({ page, totalPages, total, pageSize, noun, onChange, label? })`; `usePagination<T>(items, pageSize)` → `{ page, totalPages, total, pageSize, pageItems, setPage }`
+- **Description:** «‹ Anterior · 1–25 de 4.863 términos · página 1 de 195 · Siguiente ›» inside a `nav` (`label` default «Paginado»); the range text is `aria-live="polite"`; the ends are `aria-disabled` `secondary` buttons; renders nothing when everything fits in one page. `usePagination` pages a list that arrived whole and clamps back when it shrinks (REQ-012/S-068).
+- **Usage:** `const p = usePagination(rows, 20); <Pagination {...p} noun="desafíos" onChange={p.setPage} />`
+
 ## Tabs
 - **Location:** apps/admin/src/components/tabs.tsx
 - **Signature:** `Tabs({ label, tabs, value, onChange, children })`

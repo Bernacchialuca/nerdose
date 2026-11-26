@@ -570,7 +570,7 @@ para que un error del generador no castigue a los jugadores.
 | ID | Capability | Actor | Entity | Operation | Key Fields | Business Rules |
 |----|-----------|-------|--------|-----------|------------|----------------|
 | C-38 | Iniciar sesión en el admin | U-02 | — | ACTION | password (string, req) | Contraseña única. Sesión de 8 horas. Credencial inválida, vencida o ausente → 401 y vuelta al login. Límite: 5 intentos por IP cada 15 min |
-| C-39 | Ver reportes agrupados | U-02 | ChallengeReport, Challenge | READ | status (enum: open/resolved/dismissed, opt, default: open) | Agrupados por Challenge y ordenados por cantidad (desc). Los Challenge que alcanzaron el umbral (`alerted_at`) se marcan como alertados: es el aviso al Responsable. Para cada uno: el Challenge completo con su solución, en ES y EN, y los motivos, mensajes y contexto |
+| C-39 | Ver reportes agrupados | U-02 | ChallengeReport, Challenge | READ | status (enum: open/resolved/dismissed, opt, default: open) | Agrupados por Challenge y ordenados por cantidad (desc). Los Challenge que alcanzaron el umbral (`alerted_at`) se marcan como alertados: es el aviso al Responsable. Para cada uno: el Challenge completo con su solución y los motivos, mensajes y contexto. Lista paginada de a 20. El admin muestra los textos solo en español (REQ-012); que existan en los dos idiomas lo garantiza la verificación del generator |
 | C-40 | Resolver o descartar un reporte | U-02 | ChallengeReport | UPDATE | status (enum: resolved/dismissed, req) | Solo desde `open`; ambos estados son terminales |
 | C-41 | Anular un desafío | U-02 | Challenge, Play, ChallengeReport, Term, TimelineFact | ACTION | void_reason (string, req), culprit.kind (enum: term/timeline_fact/template/none, req), culprit.id (uuid, opt, req si kind ∈ term/timeline_fact) | Solo un Challenge `published`, y siempre manual. Efectos: deja de aceptar jugadas y muestra "Este desafío tenía un error y fue anulado. Tu racha no se ve afectada"; todas sus Play pasan a `voided` (las terminadas conservan su `result`; las en curso se cierran como completadas); los reportes `open` pasan a `resolved`; si el culpable es un Term o TimelineFact, pasa a `rejected`; se recalculan los agregados de los jugadores afectados (C-35) |
 | C-42 | Marcar un desafío anulado como completado | U-01 | Play | CREATE | challenge_number (int, req) | Solo para el Challenge `voided` de hoy y si el jugador no tenía Play. Crea una Play `voided`: cuenta para las rachas y `total_completed`, no para `played`, `wins` ni `extra` |
@@ -598,7 +598,7 @@ para que un error del generador no castigue a los jugadores.
 
 ### F-12: Admin — próximos desafíos y stock de contenido
 
-**Descripción:** El Responsable ve los próximos 14 días de cada juego, con la solución y el log de verificación, y puede regenerar uno. También ve el stock de contenido de los bancos, la última carga del dataset y las palabras más rechazadas en Devdle.
+**Descripción:** El Responsable ve los próximos 14 días de cada juego, con la solución y el log de verificación, y puede regenerar uno. También ve el stock de contenido de los bancos, la última carga del dataset y las palabras más rechazadas en Devdle, y puede explorar los ítems de cada banco (pantalla «Bancos», REQ-012).
 
 **Historia de usuario:**
 Como responsable de la plataforma,
@@ -609,9 +609,10 @@ para anticipar problemas sin tener que cargar nada a mano.
 
 | ID | Capability | Actor | Entity | Operation | Key Fields | Business Rules |
 |----|-----------|-------|--------|-----------|------------|----------------|
-| C-43 | Ver los próximos desafíos | U-02 | Challenge | READ | days (int, opt, default: 14) | Por día y por juego: preview real (como la ve el jugador, con la solución superpuesta), en ES y EN, con su log de verificación. Indica los días sin desafío, las fallas de generación registradas (intentos y motivo del último rechazo) y las regeneraciones pendientes |
+| C-43 | Ver los próximos desafíos | U-02 | Challenge | READ | days (int, opt, default: 14) | Por día y por juego: una tarjeta por celda que abre el detalle con la preview real (como la ve el jugador, con la solución superpuesta), en español, y su log de verificación; «Regenerar» está solo dentro del detalle (REQ-012). Indica los días sin desafío, las fallas de generación registradas (intentos y motivo del último rechazo) y las regeneraciones pendientes |
 | C-44 | Regenerar un desafío | U-02 | Challenge | ACTION | challenge_id (uuid, req) | Solo un Challenge `approved` con `date` > hoy. El actual sigue `approved` hasta que su reemplazo pasa la verificación; el reemplazo es atómico (el viejo pasa a `rejected`). Si la regeneración falla, queda el actual |
-| C-45 | Ver el stock de contenido | U-02 | Term, TimelineFact, RejectedGuess | READ | — | Por banco: ítems aprobados disponibles, aprobados totales, rechazados (con su motivo), días de stock estimados, si el banco alcanza para ciclar respetando la ventana anti-repetición, y la última carga del dataset (fecha, versión, insertados, actualizados). Además, las 50 palabras más rechazadas en Devdle por cantidad de jugadores distintos. Solo lectura |
+| C-45 | Ver el stock de contenido | U-02 | Term, TimelineFact, RejectedGuess | READ | — | Por banco: ítems aprobados disponibles, aprobados totales, rechazados (resumen por motivo, con enlace a Bancos para verlos), días de stock estimados, si el banco alcanza para ciclar respetando la ventana anti-repetición, y la última carga del dataset (fecha, versión, insertados, actualizados). Los disponibles, los días de stock y el ciclo de cada juego **no cuentan los ítems que su generator excluye** (los 115 términos de nicho de Devdle siguen contando para Grep Grid; REQ-012). Además, las 50 palabras más rechazadas en Devdle por cantidad de jugadores distintos, paginadas de a 10. Solo lectura |
+| C-56 | Explorar los bancos de contenido | U-02 | Term, TimelineFact | READ | bank (enum: terms/timeline_facts, req), q (string, opt, ≤ 50), status (enum: approved/rejected, opt), category (enum del banco, opt), page (int, ≥ 1), page_size (int, 10–100, default 25) | **Agregada en REQ-012.** Pantalla «Bancos»: términos o hechos con búsqueda por texto (contiene, sin distinguir mayúsculas), filtros de estado y categoría, paginado en el servidor. Cada ítem muestra categoría, estado y motivo de rechazo, descripción en español, fecha (hechos), sitelinks, último uso por juego y si algún juego lo excluye. Una categoría que no es del banco → `validation_error`. Solo lectura |
 
 **Criterios de Aceptación:**
 - DADO que hoy es 2026-12-01
@@ -624,6 +625,12 @@ para anticipar problemas sin tener que cargar nada a mano.
 - DADO el Challenge `published` de hoy
   CUANDO el Responsable intenta regenerarlo
   ENTONCES se rechaza.
+- DADO un banco `terms` con 4.000 aprobados disponibles, 115 de ellos en la lista de nicho de Devdle
+  CUANDO el Responsable abre Stock
+  ENTONCES Devdle muestra 3.885 disponibles y Grep Grid 4.000 (REQ-012).
+- DADO el banco de términos
+  CUANDO el Responsable busca `sql` con el filtro «rechazado» en Bancos
+  ENTONCES ve, de a 25, los términos rechazados que contienen «sql», con su motivo, su último uso por juego y si Devdle los excluye (C-56).
 
 **Prioridad:** Media
 

@@ -269,6 +269,7 @@ Visibilidad y control sobre el contenido automático: ver los próximos 14 días
 - C-43: Ver los próximos desafíos (de F-12)
 - C-44: Regenerar un desafío (de F-12)
 - C-45: Ver el stock de contenido (de F-12)
+- C-56: Explorar los bancos de contenido (de F-12; **agregada después de v1, REQ-012**)
 - C-49: Alertar una falla de generación (de F-14)
 
 **Precondiciones:**

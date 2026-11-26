@@ -1,7 +1,7 @@
 # ADR-006: Contrato `GameDefinition` y juegos como paquetes enchufables
 
 **Estado:** Accepted
-**Fecha:** 2026-11-03 (actualizado 2026-11-15: `culprits`, `bankUsage`, `Preview`, `codeLanguage`, `verify` asíncrono, `aheadDays`, `StatsSummary`)
+**Fecha:** 2026-11-03 (actualizado 2026-11-15: `culprits`, `bankUsage`, `Preview`, `codeLanguage`, `verify` asíncrono, `aheadDays`, `StatsSummary`; 2026-11-25: `BankUsage.excludedItems`)
 **Decisores:** Responsable de nerdose
 **Etiquetas:** juegos, contrato, extensibilidad, anti-spoiler
 
@@ -45,6 +45,7 @@ export interface BankUsage {
   lastUsedField: string;            // last_used_devdle, last_used_grep, last_used
   windowDays: number;               // ventana de no repetición
   itemsPerChallenge: number;
+  excludedItems?: ReadonlySet<string>; // ítems (por texto: terms.term, timeline_facts.label) que el generator nunca elige (REQ-012)
 }
 
 // entrada ./generator
@@ -83,6 +84,7 @@ Hay un **registry** en `api`, en `web`/`admin` y en `generator` que mapea `game_
 - `moveSchema` MUST usarse tanto en `web` (antes de enviar) como en la `api` (`@hono/zod-validator`). Si el parse falla, la respuesta es `422 invalid_move`.
 - `share(result, number, locale)` MUST NOT incluir la solución y MUST terminar en `nerdose.dev`.
 - `bankUsage` MUST coincidir con `historySpec` del generator del mismo juego (banco y campo `last_used_*`); un test del paquete lo verifica. Los juegos sin banco declaran `null` (REQ-008).
+- Si el generator de un juego excluye ítems del banco, `bankUsage.excludedItems` MUST ser **el mismo** `Set` que usa el generator (importado de `src/shared` del paquete), para que el stock de la `api` no los cuente como disponibles para ese juego ni en su `cycle_ok`. Hoy solo Devdle lo declara (`DEVDLE_EXCLUDED_TERMS`, REQ-012/S-067).
 - `culprits(p)` MUST devolver solo ítems de banco presentes en el payload; un juego sin banco devuelve `[]` (REQ-007).
 - `Preview` MUST ser de solo lectura: valida `payload` con el schema del juego, traduce con los recursos del propio paquete según `language`, y no hace `fetch`, no usa storage ni estado de partida. `web` MUST NOT montarla (necesita el `payload` completo, que solo devuelve `/api/admin/*`). El admin la monta en ES y EN lado a lado; un juego sin `Preview` cae a la vista genérica del payload (REQ-008).
 - `generate` MUST ser determinista: el mismo `{ date, seed, history }` da el mismo `Payload`. MUST NOT usar `Math.random()` ni la hora actual.
