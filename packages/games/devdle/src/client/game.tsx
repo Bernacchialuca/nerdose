@@ -1,6 +1,6 @@
 import { useId, useMemo, useState } from 'react';
 
-import { MAX_GUESSES, hintMoveSchema, moveSchema } from '../definition/schemas';
+import { MAX_GUESSES, giveUpMoveSchema, hintMoveSchema, moveSchema } from '../definition/schemas';
 
 import { Board } from './board';
 import { CategoryHint } from './category-hint';
@@ -11,6 +11,7 @@ import { LetterHint } from './letter-hint';
 import { isFinished, keyStates } from './marks';
 import { MoveHint } from './move-hint';
 import { parsePublicView, parseState } from './parse';
+import { SurrenderButton, SurrenderDialog } from './surrender';
 import type { GameProps, MoveErrorInfo } from './types';
 import { useDevdleInput } from './use-devdle-input';
 
@@ -41,6 +42,7 @@ export function Game({
   const [announcement, setAnnouncement] = useState('');
   const [prevCount, setPrevCount] = useState(guesses.length);
   const [prevError, setPrevError] = useState(moveError);
+  const [surrender, setSurrender] = useState<'closed' | 'open' | 'submitting'>('closed');
 
   const listFormat = useMemo(() => new Intl.ListFormat(locale, { type: 'conjunction' }), [locale]);
 
@@ -64,6 +66,8 @@ export function Game({
   if (moveError !== prevError) {
     setPrevError(moveError);
     if (moveError) setLocalHint(null);
+    // Si rendirse falló, el diálogo vuelve a quedar disponible para reintentar o cerrar.
+    if (moveError && surrender === 'submitting') setSurrender('open');
   }
 
   const inputBlocked = locked || pending || isFinished(play);
@@ -96,7 +100,13 @@ export function Game({
     else setLocalHint('onlyLetters');
   };
 
-  useDevdleInput({ enabled: !locked, onLetter, onBackspace, onSubmit, onInvalid });
+  useDevdleInput({
+    enabled: !locked && surrender === 'closed',
+    onLetter,
+    onBackspace,
+    onSubmit,
+    onInvalid,
+  });
 
   const onReveal = (position: number) => {
     if (inputBlocked) return;
@@ -177,9 +187,32 @@ export function Game({
             />
           )}
           {gameStats ? <Distribution stats={gameStats} t={t} /> : null}
+          {locked ? null : (
+            <SurrenderButton
+              disabled={inputBlocked}
+              onOpen={() => {
+                setSurrender('open');
+              }}
+              t={t}
+            />
+          )}
           {aside}
         </aside>
       </div>
+      {surrender === 'closed' ? null : (
+        <SurrenderDialog
+          used={guesses.length}
+          busy={surrender === 'submitting' && pending}
+          onClose={() => {
+            setSurrender('closed');
+          }}
+          onConfirm={() => {
+            setSurrender('submitting');
+            onMove(giveUpMoveSchema.parse({ give_up: true }));
+          }}
+          t={t}
+        />
+      )}
     </div>
   );
 }

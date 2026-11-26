@@ -307,6 +307,40 @@ describe('devdle definition', () => {
     });
   });
 
+  describe('give up', () => {
+    const giveUp = (st: DevdleState) =>
+      devdle.applyMove(PAYLOAD_REACT, st, { give_up: true }, NOW, ALL_VALID);
+
+    it('closes the game as a loss that counts for the stats', () => {
+      const r = giveUp(play(['CACHE']));
+      if ('error' in r) throw new Error(r.error);
+      expect(r.feedback).toEqual({ gave_up: true });
+      expect(devdle.isFinished(r.state)).toBe(true);
+      const result = devdle.result(PAYLOAD_REACT, r.state, 'es');
+      expect(result).toMatchObject({ win: false, score: 6, gave_up: true, word: 'REACT' });
+      expect(devdle.isWin(result)).toBe(false);
+      expect(devdle.reduceStats(devdle.initialStats(), result).losses).toBe(1);
+    });
+
+    it('accepts no move after giving up and cannot give up a finished game', () => {
+      const r = giveUp(S0);
+      if ('error' in r) throw new Error(r.error);
+      expect(devdle.applyMove(PAYLOAD_REACT, r.state, { guess: 'REACT' }, NOW, ALL_VALID)).toEqual({
+        error: 'invalid_move',
+      });
+      expect(giveUp(play(['REACT']))).toEqual({ error: 'invalid_move' });
+    });
+
+    it('moveSchema only accepts give_up: true', () => {
+      expect(devdle.moveSchema.safeParse({ give_up: true }).success).toBe(true);
+      expect(devdle.moveSchema.safeParse({ give_up: false }).success).toBe(false);
+    });
+
+    it('omits gave_up from normal results', () => {
+      expect(devdle.result(PAYLOAD_REACT, play(['REACT']), 'es')).not.toHaveProperty('gave_up');
+    });
+  });
+
   it('payloadSchema parses the fixture', () => {
     expect(() => payloadSchema.parse(PAYLOAD_REACT)).not.toThrow();
   });

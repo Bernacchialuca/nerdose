@@ -7,7 +7,9 @@ export const MAX_GUESSES = 6;
 export const guessMoveSchema = z.strictObject({ guess: z.string().regex(WORD_PATTERN) });
 /** One per game: reveals the letter at `position` (0-based). */
 export const hintMoveSchema = z.strictObject({ hint: z.number().int().min(0).max(11) });
-export const moveSchema = z.union([guessMoveSchema, hintMoveSchema]);
+/** Closes the game as a loss: counts for the streak and reveals the word. */
+export const giveUpMoveSchema = z.strictObject({ give_up: z.literal(true) });
+export const moveSchema = z.union([guessMoveSchema, hintMoveSchema, giveUpMoveSchema]);
 
 export const letterMarkSchema = z.enum(['correct', 'present', 'absent']);
 export const guessSchema = z.object({
@@ -22,6 +24,7 @@ export const revealedHintSchema = z.object({
 export const stateSchema = z.object({
   guesses: z.array(guessSchema).max(MAX_GUESSES),
   hint: revealedHintSchema.optional(),
+  gave_up: z.literal(true).optional(),
 });
 
 const localizedSchema = z.object({ es: z.string(), en: z.string() });
@@ -49,6 +52,7 @@ export const resultSchema = z.object({
   summary: z.string(),
   guesses: z.array(guessSchema),
   hint: revealedHintSchema.nullable().optional(),
+  gave_up: z.boolean().optional(),
 });
 
 const count = z.number().int().min(0);
@@ -62,7 +66,7 @@ export type DevdlePayload = z.infer<typeof payloadSchema>;
 export type DevdleMove = z.infer<typeof moveSchema>;
 export type DevdleGuess = z.infer<typeof guessSchema>;
 export type DevdleRevealedHint = z.infer<typeof revealedHintSchema>;
-export type DevdleFeedback = DevdleGuess | { hint: DevdleRevealedHint };
+export type DevdleFeedback = DevdleGuess | { hint: DevdleRevealedHint } | { gave_up: true };
 export type DevdleState = z.infer<typeof stateSchema>;
 export type DevdlePublicView = z.infer<typeof publicViewSchema>;
 export type DevdleResult = z.infer<typeof resultSchema>;

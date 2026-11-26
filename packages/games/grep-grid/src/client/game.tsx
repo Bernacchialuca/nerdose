@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { buttonClass, cn } from '@nerdose/ui';
+import { buttonClass } from '@nerdose/ui';
 
 import { moveSchema, WORDS_COUNT } from '../definition/schemas';
 import { sameCell, type Cell } from '../shared/geometry';
@@ -11,7 +11,6 @@ import { ConsoleHint, type HintAnnouncement } from './console-hint';
 import { HELP_TARGET_ID } from './help-target';
 import { parseFeedback, parsePublicView, parseState } from './parse';
 import { SectionPanel } from './section-panel';
-import { SURRENDER_BUTTON } from './surrender-button';
 import { SurrenderDialog } from './surrender-dialog';
 import type { GameProps } from './types';
 import { WordList, type WordRow } from './word-list';
@@ -204,12 +203,13 @@ export function Game({
               onClick={() => {
                 if (!pending) setDialog('open');
               }}
-              className={cn(
-                pending ? buttonClass({ disabled: true }) : SURRENDER_BUTTON,
-                'self-start',
-              )}
+              className={buttonClass({
+                variant: 'error-outline',
+                fullWidth: true,
+                disabled: pending,
+              })}
             >
-              <span aria-hidden="true">✕</span>
+              <span aria-hidden="true">⚑</span>
               {t('surrender.button')}
             </button>
           )}

@@ -417,4 +417,46 @@ describe('Game', () => {
       }
     });
   });
+
+  describe('surrender', () => {
+    it('asks for confirmation and then sends the give up move', async () => {
+      const onMove = vi.fn();
+      const user = userEvent.setup();
+      render(<Game {...base({ onMove })} />);
+      await user.click(screen.getByRole('button', { name: /Rendirse/ }));
+      const dialog = screen.getByRole('alertdialog', { name: '¿Rendirte?' });
+      expect(dialog).toHaveTextContent('2 de 6 intentos usados');
+      expect(within(dialog).getByRole('button', { name: 'Seguir jugando' })).toHaveFocus();
+      await user.click(within(dialog).getByRole('button', { name: 'Sí, rendirme' }));
+      expect(onMove).toHaveBeenCalledWith({ give_up: true });
+    });
+
+    it('keeps playing closes the dialog without a move', async () => {
+      const onMove = vi.fn();
+      const user = userEvent.setup();
+      render(<Game {...base({ onMove })} />);
+      await user.click(screen.getByRole('button', { name: /Rendirse/ }));
+      await user.click(screen.getByRole('button', { name: 'Seguir jugando' }));
+      expect(screen.queryByRole('alertdialog')).toBeNull();
+      expect(onMove).not.toHaveBeenCalled();
+    });
+
+    it('the physical keyboard does not type while the dialog is open', async () => {
+      const user = userEvent.setup();
+      render(<Game {...base()} />);
+      await user.click(screen.getByRole('button', { name: /Rendirse/ }));
+      await user.keyboard('x');
+      expect(labels(3)[0]).toBe('casilla, vacía');
+    });
+
+    it('is a full-width error-outline button, hidden when locked', () => {
+      const { unmount } = render(<Game {...base()} />);
+      const btn = screen.getByRole('button', { name: /Rendirse/ });
+      expect(btn).toHaveClass('border-status-error-border', 'w-full');
+      expect(btn.querySelector('[aria-hidden="true"]')).toHaveTextContent('⚑');
+      unmount();
+      render(<Game {...base({ locked: true })} />);
+      expect(screen.queryByRole('button', { name: /Rendirse/ })).toBeNull();
+    });
+  });
 });

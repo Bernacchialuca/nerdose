@@ -81,6 +81,15 @@ export const es = {
     reveal: 'Revelar la letra {{n}}',
     revealed: 'La letra {{n}} es {{letter}}.',
   },
+  surrender: {
+    button: 'Rendirse',
+    title: '¿Rendirte?',
+    close: 'Cerrar',
+    body: 'Vas a cerrar la partida con {{count}} de {{max}} intentos usados. Cuenta para tu racha y te mostramos la palabra. No se puede deshacer.',
+    keepPlaying: 'Seguir jugando',
+    confirm: 'Sí, rendirme',
+    closing: 'Cerrando…',
+  },
   legend: {
     title: 'cómo se juega',
     correct: 'Letra correcta en el lugar correcto.',
@@ -91,6 +100,7 @@ export const es = {
     hintUsed: 'Usaste la pista: la letra {{n}} era {{letter}}.',
     won: 'Ganaste en {{score}}/{{max}}',
     wonDetail: 'Repasá la palabra del día y su definición.',
+    gaveUp: 'Te rendiste: X/{{max}}',
     lost: 'No salió: X/{{max}}',
     lostDetail: 'Mostramos la palabra y su explicación.',
     wordTitle: 'palabra del día',

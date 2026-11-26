@@ -23,6 +23,9 @@ function isWon(s: DevdleState): boolean {
   return last !== undefined && isSolved(last);
 }
 
+const isOver = (s: DevdleState): boolean =>
+  s.gave_up === true || isWon(s) || s.guesses.length >= MAX_GUESSES;
+
 export const devdle: GameDefinition<
   DevdlePayload,
   DevdlePublicView,
@@ -50,7 +53,10 @@ export const devdle: GameDefinition<
   initState: () => ({ guesses: [] }),
 
   applyMove(p, s, m, _now, ctx) {
-    if (isWon(s) || s.guesses.length >= MAX_GUESSES) return { error: 'invalid_move' };
+    if (isOver(s)) return { error: 'invalid_move' };
+    if ('give_up' in m) {
+      return { state: { ...s, gave_up: true }, feedback: { gave_up: true } };
+    }
     if ('hint' in m) {
       if (s.hint !== undefined || m.hint >= p.word.length) return { error: 'invalid_move' };
       const hint = { position: m.hint, letter: p.word.charAt(m.hint) };
@@ -65,7 +71,7 @@ export const devdle: GameDefinition<
     return { state: { ...s, guesses: [...s.guesses, feedback] }, feedback };
   },
 
-  isFinished: (s) => isWon(s) || s.guesses.length >= MAX_GUESSES,
+  isFinished: isOver,
 
   result(p, s, locale) {
     const win = isWon(s);
@@ -78,6 +84,7 @@ export const devdle: GameDefinition<
       summary: p.summary[locale],
       guesses: s.guesses,
       hint: s.hint ?? null,
+      ...(s.gave_up ? { gave_up: true } : {}),
     };
   },
 
@@ -102,6 +109,7 @@ export { scoreGuess } from './feedback';
 export {
   MAX_GUESSES,
   WORD_PATTERN,
+  giveUpMoveSchema,
   guessMoveSchema,
   guessSchema,
   hintMoveSchema,

@@ -174,6 +174,25 @@ describe('buttonClass', () => {
     );
   });
 
+  it('builds the error-outline trigger for confirmed destructive actions', () => {
+    const c = classes(buttonClass({ variant: 'error-outline', fullWidth: true }));
+    expect(c).toEqual(
+      expect.arrayContaining([
+        'border',
+        'border-status-error-border',
+        'text-status-error-soft',
+        'hover:bg-status-error-bg',
+        'font-medium',
+        'min-h-11',
+        'w-full',
+      ]),
+    );
+    expect(c).not.toContain('bg-status-error');
+    const disabled = classes(buttonClass({ variant: 'error-outline', disabled: true }));
+    expect(disabled).toContain('cursor-not-allowed');
+    expect(disabled).not.toContain('text-status-error-soft');
+  });
+
   it('builds the destructive error button (S-033 TS-1..TS-3)', () => {
     const c = classes(buttonClass({ variant: 'error' }));
     for (const k of [

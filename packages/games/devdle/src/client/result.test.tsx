@@ -51,6 +51,11 @@ describe('Result', () => {
     expect(screen.queryByText(/Usaste la pista/)).toBeNull();
   });
 
+  it('says you gave up when you did', () => {
+    render(<Result {...base({ result: { ...RESULT_LOSS, gave_up: true } })} />);
+    expect(screen.getByRole('heading', { level: 1, name: 'Te rendiste: X/6' })).toBeInTheDocument();
+  });
+
   it('shows a loss (TS-51)', () => {
     render(<Result {...base({ result: RESULT_LOSS })} />);
     expect(screen.getByRole('heading', { level: 1, name: 'No salió: X/6' })).toBeInTheDocument();

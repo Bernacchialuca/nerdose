@@ -84,6 +84,15 @@ export const en: Resources = {
     reveal: 'Reveal letter {{n}}',
     revealed: 'Letter {{n}} is {{letter}}.',
   },
+  surrender: {
+    button: 'Give up',
+    title: 'Give up?',
+    close: 'Close',
+    body: "You're about to close the game with {{count}} of {{max}} attempts used. It counts for your streak and we'll show you the word. This can't be undone.",
+    keepPlaying: 'Keep playing',
+    confirm: 'Yes, give up',
+    closing: 'Closing…',
+  },
   legend: {
     title: 'how to play',
     correct: 'Right letter in the right place.',
@@ -94,6 +103,7 @@ export const en: Resources = {
     hintUsed: 'You used the hint: letter {{n}} was {{letter}}.',
     won: 'You won in {{score}}/{{max}}',
     wonDetail: 'Go over the word of the day and its definition.',
+    gaveUp: 'You gave up: X/{{max}}',
     lost: 'Not this time: X/{{max}}',
     lostDetail: 'Here is the word and its explanation.',
     wordTitle: 'word of the day',
