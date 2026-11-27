@@ -1,0 +1,14 @@
+**/node_modules
+**/dist
+**/.turbo
+**/coverage
+**/.env
+**/.env.local
+**/.env.test
+.git
+.github
+.claude
+.vscode
+docs
+Dockerfile
+.dockerignore
