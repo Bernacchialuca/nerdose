@@ -1,6 +1,6 @@
 # Nerdose
 
-Plataforma de juegos diarios para nerds. Monorepo pnpm + Turborepo con `apps/{web,admin,api,generator}`, `packages/{core,db,ui,polyglot}` y un paquete por juego en `packages/games/*`.
+Plataforma de juegos diarios para devs. Monorepo pnpm + Turborepo con `apps/{web,admin,api,generator}`, `packages/{core,db,ui,polyglot}` y un paquete por juego en `packages/games/*`.
 
 ## Estructura
 
