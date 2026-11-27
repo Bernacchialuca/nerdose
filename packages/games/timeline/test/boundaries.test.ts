@@ -70,11 +70,7 @@ describe('game-timeline entry boundaries (TS-2)', () => {
     const clientFiles = files.filter((f) => f.file.startsWith('client/'));
     expect(clientFiles.length).toBeGreaterThan(0);
     for (const { file, text } of clientFiles) {
-      for (const forbidden of [
-        'localStorage',
-        'sessionStorage',
-        '@nerdose/game-',
-      ]) {
+      for (const forbidden of ['localStorage', 'sessionStorage', '@nerdose/game-']) {
         expect(text.includes(forbidden), `${file} contains ${forbidden}`).toBe(false);
       }
     }
