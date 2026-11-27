@@ -84,16 +84,20 @@ FROM base AS generator
 ENV NODE_ENV=production \
     JAVA_HOME=/opt/java/openjdk \
     PATH=/usr/local/go/bin:/opt/java/openjdk/bin:$PATH \
-    GOTOOLCHAIN=local \
-    GOPROXY=off \
-    GOFLAGS=-buildvcs=false \
     GOCACHE=/home/node/.cache/go-build
 COPY --from=go /usr/local/go /usr/local/go
 COPY --from=jdk /opt/java/openjdk /opt/java/openjdk
 COPY --from=generator-deps --chown=node:node /app /app
 WORKDIR /app/apps/generator
 USER node
-RUN go version && java -version
+# Precompila `fmt` (lo único que importa el Go emitido) en la caché de Go del usuario. Si no, el
+# primer `go build` del runner compila la librería estándar desde cero, no entra en los 10 s
+# (ADR-007) y los primeros candidatos de Big O y Bug Hunt se rechazan por timeout.
+RUN go version && java -version \
+    && d="$(mktemp -d)" \
+    && printf 'package main\n\nimport "fmt"\n\nfunc main() { fmt.Println("ok") }\n' > "$d/main.go" \
+    && cd "$d" && go build -o main main.go && ./main \
+    && rm -rf "$d"
 CMD ["tsx", "src/index.ts"]
 
 # ---------------------------------------------------------------------------------------------
