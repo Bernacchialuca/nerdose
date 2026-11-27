@@ -91,7 +91,7 @@ Decisiones de producto tomadas en el discovery, con su porqué. El registro comp
 | 8 | Tech Timeline: orden y victoria | Siempre ascendente; puntaje 0–5 y victoria solo con 5/5. Una consigna fija evita confusión |
 | 9 | Tech Timeline: categorías v1 | Solo las que Wikidata cubre con calidad. No se fuerza una categoría sin fuente fiable |
 | 10 | Lenguaje en Bug Hunt / Big O | Cambio libre durante la partida y preferencia recordada. El lenguaje es solo una vista; la respuesta es la misma en los tres |
-| 11 | Formato de share | Emoji del juego + nombre + #número + resultado sin spoilers + nerdose.dev. Formato unificado y reconocible |
+| 11 | Formato de share | Emoji del juego + nombre + #número + resultado sin spoilers + la dirección del sitio (el host abierto, sin dominio fijo). Formato unificado y reconocible |
 | 12 | Número de desafío | Número de día de la plataforma, igual para los 5 juegos |
 | 13 | Anulación con partidas en curso | Se cierran como completadas (anuladas): cuentan para la racha, no como victoria ni derrota. El error es de la plataforma |
 | 14 | Anulación: decisión | Siempre manual desde el admin; los reportes solo alertan. Evita el abuso coordinado de reportes |

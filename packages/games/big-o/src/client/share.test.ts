@@ -11,19 +11,19 @@ import {
 
 describe('share', () => {
   it('shares a win in Java (TS-6)', () => {
-    expect(share(RESULT_WON_JAVA_ES, 128)).toBe('🧮 Big O #128\n🟩 Java\nnerdose.dev');
+    expect(share(RESULT_WON_JAVA_ES, 128)).toBe('🧮 Big O #128\n🟩 Java');
   });
 
   it('shares a loss in Go and a win in JavaScript (TS-7)', () => {
-    expect(share(RESULT_LOST_GO_ES, 8)).toBe('🧮 Big O #8\n🟥 Go\nnerdose.dev');
-    expect(share(RESULT_PLAIN_ES, 8)).toBe('🧮 Big O #8\n🟩 JavaScript\nnerdose.dev');
+    expect(share(RESULT_LOST_GO_ES, 8)).toBe('🧮 Big O #8\n🟥 Go');
+    expect(share(RESULT_PLAIN_ES, 8)).toBe('🧮 Big O #8\n🟩 JavaScript');
   });
 
   it('has no spoilers and is identical in es and en (TS-8)', () => {
     const text = share(RESULT_WON_JAVA_ES, 8);
     expect(share(RESULT_WON_JAVA_EN, 8)).toBe(text);
-    expect(text.split('\n')).toHaveLength(3);
-    expect(text.endsWith('nerdose.dev')).toBe(true);
+    expect(text.split('\n')).toHaveLength(2);
+    expect(text).not.toContain('nerdose');
     for (const spoiler of ['O(', 'o_n', 'log', 'nested', 'n veces', '10240']) {
       expect(text.includes(spoiler)).toBe(false);
     }

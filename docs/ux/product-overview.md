@@ -52,7 +52,7 @@ status: Draft - Punto de partida para discusión
 - **Sin desafío hoy** — Estado de un juego sin desafío publicado en el día.
 - **Anulado (voided)** — Desafío con error confirmado, cerrado manualmente por el responsable; no afecta la racha.
 - **Reporte** — Aviso del jugador de que un desafío está mal (`wrong_answer`, `ambiguous`, etc.); solo alerta, nunca despublica.
-- **Share** — Resultado compartible sin spoilers: emoji del juego, nombre, `#número`, resultado y `nerdose.dev`.
+- **Share** — Resultado compartible sin spoilers: emoji del juego, nombre, `#número`, resultado y la dirección del sitio (el host abierto).
 - **Stock de contenido** — Ítems aprobados disponibles en los bancos de términos y de hechos.
 - **Próximos desafíos** — Desafíos ya generados y verificados de los próximos 14 días, visibles solo en el admin.
 

@@ -102,34 +102,35 @@ sequenceDiagram
 **Tipo:** Interno
 
 **Acción:**
-1. `text = share(result, number, locale)` del `client` del juego (el `locale` es el idioma activo de la sesión; solo el share de Bug Hunt tiene texto y lo traduce). Nunca incluye la solución y termina en `nerdose.dev`. Ejemplo:
+1. `text = share(result, number, locale)` del `client` del juego (el `locale` es el idioma activo de la sesión; solo el share de Bug Hunt tiene texto y lo traduce). Nunca incluye la solución ni el sitio.
+2. `web` le agrega una última línea con el host de la dirección abierta (`window.location.host`, `withSite` en `share-button.tsx`); ningún dominio queda fijo en el código. En los ejemplos, `<sitio>` es ese host. Ejemplo:
    ```
    🟩 Devdle #128 · 2/6
    🟩🟨⬛⬛⬛
    🟩🟩🟩🟩🟩
-   nerdose.dev
+   <sitio>
    ```
    Devdle termina la primera línea en `X/6` si perdió o se rindió, y le suma ` 💡` si usó la pista (`🟩 Devdle #128 · 4/6 💡`), sin decir qué letra reveló (REQ-012, S-063).
    Grep Grid (sin las palabras ni indicio de rendición):
    ```
    🔎 Grep Grid #8
    6/8
-   nerdose.dev
+   <sitio>
    ```
    Big O (🟩 si acertó, 🟥 si no, y el lenguaje con el que confirmó; sin la opción elegida ni la correcta, idéntico en es y en):
    ```
    🧮 Big O #12
    🟩 Java
-   nerdose.dev
+   <sitio>
    ```
    Bug Hunt (🟩 si encontró el bug, 🟥 si no, y el lenguaje de la pestaña con la que confirmó; sin la línea ni el tipo de bug; el texto sigue el idioma activo):
    ```
    🐛 Bug Hunt #12 · JavaScript
    🟥 se me escapó
-   nerdose.dev
+   <sitio>
    ```
    En inglés, la segunda línea es `🟥 it got away` (y `🟩 bug found` al acertar).
-2. `navigator.share({ text })` si está disponible; si no, `navigator.clipboard.writeText(text)` y el aviso "copiado". No se emite ningún evento de analítica.
+3. `navigator.share({ text })` si está disponible; si no, `navigator.clipboard.writeText(text)` y el aviso "copiado". No se emite ningún evento de analítica.
 
 ## Manejo de Errores
 

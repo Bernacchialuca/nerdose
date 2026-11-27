@@ -8,9 +8,16 @@ import { useLoadedGameClient } from '../use-loaded-game-client';
 
 export const COPIED_RESET_MS = 3000;
 
+/**
+ * Texto final del share: el del juego más una última línea con el host del sitio. Sale de la
+ * dirección que está abierta, así no hay dominio fijo en el código ni variable que configurar.
+ */
+export const withSite = (gameText: string, host: string = window.location.host): string =>
+  `${gameText}\n${host}`;
+
 type Props = {
   gameId: GameId;
-  /** El texto lo arma el `share()` del juego; el shell nunca lo compone. */
+  /** El resultado lo arma el `share()` del juego; el shell solo agrega la línea del sitio. */
   getText: () => string;
   variant: 'header';
 };
@@ -83,7 +90,7 @@ export function ClientShareButton({
     <ShareButton
       gameId={gameId}
       variant={variant}
-      getText={() => client.share(result, number, locale)}
+      getText={() => withSite(client.share(result, number, locale))}
     />
   );
 }

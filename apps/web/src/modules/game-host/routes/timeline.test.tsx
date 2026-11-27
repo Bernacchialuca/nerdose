@@ -31,8 +31,8 @@ import { renderWithProviders } from '@/test/render';
 
 const TODAY = '/api/games/timeline/today?lang=es';
 const MOVE = '/api/games/timeline/today/move?lang=es';
-const SHARE_3 = '⏳ Tech Timeline #128\n🟩🟥🟥🟩🟩 3/5\nnerdose.dev';
-const SHARE_5 = '⏳ Tech Timeline #128\n🟩🟩🟩🟩🟩 5/5\nnerdose.dev';
+const SHARE_3 = '⏳ Tech Timeline #128\n🟩🟥🟥🟩🟩 3/5\nlocalhost:5173';
+const SHARE_5 = '⏳ Tech Timeline #128\n🟩🟩🟩🟩🟩 5/5\nlocalhost:5173';
 const PROMPT_ES = 'Ordená estos hitos del más antiguo al más reciente';
 const PROMPT_EN = 'Order these milestones from oldest to newest';
 const VOIDED = 'Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.';

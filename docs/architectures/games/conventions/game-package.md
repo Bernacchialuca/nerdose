@@ -103,7 +103,7 @@ Members of `GameDefinition` that only some games use are still mandatory and tak
 - `./definition` implements every method of `GameDefinition`; `toPublic` never includes the solution (per-game list in ADR-006).
 - Every game has an anti-spoiler contract test: serialize `toPublic(payload)` and every pre-result response and verify none contains a solution value.
 - `moveSchema` is the single schema used by `web` (before sending) and by `api` (validation); a parse failure is `422 invalid_move`.
-- `share(result, number, locale)` never includes the solution and ends with `nerdose.dev`; `locale` is optional in the game package (default `'es'`), so games without localized share text ignore it.
+- `share(result, number, locale)` never includes the solution nor the site: the `web` host appends `window.location.host` as the last line, so no domain is hard-coded; `locale` is optional in the game package (default `'es'`), so games without localized share text ignore it.
 - `generate` is deterministic: same `{ date, seed, history }` gives the same payload. It never uses `Math.random()` or the current time; randomness comes from the PRNG built from the seed.
 - Every player-facing text of a `Payload` is `{ es, en }`; `verify` fails if a language is missing.
 - `verify` may be `async` (games that execute code through `@nerdose/polyglot`); the `generator` always `await`s it. It receives no date: a game whose variety checks need `D` carries it in the payload (`date`), as every game does (`big-o` declares it optional and fails `variety_*` without it).

@@ -257,7 +257,7 @@ para concentrarme en el desafío y no en la interfaz.
 | C-10 | Retomar la partida | U-01 | Play | READ | state (json) | Si el jugador sale y vuelve el mismo día, retoma la Play en el estado exacto en que la dejó |
 | C-11 | Hacer una jugada | U-01 | Play | UPDATE | challenge_number (int, req), move (json, req, según el juego) | Validación 100% en el servidor. Play terminada → `game_finished`. `challenge_number` ≠ hoy → `challenge_expired`: la jugada se rechaza, el front carga el desafío nuevo y la Play vieja queda `in_progress` para siempre, sin contar. Challenge `voided` → `challenge_voided`. Move inválido → `invalid_move`. Límite: 60/min por jugador y 300/min por IP |
 | C-12 | Cerrar la partida y mostrar el resultado | Sistema | Play, PlayerGameStats, PlayerStats | UPDATE | status (enum: won/lost), result (json), score (int), finished_at (timestamp) | Al cumplirse el fin de partida del juego. En la misma transacción se actualizan las rachas y las stats (C-33). La respuesta incluye la solución con su explicación, el resultado del jugador, el share y las rachas actualizadas |
-| C-13 | Compartir el resultado | U-01 | Play | ACTION | — | Formato: emoji del juego + nombre + `#número`, una línea de resultado sin spoilers y `nerdose.dev`. Share nativo del dispositivo o copiar al portapapeles. Nunca incluye la solución |
+| C-13 | Compartir el resultado | U-01 | Play | ACTION | — | Formato: emoji del juego + nombre + `#número`, una línea de resultado sin spoilers y la dirección del sitio (el host abierto, sin dominio fijo en el código). Share nativo del dispositivo o copiar al portapapeles. Nunca incluye la solución |
 | C-14 | Mostrar "sin desafío hoy" | Sistema | Challenge | READ | challenge_status = none | Si un juego no tiene Challenge publicado hoy, se muestra "sin desafío hoy" y el día es neutro para la racha de ese juego |
 
 **Criterios de Aceptación:**
@@ -275,7 +275,7 @@ para concentrarme en el desafío y no en la interfaz.
   ENTONCES ve la grilla con esas 3 palabras tachadas y sigue jugando.
 - DADO un jugador que perdió Bug Hunt #8 en JavaScript
   CUANDO toca "Compartir" en un celular
-  ENTONCES se abre el share nativo con "🐛 Bug Hunt #8 · JavaScript\n🟥 se me escapó\nnerdose.dev".
+  ENTONCES se abre el share nativo con "🐛 Bug Hunt #8 · JavaScript\n🟥 se me escapó\n<sitio>", donde `<sitio>` es el host de la dirección abierta.
 
 **Prioridad:** Alta
 

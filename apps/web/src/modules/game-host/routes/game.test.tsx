@@ -36,7 +36,7 @@ import { renderWithProviders } from '@/test/render';
 const FILLED_CELLS = /^[A-Z], /;
 const filledCells = (pattern = FILLED_CELLS) =>
   within(screen.getByRole('grid', { name: /^(Tablero|Board):/ })).getAllByLabelText(pattern);
-const SHARE_WIN = '🟩 Devdle #128 · 3/6\n⬛🟨🟨⬛⬛⬛\n🟨⬛🟩⬛🟩🟩\n🟩🟩🟩🟩🟩🟩\nnerdose.dev';
+const SHARE_WIN = '🟩 Devdle #128 · 3/6\n⬛🟨🟨⬛⬛⬛\n🟨⬛🟩⬛🟩🟩\n🟩🟩🟩🟩🟩🟩\nlocalhost:5173';
 const COOKIES =
   'Para jugar necesitamos una única cookie funcional, sin datos personales. Activá las cookies y tocá «Reintentar».';
 const VOIDED = 'Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.';
@@ -712,7 +712,7 @@ describe('compartir', () => {
     const text: string = share.mock.calls[0]?.[0].text;
     expect(text.startsWith('🟩 Devdle #128 · X/6\n')).toBe(true);
     expect(text.split('\n')).toHaveLength(8);
-    expect(text.endsWith('\nnerdose.dev')).toBe(true);
+    expect(text.endsWith('\nlocalhost:5173')).toBe(true);
   });
 });
 

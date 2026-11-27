@@ -58,7 +58,7 @@ Entry `./client` (React 19, Shiki loaded dynamically). Same props contract as Bi
 
 ### share
 - **Location:** packages/games/bug-hunt/src/client/share.ts
-- **Description:** `🐛 Bug Hunt #N · <Language>` / `🟩 bug encontrado` | `🟥 se me escapó` (en: `bug found` | `it got away`) / `nerdose.dev`; never the line, the bug type or the test. `locale` is optional (default `'es'`) so the client fits the host's current and future `GameClient.share`. Throws `ZodError` on an invalid result.
+- **Description:** `🐛 Bug Hunt #N · <Language>` / `🟩 bug encontrado` | `🟥 se me escapó` (en: `bug found` | `it got away`), and the host appends the site line; never the line, the bug type or the test. `locale` is optional (default `'es'`) so the client fits the host's current and future `GameClient.share`. Throws `ZodError` on an invalid result.
 - **Signature:** `share(result: unknown, number: number, locale?: Locale): string`
 
 ### i18n / HELP_TARGET_ID / contract types / parsers

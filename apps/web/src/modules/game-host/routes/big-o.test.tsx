@@ -34,8 +34,8 @@ import { renderWithProviders } from '@/test/render';
 
 const TODAY = '/api/games/big-o/today?lang=es';
 const MOVE = '/api/games/big-o/today/move?lang=es';
-const SHARE_WON_JAVA = '🧮 Big O #128\n🟩 Java\nnerdose.dev';
-const SHARE_LOST_GO = '🧮 Big O #128\n🟥 Go\nnerdose.dev';
+const SHARE_WON_JAVA = '🧮 Big O #128\n🟩 Java\nlocalhost:5173';
+const SHARE_LOST_GO = '🧮 Big O #128\n🟥 Go\nlocalhost:5173';
 const QUESTION_ES = '¿Cuál es la complejidad temporal (peor caso) de f(n)?';
 const QUESTION_EN = 'What is the time complexity (worst case) of f(n)?';
 const VOIDED = 'Este desafío tenía un error y fue anulado. Tu racha no se ve afectada.';
@@ -549,7 +549,7 @@ describe('«Cómo se juega», sin desafío y teclado', () => {
     const button = within(screen.getByRole('banner')).getByRole('button', { name: 'Compartir' });
     await tabTo(() => button);
     await user.keyboard('{Enter}');
-    await waitFor(() => expect(write).toHaveBeenCalledWith('🧮 Big O #128\n🟩 Go\nnerdose.dev'));
+    await waitFor(() => expect(write).toHaveBeenCalledWith('🧮 Big O #128\n🟩 Go\nlocalhost:5173'));
   });
 });
 
