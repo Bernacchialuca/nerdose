@@ -90,7 +90,9 @@ El script manda un `User-Agent` descriptivo con un contacto del proyecto, como e
 
 ### Infraestructura
 
-> **Diferido:** hosting, plataforma de despliegue, ambientes, CI/CD, backups, DNS/TLS, y almacenamiento de secretos se definen en una iteración posterior. Acá solo queda lo que la arquitectura ya exige de la infraestructura.
+> **Diferido:** hosting, plataforma de despliegue, ambientes, CD, backups, DNS/TLS, y almacenamiento de secretos se definen en una iteración posterior. Acá solo queda lo que la arquitectura ya exige de la infraestructura.
+>
+> **Ya definido (2026-11-26):** una imagen Docker por servicio (`Dockerfile` de la raíz: `api`, `generator`, `migrate` y el build estático de `web`/`admin`) y CI en GitHub Actions (`.github/workflows/ci.yml`). Valen para cualquier hosting.
 
 **Requisitos que el despliegue tiene que cumplir:**
 - **Mismo origen:** `nerdose.dev` sirve `web` y enruta `/api/*` a la `api`; `admin.nerdose.dev` sirve `admin` y enruta `/api/admin/*` a la misma `api`. Sin CORS. *Qué* se enruta está decidido; *cómo* (proxy, plataforma) queda diferido.

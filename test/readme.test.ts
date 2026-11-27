@@ -156,7 +156,7 @@ describe('README.md', () => {
   it('covers a missing toolchain in common problems', () => {
     const text = readme();
     const start = text.indexOf('## Problemas comunes');
-    const end = text.indexOf('Hosting, CI/CD y despliegue: fuera de alcance por ahora.');
+    const end = text.indexOf('\n## Docker y CI\n');
     expect(start).toBeGreaterThanOrEqual(0);
     expect(text.slice(start, end)).toContain('Missing toolchain');
   });
