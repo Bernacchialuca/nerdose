@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { DevdlePayload } from '../definition';
 import { generator } from './index';
 import type { DevdleTerm } from './index';
+import { LAUNCH_DAYS } from './launch-terms';
 import { verifyPayload } from './verify';
 import { BANK, T_OAUTH, T_REACT, T_REDIS, T_ROUTER, payloadFrom } from './test-fixtures';
 
@@ -23,6 +24,7 @@ describe('generator.verify', () => {
         { name: 'not_used_365', ok: true },
         { name: 'category_rotation', ok: true },
         { name: 'not_excluded', ok: true },
+        { name: 'launch_pool', ok: true },
       ],
     });
     expect(JSON.parse(JSON.stringify(log))).toEqual(log);
@@ -109,6 +111,34 @@ describe('generator.verify', () => {
     expect(log.reason).toBe('not_excluded');
   });
 
+  it('rejects a non-launch term in the launch window while launch terms remain', () => {
+    const log = verifyPayload(payloadFrom(T_ROUTER), h, { number: LAUNCH_DAYS });
+    expect(log.ok).toBe(false);
+    expect(log.reason).toBe('launch_pool');
+    expect(log.checks.find((c) => c.name === 'launch_pool')?.detail).toBe(
+      `ROUTER is not a launch term (challenge #${LAUNCH_DAYS})`,
+    );
+    expect(verifyPayload(p, h, { number: 1 }).ok).toBe(true);
+  });
+
+  it('accepts any term after the launch window or when no launch term is reusable', () => {
+    const router = payloadFrom(T_ROUTER);
+    expect(verifyPayload(router, h, { number: LAUNCH_DAYS + 1 }).ok).toBe(true);
+    expect(verifyPayload(router, h).ok).toBe(true);
+    const noLaunchLeft = { bankItems: [T_REDIS, T_ROUTER], recentChallenges: [] };
+    expect(verifyPayload(router, noLaunchLeft, { number: 1 }).ok).toBe(true);
+  });
+
+  it('applies the category rotation inside the launch terms', () => {
+    // Fuera del tramo ROUTER (networking) evitaría la categoría de ayer; en el tramo solo hay REACT.
+    const recentLangs = [
+      { date: '2026-12-01', payload: { ...p, category: 'programming_languages' as const } },
+    ];
+    const history = { bankItems: BANK, recentChallenges: recentLangs };
+    expect(verifyPayload(p, history).reason).toBe('category_rotation');
+    expect(verifyPayload(p, history, { number: 1 }).ok).toBe(true);
+  });
+
   it('rejects unknown or inconsistent terms (TS-49)', () => {
     for (const bad of [
       { ...p, term_id: '99999999-9999-4999-8999-999999999999' },
@@ -129,6 +159,7 @@ describe('generator.verify', () => {
       'not_used_365',
       'category_rotation',
       'not_excluded',
+      'launch_pool',
     ]);
     expect(log.reason).toBe('word_shape');
   });

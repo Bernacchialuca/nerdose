@@ -1,7 +1,7 @@
 # ADR-006: Contrato `GameDefinition` y juegos como paquetes enchufables
 
 **Estado:** Accepted
-**Fecha:** 2026-11-03 (actualizado 2026-11-15: `culprits`, `bankUsage`, `Preview`, `codeLanguage`, `verify` asíncrono, `aheadDays`, `StatsSummary`; 2026-11-25: `BankUsage.excludedItems`)
+**Fecha:** 2026-11-03 (actualizado 2026-11-15: `culprits`, `bankUsage`, `Preview`, `codeLanguage`, `verify` asíncrono, `aheadDays`, `StatsSummary`; 2026-11-25: `BankUsage.excludedItems`; 2026-11-26: `GenerationContext.number`)
 **Decisores:** Responsable de nerdose
 **Etiquetas:** juegos, contrato, extensibilidad, anti-spoiler
 
@@ -54,9 +54,10 @@ export interface MoveContext { isValidWord(word: string): boolean; locale: Local
 export interface GameGenerator<Payload> {
   historySpec: { bank: 'terms' | 'timeline_facts' | null; lastUsedField: string; recentDays: number; aheadDays?: number };   // aheadDays default 0 (REQ-009)
   usedBankItems(p: Payload): string[];                       // ids del banco que consume el payload
-  generate(input: { date: string; seed: Uint8Array; history: GeneratorHistory }): Payload;
-  verify(p: Payload, history: GeneratorHistory): VerificationLog | Promise<VerificationLog>;   // { ok, checks[], reason? }
+  generate(input: { date: string; seed: Uint8Array; history: GeneratorHistory } & GenerationContext): Payload;
+  verify(p: Payload, history: GeneratorHistory, context?: GenerationContext): VerificationLog | Promise<VerificationLog>;   // { ok, checks[], reason? }
 }
+// GenerationContext = { number?: number }   // número del desafío (1 = LAUNCH_DATE); el pipeline siempre lo manda (2026-11-26)
 // GeneratorHistory = { bankItems (ítems approved con su last_used_*), recentChallenges (no rejected, [D - recentDays, D + aheadDays] sin la fila de D) }
 
 // entrada ./client
@@ -72,6 +73,7 @@ Hay un **registry** en `api`, en `web`/`admin` y en `generator` que mapea `game_
 - La `api` MUST guardar `plays.code_language = codeLanguage(state)` al cerrar la Play y, si no es `null`, actualizar `players.preferred_code_language` en la misma transacción, sin ramificar por `game_id` (REQ-009).
 - `StatsSummary` MUST derivar sus valores con funciones puras del paquete y mostrar `—` para un porcentaje sin partidas; MUST NOT importar el tablero ni hacer `fetch` (REQ-011).
 - `generateForDate` MUST hacer `await` de `verify`; los generadores síncronos siguen siendo válidos.
+- `generateForDate` MUST pasar `number` (`challengeNumber(date, LAUNCH_DATE)`) a `generate` y a `verify`. Los juegos que no lo usan lo ignoran; Devdle lo usa para sus términos de lanzamiento (2026-11-26).
 
 - Cada juego MUST vivir en `packages/games/<game_id>`, con `game_id` ∈ `devdle | grep-grid | timeline | big-o | bug-hunt`.
 - La entrada `./definition` MUST exportar un objeto que implemente `GameDefinition` de `@nerdose/core`, con todos los métodos de la interfaz.
@@ -87,7 +89,7 @@ Hay un **registry** en `api`, en `web`/`admin` y en `generator` que mapea `game_
 - Si el generator de un juego excluye ítems del banco, `bankUsage.excludedItems` MUST ser **el mismo** `Set` que usa el generator (importado de `src/shared` del paquete), para que el stock de la `api` no los cuente como disponibles para ese juego ni en su `cycle_ok`. Hoy solo Devdle lo declara (`DEVDLE_EXCLUDED_TERMS`, REQ-012/S-067).
 - `culprits(p)` MUST devolver solo ítems de banco presentes en el payload; un juego sin banco devuelve `[]` (REQ-007).
 - `Preview` MUST ser de solo lectura: valida `payload` con el schema del juego, traduce con los recursos del propio paquete según `language`, y no hace `fetch`, no usa storage ni estado de partida. `web` MUST NOT montarla (necesita el `payload` completo, que solo devuelve `/api/admin/*`). El admin la monta en ES y EN lado a lado; un juego sin `Preview` cae a la vista genérica del payload (REQ-008).
-- `generate` MUST ser determinista: el mismo `{ date, seed, history }` da el mismo `Payload`. MUST NOT usar `Math.random()` ni la hora actual.
+- `generate` MUST ser determinista: el mismo `{ date, number, seed, history }` da el mismo `Payload`. MUST NOT usar `Math.random()` ni la hora actual.
 - `Payload` MUST incluir todos los textos que lee el jugador como `{ es, en }`. `verify` MUST fallar si falta algún idioma.
 - Sumar un juego MUST requerir solo crear su paquete y registrarlo en los tres registries, sin cambiar rutas, tablas ni lógica de rachas.
 

@@ -9,6 +9,7 @@ import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { ChallengePublishingRepository } from '@/domain/challenge-publishing/challenge-publishing.repository';
 import { generateForDate, type GenerateDeps } from '@/domain/challenge-publishing/generate';
 import { generatorRegistry } from '@/games/registry';
+import { addDays } from '@/shared/dates';
 
 import { BANK16, insertTerms } from '../helpers/bank';
 import { setupTestDb } from '../helpers/db';
@@ -68,7 +69,7 @@ describe('generateForDate', () => {
     });
     const verification = row!.verification as { ok: boolean; checks: unknown[] };
     expect(verification.ok).toBe(true);
-    expect(verification.checks).toHaveLength(6);
+    expect(verification.checks).toHaveLength(7);
     const payload = payloadSchema.parse(row!.payload);
     expect(payload.date).toBe('2026-12-02');
     const used = await t.owner.db
@@ -76,6 +77,29 @@ describe('generateForDate', () => {
       .from(terms)
       .where(eq(terms.lastUsedDevdle, '2026-12-02'));
     expect(used.map((r) => r.id)).toEqual([payload.term_id]);
+  });
+
+  it('pasa el number a Devdle: en los primeros 50 desafíos elige solo términos de lanzamiento', async () => {
+    // De BANK16, REACT, PYTHON, REDIS y MYSQL están en la lista de lanzamiento de Devdle.
+    await insertTerms(t.owner.db, BANK16);
+    const launch = ['REACT', 'PYTHON', 'REDIS', 'MYSQL'];
+    // #13 a #50 dentro del tramo; #51 en adelante, todo el banco.
+    const inWindow = ['2026-12-02', '2026-12-20', '2027-01-08'];
+    for (const date of inWindow) {
+      await generateForDate({ entry, date }, setup().deps);
+      const [row] = await rowsFor(date);
+      expect(row?.status).toBe('approved');
+      expect(launch).toContain(payloadSchema.parse(row!.payload).word);
+    }
+    const words = new Set<string>();
+    for (let i = 0; i < 12; i++) {
+      const date = addDays('2027-01-09', i);
+      await generateForDate({ entry, date }, setup().deps);
+      const [row] = await rowsFor(date);
+      expect(row).toMatchObject({ number: 51 + i, status: 'approved' });
+      words.add(payloadSchema.parse(row!.payload).word);
+    }
+    expect([...words].some((w) => !launch.includes(w))).toBe(true);
   });
 
   it('es determinista', async () => {

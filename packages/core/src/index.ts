@@ -38,6 +38,7 @@ export type {
   AnyGameGenerator,
   BankName,
   GameGenerator,
+  GenerationContext,
   GeneratorHistory,
   HistorySpec,
   RecentChallenge,

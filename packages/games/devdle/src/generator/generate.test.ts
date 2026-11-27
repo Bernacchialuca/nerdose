@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { payloadSchema } from '../definition';
 import { generator } from './index';
+import { LAUNCH_DAYS } from './launch-terms';
 import {
   BANK,
   DATE,
@@ -19,10 +20,10 @@ const history = (bankItems = BANK, recentChallenges: typeof RECENT_GIT_DB_LINUX 
   bankItems,
   recentChallenges,
 });
-const words = (h: ReturnType<typeof history>) =>
+const words = (h: ReturnType<typeof history>, number?: number) =>
   Array.from(
     { length: 50 },
-    (_, i) => generator.generate({ date: DATE, seed: seed(i + 1), history: h }).word,
+    (_, i) => generator.generate({ date: DATE, number, seed: seed(i + 1), history: h }).word,
   );
 
 describe('generator.generate', () => {
@@ -78,6 +79,35 @@ describe('generator.generate', () => {
     ];
     const w = words(history([T_REACT, T_ROUTER, T_KERNEL], recent));
     for (const x of w) expect(['REACT', 'ROUTER']).toContain(x);
+  });
+
+  describe('launch window', () => {
+    // REACT y REDIS están en la lista de lanzamiento; REDIS no se puede reusar en DATE.
+    it('picks only launch terms in the first LAUNCH_DAYS challenges', () => {
+      for (const n of [1, LAUNCH_DAYS]) {
+        expect(new Set(words(history(), n))).toEqual(new Set(['REACT']));
+      }
+    });
+
+    it('picks from the whole bank after the launch window or without a number', () => {
+      for (const n of [LAUNCH_DAYS + 1, undefined]) {
+        const w = words(history(), n);
+        for (const x of w) expect(['KERNEL', 'MERGE', 'REACT', 'ROUTER']).toContain(x);
+        expect(new Set(w).size).toBeGreaterThanOrEqual(2);
+      }
+    });
+
+    it('falls back to the whole bank when no launch term is reusable', () => {
+      const w = words(history([T_REDIS, T_KERNEL, T_ROUTER]), 1);
+      for (const x of w) expect(['KERNEL', 'ROUTER']).toContain(x);
+    });
+
+    it('rotates categories inside the launch terms', () => {
+      const docker = { ...T_KERNEL, id: '88888888-8888-4888-8888-888888888888', term: 'DOCKER' };
+      const recentLangs = [recent3('2026-12-01', 'programming_languages')];
+      const w = words(history([T_REACT, docker, T_ROUTER], recentLangs), 1);
+      expect(new Set(w)).toEqual(new Set(['DOCKER']));
+    });
   });
 
   it('builds the exact payload with a single eligible (TS-39)', () => {

@@ -22,7 +22,7 @@
 
 ## GameGenerator, GeneratorHistory, VerificationLog, AnyGameGenerator
 - **Location:** packages/core/src/game-generator.ts
-- **Signature:** `GameGenerator<Payload, BankItem = unknown> { historySpec: HistorySpec; usedBankItems(p): string[]; generate({ date, seed, history }): Payload; verify(p, history): VerificationLog | Promise<VerificationLog> }`; `HistorySpec = { bank, lastUsedField, recentDays, aheadDays?: number }` (`aheadDays` default 0 applied by the consumer; the row of D is excluded); `GeneratorHistory<Payload, BankItem> = { bankItems, recentChallenges: { date, payload }[] }`; `VerificationLog = { ok, checks: { name, ok, detail? }[], reason? }`; `AnyGameGenerator = GameGenerator<any, any>`
+- **Signature:** `GameGenerator<Payload, BankItem = unknown> { historySpec: HistorySpec; usedBankItems(p): string[]; generate({ date, number?, seed, history }): Payload; verify(p, history, context?: { number? }): VerificationLog | Promise<VerificationLog> }`; `GenerationContext = { number?: number }` (challenge number, 1 = `LAUNCH_DATE`; the generator pipeline always sends it, games that don't need it ignore it); `HistorySpec = { bank, lastUsedField, recentDays, aheadDays?: number }` (`aheadDays` default 0 applied by the consumer; the row of D is excluded); `GeneratorHistory<Payload, BankItem> = { bankItems, recentChallenges: { date, payload }[] }`; `VerificationLog = { ok, checks: { name, ok, detail? }[], reason? }`; `AnyGameGenerator = GameGenerator<any, any>`
 - **Usage:** `const log = await gen.verify(payload, history); if (!log.ok) retry` (log is stored in `challenges.verification`).
 
 ## Culprit, CulpritKind and culprits(p)

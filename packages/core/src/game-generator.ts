@@ -30,17 +30,26 @@ export interface VerificationLog {
   reason?: string;
 }
 
+/** Data of the challenge being generated that is not in the payload. */
+export interface GenerationContext {
+  /** Challenge number (`challengeNumber(date, LAUNCH_DATE)`, 1 = launch day). The pipeline always sends it. */
+  number?: number;
+}
+
 export interface GameGenerator<Payload, BankItem = unknown> {
   historySpec: HistorySpec;
   usedBankItems(p: Payload): string[];
-  generate(input: {
-    date: string;
-    seed: Uint8Array;
-    history: GeneratorHistory<Payload, BankItem>;
-  }): Payload;
+  generate(
+    input: {
+      date: string;
+      seed: Uint8Array;
+      history: GeneratorHistory<Payload, BankItem>;
+    } & GenerationContext,
+  ): Payload;
   verify(
     p: Payload,
     history: GeneratorHistory<Payload, BankItem>,
+    context?: GenerationContext,
   ): VerificationLog | Promise<VerificationLog>;
 }
 

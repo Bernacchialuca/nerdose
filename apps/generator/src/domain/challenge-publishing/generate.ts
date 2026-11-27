@@ -94,7 +94,7 @@ export async function generateForDate(
     const log = deps.log.child({ game_id: gameId, date, attempt });
 
     const seed = seedFor(env.GENERATOR_SECRET, gameId, date, attempt);
-    const payload = payloadSchema.parse(generator.generate({ date, seed, history }));
+    const payload = payloadSchema.parse(generator.generate({ date, number, seed, history }));
     const id = await repo.insertDraft({
       gameId,
       date,
@@ -108,7 +108,7 @@ export async function generateForDate(
     log.info('ChallengeGenerated');
 
     // verify puede ser asíncrono (juegos de código, REQ-009); await de un valor síncrono no cambia nada.
-    const verification = await generator.verify(payload, history);
+    const verification = await generator.verify(payload, history, { number });
     if (verification.ok && mode === 'regenerate') {
       // La cola hace el reemplazo atómico: el candidato queda en draft.
       return {

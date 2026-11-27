@@ -4,6 +4,7 @@ import type { DevdlePayload } from '../definition';
 import { addDays } from './dates';
 import { DEVDLE_EXCLUDED_TERMS } from '../shared/excluded';
 import type { DevdleTerm } from './index';
+import { DEVDLE_LAUNCH_TERMS, LAUNCH_DAYS } from './launch-terms';
 
 export const REUSE_WINDOW_DAYS = 365;
 export const RECENT_DAYS = 3;
@@ -38,6 +39,24 @@ function rotationTiers(date: string, recent: Recent): ReadonlySet<string>[] {
 const reusableTerms = (bankItems: readonly DevdleTerm[], date: string): DevdleTerm[] =>
   bankItems.filter((t) => isReusable(t.last_used_devdle, date) && !isExcluded(t.term));
 
+export const inLaunchWindow = (number: number | undefined): boolean =>
+  number !== undefined && number >= 1 && number <= LAUNCH_DAYS;
+
+/**
+ * Los términos de los que sale la palabra de D. En los primeros `LAUNCH_DAYS` desafíos, solo los de
+ * `DEVDLE_LAUNCH_TERMS` mientras quede alguno reutilizable; si no (o fuera de ese tramo), todo el
+ * banco. La rotación de categorías se aplica después, sobre este conjunto.
+ */
+export function candidateTerms(
+  bankItems: readonly DevdleTerm[],
+  date: string,
+  number: number | undefined,
+): readonly DevdleTerm[] {
+  if (!inLaunchWindow(number)) return bankItems;
+  const launch = bankItems.filter((t) => DEVDLE_LAUNCH_TERMS.has(t.term));
+  return reusableTerms(launch, date).length > 0 ? launch : bankItems;
+}
+
 /** Las categorías que la regla de rotación aplicable a D bloquea (la más estricta con candidatos). */
 export function blockedCategories(
   bankItems: readonly DevdleTerm[],
@@ -55,7 +74,9 @@ export function eligibleTerms(
   bankItems: readonly DevdleTerm[],
   date: string,
   recentChallenges: Recent,
+  number?: number,
 ): DevdleTerm[] {
-  const blocked = blockedCategories(bankItems, date, recentChallenges);
-  return sortByTerm(reusableTerms(bankItems, date).filter((t) => !blocked.has(t.category)));
+  const pool = candidateTerms(bankItems, date, number);
+  const blocked = blockedCategories(pool, date, recentChallenges);
+  return sortByTerm(reusableTerms(pool, date).filter((t) => !blocked.has(t.category)));
 }

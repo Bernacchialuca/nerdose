@@ -19,8 +19,8 @@ export const generator: GameGenerator<DevdlePayload, DevdleTerm> = {
 
   usedBankItems: (p) => [p.term_id],
 
-  generate({ date, seed, history }) {
-    const eligible = eligibleTerms(history.bankItems, date, history.recentChallenges);
+  generate({ date, number, seed, history }) {
+    const eligible = eligibleTerms(history.bankItems, date, history.recentChallenges, number);
     // Sin elegibles se elige igual: `verify` rechaza y el pipeline lo registra.
     const pool = eligible.length > 0 ? eligible : sortByTerm(history.bankItems);
     const t = rngFrom(seed).pick(pool);
