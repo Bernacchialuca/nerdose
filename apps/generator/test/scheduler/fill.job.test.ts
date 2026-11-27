@@ -92,7 +92,8 @@ afterAll(() => t.cleanup());
 
 describe('job fill', () => {
   it('rellena los 14 días con number, términos distintos y rotación de categoría', async () => {
-    expect(await setup().run()).toBe('success');
+    // Fuera de los 50 desafíos de lanzamiento de Devdle: con todo BANK16 la rotación de 3 días se cumple.
+    expect(await setup({ launch: '2026-10-01' }).run()).toBe('success');
     expect((await lastRun()).summary).toEqual({
       generated: 14,
       approved: 14,
@@ -103,7 +104,7 @@ describe('job fill', () => {
     expect(rows.map((r) => r.date)).toEqual(
       Array.from({ length: 14 }, (_, i) => `2026-12-${String(i + 2).padStart(2, '0')}`),
     );
-    expect(rows.map((r) => r.number)).toEqual(Array.from({ length: 14 }, (_, i) => 13 + i));
+    expect(rows.map((r) => r.number)).toEqual(Array.from({ length: 14 }, (_, i) => 63 + i));
     expect((await challengesOf()).filter((r) => r.date <= '2026-12-01')).toHaveLength(0);
     const payloads = rows.map((r) => r.payload as { term_id: string; category: string });
     expect(new Set(payloads.map((p) => p.term_id)).size).toBe(14);

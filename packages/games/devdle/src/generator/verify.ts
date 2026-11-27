@@ -1,8 +1,19 @@
-import type { GeneratorHistory, VerificationCheck, VerificationLog } from '@nerdose/core';
+import type {
+  GenerationContext,
+  GeneratorHistory,
+  VerificationCheck,
+  VerificationLog,
+} from '@nerdose/core';
 
 import { WORD_PATTERN, type DevdlePayload } from '../definition';
 import { addDays, isValidDate } from './dates';
-import { REUSE_WINDOW_DAYS, blockedCategories, isExcluded } from './eligibility';
+import {
+  REUSE_WINDOW_DAYS,
+  blockedCategories,
+  candidateTerms,
+  inLaunchWindow,
+  isExcluded,
+} from './eligibility';
 import type { DevdleTerm } from './index';
 
 const filled = (v: unknown): boolean => typeof v === 'string' && v.trim().length > 0;
@@ -12,6 +23,7 @@ const check = (name: string, detail: string | null): VerificationCheck =>
 export function verifyPayload(
   p: DevdlePayload,
   history: GeneratorHistory<DevdlePayload, DevdleTerm>,
+  context: GenerationContext = {},
 ): VerificationLog {
   const item = history.bankItems.find((t) => t.id === p.term_id);
 
@@ -40,9 +52,16 @@ export function verifyPayload(
     }
   }
 
+  const pool = isValidDate(p.date)
+    ? candidateTerms(history.bankItems, p.date, context.number)
+    : history.bankItems;
   const recent =
     isValidDate(p.date) &&
-    blockedCategories(history.bankItems, p.date, history.recentChallenges).has(p.category);
+    blockedCategories(pool, p.date, history.recentChallenges).has(p.category);
+  const launchPool =
+    inLaunchWindow(context.number) && item && !pool.includes(item)
+      ? `${p.word} is not a launch term (challenge #${context.number})`
+      : null;
 
   const checks = [
     check('word_shape', WORD_PATTERN.test(p.word) ? null : `invalid word ${p.word}`),
@@ -54,6 +73,7 @@ export function verifyPayload(
     check('not_used_365', notUsed),
     check('category_rotation', recent ? `category ${p.category} used in the last days` : null),
     check('not_excluded', isExcluded(p.word) ? `${p.word} is excluded from Devdle` : null),
+    check('launch_pool', launchPool),
   ];
   const failed = checks.find((c) => !c.ok);
   return failed ? { ok: false, checks, reason: failed.name } : { ok: true, checks };
