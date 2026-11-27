@@ -36,6 +36,8 @@ packages/
 ├── eslint.config.js      # incluye los límites de importación entre paquetes
 ├── vitest.config.ts
 ├── compose.yaml          # PostgreSQL 16 local
+├── Dockerfile            # imágenes de producción (api, generator, migrate, static)
+├── .github/workflows/    # CI
 ├── .env.example
 └── test/                 # tests del workspace
 ```
@@ -152,6 +154,7 @@ curl -i http://localhost:5174/api/health
 ## Comandos útiles
 
 - `pnpm lint`
+- `pnpm build` (build estático de `web` y `admin` con Vite, en `apps/*/dist`)
 - `pnpm typecheck`
 - `pnpm test` (requiere Docker: los tests de integración usan Testcontainers; y los toolchains de "Requisitos": los de `@nerdose/polyglot`, `@nerdose/game-big-o` y `@nerdose/game-bug-hunt` ejecutan Go y Java)
 - `pnpm --filter <paquete> <script>` para correr un script de un solo paquete.
@@ -170,4 +173,22 @@ curl -i http://localhost:5174/api/health
 - **`password authentication failed for user "nerdose_api"`:** las contraseñas de los `.env.local` no coinciden. Corregirlas y volver a correr `db:migrate`.
 - **`Missing toolchain` o `Wrong toolchain version` en los tests de `@nerdose/polyglot`, `@nerdose/game-big-o` o `@nerdose/game-bug-hunt`:** falta Go o JDK, o la versión no es la pedida. Instalar Go >= 1.25 y JDK 21, dejarlos en el `PATH` y verificar con `go version` y `java -version` (ver "Requisitos").
 
-Hosting, CI/CD y despliegue: fuera de alcance por ahora.
+## Docker y CI
+
+Imágenes de producción, una por servicio, desde el `Dockerfile` de la raíz con el monorepo como contexto:
+
+```bash
+docker build --target api       -t nerdose-api .
+docker build --target generator -t nerdose-generator .   # Node 24 + Go 1.25 + JDK 21
+docker build --target migrate   -t nerdose-migrate .     # corre las migraciones y termina
+docker build --target static --output type=local,dest=out .   # out/web y out/admin (estáticos)
+```
+
+- Las variables de cada imagen son las de su `.env.example` (`apps/api`, `apps/generator`, `packages/db`), con `NODE_ENV=production`.
+- `migrate` va antes de levantar `api` y `generator`.
+- `generator` no debe tener salida a internet. Si `/tmp` es un tmpfs, se monta con `exec`: el binario de Go se compila y se ejecuta ahí.
+- `web` y `admin` son estáticos. El sitio de `web` enruta `/api/*` a la `api`, y el de `admin` solo `/api/admin/*`, igual que el proxy de desarrollo.
+
+El CI (`.github/workflows/ci.yml`) corre format, lint, typecheck, build y tests, y construye las imágenes en cada PR y push a `dev`/`main`.
+
+Hosting, publicación de las imágenes, TLS y despliegue: se definen con el hosting.

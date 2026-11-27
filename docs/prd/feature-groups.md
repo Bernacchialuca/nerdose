@@ -379,7 +379,7 @@ El jugador consulta todo su progreso, con heatmap e historial. El Responsable ve
 
 ## Notas de Secuenciamiento
 
-**FG-1 (Walking skeleton)** va primero: sin los 4 servicios corriendo y conectados en local no se puede construir nada. El despliegue (hosting, CI/CD, secretos) queda diferido y se define cuando se decida lanzar; no bloquea ningún feature group.
+**FG-1 (Walking skeleton)** va primero: sin los 4 servicios corriendo y conectados en local no se puede construir nada. El despliegue (hosting, CD, secretos) queda diferido; las imágenes Docker y el CI ya existen (2026-11-26), y se define cuando se decida lanzar; no bloquea ningún feature group.
 
 **FG-2 (Plataforma base)** depende de FG-1 y es prerequisito de todo lo que tiene jugador: sesión, día de la plataforma e i18n.
 
